@@ -16,7 +16,6 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
-  TinyMCE,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -100,7 +99,6 @@ const CourtRecord: FC = () => {
                 />
               ))}
             </Accordion>
-            <TinyMCE label="Afstaða ákærða, málflutningur og aðrar bókanir" />
             <Box
               display="flex"
               justifyContent="flexEnd"

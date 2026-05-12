@@ -132,6 +132,13 @@ export const colorSwatchSelected = style({
   border: `2px solid ${theme.color.blue300}`,
 })
 
+export const errorText = style({
+  color: theme.color.red400,
+  fontSize: 12,
+  marginTop: 4,
+  paddingLeft: `${theme.spacing[1]}px`,
+})
+
 export const removeColor = style({
   width: 24,
   height: 24,

@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Editor } from '@tinymce/tinymce-react'
 
 import { theme } from '@island.is/island-ui/theme'
 
+import RequiredStar from '../RequiredStar/RequiredStar'
 import * as styles from './TinyMCE.css'
 
 const hexToRgb = (hex: string) => {
@@ -48,9 +49,25 @@ const itemVariants = {
 
 interface Props {
   label: string
+  defaultValue?: string
+  onChange?: (html: string) => void
+  onBlur?: (html: string) => void
+  disabled?: boolean
+  errorMessage?: string
+  required?: boolean
 }
 
-const TinyMCE = ({ label }: Props) => {
+const TinyMCE = ({
+  label,
+  defaultValue,
+  onChange,
+  onBlur,
+  disabled,
+  errorMessage,
+  required,
+}: Props) => {
+  const editorId = useId()
+  const initialValueRef = useRef(defaultValue ?? '')
   const [pickerOpen, setPickerOpen] = useState(false)
   const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
@@ -59,6 +76,7 @@ const TinyMCE = ({ label }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const highlightBtnApiRef = useRef<any>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
+  const highlightGroupRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     highlightBtnApiRef.current?.setActive(pickerOpen)
@@ -68,7 +86,12 @@ const TinyMCE = ({ label }: Props) => {
     if (!pickerOpen) return
     const close = () => setPickerOpen(false)
     const handleMouseDown = (e: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(target) &&
+        !highlightGroupRef.current?.contains(target)
+      ) {
         close()
       }
     }
@@ -84,124 +107,135 @@ const TinyMCE = ({ label }: Props) => {
   }, [pickerOpen])
 
   return (
-    <div className={styles.wrapper}>
-      <label className={styles.label}>{label}</label>
-      <Editor
-        apiKey={process.env.TINY_MCE_API_KEY}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onInit={(_: any, editor: any) => {
-          editorRef.current = editor
-        }}
-        init={{
-          plugins: 'lists fullscreen',
-          toolbar: 'bold italic | indent outdent | highlightcolor | fullscreen',
-          toolbar_mode: 'wrap',
-          menubar: false,
-          setup: (editor) => {
-            editor.on('NodeChange', (e) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              let node: any = e.element
-              while (node && node !== editor.getBody()) {
-                if (node.nodeType === 1) {
-                  const bg: string = node.style?.backgroundColor ?? ''
-                  if (bg && bg !== 'transparent') {
-                    const match = HIGHLIGHT_COLORS.find(
-                      ({ color }) => hexToRgb(color) === bg,
-                    )
-                    if (match) {
-                      setSelectedColor(match.color)
-                      return
+    <div>
+      <div className={styles.wrapper}>
+        <label className={styles.label} htmlFor={editorId}>
+          {`${label} `}
+          {required && <RequiredStar />}
+        </label>
+        <Editor
+          id={editorId}
+          apiKey={process.env.TINY_MCE_API_KEY}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onInit={(_: any, editor: any) => {
+            editorRef.current = editor
+          }}
+          init={{
+            plugins: 'lists fullscreen',
+            toolbar:
+              'bold italic | indent outdent | highlightcolor | fullscreen',
+            toolbar_mode: 'wrap',
+            menubar: false,
+            setup: (editor) => {
+              editor.on('blur', () => onBlur?.(editor.getContent()))
+              editor.on('NodeChange', (e) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                let node: any = e.element
+                while (node && node !== editor.getBody()) {
+                  if (node.nodeType === 1) {
+                    const bg: string = node.style?.backgroundColor ?? ''
+                    if (bg && bg !== 'transparent') {
+                      const match = HIGHLIGHT_COLORS.find(
+                        ({ color }) => hexToRgb(color) === bg,
+                      )
+                      if (match) {
+                        setSelectedColor(match.color)
+                        return
+                      }
                     }
                   }
+                  node = node.parentNode
                 }
-                node = node.parentNode
-              }
-              setSelectedColor(null)
-            })
+                setSelectedColor(null)
+              })
 
-            editor.ui.registry.addToggleButton('highlightcolor', {
-              icon: 'highlight-bg-color',
-              onAction: (api) => {
-                highlightBtnApiRef.current = api
-                const container = editor.getContainer()
-                // Toolbar groups: [0]=bold+italic [1]=indent+outdent [2]=highlightcolor [3]=fullscreen
-                const groups = container.querySelectorAll<HTMLElement>(
-                  '.tox-toolbar__group',
-                )
-                const group = groups[2]
-                if (group) {
-                  const rect = group.getBoundingClientRect()
-                  setPickerPos({ top: rect.bottom + 4, left: rect.left })
-                }
-                setPickerOpen((open) => !open)
-              },
-              onSetup: (api) => {
-                highlightBtnApiRef.current = api
-                return () => undefined
-              },
-            })
-          },
-          content_style:
-            "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; }",
-          branding: false,
-          statusbar: false,
-          placeholder: 'Start typing...',
-        }}
-        initialValue=""
-        onEditorChange={(content) => console.log(content)}
-      />
-      <AnimatePresence>
-        {pickerOpen && (
-          <motion.div
-            ref={pickerRef}
-            className={styles.colorPicker}
-            style={{ top: pickerPos.top, left: pickerPos.left }}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            {HIGHLIGHT_COLORS.map(({ label: colorLabel, color }) => (
+              editor.ui.registry.addToggleButton('highlightcolor', {
+                icon: 'highlight-bg-color',
+                onAction: (api) => {
+                  highlightBtnApiRef.current = api
+                  const container = editor.getContainer()
+                  // Toolbar groups: [0]=bold+italic [1]=indent+outdent [2]=highlightcolor [3]=fullscreen
+                  const groups = container.querySelectorAll<HTMLElement>(
+                    '.tox-toolbar__group',
+                  )
+                  const group = groups[2]
+                  if (group) {
+                    highlightGroupRef.current = group
+                    const rect = group.getBoundingClientRect()
+                    setPickerPos({ top: rect.bottom + 4, left: rect.left })
+                  }
+                  setPickerOpen((open) => !open)
+                },
+                onSetup: (api) => {
+                  highlightBtnApiRef.current = api
+                  return () => undefined
+                },
+              })
+            },
+            content_style:
+              "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
+            branding: false,
+            statusbar: false,
+            placeholder: 'Start typing...',
+          }}
+          initialValue={initialValueRef.current}
+          onEditorChange={(content) => onChange?.(content)}
+          disabled={disabled}
+        />
+        <AnimatePresence>
+          {pickerOpen && (
+            <motion.div
+              ref={pickerRef}
+              className={styles.colorPicker}
+              style={{ top: pickerPos.top, left: pickerPos.left }}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {HIGHLIGHT_COLORS.map(({ label: colorLabel, color }) => (
+                <motion.button
+                  key={color}
+                  type="button"
+                  className={`${styles.colorSwatch}${
+                    selectedColor === color
+                      ? ` ${styles.colorSwatchSelected}`
+                      : ''
+                  }`}
+                  style={{ background: color }}
+                  aria-label={colorLabel}
+                  variants={itemVariants}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    editorRef.current?.execCommand('HiliteColor', false, color)
+                    setSelectedColor(color)
+                    setPickerOpen(false)
+                  }}
+                />
+              ))}
               <motion.button
-                key={color}
                 type="button"
-                className={`${styles.colorSwatch}${
-                  selectedColor === color
-                    ? ` ${styles.colorSwatchSelected}`
-                    : ''
-                }`}
-                style={{ background: color }}
-                aria-label={colorLabel}
+                className={styles.removeColor}
+                aria-label="Remove highlight"
                 variants={itemVariants}
                 onMouseDown={(e) => {
                   e.preventDefault()
-                  editorRef.current?.execCommand('HiliteColor', false, color)
-                  setSelectedColor(color)
+                  editorRef.current?.execCommand(
+                    'HiliteColor',
+                    false,
+                    'transparent',
+                  )
+                  setSelectedColor(null)
                   setPickerOpen(false)
                 }}
-              />
-            ))}
-            <motion.button
-              type="button"
-              className={styles.removeColor}
-              aria-label="Remove highlight"
-              variants={itemVariants}
-              onMouseDown={(e) => {
-                e.preventDefault()
-                editorRef.current?.execCommand(
-                  'HiliteColor',
-                  false,
-                  'transparent',
-                )
-                setSelectedColor(null)
-                setPickerOpen(false)
-              }}
-            >
-              ✕
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              >
+                ✕
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      {errorMessage && <span className={styles.errorText}>{errorMessage}</span>}
     </div>
   )
 }
