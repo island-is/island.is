@@ -91,8 +91,9 @@ const TinyMCE = ({ label }: Props) => {
                 highlightBtnApiRef.current = api
                 const container = editor.getContainer()
                 // Toolbar groups: [0]=bold+italic [1]=indent+outdent [2]=highlightcolor [3]=fullscreen
-                const groups =
-                  container.querySelectorAll<HTMLElement>('.tox-toolbar__group')
+                const groups = container.querySelectorAll<HTMLElement>(
+                  '.tox-toolbar__group',
+                )
                 const group = groups[2]
                 if (group) {
                   const rect = group.getBoundingClientRect()
@@ -125,7 +126,9 @@ const TinyMCE = ({ label }: Props) => {
             <button
               key={color}
               type="button"
-              className={`${styles.colorSwatch}${selectedColor === color ? ` ${styles.colorSwatchSelected}` : ''}`}
+              className={`${styles.colorSwatch}${
+                selectedColor === color ? ` ${styles.colorSwatchSelected}` : ''
+              }`}
               style={{ background: color }}
               aria-label={colorLabel}
               onMouseDown={(e) => {
@@ -142,7 +145,11 @@ const TinyMCE = ({ label }: Props) => {
             aria-label="Remove highlight"
             onMouseDown={(e) => {
               e.preventDefault()
-              editorRef.current?.execCommand('HiliteColor', false, 'transparent')
+              editorRef.current?.execCommand(
+                'HiliteColor',
+                false,
+                'transparent',
+              )
               setSelectedColor(null)
               setPickerOpen(false)
             }}
