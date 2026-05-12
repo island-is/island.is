@@ -490,7 +490,6 @@ export const addNumberedList = (
 }
 
 const MARK_HIGHLIGHT_COLOR = '#fff066'
-const INDENT_PTS = 20
 
 interface Run {
   text: string
@@ -573,8 +572,6 @@ const collectBlocksFromNodes = (
       const runs: Run[] = []
       collectRuns(children, false, false, false, runs)
       blocks.push({ runs, indent: indent + pIndent })
-    } else if (el.name === 'blockquote') {
-      blocks.push(...collectBlocksFromNodes(children, indent + INDENT_PTS))
     } else {
       blocks.push(...collectBlocksFromNodes(children, indent))
     }

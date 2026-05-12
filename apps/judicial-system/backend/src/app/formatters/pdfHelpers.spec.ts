@@ -70,18 +70,6 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[2]).toMatchObject({ text: ' end', bold: false })
   })
 
-  it('adds indent for blockquote', () => {
-    const blocks = htmlToBlocks('<blockquote><p>indented</p></blockquote>')
-    expect(blocks[0].indent).toBe(20)
-  })
-
-  it('adds cumulative indent for nested blockquotes', () => {
-    const blocks = htmlToBlocks(
-      '<blockquote><blockquote><p>deep</p></blockquote></blockquote>',
-    )
-    expect(blocks[0].indent).toBe(40)
-  })
-
   it('converts padding-left style to indent in points', () => {
     const blocks = htmlToBlocks('<p style="padding-left: 40px;">indented</p>')
     expect(blocks[0].indent).toBe(30)
