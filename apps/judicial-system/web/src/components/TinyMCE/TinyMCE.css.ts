@@ -2,6 +2,7 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+
 export const label = style({
   display: 'block',
   color: theme.color.blue400,

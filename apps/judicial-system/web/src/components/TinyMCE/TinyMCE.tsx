@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Editor } from '@tinymce/tinymce-react'
 
 import { theme } from '@island.is/island-ui/theme'
@@ -20,6 +21,31 @@ const HIGHLIGHT_COLORS = [
   { label: 'Purple', color: theme.color.purple200 },
 ]
 
+const containerVariants = {
+  hidden: { opacity: 0, scale: 0.92, y: -6 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.15,
+      ease: 'easeOut' as const,
+      staggerChildren: 0.03,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.92,
+    y: -6,
+    transition: { duration: 0.12, ease: 'easeIn' as const },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.12 } },
+}
+
 interface Props {
   label: string
 }
@@ -40,13 +66,21 @@ const TinyMCE = ({ label }: Props) => {
 
   useEffect(() => {
     if (!pickerOpen) return
-    const handler = (e: MouseEvent) => {
+    const close = () => setPickerOpen(false)
+    const handleMouseDown = (e: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setPickerOpen(false)
+        close()
       }
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    const iframeDoc = editorRef.current?.getDoc()
+    document.addEventListener('mousedown', handleMouseDown)
+    iframeDoc?.addEventListener('mousedown', close)
+    window.addEventListener('scroll', close, { capture: true })
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+      iframeDoc?.removeEventListener('mousedown', close)
+      window.removeEventListener('scroll', close, { capture: true })
+    }
   }, [pickerOpen])
 
   return (
@@ -116,48 +150,50 @@ const TinyMCE = ({ label }: Props) => {
         initialValue=""
         onEditorChange={(content) => console.log(content)}
       />
-      {pickerOpen && (
-        <div
-          ref={pickerRef}
-          className={styles.colorPicker}
-          style={{ top: pickerPos.top, left: pickerPos.left }}
-        >
-          {HIGHLIGHT_COLORS.map(({ label: colorLabel, color }) => (
-            <button
-              key={color}
+      <AnimatePresence>
+        {pickerOpen && (
+          <motion.div
+            ref={pickerRef}
+            className={styles.colorPicker}
+            style={{ top: pickerPos.top, left: pickerPos.left }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {HIGHLIGHT_COLORS.map(({ label: colorLabel, color }) => (
+              <motion.button
+                key={color}
+                type="button"
+                className={`${styles.colorSwatch}${selectedColor === color ? ` ${styles.colorSwatchSelected}` : ''}`}
+                style={{ background: color }}
+                aria-label={colorLabel}
+                variants={itemVariants}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  editorRef.current?.execCommand('HiliteColor', false, color)
+                  setSelectedColor(color)
+                  setPickerOpen(false)
+                }}
+              />
+            ))}
+            <motion.button
               type="button"
-              className={`${styles.colorSwatch}${
-                selectedColor === color ? ` ${styles.colorSwatchSelected}` : ''
-              }`}
-              style={{ background: color }}
-              aria-label={colorLabel}
+              className={styles.removeColor}
+              aria-label="Remove highlight"
+              variants={itemVariants}
               onMouseDown={(e) => {
                 e.preventDefault()
-                editorRef.current?.execCommand('HiliteColor', false, color)
-                setSelectedColor(color)
+                editorRef.current?.execCommand('HiliteColor', false, 'transparent')
+                setSelectedColor(null)
                 setPickerOpen(false)
               }}
-            />
-          ))}
-          <button
-            type="button"
-            className={styles.removeColor}
-            aria-label="Remove highlight"
-            onMouseDown={(e) => {
-              e.preventDefault()
-              editorRef.current?.execCommand(
-                'HiliteColor',
-                false,
-                'transparent',
-              )
-              setSelectedColor(null)
-              setPickerOpen(false)
-            }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
+            >
+              ✕
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
