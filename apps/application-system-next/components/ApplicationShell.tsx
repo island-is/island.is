@@ -59,12 +59,22 @@ export const ApplicationShell = ({
         applicationName: screen.header.applicationName ?? screen.header.title,
       })
     }
-  }, [screen.header.applicationName, screen.header.institutionName, screen.header.title, setInfo])
+  }, [
+    screen.header.applicationName,
+    screen.header.institutionName,
+    screen.header.title,
+    setInfo,
+  ])
 
   return (
     <ApplicationContextProvider applicationId={applicationId}>
       <Box className={styles.root}>
-        <Box paddingTop={[0, 4]} paddingBottom={[0, 5]} width="full" height="full">
+        <Box
+          paddingTop={[0, 4]}
+          paddingBottom={[0, 5]}
+          width="full"
+          height="full"
+        >
           <GridContainer>
             <GridRow>
               <GridColumn
@@ -91,7 +101,9 @@ export const ApplicationShell = ({
                         {screen.header.title}
                       </Text>
                       {screen.header.description && (
-                        <Text marginBottom={3}>{screen.header.description}</Text>
+                        <Text marginBottom={3}>
+                          {screen.header.description}
+                        </Text>
                       )}
 
                       {error && (
@@ -125,7 +137,11 @@ export const ApplicationShell = ({
                           justifyContent="spaceBetween"
                           paddingTop={[1, 4]}
                         >
-                          <Box display="inlineFlex" padding={2} paddingRight="none">
+                          <Box
+                            display="inlineFlex"
+                            padding={2}
+                            paddingRight="none"
+                          >
                             {screen.footer.buttons.map((btn) => (
                               <Box key={btn.id} marginLeft={1}>
                                 <Button
@@ -134,11 +150,13 @@ export const ApplicationShell = ({
                                     btn.actionType === 'NEXT_PAGE'
                                       ? 'arrowForward'
                                       : btn.actionType === 'SUBMIT'
-                                        ? 'checkmarkCircle'
-                                        : undefined
+                                      ? 'checkmarkCircle'
+                                      : undefined
                                   }
                                   variant={
-                                    btn.variant === 'REJECT' ? 'ghost' : 'primary'
+                                    btn.variant === 'REJECT'
+                                      ? 'ghost'
+                                      : 'primary'
                                   }
                                   colorScheme={
                                     btn.variant === 'REJECT'
@@ -158,7 +176,11 @@ export const ApplicationShell = ({
                               </Box>
                             ))}
                           </Box>
-                          <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
+                          <Box
+                            display={['none', 'inlineFlex']}
+                            padding={2}
+                            paddingLeft="none"
+                          >
                             {screen.footer.canGoBack && (
                               <Button
                                 variant="ghost"
@@ -169,7 +191,11 @@ export const ApplicationShell = ({
                               </Button>
                             )}
                           </Box>
-                          <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
+                          <Box
+                            display={['inlineFlex', 'none']}
+                            padding={2}
+                            paddingLeft="none"
+                          >
                             {screen.footer.canGoBack && (
                               <Button
                                 circle
@@ -216,7 +242,8 @@ export const ApplicationShell = ({
                                   variant="medium"
                                   fontWeight={
                                     screen.stepper.activeSectionIndex === idx &&
-                                    screen.stepper.activeSubSectionIndex === subIdx
+                                    screen.stepper.activeSubSectionIndex ===
+                                      subIdx
                                       ? 'semiBold'
                                       : 'regular'
                                   }

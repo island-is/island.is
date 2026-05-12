@@ -69,8 +69,7 @@ export class SdfMultiClientCondition {
 
 export const SdfClientCondition = createUnionType({
   name: 'SdfClientCondition',
-  types: () =>
-    [SdfSingleClientCondition, SdfMultiClientCondition] as const,
+  types: () => [SdfSingleClientCondition, SdfMultiClientCondition] as const,
   resolveType(value) {
     if ('checks' in value) {
       return SdfMultiClientCondition
@@ -1143,8 +1142,7 @@ export class SdfRepeaterComponent {
   // Items field uses a lazy type reference to break the circular dependency.
   // Each item is an array of components (one row of the repeater).
   @Field(() => [String], {
-    description:
-      'JSON-serialized rows of components. Parsed by the frontend.',
+    description: 'JSON-serialized rows of components. Parsed by the frontend.',
   })
   items!: string[]
 }
@@ -1265,7 +1263,10 @@ export const resolveComponentType = (
     const cls = resolveComponentTypeByName(typeName)
     if (cls) return cls.name
   }
-  if (typeof value?.componentName === 'string' && value.componentName.length > 0) {
+  if (
+    typeof value?.componentName === 'string' &&
+    value.componentName.length > 0
+  ) {
     return SdfCustomComponent.name
   }
   if (typeof value?.arrayPath === 'string' && value.arrayPath.length > 0) {
@@ -1338,7 +1339,7 @@ export class SdfPage {
   subSectionIndex!: number
 
   @Field(() => [SdfComponent])
-  components!: (typeof SdfComponent)[]
+  components!: typeof SdfComponent[]
 
   @Field(() => [SdfValidationError])
   errors!: SdfValidationError[]
@@ -1452,7 +1453,13 @@ export class SdfGetScreenInput {
   @Field()
   applicationId!: string
 
-  @Field(() => Int, { nullable: true, description: 'Optional override for deep-linking. Omit to use the persisted page index.', deprecationReason: 'The backend now tracks page index in the database. Only use for deep-link overrides.' })
+  @Field(() => Int, {
+    nullable: true,
+    description:
+      'Optional override for deep-linking. Omit to use the persisted page index.',
+    deprecationReason:
+      'The backend now tracks page index in the database. Only use for deep-link overrides.',
+  })
   step?: number
 }
 
@@ -1467,7 +1474,10 @@ export class SdfExecuteActionInput {
   @Field({ nullable: true })
   answers?: string
 
-  @Field(() => Int, { nullable: true, deprecationReason: 'The backend now tracks page index in the database.' })
+  @Field(() => Int, {
+    nullable: true,
+    deprecationReason: 'The backend now tracks page index in the database.',
+  })
   lastKnownPageIndex?: number
 
   @Field(() => [String], { nullable: true })

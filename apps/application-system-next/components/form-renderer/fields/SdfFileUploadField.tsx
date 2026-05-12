@@ -115,7 +115,11 @@ const uploadFileToS3 = (
         const percent = Math.round((event.loaded / event.total) * 100)
         dispatch({
           type: FileActionType.UPDATE,
-          payload: { file, status: 'uploading', percent: Math.min(percent, 99) },
+          payload: {
+            file,
+            status: 'uploading',
+            percent: Math.min(percent, 99),
+          },
         })
       }
     })
@@ -184,7 +188,8 @@ export const SdfFileUploadField = ({
     const changed =
       prev.length !== nextAnswer.length ||
       prev.some(
-        (p, i) => p.name !== nextAnswer[i]?.name || p.key !== nextAnswer[i]?.key,
+        (p, i) =>
+          p.name !== nextAnswer[i]?.name || p.key !== nextAnswer[i]?.key,
       )
 
     if (changed) {
@@ -388,7 +393,12 @@ export const SdfFileUploadField = ({
         }
       })
     },
-    [component.maxSize, component.maxSizeErrorText, component.accept, formatMessage],
+    [
+      component.maxSize,
+      component.maxSizeErrorText,
+      component.accept,
+      formatMessage,
+    ],
   )
 
   return (
