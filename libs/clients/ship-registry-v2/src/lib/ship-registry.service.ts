@@ -5,10 +5,13 @@ import {
   getSailorCertificatesAndRelatedInfo,
   getShipInfoCertDetail,
   getShipsByOwnerAndFisherySsn,
-  MyShipDetailDto,
-  SailorRegistrationInfoDto,
   ShipBaseInfoDto,
 } from '../../gen/fetch'
+import {
+  mapSailorCertificates,
+  type SailorCertificatesDto,
+} from './dtos/sailor.dto'
+import { mapShipDetail, type ShipDetailDto } from './dtos/ship.dto'
 
 @Injectable()
 export class ShipRegistryClientV2Service {
@@ -23,7 +26,7 @@ export class ShipRegistryClientV2Service {
   async getShipDetails(
     user: User,
     registryNumber: string,
-  ): Promise<MyShipDetailDto | null> {
+  ): Promise<ShipDetailDto | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getShipInfoCertDetail({
@@ -32,17 +35,17 @@ export class ShipRegistryClientV2Service {
       ),
     )
 
-    return response ?? null
+    return response ? mapShipDetail(response) : null
   }
 
   async getSailorCertificates(
     user: User,
-  ): Promise<SailorRegistrationInfoDto | null> {
+  ): Promise<SailorCertificatesDto | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(getSailorCertificatesAndRelatedInfo()),
     )
 
-    return response ?? null
+    return response ? mapSailorCertificates(response) : null
   }
 
   getCrewRegistrations(): never {
