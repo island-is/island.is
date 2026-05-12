@@ -50,6 +50,7 @@ const itemVariants = {
 
 interface Props {
   label: string
+  placeholder: string
   defaultValue?: string
   onChange?: (html: string) => void
   onBlur?: (html: string) => void
@@ -60,6 +61,7 @@ interface Props {
 
 const TinyMCE = ({
   label,
+  placeholder,
   defaultValue,
   onChange,
   onBlur,
@@ -200,8 +202,7 @@ const TinyMCE = ({
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
             branding: false,
             statusbar: false,
-            placeholder:
-              'Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér.',
+            placeholder,
           }}
           initialValue={initialValueRef.current}
           onEditorChange={(content) => onChange?.(content)}
