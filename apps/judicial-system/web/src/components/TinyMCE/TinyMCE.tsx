@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Editor } from '@tinymce/tinymce-react'
 
+import { ErrorMessage } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
@@ -68,6 +69,7 @@ const TinyMCE = ({
 }: Props) => {
   const editorId = useId()
   const initialValueRef = useRef(defaultValue ?? '')
+  const [focused, setFocused] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
   const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
@@ -108,8 +110,8 @@ const TinyMCE = ({
 
   return (
     <div>
-      <div className={styles.wrapper}>
-        <label className={styles.label} htmlFor={editorId}>
+      <div className={[styles.wrapper, errorMessage && styles.wrapperError, focused && styles.wrapperFocused].filter(Boolean).join(' ')}>
+        <label className={`${styles.label}${errorMessage ? ` ${styles.labelError}` : ''}`} htmlFor={editorId}>
           {`${label} `}
           {required && <RequiredStar />}
         </label>
@@ -127,7 +129,11 @@ const TinyMCE = ({
             toolbar_mode: 'wrap',
             menubar: false,
             setup: (editor) => {
-              editor.on('blur', () => onBlur?.(editor.getContent()))
+              editor.on('focus', () => setFocused(true))
+              editor.on('blur', () => {
+                setFocused(false)
+                onBlur?.(editor.getContent())
+              })
               editor.on('NodeChange', (e) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 let node: any = e.element
@@ -176,7 +182,8 @@ const TinyMCE = ({
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
             branding: false,
             statusbar: false,
-            placeholder: 'Start typing...',
+            placeholder:
+              'Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér.',
           }}
           initialValue={initialValueRef.current}
           onEditorChange={(content) => onChange?.(content)}
@@ -237,7 +244,7 @@ const TinyMCE = ({
           )}
         </AnimatePresence>
       </div>
-      {errorMessage && <span className={styles.errorText}>{errorMessage}</span>}
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </div>
   )
 }

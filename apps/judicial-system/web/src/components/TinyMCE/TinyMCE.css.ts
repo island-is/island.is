@@ -19,6 +19,10 @@ export const label = style({
   },
 })
 
+export const labelError = style({
+  color: theme.color.red600,
+})
+
 export const wrapper = style({
   position: 'relative',
   borderRadius: 8,
@@ -39,8 +43,27 @@ export const wrapper = style({
     '&:hover::before': {
       boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
     },
-    '&:focus-within::before': {
+  },
+})
+
+export const wrapperFocused = style({
+  '::before': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  selectors: {
+    '&:hover::before': {
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+    },
+  },
+})
+
+export const wrapperError = style({
+  '::before': {
+    boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
+  },
+  selectors: {
+    '&:hover::before': {
+      boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
     },
   },
 })
@@ -130,13 +153,6 @@ export const colorSwatch = style({
 
 export const colorSwatchSelected = style({
   border: `2px solid ${theme.color.blue300}`,
-})
-
-export const errorText = style({
-  color: theme.color.red400,
-  fontSize: 12,
-  marginTop: 4,
-  paddingLeft: `${theme.spacing[1]}px`,
 })
 
 export const removeColor = style({
