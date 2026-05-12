@@ -1,6 +1,12 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
-import { SocialBenefitsPaths, SocialInsuranceMaintenancePaths } from './paths'
+import {
+  SocialBenefitsPaths,
+  SocialInsuranceMaintenancePaths,
+  UnemploymentBenefitsPaths,
+} from './paths'
+import { sharedMessages } from './messages'
+import { unemploymentBenefitsMessages } from './messages/unemployment'
 
 export const socialBenefitsNavigation: PortalNavigationItem = {
   name: m.socialInsuranceMaintenance,
@@ -53,6 +59,20 @@ export const socialBenefitsNavigation: PortalNavigationItem = {
           name: m.paymentTypesOverview,
           description: m.paymentTypesOverviewDescription,
           path: SocialInsuranceMaintenancePaths.SocialInsurancePaymentTypesOverview,
+        },
+      ],
+    },
+    {
+      name: unemploymentBenefitsMessages.unemploymentBenefits,
+      path: UnemploymentBenefitsPaths.Root,
+      children: [
+        {
+          name: sharedMessages.myStatus,
+          path: UnemploymentBenefitsPaths.Status,
+        },
+        {
+          name: sharedMessages.myData,
+          path: UnemploymentBenefitsPaths.MyData,
         },
       ],
     },

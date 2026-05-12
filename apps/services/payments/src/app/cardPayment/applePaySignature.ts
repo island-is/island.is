@@ -75,17 +75,51 @@ export interface ApplePayVerifyTraceEvent {
 const verifyError = (stage: string, message: string): Error =>
   new Error(`Apple Pay verify [stage=${stage}] ${message}`)
 
-const certHasOid = (cert: forge.pki.Certificate, oid: string): boolean => {
-  const exts = (cert as unknown as { extensions: Array<{ id: string }> })
-    .extensions
-  return Array.isArray(exts) && exts.some((e) => e.id === oid)
-}
+// Re-encode any forge ASN.1 node back to DER bytes.
+const asn1ToDerBytes = (asn1: forge.asn1.Asn1): Buffer =>
+  Buffer.from(forge.asn1.toDer(asn1).getBytes(), 'binary')
 
-const forgeCertToDer = (cert: forge.pki.Certificate): Buffer =>
-  Buffer.from(
-    forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes(),
-    'binary',
-  )
+// Walks a parsed X.509 Certificate ASN.1 structure and returns true if the
+// cert carries an extension with the given OID. Deliberately avoids
+// forge.pki.certificateFromAsn1 because that helper materializes the cert's
+// public key via forge.pki.publicKeyFromAsn1, which throws "Cannot read
+// public key. OID is not RSA." on ECDSA certs — and Apple Pay's leaf and
+// intermediate are ECDSA P-256.
+//
+// Certificate ::= SEQUENCE { tbsCertificate, signatureAlgorithm, signature }
+// TBSCertificate has positional fields with extensions at [3] EXPLICIT.
+const certHasOidExtension = (
+  certAsn1: forge.asn1.Asn1,
+  oid: string,
+): boolean => {
+  if (!certAsn1.constructed || !Array.isArray(certAsn1.value)) return false
+  const tbsCert = certAsn1.value[0] as forge.asn1.Asn1 | undefined
+  if (!tbsCert?.constructed || !Array.isArray(tbsCert.value)) return false
+  for (const f of tbsCert.value as forge.asn1.Asn1[]) {
+    if (
+      f.tagClass === forge.asn1.Class.CONTEXT_SPECIFIC &&
+      f.type === 3 &&
+      f.constructed &&
+      Array.isArray(f.value)
+    ) {
+      const extensionsList = f.value[0] as forge.asn1.Asn1 | undefined
+      if (!extensionsList?.constructed || !Array.isArray(extensionsList.value))
+        return false
+      for (const extSeq of extensionsList.value as forge.asn1.Asn1[]) {
+        if (
+          !extSeq.constructed ||
+          !Array.isArray(extSeq.value) ||
+          extSeq.value.length === 0
+        )
+          continue
+        const oidNode = extSeq.value[0] as forge.asn1.Asn1
+        if (oidNode.type !== forge.asn1.Type.OID) continue
+        if (forge.asn1.derToOid(oidNode.value as string) === oid) return true
+      }
+    }
+  }
+  return false
+}
 
 const parseSigningTime = (asn1Node: forge.asn1.Asn1): number => {
   const value = asn1Node.value as string
@@ -161,55 +195,100 @@ export const verifyApplePaySignature = ({
   }
   trace('parse-asn1', {})
 
-  let pkcs7Msg: {
-    type: string
-    certificates: forge.pki.Certificate[]
-    rawCapture: { signerInfos?: forge.asn1.Asn1[] }
+  // Walk ContentInfo manually rather than use forge.pkcs7.messageFromAsn1.
+  // That helper materializes each embedded cert via forge.pki.certificateFromAsn1
+  // → forge.pki.publicKeyFromAsn1, which throws on ECDSA public keys. Apple's
+  // Apple Pay leaf + intermediate are ECDSA P-256, so we have to bypass it.
+  //
+  // ContentInfo ::= SEQUENCE { contentType OID, content [0] EXPLICIT }
+  // SignedData  ::= SEQUENCE {
+  //   version, digestAlgorithms SET, encapContentInfo,
+  //   [0] certificates IMPLICIT optional,
+  //   [1] crls         IMPLICIT optional,
+  //   signerInfos      SET
+  // }
+  if (
+    !asn1Root.constructed ||
+    asn1Root.type !== forge.asn1.Type.SEQUENCE ||
+    !Array.isArray(asn1Root.value) ||
+    asn1Root.value.length < 2
+  ) {
+    throw verifyError('parse-signed-data', 'malformed ContentInfo SEQUENCE')
   }
-  try {
-    pkcs7Msg = forge.pkcs7.messageFromAsn1(
-      asn1Root,
-    ) as unknown as typeof pkcs7Msg
-  } catch (e) {
-    throw verifyError('parse-signed-data', (e as Error).message)
-  }
-  if (pkcs7Msg.type !== forge.pki.oids.signedData) {
+  const contentTypeNode = asn1Root.value[0] as forge.asn1.Asn1
+  if (contentTypeNode.type !== forge.asn1.Type.OID) {
     throw verifyError(
       'parse-signed-data',
-      `expected SignedData, got OID ${pkcs7Msg.type}`,
+      'missing ContentInfo.contentType OID',
     )
   }
-  const signerInfoCount = pkcs7Msg.rawCapture?.signerInfos?.length ?? 0
+  const contentTypeOid = forge.asn1.derToOid(contentTypeNode.value as string)
+  if (contentTypeOid !== forge.pki.oids.signedData) {
+    throw verifyError(
+      'parse-signed-data',
+      `expected SignedData OID, got ${contentTypeOid}`,
+    )
+  }
+  const contentNode = asn1Root.value[1] as forge.asn1.Asn1
+  if (
+    contentNode.tagClass !== forge.asn1.Class.CONTEXT_SPECIFIC ||
+    contentNode.type !== 0 ||
+    !contentNode.constructed ||
+    !Array.isArray(contentNode.value) ||
+    contentNode.value.length === 0
+  ) {
+    throw verifyError(
+      'parse-signed-data',
+      'malformed ContentInfo.content [0] EXPLICIT',
+    )
+  }
+  const signedDataAsn1 = contentNode.value[0] as forge.asn1.Asn1
+  if (!signedDataAsn1.constructed || !Array.isArray(signedDataAsn1.value)) {
+    throw verifyError('parse-signed-data', 'malformed SignedData SEQUENCE')
+  }
+
+  // Walk SignedData fields. Of the optional/positional layout we only care
+  // about [0] certificates IMPLICIT and the final signerInfos SET. The
+  // signerInfos SET is the LAST universal SET — digestAlgorithms (the first
+  // SET) appears earlier; we keep overwriting until we land on the last one.
+  let certificateNodes: forge.asn1.Asn1[] = []
+  let signerInfoNodes: forge.asn1.Asn1[] | undefined
+  for (const f of signedDataAsn1.value as forge.asn1.Asn1[]) {
+    if (
+      f.tagClass === forge.asn1.Class.CONTEXT_SPECIFIC &&
+      f.type === 0 &&
+      f.constructed
+    ) {
+      certificateNodes = f.value as forge.asn1.Asn1[]
+    } else if (
+      f.tagClass === forge.asn1.Class.UNIVERSAL &&
+      f.type === forge.asn1.Type.SET &&
+      f.constructed
+    ) {
+      signerInfoNodes = f.value as forge.asn1.Asn1[]
+    }
+  }
   trace('parse-signed-data', {
-    type: pkcs7Msg.type,
-    certCount: pkcs7Msg.certificates?.length ?? 0,
-    signerInfoCount,
+    contentTypeOid,
+    certCount: certificateNodes.length,
+    signerInfoCount: signerInfoNodes?.length ?? 0,
   })
 
   // Apple Pay tokens always embed exactly the leaf and intermediate. A root
   // is NEVER embedded (we provide our own pinned trust anchor in step 3).
   // Anything else is malformed — fail closed.
-  const certs = pkcs7Msg.certificates
-  if (!Array.isArray(certs) || certs.length !== 2) {
+  if (certificateNodes.length !== 2) {
     throw verifyError(
       'cert-count',
-      `expected 2 embedded certs, got ${certs?.length ?? 0}`,
+      `expected 2 embedded certs, got ${certificateNodes.length}`,
     )
   }
 
-  const certSubjectCn = (cert: forge.pki.Certificate): string => {
-    const cn = cert.subject.attributes.find(
-      (a: { shortName?: string }) => a.shortName === 'CN',
-    ) as { value?: string } | undefined
-    return cn?.value ?? '<unknown>'
-  }
-  trace('cert-list', {
-    certs: certs.map((c) => ({
-      subject: certSubjectCn(c),
-      hasLeafOid: certHasOid(c, APPLE_PAY_LEAF_OID),
-      hasIntermediateOid: certHasOid(c, APPLE_PAY_INTERMEDIATE_OID),
-    })),
-  })
+  const certInfo = certificateNodes.map((c) => ({
+    hasLeafOid: certHasOidExtension(c, APPLE_PAY_LEAF_OID),
+    hasIntermediateOid: certHasOidExtension(c, APPLE_PAY_INTERMEDIATE_OID),
+  }))
+  trace('cert-list', { certs: certInfo })
 
   // ──────────────────────────────────────────────────────────────────
   // Step 2: identify which embedded cert is the leaf vs the intermediate.
@@ -219,33 +298,33 @@ export const verifyApplePaySignature = ({
   // 1.2.840.113635.100.6.2.14. A cert that carries both, or that carries
   // neither, indicates a forged or unrelated CMS payload — fail closed.
   // ──────────────────────────────────────────────────────────────────
-  let leafForge: forge.pki.Certificate | undefined
-  let intermediateForge: forge.pki.Certificate | undefined
-  for (const cert of certs) {
-    const isLeaf = certHasOid(cert, APPLE_PAY_LEAF_OID)
-    const isIntermediate = certHasOid(cert, APPLE_PAY_INTERMEDIATE_OID)
-    if (isLeaf && isIntermediate) {
+  let leafCertAsn1: forge.asn1.Asn1 | undefined
+  let intermediateCertAsn1: forge.asn1.Asn1 | undefined
+  for (let i = 0; i < certificateNodes.length; i++) {
+    const c = certificateNodes[i]
+    const { hasLeafOid, hasIntermediateOid } = certInfo[i]
+    if (hasLeafOid && hasIntermediateOid) {
       throw verifyError('cert-oid', 'cert has both leaf and intermediate OIDs')
     }
-    if (isLeaf) {
-      if (leafForge) {
+    if (hasLeafOid) {
+      if (leafCertAsn1) {
         throw verifyError('leaf-oid', 'multiple leaf candidates')
       }
-      leafForge = cert
-    } else if (isIntermediate) {
-      if (intermediateForge) {
+      leafCertAsn1 = c
+    } else if (hasIntermediateOid) {
+      if (intermediateCertAsn1) {
         throw verifyError(
           'intermediate-oid',
           'multiple intermediate candidates',
         )
       }
-      intermediateForge = cert
+      intermediateCertAsn1 = c
     }
   }
-  if (!leafForge) {
+  if (!leafCertAsn1) {
     throw verifyError('leaf-oid', `no cert carries OID ${APPLE_PAY_LEAF_OID}`)
   }
-  if (!intermediateForge) {
+  if (!intermediateCertAsn1) {
     throw verifyError(
       'intermediate-oid',
       `no cert carries OID ${APPLE_PAY_INTERMEDIATE_OID}`,
@@ -254,17 +333,19 @@ export const verifyApplePaySignature = ({
 
   // ──────────────────────────────────────────────────────────────────
   // Step 3: chain validation against the bundled Apple Root CA G3.
-  // We deliberately switch from forge to Node's native X509Certificate
-  // here because forge's cert-chain verification has weak ECDSA support,
-  // and Apple's PKI uses ECDSA P-256 throughout. Re-encoding via DER and
-  // re-loading natively is the cleanest hand-off.
+  // We deliberately use Node's native X509Certificate here because forge's
+  // cert-chain verification has weak ECDSA support, and Apple's PKI uses
+  // ECDSA P-256 throughout. Re-encoding the parsed ASN.1 nodes back to
+  // DER and re-loading natively is the cleanest hand-off.
   // ──────────────────────────────────────────────────────────────────
   let leaf: crypto.X509Certificate
   let intermediate: crypto.X509Certificate
   let root: crypto.X509Certificate
   try {
-    leaf = new crypto.X509Certificate(forgeCertToDer(leafForge))
-    intermediate = new crypto.X509Certificate(forgeCertToDer(intermediateForge))
+    leaf = new crypto.X509Certificate(asn1ToDerBytes(leafCertAsn1))
+    intermediate = new crypto.X509Certificate(
+      asn1ToDerBytes(intermediateCertAsn1),
+    )
     root = new crypto.X509Certificate(trustedRootPem)
   } catch (e) {
     throw verifyError('cert-load', (e as Error).message)
@@ -346,9 +427,7 @@ export const verifyApplePaySignature = ({
 
   // ──────────────────────────────────────────────────────────────────
   // Step 4: extract the SignerInfo fields by walking the parsed ASN.1.
-  // node-forge's pkcs7 module parses SignedData but doesn't expose a
-  // friendly per-signer API on read (only on write), so we walk the SET
-  // ourselves. SignerInfo per RFC 5652 §5.3:
+  // SignerInfo per RFC 5652 §5.3:
   //   SEQUENCE {
   //     version, sid, digestAlgorithm,
   //     signedAttrs       [0] IMPLICIT SET OF Attribute OPTIONAL,
@@ -359,14 +438,13 @@ export const verifyApplePaySignature = ({
   // Apple Pay always includes signedAttrs, omits unsignedAttrs, uses
   // issuerAndSerialNumber for the SignerIdentifier, and uses SHA-256.
   // ──────────────────────────────────────────────────────────────────
-  const signerInfos = pkcs7Msg.rawCapture.signerInfos
-  if (!Array.isArray(signerInfos) || signerInfos.length !== 1) {
+  if (!signerInfoNodes || signerInfoNodes.length !== 1) {
     throw verifyError(
       'signer-info',
-      `expected 1 signerInfo, got ${signerInfos?.length ?? 0}`,
+      `expected 1 signerInfo, got ${signerInfoNodes?.length ?? 0}`,
     )
   }
-  const signerInfoAsn1 = signerInfos[0]
+  const signerInfoAsn1 = signerInfoNodes[0]
   if (!signerInfoAsn1.constructed) {
     throw verifyError('signer-info', 'signerInfo is not constructed')
   }
@@ -510,12 +588,14 @@ export const verifyApplePaySignature = ({
   if (!contentTypeAttr || contentTypeAttr.type !== forge.asn1.Type.OID) {
     throw verifyError('content-type', 'missing or malformed contentType')
   }
-  const contentTypeOid = forge.asn1.derToOid(contentTypeAttr.value as string)
-  trace('content-type', { contentTypeOid })
-  if (contentTypeOid !== ID_DATA_OID) {
+  const signedContentTypeOid = forge.asn1.derToOid(
+    contentTypeAttr.value as string,
+  )
+  trace('content-type', { contentTypeOid: signedContentTypeOid })
+  if (signedContentTypeOid !== ID_DATA_OID) {
     throw verifyError(
       'content-type',
-      `unexpected contentType ${contentTypeOid}`,
+      `unexpected contentType ${signedContentTypeOid}`,
     )
   }
 

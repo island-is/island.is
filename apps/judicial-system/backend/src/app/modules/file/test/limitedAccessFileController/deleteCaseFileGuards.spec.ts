@@ -5,11 +5,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
-import {
-  CaseCompletedGuard,
-  CaseTypeGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { LimitedAccessDeleteCaseFileGuard } from '../../guards/limitedAccessDeleteCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
@@ -21,7 +17,6 @@ describe('LimitedAccessFileController - Delete case file guards', () => {
     [
       CaseTypeGuard,
       CaseWriteGuard,
-      CaseCompletedGuard,
       CaseFileExistsGuard,
       LimitedAccessDeleteCaseFileGuard,
     ],
