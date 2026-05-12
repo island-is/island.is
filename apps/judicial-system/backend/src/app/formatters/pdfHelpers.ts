@@ -489,7 +489,7 @@ export const addNumberedList = (
   doc.x = originalX
 }
 
-const HIGHLIGHT_COLOR = '#FFFF00'
+const HIGHLIGHT_COLOR = '#fff066'
 const INDENT_PTS = 20
 
 interface Run {
