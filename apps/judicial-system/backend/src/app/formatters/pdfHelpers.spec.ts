@@ -106,4 +106,102 @@ describe('htmlToBlocks', () => {
     const texts = blocks[0].runs.map((r) => r.text)
     expect(texts).toContain('\n')
   })
+
+  describe('malformed HTML', () => {
+    it('captures text from an unclosed tag', () => {
+      const blocks = htmlToBlocks('<p>Hello')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs[0].text).toBe('Hello')
+    })
+
+    it('captures bold run from mismatched closing tags', () => {
+      const blocks = htmlToBlocks('<p><strong>bold</p>')
+      expect(blocks[0].runs[0]).toMatchObject({ text: 'bold', bold: true })
+    })
+  })
+
+  describe('unsupported tags', () => {
+    it('strips <div> wrapper and processes child paragraph normally', () => {
+      const blocks = htmlToBlocks('<div><p>text</p></div>')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs[0].text).toBe('text')
+    })
+
+    it('strips <ul> and <li> and captures list item text as blocks', () => {
+      const blocks = htmlToBlocks('<ul><li>item one</li><li>item two</li></ul>')
+      const texts = blocks.map((b) => b.runs.map((r) => r.text).join(''))
+      expect(texts).toContain('item one')
+      expect(texts).toContain('item two')
+    })
+
+    it('strips <ol> and <li> and captures ordered list items as blocks', () => {
+      const blocks = htmlToBlocks('<ol><li>first</li><li>second</li></ol>')
+      const texts = blocks.map((b) => b.runs.map((r) => r.text).join(''))
+      expect(texts).toContain('first')
+      expect(texts).toContain('second')
+    })
+
+    it('does not emit literal tag names as run text for <script>', () => {
+      const blocks = htmlToBlocks('<script>alert("xss")</script>')
+      const allText = blocks.flatMap((b) => b.runs.map((r) => r.text)).join('')
+      expect(allText).not.toContain('<script>')
+      expect(allText).not.toContain('</script>')
+    })
+
+    it('does not emit literal tag names as run text for <style>', () => {
+      const blocks = htmlToBlocks('<style>body { color: red; }</style>')
+      const allText = blocks.flatMap((b) => b.runs.map((r) => r.text)).join('')
+      expect(allText).not.toContain('<style>')
+      expect(allText).not.toContain('</style>')
+    })
+  })
+
+  describe('mixed indentation', () => {
+    it('sums blockquote indent and padding-left (blockquote=20 + 40px→30pt = 50)', () => {
+      const blocks = htmlToBlocks(
+        '<blockquote><p style="padding-left: 40px;">text</p></blockquote>',
+      )
+      expect(blocks[0].indent).toBe(50)
+      expect(blocks[0].runs[0].text).toBe('text')
+    })
+
+    it('sums two blockquote levels and padding-left (40 + 20px→15pt = 55)', () => {
+      const blocks = htmlToBlocks(
+        '<blockquote><blockquote><p style="padding-left: 20px;">text</p></blockquote></blockquote>',
+      )
+      expect(blocks[0].indent).toBe(55)
+    })
+  })
+
+  describe('deep nesting', () => {
+    it('accumulates correct indent for 4 nested blockquotes (4 × 20 = 80)', () => {
+      const html =
+        '<blockquote><blockquote><blockquote><blockquote><p>deep</p></blockquote></blockquote></blockquote></blockquote>'
+      const blocks = htmlToBlocks(html)
+      expect(blocks[0].indent).toBe(80)
+      expect(blocks[0].runs[0].text).toBe('deep')
+    })
+
+    it('extracts runs correctly from many nested container elements', () => {
+      const html =
+        '<div><div><blockquote><blockquote><p><strong>bold deep</strong></p></blockquote></blockquote></div></div>'
+      const blocks = htmlToBlocks(html)
+      expect(blocks[0].indent).toBe(40)
+      expect(blocks[0].runs[0]).toMatchObject({ text: 'bold deep', bold: true })
+    })
+  })
+
+  describe('empty and whitespace-only content', () => {
+    it('returns no blocks for empty string input', () => {
+      const blocks = htmlToBlocks('')
+      expect(blocks).toHaveLength(0)
+    })
+
+    it('preserves whitespace-only text as a run within a paragraph', () => {
+      const blocks = htmlToBlocks('<p>   </p>')
+      expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs).toHaveLength(1)
+      expect(blocks[0].runs[0].text.trim()).toBe('')
+    })
+  })
 })
