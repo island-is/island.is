@@ -191,6 +191,10 @@ const TinyMCE = ({
                 },
               })
             },
+            paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            paste_retain_style_properties:
+              'font-weight,font-style,background-color,margin-left,padding-left',
+            paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
             branding: false,
