@@ -621,21 +621,47 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
       doc.font(getFontName(run)).fontSize(baseFontSize)
 
       if (run.highlight) {
-        const w = doc.widthOfString(run.text)
+        const lineHeight = doc.currentLineHeight(true)
         const h = doc.currentLineHeight(false)
         // Shift rect up by half the descender height to centre around visible glyphs
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const descender =
           (Math.abs((doc as any)._font?.descender ?? 200) / 1000) * baseFontSize
         const hPad = 1
-        doc
-          .rect(
-            currentX - hPad,
-            blockY - descender / 2,
-            w + hPad * 2,
-            h + descender,
-          )
-          .fill(run.highlight)
+
+        // Simulate word-wrap to draw one highlight rect per laid-out line
+        const words = run.text.split(' ')
+        let lineText = ''
+        let lineIdx = 0
+        let lineAvailable = width - (currentX - leftX)
+
+        const drawHighlightRect = (text: string, idx: number) => {
+          const x = idx === 0 ? currentX : leftX
+          doc
+            .rect(
+              x - hPad,
+              blockY + idx * (lineHeight + 2) - descender / 2 - 1,
+              doc.widthOfString(text) + hPad * 2,
+              h + descender + 1,
+            )
+            .fill(run.highlight as string)
+        }
+
+        for (const word of words) {
+          const candidate = lineText ? `${lineText} ${word}` : word
+          if (doc.widthOfString(candidate) > lineAvailable && lineText) {
+            drawHighlightRect(lineText, lineIdx)
+            lineText = word
+            lineIdx++
+            lineAvailable = width
+          } else {
+            lineText = candidate
+          }
+        }
+        if (lineText) {
+          drawHighlightRect(lineText, lineIdx)
+        }
+
         doc.fillColor('black')
       }
 
