@@ -1,7 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Input, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch } from 'react'
+import { Dispatch, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
@@ -17,7 +17,8 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 export const Email = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { formatMessage, lang } = useLocale()
-  const { control } = useFormContext()
+  const { control, trigger } = useFormContext()
+  const [showError, setShowError] = useState(false)
 
   return (
     <Stack space={2}>
@@ -42,14 +43,19 @@ export const Email = ({ item, dispatch, valueIndex = 0 }: Props) => {
             label={item.name?.[lang] ?? ''}
             value={field.value ?? ''}
             onChange={(e) => {
+              setShowError(false)
               field.onChange(e)
               dispatch?.({
                 type: 'SET_EMAIL',
                 payload: { id: item.id, value: e.target.value, valueIndex },
               })
             }}
-            onBlur={field.onBlur}
-            errorMessage={fieldState.error?.message}
+            onBlur={() => {
+              field.onBlur()
+              setShowError(true)
+              trigger(field.name)
+            }}
+            errorMessage={showError ? fieldState.error?.message : undefined}
             required={!!item?.isRequired}
             backgroundColor="blue"
           />

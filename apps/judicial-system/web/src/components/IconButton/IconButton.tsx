@@ -1,4 +1,4 @@
-import { FC, forwardRef, MouseEvent } from 'react'
+import { forwardRef, MouseEvent } from 'react'
 import cn from 'classnames'
 import { Button } from '@ariakit/react/button'
 
@@ -19,44 +19,39 @@ interface RenderButtonProps {
   colorScheme: 'blue' | 'red' | 'transparent'
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
-  ref: React.Ref<HTMLButtonElement>
 }
 
-const RenderButton: FC<RenderButtonProps> = ({
-  icon,
-  colorScheme,
-  onClick,
-  disabled,
-  ref,
-}) => (
-  <Box
-    component={Button}
-    ref={ref}
-    className={cn(styles.iconButtonContainer, {
-      [styles.buttonDisabled]: disabled,
-      [styles.transparent]: colorScheme === 'transparent',
-    })}
-    background={
-      colorScheme === 'blue'
-        ? 'blue200'
-        : colorScheme === 'red'
-        ? 'red200'
-        : 'transparent'
-    }
-    onClick={(evt) => onClick && onClick(evt)}
-    disabled={disabled}
-    aria-label="Valmynd"
-  >
-    <Icon
-      icon={icon}
-      color={
-        colorScheme === 'blue' || colorScheme === 'transparent'
-          ? 'blue400'
-          : 'red400'
+const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
+  ({ icon, colorScheme, onClick, disabled }, ref) => (
+    <Box
+      component={Button}
+      ref={ref}
+      className={cn(styles.iconButtonContainer, {
+        [styles.buttonDisabled]: disabled,
+        [styles.transparent]: colorScheme === 'transparent',
+      })}
+      background={
+        colorScheme === 'blue'
+          ? 'blue200'
+          : colorScheme === 'red'
+          ? 'red200'
+          : 'transparent'
       }
-      size="small"
-    />
-  </Box>
+      onClick={(evt) => onClick && onClick(evt)}
+      disabled={disabled}
+      aria-label="Valmynd"
+    >
+      <Icon
+        icon={icon}
+        color={
+          colorScheme === 'blue' || colorScheme === 'transparent'
+            ? 'blue400'
+            : 'red400'
+        }
+        size="small"
+      />
+    </Box>
+  ),
 )
 
 const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {

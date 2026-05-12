@@ -131,6 +131,32 @@ export class CaseRepositoryService {
     return !attributes.exclude?.includes('policeCaseNumbers')
   }
 
+  private async resolvePoliceCaseNumbersForCaseGraph(
+    cases: Case[],
+    options?: { transaction?: Transaction },
+  ): Promise<void> {
+    const byId = new Map<string, Case>()
+
+    // Add merged cases so we resolve their police case numbers too
+    for (const c of cases) {
+      if (c.id) {
+        byId.set(c.id, c)
+      }
+      c.mergedCases?.forEach((mergedCase) => {
+        if (mergedCase.id) {
+          byId.set(mergedCase.id, mergedCase)
+        }
+      })
+    }
+
+    const toResolve = [...byId.values()]
+
+    await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+      toResolve,
+      { transaction: options?.transaction },
+    )
+  }
+
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
     try {
       this.logger.debug(`Finding case by ID ${id}`)
@@ -150,10 +176,9 @@ export class CaseRepositoryService {
       this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
 
       if (result) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-          [result],
-          { transaction: options?.transaction },
-        )
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
       }
 
       return result
@@ -197,10 +222,9 @@ export class CaseRepositoryService {
       this.logger.debug(`Case ${result ? 'found' : 'not found'}`)
 
       if (result && this.shouldResolvePoliceCaseNumbers(options?.attributes)) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-          [result],
-          { transaction: options?.transaction },
-        )
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
       }
 
       return result
@@ -266,10 +290,9 @@ export class CaseRepositoryService {
         results.length > 0 &&
         this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-          results,
-          { transaction: options?.transaction },
-        )
+        await this.resolvePoliceCaseNumbersForCaseGraph(results, {
+          transaction: options?.transaction,
+        })
       }
 
       return results
@@ -341,10 +364,9 @@ export class CaseRepositoryService {
         !options?.raw &&
         this.shouldResolvePoliceCaseNumbers(options?.attributes)
       ) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
-          results.rows,
-          { transaction: options?.transaction },
-        )
+        await this.resolvePoliceCaseNumbersForCaseGraph(results.rows, {
+          transaction: options?.transaction,
+        })
       }
 
       return results

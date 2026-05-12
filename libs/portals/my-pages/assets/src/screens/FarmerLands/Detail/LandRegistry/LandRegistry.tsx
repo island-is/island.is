@@ -49,13 +49,22 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.ownershipType)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.usage)}
             </T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+            <T.HeadData
+              scope="col"
+              text={{ variant: 'small', fontWeight: 'semiBold' }}
+            >
               {formatMessage(fm.share)}
             </T.HeadData>
           </T.Row>
