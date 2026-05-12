@@ -396,6 +396,42 @@ export const transformCivilClaimants = ({
   return civilClaimants?.map((civilClaimant) => civilClaimant.toJSON())
 }
 
+const canDefenderSeeCivilClaimFile = (
+  file: CaseFile,
+  user: User,
+  theCase: Case,
+): boolean => {
+  if (file.category !== CaseFileCategory.CIVIL_CLAIM) {
+    return true
+  }
+
+  if (!file.civilClaimantId) {
+    return true
+  }
+
+  const claimant = theCase.civilClaimants?.find(
+    (c) => c.id === file.civilClaimantId,
+  )
+
+  if (!claimant?.policeCaseNumbers?.length) {
+    return true
+  }
+
+  return (
+    theCase.defendants?.some(
+      (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user.nationalId).includes(
+          defendant.defenderNationalId,
+        ) &&
+        defendant.policeCaseNumbers?.some((pcn) =>
+          claimant.policeCaseNumbers?.includes(pcn),
+        ),
+    ) ?? false
+  )
+}
+
 const transformCaseRepresentatives = (theCase: Case) => {
   const { prosecutor, civilClaimants } = theCase
   const prosecutorRepresentativeProps =
@@ -592,6 +628,11 @@ const transformCase = (
                 user.nationalId,
                 theCase.civilClaimants,
               ))),
+      )
+      .filter(
+        (file) =>
+          !isDefence ||
+          canDefenderSeeCivilClaimFile(file, user as User, theCase),
       )
       .map((file) => ({
         ...file.toJSON(),
