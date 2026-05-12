@@ -86,4 +86,28 @@ export const strings = {
     description:
       'Notaður sem upplýsingartexti við "Deila gögnum" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  policeCaseNumberLabel: defineMessage({
+    id: 'judicial.system.indictments:processing.police_case_number_label',
+    defaultMessage: 'LÖKE málsnúmer',
+    description:
+      'Notaður sem titill á LÖKE málsnúmer vali í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  defendantSelectionLabel: defineMessage({
+    id: 'judicial.system.indictments:processing.defendant_selection_label',
+    defaultMessage: 'Hverjum beinist krafan gegn?',
+    description:
+      'Notaður sem titill á ákærðavali í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  policeCaseNumberPlaceholder: defineMessage({
+    id: 'judicial.system.indictments:processing.police_case_number_placeholder',
+    defaultMessage: 'Veldu málsnúmer',
+    description:
+      'Notaður sem placeholder í LÖKE málsnúmer vali í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
+  civilClaimFileUploadTitle: defineMessage({
+    id: 'judicial.system.indictments:processing.civil_claim_file_upload_title',
+    defaultMessage: 'Bótakrafa',
+    description:
+      'Notaður sem titill á bótakröfu skjalasvæði í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
 }

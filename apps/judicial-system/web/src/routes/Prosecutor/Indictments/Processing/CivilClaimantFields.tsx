@@ -1,13 +1,16 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   Box,
   Button,
   Checkbox,
+  InputFileUpload,
   RadioButton,
+  Select,
   Text,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -15,15 +18,20 @@ import {
   InputAdvocate,
   InputName,
   InputNationalId,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseFileCategory,
   CivilClaimant,
+  Defendant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCivilClaimants,
   useNationalRegistry,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 
 import { strings } from './processing.strings'
 
@@ -35,11 +43,43 @@ export const CivilClaimantFields = ({
   civilClaimant,
   civilClaimantIndex,
   removeCivilClaimantById,
+  policeCaseNumbers,
+  defendants,
+  uploadFiles,
+  addUploadFiles,
+  updateUploadFile,
+  removeUploadFile,
+  handleUpload,
+  handleRetry,
+  handleRemove,
+  onOpenFile,
 }: {
   caseId: string
   civilClaimant: CivilClaimant
   civilClaimantIndex: number
   removeCivilClaimantById: (id: string) => void
+  policeCaseNumbers: string[]
+  defendants: Defendant[]
+  uploadFiles: TUploadFile[]
+  addUploadFiles: (
+    files: FileWithPreviewURL[],
+    overRides?: Partial<TUploadFile>,
+  ) => TUploadFile[]
+  updateUploadFile: (file: TUploadFile, newId?: string) => void
+  removeUploadFile: (file: TUploadFile) => void
+  handleUpload: (
+    files: TUploadFile[],
+    updateFile: (file: TUploadFile, newId?: string) => void,
+  ) => Promise<string>
+  handleRetry: (
+    file: TUploadFile,
+    callback: (file: TUploadFile, newId?: string) => void,
+  ) => Promise<string>
+  handleRemove: (
+    file: TUploadFile,
+    callback?: (file: TUploadFile) => void,
+  ) => Promise<void>
+  onOpenFile: (file: TUploadFile) => void
 }) => {
   const { formatMessage } = useIntl()
   const { setWorkingCase } = useContext(FormContext)
@@ -163,6 +203,59 @@ export const CivilClaimantFields = ({
 
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
+
+  const availableDefendants = useMemo(() => {
+    if (!civilClaimant.policeCaseNumbers?.length) {
+      return []
+    }
+    return defendants.filter((defendant) =>
+      defendant.policeCaseNumbers?.some((pcn) =>
+        civilClaimant.policeCaseNumbers?.includes(pcn),
+      ),
+    )
+  }, [civilClaimant.policeCaseNumbers, defendants])
+
+  const handlePoliceCaseNumbersChange = (
+    newPoliceCaseNumbers: string[],
+  ) => {
+    const newAvailableDefendantIds = new Set(
+      defendants
+        .filter((d) =>
+          d.policeCaseNumbers?.some((pcn) =>
+            newPoliceCaseNumbers.includes(pcn),
+          ),
+        )
+        .map((d) => d.id),
+    )
+
+    const prunedDefendantIds = (civilClaimant.defendantIds ?? []).filter(
+      (id) => newAvailableDefendantIds.has(id),
+    )
+
+    handleSetAndSendCivilClaimantToServer({
+      civilClaimantId: civilClaimant.id,
+      policeCaseNumbers: newPoliceCaseNumbers,
+      defendantIds: prunedDefendantIds,
+    })
+  }
+
+  const handleDefendantToggle = (defendantId: string) => {
+    const currentIds = civilClaimant.defendantIds ?? []
+    const newIds = currentIds.includes(defendantId)
+      ? currentIds.filter((id) => id !== defendantId)
+      : [...currentIds, defendantId]
+
+    handleSetAndSendCivilClaimantToServer({
+      civilClaimantId: civilClaimant.id,
+      defendantIds: newIds,
+    })
+  }
+
+  const claimantFiles = uploadFiles.filter(
+    (file) =>
+      file.category === CaseFileCategory.CIVIL_CLAIM &&
+      file.civilClaimantId === civilClaimant.id,
+  )
 
   return (
     <>
@@ -318,11 +411,6 @@ export const CivilClaimantFields = ({
                     spokespersonNationalId,
                   ),
                 })
-
-                // handleSetAndSendCivilClaimantToServer({
-                //   civilClaimantId: civilClaimant.id,
-                //   caseFilesSharedWithSpokesperson: Boolean(spokespersonName),
-                // })
               }}
               onEmailChange={(spokespersonEmail: string | null) =>
                 handleUpdateCivilClaimantState({
@@ -383,6 +471,85 @@ export const CivilClaimantFields = ({
           />
         </>
       )}
+      <Box marginTop={3}>
+        <SectionHeading
+          title={formatMessage(strings.policeCaseNumberLabel)}
+          heading="h4"
+          marginBottom={2}
+        />
+        <Select
+          name={`civilClaimantPoliceCaseNumbers-${civilClaimant.id}`}
+          label={formatMessage(strings.policeCaseNumberLabel)}
+          placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
+          isMulti
+          options={policeCaseNumbers.map((pcn) => ({
+            label: pcn,
+            value: pcn,
+          }))}
+          value={(civilClaimant.policeCaseNumbers ?? []).map((pcn) => ({
+            label: pcn,
+            value: pcn,
+          }))}
+          onChange={(selectedOptions) =>
+            handlePoliceCaseNumbersChange(
+              selectedOptions.map((o) => o.value),
+            )
+          }
+        />
+      </Box>
+      {availableDefendants.length > 0 && (
+        <Box marginTop={3}>
+          <SectionHeading
+            title={formatMessage(strings.defendantSelectionLabel)}
+            heading="h4"
+            marginBottom={2}
+          />
+          {availableDefendants.map((defendant) => (
+            <Box marginBottom={1} key={defendant.id}>
+              <Checkbox
+                name={`civilClaimant-${civilClaimant.id}-defendant-${defendant.id}`}
+                label={defendant.name ?? ''}
+                checked={(civilClaimant.defendantIds ?? []).includes(
+                  defendant.id,
+                )}
+                onChange={() => handleDefendantToggle(defendant.id)}
+                large
+                filled
+              />
+            </Box>
+          ))}
+        </Box>
+      )}
+      <Box marginTop={3}>
+        <SectionHeading
+          title={formatMessage(strings.civilClaimFileUploadTitle)}
+          heading="h4"
+          marginBottom={2}
+        />
+        <InputFileUpload
+          name={`civilClaim-${civilClaimant.id}`}
+          files={claimantFiles}
+          accept={Object.values(fileExtensionWhitelist)}
+          title="Dragðu gögn hingað til að hlaða upp"
+          buttonLabel="Velja gögn til að hlaða upp"
+          onChange={(files) =>
+            handleUpload(
+              addUploadFiles(files, {
+                category: CaseFileCategory.CIVIL_CLAIM,
+                civilClaimantId: civilClaimant.id,
+              }),
+              updateUploadFile,
+            )
+          }
+          onOpenFile={(file) => onOpenFile(file as TUploadFile)}
+          onRemove={(file) =>
+            handleRemove(file as TUploadFile, removeUploadFile)
+          }
+          onRetry={(file) =>
+            handleRetry(file as TUploadFile, updateUploadFile)
+          }
+        />
+      </Box>
     </>
   )
 }
