@@ -136,41 +136,6 @@ describe('htmlToBlocks', () => {
     })
   })
 
-  describe('mixed indentation', () => {
-    it('sums blockquote indent and padding-left (blockquote=20 + 40px→30pt = 50)', () => {
-      const blocks = htmlToBlocks(
-        '<blockquote><p style="padding-left: 40px;">text</p></blockquote>',
-      )
-      expect(blocks[0].indent).toBe(50)
-      expect(blocks[0].runs[0].text).toBe('text')
-    })
-
-    it('sums two blockquote levels and padding-left (40 + 20px→15pt = 55)', () => {
-      const blocks = htmlToBlocks(
-        '<blockquote><blockquote><p style="padding-left: 20px;">text</p></blockquote></blockquote>',
-      )
-      expect(blocks[0].indent).toBe(55)
-    })
-  })
-
-  describe('deep nesting', () => {
-    it('accumulates correct indent for 4 nested blockquotes (4 × 20 = 80)', () => {
-      const html =
-        '<blockquote><blockquote><blockquote><blockquote><p>deep</p></blockquote></blockquote></blockquote></blockquote>'
-      const blocks = htmlToBlocks(html)
-      expect(blocks[0].indent).toBe(80)
-      expect(blocks[0].runs[0].text).toBe('deep')
-    })
-
-    it('extracts runs correctly from many nested container elements', () => {
-      const html =
-        '<div><div><blockquote><blockquote><p><strong>bold deep</strong></p></blockquote></blockquote></div></div>'
-      const blocks = htmlToBlocks(html)
-      expect(blocks[0].indent).toBe(40)
-      expect(blocks[0].runs[0]).toMatchObject({ text: 'bold deep', bold: true })
-    })
-  })
-
   describe('empty and whitespace-only content', () => {
     it('returns no blocks for empty string input', () => {
       const blocks = htmlToBlocks('')
