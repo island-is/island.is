@@ -4,6 +4,7 @@ import {
   useGetApplicantAvailableActionsQuery,
   useGetApplicantRequestedAttachmentsQuery,
   useGetAttachmentTypesQuery,
+  useGetAttachmentLazyQuery,
 } from './MyData.generated'
 import {
   Box,
@@ -16,6 +17,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
+import { useCallback } from 'react'
 
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
@@ -59,6 +61,52 @@ const MyData = () => {
     const type = attachmentTypeMap.get(attachmentTypeId)
     return type?.name ?? ''
   }
+
+  const [fetchAttachment] = useGetAttachmentLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
+
+  const openAttachment = useCallback(
+    (attachmentId: string) => {
+      fetchAttachment({
+        variables: { id: attachmentId },
+        onCompleted: (result) => {
+          const attachment = result.vmstAttachment
+          if (!attachment.data) return
+
+          const byteCharacters = atob(attachment.data)
+          const byteNumbers = new Uint8Array(byteCharacters.length)
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
+          }
+          const blob = new Blob([byteNumbers], {
+            type: attachment.contentType,
+          })
+          const blobUrl = URL.createObjectURL(blob)
+
+          const viewableTypes = [
+            'application/pdf',
+            'image/png',
+            'image/jpeg',
+            'image/heic',
+          ]
+
+          if (viewableTypes.includes(attachment.contentType)) {
+            window.open(blobUrl, '_blank')
+          } else {
+            const link = document.createElement('a')
+            link.href = blobUrl
+            link.download = attachment.name
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            URL.revokeObjectURL(blobUrl)
+          }
+        },
+      })
+    },
+    [fetchAttachment],
+  )
 
   return (
     <IntroWrapper
@@ -118,11 +166,13 @@ const MyData = () => {
               <Box key={attachment.id ?? index}>
                 <UserInfoLine
                   label={getAttachmentName(attachment.attachmentTypeId)}
-                  editLink={{
-                    // TODO This is incomplete and will be finished when we get document data from Galdur
-                    url: '',
+                  button={{
                     title: formatMessage(um.myDataViewDocument),
-                    icon: 'arrowForward',
+                    onClick: () => {
+                      if (attachment.attachmentId) {
+                        openAttachment(attachment.attachmentId)
+                      }
+                    },
                   }}
                 />
                 <Divider />

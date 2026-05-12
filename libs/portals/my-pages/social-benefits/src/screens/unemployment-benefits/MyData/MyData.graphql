@@ -29,3 +29,14 @@ query getAttachmentTypes {
     }
   }
 }
+
+query getAttachment($id: String!) {
+  vmstAttachment(id: $id) {
+    id
+    name
+    contentType
+    created
+    data
+    size
+  }
+}

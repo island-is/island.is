@@ -13,6 +13,7 @@ import {
   VmstApplicationsApplicantRequestedAttachment,
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
+  VmstApplicationsAttachment,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -145,5 +146,13 @@ export class VMSTApplicationsResolver {
   @Audit()
   async getAttachmentTypes() {
     return this.vmstApplicationsService.getAttachmentTypes()
+  }
+
+  @Query(() => VmstApplicationsAttachment, {
+    name: 'vmstAttachment',
+  })
+  @Audit()
+  async getAttachment(@Args('id', { type: () => String }) id: string) {
+    return this.vmstApplicationsService.getAttachment(id)
   }
 }

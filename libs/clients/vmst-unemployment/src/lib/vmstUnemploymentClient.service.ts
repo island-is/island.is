@@ -29,6 +29,7 @@ import {
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
@@ -498,5 +499,19 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.applicantUpdateApplicant(requestParameters)
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    const api = await this.createApiClient(
+      AttachmentApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.attachmentGetAttachment({
+      id: attachmentId,
+      includeData: true,
+    })
   }
 }

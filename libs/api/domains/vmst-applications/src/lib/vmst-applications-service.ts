@@ -4,6 +4,7 @@ import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
 } from '@island.is/clients/vmst-unemployment'
@@ -140,5 +141,11 @@ export class VMSTApplicationsService {
 
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {
     return this.vmstUnemploymentService.getAttachmentTypes()
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    return this.vmstUnemploymentService.getAttachment(attachmentId)
   }
 }
