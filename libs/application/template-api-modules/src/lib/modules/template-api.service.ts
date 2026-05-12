@@ -35,7 +35,7 @@ export class TemplateAPIService {
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     const serviceId = this.getServiceId(action)
-
+    this.services.map((i) => console.log(i.serviceId))
     const service = this.services.find((x) => x.serviceId === serviceId)
     if (service) {
       const result = await service.performAction(

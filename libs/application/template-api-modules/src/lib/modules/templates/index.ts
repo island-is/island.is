@@ -1,3 +1,6 @@
+
+import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
+import { SubmitDocumentsService } from './vmst/submit-documents/submit-documents.service'
 import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
 import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
 import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
@@ -285,7 +288,8 @@ export const modules = [
   ConfirmJobSearchModule,
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
-]
+  SubmitDocumentsModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -382,4 +386,5 @@ export const services = [
   ConfirmJobSearchService,
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
-]
+  SubmitDocumentsService,
+            ]
