@@ -110,8 +110,21 @@ const TinyMCE = ({
 
   return (
     <div>
-      <div className={[styles.wrapper, errorMessage && styles.wrapperError, focused && styles.wrapperFocused].filter(Boolean).join(' ')}>
-        <label className={`${styles.label}${errorMessage ? ` ${styles.labelError}` : ''}`} htmlFor={editorId}>
+      <div
+        className={[
+          styles.wrapper,
+          errorMessage && styles.wrapperError,
+          focused && styles.wrapperFocused,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <label
+          className={`${styles.label}${
+            errorMessage ? ` ${styles.labelError}` : ''
+          }`}
+          htmlFor={editorId}
+        >
           {`${label} `}
           {required && <RequiredStar />}
         </label>
