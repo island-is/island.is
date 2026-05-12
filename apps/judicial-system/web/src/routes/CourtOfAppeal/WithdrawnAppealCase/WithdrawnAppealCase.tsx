@@ -45,8 +45,7 @@ const WithdrawnAppealCase = () => {
     caseId: workingCase.id,
   })
 
-  const isStepValid =
-    allFilesDoneOrError && targetAppealCase?.appealCaseNumber
+  const isStepValid = allFilesDoneOrError && targetAppealCase?.appealCaseNumber
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
