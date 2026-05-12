@@ -165,7 +165,11 @@ const TinyMCE = ({ label }: Props) => {
               <motion.button
                 key={color}
                 type="button"
-                className={`${styles.colorSwatch}${selectedColor === color ? ` ${styles.colorSwatchSelected}` : ''}`}
+                className={`${styles.colorSwatch}${
+                  selectedColor === color
+                    ? ` ${styles.colorSwatchSelected}`
+                    : ''
+                }`}
                 style={{ background: color }}
                 aria-label={colorLabel}
                 variants={itemVariants}
@@ -184,7 +188,11 @@ const TinyMCE = ({ label }: Props) => {
               variants={itemVariants}
               onMouseDown={(e) => {
                 e.preventDefault()
-                editorRef.current?.execCommand('HiliteColor', false, 'transparent')
+                editorRef.current?.execCommand(
+                  'HiliteColor',
+                  false,
+                  'transparent',
+                )
                 setSelectedColor(null)
                 setPickerOpen(false)
               }}
