@@ -808,6 +808,9 @@ export class SdfDisplayField {
   @Field({ nullable: true })
   displayInputLabel?: string
 
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientExpression?: Record<string, unknown>
+
   /** Same semantics as `SdfTextField.inputVariant` (e.g. `currency`, `number`). */
   @Field({ nullable: true })
   inputVariant?: string

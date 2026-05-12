@@ -46,6 +46,10 @@ describe('mapScreenToComponents — display field parity props', () => {
           halfWidthOwnline: true,
           label: 'ISK',
           suffix: ' kr.',
+          clientExpression: {
+            type: 'sum',
+            fields: ['input1', 'input2', 'input3'],
+          },
           value: (vals: { sourceNumber?: number }) =>
             String((vals?.sourceNumber ?? 0) * 2),
         }),
@@ -71,6 +75,10 @@ describe('mapScreenToComponents — display field parity props', () => {
     expect(df1?.halfWidthOwnline).toBe(true)
     expect(df1?.displayInputLabel).toBe('ISK')
     expect(df1?.textSuffix).toBe(' kr.')
+    expect(df1?.clientExpression).toEqual({
+      type: 'sum',
+      fields: ['input1', 'input2', 'input3'],
+    })
     expect(df1?.value).toBe('2000')
 
     const df2 = byId('displayField2')

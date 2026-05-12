@@ -8,8 +8,12 @@ import {
 
 const DEBOUNCE_MS = 300
 
-const hasDisplayFields = (components: SdfComponentData[]): boolean =>
-  components.some((c) => c.__typename === 'SdfDisplayField')
+const hasServerComputedDisplayFields = (
+  components: SdfComponentData[],
+): boolean =>
+  components.some(
+    (c) => c.__typename === 'SdfDisplayField' && !c.clientExpression,
+  )
 
 /**
  * Reactively recomputes `SdfDisplayField` values by calling the dedicated
@@ -27,13 +31,14 @@ export const useDisplayRecompute = (
   components: SdfComponentData[],
   answers: Record<string, unknown>,
   locale: string,
+  pageIndex?: number,
 ): Record<string, string> => {
   const [overlay, setOverlay] = useState<Record<string, string>>({})
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const requestCounterRef = useRef(0)
 
   const shouldRecompute = useMemo(
-    () => hasDisplayFields(components),
+    () => hasServerComputedDisplayFields(components),
     [components],
   )
 
@@ -43,17 +48,21 @@ export const useDisplayRecompute = (
   )
 
   useEffect(() => {
-    if (!shouldRecompute) return
+    if (!shouldRecompute) {
+      setOverlay({})
+      return
+    }
 
     if (timerRef.current) clearTimeout(timerRef.current)
+    const requestId = ++requestCounterRef.current
     timerRef.current = setTimeout(async () => {
-      const requestId = ++requestCounterRef.current
       try {
         const result = await validateAction(
           applicationId,
           answers,
           [],
           locale,
+          pageIndex,
         )
         if (requestId !== requestCounterRef.current) return
         setOverlay(result.displayValues ?? {})
@@ -65,7 +74,7 @@ export const useDisplayRecompute = (
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [serializedAnswers, applicationId, locale, shouldRecompute])
+  }, [serializedAnswers, applicationId, locale, pageIndex, shouldRecompute])
 
   return overlay
 }

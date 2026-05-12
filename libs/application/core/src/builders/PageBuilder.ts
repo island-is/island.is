@@ -38,8 +38,12 @@ import {
   StaticTableField,
   TableRepeaterField,
   VehiclePermnoWithInfoField,
+  FormTextArray,
+  FormTextWithLocale,
+  FormValue,
 } from '@island.is/application/types'
 import { BoxProps } from '@island.is/island-ui/core/types'
+import type { z } from 'zod'
 import {
   buildAccordionField,
   buildAsyncSelectField,
@@ -71,6 +75,21 @@ import { Locale } from '@island.is/shared/types'
 
 /** Builder-time field: satisfies `Field` while allowing extra props not on every union member. */
 type MutableField = Field & Record<string, unknown>
+type ApplicationForSchema<TSchema> = TSchema extends z.ZodTypeAny
+  ? z.infer<TSchema> extends FormValue
+    ? Application<z.infer<TSchema>>
+    : Application<FormValue>
+  : Application<FormValue>
+type TypedFormText<TSchema> =
+  | StaticText
+  | ((
+      application: ApplicationForSchema<TSchema>,
+    ) => StaticText | null | undefined)
+type TypedFormTextArray<TSchema> =
+  | StaticText[]
+  | ((
+      application: ApplicationForSchema<TSchema>,
+    ) => (StaticText | null | undefined)[])
 
 type SimpleCondition = {
   field: string
@@ -134,23 +153,26 @@ type FieldBuilderOptionsWithTitle<TField extends Field> = Omit<
   'children' | 'component' | 'id' | 'type'
 >
 type OptionList = Array<string | { label: FormText; value: string }>
-type DynamicOptions = (application: Application) => OptionList
+type DynamicOptions<TSchema = unknown> = (
+  application: ApplicationForSchema<TSchema>,
+) => OptionList
 type AccordionFieldOptions = FieldBuilderOptions<AccordionField>
 type AsyncSelectFieldOptions = FieldBuilderOptions<AsyncSelectField>
 type BankAccountFieldOptions = FieldBuilderOptions<BankAccountField>
 type WithShowWhen = {
   showWhen?: ShowWhen
 }
-type CheckboxFieldOptions = Omit<
+type CheckboxFieldOptions<TSchema = unknown> = Omit<
   FieldBuilderOptions<CheckboxField>,
   'options'
 > &
   WithShowWhen & {
-    options: OptionList | DynamicOptions | CheckboxField['options']
+    options: OptionList | DynamicOptions<TSchema> | CheckboxField['options']
   }
 type CompanySearchFieldOptions = FieldBuilderOptions<CompanySearchField>
 type DateFieldOptions = FieldBuilderOptions<DateField>
-type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField>
+type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField> &
+  WithShowWhen
 type DisplayFieldOptions = Omit<
   DisplayField,
   'children' | 'component' | 'id' | 'title' | 'type' | 'value'
@@ -167,14 +189,20 @@ type OverviewFieldOptions = FieldBuilderOptions<OverviewField>
 type PaginatedSearchableTableFieldOptions =
   FieldBuilderOptionsWithTitle<PaginatedSearchableTableField>
 type PhoneFieldOptions = FieldBuilderOptions<PhoneField>
-type RadioFieldOptions = Omit<FieldBuilderOptions<RadioField>, 'options'> &
+type RadioFieldOptions<TSchema = unknown> = Omit<
+  FieldBuilderOptions<RadioField>,
+  'options'
+> &
   WithShowWhen & {
-    options: OptionList | DynamicOptions | RadioField['options']
+    options: OptionList | DynamicOptions<TSchema> | RadioField['options']
   }
-type SelectFieldOptions = Omit<FieldBuilderOptions<SelectField>, 'options'> &
+type SelectFieldOptions<TSchema = unknown> = Omit<
+  FieldBuilderOptions<SelectField>,
+  'options'
+> &
   WithShowWhen & {
     onSelectRefetch?: string[]
-    options: OptionList | DynamicOptions | SelectField['options']
+    options: OptionList | DynamicOptions<TSchema> | SelectField['options']
     refetchTargets?: string[]
   }
 type SliderFieldOptions = FieldBuilderOptions<SliderField>
@@ -211,9 +239,9 @@ type PageBuilderOptions = {
   space?: MultiField['space']
 }
 
-interface SearchFieldOptions extends FieldOptions {
+interface SearchFieldOptions<TSchema = unknown> extends FieldOptions {
   searchAction: string
-  options: OptionList | DynamicOptions
+  options: OptionList | DynamicOptions<TSchema>
   onSelectRefetch?: string[]
   refetchTargets?: string[]
   minQueryLength?: number
@@ -317,18 +345,20 @@ const resolveShowWhen = (showWhen: ShowWhen): Condition => {
 const normalizeOptionList = (options: OptionList) =>
   options.map((o) => (typeof o === 'string' ? { label: o, value: o } : o))
 
-const normalizeOptions = (
-  options: OptionList | DynamicOptions | RadioField['options'],
+const normalizeOptions = <TSchema,>(
+  options: OptionList | DynamicOptions<TSchema> | RadioField['options'],
 ): RadioField['options'] => {
   if (typeof options === 'function') {
     const resolveOptions = options as (
-      application: Application,
+      application: ApplicationForSchema<TSchema>,
       field: Field,
       locale: Locale,
     ) => OptionList
 
     return (application, field, locale) =>
-      normalizeOptionList(resolveOptions(application, field, locale))
+      normalizeOptionList(
+        resolveOptions(application as ApplicationForSchema<TSchema>, field, locale),
+      )
   }
 
   return normalizeOptionList(options as OptionList) as RadioField['options']
@@ -463,11 +493,11 @@ const makeBaseField = (
 export class PageBuilder<TSchema = unknown> {
   private fields: Field[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts: PageBuilderOptions
   private readonly _schema?: TSchema
 
-  constructor(id: string, title: FormText, opts?: PageBuilderOptions) {
+  constructor(id: string, title: FormTextWithLocale, opts?: PageBuilderOptions) {
     this._id = id
     this._title = title
     this.opts = opts ?? {}
@@ -502,7 +532,11 @@ export class PageBuilder<TSchema = unknown> {
   }
 
   /** When `opts.width` is `'half'`, SDF renders options side-by-side (e.g. Já/Nei); `'full'` stacks one per row. */
-  addRadioField(id: string, title: FormText, opts: RadioFieldOptions): this {
+  addRadioField(
+    id: string,
+    title: FormText,
+    opts: RadioFieldOptions<TSchema>,
+  ): this {
     this.fields.push(
       buildRadioField({
         id,
@@ -514,7 +548,11 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
-  addSelectField(id: string, title: FormText, opts: SelectFieldOptions): this {
+  addSelectField(
+    id: string,
+    title: FormText,
+    opts: SelectFieldOptions<TSchema>,
+  ): this {
     const { onSelectRefetch, refetchTargets, showWhen, ...fieldOpts } = opts
     const field = buildSelectField({
       id,
@@ -535,7 +573,11 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
-  addSearchField(id: string, title: FormText, opts: SearchFieldOptions): this {
+  addSearchField(
+    id: string,
+    title: FormText,
+    opts: SearchFieldOptions<TSchema>,
+  ): this {
     const field = makeBaseField(
       id,
       title,
@@ -580,7 +622,7 @@ export class PageBuilder<TSchema = unknown> {
   addCheckboxField(
     id: string,
     title: FormText,
-    opts: CheckboxFieldOptions,
+    opts: CheckboxFieldOptions<TSchema>,
   ): this {
     this.fields.push(
       buildCheckboxField({
@@ -617,7 +659,15 @@ export class PageBuilder<TSchema = unknown> {
     title: FormText,
     opts?: DescriptionFieldOptions,
   ): this {
-    this.fields.push(buildDescriptionField({ id, title, ...opts }))
+    const { showWhen, ...fieldOpts } = opts ?? {}
+    this.fields.push(
+      buildDescriptionField({
+        id,
+        title,
+        ...fieldOpts,
+        ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+      }),
+    )
     return this
   }
 
@@ -837,7 +887,7 @@ export class PageBuilder<TSchema = unknown> {
   addKeyValueField(
     id: string,
     title: FormText,
-    value: FormText | ((app: Application) => string),
+    value: TypedFormText<TSchema> | TypedFormTextArray<TSchema>,
     opts?: FieldOptions,
   ): this {
     const field = makeBaseField(
@@ -850,7 +900,7 @@ export class PageBuilder<TSchema = unknown> {
         doesNotRequireAnswer: true,
       },
     )
-    field.value = value
+    field.value = value as FormText | FormTextArray
     this.fields.push(field)
     return this
   }

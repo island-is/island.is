@@ -73,6 +73,10 @@ type SdfBffUser = BffUser & {
   nationalId: string
 }
 
+type ApplicationWithPageIndex = ApplicationWithAttachments & {
+  pageIndex?: number
+}
+
 type ScreenWithDescription = FormScreen & {
   description?: Parameters<FormTextResolver['resolve']>[0]
 }
@@ -534,6 +538,7 @@ export class SdfScreenService {
     fieldIds: string[],
     locale: Locale,
     user: User,
+    pageIndexOverride?: number,
   ): Promise<ValidateResponseDto> {
     const application = await this.requireApplicationForUser(
       applicationId,
@@ -602,6 +607,7 @@ export class SdfScreenService {
       locale,
       user,
       formatResolver,
+      pageIndexOverride,
     )
 
     return {
@@ -630,10 +636,14 @@ export class SdfScreenService {
     locale: Locale,
     user: User,
     resolver: FormTextResolver,
+    pageIndexOverride?: number,
   ): Promise<Record<string, string>> {
     const results: Record<string, string> = {}
 
-    const pageIndex: number = (application as any).pageIndex ?? 0
+    const pageIndex: number =
+      pageIndexOverride ??
+      (application as ApplicationWithPageIndex).pageIndex ??
+      0
     let currentScreen: FormScreen | undefined
     try {
       currentScreen = await this.getCurrentScreen(

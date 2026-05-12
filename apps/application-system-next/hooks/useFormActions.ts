@@ -14,6 +14,9 @@ export const useFormActions = (
   const answersRef = useRef<Record<string, unknown>>(
     initialScreen.answers ?? {},
   )
+  const [answerSnapshot, setAnswerSnapshot] = useState<Record<string, unknown>>(
+    initialScreen.answers ?? {},
+  )
   const pageIndexRef = useRef(initialScreen.page.index)
   const pendingTargetCountsRef = useRef<Record<string, number>>({})
   const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>([])
@@ -25,12 +28,19 @@ export const useFormActions = (
   useEffect(() => {
     if (screen.answers) {
       answersRef.current = { ...answersRef.current, ...screen.answers }
+      setAnswerSnapshot(answersRef.current)
       forceRender((n) => n + 1)
     }
   }, [screen.page.index])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
+    console.log('[SDF display debug] useFormActions setAnswer', {
+      fieldId,
+      value,
+      answers: answersRef.current,
+    })
+    setAnswerSnapshot(answersRef.current)
     forceRender((n) => n + 1)
   }, [])
 
@@ -104,6 +114,7 @@ export const useFormActions = (
             ...answersRef.current,
             ...(result.answers ?? {}),
           }
+          setAnswerSnapshot(answersRef.current)
           forceRender((n) => n + 1)
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Action failed')
@@ -155,6 +166,7 @@ export const useFormActions = (
     error,
     pendingRefetchTargets,
     answers: answersRef,
+    answerSnapshot,
     setAnswer,
     onAnswerChange,
     nextPage,

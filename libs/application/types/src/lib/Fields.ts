@@ -1119,8 +1119,19 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
+  clientExpression?: ClientDisplayExpression
   value: (answers: FormValue, externalData: ExternalData) => string
 }
+
+export type ClientDisplayExpression =
+  | {
+      type: 'sum'
+      fields: string[]
+    }
+  | {
+      type: 'multiply'
+      factors: Array<{ field: string } | { value: number }>
+    }
 
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'

@@ -374,6 +374,10 @@ export class ComponentDto {
   @ApiPropertyOptional()
   displayInputLabel?: string
 
+  /** Display field: serializable expression that the SDF client can evaluate without a backend round-trip. */
+  @ApiPropertyOptional()
+  clientExpression?: Record<string, unknown>
+
   /** Optional vertical spacing (design system spacing units), e.g. description fields. */
   @ApiPropertyOptional()
   marginTop?: number

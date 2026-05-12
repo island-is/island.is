@@ -1,5 +1,16 @@
 import { getValueViaPath, SubSectionBuilder } from '@island.is/application/core'
 
+const toCurrencyNumber = (value: string | undefined): number => {
+  if (!value) {
+    return 0
+  }
+
+  const normalized = value.replace(/[^\d,-]/g, '').replace(',', '.')
+  return Number(normalized || 0)
+}
+
+const summedInputIds = ['input1', 'input2', 'input3']
+
 export const displayFieldSubsection = new SubSectionBuilder(
   'displayFieldSubsection',
   'Display Field',
@@ -29,15 +40,22 @@ export const displayFieldSubsection = new SubSectionBuilder(
         'displayField',
         'Display Field',
         (answers) => {
-          const value1 = Number(getValueViaPath<string>(answers, 'input1'))
-          const value2 = Number(getValueViaPath<string>(answers, 'input2'))
-          const value3 = Number(getValueViaPath<string>(answers, 'input3'))
-          return `${value1 + value2 + value3}`
+          const sum = summedInputIds.reduce(
+            (total, inputId) =>
+              total +
+              toCurrencyNumber(getValueViaPath<string>(answers, inputId)),
+            0,
+          )
+          return `${sum}`
         },
         {
           variant: 'currency',
           label: 'Sum of inputs 1, 2 and 3',
           rightAlign: true,
+          clientExpression: {
+            type: 'sum',
+            fields: summedInputIds,
+          },
         },
       )
       .addTextField('input4', 'Upphæð leigu', {
@@ -59,6 +77,8 @@ export const displayFieldSubsection = new SubSectionBuilder(
         'Upphæð leigu',
         (answers) => {
           const value4 = Number(getValueViaPath<string>(answers, 'input4'))
+          const sum = Number(getValueViaPath<string>(answers, 'displayField'))
+
           const value5 = getValueViaPath<string>(
             answers,
             'radioFieldForDisplayField',
@@ -72,11 +92,15 @@ export const displayFieldSubsection = new SubSectionBuilder(
             return 'Önnur upphæð'
           }
 
-          return `${value4 * Number(value5)}`
+          return `${value4 * sum}`
         },
         {
           variant: 'currency',
           rightAlign: true,
+          clientExpression: {
+            type: 'sum',
+            fields: ['input4', ...summedInputIds],
+          },
         },
       )
   })

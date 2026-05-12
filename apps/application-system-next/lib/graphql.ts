@@ -95,6 +95,15 @@ export interface MultiClientCondition {
 }
 
 export type ClientCondition = SingleClientCondition | MultiClientCondition
+export type ClientDisplayExpression =
+  | {
+      type: 'sum'
+      fields: string[]
+    }
+  | {
+      type: 'multiply'
+      factors: Array<{ field: string } | { value: number }>
+    }
 
 export interface SdfDataTableInput {
   key: string
@@ -155,6 +164,7 @@ export interface SdfComponentData {
   spacing?: number
   checkboxBackgroundColor?: string
   displayInputLabel?: string
+  clientExpression?: ClientDisplayExpression
   titleVariant?: string
   halfWidthOwnline?: boolean
   clientCondition?: ClientCondition | null
@@ -492,6 +502,7 @@ export const GET_SCREEN_QUERY = `
             label
             displayValue: value
             displayInputLabel
+            clientExpression
             inputVariant
             textSuffix
             rightAlign
@@ -716,7 +727,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfKeyValueField { id label value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfAlertMessageField { id alertType title message clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfLinkField { id label url clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDisplayField { id label displayValue: value displayInputLabel inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfDisplayField { id label displayValue: value displayInputLabel clientExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfSliderField { id label min max step clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
           ... on SdfTitleField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
@@ -940,6 +951,7 @@ export const validateAction = async (
   answers?: Record<string, unknown>,
   fieldIds?: string[],
   locale = 'is',
+  lastKnownPageIndex?: number,
 ): Promise<SdfValidateResult> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfValidate'), {
     method: 'POST',
@@ -952,6 +964,7 @@ export const validateAction = async (
           actionType: 'VALIDATE',
           answers: answers ? JSON.stringify(answers) : undefined,
           fieldIds,
+          lastKnownPageIndex,
         },
         locale,
       },

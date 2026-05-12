@@ -12,6 +12,7 @@ import {
   SectionChildren,
   SubSection,
   FormText,
+  FormTextWithLocale,
   StaticText,
   SubmitField,
 } from '@island.is/application/types'
@@ -75,10 +76,14 @@ const toSubmitField = (data: SubmitFieldOptions): SubmitField => ({
 export class SubSectionBuilder<TSchema = unknown> {
   private children: FormLeaf[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts?: SubSectionBuilderOptions
 
-  constructor(id: string, title: FormText, opts?: SubSectionBuilderOptions) {
+  constructor(
+    id: string,
+    title: FormTextWithLocale,
+    opts?: SubSectionBuilderOptions,
+  ) {
     this._id = id
     this._title = title
     this.opts = opts
@@ -86,7 +91,7 @@ export class SubSectionBuilder<TSchema = unknown> {
 
   addPage(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
   ): this {
     const pageBuilder = new PageBuilder<TSchema>(id, title)
@@ -118,10 +123,10 @@ export class SubSectionBuilder<TSchema = unknown> {
 export class SectionBuilder<TSchema = unknown> {
   private children: SectionChildren[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts?: SectionBuilderOptions
 
-  constructor(id: string, title: FormText, opts?: SectionBuilderOptions) {
+  constructor(id: string, title: FormTextWithLocale, opts?: SectionBuilderOptions) {
     this._id = id
     this._title = title
     this.opts = opts
@@ -129,7 +134,7 @@ export class SectionBuilder<TSchema = unknown> {
 
   addPage(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
   ): this {
     const pageBuilder = new PageBuilder<TSchema>(id, title)
@@ -140,7 +145,7 @@ export class SectionBuilder<TSchema = unknown> {
 
   addSubSection(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (s: SubSectionBuilder<TSchema>) => void,
     opts?: SubSectionBuilderOptions,
   ): this {

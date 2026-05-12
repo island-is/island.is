@@ -101,6 +101,11 @@ export const ComponentSwitch = ({
   const handleChange = useCallback(
     (value: unknown) => {
       if (component.id) {
+        console.log('[SDF display debug] ComponentSwitch handleChange', {
+          id: component.id,
+          type: component.__typename,
+          value,
+        })
         onAnswerChange(component.id, value)
       }
     },
