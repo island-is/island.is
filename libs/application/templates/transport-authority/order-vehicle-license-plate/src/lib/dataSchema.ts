@@ -4,24 +4,17 @@ import { YES, NO } from '@island.is/application/core'
 export const OrderVehicleLicensePlateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
-    plate: z.string().min(1),
     vehicle: z.string().optional(),
-    color: z.string().optional(),
-    type: z.string().optional(),
+    plate: z.string().min(1),
   }),
-  plateType: z.object({
-    regGroup: z.string().min(1),
-    currentPlateTypeName: z.string().optional(),
-    selectedPlateTypeName: z.string().optional(),
+  vehicle: z.object({
+    plate: z.string(),
+    type: z.string(),
   }),
   plateSize: z
     .object({
-      frontPlateSize: z.array(z.string()).max(1),
-      rearPlateSize: z.array(z.string()).max(1),
-      frontPlateSizeName: z.string().optional(),
-      rearPlateSizeName: z.string().optional(),
-      currentFrontSize: z.string().optional(),
-      currentRearSize: z.string().optional(),
+      frontPlateSize: z.array(z.string()),
+      rearPlateSize: z.array(z.string()),
     })
     .refine(({ frontPlateSize, rearPlateSize }) => {
       return frontPlateSize.length !== 0 || rearPlateSize.length !== 0

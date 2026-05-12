@@ -47,7 +47,6 @@ export const mapVehicle = async (
     | undefined
   let debtStatus: VehicleDebtStatus | undefined
   let mileageReadings: MileageReadingDto[] | undefined
-  let regGroup: string | undefined
 
   if (fetchExtraData) {
     // Get owner change validation
@@ -80,13 +79,10 @@ export const mapVehicle = async (
         vin: undefined,
       })
 
-      regGroup = vehicleInfo?.plates?.[0]?.reggroup || undefined
-
       validation =
         await deps.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
           auth,
           vehicle.permno || '',
-          regGroup || '',
           vehicleInfo?.platetypefront || '',
           vehicleInfo?.platetyperear || '',
         )
@@ -117,7 +113,6 @@ export const mapVehicle = async (
     make: vehicle.make || undefined,
     color: vehicle.colorName || undefined,
     role: vehicle.role || undefined,
-    regGroup: regGroup,
     validationErrorMessages: validation?.hasError
       ? validation.errorMessages
       : null,
