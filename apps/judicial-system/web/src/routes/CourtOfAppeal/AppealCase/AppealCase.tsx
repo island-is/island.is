@@ -59,7 +59,6 @@ const AppealCase: FC = () => {
 
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
@@ -105,7 +104,7 @@ const AppealCase: FC = () => {
     )
   }
 
-  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
+  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
     setNavigateTo(destination)
 
@@ -251,7 +250,7 @@ const AppealCase: FC = () => {
             )}
             primaryButton={{
               text: formatMessage(strings.modalPrimaryButton),
-              onClick: () => router.push(`${navigateTo}/${id}`),
+              onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
             }}
             secondaryButton={
               sendNotificationError
