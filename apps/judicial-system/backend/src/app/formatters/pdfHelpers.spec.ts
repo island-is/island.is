@@ -59,7 +59,7 @@ describe('htmlToBlocks', () => {
     const blocks = htmlToBlocks('<p><mark>highlighted</mark></p>')
     expect(blocks[0].runs[0]).toMatchObject({
       text: 'highlighted',
-      highlight: true,
+      highlight: '#fff066',
     })
   })
 
@@ -67,7 +67,7 @@ describe('htmlToBlocks', () => {
     const blocks = htmlToBlocks(
       '<p><span style="background-color: #ffff00;">highlighted</span></p>',
     )
-    expect(blocks[0].runs[0]).toMatchObject({ highlight: true })
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
   })
 
   it('produces multiple runs within one paragraph', () => {

@@ -489,14 +489,14 @@ export const addNumberedList = (
   doc.x = originalX
 }
 
-const HIGHLIGHT_COLOR = '#fff066'
+const MARK_HIGHLIGHT_COLOR = '#fff066'
 const INDENT_PTS = 20
 
 interface Run {
   text: string
   bold: boolean
   italic: boolean
-  highlight: boolean
+  highlight: string | false
 }
 
 export interface RichTextBlock {
@@ -504,11 +504,16 @@ export interface RichTextBlock {
   indent: number
 }
 
+const extractBgColor = (style: string): string | null => {
+  const m = style.match(/background-color:\s*([^;]+)/)
+  return m ? m[1].trim() : null
+}
+
 const collectRuns = (
   nodes: ChildNode[],
   bold: boolean,
   italic: boolean,
-  highlight: boolean,
+  highlight: string | false,
   result: Run[],
 ): void => {
   for (const node of nodes) {
@@ -524,11 +529,14 @@ const collectRuns = (
       collectRuns(children, true, italic, highlight, result)
     } else if (el.name === 'em' || el.name === 'i') {
       collectRuns(children, bold, true, highlight, result)
+    } else if (el.name === 'mark') {
+      collectRuns(children, bold, italic, MARK_HIGHLIGHT_COLOR, result)
     } else if (
-      el.name === 'mark' ||
-      (el.name === 'span' && el.attribs?.style?.includes('background-color'))
+      el.name === 'span' &&
+      el.attribs?.style?.includes('background-color')
     ) {
-      collectRuns(children, bold, italic, true, result)
+      const color = extractBgColor(el.attribs.style) ?? MARK_HIGHLIGHT_COLOR
+      collectRuns(children, bold, italic, color, result)
     } else if (el.name === 'br') {
       result.push({ text: '\n', bold: false, italic: false, highlight: false })
     } else {
@@ -603,6 +611,8 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
 
     const leftX = doc.page.margins.left + block.indent
     const width = doc.page.width - doc.page.margins.right - leftX
+    const blockY = doc.y
+    let currentX = leftX
 
     for (let i = 0; i < block.runs.length; i++) {
       const run = block.runs[i]
@@ -610,18 +620,19 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
 
       doc.font(getFontName(run)).fontSize(baseFontSize)
 
-      const textX = i === 0 ? leftX : doc.x
-      const textY = doc.y
-
       if (run.highlight) {
         const w = doc.widthOfString(run.text)
-        const h = doc.currentLineHeight(true)
-        doc.rect(textX, textY, w, h).fill(HIGHLIGHT_COLOR)
+        const h = doc.currentLineHeight(false)
+        // Shift rect up by half the descender height to centre around visible glyphs
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const descender = Math.abs((doc as any)._font?.descender ?? 200) / 1000 * baseFontSize
+        const hPad = 1
+        doc.rect(currentX - hPad, blockY - descender / 2, w + hPad * 2, h + descender).fill(run.highlight)
         doc.fillColor('black')
       }
 
       if (i === 0) {
-        doc.text(run.text, textX, textY, {
+        doc.text(run.text, leftX, blockY, {
           continued: !isLast,
           paragraphGap: 1,
           width,
@@ -629,6 +640,8 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
       } else {
         doc.text(run.text, { continued: !isLast, paragraphGap: 1 })
       }
+
+      currentX += doc.widthOfString(run.text)
     }
   }
 }
