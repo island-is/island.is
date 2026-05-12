@@ -18,9 +18,9 @@ describe('resolveTargetAppealCaseByAppealCaseId', () => {
   } as Case
 
   it('returns the case-level appeal when no query param is set', () => {
-    expect(
-      resolveTargetAppealCaseByAppealCaseId(workingCase, undefined),
-    ).toBe(caseLevel)
+    expect(resolveTargetAppealCaseByAppealCaseId(workingCase, undefined)).toBe(
+      caseLevel,
+    )
   })
 
   it('returns the case-level appeal when the query id matches it', () => {

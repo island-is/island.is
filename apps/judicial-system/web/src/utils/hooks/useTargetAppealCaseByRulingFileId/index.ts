@@ -26,10 +26,7 @@ export const resolveTargetAppealCaseByRulingFileId = (
   )
 }
 
-const useTargetAppealCaseByRulingFileId = ():
-  | AppealCase
-  | undefined
-  | null => {
+const useTargetAppealCaseByRulingFileId = (): AppealCase | undefined | null => {
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
   const rulingFileId =
