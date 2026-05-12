@@ -37,9 +37,6 @@ export const ValidationErrorMessages: FC<
           pickVehicle: {
             plate: answers?.pickVehicle?.plate,
           },
-          plateType: {
-            regGroup: answers?.plateType?.regGroup,
-          },
           plateSize: {
             frontPlateSize: answers?.plateSize?.frontPlateSize,
             rearPlateSize: answers?.plateSize?.rearPlateSize,

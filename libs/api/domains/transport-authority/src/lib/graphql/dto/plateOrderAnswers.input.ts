@@ -7,12 +7,6 @@ export class PlateOrderAnswersPickVehicle {
 }
 
 @InputType()
-export class PlateOrderAnswersPlateType {
-  @Field(() => String, { nullable: false })
-  regGroup!: string
-}
-
-@InputType()
 export class PlateOrderAnswersPlateSize {
   @Field(() => [String], { nullable: true })
   frontPlateSize?: string[]
@@ -37,9 +31,6 @@ export class OperatorChangeAnswersPlateDelivery {
 export class PlateOrderAnswers {
   @Field(() => PlateOrderAnswersPickVehicle, { nullable: false })
   pickVehicle!: PlateOrderAnswersPickVehicle
-
-  @Field(() => PlateOrderAnswersPlateType, { nullable: false })
-  plateType!: PlateOrderAnswersPlateType
 
   @Field(() => PlateOrderAnswersPlateSize, { nullable: false })
   plateSize!: PlateOrderAnswersPlateSize
