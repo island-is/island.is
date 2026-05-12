@@ -107,6 +107,7 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
 export { default as DateLabel } from './DateLabel/DateLabel'
+export { default as RulingFileLabel } from './RulingFileLabel/RulingFileLabel'
 export { default as ReopenModal } from './Modals/ReopenModal/ReopenModal'
 export { default as RulingModifiedModal } from './Modals/RulingModifiedModal/RulingModifiedModal'
 export { default as CasesLayout } from './Layouts/CasesLayout'

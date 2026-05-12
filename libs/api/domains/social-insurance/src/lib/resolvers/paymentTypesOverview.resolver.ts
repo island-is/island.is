@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
@@ -17,6 +17,7 @@ import {
 import { PaymentTypeOverview } from '../models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from '../models/paymentTypes/childBenefitInformation.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
+import type { Locale } from '@island.is/shared/types'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -33,8 +34,10 @@ export class PaymentTypesOverviewResolver {
   @Audit()
   getPaymentTypes(
     @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<PaymentTypeOverview[] | null> {
-    return this.service.getPaymentTypes(user)
+    return this.service.getPaymentTypes(user, locale)
   }
 
   @Query(() => [ChildBenefitInformation], {
