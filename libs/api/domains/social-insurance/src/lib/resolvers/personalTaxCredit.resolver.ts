@@ -15,6 +15,8 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
+import { PersonalTaxCreditSpouseInfo } from '../models/personalTaxCredit/spouseInfo.model'
+import { TaxBracketAction } from '../enums/taxBracketAction'
 import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.input'
 import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
 import { DiscontinueTaxCardAllowanceInput } from '../dtos/discontinueTaxCardAllowance.input'
@@ -37,6 +39,37 @@ export class PersonalTaxCreditResolver {
     @CurrentUser() user: User,
   ): Promise<PersonalTaxCredit | null> {
     return this.service.getPersonalTaxCredit(user)
+  }
+
+  @Query(() => TaxBracketAction, {
+    name: 'socialInsurancePersonalTaxCreditTaxBracket',
+    nullable: true,
+  })
+  @Audit()
+  getTaxBracket(@CurrentUser() user: User): Promise<TaxBracketAction | null> {
+    return this.service.getTaxBracket(user)
+  }
+
+  @Query(() => TaxBracketAction, {
+    name: 'socialInsurancePersonalTaxCreditTaxBracketAction',
+    nullable: true,
+  })
+  @Audit()
+  getTaxBracketAction(
+    @CurrentUser() user: User,
+  ): Promise<TaxBracketAction | null> {
+    return this.service.getTaxBracketAction(user)
+  }
+
+  @Query(() => PersonalTaxCreditSpouseInfo, {
+    name: 'socialInsurancePersonalTaxCreditSpouseInfo',
+    nullable: true,
+  })
+  @Audit()
+  getSpouseInfo(
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxCreditSpouseInfo | null> {
+    return this.service.getSpouseInfo(user)
   }
 
   @Mutation(() => Boolean, {
@@ -72,6 +105,19 @@ export class PersonalTaxCreditResolver {
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.discontinueTaxCardAllowance(user, input)
+    return true
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'setSocialInsurancePersonalTaxCreditTaxBracket',
+  })
+  @Audit()
+  async setTaxBracket(
+    @Args('taxBracket', { type: () => TaxBracketAction })
+    taxBracket: TaxBracketAction,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.setTaxBracket(user, taxBracket)
     return true
   }
 }

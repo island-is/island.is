@@ -3663,6 +3663,9 @@ export interface IOrganizationPageFields {
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
 
