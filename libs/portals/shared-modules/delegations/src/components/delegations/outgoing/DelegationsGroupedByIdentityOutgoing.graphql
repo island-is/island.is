@@ -23,7 +23,6 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
       domain(lang: $lang) {
         name
         displayName
-        organisationLogoKey
         organisationLogoUrl
       }
       apiScope(lang: $lang) {

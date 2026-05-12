@@ -803,12 +803,6 @@
           "helpText": "The display name for this domain",
           "errorMessage": "The display name is required and can not include invalid characters"
         },
-        "organisationLogoKey": {
-          "label": "Logo Key",
-          "placeholder": "Logo key for this domain",
-          "helpText": "The logo key for this domain",
-          "errorMessage": "The logo key is required and can not include invalid characters"
-        },
         "contactEmail": {
           "label": "Contact Email",
           "placeholder": "Contact email for this domain",

@@ -242,7 +242,6 @@ describe('MeTenantsController', () => {
           nationalId: createNationalId('company'),
           displayName: 'Super new domain',
           description: 'A freshly created tenant',
-          organisationLogoKey: 'stafraent-island',
           contactEmail: 'contact@example.is',
         }
 
@@ -267,7 +266,6 @@ describe('MeTenantsController', () => {
           nationalId: createNationalId('company'),
           displayName: 'dup',
           description: 'dup',
-          organisationLogoKey: 'dup',
         })
 
         expect(res.status).toBe(409)
@@ -279,7 +277,6 @@ describe('MeTenantsController', () => {
           nationalId: createNationalId('company'),
           displayName: 'x',
           description: 'x',
-          organisationLogoKey: 'x',
         })
 
         expect(res.status).toBe(400)
@@ -396,7 +393,6 @@ describe('MeTenantsController', () => {
           nationalId: createNationalId('company'),
           displayName: 'x',
           description: 'x',
-          organisationLogoKey: 'x',
         })
 
         expect(res.status).toBe(403)

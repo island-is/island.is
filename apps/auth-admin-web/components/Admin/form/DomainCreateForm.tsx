@@ -206,42 +206,6 @@ const DomainCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                   />
                 </div>
 
-                <div className="domain-create-form__container__field">
-                  <label
-                    className="domain-create-form__label"
-                    htmlFor="organisationLogoKey"
-                  >
-                    {localization.fields['organisationLogoKey'].label}
-                  </label>
-                  <input
-                    id="organisationLogoKey"
-                    type="text"
-                    {...register('domain.organisationLogoKey', {
-                      required: true,
-                      validate: ValidationUtils.validateDescription,
-                    })}
-                    defaultValue={props.domain.organisationLogoKey}
-                    className="domain-create-form__input"
-                    title={localization.fields['organisationLogoKey'].helpText}
-                    placeholder={
-                      localization.fields['organisationLogoKey'].placeholder
-                    }
-                  />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="domain.organisationLogoKey"
-                    message={
-                      localization.fields['organisationLogoKey'].errorMessage
-                    }
-                  />
-                  <HelpBox
-                    helpText={
-                      localization.fields['organisationLogoKey'].helpText
-                    }
-                  />
-                </div>
-
                 {/*Contact email*/}
                 <div className="domain-create-form__container__field">
                   <label

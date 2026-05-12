@@ -4,9 +4,7 @@ import { Domain } from '@island.is/auth-api-lib'
 import { CreateApiScope } from './types'
 
 export type CreateDomain = Pick<Domain, 'name'> &
-  Partial<
-    Pick<Domain, 'description' | 'nationalId' | 'organisationLogoKey'>
-  > & {
+  Partial<Pick<Domain, 'description' | 'nationalId'>> & {
     apiScopes?: CreateApiScope[]
   }
 

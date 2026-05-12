@@ -81,7 +81,6 @@ export class FixtureFactory {
     description,
     nationalId,
     apiScopes = [],
-    organisationLogoKey,
   }: CreateDomain): Promise<Domain> {
     // Create the global identity resources as createDomain is always called first when test data is created.
     await Promise.all(
@@ -94,7 +93,6 @@ export class FixtureFactory {
       name: name ?? faker.random.word(),
       description: description ?? faker.lorem.sentence(),
       nationalId: nationalId ?? createNationalId('company'),
-      organisationLogoKey: organisationLogoKey ?? faker.random.word(),
     })
     domain.scopes = await Promise.all(
       apiScopes.map((apiScope, order) =>

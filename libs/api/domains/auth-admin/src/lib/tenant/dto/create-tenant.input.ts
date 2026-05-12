@@ -17,9 +17,6 @@ export class CreateTenantInput {
   @Field(() => String)
   description!: string
 
-  @Field(() => String)
-  organisationLogoKey!: string
-
   @Field(() => String, { nullable: true })
   contactEmail?: string
 

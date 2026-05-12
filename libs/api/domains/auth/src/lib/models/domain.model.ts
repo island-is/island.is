@@ -14,9 +14,6 @@ export class Domain {
   @Field(() => String)
   nationalId!: string
 
-  @Field(() => String)
-  organisationLogoKey!: string
-
   @Field(() => String, { nullable: true })
   organisationLogoUrl?: string
 }

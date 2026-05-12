@@ -20,8 +20,5 @@ export class UpdateTenantInput {
   description?: string
 
   @Field(() => String, { nullable: true })
-  organisationLogoKey?: string
-
-  @Field(() => String, { nullable: true })
   contactEmail?: string
 }

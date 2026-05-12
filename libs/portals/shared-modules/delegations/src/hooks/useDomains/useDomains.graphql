@@ -4,6 +4,5 @@ query AuthDomains($input: AuthDomainsInput!) {
     displayName
     description
     nationalId
-    organisationLogoKey
   }
 }

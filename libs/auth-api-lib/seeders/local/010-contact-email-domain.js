@@ -5,7 +5,6 @@ const emailDomain = {
   description: '@email.island.is domain',
   national_id: '5005101370',
   display_name: 'Ísland.is email',
-  organisation_logo_key: 'Stafrænt Ísland',
   contact_email: 'email@island.is',
 }
 

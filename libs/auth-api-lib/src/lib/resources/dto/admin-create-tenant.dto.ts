@@ -46,11 +46,6 @@ export class AdminCreateTenantDto {
   @ApiProperty({ example: 'Domain for Island.is' })
   description!: string
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ example: 'Stafrænt Ísland' })
-  organisationLogoKey!: string
-
   @IsOptional()
   @IsEmail()
   @ApiPropertyOptional({ example: 'island@example.is' })

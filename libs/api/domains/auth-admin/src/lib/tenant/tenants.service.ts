@@ -120,7 +120,6 @@ export class TenantsService extends MultiEnvironmentService {
           displayName: [{ locale: 'is', value: domain.displayName }],
           nationalId: domain.nationalId,
           description: domain.description,
-          organisationLogoKey: domain.organisationLogoKey,
           contactEmail: domain.contactEmail,
         }),
         prefixErrorMessage: `Failed to fetch admin details for tenant ${id}`,
@@ -139,7 +138,6 @@ export class TenantsService extends MultiEnvironmentService {
       nationalId: primary.nationalId,
       contactEmail: primary.contactEmail,
       description: primary.description,
-      organisationLogoKey: primary.organisationLogoKey,
     }
   }
 
@@ -156,7 +154,6 @@ export class TenantsService extends MultiEnvironmentService {
               nationalId: input.nationalId,
               displayName: input.displayName,
               description: input.description,
-              organisationLogoKey: input.organisationLogoKey,
               ...(input.contactEmail
                 ? { contactEmail: input.contactEmail }
                 : {}),
@@ -207,7 +204,6 @@ export class TenantsService extends MultiEnvironmentService {
         displayName: [{ locale: 'is', value: domain.displayName }],
         nationalId: domain.nationalId,
         description: domain.description,
-        organisationLogoKey: domain.organisationLogoKey,
         contactEmail: domain.contactEmail,
       }),
       prefixErrorMessage: `Failed to update tenant ${tenantId}`,
@@ -247,7 +243,6 @@ export class TenantsService extends MultiEnvironmentService {
             nationalId: source.nationalId,
             displayName: source.displayName,
             description: source.description,
-            organisationLogoKey: source.organisationLogoKey,
             ...(source.contactEmail
               ? { contactEmail: source.contactEmail }
               : {}),
@@ -267,7 +262,6 @@ export class TenantsService extends MultiEnvironmentService {
       displayName: [{ locale: 'is', value: created.displayName }],
       nationalId: created.nationalId,
       description: created.description,
-      organisationLogoKey: created.organisationLogoKey,
       contactEmail: created.contactEmail,
     }
   }

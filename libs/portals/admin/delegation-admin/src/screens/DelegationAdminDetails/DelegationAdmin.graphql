@@ -8,7 +8,6 @@ query getCustomDelegationsAdmin($nationalId: String!) {
       referenceId
       domain {
         name
-        organisationLogoKey
         organisationLogoUrl
         displayName
         nationalId
@@ -39,7 +38,6 @@ query getCustomDelegationsAdmin($nationalId: String!) {
       referenceId
       domain {
         name
-        organisationLogoKey
         organisationLogoUrl
         displayName
         nationalId

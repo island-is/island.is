@@ -3,7 +3,6 @@ import { factory, faker, title } from '@island.is/shared/mocking'
 import { createNationalId } from '@island.is/testing/fixtures'
 import {
   AuthCustomDelegation,
-  AuthDelegation,
   AuthApiScope,
   AuthDomain,
   AuthDelegationScope,
@@ -14,7 +13,6 @@ export const domain = factory<AuthDomain>({
   description: () => faker.lorem.paragraph(),
   nationalId: () => createNationalId('company'),
   displayName: () => faker.company.companyName(),
-  organisationLogoKey: ({ displayName }) => displayName,
   organisationLogoUrl: () => faker.image.business(16, 16),
 })
 

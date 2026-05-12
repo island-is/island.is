@@ -56,17 +56,6 @@ export class Domain extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: 'Stafrænt Ísland',
-  })
-  @ApiProperty({
-    example: 'Stafrænt Ísland',
-    description: 'This key is used to look up the organisation in Contentful.',
-  })
-  organisationLogoKey!: string
-
-  @Column({
-    type: DataType.STRING,
   })
   @ApiProperty({
     example: 'island@example.is',

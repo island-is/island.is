@@ -21,7 +21,6 @@ type DelegationScope = Pick<
   domain?: {
     displayName?: string
     organisationLogoUrl?: string | null
-    organisationLogoKey?: string
   } | null
   apiScope?: {
     name?: string

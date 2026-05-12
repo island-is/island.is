@@ -126,7 +126,6 @@ export class DelegationAdminResolver {
         displayName: '',
         description: '',
         nationalId: '',
-        organisationLogoKey: '',
       }
     }
 

@@ -20,7 +20,4 @@ export class Tenant {
 
   @Field({ nullable: true })
   description?: string
-
-  @Field({ nullable: true })
-  organisationLogoKey?: string
 }

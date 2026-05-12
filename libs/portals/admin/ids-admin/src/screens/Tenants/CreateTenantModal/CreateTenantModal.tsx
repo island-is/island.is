@@ -124,9 +124,6 @@ const CreateTenantModal = ({
             nationalId: result.data.nationalId,
             displayName: result.data.displayName,
             description: result.data.description,
-            // Backend still requires this field; sending the tenant name as a
-            // placeholder until the column is dropped from the database.
-            organisationLogoKey: result.data.name,
             contactEmail: result.data.contactEmail || undefined,
             environments: result.data.environments,
           },

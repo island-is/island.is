@@ -28,8 +28,5 @@ export class TenantEnvironment {
   description?: string
 
   @Field({ nullable: true })
-  organisationLogoKey?: string
-
-  @Field({ nullable: true })
   contactEmail?: string
 }

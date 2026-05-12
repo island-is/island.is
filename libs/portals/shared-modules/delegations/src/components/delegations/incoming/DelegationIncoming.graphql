@@ -9,7 +9,6 @@ fragment AuthCustomDelegation on AuthCustomDelegation {
     domain {
       displayName
       organisationLogoUrl
-      organisationLogoKey
     }
     apiScope(lang: $lang) {
       ...AuthApiScope
@@ -18,7 +17,6 @@ fragment AuthCustomDelegation on AuthCustomDelegation {
   domain {
     name
     displayName
-    organisationLogoKey
     organisationLogoUrl
   }
 }

@@ -5,7 +5,6 @@ const articDomain = {
   description: '64 Artic domain',
   national_id: '5005101370',
   display_name: '64 Artic',
-  organisation_logo_key: 'Stafrænt Ísland',
   contact_email: 'dev-artic@64-artic.is',
 }
 
