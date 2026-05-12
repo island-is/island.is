@@ -118,7 +118,7 @@ const AppealCase: FC = () => {
         workingCase.notifications,
       )
     ) {
-      router.push(`${destination}/${id}`)
+      router.push(`${destination}/${workingCase.id}`)
     } else {
       await sendNotifications()
       setModalVisible(true)
