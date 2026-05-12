@@ -310,6 +310,7 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
+          (civilClaimant.policeCaseNumbers?.length ?? 0) > 0 &&
           validate([
             [
               civilClaimant.nationalId,
