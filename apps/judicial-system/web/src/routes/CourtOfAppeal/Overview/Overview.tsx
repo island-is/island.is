@@ -72,7 +72,7 @@ const CourtOfAppealOverview = () => {
 
   return (
     <>
-      {appealBanner}
+      {workingCase.hasBeenAppealed && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

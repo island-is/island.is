@@ -67,7 +67,7 @@ const CourtOfAppealResult = () => {
 
   return (
     <>
-      {appealBanner}
+      {workingCase.hasBeenAppealed && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
