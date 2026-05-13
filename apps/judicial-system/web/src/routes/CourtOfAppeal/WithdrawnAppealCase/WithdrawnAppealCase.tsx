@@ -40,6 +40,9 @@ const WithdrawnAppealCase = () => {
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
+    undefined,
+    undefined,
+    targetAppealCase?.rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
