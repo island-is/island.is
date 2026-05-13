@@ -42,7 +42,8 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={3}
+      paddingBottom={1}
       paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
