@@ -72,6 +72,7 @@ const Overview = () => {
     <IntroWrapper
       title={m.occupationalLicenses}
       intro={formatMessage(m.occupationalLicensesDescription)}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !!errors.length && (

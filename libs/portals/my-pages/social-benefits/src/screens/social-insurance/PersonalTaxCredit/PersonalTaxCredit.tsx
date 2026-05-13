@@ -70,10 +70,11 @@ const PersonalTaxCredit = () => {
     <IntroWrapper
       title={formatMessage(m.personalTaxCredit)}
       intro={formatMessage(m.personalTaxCreditDescription)}
-      serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.socialInsuranceTooltip,
-      )}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: TRYGGINGASTOFNUN_SLUG,
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
     >
       {loading ? (
         <CardLoader />
@@ -107,15 +108,6 @@ const PersonalTaxCredit = () => {
               onSave={handleSaveMyTaxCredit}
             />
           </Box>
-
-          <AlertMessage
-            type="info"
-            message={
-              <Text as="span" variant="small" whiteSpace="preLine">
-                {formatMessage(m.taxBracketInfo)}
-              </Text>
-            }
-          />
         </Stack>
       )}
     </IntroWrapper>

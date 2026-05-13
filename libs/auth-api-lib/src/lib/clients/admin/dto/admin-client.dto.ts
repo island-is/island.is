@@ -135,6 +135,9 @@ export class AdminClientDto {
   @ApiPropertyOptional()
   modified?: Date
 
+  @ApiPropertyOptional()
+  archived?: Date
+
   @ApiProperty({
     description: 'Array of allowed CORS origins for the client.',
     type: [String],

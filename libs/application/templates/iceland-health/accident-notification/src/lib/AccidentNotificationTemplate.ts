@@ -235,6 +235,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+            },
           ],
         },
 
@@ -306,6 +314,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
+            },
           ],
         },
 
@@ -339,7 +355,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               notificationTemplateId:
                 NotificationConfig[NotificationType.AccidentNotificationPruned]
                   .templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({
@@ -363,6 +381,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
               shouldBeListedForRole: false,
+            },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/InReviewForm/index').then((val) =>
+                  Promise.resolve(val.ApplicantReview),
+                ),
+              read: 'all',
             },
           ],
         },

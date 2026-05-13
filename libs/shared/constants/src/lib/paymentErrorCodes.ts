@@ -59,6 +59,7 @@ export enum CardErrorCode {
   ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
   ApplePayNotConfigured = 'ApplePayNotConfigured',
   ApplePayReplayDetected = 'ApplePayReplayDetected',
+  ApplePaySignatureVerificationFailed = 'ApplePaySignatureVerificationFailed',
 }
 
 export enum InvoiceErrorCode {

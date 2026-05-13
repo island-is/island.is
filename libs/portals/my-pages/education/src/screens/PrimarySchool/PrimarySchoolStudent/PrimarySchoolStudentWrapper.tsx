@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 import { Hidden, Box } from '@island.is/island-ui/core'
 import {
-  IntroWrapperV2,
+  IntroWrapper,
   m,
   MMS_SLUG,
   TabNavigation,
@@ -50,7 +50,7 @@ export const PrimarySchoolStudentWrapper = ({
   ]
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={title}
       intro={psm.studentHubIntro}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
@@ -63,7 +63,7 @@ export const PrimarySchoolStudentWrapper = ({
         />
       </Hidden>
       <Box paddingTop={2}>{children}</Box>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

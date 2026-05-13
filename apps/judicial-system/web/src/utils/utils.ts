@@ -4,12 +4,14 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCase,
   AppealCaseState,
   Case,
   CaseAppealDecision,
@@ -253,32 +255,76 @@ export const getDefenceUserPartyIds = (
 /**
  * Returns a human-readable description of who appealed and when.
  *
- * Examples:
- * - "Sækjandi kærði í þinghaldi"
- * - "Kært af sækjanda 1. apríl 2026 kl. 10:00"
- * - "Verjandi Jón Jónsson kærði úrskurðinn 1. apríl 2026 kl. 10:00"
- * - "Lögmaður Anna Önnudóttir kærði úrskurðinn 1. apríl 2026 kl. 10:00"
+ * Branches by case type, then by appeal kind for indictment cases:
+ * - Request cases (case-level appeals only): in-court branch + "Kært af X"
+ *   passive form.
+ * - Indictment ruling-order appeals: subject-verb form ("Sækjandi kærði
+ *   úrskurðinn …").
+ * - Indictment case-level appeals (dismissal): same passive form as request
+ *   cases out-of-court — no in-court mechanic.
+ *
+ * `appealCase` defaults to `workingCase.appealCase` so case-level call sites
+ * can omit it; ruling-order call sites pass the specific appeal-case row.
  */
-export const getAppealActorText = (workingCase: Case): string => {
-  const appealedInCourt =
-    workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-    workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+export const getAppealActorText = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined = workingCase.appealCase,
+): string => {
+  if (isRequestCase(workingCase.type)) {
+    const appealedInCourt =
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
 
-  if (appealedInCourt) {
-    return workingCase.appealedByRole === UserRole.PROSECUTOR
-      ? 'Sækjandi kærði í þinghaldi'
-      : 'Varnaraðili kærði í þinghaldi'
+    if (appealedInCourt) {
+      return appealCase?.appealedByRole === UserRole.PROSECUTOR
+        ? 'Sækjandi kærði í þinghaldi'
+        : 'Varnaraðili kærði í þinghaldi'
+    }
+
+    const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
+
+    if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
+      return `Kært af sækjanda ${dateStr}`
+    }
+
+    const party = getAppealingPartyInfo(
+      workingCase,
+      appealCase?.appealedByNationalId,
+    )
+
+    return party
+      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+      : `Kært af verjanda ${dateStr}`
   }
 
-  const dateStr = formatDate(workingCase.appealedDate, 'PPPp')
+  // Indictment case
+  if (appealCase?.rulingFileId) {
+    const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
-  if (workingCase.appealedByRole === UserRole.PROSECUTOR) {
+    if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
+      return `Sækjandi kærði úrskurðinn ${dateStr}`
+    }
+
+    const party = getAppealingPartyInfo(
+      workingCase,
+      appealCase.appealedByNationalId,
+    )
+
+    return party
+      ? `${party.role} ${party.name} kærði úrskurðinn ${dateStr}`
+      : `Verjandi kærði úrskurðinn ${dateStr}`
+  }
+
+  // Indictment case-level (dismissal) appeal
+  const dateStr = formatDate(appealCase?.appealedDate, 'PPPp')
+
+  if (appealCase?.appealedByRole === UserRole.PROSECUTOR) {
     return `Kært af sækjanda ${dateStr}`
   }
 
   const party = getAppealingPartyInfo(
     workingCase,
-    workingCase.appealCase?.appealedByNationalId,
+    appealCase?.appealedByNationalId,
   )
 
   return party
@@ -338,6 +384,137 @@ export const getAppealingPartyInfo = (
   return undefined
 }
 
+/**
+ * Returns true iff the file's category is visible per the appeal-state rules,
+ * given the specific appeal-case row in scope. Encodes:
+ * - Brief categories: visible iff the appellant's role matches.
+ * - Statement categories: visible iff the submitter has actually submitted on
+ *   this appeal — singular date gate for request cases, per-party (defendantId
+ *   / civilClaimantId match against the lists) for indictment cases.
+ * - Free-form *_APPEAL_CASE_FILE: always visible while the appeal exists.
+ * - APPEAL_RULING / APPEAL_COURT_RECORD: visible to Court of Appeals always,
+ *   to all parties once the appeal is COMPLETED.
+ *
+ * Returns false when the file lacks a category, when the appeal-case row is
+ * absent, or when the category is not appeal-related.
+ */
+export const isAppealFileCategoryVisible = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined,
+  file: {
+    category?: CaseFileCategory | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+    rulingFileId?: string | null
+  },
+  user: User | undefined,
+): boolean => {
+  if (!file.category || !appealCase) {
+    return false
+  }
+
+  // Each AppealCase row owns its own files. Case-level appeals (rulingFileId
+  // null) only see case-level files; ruling-order appeals only see files
+  // tagged with their specific rulingFileId.
+  if ((appealCase.rulingFileId ?? null) !== (file.rulingFileId ?? null)) {
+    return false
+  }
+
+  switch (file.category) {
+    case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+    case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+      return appealCase.appealedByRole === UserRole.PROSECUTOR
+
+    case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+    case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE: {
+      if (appealCase.appealedByRole !== UserRole.DEFENDER) {
+        return false
+      }
+      if (isRequestCase(workingCase.type)) {
+        return true
+      }
+      // Indictment: the appellant's national id must match the confirmed
+      // defender of the file's defendant, or the confirmed spokesperson of
+      // the file's civil claimant.
+      if (!appealCase.appealedByNationalId) {
+        return false
+      }
+      const normalizedAppellantId = normalizeAndFormatNationalId(
+        appealCase.appealedByNationalId,
+      )
+      if (file.defendantId) {
+        const defendant = workingCase.defendants?.find(
+          (d) => d.id === file.defendantId,
+        )
+        return Boolean(
+          defendant?.isDefenderChoiceConfirmed &&
+            defendant.defenderNationalId &&
+            normalizedAppellantId.includes(defendant.defenderNationalId),
+        )
+      }
+      if (file.civilClaimantId) {
+        const civilClaimant = workingCase.civilClaimants?.find(
+          (cc) => cc.id === file.civilClaimantId,
+        )
+        return Boolean(
+          civilClaimant?.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.spokespersonNationalId &&
+            normalizedAppellantId.includes(
+              civilClaimant.spokespersonNationalId,
+            ),
+        )
+      }
+      return false
+    }
+
+    case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
+    case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
+      return Boolean(appealCase.prosecutorStatementDate)
+
+    case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
+    case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
+      if (isRequestCase(workingCase.type)) {
+        return Boolean(appealCase.defendantStatementDate)
+      }
+      if (file.defendantId) {
+        return Boolean(
+          appealCase.defendantStatementDates?.some(
+            (d) => d.defendantId === file.defendantId,
+          ),
+        )
+      }
+      if (file.civilClaimantId) {
+        return Boolean(
+          appealCase.civilClaimantStatementDates?.some(
+            (cc) => cc.civilClaimantId === file.civilClaimantId,
+          ),
+        )
+      }
+      return false
+
+    case CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE:
+      // Hidden from defenders in request cases (prosecution-only material).
+      if (isRequestCase(workingCase.type) && isDefenceUser(user)) {
+        return false
+      }
+      return true
+
+    case CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE:
+      return true
+
+    case CaseFileCategory.APPEAL_RULING:
+    case CaseFileCategory.APPEAL_COURT_RECORD:
+      return (
+        appealCase.appealState === AppealCaseState.COMPLETED ||
+        isCourtOfAppealsUser(user)
+      )
+
+    default:
+      return false
+  }
+}
+
 export const isMatchingAppealCaseFile = (
   workingCase: Case,
   categories: CaseFileCategory[],
@@ -345,14 +522,20 @@ export const isMatchingAppealCaseFile = (
     category?: CaseFileCategory | null
     defendantId?: string | null
     civilClaimantId?: string | null
+    rulingFileId?: string | null
   },
   user: User | undefined,
+  rulingFileId?: string | null,
 ): boolean => {
   if (!file.category) {
     return false
   }
 
   if (!categories.includes(file.category)) {
+    return false
+  }
+
+  if (rulingFileId && file.rulingFileId !== rulingFileId) {
     return false
   }
 
@@ -402,6 +585,80 @@ export const isMatchingAppealCaseFile = (
   }
 
   return false
+}
+
+// For indictment cases each defender / civil claimant spokesperson sends
+// their own statement, so resolve the per-party date from the per-appeal
+// lists by id. Request cases have a single defender, so the aggregated
+// appealCase.defendantStatementDate is the right answer.
+export const getCurrentUserStatementDate = (
+  workingCase: Case,
+  appealCase: AppealCase | null | undefined,
+  user: User | undefined,
+): string | undefined => {
+  if (!appealCase) {
+    return undefined
+  }
+
+  const isProsecution = isProsecutionUser(user)
+  const isDefence = isDefenceUser(user)
+
+  if (!isProsecution && !isDefence) {
+    return undefined
+  }
+
+  if (isRequestCase(workingCase.type)) {
+    return isProsecution
+      ? appealCase.prosecutorStatementDate ?? undefined
+      : appealCase.defendantStatementDate ?? undefined
+  }
+
+  if (!isIndictmentCase(workingCase.type)) {
+    return undefined
+  }
+
+  if (isProsecution) {
+    return appealCase.prosecutorStatementDate ?? undefined
+  }
+
+  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+    workingCase,
+    user,
+  )
+
+  if (defendantId) {
+    return appealCase?.defendantStatementDates?.find(
+      (d) => d.defendantId === defendantId,
+    )?.statementDate
+  }
+
+  if (civilClaimantId) {
+    return appealCase?.civilClaimantStatementDates?.find(
+      (c) => c.civilClaimantId === civilClaimantId,
+    )?.statementDate
+  }
+
+  return undefined
+}
+
+export const areAllDefenderDefendantsCancelledOrDismissed = (
+  nationalId: string | null | undefined,
+  defendants: Defendant[] | null | undefined,
+): boolean => {
+  if (!nationalId || !defendants) {
+    return false
+  }
+  const normalizedId = normalizeAndFormatNationalId(nationalId)
+  const defenderDefendants = defendants.filter(
+    (d) =>
+      d.isDefenderChoiceConfirmed &&
+      d.defenderNationalId &&
+      normalizedId.includes(d.defenderNationalId),
+  )
+  return (
+    defenderDefendants.length > 0 &&
+    defenderDefendants.every((d) => d.indictmentCancelledOrDismissedState)
+  )
 }
 
 // Use the gender of the single defendant if there is only one,

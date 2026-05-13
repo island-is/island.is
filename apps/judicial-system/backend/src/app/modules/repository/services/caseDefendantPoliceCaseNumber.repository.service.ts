@@ -95,7 +95,9 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     )
 
     const unassigned = rows
-      .filter((row) => row.defendantId == null)
+      .filter(
+        (row) => row.defendantId === null || row.defendantId === undefined,
+      )
       .map((row) => normalize(row.policeCaseNumber))
       .filter(
         (policeCaseNumber) =>
@@ -187,44 +189,49 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   async assignDefendantPoliceCaseNumbers(
     caseId: string,
     links: ReadonlyArray<{ defendantId: string; policeCaseNumber: string }>,
-  ): Promise<void> {
+    options: { transaction: Transaction },
+  ): Promise<string[]> {
     if (links.length === 0) {
-      return
-    }
-
-    const sequelize = this.model.sequelize
-    if (!sequelize) {
-      throw new Error('Sequelize instance unavailable')
+      return []
     }
 
     try {
-      await sequelize.transaction(async (transaction) => {
-        await this.model.bulkCreate(
-          links.map(({ defendantId, policeCaseNumber }) => ({
-            caseId,
-            defendantId,
-            policeCaseNumber,
-          })),
-          { transaction, ignoreDuplicates: true },
-        )
+      const { transaction } = options
 
-        const policeCaseNumbers = [
-          ...new Set(links.map((l) => l.policeCaseNumber)),
-        ]
+      const insertedLinks = await this.model.bulkCreate(
+        links.map(({ defendantId, policeCaseNumber }) => ({
+          caseId,
+          defendantId,
+          policeCaseNumber,
+        })),
+        { transaction, ignoreDuplicates: true, returning: true },
+      )
 
-        await this.model.destroy({
-          where: {
-            caseId,
-            defendantId: { [Op.is]: null },
-            policeCaseNumber: { [Op.in]: policeCaseNumbers },
-          },
-          transaction,
-        })
+      const newPoliceCaseNumbers = [
+        ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
+      ]
+
+      const policeCaseNumbers = [
+        ...new Set(links.map((l) => l.policeCaseNumber)),
+      ]
+
+      await this.model.destroy({
+        where: {
+          caseId,
+          defendantId: { [Op.is]: null },
+          policeCaseNumber: { [Op.in]: policeCaseNumbers },
+        },
+        transaction,
       })
 
       this.logger.debug(
-        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}`,
+        `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}` +
+          (newPoliceCaseNumbers.length > 0
+            ? ` (${newPoliceCaseNumbers.length} new)`
+            : ''),
       )
+
+      return newPoliceCaseNumbers
     } catch (error) {
       this.logger.error(
         `Error assigning defendant-linked police case number rows for case ${caseId}`,

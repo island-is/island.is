@@ -1,5 +1,3 @@
-import _uniqBy from 'lodash/uniqBy'
-
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
 import {

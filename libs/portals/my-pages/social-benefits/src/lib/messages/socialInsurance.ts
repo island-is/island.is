@@ -215,10 +215,10 @@ export const m = defineMessages({
     defaultMessage:
       'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
   },
-  taxBracketInfo: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-info',
+  taxBracketInfoMarkdown: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-information#markdown',
     defaultMessage:
-      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n\n• 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
+      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n* 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n* 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n* 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
   },
   taxCardTypePersonalTaxAllowance: {
     id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
@@ -308,6 +308,10 @@ export const m = defineMessages({
   calculateMyRights: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights',
     defaultMessage: 'Reikna mín réttindi',
+  },
+  calculateMyRightsLink: {
+    id: 'sp.social-insurance-maintenance:calculate-my-rights-link',
+    defaultMessage: 'https://island.is/s/tryggingastofnun/reiknivel',
   },
   noPaymentTypesFound: {
     id: 'sp.social-insurance-maintenance:no-payment-types-found',

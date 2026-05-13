@@ -39,6 +39,7 @@ const AppointmentDetail = () => {
     <IntroWrapper
       title={appointment?.title ?? messages.appointmentDetail}
       intro={messages.appointmentsDetailIntro}
+      desktopContentSpan="10/12"
       loading={loading}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

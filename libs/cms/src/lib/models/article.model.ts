@@ -38,6 +38,12 @@ export class Article {
   @Field({ nullable: true })
   importance?: number
 
+  @Field({ nullable: true })
+  contentLastReviewed?: string
+
+  @Field({ nullable: true })
+  showDateOfTheMostRecentReview?: boolean
+
   @CacheField(() => [SliceUnion])
   body: Array<typeof SliceUnion> = []
 
@@ -150,6 +156,8 @@ export const mapArticle = ({
     intro,
     importance: fields.importance ?? 0,
     body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
+    contentLastReviewed: fields.contentLastReviewed,
+    showDateOfTheMostRecentReview: fields.showDateOfTheMostRecentReview,
     processEntry: fields.processEntry
       ? mapProcessEntry(fields.processEntry)
       : null,

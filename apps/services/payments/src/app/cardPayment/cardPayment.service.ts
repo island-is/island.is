@@ -10,6 +10,7 @@ import { z } from 'zod'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import { PaymentStatus } from '../../types'
 import {
@@ -34,6 +35,7 @@ import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
+import { verifyApplePaySignature } from './applePaySignature'
 import {
   decryptApplePayPaymentToken,
   generateApplePayDecryptedChargeRequestOptions,
@@ -43,7 +45,6 @@ import {
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
-  redactCardNumber,
   validateAndParseApplePayValidationUrl,
 } from './cardPayment.utils'
 import {
@@ -69,6 +70,7 @@ export class CardPaymentService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
     private readonly paymentFlowService: PaymentFlowService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   // VERIFICATION METHODS ------------------------------------------------------------------------------------------------
@@ -367,11 +369,6 @@ export class CardPaymentService {
   async validateApplePayMerchant(
     validationURL: string,
   ): Promise<ApplePaySessionResponse> {
-    // DEBUG-APPLEPAY: extra logging for prod-only Apple Pay validation; remove after rollout
-    this.logger.info('[DEBUG-APPLEPAY] Merchant validation started', {
-      validationURL,
-    })
-
     const {
       applePayMerchantIdentifier,
       applePayMerchantIdentityCert,
@@ -379,18 +376,6 @@ export class CardPaymentService {
       applePayDomainName,
       applePayDisplayName,
     } = this.requireMerchantIdentityConfig()
-
-    // DEBUG-APPLEPAY: PEM header lines + lengths help diagnose env-var injection bugs (literal `\n` vs real newlines, wrong cert pasted, etc.)
-    this.logger.info('[DEBUG-APPLEPAY] Merchant validation config resolved', {
-      merchantIdentifier: applePayMerchantIdentifier,
-      displayName: applePayDisplayName,
-      initiativeContext: applePayDomainName,
-      certLength: applePayMerchantIdentityCert.length,
-      certHeader: applePayMerchantIdentityCert.split('\n')[0],
-      keyLength: applePayMerchantIdentityKey.length,
-      keyHeader: applePayMerchantIdentityKey.split('\n')[0],
-      agentAlreadyMemoized: this.applePayMerchantAgent !== null,
-    })
 
     // SSRF guard: re-validate the URL host at the fetch site.
     validateAndParseApplePayValidationUrl(validationURL)
@@ -412,29 +397,21 @@ export class CardPaymentService {
     try {
       response = await fetch(validationURL, requestOptions)
     } catch (e) {
-      // DEBUG-APPLEPAY: fetch-level failures (mTLS handshake, DNS, network) never reach the !response.ok branch
-      this.logger.error(
-        '[DEBUG-APPLEPAY] Merchant validation fetch threw before response',
-        {
-          validationURL,
-          error: (e as Error).message,
-          stack: (e as Error).stack,
-        },
-      )
+      this.logger.error('Apple Pay merchant validation fetch failed', {
+        validationURL,
+        error: (e as Error).message,
+      })
       throw e
     }
 
     if (!response.ok) {
       const responseBody = await response.text()
-      this.logger.error(
-        '[DEBUG-APPLEPAY] Merchant validation non-OK response',
-        {
-          validationURL,
-          status: response.status,
-          statusText: response.statusText,
-          responseBody,
-        },
-      )
+      this.logger.error('Apple Pay merchant validation returned non-OK', {
+        validationURL,
+        status: response.status,
+        statusText: response.statusText,
+        responseBody,
+      })
       throw new BadRequestException(
         `Apple Pay validation failed: ${response.status} ${responseBody}`,
       )
@@ -442,13 +419,6 @@ export class CardPaymentService {
 
     const data = await response.json()
     const session = JSON.stringify(data)
-
-    // DEBUG-APPLEPAY: capture session prefix so we can correlate with Apple's logs without leaking the full session blob
-    this.logger.info('[DEBUG-APPLEPAY] Merchant validation succeeded', {
-      validationURL,
-      sessionLength: session.length,
-      sessionPrefix: session.slice(0, 64),
-    })
 
     return { session }
   }
@@ -537,8 +507,7 @@ export class CardPaymentService {
     const { paymentFlowId, transactionIdentifier } = input
     const logPrefix = `[${paymentFlowId}]`
 
-    // DEBUG-APPLEPAY: extra logging for prod-only Apple Pay charge; remove after rollout
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Charge started`, {
+    this.logger.info(`${logPrefix} Apple Pay charge started`, {
       paymentFlowId,
       totalPrice,
       tokenVersion: input.paymentData.version,
@@ -550,38 +519,13 @@ export class CardPaymentService {
     const { applePayPaymentProcessingKey, applePayMerchantIdentifier } =
       this.requireApplePayDecryptionConfig()
 
-    // DEBUG-APPLEPAY: PEM header + length helps diagnose missing newlines / wrong key paste in env vars
-    this.logger.info(
-      `${logPrefix} [DEBUG-APPLEPAY] Decryption config resolved`,
-      {
-        paymentFlowId,
-        merchantIdentifier: applePayMerchantIdentifier,
-        processingKeyLength: applePayPaymentProcessingKey.length,
-        processingKeyHeader: applePayPaymentProcessingKey.split('\n')[0],
-        processingKeyAlreadyValidated: this.applePayProcessingKeyValidated,
-      },
-    )
-
-    try {
-      this.validateApplePayProcessingKeyOnce(applePayPaymentProcessingKey)
-    } catch (e) {
-      this.logger.error(
-        `${logPrefix} [DEBUG-APPLEPAY] Processing key PEM failed to parse`,
-        {
-          paymentFlowId,
-          error: (e as Error).message,
-          processingKeyLength: applePayPaymentProcessingKey.length,
-          processingKeyHeader: applePayPaymentProcessingKey.split('\n')[0],
-        },
-      )
-      throw e
-    }
+    this.validateApplePayProcessingKeyOnce(applePayPaymentProcessingKey)
 
     // Reject replay of a previously seen Apple Pay token.
     const replayCacheKey = this.applePayReplayCacheKey(transactionIdentifier)
     const alreadySeen = await this.cacheManager.get(replayCacheKey)
     if (alreadySeen) {
-      this.logger.warn(`${logPrefix} [DEBUG-APPLEPAY] Replay detected`, {
+      this.logger.warn(`${logPrefix} Apple Pay replay detected`, {
         paymentFlowId,
         transactionIdentifier,
         replayCacheKey,
@@ -589,23 +533,54 @@ export class CardPaymentService {
       throw new BadRequestException(CardErrorCode.ApplePayReplayDetected)
     }
 
-    // TODO(apple-pay-signature-verify): verify paymentData.signature (CMS),
-    // chain to Apple Root CA G3, leaf OID 1.2.840.113635.100.6.29, signing
-    // time within ~5 min, and header.publicKeyHash matches our payment
-    // processing public key SPKI. Endpoint is gated by
-    // Features.isIslandisApplePayPaymentEnabled while this is outstanding.
+    let enforceVerification = true
+    try {
+      enforceVerification = await this.featureFlagService.getValue(
+        Features.isIslandisApplePayStrictSignatureVerificationEnabled,
+        true,
+      )
+    } catch (e) {
+      this.logger.error(
+        `${logPrefix} [APPLEPAY-VERIFY] feature-flag lookup failed; fail-safe to enforce`,
+        e,
+      )
+    }
 
-    // DEBUG-APPLEPAY: capture token shape pre-decrypt to attribute decrypt failures to malformed input vs key/KDF mismatch
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Token pre-decrypt`, {
-      paymentFlowId,
-      version: input.paymentData.version,
-      dataLength: input.paymentData.data?.length ?? 0,
-      signatureLength: input.paymentData.signature?.length ?? 0,
-      ephemeralPublicKeyLength:
-        input.paymentData.header?.ephemeralPublicKey?.length ?? 0,
-      publicKeyHashLength: input.paymentData.header?.publicKeyHash?.length ?? 0,
-      hasTransactionId: !!input.paymentData.header?.transactionId,
-    })
+    if (!enforceVerification) {
+      this.logger.warn(
+        `${logPrefix} [APPLEPAY-VERIFY] signature verification skipped`,
+        {
+          paymentFlowId,
+          transactionIdentifier,
+        },
+      )
+    } else {
+      // Trace the verification process, for error logging
+      const traceEvents: { stage: string; data: Record<string, unknown> }[] = []
+      try {
+        verifyApplePaySignature({
+          paymentData: input.paymentData,
+          paymentProcessingKey: applePayPaymentProcessingKey,
+          onTrace: (event) => {
+            traceEvents.push(event)
+          },
+        })
+      } catch (e) {
+        const message = (e as Error).message
+        const stageMatch = message.match(/\[stage=([^\]]+)\]/)
+        const failureStage = stageMatch?.[1] ?? 'unknown'
+        this.logger.error(`${logPrefix} [APPLEPAY-VERIFY] result=fail`, {
+          paymentFlowId,
+          transactionIdentifier,
+          failureStage,
+          failureReason: message,
+          traceEvents,
+        })
+        throw new BadRequestException(
+          CardErrorCode.ApplePaySignatureVerificationFailed,
+        )
+      }
+    }
 
     let decryptedData: ReturnType<typeof decryptApplePayPaymentToken>
     try {
@@ -615,27 +590,14 @@ export class CardPaymentService {
         merchantIdentifier: applePayMerchantIdentifier,
       })
     } catch (e) {
-      // DEBUG-APPLEPAY: most likely culprits are KDF Party V mismatch (wrong merchantIdentifier),
-      // wrong processing key, or malformed ephemeral SPKI / GCM auth-tag mismatch
-      this.logger.error(`${logPrefix} [DEBUG-APPLEPAY] Token decrypt failed`, {
+      this.logger.error(`${logPrefix} Apple Pay token decrypt failed`, {
         paymentFlowId,
         error: (e as Error).message,
-        stack: (e as Error).stack,
         merchantIdentifier: applePayMerchantIdentifier,
         tokenVersion: input.paymentData.version,
-        dataLength: input.paymentData.data?.length ?? 0,
-        ephemeralPublicKeyLength:
-          input.paymentData.header?.ephemeralPublicKey?.length ?? 0,
       })
       throw e
     }
-
-    // DEBUG-APPLEPAY: confirms decrypt produced sensible fields before we forward to Valitor
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Token decrypted`, {
-      paymentFlowId,
-      maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
-      cryptogramLength: decryptedData.paymentCryptogram.length,
-    })
 
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
@@ -666,20 +628,6 @@ export class CardPaymentService {
       )
     }
 
-    // DEBUG-APPLEPAY: log the gateway request shape so we can verify the payload matches Valitor's WalletPayment spec
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Gateway request prepared`, {
-      paymentFlowId,
-      gatewayUrl: `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
-      maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
-      amount: totalPrice,
-      correlationId: paymentTrackingData.correlationId,
-      merchantReferenceData: paymentTrackingData.merchantReferenceData,
-      bodyLength:
-        typeof requestOptions.body === 'string'
-          ? requestOptions.body.length
-          : 0,
-    })
-
     let response: Response
     try {
       response = await fetch(
@@ -687,29 +635,13 @@ export class CardPaymentService {
         requestOptions,
       )
     } catch (e) {
-      // DEBUG-APPLEPAY: gateway DNS / TLS / network errors surface here, never reach response.ok
-      this.logger.error(
-        `${logPrefix} [DEBUG-APPLEPAY] Gateway fetch threw before response`,
-        {
-          paymentFlowId,
-          gatewayUrl: `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
-          error: (e as Error).message,
-          stack: (e as Error).stack,
-        },
-      )
+      this.logger.error(`${logPrefix} Apple Pay gateway fetch failed`, {
+        paymentFlowId,
+        gatewayUrl: `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
+        error: (e as Error).message,
+      })
       throw e
     }
-
-    // DEBUG-APPLEPAY: cheap signal for "did Valitor even acknowledge" before we try to parse
-    this.logger.info(
-      `${logPrefix} [DEBUG-APPLEPAY] Gateway response received`,
-      {
-        paymentFlowId,
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-      },
-    )
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
       paymentFlowId,
@@ -719,12 +651,8 @@ export class CardPaymentService {
       errorMessage: 'Failed to charge Apple Pay payment',
     })
 
-    // Replay marker is already set pre-fetch; on success there's nothing
-    // more to do here.
-
-    this.logger.info(`${logPrefix} [DEBUG-APPLEPAY] Charge succeeded`, {
+    this.logger.info(`${logPrefix} Apple Pay charge succeeded`, {
       paymentFlowId,
-      maskedCardNumber: redactCardNumber(decryptedData.cardNumber),
       responseCode: data.responseCode,
       responseDescription: data.responseDescription,
       correlationID: data.correlationID,
@@ -737,7 +665,10 @@ export class CardPaymentService {
   }
 
   private applePayReplayCacheKey(transactionIdentifier: string): string {
-    return `applepay:tx:${transactionIdentifier}`
+    // Lowercase before keying so case variants of the same Apple Pay
+    // transaction id (which is hex) cannot bypass replay detection by
+    // hitting different cache slots.
+    return `applepay:tx:${transactionIdentifier.toLowerCase()}`
   }
 
   // REFUND METHODS ------------------------------------------------------------------------------------------------
