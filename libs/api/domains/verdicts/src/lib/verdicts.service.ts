@@ -20,6 +20,7 @@ import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
 import { CourtOfAppealAppealsResponse } from './dto/courtOfAppealAppeals.response'
 import { VerdictsApiModuleConfig } from './verdicts.config'
 import { VERDICTS_FETCH } from './verdicts.fetch'
+import { SupremeCourtDeterminationCaseTypesResponse } from './dto/supremeCourtDeterminationCaseTypes.response'
 
 @Injectable()
 export class VerdictsService {
@@ -96,6 +97,18 @@ export class VerdictsService {
     input: SupremeCourtDeterminationByIdInput,
   ): Promise<SupremeCourtDeterminationByIdResponse | null> {
     return this.verdictsClientService.getSupremeCourtDeterminationById(input.id)
+  }
+
+  async getSupremeCourtDeterminationCaseTypes(): Promise<SupremeCourtDeterminationCaseTypesResponse> {
+    const response =
+      await this.verdictsClientService.getSupremeCourtDeterminationCaseTypes()
+    return {
+      caseTypes: response
+        .filter((item) => Boolean(item.label?.trim()))
+        .map((item) => ({
+          label: item.label as string,
+        })),
+    }
   }
 
   async getSupremeCourtAppeals(
