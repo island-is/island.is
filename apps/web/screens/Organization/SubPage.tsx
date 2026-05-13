@@ -218,7 +218,7 @@ export const SubPageContent = ({
         )}
       </Stack>
       {subpage?.showDateOfTheMostRecentReview && subpage.contentLastReviewed && (
-        <GridContainer>
+        <GridContainer className="rs_read">
           <Box paddingTop={4}>
             <GridRow>
               <GridColumn

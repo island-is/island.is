@@ -278,7 +278,7 @@ const ProjectPage: Screen<PageProps> = ({
       {!!subpage &&
         subpage.showDateOfTheMostRecentReview &&
         subpage.contentLastReviewed && (
-          <Box paddingTop={2}>
+          <Box paddingTop={2} className="rs_read">
             <Text variant="small">
               {`${n(
                 'contentLastReviewedLabel',
