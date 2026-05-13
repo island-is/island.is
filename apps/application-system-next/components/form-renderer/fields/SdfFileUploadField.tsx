@@ -255,6 +255,13 @@ export const SdfFileUploadField = ({
           payload: { fileToRemove },
         })
         setSumOfFileCount((prev) => prev - 1)
+        setSumOfFileSizes((prev) =>
+          Math.max(
+            0,
+            prev -
+              (fileToRemove.originalFileObj?.size ?? fileToRemove.size ?? 0),
+          ),
+        )
       }
 
       if (overwriteError) setUploadError(undefined)
@@ -339,6 +346,10 @@ export const SdfFileUploadField = ({
             },
           })
         } catch {
+          dispatch({
+            type: FileActionType.UPDATE,
+            payload: { file: f, status: 'error', percent: 0 },
+          })
           setUploadError(formatMessage(coreErrorMessages.fileUpload))
         }
       })
@@ -382,8 +393,21 @@ export const SdfFileUploadField = ({
           return
         }
         if (component.accept) {
-          const acceptedExtensions = component.accept.split(',')
-          if (!acceptedExtensions.includes(file.file.type)) {
+          const acceptedEntries = component.accept
+            .split(',')
+            .map((entry) => entry.trim().toLowerCase())
+          const fileName = file.file.name.toLowerCase()
+          const lastDot = fileName.lastIndexOf('.')
+          const fileExt = lastDot >= 0 ? fileName.slice(lastDot) : ''
+
+          const isAccepted = acceptedEntries.some(
+            (entry) =>
+              entry === fileExt ||
+              `.${entry}` === fileExt ||
+              entry === file.file.type,
+          )
+
+          if (!isAccepted) {
             setUploadError(
               formatMessage(coreErrorMessages.fileInvalidExtension, {
                 accept: component.accept,
