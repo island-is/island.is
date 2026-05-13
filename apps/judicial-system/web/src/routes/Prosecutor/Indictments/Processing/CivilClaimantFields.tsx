@@ -215,9 +215,7 @@ export const CivilClaimantFields = ({
     )
   }, [civilClaimant.policeCaseNumbers, defendants])
 
-  const handlePoliceCaseNumbersChange = (
-    newPoliceCaseNumbers: string[],
-  ) => {
+  const handlePoliceCaseNumbersChange = (newPoliceCaseNumbers: string[]) => {
     const newAvailableDefendantIds = new Set(
       defendants
         .filter((d) =>
@@ -228,8 +226,8 @@ export const CivilClaimantFields = ({
         .map((d) => d.id),
     )
 
-    const prunedDefendantIds = (civilClaimant.defendantIds ?? []).filter(
-      (id) => newAvailableDefendantIds.has(id),
+    const prunedDefendantIds = (civilClaimant.defendantIds ?? []).filter((id) =>
+      newAvailableDefendantIds.has(id),
     )
 
     handleSetAndSendCivilClaimantToServer({
@@ -431,17 +429,13 @@ export const CivilClaimantFields = ({
                     spokespersonEmail,
                   })
                 }
-                onPhoneNumberChange={(
-                  spokespersonPhoneNumber: string | null,
-                ) =>
+                onPhoneNumberChange={(spokespersonPhoneNumber: string | null) =>
                   handleUpdateCivilClaimantState({
                     civilClaimantId: civilClaimant.id,
                     spokespersonPhoneNumber,
                   })
                 }
-                onPhoneNumberSave={(
-                  spokespersonPhoneNumber: string | null,
-                ) =>
+                onPhoneNumberSave={(spokespersonPhoneNumber: string | null) =>
                   handleUpdateCivilClaimant({
                     civilClaimantId: civilClaimant.id,
                     spokespersonPhoneNumber,
@@ -508,9 +502,7 @@ export const CivilClaimantFields = ({
               value: pcn,
             }))}
             onChange={(selectedOptions) =>
-              handlePoliceCaseNumbersChange(
-                selectedOptions.map((o) => o.value),
-              )
+              handlePoliceCaseNumbersChange(selectedOptions.map((o) => o.value))
             }
           />
           {availableDefendants.length > 0 && (
@@ -539,11 +531,7 @@ export const CivilClaimantFields = ({
         </BlueBox>
       </Box>
       <Box marginTop={3}>
-        <SectionHeading
-          title="Bótakrafa"
-          heading="h4"
-          marginBottom={2}
-        />
+        <SectionHeading title="Bótakrafa" heading="h4" marginBottom={2} />
         <InputFileUpload
           name={`civilClaim-${civilClaimant.id}`}
           files={claimantFiles}
@@ -563,9 +551,7 @@ export const CivilClaimantFields = ({
           onRemove={(file) =>
             handleRemove(file as TUploadFile, removeUploadFile)
           }
-          onRetry={(file) =>
-            handleRetry(file as TUploadFile, updateUploadFile)
-          }
+          onRetry={(file) => handleRetry(file as TUploadFile, updateUploadFile)}
         />
       </Box>
     </>
