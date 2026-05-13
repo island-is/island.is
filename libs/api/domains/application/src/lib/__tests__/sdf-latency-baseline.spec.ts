@@ -1,10 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { SdfResolver } from '../sdf.resolver'
 import { SdfService } from '../sdf.service'
-import {
-  SdfActionType,
-  SdfExecuteActionInput,
-} from '../sdf.model'
+import { SdfActionType, SdfExecuteActionInput } from '../sdf.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   ComponentDtoWidthEnum,
@@ -80,9 +77,27 @@ const createRealisticScreenDto = (): ScreenDto => {
       removeItemLabel: 'Fjarlægja',
       children: [
         JSON.stringify([
-          { id: 'periods[0].startDate', type: 'DATE', label: 'Upphafsdagur', required: true, disabled: false },
-          { id: 'periods[0].endDate', type: 'DATE', label: 'Lokadagur', required: true, disabled: false },
-          { id: 'periods[0].ratio', type: 'SLIDER', label: 'Hlutfall', required: true, disabled: false },
+          {
+            id: 'periods[0].startDate',
+            type: 'DATE',
+            label: 'Upphafsdagur',
+            required: true,
+            disabled: false,
+          },
+          {
+            id: 'periods[0].endDate',
+            type: 'DATE',
+            label: 'Lokadagur',
+            required: true,
+            disabled: false,
+          },
+          {
+            id: 'periods[0].ratio',
+            type: 'SLIDER',
+            label: 'Hlutfall',
+            required: true,
+            disabled: false,
+          },
         ]),
       ],
     },
@@ -141,9 +156,7 @@ const createRealisticScreenDto = (): ScreenDto => {
           id: 'periods',
           title: 'Tímabil',
           isComplete: false,
-          children: [
-            { id: 'sub-periods', title: 'Tímabil orlofs' },
-          ],
+          children: [{ id: 'sub-periods', title: 'Tímabil orlofs' }],
         },
         {
           id: 'payments',
@@ -239,7 +252,9 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
     const p95 = percentile(latencies, 95)
 
     console.log(
-      `getScreen GQL overhead: p50=${p50.toFixed(2)}ms, p95=${p95.toFixed(2)}ms (n=${ITERATIONS})`,
+      `getScreen GQL overhead: p50=${p50.toFixed(2)}ms, p95=${p95.toFixed(
+        2,
+      )}ms (n=${ITERATIONS})`,
     )
 
     expect(p50).toBeLessThan(5)
@@ -273,7 +288,9 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
     const p95 = percentile(latencies, 95)
 
     console.log(
-      `executeAction (NEXT_PAGE) GQL overhead: p50=${p50.toFixed(2)}ms, p95=${p95.toFixed(2)}ms (n=${ITERATIONS})`,
+      `executeAction (NEXT_PAGE) GQL overhead: p50=${p50.toFixed(
+        2,
+      )}ms, p95=${p95.toFixed(2)}ms (n=${ITERATIONS})`,
     )
 
     expect(p50).toBeLessThan(5)
@@ -303,7 +320,9 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
     const p95 = percentile(latencies, 95)
 
     console.log(
-      `executeAction (REFETCH) GQL overhead: p50=${p50.toFixed(2)}ms, p95=${p95.toFixed(2)}ms (n=${ITERATIONS})`,
+      `executeAction (REFETCH) GQL overhead: p50=${p50.toFixed(
+        2,
+      )}ms, p95=${p95.toFixed(2)}ms (n=${ITERATIONS})`,
     )
 
     expect(p50).toBeLessThan(5)
