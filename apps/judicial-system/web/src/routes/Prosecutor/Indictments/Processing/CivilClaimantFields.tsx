@@ -20,6 +20,7 @@ import {
   InputNationalId,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
   CivilClaimant,
@@ -31,7 +32,6 @@ import {
   useNationalRegistry,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload/useS3Upload'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 
 import { strings } from './processing.strings'
 

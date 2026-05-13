@@ -14,7 +14,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
-
 import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
 
 const defenderCaseFileCategoriesForRequestCases = [
