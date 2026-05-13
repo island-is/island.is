@@ -316,9 +316,6 @@ export class TranslationService extends MultiEnvironmentService {
             className: input.className,
             property: input.property,
             key: input.key,
-            deleteTranslationDto: {
-              environments: [environment],
-            },
           }),
         )
         deletedEnvironments.push(environment)

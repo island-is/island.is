@@ -146,16 +146,32 @@ export const GrantTypeModal = ({ modal }: GrantTypeModalProps) => {
               paddingTop={4}
               display="flex"
               justifyContent="spaceBetween"
+              alignItems="center"
               columnGap={2}
             >
               <Button variant="ghost" onClick={modal.resetModalState}>
                 {formatMessage(m.cancel)}
               </Button>
-              <Button onClick={modal.handleSubmit} loading={modal.isSubmitting}>
-                {modal.isEditing
-                  ? formatMessage(m.save)
-                  : formatMessage(m.create)}
-              </Button>
+              <Box display="flex" alignItems="center" columnGap={3}>
+                {modal.isEditing &&
+                  modal.userAvailableEnvironments.length > 1 && (
+                    <Checkbox
+                      label={formatMessage(m.saveForAllEnvironments)}
+                      name="saveOnAllEnvironments"
+                      checked={modal.saveOnAllEnvs}
+                      onChange={modal.toggleSaveOnAllEnvs}
+                    />
+                  )}
+                <Button
+                  onClick={modal.handleSubmit}
+                  loading={modal.isSubmitting}
+                  disabled={modal.loadingGrantType || modal.isPublishing}
+                >
+                  {modal.isEditing
+                    ? formatMessage(m.save)
+                    : formatMessage(m.create)}
+                </Button>
+              </Box>
             </Box>
           </Stack>
         </Box>

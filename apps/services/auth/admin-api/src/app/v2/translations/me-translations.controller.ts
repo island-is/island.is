@@ -34,7 +34,6 @@ import { NoContentException } from '@island.is/nest/problem'
 import { CreateTranslationDto } from './dto/create-translation.dto'
 import { PagedTranslationsDto } from './dto/paged-translations.dto'
 import { UpdateTranslationDto } from './dto/update-translation.dto'
-import { DeleteTranslationDto } from './dto/delete-translation.dto'
 
 const namespace = '@island.is/auth/admin-api/v2/translations'
 
@@ -179,7 +178,6 @@ export class MeTranslationsController {
     @Param('className') className: string,
     @Param('property') property: string,
     @Param('key') key: string,
-    @Body() input: DeleteTranslationDto,
   ): Promise<void> {
     const resource = translationResource({ language, className, property, key })
     await this.auditService.auditPromise(
@@ -189,7 +187,6 @@ export class MeTranslationsController {
         action: 'delete',
         resources: resource,
         alsoLog: true,
-        meta: { environments: input.environments },
       },
       this.translationService.deleteTranslation({
         language,

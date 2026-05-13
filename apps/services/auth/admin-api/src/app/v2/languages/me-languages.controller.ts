@@ -34,7 +34,6 @@ import { NoContentException } from '@island.is/nest/problem'
 
 import { PagedLanguagesDto } from './dto/paged-languages.dto'
 import { UpdateLanguageDto } from './dto/update-language.dto'
-import { DeleteLanguageDto } from './dto/delete-language.dto'
 
 const namespace = '@island.is/auth/admin-api/v2/languages'
 const MAX_COUNT = 10000
@@ -166,7 +165,6 @@ export class MeLanguagesController {
   async delete(
     @CurrentUser() user: User,
     @Param('isoKey') isoKey: string,
-    @Body() input: DeleteLanguageDto,
   ): Promise<void> {
     await this.auditService.auditPromise(
       {
@@ -175,7 +173,6 @@ export class MeLanguagesController {
         action: 'delete',
         resources: isoKey,
         alsoLog: true,
-        meta: { environments: input.environments },
       },
       this.translationService.deleteLanguage(isoKey),
     )

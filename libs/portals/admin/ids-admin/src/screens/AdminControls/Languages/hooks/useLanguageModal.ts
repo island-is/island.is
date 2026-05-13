@@ -48,6 +48,7 @@ export const useLanguageModal = ({
   >([])
   const [loadingLanguage, setLoadingLanguage] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
   const lastHandledFetcherData = useRef<LanguagesActionResult | null>(null)
 
   const [fetchLanguage] = useLazyQuery<
@@ -72,6 +73,11 @@ export const useLanguageModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setSaveOnAllEnvs(false)
+  }, [])
+
+  const toggleSaveOnAllEnvs = useCallback(() => {
+    setSaveOnAllEnvs((prev) => !prev)
   }, [])
 
   useEffect(() => {
@@ -181,7 +187,13 @@ export const useLanguageModal = ({
         const { data } = await fetchLanguage({
           variables: { isoKey: formData.isoKey },
         })
-        if (data?.authAdminLanguage) {
+
+        const existingEnvs =
+          data?.authAdminLanguage?.availableEnvironments ?? []
+        const overlap = existingEnvs.filter((env) =>
+          selectedEnvironments.includes(env),
+        )
+        if (overlap.length > 0) {
           errors.isoKey = formatMessage(m.languagesErrorAlreadyExists)
         }
       } catch {
@@ -210,8 +222,12 @@ export const useLanguageModal = ({
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
-    } else if (isEditing && userAvailableEnvironments.length > 0) {
-      submitData.set('environments', JSON.stringify(userAvailableEnvironments))
+    } else if (isEditing) {
+      const targets =
+        saveOnAllEnvs && userAvailableEnvironments.length > 1
+          ? userAvailableEnvironments
+          : [selectedEnvResult.environment]
+      submitData.set('environments', JSON.stringify(targets))
     }
 
     fetcher.submit(submitData, { method: 'post' })
@@ -306,6 +322,8 @@ export const useLanguageModal = ({
     environmentOptions,
     selectedEnvResult,
     configuredEnvironments,
+    userAvailableEnvironments,
+    saveOnAllEnvs,
     openCreateModal,
     openEditModal,
     resetModalState,
@@ -314,6 +332,7 @@ export const useLanguageModal = ({
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,
+    toggleSaveOnAllEnvs,
   }
 }
 

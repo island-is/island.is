@@ -53,6 +53,7 @@ export const useTranslationModal = ({
   >([])
   const [loadingTranslation, setLoadingTranslation] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
   const lastHandledFetcherData = useRef<TranslationsActionResult | null>(null)
 
   const [fetchTranslation] = useLazyQuery<
@@ -77,6 +78,11 @@ export const useTranslationModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setSaveOnAllEnvs(false)
+  }, [])
+
+  const toggleSaveOnAllEnvs = useCallback(() => {
+    setSaveOnAllEnvs((prev) => !prev)
   }, [])
 
   useEffect(() => {
@@ -203,7 +209,13 @@ export const useTranslationModal = ({
             },
           },
         })
-        if (data?.authAdminTranslation) {
+
+        const existingEnvs =
+          data?.authAdminTranslation?.availableEnvironments ?? []
+        const overlap = existingEnvs.filter((env) =>
+          selectedEnvironments.includes(env),
+        )
+        if (overlap.length > 0) {
           errors.key = formatMessage(m.translationsErrorAlreadyExists)
         }
       } catch {
@@ -236,8 +248,12 @@ export const useTranslationModal = ({
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
-    } else if (isEditing && userAvailableEnvironments.length > 0) {
-      submitData.set('environments', JSON.stringify(userAvailableEnvironments))
+    } else if (isEditing) {
+      const targets =
+        saveOnAllEnvs && userAvailableEnvironments.length > 1
+          ? userAvailableEnvironments
+          : [selectedEnvResult.environment]
+      submitData.set('environments', JSON.stringify(targets))
     }
 
     fetcher.submit(submitData, { method: 'post' })
@@ -338,6 +354,8 @@ export const useTranslationModal = ({
     languageOptions,
     selectedEnvResult,
     configuredEnvironments,
+    userAvailableEnvironments,
+    saveOnAllEnvs,
     openCreateModal,
     openEditModal,
     resetModalState,
@@ -346,6 +364,7 @@ export const useTranslationModal = ({
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,
+    toggleSaveOnAllEnvs,
   }
 }
 

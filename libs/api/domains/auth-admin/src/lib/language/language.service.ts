@@ -255,9 +255,6 @@ export class LanguageService extends MultiEnvironmentService {
         await this.makeRequest(user, environment, (api) =>
           api.meLanguagesControllerDeleteRaw({
             isoKey,
-            deleteLanguageDto: {
-              environments: [environment],
-            },
           }),
         )
         deletedEnvironments.push(environment)
