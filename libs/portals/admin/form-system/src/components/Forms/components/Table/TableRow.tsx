@@ -25,7 +25,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
@@ -78,7 +78,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
-
+  const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
@@ -308,20 +308,30 @@ export const TableRow = ({
       console.error('Error updating form:', error)
     }
 
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+        },
       },
-    })
+    )
   }
 
   const view = async () => {
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
-        readOnly: true,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+          readOnly: true,
+        },
       },
-    })
+    )
   }
 
   return (

@@ -46,6 +46,7 @@ export type ZendeskConfiguration = {
       snippetUrl?: string
       urlTrackingTicketId?: string
       chatBubbleVariant?: 'default' | 'circle'
+      chatBubbleTitle?: string
     }
   }
 >

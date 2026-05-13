@@ -619,22 +619,20 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    if (!application.skipValidation) {
-      await this.validationService.validateIncomingAnswers(
-        existingApplication as BaseApplication,
-        newAnswers,
-        user.nationalId,
-        true,
-        intl.formatMessage,
-      )
+    await this.validationService.validateIncomingAnswers(
+      existingApplication as BaseApplication,
+      newAnswers,
+      user.nationalId,
+      true,
+      intl.formatMessage,
+    )
 
-      await this.validationService.validateApplicationSchema(
-        existingApplication,
-        newAnswers,
-        intl.formatMessage,
-        user,
-      )
-    }
+    await this.validationService.validateApplicationSchema(
+      existingApplication,
+      newAnswers,
+      intl.formatMessage,
+      user,
+    )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const applicantActors: string[] =

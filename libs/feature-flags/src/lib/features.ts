@@ -44,7 +44,7 @@ export enum Features {
   inheritanceReportReviewEnabled = 'isInheritanceReportReviewEnabled',
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
-
+  isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -190,6 +190,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+
+  organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }
 
 export enum ServerSideFeature {

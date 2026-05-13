@@ -3,11 +3,12 @@ import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
-import { Case } from '../../repository'
+import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
+import { Case, CaseRepositoryService } from '../../repository'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
 
 jest.mock('isomorphic-fetch')
@@ -26,15 +27,23 @@ type GivenWhenThen = (
 describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
   let assignDefendantPoliceCaseNumbers: jest.Mock
+  let mockIndictmentCountService: IndictmentCountService
+  let mockCaseRepositoryService: CaseRepositoryService
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
 
-    const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
-      await createTestingPoliceModule()
+    const {
+      policeController,
+      caseDefendantPoliceCaseNumberRepositoryService,
+      indictmentCountService,
+      caseRepositoryService,
+    } = await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
+    mockIndictmentCountService = indictmentCountService
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -162,7 +171,104 @@ describe('PoliceController - Get police case info', () => {
             policeCaseNumber: '007-2020-000057',
           },
         ]),
+        expect.objectContaining({ transaction: expect.any(Object) }),
       )
+    })
+  })
+
+  describe('indictment counts created for new police case numbers', () => {
+    const theUser = {} as User
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: '11111111-1111-1111-1111-111111111111',
+          nationalId: '0101302399',
+          noNationalId: false,
+        },
+      ],
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      assignDefendantPoliceCaseNumbers.mockResolvedValueOnce([
+        '007-2020-000103',
+        '007-2020-000057',
+      ])
+
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000103',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: null,
+            gotuNumer: null,
+            sveitafelag: null,
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000057',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: null,
+            gotuNumer: null,
+            sveitafelag: null,
+            artalNrGreinLidur: null,
+          },
+        ],
+      })
+
+      then = await givenWhenThen(caseId, theUser, theCase)
+    })
+
+    it('should create indictment counts for newly discovered police case numbers', () => {
+      expect(
+        mockIndictmentCountService.createWithPoliceCaseNumber,
+      ).toHaveBeenCalledTimes(2)
+      expect(
+        mockIndictmentCountService.createWithPoliceCaseNumber,
+      ).toHaveBeenCalledWith(caseId, '007-2020-000103', expect.any(Object))
+      expect(
+        mockIndictmentCountService.createWithPoliceCaseNumber,
+      ).toHaveBeenCalledWith(caseId, '007-2020-000057', expect.any(Object))
+    })
+
+    it('should auto-fill missing inferred crime scenes and subtypes', () => {
+      expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({ transaction: expect.any(Object) }),
+      )
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({
+          crimeScenes: expect.objectContaining({
+            '007-2020-000103': {
+              place: '',
+              date: new Date('2021-02-23T13:17:00'),
+            },
+            '007-2020-000057': {
+              place: '',
+              date: new Date('2021-02-23T13:17:00'),
+            },
+          }),
+        }),
+        expect.objectContaining({ transaction: expect.any(Object) }),
+      )
+    })
+
+    it('should still return police case info', () => {
+      expect(then.result).toHaveLength(3)
     })
   })
 

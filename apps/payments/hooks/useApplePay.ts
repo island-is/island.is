@@ -131,14 +131,8 @@ export const useApplePay = ({
 
         const parsedSession = JSON.parse(session)
 
-        console.info('Apple Pay merchant validation completed')
-
         sessionRef.current?.completeMerchantValidation(parsedSession)
       } catch (e) {
-        console.error('Apple Pay merchant validation failed', {
-          error: e instanceof Error ? e.message : e,
-        })
-
         sessionRef.current?.abort()
 
         const problem = findProblemInApolloError(e as ApolloError)
@@ -192,17 +186,11 @@ export const useApplePay = ({
           )
         }
 
-        console.info('Apple Pay charge completed')
-
         sessionRef.current?.completePayment({
           status: window.ApplePaySession.STATUS_SUCCESS,
         })
         onPaymentSuccess('card')
       } catch (e) {
-        console.error('Apple Pay charge failed', {
-          error: e instanceof Error ? e.message : e,
-        })
-
         sessionRef.current?.completePayment({
           status: window.ApplePaySession.STATUS_FAILURE,
         })
