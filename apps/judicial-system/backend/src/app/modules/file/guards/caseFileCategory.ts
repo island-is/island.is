@@ -15,6 +15,8 @@ import {
 
 import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
 
+import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
+
 const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -177,6 +179,7 @@ const canDefenceUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  civilClaimantId,
   fileCreated,
 }: {
   nationalId: string
@@ -189,6 +192,7 @@ const canDefenceUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  civilClaimantId?: string | null
   fileCreated?: Date
 }) => {
   if (isRequestCase(caseType)) {
@@ -229,14 +233,24 @@ const canDefenceUserViewCaseFile = ({
       (submittedBy || fileRepresentative) &&
       (userName === submittedBy || userName === fileRepresentative)
 
-    return (
+    const categoryAllowed =
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,
         caseFileCategory,
         defendants,
         civilClaimants,
       ) || hasUserSubmittedCaseFile
-    )
+
+    if (!categoryAllowed) {
+      return false
+    }
+
+    return canDefenceUserViewCivilClaimCaseFile(nationalId, {
+      category: caseFileCategory,
+      civilClaimantId,
+      defendants,
+      civilClaimants,
+    })
   }
 
   return false
@@ -272,6 +286,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  civilClaimantId,
   fileCreated,
 }: {
   user: User
@@ -283,6 +298,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  civilClaimantId?: string | null
   fileCreated?: Date
 }) => {
   if (!caseFileCategory) {
@@ -301,6 +317,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       defendants,
       civilClaimants,
       defendantId,
+      civilClaimantId,
       fileCreated,
     })
   }
