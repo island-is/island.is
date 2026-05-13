@@ -1,6 +1,7 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { AvatarImage } from '@island.is/portals/my-pages/documents'
 import {
   COAT_OF_ARMS,
   InformationPaths,
@@ -11,7 +12,6 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
-import { Link } from 'react-router-dom'
 import { lock } from '../Dashboard.css'
 import * as styles from './DashboardNotifications.css'
 
@@ -42,8 +42,9 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
-      paddingX={4}
+      paddingTop={3}
+      paddingBottom={1}
+      paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
         <span className={lock} aria-hidden="true">
@@ -56,6 +57,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
+        paddingX={[4, 4, 0]}
       >
         <LinkResolver href={InformationPaths.Notifications}>
           <Box
@@ -91,7 +93,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       </Box>
 
       {loading && (
-        <Box marginTop={4}>
+        <Box marginTop={4} paddingX={[4, 4, 0]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -109,6 +111,7 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
           alignItems="center"
           paddingTop={2}
           rowGap={2}
+          paddingX={[4, 4, 0]}
         >
           <Text variant="h4" textAlign="center">
             {formatMessage(m.accessNeeded)}
@@ -141,8 +144,8 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
         hasDelegationAccess &&
         !error &&
         notifications.map((item) => {
-          const href = resolveLink(item.message.link)
-          const isExternal = href.startsWith('http')
+          const href =
+            resolveLink(item.message.link) || InformationPaths.Notifications
 
           const unread = !item.metadata.read
           const content = (
@@ -151,18 +154,16 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               alignItems="center"
               columnGap={2}
               paddingY={2}
-              paddingX={2}
+              paddingX={[4, 4, 2]}
               borderTopWidth="standard"
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}
             >
-              <Box className={styles.notificationSenderLogoWrapper}>
-                <img
-                  src={item.sender?.logoUrl ?? COAT_OF_ARMS}
-                  alt=""
-                  className={styles.notificationSenderLogoImage}
-                />
-              </Box>
+              <AvatarImage
+                img={item.sender?.logoUrl ?? COAT_OF_ARMS}
+                background={unread ? 'white' : 'blue100'}
+                imageClass={styles.notificationSenderLogoImage}
+              />
               <Box flexGrow={1} overflow="hidden">
                 <Box
                   display="flex"
@@ -199,35 +200,15 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
             </Box>
           )
 
-          if (!href) return <Box key={item.notificationId}>{content}</Box>
-
-          if (isExternal) {
-            return (
-              <a
-                key={item.notificationId}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${item.message.title} - ${formatMessage(
-                  m.notificationOpensInNewTab,
-                )}`}
-                className={styles.notificationLink}
-                onClick={() => handleNotificationClick(item.id)}
-              >
-                {content}
-              </a>
-            )
-          }
-
           return (
-            <Link
+            <LinkResolver
               key={item.notificationId}
-              to={href}
+              href={href}
               className={styles.notificationLink}
-              onClick={() => handleNotificationClick(item.id)}
+              callback={() => handleNotificationClick(item.id)}
             >
               {content}
-            </Link>
+            </LinkResolver>
           )
         })}
     </Box>

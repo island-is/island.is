@@ -41,7 +41,9 @@ export const validateIdpProviderForm = ({
     errors.helptext = formatMessage(m.idpProvidersErrorHelptextRequired)
   }
 
-  if (formData.level < 1 || formData.level > 4) {
+  if (formData.level === '') {
+    errors.level = formatMessage(m.idpProvidersErrorLevelRequired)
+  } else if (formData.level < 1 || formData.level > 4) {
     errors.level = formatMessage(m.idpProvidersErrorLevelRange)
   }
 

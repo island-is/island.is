@@ -11,4 +11,16 @@ export class Tenant {
 
   @Field(() => [TenantEnvironment])
   environments!: TenantEnvironment[]
+
+  @Field({ nullable: true })
+  nationalId?: string
+
+  @Field({ nullable: true })
+  contactEmail?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organisationLogoKey?: string
 }
