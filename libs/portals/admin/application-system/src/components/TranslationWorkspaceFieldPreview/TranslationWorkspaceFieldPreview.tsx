@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import {
   AlertMessage,
   Box,
@@ -17,9 +18,11 @@ import {
   Table as T,
   Stack,
   InputFileUpload,
+  getTextStyles,
   type AlertMessageType,
   type InputBackgroundColor,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { Markdown } from '@island.is/shared/components'
 import {
   coreErrorMessages,
@@ -49,8 +52,60 @@ import {
   resolvePreviewLabel,
   resolveTranslatableStaticText,
 } from '../../utils/translationWorkspaceStaticText'
+import { FieldTypes } from '@island.is/application/types'
+import type { CustomField, Application } from '@island.is/application/types'
 import { filterPreviewMultiFieldChildren } from '../../utils/translationWorkspaceMultiFieldChildren'
+import { CustomFieldErrorBoundary } from '../CustomFieldErrorBoundary/CustomFieldErrorBoundary'
 import { focusedFieldHighlight } from '../TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea.css'
+
+const PREVIEW_APPLICATION_BASE: Application = {
+  id: 'preview',
+  typeId: '' as Application['typeId'],
+  state: 'draft',
+  status: 'draft' as Application['status'],
+  applicant: '',
+  assignees: [],
+  applicantActors: [],
+  answers: {},
+  externalData: {},
+  created: new Date(),
+  modified: new Date(),
+}
+
+export const createWorkspacePreviewApplication = (
+  templateTypeId: string | undefined,
+): Application => ({
+  ...PREVIEW_APPLICATION_BASE,
+  typeId: (templateTypeId ?? '') as Application['typeId'],
+})
+
+type TranslationWorkspaceRepeaterNestedProps = {
+  showValidationErrors?: boolean
+  validationDescriptorsByPath?: Record<string, ValidationMessageDescriptor[]>
+  focusedFieldId?: string | null
+  fieldErrorOverrides?: Set<string>
+  previewFieldValues?: Record<string, string>
+  customFields?: Record<string, FC<any>>
+  previewApplication: Application
+}
+
+const CustomFieldFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const methods = useForm({ mode: 'onBlur' })
+  return <FormProvider {...methods}>{children}</FormProvider>
+}
+
+function buildMockCustomField(
+  screen: ScreenIntrospection,
+): CustomField {
+  return {
+    id: screen.id,
+    type: FieldTypes.CUSTOM,
+    component: screen.component ?? '',
+    title: screen.title ?? '',
+    children: undefined,
+    props: {},
+  }
+}
 
 const staticTableTitleVariantToText = (
   v: string | null | undefined,
@@ -160,6 +215,9 @@ const VALID_ALERT_TYPES: Set<string> = new Set([
   'warning',
 ])
 
+/** Matches `AlertMessageFormField`: body markdown uses small text styling. */
+const alertMessagePreviewBodyClass = cn(getTextStyles({ variant: 'small' }))
+
 const AlertMessageFieldPreview = ({
   screen,
   resolvePreviewString,
@@ -204,22 +262,32 @@ const AlertMessageFieldPreview = ({
       <Box {...layout}>
         <AlertMessage
           type={alertType}
-          title={fallback || screen.id}
+          {...(fallback
+            ? {
+                message: (
+                  <Box component="div" className={alertMessagePreviewBodyClass}>
+                    <Markdown>{fallback}</Markdown>
+                  </Box>
+                ),
+              }
+            : { title: screen.id })}
         />
       </Box>
     )
   }
 
+  const messageNode = messageResolved ? (
+    <Box component="div" className={alertMessagePreviewBodyClass}>
+      <Markdown>{messageResolved}</Markdown>
+    </Box>
+  ) : undefined
+
   return (
     <Box {...layout}>
       <AlertMessage
         type={alertType}
-        title={titleResolved || messageResolved}
-        message={
-          titleResolved && messageResolved ? (
-            <Markdown>{messageResolved}</Markdown>
-          ) : undefined
-        }
+        {...(titleResolved ? { title: titleResolved } : {})}
+        {...(messageNode ? { message: messageNode } : {})}
       />
     </Box>
   )
@@ -790,11 +858,18 @@ const FieldsRepeaterFieldPreview = ({
   screen,
   resolvePreviewString,
   formatMessage,
+  showValidationErrors,
+  validationDescriptorsByPath,
+  focusedFieldId,
+  fieldErrorOverrides,
+  previewFieldValues,
+  customFields,
+  previewApplication,
 }: {
   screen: ScreenIntrospection
   resolvePreviewString: ResolvePreviewString
   formatMessage: PreviewFormatMessage
-}) => {
+} & TranslationWorkspaceRepeaterNestedProps) => {
   const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const formChildren = filterPreviewMultiFieldChildren(screen.children)
@@ -886,6 +961,13 @@ const FieldsRepeaterFieldPreview = ({
                   screen={child}
                   resolvePreviewString={resolvePreviewString}
                   formatMessage={formatMessage}
+                  showValidationErrors={showValidationErrors}
+                  validationDescriptorsByPath={validationDescriptorsByPath}
+                  focusedFieldId={focusedFieldId}
+                  fieldErrorOverrides={fieldErrorOverrides}
+                  previewFieldValues={previewFieldValues}
+                  customFields={customFields}
+                  previewApplication={previewApplication}
                 />
               </GridColumn>
             )
@@ -910,11 +992,18 @@ const TableRepeaterFieldPreview = ({
   screen,
   resolvePreviewString,
   formatMessage,
+  showValidationErrors,
+  validationDescriptorsByPath,
+  focusedFieldId,
+  fieldErrorOverrides,
+  previewFieldValues,
+  customFields,
+  previewApplication,
 }: {
   screen: ScreenIntrospection
   resolvePreviewString: ResolvePreviewString
   formatMessage: PreviewFormatMessage
-}) => {
+} & TranslationWorkspaceRepeaterNestedProps) => {
   const key = screen.id
   const layout = fieldPreviewLayoutProps(screen)
   const formChildren = filterPreviewMultiFieldChildren(screen.children)
@@ -1045,6 +1134,15 @@ const TableRepeaterFieldPreview = ({
                       screen={child}
                       resolvePreviewString={resolvePreviewString}
                       formatMessage={formatMessage}
+                      showValidationErrors={showValidationErrors}
+                      validationDescriptorsByPath={
+                        validationDescriptorsByPath
+                      }
+                      focusedFieldId={focusedFieldId}
+                      fieldErrorOverrides={fieldErrorOverrides}
+                      previewFieldValues={previewFieldValues}
+                      customFields={customFields}
+                      previewApplication={previewApplication}
                     />
                   </GridColumn>
                 )
@@ -1133,6 +1231,8 @@ const LeafFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
+  customFields,
+  previewApplication,
 }: {
   screen: ScreenIntrospection
   resolvePreviewString: ResolvePreviewString
@@ -1142,9 +1242,48 @@ const LeafFieldPreview = ({
   focusedFieldId?: string | null
   fieldErrorOverrides?: Set<string>
   previewFieldValues?: Record<string, string>
+  customFields?: Record<string, FC<any>>
+  previewApplication: Application
 }) => {
   if (PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)) {
     return null
+  }
+
+  if (screen.type === 'CUSTOM' && screen.component) {
+    const CustomComponent = customFields?.[screen.component]
+    if (CustomComponent) {
+      const mockField = buildMockCustomField(screen)
+      return (
+        <Box key={screen.id}>
+          <CustomFieldErrorBoundary componentName={screen.component}>
+            <CustomFieldFormProvider>
+              <CustomComponent
+                application={previewApplication}
+                field={mockField}
+                error={undefined}
+                errors={{}}
+                goToScreen={noop}
+                refetch={noop}
+              />
+            </CustomFieldFormProvider>
+          </CustomFieldErrorBoundary>
+        </Box>
+      )
+    }
+    return (
+      <Box
+        key={screen.id}
+        padding={2}
+        border="standard"
+        borderRadius="standard"
+        background="blue100"
+      >
+        <Text variant="eyebrow" color="blue400">
+          CUSTOM
+        </Text>
+        <Text variant="small">{screen.component}</Text>
+      </Box>
+    )
   }
 
   const label = resolvePreviewLabel(screen, resolvePreviewString)
@@ -1270,6 +1409,13 @@ const LeafFieldPreview = ({
         screen={screen}
         resolvePreviewString={resolvePreviewString}
         formatMessage={formatMessage}
+        showValidationErrors={showValidationErrors}
+        validationDescriptorsByPath={validationDescriptorsByPath}
+        focusedFieldId={focusedFieldId}
+        fieldErrorOverrides={fieldErrorOverrides}
+        previewFieldValues={previewFieldValues}
+        customFields={customFields}
+        previewApplication={previewApplication}
       />
     )
   }
@@ -1280,6 +1426,13 @@ const LeafFieldPreview = ({
         screen={screen}
         resolvePreviewString={resolvePreviewString}
         formatMessage={formatMessage}
+        showValidationErrors={showValidationErrors}
+        validationDescriptorsByPath={validationDescriptorsByPath}
+        focusedFieldId={focusedFieldId}
+        fieldErrorOverrides={fieldErrorOverrides}
+        previewFieldValues={previewFieldValues}
+        customFields={customFields}
+        previewApplication={previewApplication}
       />
     )
   }
@@ -1512,6 +1665,8 @@ export interface TranslationWorkspaceFieldPreviewProps {
   focusedFieldId?: string | null
   fieldErrorOverrides?: Set<string>
   previewFieldValues?: Record<string, string>
+  customFields?: Record<string, FC<any>>
+  previewApplication: Application
 }
 
 /**
@@ -1527,6 +1682,8 @@ export const TranslationWorkspaceFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
+  customFields,
+  previewApplication,
 }: TranslationWorkspaceFieldPreviewProps) => {
   if (screen.type === 'MULTI_FIELD') {
     const space = (screen.space ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -1570,6 +1727,8 @@ export const TranslationWorkspaceFieldPreview = ({
                     focusedFieldId={focusedFieldId}
                     fieldErrorOverrides={fieldErrorOverrides}
                     previewFieldValues={previewFieldValues}
+                    customFields={customFields}
+                    previewApplication={previewApplication}
                   />
                 </Box>
               </GridColumn>
@@ -1594,6 +1753,8 @@ export const TranslationWorkspaceFieldPreview = ({
         focusedFieldId={focusedFieldId}
         fieldErrorOverrides={fieldErrorOverrides}
         previewFieldValues={previewFieldValues}
+        customFields={customFields}
+        previewApplication={previewApplication}
       />
     </Box>
   )

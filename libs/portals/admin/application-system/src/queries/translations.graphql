@@ -3,6 +3,7 @@
 fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   id
   type
+  component
   title
   description
   pageTitle

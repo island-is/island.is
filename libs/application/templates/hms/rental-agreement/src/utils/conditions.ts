@@ -172,7 +172,7 @@ export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {
 
   const units = getValueViaPath<PropertyUnit[]>(
     answers,
-    'registerProperty.searchresults.units',
+    'Routes.PROPERTYSEARCH.units',
   )
 
   if (!units || units.length === 0) {

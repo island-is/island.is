@@ -17,11 +17,11 @@ export const propertySearchSubsection = buildSubSection({
       description: m.propertySearch.search.pageDescription,
       children: [
         buildCustomField({
-          id: Routes.PROPERTYSEARCH,
+          id: 'Routes.PROPERTYSEARCH',
           component: 'PropertySearch',
         }),
         buildDescriptionField({
-          id: Routes.PROPERTYSEARCH,
+          id: 'Routes.PROPERTYSEARCH.asdf',
           description: m.propertySearch.search.spouseFamilyNotice,
           marginTop: 2,
         }),

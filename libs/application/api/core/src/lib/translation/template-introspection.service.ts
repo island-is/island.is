@@ -30,7 +30,10 @@ import type {
   FileUploadField,
   Schema,
 } from '@island.is/application/types'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  getApplicationTemplateByTypeId,
+  getApplicationCustomFieldMessageDescriptors,
+} from '@island.is/application/template-loader'
 import type { MessageDescriptor } from 'react-intl'
 
 export interface ValidationMessageDescriptorInfo extends MessageDescriptorInfo {
@@ -91,6 +94,8 @@ export interface SubSectionIntrospection {
 export interface ScreenIntrospection {
   id: string
   type: string
+  /** For `CUSTOM` fields: the component lookup key (e.g. `'ExampleCustomComponent'`). */
+  component?: string | null
   title: string | null
   description: string | null
   /** `EXTERNAL_DATA_SOURCE` (data provider row): optional heading above the blue title. */
@@ -447,6 +452,74 @@ function extractMessageDescriptorsFromFormText(
   return []
 }
 
+const MAX_PROPS_DESCRIPTOR_DEPTH = 12
+
+/**
+ * Recursively collects `MessageDescriptor`-shaped objects from field `props` (e.g. CUSTOM fields).
+ */
+function extractMessageDescriptorsFromPropsDeep(
+  value: unknown,
+  depth: number,
+  visited: WeakSet<object>,
+): MessageDescriptorInfo[] {
+  if (depth > MAX_PROPS_DESCRIPTOR_DEPTH) {
+    return []
+  }
+  if (value === null || value === undefined) {
+    return []
+  }
+  const valueType = typeof value
+  if (
+    valueType === 'string' ||
+    valueType === 'number' ||
+    valueType === 'boolean' ||
+    valueType === 'bigint' ||
+    valueType === 'symbol'
+  ) {
+    return []
+  }
+  if (valueType === 'function') {
+    return []
+  }
+  if (isMessageDescriptor(value)) {
+    return [
+      {
+        id: String((value as MessageDescriptor).id),
+        defaultMessage: (value as MessageDescriptor).defaultMessage as
+          | string
+          | undefined,
+        description: (value as MessageDescriptor).description as
+          | string
+          | undefined,
+      },
+    ]
+  }
+  if (Array.isArray(value)) {
+    if (visited.has(value)) {
+      return []
+    }
+    visited.add(value)
+    const out: MessageDescriptorInfo[] = []
+    for (const el of value) {
+      out.push(...extractMessageDescriptorsFromPropsDeep(el, depth + 1, visited))
+    }
+    return out
+  }
+  if (typeof value === 'object') {
+    const obj = value as object
+    if (visited.has(obj)) {
+      return []
+    }
+    visited.add(obj)
+    const out: MessageDescriptorInfo[] = []
+    for (const v of Object.values(value as Record<string, unknown>)) {
+      out.push(...extractMessageDescriptorsFromPropsDeep(v, depth + 1, visited))
+    }
+    return out
+  }
+  return []
+}
+
 function walkExternalDataSourceItem(
   syntheticId: string,
   provider: DataProviderItem,
@@ -610,6 +683,20 @@ function extractMessageDescriptorsFromField(
       f.emailLabel as FormText | undefined,
     ),
   )
+
+  const propsRaw = f.props
+  if (propsRaw && typeof propsRaw === 'object') {
+    const fromProps = extractMessageDescriptorsFromPropsDeep(
+      propsRaw,
+      0,
+      new WeakSet<object>(),
+    )
+    for (const d of fromProps) {
+      if (!descriptors.some((x) => x.id === d.id)) {
+        descriptors.push(d)
+      }
+    }
+  }
 
   return descriptors
 }
@@ -1223,7 +1310,10 @@ function walkStaticTableScreen(st: StaticTableField): ScreenIntrospection {
   }
 }
 
-function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
+function walkFormLeaf(
+  leaf: FormLeaf,
+  customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
+): ScreenIntrospection {
   const descriptors: MessageDescriptorInfo[] = []
   const children: ScreenIntrospection[] = []
   const leafRecord = leaf as unknown as Record<string, unknown>
@@ -1268,7 +1358,7 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     }
     if (multiField.children) {
       for (const child of multiField.children) {
-        const childScreen = walkFormLeaf(child)
+        const childScreen = walkFormLeaf(child, customFieldManifest)
         children.push(childScreen)
         descriptors.push(...childScreen.messageDescriptors)
       }
@@ -1450,9 +1540,20 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     }
   }
 
+  let messageDescriptorsOut = descriptors
+  if (leaf.type === FieldTypes.CUSTOM && customFieldManifest) {
+    const comp =
+      typeof leafRecord.component === 'string' ? leafRecord.component : ''
+    const extra = comp ? customFieldManifest[comp] : undefined
+    if (extra?.length) {
+      messageDescriptorsOut = mergeMessageDescriptors(descriptors, extra)
+    }
+  }
+
   return {
     id: leaf.id ?? '',
     type: leaf.type ?? 'FIELD',
+    component: (leafRecord.component as string) ?? null,
     title: extractStaticText(leaf.title as StaticText | undefined),
     description,
     pageTitle: null,
@@ -1465,7 +1566,7 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
     marginBottom,
     paddingTop,
     titleVariant,
-    messageDescriptors: descriptors,
+    messageDescriptors: messageDescriptorsOut,
     children: children.length > 0 ? children : undefined,
     radioOptions,
     radioLargeButtons,
@@ -1482,15 +1583,18 @@ function walkFormLeaf(leaf: FormLeaf): ScreenIntrospection {
   }
 }
 
-function walkSection(section: Section): SectionIntrospection {
+function walkSection(
+  section: Section,
+  customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
+): SectionIntrospection {
   const subSections: SubSectionIntrospection[] = []
   const screens: ScreenIntrospection[] = []
 
   for (const child of section.children) {
     if (child.type === FormItemTypes.SUB_SECTION) {
-      subSections.push(walkSubSection(child as SubSection))
+      subSections.push(walkSubSection(child as SubSection, customFieldManifest))
     } else {
-      screens.push(walkFormLeaf(child as FormLeaf))
+      screens.push(walkFormLeaf(child as FormLeaf, customFieldManifest))
     }
   }
 
@@ -1505,11 +1609,14 @@ function walkSection(section: Section): SectionIntrospection {
   }
 }
 
-function walkSubSection(subSection: SubSection): SubSectionIntrospection {
+function walkSubSection(
+  subSection: SubSection,
+  customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
+): SubSectionIntrospection {
   const screens: ScreenIntrospection[] = []
 
   for (const child of subSection.children) {
-    screens.push(walkFormLeaf(child))
+    screens.push(walkFormLeaf(child, customFieldManifest))
   }
 
   return {
@@ -1538,12 +1645,15 @@ function extractFormLogoKey(logo: Form['logo'] | undefined): string | null {
   return key
 }
 
-function walkForm(form: Form): FormIntrospection {
+function walkForm(
+  form: Form,
+  customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
+): FormIntrospection {
   const sections: SectionIntrospection[] = []
 
   for (const child of form.children) {
     if (child.type === FormItemTypes.SECTION) {
-      sections.push(walkSection(child as Section))
+      sections.push(walkSection(child as Section, customFieldManifest))
     }
   }
 
@@ -1716,6 +1826,14 @@ export class TemplateIntrospectionService {
       translationNamespaces.push(...template.translationNamespaces)
     }
 
+    let customFieldManifest: Record<string, MessageDescriptorInfo[]> = {}
+    try {
+      customFieldManifest =
+        await getApplicationCustomFieldMessageDescriptors(typeId)
+    } catch {
+      customFieldManifest = {}
+    }
+
     const states: StateIntrospection[] = []
     const allDescriptors: MessageDescriptorInfo[] = []
     const seenDescriptorIds = new Set<string>()
@@ -1744,7 +1862,7 @@ export class TemplateIntrospectionService {
               }) => Promise<Form>
             )({ featureFlagClient: mockFeatureFlagClient })
 
-            formIntrospection = walkForm(form)
+            formIntrospection = walkForm(form, customFieldManifest)
 
             const descriptors = collectAllDescriptors(formIntrospection)
             for (const d of descriptors) {

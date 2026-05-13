@@ -39,6 +39,8 @@ import {
   TranslationWorkspaceNotFound,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
+import { createWorkspacePreviewApplication } from '../../components/TranslationWorkspaceFieldPreview/TranslationWorkspaceFieldPreview'
+import { useTemplateCustomFields } from '../../hooks/useTemplateCustomFields'
 import * as workspaceStyles from './TranslationWorkspace.css'
 
 const AUTOSAVE_INTERVAL_MS = 60_000
@@ -46,6 +48,16 @@ const AUTOSAVE_INTERVAL_MS = 60_000
 export const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
   const { formatMessage } = useLocale()
+  const {
+    customFields,
+    loading: customFieldsLoading,
+    error: customFieldsError,
+  } = useTemplateCustomFields(typeId)
+
+  const previewApplication = useMemo(
+    () => createWorkspacePreviewApplication(typeId),
+    [typeId],
+  )
 
   const { data, loading, error } = useGetApplicationTemplateIntrospectionQuery({
     variables: { typeId: typeId ?? '' },
@@ -141,44 +153,6 @@ export const TranslationWorkspace = () => {
     },
     [editedValues, activeLocale, getPersistedForMessage],
   )
-
-  useEffect(() => {
-    if (!introspection) return
-
-    const mapScreen = (screen: ScreenIntrospection) => ({
-      type: screen.type,
-      name: screen.id,
-      label: screen.title,
-    })
-
-    const mapScreens = (screens: ScreenIntrospection[]) =>
-      screens.flatMap((s) =>
-        s.type === 'MULTI_FIELD' && s.children?.length
-          ? s.children.map(mapScreen)
-          : [mapScreen(s)],
-      )
-
-    const parsed = introspection.states.map((state) => ({
-      state: state.stateKey,
-      roles: state.roles.map((role) => ({
-        role: role.roleId,
-        form: role.form
-          ? {
-              sections: role.form.sections.map((section) => ({
-                title: section.title ?? section.id,
-                subsections: section.subSections.map((sub) => ({
-                  title: sub.title ?? sub.id,
-                  fields: mapScreens(sub.screens as ScreenIntrospection[]),
-                })),
-                fields: mapScreens(section.screens as ScreenIntrospection[]),
-              })),
-            }
-          : null,
-      })),
-    }))
-
-    console.log('[TranslationWorkspace] Parsed application structure', parsed)
-  }, [introspection])
 
   const [bulkUpdate, { loading: saving }] =
     useBulkUpdateApplicationTranslationsMutation()
@@ -667,6 +641,8 @@ export const TranslationWorkspace = () => {
             focusedFieldId={fieldsTabActive ? focusedFieldId : null}
             fieldErrorOverrides={fieldErrorOverrides}
             previewFieldValues={previewFieldValues}
+            customFields={customFields}
+            previewApplication={previewApplication}
           />
         </div>
         <div className={workspaceStyles.workspaceNavAside}>

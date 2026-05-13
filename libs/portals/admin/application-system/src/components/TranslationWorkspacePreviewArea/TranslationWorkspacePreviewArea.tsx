@@ -1,3 +1,5 @@
+import type { FC } from 'react'
+import type { Application } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -46,6 +48,8 @@ export interface TranslationWorkspacePreviewAreaProps {
   focusedFieldId: string | null
   fieldErrorOverrides: Set<string>
   previewFieldValues: Record<string, string>
+  customFields?: Record<string, FC<any>>
+  previewApplication: Application
 }
 
 export const TranslationWorkspacePreviewArea = ({
@@ -66,6 +70,8 @@ export const TranslationWorkspacePreviewArea = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
+  customFields,
+  previewApplication,
 }: TranslationWorkspacePreviewAreaProps) => {
   if (previewScreens.length === 0) {
     return (
@@ -132,6 +138,8 @@ export const TranslationWorkspacePreviewArea = ({
                   focusedFieldId={focusedFieldId}
                   fieldErrorOverrides={fieldErrorOverrides}
                   previewFieldValues={previewFieldValues}
+                  customFields={customFields}
+                  previewApplication={previewApplication}
                 />
               ))}
             </Box>

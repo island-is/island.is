@@ -124,6 +124,9 @@ export class ScreenIntrospectionGql {
   type!: string
 
   @Field(() => String, { nullable: true })
+  component?: string | null
+
+  @Field(() => String, { nullable: true })
   title?: string | null
 
   @Field(() => String, { nullable: true })

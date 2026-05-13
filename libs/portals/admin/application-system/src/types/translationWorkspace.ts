@@ -17,6 +17,8 @@ export interface RadioOptionIntrospection {
 export interface ScreenIntrospection {
   id: string
   type: string
+  /** For `CUSTOM` fields: the component lookup key (e.g. `'ExampleCustomComponent'`). */
+  component?: string | null
   title: string | null
   description?: string | null
   pageTitle?: string | null
