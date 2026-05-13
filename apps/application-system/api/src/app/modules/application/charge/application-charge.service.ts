@@ -7,6 +7,7 @@ import { PaymentService } from '@island.is/application/api/payment'
 import { PaymentsApi } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
+import { ApplicationStatus } from '@island.is/application/types'
 
 @Injectable()
 export class ApplicationChargeService {
@@ -20,7 +21,7 @@ export class ApplicationChargeService {
   }
 
   async deleteCharge(
-    application: Pick<Application, 'id' | 'typeId' | 'state'>,
+    application: Pick<Application, 'id' | 'typeId' | 'state' | 'status'>,
   ) {
     try {
       const payment = await this.paymentService.findPaymentByApplicationId(
@@ -49,6 +50,12 @@ export class ApplicationChargeService {
         ) {
           this.logger.info(
             `Not deleting charge for application ${application.id} because its lifecycle does not allow it`,
+          )
+          return
+        }
+        if (application.status === ApplicationStatus.COMPLETED) {
+          this.logger.info(
+            `Not deleting charge for application ${application.id} because it is completed`,
           )
           return
         }
