@@ -177,6 +177,15 @@ export interface SdfComponentData {
   maxDate?: string
   maxSize?: number
   accept?: string
+  uploadHeader?: string
+  uploadDescription?: string
+  uploadButtonLabel?: string
+  uploadMultiple?: boolean
+  totalMaxSize?: number
+  maxFileCount?: number
+  forImageUpload?: boolean
+  maxSizeErrorText?: string
+  introduction?: string
   header?: string[]
   rows?: string[][] | SdfDataTableRow[]
   staticTableRows?: string[][]
@@ -404,6 +413,15 @@ export const GET_SCREEN_QUERY = `
             disabled
             maxSize
             accept
+            uploadHeader
+            uploadDescription
+            uploadButtonLabel
+            uploadMultiple
+            totalMaxSize
+            maxFileCount
+            forImageUpload
+            maxSizeErrorText
+            introduction
             clientCondition {
               ... on SdfSingleClientCondition { questionId comparator value }
               ... on SdfMultiClientCondition { on checks { questionId comparator value } }
@@ -707,7 +725,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfFileUploadField { id label required disabled maxSize accept clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfFileUploadField { id label required disabled maxSize accept uploadHeader uploadDescription uploadButtonLabel uploadMultiple totalMaxSize maxFileCount forImageUpload maxSizeErrorText introduction clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfPhoneField { id label placeholder required disabled width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfNationalIdField { id label required disabled clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
           ... on SdfDescriptionField { id label description marginTop marginBottom clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }

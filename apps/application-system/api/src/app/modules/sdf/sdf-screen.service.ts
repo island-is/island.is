@@ -343,15 +343,17 @@ export class SdfScreenService {
 
     const persistedPageIndex = application.pageIndex ?? 0
     const hasAnswers = Object.keys(application.answers ?? {}).length > 0
-    if (persistedPageIndex === 0 && hasAnswers) {
+    if (persistedPageIndex === 0 && hasAnswers && !ephemeral) {
       // Migration fallback: existing app with no persisted page index.
       // Infer from answers and persist so this only runs once.
+      // Ephemeral renders (e.g. REFETCH) must not use this path: we cannot
+      // persist here, and returning an inferred index would desync
+      // `page.index` from `application.pageIndex` and break NEXT_PAGE
+      // idempotency (lastKnownPageIndex vs persisted cursor).
       const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
-      if (!ephemeral) {
-        await this.applicationService.update(applicationId, {
-          pageIndex: resolvedIndex,
-        })
-      }
+      await this.applicationService.update(applicationId, {
+        pageIndex: resolvedIndex,
+      })
 
       return resolvedIndex
     }
