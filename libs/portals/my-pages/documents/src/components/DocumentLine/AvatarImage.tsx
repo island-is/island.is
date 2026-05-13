@@ -23,10 +23,11 @@ export const AvatarImage: FC<Props> = ({
   avatar,
   large,
   imageClass,
-  as = 'button',
+  as,
   onClick,
 }) => {
   const { formatMessage } = useLocale()
+  const component = as ?? (onClick ? 'button' : 'div')
   return (
     <Box
       display="flex"
@@ -42,9 +43,9 @@ export const AvatarImage: FC<Props> = ({
       className={cn(styles.imageContainer, {
         [styles.largeAvatar]: large,
       })}
-      component={as}
+      component={component}
       aria-label={
-        as === 'button'
+        component === 'button'
           ? formatMessage(messages.markAsBulkSelection)
           : undefined
       }

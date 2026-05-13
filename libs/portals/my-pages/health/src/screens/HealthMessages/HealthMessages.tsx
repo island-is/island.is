@@ -86,7 +86,7 @@ const HealthMessages = () => {
       },
       {
         id: '4',
-        organization: 'Önæmisfræðideild',
+        organization: 'Ónæmisfræðideild',
         title: 'Almennt vottorð',
         date: '11.04.2025',
         starred: false,
