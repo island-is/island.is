@@ -16,11 +16,10 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
 import { useShipRegistrySailorCertificatesQuery } from './SailorSchoolCertificates.generated'
-import {
-  ShipRegistrySailorSchoolCertificate,
-  ShipRegistrySailorCertificateStatus,
-} from '@island.is/api/schema'
+import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
 
+//TODO: add filter input and file export
+//
 const columnHelper = createColumnHelper<ShipRegistrySailorSchoolCertificate>()
 
 const SailorSchoolCertificates = () => {
@@ -42,23 +41,6 @@ const SailorSchoolCertificates = () => {
         cell: ({ getValue }) => {
           const value = getValue()
           return value ? formatDate(new Date(value)) : '-'
-        },
-      }),
-      columnHelper.accessor('status', {
-        id: 'status',
-        header: formatMessage(om.sailorSchoolCertificatesColumnStatus),
-        enableSorting: false,
-        cell: ({ getValue }) => {
-          const value = getValue()
-          if (value === ShipRegistrySailorCertificateStatus.Unknown) return null
-          const isValid = value === ShipRegistrySailorCertificateStatus.Valid
-          return (
-            <Tag outlined disabled variant={isValid ? 'mint' : 'red'}>
-              {isValid
-                ? formatMessage(om.validLicense)
-                : formatMessage(om.invalidLicense)}
-            </Tag>
-          )
         },
       }),
     ],

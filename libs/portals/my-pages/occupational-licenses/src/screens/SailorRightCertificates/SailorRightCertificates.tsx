@@ -18,12 +18,12 @@ import { olMessage as om } from '../../lib/messages'
 // Both SailorSchoolCertificates and SailorRightCertificates use the SAME query
 // to ensure shared Apollo cache between screens.
 import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
-import {
-  ShipRegistrySailorRightCertificate,
-  ShipRegistrySailorCertificateStatus,
-} from '@island.is/api/schema'
+import { ShipRegistrySailorRightCertificate } from '@island.is/api/schema'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
+
+//TODO: add filter input and file export
+//
 
 const SailorRightCertificates = () => {
   useNamespaces('sp.occupational-licenses')
@@ -48,23 +48,6 @@ const SailorRightCertificates = () => {
         cell: ({ getValue }) => {
           const value = getValue()
           return value ? formatDate(new Date(value)) : '-'
-        },
-      }),
-      columnHelper.accessor('status', {
-        id: 'status',
-        header: formatMessage(om.sailorRightCertificatesColumnStatus),
-        enableSorting: false,
-        cell: ({ getValue }) => {
-          const value = getValue()
-          if (value === ShipRegistrySailorCertificateStatus.Unknown) return null
-          const isValid = value === ShipRegistrySailorCertificateStatus.Valid
-          return (
-            <Tag outlined disabled variant={isValid ? 'mint' : 'red'}>
-              {isValid
-                ? formatMessage(om.validLicense)
-                : formatMessage(om.invalidLicense)}
-            </Tag>
-          )
         },
       }),
     ],

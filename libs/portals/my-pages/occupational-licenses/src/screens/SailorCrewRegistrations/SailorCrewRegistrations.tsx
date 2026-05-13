@@ -43,6 +43,12 @@ import {
 //     dateFrom             # Gildir frá
 //     dateTo               # Gildir til
 //   }
+//
+// MORE TODO: This screen represents 3 different tabs. For clarity, split them up and use this screen as a wrapper to navigate between tab renders.
+// TODO: The tab panel should have marginbottom={5}
+// TODO: No icelandic names in format message keys.
+// TODO: missing dummy data for siglingartími
+//
 
 const exemptionColumnHelper = createColumnHelper<RegistrationExemptionEntry>()
 const maritimeBookColumnHelper = createColumnHelper<MaritimeBookEntry>()
@@ -170,6 +176,10 @@ const SailorCrewRegistrations = () => {
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       <Tabs
+        //siglingartimi => seaService
+        //sjoferdabaekur -> SeaServiceBooks
+        //undanþágur -> exemptions
+        //TODO -> fix these translations. Do not use icelandic names in format message keys.
         label={`${formatMessage(om.sailorTabSiglingartimi)} / ${formatMessage(
           om.sailorTabUndanthaegur,
         )} / ${formatMessage(om.sailorTabSjoferoadabaekur)}`}
@@ -178,8 +188,10 @@ const SailorCrewRegistrations = () => {
           {
             label: formatMessage(om.sailorTabSiglingartimi),
             content: (
-              // TODO: Implement when API exposes sailing time (siglingartími) data
-              <EmptyState description={om.sailorSiglingartimiPending} />
+              // TODO: Implement when API exposes sailing time (siglingartími) data<
+              <Box marginTop={2}>
+                <Problem type="no_data" noBorder={false} />
+              </Box>
             ),
           },
           {
@@ -188,6 +200,13 @@ const SailorCrewRegistrations = () => {
               <Stack space={3}>
                 <Text>{formatMessage(om.sailorUndanthaegurIntro)}</Text>
                 <Box>
+                  {
+                    //TODO: this button currently expands to full width. It should be limited to content.
+                    //TODO: missing export button beside filter input which should also not be full width!
+                    //TODO: column hedaer should be left-aligned
+                    //TODO: expanded table grid is wrong, heimild til að gegna... and staðan auglýst should be swapped positionally
+                    //TODO: same issues in Sjóferðabækur, except the table grid swap.
+                  }
                   <LinkButton
                     to="#"
                     text={formatMessage(om.sailorUndanthaegurLinkText)}
