@@ -19,7 +19,6 @@ export const accessDeniedImage = style({
 export const notificationSenderLogoImage = style({
   height: 'auto',
   width: 'auto',
-  display: 'flex',
   maxHeight: 28,
   maxWidth: 28,
 })
