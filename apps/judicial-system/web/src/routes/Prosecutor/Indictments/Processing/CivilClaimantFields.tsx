@@ -15,7 +15,6 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContext,
-  IconButton,
   InputAdvocate,
   InputName,
   InputNationalId,
@@ -260,17 +259,20 @@ export const CivilClaimantFields = ({
 
   return (
     <>
+      {civilClaimantIndex > 0 && (
+        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Button
+            variant="text"
+            colorScheme="destructive"
+            size="small"
+            icon="trash"
+            onClick={() => removeCivilClaimantById(civilClaimant.id)}
+          >
+            Eyða
+          </Button>
+        </Box>
+      )}
       <BlueBox>
-        {civilClaimantIndex > 0 && (
-          <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-            <IconButton
-              icon="trash"
-              colorScheme="blue"
-              onClick={() => removeCivilClaimantById(civilClaimant.id)}
-              tooltipText="Eyða kröfuhafa"
-            />
-          </Box>
-        )}
         <Box marginBottom={2}>
           <Checkbox
             name={`civilClaimantNoNationalId-${civilClaimant.id}`}
@@ -486,15 +488,15 @@ export const CivilClaimantFields = ({
       </BlueBox>
       <Box marginTop={3}>
         <SectionHeading
-          title={formatMessage(strings.policeCaseNumberSectionTitle)}
+          title="Hvaða máli tengist krafan?"
           heading="h4"
           marginBottom={2}
         />
         <BlueBox>
           <Select
             name={`civilClaimantPoliceCaseNumbers-${civilClaimant.id}`}
-            label={formatMessage(strings.policeCaseNumberLabel)}
-            placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
+            label="LÖKE málsnúmer"
+            placeholder="Veldu málsnúmer"
             isMulti
             required
             options={policeCaseNumbers.map((pcn) => ({
@@ -514,7 +516,7 @@ export const CivilClaimantFields = ({
           {availableDefendants.length > 0 && (
             <Box marginTop={3}>
               <SectionHeading
-                title={formatMessage(strings.defendantSelectionLabel)}
+                title="Hverjum beinist krafan gegn?"
                 heading="h4"
                 marginBottom={2}
               />
@@ -538,7 +540,7 @@ export const CivilClaimantFields = ({
       </Box>
       <Box marginTop={3}>
         <SectionHeading
-          title={formatMessage(strings.civilClaimFileUploadTitle)}
+          title="Bótakrafa"
           heading="h4"
           marginBottom={2}
         />
