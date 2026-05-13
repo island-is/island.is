@@ -6,7 +6,11 @@ import {
   SdfExecuteActionInput,
 } from '../sdf.model'
 import type { User } from '@island.is/auth-nest-tools'
-import type { ScreenDto, ComponentDto } from '../../../gen/fetch'
+import {
+  ComponentDtoWidthEnum,
+  type ScreenDto,
+  type ComponentDto,
+} from '../../../gen/fetch'
 
 /**
  * Phase 3 Gate — Latency Baseline
@@ -42,7 +46,7 @@ const createRealisticScreenDto = (): ScreenDto => {
       placeholder: 'Sláðu inn nafn',
       required: true,
       disabled: false,
-      width: 'FULL',
+      width: ComponentDtoWidthEnum.FULL,
     },
     {
       id: 'applicantEmail',
@@ -51,7 +55,7 @@ const createRealisticScreenDto = (): ScreenDto => {
       placeholder: 'netfang@island.is',
       required: true,
       disabled: false,
-      width: 'FULL',
+      width: ComponentDtoWidthEnum.FULL,
     },
     {
       id: 'applicantPhone',
