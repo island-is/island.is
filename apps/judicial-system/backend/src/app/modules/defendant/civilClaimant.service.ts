@@ -20,7 +20,11 @@ import {
   CivilClaimantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case, CaseDefendantPoliceCaseNumber, CivilClaimant } from '../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumber,
+  CivilClaimant,
+} from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 
 @Injectable()
