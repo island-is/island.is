@@ -86,11 +86,17 @@ export const strings = {
     description:
       'Notaður sem upplýsingartexti við "Deila gögnum" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
+  policeCaseNumberSectionTitle: defineMessage({
+    id: 'judicial.system.indictments:processing.police_case_number_section_title',
+    defaultMessage: 'Hvaða máli tengist krafan?',
+    description:
+      'Notaður sem titill á LÖKE málsnúmer svæði í einkaréttarkröfu á Málsmeðferðarskjánum.',
+  }),
   policeCaseNumberLabel: defineMessage({
     id: 'judicial.system.indictments:processing.police_case_number_label',
     defaultMessage: 'LÖKE málsnúmer',
     description:
-      'Notaður sem titill á LÖKE málsnúmer vali í einkaréttarkröfu á Málsmeðferðarskjánum.',
+      'Notaður sem label á LÖKE málsnúmer vali í einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
   defendantSelectionLabel: defineMessage({
     id: 'judicial.system.indictments:processing.defendant_selection_label',
