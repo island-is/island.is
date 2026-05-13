@@ -1,6 +1,7 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { AvatarImage } from '@island.is/portals/my-pages/documents'
 import {
   COAT_OF_ARMS,
   InformationPaths,
@@ -41,7 +42,8 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={3}
+      paddingBottom={1}
       paddingX={[0, 0, 4]}
     >
       {!loading && !hasDelegationAccess && (
@@ -157,13 +159,11 @@ export const DashboardNotifications = ({ limit }: { limit: number }) => {
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}
             >
-              <Box className={styles.notificationSenderLogoWrapper}>
-                <img
-                  src={item.sender?.logoUrl ?? COAT_OF_ARMS}
-                  alt=""
-                  className={styles.notificationSenderLogoImage}
-                />
-              </Box>
+              <AvatarImage
+                img={item.sender?.logoUrl ?? COAT_OF_ARMS}
+                background={unread ? 'white' : 'blue100'}
+                imageClass={styles.notificationSenderLogoImage}
+              />
               <Box flexGrow={1} overflow="hidden">
                 <Box
                   display="flex"
