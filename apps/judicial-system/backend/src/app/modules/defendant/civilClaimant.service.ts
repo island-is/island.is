@@ -97,12 +97,19 @@ export class CivilClaimantService {
   ): Promise<CivilClaimant> {
     let effectiveUpdate = { ...update }
 
-    if (update.policeCaseNumbers) {
+    const policeCaseNumbersForValidation =
+      update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? []
+
+    const shouldPruneDefendantIds =
+      update.policeCaseNumbers !== undefined ||
+      update.defendantIds !== undefined
+
+    if (shouldPruneDefendantIds) {
       const currentDefendantIds =
         update.defendantIds ?? civilClaimant.defendantIds
       const prunedDefendantIds = await this.pruneDefendantIds(
         caseId,
-        update.policeCaseNumbers,
+        policeCaseNumbersForValidation,
         currentDefendantIds,
       )
       effectiveUpdate = { ...effectiveUpdate, defendantIds: prunedDefendantIds }
