@@ -92,9 +92,12 @@ const template: ApplicationTemplate<
             {
               template: NotificationConfig[NotificationType.System].templateId,
               delayInMs: 10000,
-              args: {
-                documentId: '1234567890',
-              },
+              args: [
+                {
+                  key: 'documentId',
+                  value: '1234567890',
+                },
+              ],
             },
           ],
           roles: [

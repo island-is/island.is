@@ -27,6 +27,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -160,6 +161,10 @@ const AppealToCourtOfAppeals = () => {
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
           )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={rulingFileId}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title="Kæra" required />
