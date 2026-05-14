@@ -685,7 +685,7 @@ export class HealthDirectorateService {
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
-      unread: c.unread,
+      isRead: !c.unread,
     }))
   }
 
@@ -708,7 +708,7 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
-      unread: c.unread,
+      isRead: !c.unread,
       messages: c.messages.map((m) => this.mapMessageEntry(m)),
     }
   }
@@ -745,7 +745,7 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
-      unread: c.unread,
+      isRead: !c.unread,
       messages: c.messages.map((m) => this.mapMessageEntry(m)),
     }
   }
@@ -779,7 +779,7 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
-      unread: c.unread,
+      isRead: !c.unread,
       messages: c.messages.map((m) => this.mapMessageEntry(m)),
     }
   }

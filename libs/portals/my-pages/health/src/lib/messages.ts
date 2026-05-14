@@ -1899,6 +1899,14 @@ export const messages = defineMessages({
     defaultMessage: 'Sýna opin',
     id: 'sp.health:health-messages-show-open',
   },
+  healthMessagesFilterStarred: {
+    defaultMessage: 'Stjörnumerkt',
+    id: 'sp.health:health-messages-filter-starred',
+  },
+  healthMessagesFilterArchived: {
+    defaultMessage: 'Geymsla',
+    id: 'sp.health:health-messages-filter-archived',
+  },
   healthMessageAttachment: {
     defaultMessage: 'Viðhengi',
     id: 'sp.health:health-message-attachment',
@@ -1918,6 +1926,10 @@ export const messages = defineMessages({
   healthMessageSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
+  },
+  healthMessageCloseReply: {
+    defaultMessage: 'Loka svarglugga',
+    id: 'sp.health:health-message-close-reply',
   },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',

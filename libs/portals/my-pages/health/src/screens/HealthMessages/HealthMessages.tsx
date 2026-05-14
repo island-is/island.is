@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Filter,
   Icon,
   Input,
@@ -8,17 +9,31 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FavAndStash, IntroWrapper, m } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  EmptyState,
+  FavAndStash,
+  IntroWrapper,
+  formatDate,
+  m,
+} from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { HealthDirectorateHealthMessageStatusFilter } from '@island.is/api/schema'
+import {
+  useGetHealthMessagesQuery,
+  useStarHealthMessageMutation,
+  useUnstarHealthMessageMutation,
+  useArchiveHealthMessageMutation,
+  useUnarchiveHealthMessageMutation,
+} from './HealthMessages.generated'
 
 const CircleLogo = ({
-  img,
   fallbackIcon,
 }: {
-  img?: string
   fallbackIcon: 'heart' | 'document'
 }) => {
   return (
@@ -32,15 +47,7 @@ const CircleLogo = ({
       borderWidth="standard"
       style={{ width: 48, height: 48, flexShrink: 0, overflow: 'hidden' }}
     >
-      {img ? (
-        <img
-          src={img}
-          alt=""
-          style={{ width: 28, height: 28, objectFit: 'contain' }}
-        />
-      ) : (
-        <Icon icon={fallbackIcon} type="outline" color="blue400" />
-      )}
+      <Icon icon={fallbackIcon} type="outline" color="blue400" />
     </Box>
   )
 }
@@ -48,78 +55,48 @@ const CircleLogo = ({
 const HealthMessages = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-
   const navigate = useNavigate()
-  const [filterOpenOnly, setFilterOpenOnly] = useState(false)
-  const [query, setQuery] = useState('')
-  const [starredById, setStarredById] = useState<Record<string, boolean>>({})
-  const [archivedById, setArchivedById] = useState<Record<string, boolean>>({})
 
-  const baseItems = useMemo(
-    () => [
-      {
-        id: '1',
-        organization: 'Heilsugæslan Glæsibæ',
-        title: 'Eftirfylgni meðferð',
-        date: '17.02.2026',
-        starred: false,
-        icon: 'healthDirectorate' as const,
-        status: 'open' as const,
-      },
-      {
-        id: '2',
-        organization: 'Meltingarsetrið',
-        title: 'Leiðbeiningar fyrir magaspeglun',
-        date: '27.10.2025',
-        starred: false,
-        icon: 'document' as const,
-        status: 'open' as const,
-      },
-      {
-        id: '3',
-        organization: 'Heilsugæslan Glæsibæ',
-        title: 'Niðurstaða rannsóknar',
-        date: '17.02.2026',
-        starred: true,
-        icon: 'healthDirectorate' as const,
-        status: 'open' as const,
-      },
-      {
-        id: '4',
-        organization: 'Ónæmisfræðideild',
-        title: 'Almennt vottorð',
-        date: '11.04.2025',
-        starred: false,
-        icon: 'document' as const,
-        status: 'closed' as const,
-      },
-      {
-        id: '5',
-        organization: 'Landspítali',
-        title: 'Niðurstöður PCR prófs vegna COVID-19',
-        date: '15.05.2024',
-        starred: false,
-        icon: 'document' as const,
-        status: 'closed' as const,
-      },
-    ],
-    [],
-  )
+  const [filterOpenOnly, setFilterOpenOnly] = useState(false)
+  const [filterStarred, setFilterStarred] = useState(false)
+  const [filterArchived, setFilterArchived] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const { data, loading, error } = useGetHealthMessagesQuery({
+    variables: {
+      ...(filterArchived
+        ? { status: HealthDirectorateHealthMessageStatusFilter.archived }
+        : filterOpenOnly
+        ? { status: HealthDirectorateHealthMessageStatusFilter.active }
+        : {}),
+      ...(filterStarred ? { starred: true } : {}),
+    },
+  })
+
+  const [starMessage] = useStarHealthMessageMutation({
+    refetchQueries: ['GetHealthMessages'],
+  })
+  const [unstarMessage] = useUnstarHealthMessageMutation({
+    refetchQueries: ['GetHealthMessages'],
+  })
+  const [archiveMessage] = useArchiveHealthMessageMutation({
+    refetchQueries: ['GetHealthMessages'],
+  })
+  const [unarchiveMessage] = useUnarchiveHealthMessageMutation({
+    refetchQueries: ['GetHealthMessages'],
+  })
+
+  const items = data?.healthDirectorateHealthMessages ?? []
 
   const filtered = useMemo(() => {
-    const openFiltered = filterOpenOnly
-      ? baseItems.filter((i) => i.status === 'open')
-      : baseItems
-
     const q = query.trim().toLowerCase()
-    return q
-      ? openFiltered.filter((i) =>
-          [i.organization, i.title, i.date]
-            .filter(Boolean)
-            .some((v) => v.toLowerCase().includes(q)),
-        )
-      : openFiltered
-  }, [baseItems, filterOpenOnly, query])
+    if (!q) return items
+    return items.filter((i) =>
+      [i.title, i.lastSenderGroupName]
+        .filter(Boolean)
+        .some((v) => v!.toLowerCase().includes(q)),
+    )
+  }, [items, query])
 
   return (
     <IntroWrapper
@@ -153,6 +130,8 @@ const HealthMessages = () => {
             }
             onFilterClear={() => {
               setFilterOpenOnly(false)
+              setFilterStarred(false)
+              setFilterArchived(false)
               setQuery('')
             }}
           >
@@ -169,6 +148,22 @@ const HealthMessages = () => {
                   ? formatMessage(messages.healthMessagesShowAll)
                   : formatMessage(messages.healthMessagesShowOpen)}
               </Button>
+              <Box paddingTop={2}>
+                <Checkbox
+                  id="filter-starred"
+                  label={formatMessage(messages.healthMessagesFilterStarred)}
+                  checked={filterStarred}
+                  onChange={(e) => setFilterStarred(e.target.checked)}
+                />
+              </Box>
+              <Box paddingTop={1}>
+                <Checkbox
+                  id="filter-archived"
+                  label={formatMessage(messages.healthMessagesFilterArchived)}
+                  checked={filterArchived}
+                  onChange={(e) => setFilterArchived(e.target.checked)}
+                />
+              </Box>
             </Box>
           </Filter>,
           <Box key="create" style={{ whiteSpace: 'nowrap' }}>
@@ -184,96 +179,107 @@ const HealthMessages = () => {
         ],
       }}
     >
-      <Box
-        background="blue100"
-        borderColor="blue200"
-        borderBottomWidth="standard"
-        display="flex"
-        justifyContent="spaceBetween"
-        paddingX={2}
-        paddingY={2}
-      >
-        <Text variant="medium" fontWeight="semiBold">
-          {formatMessage(m.messages)}
-        </Text>
-        <Text variant="medium" fontWeight="semiBold">
-          {formatMessage(messages.date)}
-        </Text>
-      </Box>
+      {loading && <CardLoader />}
+      {error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && (
+        <>
+          <Box
+            background="blue100"
+            borderColor="blue200"
+            borderBottomWidth="standard"
+            display="flex"
+            justifyContent="spaceBetween"
+            paddingX={2}
+            paddingY={2}
+          >
+            <Text variant="medium" fontWeight="semiBold">
+              {formatMessage(m.messages)}
+            </Text>
+            <Text variant="medium" fontWeight="semiBold">
+              {formatMessage(messages.date)}
+            </Text>
+          </Box>
 
-      <Stack space={0}>
-        {filtered.map((item) => {
-          const starred = starredById[item.id] ?? item.starred ?? false
-          const archived = archivedById[item.id] ?? false
-          const rowIcon: 'heart' | 'document' =
-            item.icon === 'healthDirectorate' ? 'heart' : 'document'
+          {filtered.length === 0 && (
+            <EmptyState title={messages.noData} />
+          )}
 
-          return (
-            <Box
-              key={item.id}
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-              borderColor="blue200"
-              borderBottomWidth="standard"
-              paddingX={2}
-              paddingY="p2"
-              columnGap={2}
-              cursor="pointer"
-              onClick={() =>
-                navigate(
-                  HealthPaths.HealthMessagesDetail.replace(':id', item.id),
-                )
-              }
-            >
-              {/* Left: logo + text */}
+          <Stack space={0}>
+            {filtered.map((item) => (
               <Box
+                key={item.id}
                 display="flex"
                 alignItems="center"
+                justifyContent="spaceBetween"
+                borderColor="blue200"
+                borderBottomWidth="standard"
+                paddingX={2}
+                paddingY="p2"
                 columnGap={2}
-                minWidth={0}
+                cursor="pointer"
+                onClick={() =>
+                  navigate(
+                    HealthPaths.HealthMessagesDetail.replace(':id', item.id),
+                  )
+                }
               >
-                <CircleLogo fallbackIcon={rowIcon} />
-                <Box minWidth={0}>
-                  <Text variant="medium">{item.organization}</Text>
-                  <Text color="blue400" truncate fontWeight="regular">
-                    {item.title}
+                {/* Left: logo + text */}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={2}
+                  minWidth={0}
+                >
+                  <CircleLogo
+                    fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
+                  />
+                  <Box minWidth={0}>
+                    <Text variant="medium">{item.lastSenderGroupName}</Text>
+                    <Text color="blue400" truncate fontWeight="regular">
+                      {item.title}
+                    </Text>
+                  </Box>
+                </Box>
+
+                {/* Right: date above, icons below */}
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="flexEnd"
+                  style={{ flexShrink: 0 }}
+                >
+                  <Text variant="medium">
+                    {item.lastMessageSentAt
+                      ? formatDate(item.lastMessageSentAt)
+                      : ''}
                   </Text>
+                  <FavAndStash
+                    colorScheme="negative"
+                    bookmarked={item.isStarred}
+                    archived={item.isArchived}
+                    onFav={(e) => {
+                      e.stopPropagation()
+                      if (item.isStarred) {
+                        unstarMessage({ variables: { id: item.id } })
+                      } else {
+                        starMessage({ variables: { id: item.id } })
+                      }
+                    }}
+                    onStash={(e) => {
+                      e.stopPropagation()
+                      if (item.isArchived) {
+                        unarchiveMessage({ variables: { id: item.id } })
+                      } else {
+                        archiveMessage({ variables: { id: item.id } })
+                      }
+                    }}
+                  />
                 </Box>
               </Box>
-
-              {/* Right: date above, icons below */}
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="flexEnd"
-                style={{ flexShrink: 0 }}
-              >
-                <Text variant="medium">{item.date}</Text>
-                <FavAndStash
-                  colorScheme="negative"
-                  bookmarked={starred}
-                  archived={archived}
-                  onFav={(e) => {
-                    e.stopPropagation()
-                    setStarredById((prev) => ({
-                      ...prev,
-                      [item.id]: !(prev[item.id] ?? item.starred),
-                    }))
-                  }}
-                  onStash={(e) => {
-                    e.stopPropagation()
-                    setArchivedById((prev) => ({
-                      ...prev,
-                      [item.id]: !prev[item.id],
-                    }))
-                  }}
-                />
-              </Box>
-            </Box>
-          )
-        })}
-      </Stack>
+            ))}
+          </Stack>
+        </>
+      )}
     </IntroWrapper>
   )
 }

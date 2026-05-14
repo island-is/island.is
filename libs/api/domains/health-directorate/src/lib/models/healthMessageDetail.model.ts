@@ -44,9 +44,9 @@ export class HealthDirectorateHealthMessageDetail {
 
   @Field({
     description:
-      'True when the thread contains a message newer than the patient last-read marker.',
+      'True when the patient has read the latest message in this thread.',
   })
-  unread!: boolean
+  isRead!: boolean
 
   @Field(() => [HealthDirectorateHealthMessageEntry])
   messages!: HealthDirectorateHealthMessageEntry[]

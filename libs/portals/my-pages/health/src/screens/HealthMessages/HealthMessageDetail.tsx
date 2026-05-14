@@ -6,61 +6,29 @@ import {
   GridContainer,
   GridRow,
   Input,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { getInitials, m } from '@island.is/portals/my-pages/core'
-import { useState } from 'react'
+import { CardLoader, getInitials, m } from '@island.is/portals/my-pages/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import HealthMessageActionBar from './HealthMessageActionBar'
+import {
+  useGetHealthMessageDetailQuery,
+  useMarkHealthMessageAsReadMutation,
+  useStarHealthMessageDetailMutation,
+  useUnstarHealthMessageDetailMutation,
+  useArchiveHealthMessageDetailMutation,
+  useUnarchiveHealthMessageDetailMutation,
+  useReplyToHealthMessageMutation,
+} from './HealthMessageDetail.generated'
 
 type UseParams = {
   id: string
 }
-
-const MOCK_MESSAGES: Record<
-  string,
-  {
-    id: string
-    organization: string
-    dateTime: string
-    category: string
-    subject: string
-    body: string
-    attachments: string[]
-    starred: boolean
-    archived: boolean
-  }
-> = {
-  '1': {
-    id: '1',
-    organization: 'Heilsugæslan Glæsibæ',
-    dateTime: '6. febrúar 2026, 15:23',
-    category: 'Heilsa',
-    subject: 'Eftirfylgni meðferðar',
-    body: 'Sæl Lísa, hér er með afrit af nst.\n\nÞetta kemur allt vel út, blóðmagn, nýru, sölt, blóðsykur, blóðfitur, járnmagn, B12, lifrarprof, skjaldkirtils og efni sem mælir bólgur og sýkingar er alveg eðl.\n\nMeð kveðju,\n\nJón Gunnarsson, heimilislæknir',
-    attachments: ['lisajons.blpr'],
-    starred: false,
-    archived: false,
-  },
-  '2': {
-    id: '2',
-    organization: 'Meltingarsetrið',
-    dateTime: '27. október 2025, 09:00',
-    category: 'Heilsa',
-    subject: 'Leiðbeiningar fyrir magaspeglun',
-    body: 'Góðan dag.\n\nHér eru leiðbeiningar fyrir komandi magaspeglun.\n\nMeð kveðju,\nMeltingarsetrið',
-    attachments: [],
-    starred: false,
-    archived: false,
-  },
-}
-
-// Placeholder initials — in production this would come from user profile
-const USER_INITIALS = 'LJ'
-const REPLY_DATETIME = '6. febrúar 2026, 18:14'
 
 const CircleLogo = ({ organization }: { organization: string }) => (
   <Box
@@ -69,9 +37,7 @@ const CircleLogo = ({ organization }: { organization: string }) => (
     justifyContent="center"
     borderRadius="full"
     background="blue100"
-    borderColor="blue200"
-    borderWidth="standard"
-    style={{ width: 48, height: 48, flexShrink: 0 }}
+    style={{ minWidth: 48, height: 48, flexShrink: 0 }}
   >
     <Text variant="h5" as="p">
       {getInitials(organization)}
@@ -79,7 +45,7 @@ const CircleLogo = ({ organization }: { organization: string }) => (
   </Box>
 )
 
-const UserInitialsAvatar = () => (
+const UserInitialsAvatar = ({ name }: { name: string }) => (
   <Box
     display="flex"
     alignItems="center"
@@ -89,22 +55,79 @@ const UserInitialsAvatar = () => (
     style={{ width: 48, height: 48, flexShrink: 0 }}
   >
     <Text variant="h5" as="p">
-      {USER_INITIALS}
+      {getInitials(name)}
     </Text>
   </Box>
 )
+
+const formatMessageDateTime = (iso: string) => {
+  const d = new Date(iso)
+  return new Intl.DateTimeFormat('is-IS', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(d)
+}
 
 const HealthMessageDetail = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
+  const userInfo = useUserInfo()
 
-  const item = MOCK_MESSAGES[id]
-
-  const [starred, setStarred] = useState(item?.starred ?? false)
-  const [archived, setArchived] = useState(item?.archived ?? false)
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
+  const replyRef = useRef<HTMLDivElement>(null)
+
+  const { data, loading, error } = useGetHealthMessageDetailQuery({
+    variables: { id },
+  })
+
+  const [markAsRead] = useMarkHealthMessageAsReadMutation()
+  const [starMessage] = useStarHealthMessageDetailMutation({
+    refetchQueries: ['GetHealthMessageDetail'],
+  })
+  const [unstarMessage] = useUnstarHealthMessageDetailMutation({
+    refetchQueries: ['GetHealthMessageDetail'],
+  })
+  const [archiveMessage] = useArchiveHealthMessageDetailMutation({
+    refetchQueries: ['GetHealthMessageDetail'],
+  })
+  const [unarchiveMessage] = useUnarchiveHealthMessageDetailMutation({
+    refetchQueries: ['GetHealthMessageDetail'],
+  })
+  const [replyToMessage, { loading: replySending }] =
+    useReplyToHealthMessageMutation({
+      refetchQueries: ['GetHealthMessageDetail'],
+    })
+
+  const item = data?.healthDirectorateHealthMessage
+
+  // Mark as read once when the thread first loads and hasn't been read yet
+  useEffect(() => {
+    if (item?.isRead === false) {
+      markAsRead({ variables: { id } })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item?.id])
+
+  if (loading) {
+    return (
+      <Box padding={6}>
+        <CardLoader />
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Box padding={6}>
+        <Problem error={error} noBorder={false} />
+      </Box>
+    )
+  }
 
   if (!item) {
     return (
@@ -112,6 +135,18 @@ const HealthMessageDetail = () => {
         <Text>{formatMessage(messages.healthMessageNotFound)}</Text>
       </Box>
     )
+  }
+
+  const handleReply = async () => {
+    if (!replyText.trim()) return
+    await replyToMessage({
+      variables: {
+        id,
+        input: { messageTextContent: replyText },
+      },
+    })
+    setReplyText('')
+    setReplyOpen(false)
   }
 
   return (
@@ -135,134 +170,170 @@ const HealthMessageDetail = () => {
               marginBottom={3}
             >
               <Text variant="h3" as="h1">
-                {item.subject}
+                {item.title}
               </Text>
               <HealthMessageActionBar
-                bookmarked={starred}
-                archived={archived}
-                onReply={() => setReplyOpen((v) => !v)}
-                onFav={() => setStarred((v) => !v)}
-                onStash={() => setArchived((v) => !v)}
+                bookmarked={item.isStarred}
+                archived={item.isArchived}
+                onReply={() => {
+                  setReplyOpen(true)
+                  setTimeout(
+                    () =>
+                      replyRef.current?.scrollIntoView({ behavior: 'smooth' }),
+                    50,
+                  )
+                }}
+                onFav={() => {
+                  if (item.isStarred) {
+                    unstarMessage({ variables: { id } })
+                  } else {
+                    starMessage({ variables: { id } })
+                  }
+                }}
+                onStash={() => {
+                  if (item.isArchived) {
+                    unarchiveMessage({ variables: { id } })
+                  } else {
+                    archiveMessage({ variables: { id } })
+                  }
+                }}
               />
             </Box>
 
-            {/* Sender info */}
-            <Box
-              display="flex"
-              alignItems="center"
-              columnGap={2}
-              marginBottom={replyOpen ? 3 : 4}
-            >
-              <CircleLogo organization={item.organization} />
-              <Box>
-                <Text fontWeight="semiBold">{item.organization}</Text>
-                <Box display="flex" alignItems="center" columnGap={2}>
-                  <Text color="dark400" variant="small">
-                    {item.dateTime}
-                  </Text>
-                  <Box
-                    borderLeftWidth="standard"
-                    borderColor="blue200"
-                    style={{ height: 14 }}
-                  />
-                  <Tag variant="blue" outlined>
-                    {item.category}
-                  </Tag>
-                </Box>
-              </Box>
-            </Box>
+            {/* Message thread */}
+            {item.messages.map((msg, index) => {
+              const isPatient = msg.direction === 'PATIENT'
+              const senderName = isPatient
+                ? (userInfo.profile.name ?? '')
+                : (msg.senderGroupName ?? item.lastSenderGroupName ?? '')
 
-            {!replyOpen && (
-              <>
-                {/* Body */}
-                <Box marginBottom={4}>
-                  {item.body.split('\n\n').map((paragraph, i) => (
-                    <Text key={i} marginBottom={2}>
-                      {paragraph}
-                    </Text>
-                  ))}
-                </Box>
+              return (
+                <Box key={msg.id}>
+                  {index > 0 && (
+                    <Box paddingY={1}>
+                      <Divider />
+                    </Box>
+                  )}
 
-                {/* Attachments */}
-                {item.attachments.length > 0 && (
+                  {/* Sender info */}
                   <Box
                     display="flex"
-                    flexWrap="wrap"
-                    columnGap={2}
-                    marginBottom={5}
+                    flexDirection="row"
+                    paddingTop={3}
+                    marginBottom={3}
                   >
-                    {item.attachments.map((file) => (
-                      <Button
-                        key={file}
-                        size="small"
-                        variant="utility"
-                        icon="document"
-                        iconType="outline"
-                        onClick={() => undefined}
-                      >
-                        {file}
-                      </Button>
-                    ))}
+                    {isPatient ? (
+                      <UserInitialsAvatar name={userInfo.profile.name ?? ''} />
+                    ) : (
+                      <CircleLogo organization={senderName} />
+                    )}
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      marginLeft={2}
+                      justifyContent="center"
+                    >
+                      <Text variant="eyebrow" fontWeight="medium" truncate>
+                        {senderName}
+                      </Text>
+                      <Text variant="medium">
+                        {formatMessageDateTime(msg.messageSentAt)}
+                      </Text>
+                    </Box>
                   </Box>
-                )}
 
-                {/* Reply button */}
+                  {/* Body */}
+                  {msg.messageTextContent && (
+                    <Box
+                      marginBottom={4}
+                      style={{ fontWeight: 'lighter', whiteSpace: 'pre-line' }}
+                    >
+                      {msg.messageTextContent}
+                    </Box>
+                  )}
+
+                  {/* Attachments */}
+                  {msg.attachments.length > 0 && (
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      columnGap={2}
+                      marginBottom={3}
+                    >
+                      {msg.attachments.map((file) => (
+                        <Button
+                          key={file.id}
+                          size="small"
+                          variant="utility"
+                          icon="document"
+                          iconType="outline"
+                          onClick={() => undefined}
+                        >
+                          {file.fileName}
+                        </Button>
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              )
+            })}
+
+            {/* Reply button — below thread, hidden when form is open */}
+            {!replyOpen && item.patientCanReply !== false && (
+              <Box marginTop={3}>
                 <Button
                   variant="ghost"
-                  size="medium"
-                  iconType="outline"
-                  icon="undo"
+                  size="small"
+                  preTextIcon="undo"
+                  preTextIconType="outline"
                   onClick={() => setReplyOpen(true)}
                 >
                   {formatMessage(m.replyDocument)}
                 </Button>
-              </>
+              </Box>
             )}
 
+            {/* Reply form */}
             {replyOpen && (
-              <>
-                <Divider />
+              <div ref={replyRef}>
+                <Box paddingY={1}>
+                  <Divider />
+                </Box>
 
-                {/* Reply header */}
                 <Box
                   display="flex"
+                  flexDirection="row"
                   justifyContent="spaceBetween"
-                  alignItems="flexStart"
                   paddingTop={3}
                   marginBottom={3}
                 >
-                  <Box display="flex" alignItems="center" columnGap={2}>
-                    <UserInitialsAvatar />
-                    <Box>
-                      <Text fontWeight="semiBold">
+                  <Box display="flex" flexDirection="row">
+                    <UserInitialsAvatar name={userInfo.profile.name ?? ''} />
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      marginLeft={2}
+                      justifyContent="center"
+                    >
+                      <Text variant="eyebrow" fontWeight="medium" truncate>
+                        {userInfo.profile.name ?? ''}
+                      </Text>
+                      <Text variant="medium">
                         {formatMessage(messages.healthMessageTo, {
-                          arg: item.organization,
+                          arg: item.lastSenderGroupName ?? '',
                         })}
                       </Text>
-                      <Box display="flex" alignItems="center" columnGap={2}>
-                        <Text color="dark400" variant="small">
-                          {REPLY_DATETIME}
-                        </Text>
-                        <Box
-                          borderLeftWidth="standard"
-                          borderColor="blue200"
-                          style={{ height: 14 }}
-                        />
-                        <Tag variant="blue" outlined>
-                          {item.category}
-                        </Tag>
-                      </Box>
                     </Box>
                   </Box>
                   <Button
                     circle
                     icon="close"
                     colorScheme="light"
+                    aria-label={formatMessage(messages.healthMessageCloseReply)}
                     onClick={() => setReplyOpen(false)}
                   />
                 </Box>
 
-                {/* Reply textarea */}
                 <Box marginBottom={3}>
                   <Input
                     textarea
@@ -275,7 +346,6 @@ const HealthMessageDetail = () => {
                   />
                 </Box>
 
-                {/* Reply footer */}
                 <Box
                   display="flex"
                   justifyContent="spaceBetween"
@@ -289,11 +359,16 @@ const HealthMessageDetail = () => {
                   >
                     {formatMessage(messages.healthMessageUploadFile)}
                   </Button>
-                  <Button onClick={() => undefined}>
+                  <Button
+                    size="small"
+                    onClick={handleReply}
+                    loading={replySending}
+                    disabled={!replyText.trim()}
+                  >
                     {formatMessage(messages.healthMessageSend)}
                   </Button>
                 </Box>
-              </>
+              </div>
             )}
           </Box>
         </GridColumn>
