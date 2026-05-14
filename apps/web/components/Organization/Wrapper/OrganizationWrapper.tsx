@@ -210,7 +210,7 @@ export const OrganizationHeader: React.FC<
     : organizationLogoAltTextFallback
 
   const defaultProps: DefaultHeaderProps = {
-    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    fullWidth: false,
     image: organizationPage.defaultHeaderImage?.url,
     background: getBackgroundStyle(organizationPage.themeProperties),
     title: organizationPage.title,

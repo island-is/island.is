@@ -27,6 +27,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -53,6 +54,11 @@ const AppealFiles = () => {
   const { id, rulingFileId: rulingFileIdQuery } = router.query
   const rulingFileId =
     typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
+  const targetAppealCase = rulingFileId
+    ? workingCase.rulingOrderAppealCases?.find(
+        (a) => a.rulingFileId === rulingFileId,
+      )
+    : workingCase.appealCase
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -135,15 +141,21 @@ const AppealFiles = () => {
       <FormContentContainer>
         <PageTitle>Gögn</PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
-          {(workingCase.prosecutorPostponedAppealDate ||
-            workingCase.accusedPostponedAppealDate) && (
-            <Text variant="h5" as="h5">
-              {getAppealActorText(workingCase)}
-            </Text>
-          )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={rulingFileId}
+          />
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         <Box
           component="section"

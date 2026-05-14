@@ -107,4 +107,302 @@ describe('DrivingLicenseSubmissionService', () => {
       })
     })
   })
+
+  describe('B-full-renewal-65 redesign branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForRenewal65: jest.Mock
+    let renewDrivingLicense65AndOver: jest.Mock
+    let getFiles: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'B-full-renewal-65',
+      certificate: 'yes',
+      email: 'mock@email.com',
+      phone: '9999999',
+      delivery: {
+        deliveryMethod: 'post',
+        jurisdiction: '37',
+      },
+    }
+
+    beforeEach(async () => {
+      applyForRenewal65 = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      renewDrivingLicense65AndOver = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      getFiles = jest.fn(async () => [])
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { applyForRenewal65, renewDrivingLicense65AndOver },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('routes to legacy renewDrivingLicense65AndOver when flag is off', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: false,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const result = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({ success: true })
+      expect(renewDrivingLicense65AndOver).toHaveBeenCalledTimes(1)
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+
+      const [auth, input] = renewDrivingLicense65AndOver.mock.calls[0]
+      expect(auth).toBe(user.authorization)
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        sendPlasticToPerson: true,
+        pickupPlasticAtDistrict: false,
+      })
+    })
+
+    it('throws missing-cert error when flag is on but no health certificate is uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      // getFiles returns [] (no cert)
+      await expect(
+        service.submitApplication({
+          application,
+          auth: user,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            summary: expect.objectContaining({
+              id: 'dl.application:validation.healthCertificateRequired',
+            }),
+          },
+          status: 400,
+        },
+      })
+
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('calls applyForRenewal65 with the BE-shaped payload when flag is on and cert is uploaded', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        {
+          fileName: 'cert.pdf',
+          fileContent: 'base64pdfdata',
+        },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+
+      const [auth, input] = applyForRenewal65.mock.calls[0]
+      expect(auth).toBe(user.authorization)
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        primaryPhoneNumber: expect.any(String),
+        studentEmail: 'mock@email.com',
+        sendPlasticToPerson: true,
+        pickupPlasticAtDistrict: false,
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+      expect(input.contentList).toHaveLength(1)
+      expect(input.contentList[0]).toMatchObject({
+        fileName: 'cert.pdf',
+        contentType: 'application/pdf',
+        description: 'Laeknisvottord',
+      })
+    })
+
+    it('short-circuits with fake success when fakeData.useFakeData=yes and submitToRLS unset (default)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          fakeData: { useFakeData: 'yes' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('short-circuits with fake success when fakeData.useFakeData=yes and submitToRLS=no (explicit default)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          fakeData: { useFakeData: 'yes', submitToRLS: 'no' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).not.toHaveBeenCalled()
+    })
+
+    it('bypasses short-circuit and calls applyForRenewal65 when fakeData.useFakeData=yes and submitToRLS=yes', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+          fakeData: { useFakeData: 'yes', submitToRLS: 'yes' },
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+    })
+
+    it('runs the normal RLS path when fakeData.useFakeData=no even with submitToRLS=yes set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          is65RenewalRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+          fakeData: { useFakeData: 'no', submitToRLS: 'yes' },
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64', imageTypeId: 1 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      getFiles.mockResolvedValueOnce([
+        { fileName: 'cert.pdf', fileContent: 'base64pdfdata' },
+      ])
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForRenewal65).toHaveBeenCalledTimes(1)
+    })
+  })
 })
