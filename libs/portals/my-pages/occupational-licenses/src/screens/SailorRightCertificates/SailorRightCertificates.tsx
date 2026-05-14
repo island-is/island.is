@@ -38,7 +38,9 @@ const SailorRightCertificates = () => {
         (c) =>
           !search ||
           (c.type ?? '').toLowerCase().includes(search.toLowerCase()) ||
-          (c.rightsCategories ?? '').toLowerCase().includes(search.toLowerCase()),
+          (c.rightsCategories ?? '')
+            .toLowerCase()
+            .includes(search.toLowerCase()),
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rightCertificates, search],
