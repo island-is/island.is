@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Tag } from '@island.is/island-ui/core'
+import { Input, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
-  EmptyState,
   IntroWrapper,
   NestedTable,
   Table,
@@ -18,8 +17,7 @@ import { olMessage as om } from '../../lib/messages'
 import { useShipRegistrySailorCertificatesQuery } from './SailorSchoolCertificates.generated'
 import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
 
-//TODO: add filter input and file export
-//
+//TODO: add file export
 const columnHelper = createColumnHelper<ShipRegistrySailorSchoolCertificate>()
 
 const SailorSchoolCertificates = () => {
@@ -29,6 +27,18 @@ const SailorSchoolCertificates = () => {
   const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
   const schoolCertificates =
     data?.shipRegistrySailorCertificates?.schoolCertificates ?? []
+
+  const [search, setSearch] = useState('')
+  const filtered = useMemo(
+    () =>
+      schoolCertificates.filter(
+        (c) =>
+          !search ||
+          (c.title ?? '').toLowerCase().includes(search.toLowerCase()),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [schoolCertificates, search],
+  )
 
   const columns = useMemo(
     () => [
@@ -68,7 +78,7 @@ const SailorSchoolCertificates = () => {
   return (
     <IntroWrapper
       title={m.sailorsSchoolCertificatesTitle}
-      intro={formatMessage(om.sailorSchoolCertificatesIntro)}
+      intro={om.sailorSchoolCertificatesIntro}
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),
@@ -77,20 +87,32 @@ const SailorSchoolCertificates = () => {
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && schoolCertificates.length === 0 && (
-        <EmptyState
-          title={om.sailorSchoolCertificatesEmpty}
-          description={m.noData}
-        />
+        <Problem type="no_data" noBorder={false} />
       )}
       {!loading && !error && schoolCertificates.length > 0 && (
-        <Table
-          columns={columns}
-          data={schoolCertificates}
-          emptyMessage={om.sailorSchoolCertificatesEmpty}
-          loading={loading}
-          mobileTitleKey="title"
-          renderExpandedRow={renderExpandedRow}
-        />
+        <Stack space={3}>
+          <Input
+            name="schoolCertificateSearch"
+            label={formatMessage(m.inputSearchTerm)}
+            placeholder={formatMessage(m.inputSearchTerm)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={{ type: 'outline', name: 'search' }}
+            size="xs"
+            backgroundColor="blue"
+          />
+          {filtered.length === 0 ? (
+            <Problem type="no_data" noBorder={false} />
+          ) : (
+            <Table
+              columns={columns}
+              data={filtered}
+              emptyMessage={om.sailorSchoolCertificatesEmpty}
+              mobileTitleKey="title"
+              renderExpandedRow={renderExpandedRow}
+            />
+          )}
+        </Stack>
       )}
     </IntroWrapper>
   )

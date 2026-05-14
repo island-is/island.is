@@ -1755,10 +1755,6 @@ export const shipsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
   },
-  notFound: {
-    id: 'sp.ships:not-found',
-    defaultMessage: 'Skip fannst ekki',
-  },
   registrationNumber: {
     id: 'sp.ships:registration-number',
     defaultMessage: 'Skráningarnúmer',

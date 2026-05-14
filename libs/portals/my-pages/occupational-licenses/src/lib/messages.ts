@@ -187,10 +187,6 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-school-certificates-column-valid-date',
     defaultMessage: 'Gildisdagsetning',
   },
-  sailorSchoolCertificatesColumnStatus: {
-    id: 'sp.occupational-licenses:sailor-school-certificates-column-status',
-    defaultMessage: 'Staða',
-  },
   sailorSchoolCertificatesExpandSchool: {
     id: 'sp.occupational-licenses:sailor-school-certificates-expand-school',
     defaultMessage: 'Skóli',
@@ -220,17 +216,9 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-right-certificates-column-valid-date',
     defaultMessage: 'Gildisdagsetning',
   },
-  sailorRightCertificatesColumnStatus: {
-    id: 'sp.occupational-licenses:sailor-right-certificates-column-status',
-    defaultMessage: 'Staða',
-  },
   sailorRightCertificatesExpandCertificateNumber: {
     id: 'sp.occupational-licenses:sailor-right-certificates-expand-certificate-number',
     defaultMessage: 'Skírteinisnúmer',
-  },
-  sailorRightCertificatesExpandRightsCategories: {
-    id: 'sp.occupational-licenses:sailor-right-certificates-expand-rights-categories',
-    defaultMessage: 'Réttindaflokkar',
   },
   sailorRightCertificatesExpandIssueDate: {
     id: 'sp.occupational-licenses:sailor-right-certificates-expand-issue-date',
@@ -241,30 +229,33 @@ export const olMessage = defineMessages({
     defaultMessage:
       'Hér birtast upplýsingar um allar lögskráningar sjómanns á skipum, bæði núverandi og eldri. Lögskráning staðfestir ráðningu og stöðu um borð og er grundvöllur fyrir skráningu siglingartíma, réttinda og atvinnuskírteina.',
   },
-  sailorTabSiglingartimi: {
-    id: 'sp.occupational-licenses:sailor-tab-siglingartimi',
+  sailorTabSeaService: {
+    id: 'sp.occupational-licenses:sailor-tab-sea-service',
     defaultMessage: 'Siglingartími',
   },
-  sailorTabUndanthaegur: {
-    id: 'sp.occupational-licenses:sailor-tab-undanthaegur',
+  sailorTabExemptions: {
+    id: 'sp.occupational-licenses:sailor-tab-exemptions',
     defaultMessage: 'Undanþágur',
   },
-  sailorTabSjoferoadabaekur: {
-    id: 'sp.occupational-licenses:sailor-tab-sjoferoadabaekur',
+  sailorTabMaritimeBooks: {
+    id: 'sp.occupational-licenses:sailor-tab-maritime-books',
     defaultMessage: 'Sjóferðabækur',
   },
-  sailorSiglingartimiPending: {
-    id: 'sp.occupational-licenses:sailor-siglingartimi-pending',
-    defaultMessage:
-      'Upplýsingar um siglingartíma eru ekki enn tiltækar. Verið er að vinna að þessum hluta.',
+  sailorCrewRegistrationsTabsLabel: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-tabs-label',
+    defaultMessage: 'Lögskráningar',
   },
-  sailorUndanthaegurIntro: {
-    id: 'sp.occupational-licenses:sailor-undanthaegur-intro',
+  sailorColumnRank: {
+    id: 'sp.occupational-licenses:sailor-column-rank',
+    defaultMessage: 'Staða',
+  },
+  sailorExemptionsIntro: {
+    id: 'sp.occupational-licenses:sailor-exemptions-intro',
     defaultMessage:
       'Hér finnur þú tímabundnar undanþágur sem veittar hafa verið vegna réttinda, mönnunar eða annarra skilyrða sem tengjast störfum um borð.',
   },
-  sailorUndanthaegurLinkText: {
-    id: 'sp.occupational-licenses:sailor-undanthaegur-link-text',
+  sailorExemptionsLinkText: {
+    id: 'sp.occupational-licenses:sailor-exemptions-link-text',
     defaultMessage: 'Nánar um undanþágur',
   },
   sailorColumnShip: {
@@ -291,8 +282,8 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-crew-registrations-expand-days',
     defaultMessage: 'Fjöldi daga',
   },
-  sailorCrewRegistrationsUndanthaegurEmpty: {
-    id: 'sp.occupational-licenses:sailor-crew-registrations-undanthaegur-empty',
+  sailorCrewRegistrationsExemptionsEmpty: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-exemptions-empty',
     defaultMessage: 'Engar undanþágur fundust',
   },
   sailorMaritimeBooksIntro: {

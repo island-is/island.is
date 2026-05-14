@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Tag } from '@island.is/island-ui/core'
+import { Input, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
-  EmptyState,
   IntroWrapper,
   NestedTable,
   Table,
@@ -22,8 +21,7 @@ import { ShipRegistrySailorRightCertificate } from '@island.is/api/schema'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
 
-//TODO: add filter input and file export
-//
+//TODO: add file export
 
 const SailorRightCertificates = () => {
   useNamespaces('sp.occupational-licenses')
@@ -32,6 +30,19 @@ const SailorRightCertificates = () => {
   const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
   const rightCertificates =
     data?.shipRegistrySailorCertificates?.rightCertificates ?? []
+
+  const [search, setSearch] = useState('')
+  const filtered = useMemo(
+    () =>
+      rightCertificates.filter(
+        (c) =>
+          !search ||
+          (c.type ?? '').toLowerCase().includes(search.toLowerCase()) ||
+          (c.rightsCategories ?? '').toLowerCase().includes(search.toLowerCase()),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rightCertificates, search],
+  )
 
   const columns = useMemo(
     () => [
@@ -65,12 +76,6 @@ const SailorRightCertificates = () => {
           value: row.original.certificateNumber ?? '-',
         },
         {
-          title: formatMessage(
-            om.sailorRightCertificatesExpandRightsCategories,
-          ),
-          value: row.original.rightsCategories ?? '-',
-        },
-        {
           title: formatMessage(om.sailorRightCertificatesExpandIssueDate),
           value: row.original.issueDate
             ? formatDate(new Date(row.original.issueDate))
@@ -83,7 +88,7 @@ const SailorRightCertificates = () => {
   return (
     <IntroWrapper
       title={m.sailorsRightCertificatesTitle}
-      intro={formatMessage(om.sailorRightCertificatesIntro)}
+      intro={om.sailorRightCertificatesIntro}
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),
@@ -92,20 +97,32 @@ const SailorRightCertificates = () => {
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && rightCertificates.length === 0 && (
-        <EmptyState
-          title={om.sailorRightCertificatesEmpty}
-          description={m.noData}
-        />
+        <Problem type="no_data" noBorder={false} />
       )}
       {!loading && !error && rightCertificates.length > 0 && (
-        <Table
-          columns={columns}
-          data={rightCertificates}
-          emptyMessage={om.sailorRightCertificatesEmpty}
-          loading={loading}
-          mobileTitleKey="type"
-          renderExpandedRow={renderExpandedRow}
-        />
+        <Stack space={3}>
+          <Input
+            name="rightCertificateSearch"
+            label={formatMessage(m.inputSearchTerm)}
+            placeholder={formatMessage(m.inputSearchTerm)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={{ type: 'outline', name: 'search' }}
+            size="xs"
+            backgroundColor="blue"
+          />
+          {filtered.length === 0 ? (
+            <Problem type="no_data" noBorder={false} />
+          ) : (
+            <Table
+              columns={columns}
+              data={filtered}
+              emptyMessage={om.sailorRightCertificatesEmpty}
+              mobileTitleKey="type"
+              renderExpandedRow={renderExpandedRow}
+            />
+          )}
+        </Stack>
       )}
     </IntroWrapper>
   )
