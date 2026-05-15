@@ -94,34 +94,25 @@ export const useEligibility = (
   if (usingFakeData) {
     let hasPhoto: boolean
     if (usesNewPhotoSelector) {
-      // When a photo source is set to 'real', the data provider falls through
-      // to RLS, so externalData reflects whatever the logged-in user actually
-      // has. For 'yes' it's faked into externalData; for 'no' it's empty.
-      // In all three cases, reading externalData via the same logic the real
-      // path uses gives us the correct hasPhoto.
-      const thjodskraOrRLSIsReal =
-        fakeData?.hasThjodskraPhoto === 'real' ||
-        fakeData?.hasRLSPhoto === 'real'
+      // 'real' falls through to RLS/Þjóðskrá and populates externalData with
+      // real data. 'yes' / 'no' / 'metadata-only' all inject their fake shape
+      // into externalData via the data provider. So in every case the right
+      // answer comes from reading externalData through the same predicates
+      // the real path uses.
+      const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+        application.externalData,
+      )
 
-      if (thjodskraOrRLSIsReal) {
-        const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
-          application.externalData,
-        )
+      const thjodskraPhotos =
+        getValueViaPath<{
+          images?: Array<{ contentSpecification?: string }>
+        }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
+        []
+      const hasThjodskraFacial = thjodskraPhotos.some(
+        (p) => p.contentSpecification === 'FACIAL',
+      )
 
-        const thjodskraPhotos =
-          getValueViaPath<{
-            images?: Array<{ contentSpecification?: string }>
-          }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
-          []
-        const hasThjodskraFacial = thjodskraPhotos.some(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
-      } else {
-        hasPhoto =
-          fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
-      }
+      hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
     } else {
       hasPhoto = fakeData?.qualityPhoto === YES
     }

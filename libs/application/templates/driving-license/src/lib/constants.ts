@@ -197,10 +197,12 @@ export enum States {
 type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
 
 // Fake-photo modes for hasThjodskraPhoto / hasRLSPhoto:
-//   'yes'  — inject a fake photo
-//   'no'   — inject "no photo" (fake empty)
-//   'real' — fall through to real RLS / Þjóðskrá data (default)
-export type FakePhotoMode = 'yes' | 'no' | 'real'
+//   'yes'           — inject a fake photo
+//   'no'            — inject "no photo" (fake empty)
+//   'real'          — fall through to real RLS / Þjóðskrá data (default)
+//   'metadata-only' — inject the prod-observed legacy-record shape:
+//                     metadata returned, photo binary missing (RLS only)
+export type FakePhotoMode = 'yes' | 'no' | 'real' | 'metadata-only'
 
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
