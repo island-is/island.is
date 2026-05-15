@@ -1,12 +1,13 @@
 import {
+  buildAlertMessageField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildDescriptionField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { m } from '../../lib/messages'
+import { requirementsMessages, m } from '../../lib/messages'
 import { B_FULL_RENEWAL_65, QUALITY_IMAGE_TYPE_IDS } from '../../lib/constants'
 import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
@@ -32,6 +33,33 @@ export const subSectionQualityPhoto65 = buildSubSection({
       title: m.photoSelectionTitle,
       description: m.photoSelectionDescription,
       children: [
+        buildAlertMessageField({
+          id: 'noUsablePhotoAlert',
+          title: requirementsMessages.beLicenseQualityPhotoTitle,
+          message: requirementsMessages.beLicenseQualityPhotoDescription,
+          alertType: 'warning',
+          condition: (_answers, externalData) => {
+            const thjodskraPhotos =
+              getValueViaPath<ThjodskraImage[]>(
+                externalData,
+                'allPhotosFromThjodskra.data.images',
+              ) ?? []
+            const hasThjodskraFacial = thjodskraPhotos.some(
+              (p) => p.contentSpecification === 'FACIAL',
+            )
+
+            const photoAndSig = getValueViaPath<{
+              imageTypeId?: number | null
+              pohto?: string | null
+            }>(externalData, 'qualityPhotoAndSignature.data')
+
+            const hasQualityPhoto =
+              !!photoAndSig?.pohto &&
+              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
+
+            return !hasThjodskraFacial && !hasQualityPhoto
+          },
+        }),
         buildRadioField({
           id: 'selectLicensePhoto',
           title: '',
