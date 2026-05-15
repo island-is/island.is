@@ -1,15 +1,31 @@
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { v4 as uuid } from 'uuid'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  CaseState,
+  CaseType,
+  CourtDocumentType,
+  hasIndictmentCaseBeenSubmittedToCourt,
+  type User,
+} from '@island.is/judicial-system/types'
 
+import { createDigitalCaseFileMetadataPdf } from '../../../formatters'
+import { AwsS3Service } from '../../aws-s3'
+import { PoliceSystemDigitalCaseFile } from '../../police/models/PoliceSystemDigitalCaseFile.model'
 import { PoliceService } from '../../police/police.service'
-import { PoliceDigitalCaseFileRepositoryService } from '../../repository'
+import {
+  CaseFile,
+  CourtDocumentRepositoryService,
+  PoliceDigitalCaseFileRepositoryService,
+} from '../../repository'
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
@@ -18,13 +34,118 @@ import { getFilesToCreate } from './getFilesToCreate'
 export class PoliceDigitalCaseFileService {
   constructor(
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly policeService: PoliceService,
+    private readonly awsS3Service: AwsS3Service,
+    @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  private async createMetadataCaseFile(
+    caseId: string,
+    caseType: CaseType,
+    caseState: CaseState,
+    withCourtSessions: boolean,
+    submittedBy: string | undefined,
+    file: PoliceSystemDigitalCaseFile,
+    transaction: Transaction,
+  ): Promise<void> {
+    const existingFile = await this.caseFileModel.findOne({
+      where: { caseId, policeFileId: file.id },
+      transaction,
+    })
+
+    if (existingFile) {
+      return
+    }
+
+    try {
+      this.logger.debug(
+        `Creating metadata case file for digital case file ${file.id} in case ${caseId}`,
+        {
+          caseId,
+          policeDigitalFileId: file.id,
+          policeCaseNumber: file.policeCaseNumber,
+          policeExternalVendorId: file.policeExternalVendorId,
+          displayDate: file.displayDate,
+          metadataFileName: file.name,
+        },
+      )
+
+      const pdfBuffer = await createDigitalCaseFileMetadataPdf({
+        name: file.name,
+        policeDigitalFileId: file.id,
+        policeExternalVendorId: file.policeExternalVendorId,
+        displayDate: file.displayDate,
+      })
+
+      const fileId = uuid()
+      const key = `${caseId}/${fileId}/${file.name}.pdf`
+
+      const metadataCaseFile = await this.caseFileModel.create(
+        {
+          id: fileId,
+          caseId,
+          name: `${file.name}.pdf`,
+          type: 'application/pdf',
+          category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+          state: CaseFileState.STORED_IN_RVG,
+          key,
+          size: pdfBuffer.length,
+          policeCaseNumber: file.policeCaseNumber,
+          policeFileId: file.id,
+          displayDate: file.displayDate,
+          userGeneratedFilename: file.name,
+          submittedBy,
+        },
+        { transaction },
+      )
+
+      if (
+        [CaseState.SUBMITTED, CaseState.RECEIVED].includes(caseState) &&
+        withCourtSessions
+      ) {
+        await this.courtDocumentRepositoryService.create(
+          caseId,
+          {
+            documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+            name:
+              metadataCaseFile.userGeneratedFilename ?? metadataCaseFile.name,
+            caseFileId: metadataCaseFile.id,
+          },
+          { transaction },
+        )
+      }
+
+      await this.awsS3Service.putObject(caseType, key, pdfBuffer)
+
+      this.logger.debug(
+        `Successfully created metadata case file for digital case file ${file.id} in case ${caseId}`,
+        {
+          caseId,
+          policeDigitalFileId: file.id,
+          metadataCaseFileId: fileId,
+          s3Key: key,
+        },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to create metadata case file for digital case file ${file.id} in case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async syncAndGetPoliceDigitalCaseFiles(
     caseId: string,
+    caseType: CaseType,
+    caseState: CaseState,
+    courtCaseNumber: string | null | undefined,
+    withCourtSessions: boolean,
+    submittedBy: string | undefined,
     policeCaseNumbers: string[],
     user: User,
   ): Promise<PoliceDigitalCaseFileSyncResult[]> {
@@ -53,6 +174,15 @@ export class PoliceDigitalCaseFileService {
       currentPoliceDigitalCaseFiles,
       policeCaseNumbers,
     )
+    const newlyCreatedPoliceDigitalFileIds = new Set(
+      filesToCreate.map((f) => f.id),
+    )
+
+    // Only create metadata case files for cases that have a court case number and have been submitted to court
+    const shouldCreateMetadataCaseFiles =
+      caseType === CaseType.INDICTMENT &&
+      Boolean(courtCaseNumber) &&
+      hasIndictmentCaseBeenSubmittedToCourt(caseState)
 
     if (filesToCreate.length > 0) {
       await this.sequelize.transaction(async (transaction) => {
@@ -71,6 +201,22 @@ export class PoliceDigitalCaseFileService {
             ),
           ),
         )
+
+        if (shouldCreateMetadataCaseFiles) {
+          await Promise.all(
+            filesToCreate.map((f) =>
+              this.createMetadataCaseFile(
+                caseId,
+                caseType,
+                caseState,
+                withCourtSessions,
+                submittedBy,
+                f,
+                transaction,
+              ),
+            ),
+          )
+        }
       })
     }
 
@@ -94,6 +240,7 @@ export class PoliceDigitalCaseFileService {
         displayDate: f.displayDate,
         orderWithinChapter: f.orderWithinChapter,
         isDeletable: !policeSystemDigitalCaseFileIds.has(f.policeDigitalFileId),
+        isNew: newlyCreatedPoliceDigitalFileIds.has(f.policeDigitalFileId),
       }))
   }
 

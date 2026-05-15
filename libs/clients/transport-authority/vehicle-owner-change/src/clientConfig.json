@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Ownerchange API developed in .Net8.0 - Release-31 : 20260120.2",
+    "description": "Ownerchange API developed in .Net6.0 - Release-13 : 20231219.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -23,6 +23,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -32,6 +33,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -59,12 +61,27 @@
               "schema": {
                 "$ref": "#/components/schemas/AuthenticateModel"
               }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
@@ -77,6 +94,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
                 }
@@ -97,6 +124,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -114,6 +151,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -123,6 +161,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -150,12 +189,27 @@
               "schema": {
                 "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
               }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
@@ -174,6 +228,22 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -200,6 +270,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeWithBase64Contract"
+                }
               }
             }
           },
@@ -220,6 +300,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -237,6 +327,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -254,6 +354,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -263,6 +364,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -273,29 +375,44 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
@@ -314,6 +431,22 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -328,17 +461,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompaniesModel"
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChangeForFinancialCompanies"
                 }
               }
             }
@@ -360,6 +503,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -377,6 +530,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -394,6 +557,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -403,6 +567,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -427,6 +592,21 @@
               }
             },
             "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChange"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChange"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOwnerChange"
+              }
+            },
+            "application/*+xml": {
               "schema": {
                 "$ref": "#/components/schemas/PostOwnerChange"
               }
@@ -454,6 +634,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/PostOwnerChange"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostOwnerChange"
+                }
               }
             }
           },
@@ -474,6 +664,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -491,6 +691,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -508,6 +718,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -517,6 +728,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -541,6 +753,21 @@
               }
             },
             "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostPersonOwnerChange"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostPersonOwnerChange"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostPersonOwnerChange"
+              }
+            },
+            "application/*+xml": {
               "schema": {
                 "$ref": "#/components/schemas/PostPersonOwnerChange"
               }
@@ -571,6 +798,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -588,6 +825,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -605,6 +852,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -614,6 +862,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -638,6 +887,21 @@
               }
             },
             "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVehicleOwnerChange"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVehicleOwnerChange"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostVehicleOwnerChange"
+              }
+            },
+            "application/*+xml": {
               "schema": {
                 "$ref": "#/components/schemas/PostVehicleOwnerChange"
               }
@@ -668,6 +932,16 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -685,6 +959,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -711,6 +995,7 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -720,6 +1005,7 @@
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
+            "required": true,
             "schema": {
               "type": "string",
               "default": "2.0"
@@ -728,7 +1014,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
@@ -741,6 +1027,16 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerChangeDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerChangeDto"
+                }
+              },
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/OwnerChangeDto"
                 }
@@ -764,101 +1060,15 @@
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
+              },
+              "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
               },
-              "application/json": {
+              "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ownerchangesconfirmationtoislandis": {
-      "post": {
-        "tags": ["OwnerChange"],
-        "parameters": [
-          {
-            "name": "batchSize",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
               }
             }
@@ -880,231 +1090,13 @@
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/sendownerchangeonpapernotifications": {
-      "post": {
-        "tags": ["OwnerChange"],
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
+              },
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/deceasedownerchange": {
-      "post": {
-        "tags": ["OwnerChange"],
-        "parameters": [
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostDeceasedEstateOwnerChangeModel"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostDeceasedEstateOwnerChangeModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostDeceasedEstateOwnerChangeModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostDeceasedEstateOwnerChangeModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OwnerChangeDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OwnerChangeDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OwnerChangeDto"
-                  }
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
+              "text/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -1133,7 +1125,6 @@
         "additionalProperties": false
       },
       "CoOwneDto": {
-        "required": ["coOwnerPersidno", "ownerChangeSerialNumber", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -1161,7 +1152,6 @@
         "description": "CoOwner data transfer object"
       },
       "OwnerChangeDto": {
-        "required": ["ownerSerialNumber", "persidno"],
         "type": "object",
         "properties": {
           "regno": {
@@ -1247,32 +1237,13 @@
           "personIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Person's social security number"
           }
         },
         "additionalProperties": false,
         "description": "Co owner entity"
-      },
-      "PostDeceasedEstateOwnerChangeModel": {
-        "required": ["estatePersidno", "transferToPersidno"],
-        "type": "object",
-        "properties": {
-          "estatePersidno": {
-            "maxLength": 10,
-            "minLength": 10,
-            "type": "string",
-            "description": "Social security number of the estate"
-          },
-          "transferToPersidno": {
-            "maxLength": 10,
-            "minLength": 10,
-            "type": "string",
-            "description": "Social security number of the person to whom the estate is transferred"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Entity for deceased estate owner change"
       },
       "PostOperator": {
         "required": ["mainOperator", "personIdNumber"],
@@ -1281,6 +1252,7 @@
           "personIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Person's social security number"
           },
@@ -1301,24 +1273,29 @@
           "dateOfPurchase",
           "insuranceCompanyCode",
           "permno",
+          "reportingPersonIdNumber",
+          "saleAmount",
           "sellerPersonIdNumber"
         ],
         "type": "object",
         "properties": {
           "permno": {
-            "minLength": 1,
+            "maxLength": 5,
+            "minLength": 5,
             "type": "string",
             "description": "Vehicle permanent number"
           },
           "buyerPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Buyer's social security number"
           },
           "sellerPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Seller's social security number"
           },
@@ -1334,29 +1311,35 @@
             "description": "Code for insurance company, see REST GET endpoint /vehicle/codetables/insurancecompanies"
           },
           "useGroup": {
+            "maxLength": 3,
+            "minLength": 3,
             "type": "string",
             "description": "Use group for vehicle, see REST GET endpoint /vehicle/codetables/usegroups",
             "nullable": true
           },
           "saleAmount": {
+            "maximum": 9999999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Amount in purchase",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "sellerEmail": {
             "type": "string",
             "description": "Email for seller",
+            "format": "email",
             "nullable": true
           },
           "buyerEmail": {
             "type": "string",
             "description": "Email for buyer",
+            "format": "email",
             "nullable": true
           },
           "operatorEmail": {
             "type": "string",
             "description": "Email of operator",
+            "format": "email",
             "nullable": true
           },
           "operators": {
@@ -1376,11 +1359,15 @@
             "nullable": true
           },
           "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
-            "description": "Reporting person's social security number (car sale)",
-            "nullable": true
+            "description": "Reporting person's social security number (car sale)"
           },
           "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Current mileage on vehicle when owner change is reported",
             "format": "int32",
@@ -1390,24 +1377,34 @@
         "additionalProperties": false,
         "description": "Model to post owner change"
       },
-      "PostOwnerChangeForFinancialCompaniesModel": {
-        "required": ["dateOfPurchase", "permno"],
+      "PostOwnerChangeForFinancialCompanies": {
+        "required": ["permno", "personIdNumber"],
         "type": "object",
         "properties": {
           "permno": {
-            "minLength": 1,
+            "maxLength": 5,
+            "minLength": 5,
             "type": "string",
             "description": "Vehicle permanent number"
           },
           "personIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
             "type": "string",
-            "description": "Social security number of the person who vehicle will be transferred to",
-            "nullable": true
+            "description": "Social security number for person who's buying the vehicle"
           },
           "dateOfPurchase": {
             "type": "string",
-            "description": "Purchase of the vehicle",
+            "description": "Date of purchase",
             "format": "date-time"
+          },
+          "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
+            "type": "integer",
+            "description": "Current mileage on vehicle when owner change is reported",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1420,24 +1417,29 @@
           "dateOfPurchase",
           "insuranceCompanyCode",
           "permno",
+          "reportingPersonIdNumber",
+          "saleAmount",
           "sellerPersonIdNumber"
         ],
         "type": "object",
         "properties": {
           "permno": {
-            "minLength": 1,
+            "maxLength": 5,
+            "minLength": 5,
             "type": "string",
             "description": "Vehicle permanent number"
           },
           "buyerPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Buyer's social security number"
           },
           "sellerPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Seller's social security number"
           },
@@ -1453,29 +1455,35 @@
             "description": "Code for insurance company, see REST GET endpoint /vehicle/codetables/insurancecompanies"
           },
           "useGroup": {
+            "maxLength": 3,
+            "minLength": 3,
             "type": "string",
             "description": "Use group for vehicle, see REST GET endpoint /vehicle/codetables/usegroups",
             "nullable": true
           },
           "saleAmount": {
+            "maximum": 9999999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Amount in purchase",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "sellerEmail": {
             "type": "string",
             "description": "Email for seller",
+            "format": "email",
             "nullable": true
           },
           "buyerEmail": {
             "type": "string",
             "description": "Email for buyer",
+            "format": "email",
             "nullable": true
           },
           "operatorEmail": {
             "type": "string",
             "description": "Email of operator",
+            "format": "email",
             "nullable": true
           },
           "operators": {
@@ -1495,11 +1503,15 @@
             "nullable": true
           },
           "reportingPersonIdNumber": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
-            "description": "Reporting person's social security number (car sale)",
-            "nullable": true
+            "description": "Reporting person's social security number (car sale)"
           },
           "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Current mileage on vehicle when owner change is reported",
             "format": "int32",
@@ -1520,27 +1532,28 @@
           "insuranceCompanyCode",
           "permno",
           "personIdNumber",
-          "purchaseDate",
+          "saleAmount",
           "useGroup"
         ],
         "type": "object",
         "properties": {
           "permno": {
-            "minLength": 1,
+            "maxLength": 5,
+            "minLength": 5,
             "type": "string",
             "description": "Vehicle permanent number"
           },
           "personIdNumber": {
             "maxLength": 10,
             "minLength": 10,
-            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Buyer's social security number"
           },
           "currentOwnerPersonIdNumber": {
             "maxLength": 10,
             "minLength": 10,
-            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
             "description": "Current owner's social security number"
           },
@@ -1564,22 +1577,24 @@
           "saleAmount": {
             "type": "number",
             "description": "Amount of sale",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "sellerEmail": {
             "type": "string",
             "description": "Seller's email",
+            "format": "email",
             "nullable": true
           },
           "buyerEmail": {
             "type": "string",
             "description": "Buyer's email",
+            "format": "email",
             "nullable": true
           },
           "operatorEmail": {
             "type": "string",
             "description": "Operator's email",
+            "format": "email",
             "nullable": true
           },
           "operators": {
@@ -1604,6 +1619,8 @@
             "nullable": true
           },
           "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Current mileage on vehicle when owner change is reported",
             "format": "int32",
@@ -1618,7 +1635,8 @@
         "type": "object",
         "properties": {
           "permno": {
-            "minLength": 1,
+            "maxLength": 5,
+            "minLength": 5,
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -1634,6 +1652,8 @@
             "description": "Vehicle use group, see REST GET endpoint /vehicle/codetables/usegroups"
           },
           "mileage": {
+            "maximum": 9999999,
+            "minimum": 0,
             "type": "integer",
             "description": "Current mileage on vehicle when owner change is reported",
             "format": "int32",
@@ -1671,7 +1691,6 @@
         "additionalProperties": false
       },
       "ReturnTypeMessage": {
-        "required": ["errorMess", "warnSever"],
         "type": "object",
         "properties": {
           "lookupNo": {
@@ -1810,7 +1829,8 @@
                 "type": "string"
               }
             },
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false

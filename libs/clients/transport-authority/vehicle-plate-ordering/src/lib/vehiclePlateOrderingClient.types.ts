@@ -16,37 +16,11 @@ export interface PlateOrderValidationMessage {
 
 export interface PlateOrder {
   permno: string
-  regGroup: string
   frontType?: string | null
   rearType?: string | null
   deliveryStationType?: string
   deliveryStationCode?: string
   expressOrder: boolean
-}
-
-export interface PlateSize {
-  plateSizeType?: string | null
-  plateHeight?: number | null
-  plateWidth?: number | null
-}
-
-export interface PlateOrderType {
-  plateTypeCode?: string | null
-  plateTypeName?: string | null
-  plateSizes: PlateSize[]
-}
-
-export interface PlateOrderMatrix {
-  permno?: string | null
-  plates: PlateOrderType[]
-}
-
-export interface CurrentPlates {
-  permno?: string | null
-  plateTypeCode?: string | null
-  plateTypeName?: string | null
-  plateStatusCode?: string | null
-  plateStatusName?: string | null
 }
 
 // Note: type=R and code=1 is the option "Pick up at Samgöngustofa"

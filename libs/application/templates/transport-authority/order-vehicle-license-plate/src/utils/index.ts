@@ -10,7 +10,6 @@ import {
 import { payment } from '../lib/messages'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
-export { formatPlateSize } from './formatPlateSize'
 
 export const getChargeItems = (
   application: Application,

@@ -89,7 +89,7 @@ export class ConfirmTravelService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: errorMsgs.submitError,
-          summary: e || '',
+          summary: errorMsgs.submitError,
         },
         500,
       )
