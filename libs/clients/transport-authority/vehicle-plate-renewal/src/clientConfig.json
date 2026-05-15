@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "PlateOwnership API developed in .Net6.0 - Release-6 : 20240624.2",
+    "description": "PlateOwnership API developed in .Net6.0 - Release-2 : 20230517.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -55,7 +55,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -120,7 +120,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
@@ -264,7 +264,7 @@
           }
         },
         "responses": {
-          "200": { "description": "OK" },
+          "200": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -328,7 +328,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {

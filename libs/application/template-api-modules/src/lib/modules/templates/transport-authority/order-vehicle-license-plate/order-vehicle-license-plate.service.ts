@@ -155,7 +155,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       await this.vehiclePlateOrderingClient.validateAllForPlateOrder(
         auth,
         answers?.pickVehicle?.plate,
-        answers?.plateType?.regGroup,
         answers?.plateSize?.frontPlateSize?.[0],
         answers?.plateSize?.rearPlateSize?.[0],
         deliveryStationType,
@@ -226,7 +225,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       auth,
       {
         permno: answers?.pickVehicle?.plate,
-        regGroup: answers?.plateType?.regGroup,
         frontType: answers?.plateSize?.frontPlateSize?.[0],
         rearType: answers?.plateSize?.rearPlateSize?.[0],
         deliveryStationType: deliveryStationType,

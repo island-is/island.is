@@ -38,7 +38,6 @@ const SocialBenefitsOverview = () => {
   const overview = data?.vmstApplicationsOverview
   const hasNon404Error = !!error && !is404Error(error)
   const vmstReady = !loading && !hasNon404Error
-  console.log(error)
 
   return (
     <IntroWrapper

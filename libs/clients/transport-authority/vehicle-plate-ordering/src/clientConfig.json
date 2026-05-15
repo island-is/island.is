@@ -1,96 +1,140 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Plate ordering API developed in .Net6.0 - Release-8 : 20260505.1",
+    "description": "Plate ordering API developed in .Net6.0 - Release-3 : 20230125.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [{ "url": "/vehicle/PlateOrdering" }],
+  "servers": [
+    {
+      "url": "/vehicle/PlateOrdering"
+    }
+  ],
   "paths": {
     "/authenticate": {
       "post": {
         "tags": ["Authentication"],
-        "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
-              "text/xml": { "schema": { "$ref": "#/components/schemas/User" } }
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
             }
           },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -100,80 +144,110 @@
     "/orderplates": {
       "post": {
         "tags": ["PlateOrdering"],
-        "summary": "Post a plate order",
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostOrderPlatesModel"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "OK" },
+          "200": {
+            "description": "Success"
+          },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                  "items": {
+                    "$ref": "#/components/schemas/ReturnTypeMessage"
+                  }
                 }
               }
             }
@@ -182,187 +256,29 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/plateorderoptions/{permno}": {
-      "get": {
-        "tags": ["PlateOrdering"],
-        "summary": "Gets available plate types and sizes for a vehicle",
-        "parameters": [
-          {
-            "name": "permno",
-            "in": "path",
-            "description": "Vehicle permno",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": { "$ref": "#/components/schemas/PlateOrderMatrixDto" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/PlateOrderMatrixDto" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/PlateOrderMatrixDto" }
-              },
-              "application/xml": {
-                "schema": { "$ref": "#/components/schemas/PlateOrderMatrixDto" }
-              },
-              "text/xml": {
-                "schema": { "$ref": "#/components/schemas/PlateOrderMatrixDto" }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/currentplates/{permno}": {
-      "get": {
-        "tags": ["PlateOrdering"],
-        "summary": "Gets the current plates for a vehicle",
-        "parameters": [
-          {
-            "name": "permno",
-            "in": "path",
-            "description": "Vehicle permno",
-            "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
-          }
-        ],
-        "responses": {
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermnoCurrentPlateDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermnoCurrentPlateDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermnoCurrentPlateDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermnoCurrentPlateDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/PermnoCurrentPlateDto"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              },
-              "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -372,53 +288,68 @@
     "/deliverystations": {
       "get": {
         "tags": ["PlateOrdering"],
-        "summary": "Get list of valid stations to deliver plates to",
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/StationDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/StationDTO"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/StationDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/StationDTO"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/StationDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/StationDTO"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/StationDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/StationDTO"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/StationDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/StationDTO"
+                  }
                 }
               }
             }
@@ -433,240 +364,83 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": { "minLength": 1, "type": "string" },
-          "password": { "minLength": 1, "type": "string" }
+          "username": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
         },
         "additionalProperties": false
       },
-      "PermnoCurrentPlateDto": {
-        "type": "object",
-        "properties": {
-          "permno": {
-            "type": "string",
-            "description": "Vehicle permno",
-            "nullable": true
-          },
-          "plateSizeCodeFront": {
-            "type": "string",
-            "description": "Front plate size code",
-            "nullable": true
-          },
-          "plateSizeNameFront": {
-            "type": "string",
-            "description": "Front plate size name",
-            "nullable": true
-          },
-          "plateHeightFront": {
-            "type": "integer",
-            "description": "Front plate height",
-            "format": "int32",
-            "nullable": true
-          },
-          "plateWidthFront": {
-            "type": "integer",
-            "description": "Front plate width",
-            "format": "int32",
-            "nullable": true
-          },
-          "plateSizeCodeRear": {
-            "type": "string",
-            "description": "Rear plate size code",
-            "nullable": true
-          },
-          "plateSizeNameRear": {
-            "type": "string",
-            "description": "Rear plate size name",
-            "nullable": true
-          },
-          "plateHeightRear": {
-            "type": "integer",
-            "description": "Rear plate height",
-            "format": "int32",
-            "nullable": true
-          },
-          "plateWidthRear": {
-            "type": "integer",
-            "description": "Rear plate width",
-            "format": "int32",
-            "nullable": true
-          },
-          "plateTypeCode": {
-            "type": "string",
-            "description": "Plate type code",
-            "nullable": true
-          },
-          "plateTypeName": {
-            "type": "string",
-            "description": "Plate type name",
-            "nullable": true
-          },
-          "plateBackground": {
-            "type": "string",
-            "description": "Plate background color",
-            "nullable": true
-          },
-          "plateForground": {
-            "type": "string",
-            "description": "Plate forground color",
-            "nullable": true
-          },
-          "plateStatusCode": {
-            "type": "string",
-            "description": "Plate status code",
-            "nullable": true
-          },
-          "plateStatusName": {
-            "type": "string",
-            "description": "Plate status name",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Current plates for a vehicle"
-      },
-      "PlateOrderMatrixDto": {
-        "required": ["permno", "plates"],
-        "type": "object",
-        "properties": {
-          "permno": {
-            "type": "string",
-            "description": "Vehicle permno",
-            "nullable": true
-          },
-          "plates": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/PlateTypeDto" },
-            "description": "Available plate types with their sizes",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Plate order matrix for a vehicle - available plate types and sizes"
-      },
-      "PlateSizeDto": {
-        "type": "object",
-        "properties": {
-          "plateSizeType": {
-            "type": "string",
-            "description": "Plate size type code",
-            "nullable": true
-          },
-          "plateHeight": {
-            "type": "integer",
-            "description": "Plate height in mm",
-            "format": "int32",
-            "nullable": true
-          },
-          "plateWidth": {
-            "type": "integer",
-            "description": "Plate width in mm",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "A plate size option"
-      },
-      "PlateTypeDto": {
-        "required": ["plateSizes"],
-        "type": "object",
-        "properties": {
-          "regGroupCode": {
-            "type": "string",
-            "description": "Plate type code",
-            "nullable": true
-          },
-          "regGroupName": {
-            "type": "string",
-            "description": "Plate type name",
-            "nullable": true
-          },
-          "plateBackground": {
-            "type": "string",
-            "description": "Plate background colour",
-            "nullable": true
-          },
-          "plateForground": {
-            "type": "string",
-            "description": "Plate foreground colour",
-            "nullable": true
-          },
-          "plateSizes": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/PlateSizeDto" },
-            "description": "Available plate sizes for this type",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "A plate type with its available sizes"
-      },
       "PostOrderPlatesModel": {
-        "required": ["permno", "regGroup", "stationToDeliverTo", "stationType"],
+        "required": ["permno", "stationToDeliverTo", "stationType"],
         "type": "object",
         "properties": {
           "permno": {
-            "type": "string",
-            "description": "Permno of vehicle to order new plates for",
-            "nullable": true
-          },
-          "regno": {
-            "type": "string",
-            "description": "Vehicle registration number",
-            "nullable": true
-          },
-          "regGroup": {
-            "type": "string",
-            "description": "RegGroup of vehicle to order new plates for",
-            "nullable": true
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "type": "string"
           },
           "frontType": {
             "type": "string",
-            "description": "Type of front plate to order.",
             "nullable": true
           },
           "rearType": {
             "type": "string",
-            "description": "Type of rear plate to order",
             "nullable": true
           },
           "stationToDeliverTo": {
-            "type": "string",
-            "description": "Code of station to deliver ordered plates to. \r\nCan be delivered to a inspection station or SGS main office",
-            "nullable": true
+            "minLength": 1,
+            "pattern": "[1-9]*",
+            "type": "string"
           },
           "stationType": {
-            "type": "string",
-            "description": "Type of station to deliver ordered plates to",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "expressOrder": {
             "type": "boolean",
-            "description": "If true, order is given higher priority",
             "nullable": true
           },
           "checkOnly": {
             "type": "boolean",
-            "description": "If true, only performs error check, does not register plate order.",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "Model to order plates"
+        "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ReturnTypeMessage": {
-        "required": ["errorMess", "warnSever"],
         "type": "object",
         "properties": {
           "lookupNo": {
@@ -674,9 +448,18 @@
             "format": "int32",
             "nullable": true
           },
-          "warnSever": { "type": "string", "nullable": true },
-          "errorMess": { "type": "string", "nullable": true },
-          "permno": { "type": "string", "nullable": true },
+          "warnSever": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMess": {
+            "type": "string",
+            "nullable": true
+          },
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
           "warningSerialNumber": {
             "type": "integer",
             "format": "int32",
@@ -690,49 +473,95 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Name of station",
             "nullable": true
           },
           "stationCode": {
             "type": "string",
-            "description": "Station Code",
             "nullable": true
           },
           "stationType": {
             "type": "string",
-            "description": "Type of station",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "Station DTO"
+        "additionalProperties": false
       },
       "User": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "nullable": true },
-          "userName": { "type": "string", "nullable": true },
-          "normalizedUserName": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "normalizedEmail": { "type": "string", "nullable": true },
-          "emailConfirmed": { "type": "boolean" },
-          "passwordHash": { "type": "string", "nullable": true },
-          "securityStamp": { "type": "string", "nullable": true },
-          "concurrencyStamp": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "phoneNumberConfirmed": { "type": "boolean" },
-          "twoFactorEnabled": { "type": "boolean" },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
           "lockoutEnd": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lockoutEnabled": { "type": "boolean" },
-          "accessFailedCount": { "type": "integer", "format": "int32" },
-          "username": { "type": "string", "nullable": true },
-          "password": { "type": "string", "nullable": true },
-          "jwtToken": { "type": "string", "nullable": true },
-          "role": { "type": "string", "nullable": true }
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "jwtToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }
@@ -746,6 +575,9 @@
       }
     }
   },
-  "security": [{ "Bearer": [] }],
-  "tags": [{ "name": "Authentication" }, { "name": "PlateOrdering" }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

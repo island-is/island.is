@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
@@ -62,11 +63,17 @@ export const useDynamicRoutes = () => {
     GET_DRIVING_LICENSE_BOOK_QUERY,
   )
 
+  const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
+    Features.isServicePortalUnemploymentBenefitsPageEnabled,
+    false,
+  )
+
   const { data: vmstOverview, loading: vmstLoading } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
     {
       errorPolicy: 'ignore',
       onError: () => undefined,
+      skip: !vmstEnabled,
     },
   )
 
@@ -120,7 +127,7 @@ export const useDynamicRoutes = () => {
 
   return {
     activeDynamicRoutes,
-    loading: loading || licenseBookLoading || vmstLoading,
+    loading: loading || licenseBookLoading || vmstFlagLoading || vmstLoading,
   }
 }
 

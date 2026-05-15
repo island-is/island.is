@@ -2905,82 +2905,14 @@
         }
       }
     },
-    "/api/jobadvertisements/{id}": {
-      "get": {
-        "tags": [
-          "JobAdvertisement"
-        ],
-        "summary": "Gets a job advertisement by Id",
-        "operationId": "JobAdvertisement_GetSingleJobAdvertisement",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Advertisement Id",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "includeSupportData",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Job Advertisement",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/jobadvertisements": {
       "get": {
         "tags": [
           "JobAdvertisement"
         ],
-        "summary": "Gets a filtered list of job advertisements",
+        "summary": "Gets a list of job advertisements",
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
-          {
-            "name": "currentUserOnly",
-            "in": "query",
-            "description": "Filter by job advertisements which current user is assigned to",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "x-position": 1
-          },
-          {
-            "name": "searchString",
-            "in": "query",
-            "description": "Filter by string",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 2
-          },
           {
             "name": "pageNr",
             "in": "query",
@@ -2990,7 +2922,7 @@
               "format": "int32",
               "default": 1
             },
-            "x-position": 3
+            "x-position": 1
           },
           {
             "name": "pageSize",
@@ -3001,122 +2933,7 @@
               "format": "int32",
               "default": 20
             },
-            "x-position": 4
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "description": "Sort the list by",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 5
-          },
-          {
-            "name": "descending",
-            "in": "query",
-            "description": "Sort in descending order",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "x-position": 6
-          },
-          {
-            "name": "employerId",
-            "in": "query",
-            "description": "Filter by employer Id",
-            "schema": {
-              "type": "string",
-              "format": "guid",
-              "nullable": true
-            },
-            "x-position": 7
-          },
-          {
-            "name": "employerSSN",
-            "in": "query",
-            "description": "Filter by employer SSN",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 8
-          },
-          {
-            "name": "applicantId",
-            "in": "query",
-            "description": "Filter by applicant Id",
-            "schema": {
-              "type": "string",
-              "format": "guid",
-              "nullable": true
-            },
-            "x-position": 9
-          },
-          {
-            "name": "types",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 10
-          },
-          {
-            "name": "postCodes",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 11
-          },
-          {
-            "name": "serviceAreas",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 12
-          },
-          {
-            "name": "states",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": ""
-            },
-            "x-position": 13
-          },
-          {
-            "name": "activeJobs",
-            "in": "query",
-            "description": "Return only active jobadvertisements",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            },
-            "x-position": 14
-          },
-          {
-            "name": "readyForDisplay",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            },
-            "x-position": 15
-          },
-          {
-            "name": "includeSupportData",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            },
-            "x-position": 16
+            "x-position": 2
           }
         ],
         "responses": {
@@ -3125,7 +2942,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementListViewModel"
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_JobAdvertisement_JobAdvertisementListViewModel"
                 }
               }
             }
@@ -3518,10 +3335,43 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_CreateJobSearchConfirmationResponse"
                 }
               }
             }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Common_ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
           }
         },
         "security": [
@@ -4825,6 +4675,9 @@
           "description": {
             "type": "string",
             "nullable": true
+          },
+          "canBeViewedInline": {
+            "type": "boolean"
           }
         }
       },
@@ -8160,6 +8013,18 @@
         "properties": {
           "isEligible": {
             "type": "boolean"
+          },
+          "minDateFrom": {
+            "type": "string",
+            "format": ""
+          },
+          "maxDateTo": {
+            "type": "string",
+            "format": ""
+          },
+          "maxDaysPerRequest": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -8289,6 +8154,16 @@
           "applicationId": {
             "type": "string",
             "format": "guid",
+            "nullable": true
+          },
+          "possibleDateFrom": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "possibleDateTo": {
+            "type": "string",
+            "format": "",
             "nullable": true
           }
         }
@@ -8725,7 +8600,7 @@
           }
         }
       },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementViewModel": {
+      "Galdur_External_Domain_Models_JobAdvertisement_JobAdvertisementListViewModel": {
         "allOf": [
           {
             "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
@@ -8734,26 +8609,21 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "jobAdvertisement": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO"
-                  }
-                ]
+              "jobAdvertisements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_JobAdvertisement_JobAdvertisementDTO"
+                }
               },
-              "saveToEliseSuccess": {
-                "type": "boolean"
-              },
-              "message": {
-                "type": "string",
-                "nullable": true
+              "totalRecords": {
+                "type": "integer",
+                "format": "int32"
               }
             }
           }
         ]
       },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO": {
+      "Galdur_External_Domain_Models_JobAdvertisement_JobAdvertisementDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -8762,69 +8632,33 @@
             "format": "guid",
             "nullable": true
           },
-          "eliseId": {
-            "type": "string",
-            "nullable": true
-          },
-          "employerId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "employer": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Employers_EmployerDTO"
-              }
-            ]
-          },
           "contactName": {
             "type": "string",
             "nullable": true
           },
           "contactEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "confirmContactEmail": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "contactPhone": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "contactGSM": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "contactJobTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "hideContactNameInAdvertisement": {
-            "type": "boolean"
+            "type": "string"
           },
           "jobTitle": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "workPlace": {
-            "type": "string",
-            "nullable": true
-          },
-          "postcode": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "workDescription": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "workTypeId": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "workRatio": {
             "type": "integer",
@@ -8844,28 +8678,9 @@
             "type": "string",
             "nullable": true
           },
-          "positions": {
-            "type": "integer",
-            "format": "int32"
-          },
           "deadline": {
             "type": "string",
             "format": ""
-          },
-          "showOnEures": {
-            "type": "boolean"
-          },
-          "showOnWeb": {
-            "type": "boolean"
-          },
-          "readyForDisplay": {
-            "type": "boolean"
-          },
-          "additionalEuresService": {
-            "type": "boolean"
-          },
-          "housingService": {
-            "type": "boolean"
           },
           "temporaryJob": {
             "type": "boolean"
@@ -8886,43 +8701,8 @@
           "hireRefugee": {
             "type": "boolean"
           },
-          "assignedEmployeeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "employmentArrangements": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string",
-              "format": "guid"
-            }
-          },
           "employmentArrangementsDetails": {
-            "type": "string",
-            "nullable": true
-          },
-          "jobSkills": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "languages": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Languages_LanguageDTO"
-            }
-          },
-          "education": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Education"
-            }
+            "type": "string"
           },
           "requiresDrivingLicense": {
             "type": "boolean"
@@ -8930,1387 +8710,24 @@
           "requiresHeavyMachineryLicense": {
             "type": "boolean"
           },
-          "drivingLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "heavyMachineryLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "status": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementStatus_JobAdvertisementStatusDTO"
-              }
-            ]
-          },
           "type": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementType_JobAdvertisementTypeDTO"
-              }
-            ]
-          },
-          "typeId": {
             "type": "string",
-            "format": "guid",
             "nullable": true
           },
           "serviceArea": {
-            "type": "string",
-            "nullable": true
-          },
-          "assignedEmployee": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Persons_PersonDTO"
-              }
-            ]
+            "type": "string"
           },
           "created": {
             "type": "string",
-            "description": "Búin til",
             "format": ""
           },
-          "changed": {
-            "type": "string",
-            "description": "Breytt",
-            "format": "",
-            "nullable": true
-          },
-          "changedBy": {
-            "type": "string",
-            "description": "Breytt af",
-            "nullable": true
-          },
-          "supportData": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementSupportData"
-              }
-            ]
-          },
-          "recruitmentGrantEmployeeCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "recruitmentGrantShowOnMyPages": {
+          "additionalEuresService": {
             "type": "boolean"
           },
-          "serialNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "jobAdvertisementIPSInfo": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementIPSInfoDTO"
-              }
-            ]
-          }
-        }
-      },
-      "Galdur_Domain_Models_Employers_EmployerDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Einkvæmt auðkenni færslu",
-            "format": "guid"
-          },
-          "bankId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Einkvæmt auðkenni banka",
-            "format": "guid",
-            "nullable": true
-          },
-          "ledgerId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Einkvæmt auðkenni höfuðbókar",
-            "format": "guid",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "description": "Atvinnurekandi - Reikningsnúmer",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Atvinnurekandi - Nafn",
-            "nullable": true
-          },
-          "ssn": {
-            "type": "string",
-            "description": "Atvinnurekandi - Kennitala",
-            "nullable": true
-          },
-          "nameAndSSN": {
-            "type": "string",
-            "description": "Atvinnurekandi - Nafn og Kennitala",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "description": "Atvinnurekandi - Heimilisfang",
-            "nullable": true
-          },
-          "postCodeId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Einkvæmt auðkenni póstnúmers",
-            "format": "guid",
-            "nullable": true
-          },
-          "postCode": {
-            "description": "Atvinnurekandi - Póstnúmer",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
-              }
-            ]
-          },
-          "phoneNumber": {
-            "type": "string",
-            "description": "Atvinnurekandi - Símanúmer",
-            "nullable": true
-          },
-          "website": {
-            "type": "string",
-            "description": "Atvinnurekandi - Veffang",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "description": "Atvinnurekandi - Netfang",
-            "nullable": true
-          },
-          "jobSectorCodeId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Einkvæmt auðkenni atvinnugreinakóða",
-            "format": "guid",
-            "nullable": true
-          },
-          "jobs": {
-            "type": "array",
-            "description": "Atvinnurekandi - Störf skráð á fyrirtækið",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Elise_Jobs_JobDTO"
-            }
-          },
-          "logo": {
-            "type": "string",
-            "description": "Atvinnurekandi - Logo fyrirtækis",
-            "nullable": true
-          },
-          "alias": {
-            "type": "string",
-            "description": "Atvinnurekandi - Samheiti",
-            "nullable": true
-          },
-          "qualityGroupId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Auðkenni Flokkun fyrirtækis eftir gæðum",
-            "format": "guid",
-            "nullable": true
-          },
-          "qualityGroup": {
-            "description": "Atvinnurekandi - Flokkun fyrirtækis eftir gæðum",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_QualityGroups_QualityGroupDTO"
-              }
-            ]
-          },
-          "hasActiveJobAdvertisement": {
-            "type": "boolean",
-            "description": "Atvinnurekandi - Hefur starfsauglýsingar"
-          },
-          "assignedEmployeeId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Auðkenni starfsmanns",
-            "format": "guid",
-            "nullable": true
-          },
-          "assignedEmployee": {
-            "description": "Atvinnurekandi - Tengdur stafsmaður",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Persons_PersonDTO"
-              }
-            ]
-          },
-          "supportData": {
-            "description": "Atvinnurekandi - Stoðgögn",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Employers_EmployerSupportData"
-              }
-            ]
-          },
-          "isEducator": {
-            "type": "boolean",
-            "description": "Atvinnurekandi - Er fræðsluaðili"
-          },
-          "isApprovedEducator": {
-            "type": "boolean",
-            "description": "Atvinnurekandi - Er samþykktur fræðsluaðili"
-          },
-          "courseCategories": {
-            "type": "array",
-            "description": "Atvinnurekandi - Námskeiðs flokkar",
-            "nullable": true,
-            "items": {
-              "type": "string",
-              "format": "guid"
-            }
-          },
-          "contacts": {
-            "type": "array",
-            "description": "Atvinnurekandi - Tengiliðir",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Contacts_ContactDTO"
-            }
-          },
-          "typeId": {
-            "type": "string",
-            "description": "Atvinnurekandi - Auðkenni tegundar atvinnurekanda",
-            "format": "guid",
-            "nullable": true
-          },
-          "type": {
-            "description": "Atvinnurekandi - Tengdur atvinnurekdanda",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_EmployerType_EmployerTypeDTO"
-              }
-            ]
-          },
-          "employeeCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ipsEmployer": {
+          "housingService": {
             "type": "boolean"
           }
         }
-      },
-      "Galdur_Domain_Models_Elise_Jobs_JobDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "jobId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "employer": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Employers_EmployerDTO"
-              }
-            ]
-          },
-          "eliseId": {
-            "type": "string",
-            "nullable": true
-          },
-          "contactName": {
-            "type": "string",
-            "nullable": true
-          },
-          "contactEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "contactPhone": {
-            "type": "string",
-            "nullable": true
-          },
-          "contactGSM": {
-            "type": "string",
-            "nullable": true
-          },
-          "jobTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "workPlace": {
-            "type": "string",
-            "nullable": true
-          },
-          "postcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "educationId": {
-            "type": "string",
-            "nullable": true
-          },
-          "educationSubCategoryId": {
-            "type": "string",
-            "nullable": true
-          },
-          "educationSubSubCategoryId": {
-            "type": "string",
-            "nullable": true
-          },
-          "workTypeId": {
-            "type": "string",
-            "nullable": true
-          },
-          "workRatio": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "workCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "workDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "positions": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "deadline": {
-            "type": "string",
-            "format": ""
-          },
-          "escoSkills": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "drivingLicense": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "languages": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementLanguageDTO"
-            }
-          },
-          "education": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Education"
-            }
-          },
-          "machineLicense": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "skills": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementSkillDTO"
-            }
-          },
-          "jobSkill": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementJobSkillDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementLanguageDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "jobAdvertisementId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "jobAdvertisement": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO"
-              }
-            ]
-          },
-          "languageId": {
-            "type": "string",
-            "nullable": true
-          },
-          "category": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementSkillDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "jobAdvertisementId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "jobAdvertisement": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO"
-              }
-            ]
-          },
-          "skillId": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "$ref": "#/components/schemas/Galdur_Domain_Enumerations_SkillType"
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Enumerations_SkillType": {
-        "type": "integer",
-        "description": "",
-        "x-enumNames": [
-          "Driving",
-          "HeavyMachinery"
-        ],
-        "enum": [
-          0,
-          1
-        ]
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementJobSkillDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "escoId": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "jobAdvertisementId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "jobAdvertisement": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO"
-              }
-            ]
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_QualityGroups_QualityGroupDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "roleRestricted": {
-                "type": "boolean"
-              },
-              "color": {
-                "type": "string",
-                "nullable": true
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Employers_EmployerSupportData": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "banks": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Banks_BankDTO"
-            }
-          },
-          "ledgers": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Ledgers_LedgerDTO"
-            }
-          },
-          "postCodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "qualityGroups": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "courseCategories": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "types": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Contacts_ContactDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_DTOBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "guid"
-              },
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "phone": {
-                "type": "string",
-                "nullable": true
-              },
-              "connection": {
-                "type": "string",
-                "nullable": true
-              },
-              "typeId": {
-                "type": "string",
-                "format": "guid",
-                "nullable": true
-              },
-              "type": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ContactType_ContactTypeDTO"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_ContactType_ContactTypeDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_EmployerType_EmployerTypeDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_Languages_LanguageDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "orderNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "category": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "knowledge": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_JobAdvertisementStatus_JobAdvertisementStatusDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "descriptionForEmployee": {
-                "type": "string",
-                "nullable": true
-              },
-              "descriptionForApplicant": {
-                "type": "string",
-                "nullable": true
-              },
-              "forRecruitmentGrant": {
-                "type": "boolean"
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_JobAdvertisementType_JobAdvertisementTypeDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false
-          }
-        ]
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementSupportData": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "workTypes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "education": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationItem"
-            }
-          },
-          "jobCodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobCodes_JobCodeDTO"
-            }
-          },
-          "preferredJobCodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobCodes_JobCodeDTO"
-            }
-          },
-          "employmentArrangements": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_EmploymentArrangement_EmploymentArrangementDTO"
-            }
-          },
-          "statuses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementStatus_JobAdvertisementStatusDTO"
-            }
-          },
-          "skillValues": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "languageKnowledge": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "languageValues": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "drivingLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_DrivingLicenses_DrivingLicensesDTO"
-            }
-          },
-          "heavyMachineryLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_HeavyMachineryLicenses_HeavyMachineryLicensesDTO"
-            }
-          },
-          "postCodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
-            }
-          },
-          "types": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementType_JobAdvertisementTypeDTO"
-            }
-          },
-          "recruitmentGrantTypes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementRecruitmentGrantType_JobAdvertisementRecruitmentGrantTypeDTO"
-            }
-          },
-          "serviceAreas": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ServiceAreas_ServiceAreaDTO"
-            }
-          },
-          "jobSkills": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_JobSkills_JobSkillDTO"
-            }
-          },
-          "qualityGroups": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_QualityGroups_QualityGroupDTO"
-            }
-          },
-          "employmentTypes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_EmploymentType_EmploymentTypeDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_EmploymentArrangement_EmploymentArrangementDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_JobAdvertisementRecruitmentGrantType_JobAdvertisementRecruitmentGrantTypeDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "maxPeriodInMonths": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "minPeriodInMonths": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "hasNotFiredAnEmployeeIn6Months": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "monthsRegisteredSinceLastApplication": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "usedMonthsOfUnemploymentPeriod": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "lessThanUsedMonthsOfUnemploymentPeriodRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "moreThanUsedMonthsOfUnemploymentPeriodRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "employeesCount": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "calculateGrantFromBaseOrIncomeCompensation": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "pay25PercentSurcharge": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "useUnemploymentSettings": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "hasNotWorkedLast12Months": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "maxPeriodInMonthsUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "minPeriodInMonthsUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "monthsRegisteredSinceLastApplicationUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "usedMonthsOfUnemploymentPeriodUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "lessThanUsedMonthsOfUnemploymentPeriodRatioUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "moreThanUsedMonthsOfUnemploymentPeriodRatioUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "hasNotWorkedForEmployerInTheLast12MonthsUnemploymentSetting": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "calculateGrantFromBaseOrIncomeCompensationUnemploymentSetting": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "pay25PercentSurchargeUnemploymentSetting": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "hasOneEmployeeOnPayroll": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "payrollNumber": {
-                "type": "string",
-                "nullable": true
-              },
-              "active": {
-                "type": "boolean"
-              },
-              "typeNumber": {
-                "type": "string",
-                "nullable": true
-              },
-              "subsistenceTypeIds": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "type": "string",
-                  "format": "guid"
-                }
-              },
-              "maxRepaymentRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "minRepaymentRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "monthsWithMaxRepayment": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "monthsBetweenChangesOnRepaymentRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "decreaseRepaymentRatio": {
-                "type": "integer",
-                "format": "int32",
-                "nullable": true
-              },
-              "pensionFundRatio": {
-                "type": "number",
-                "format": "decimal",
-                "nullable": true
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_EmploymentType_EmploymentTypeDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false
-          }
-        ]
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementIPSInfoDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "jobAdvertisementId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "mentorName": {
-            "type": "string",
-            "nullable": true
-          },
-          "mentorEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "mentorGSM": {
-            "type": "string",
-            "nullable": true
-          },
-          "mentorJobTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "hiredIPSApplicantId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "hiredIPSStartDate": {
-            "type": "string",
-            "format": "",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementListViewModel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "jobAdvertisements": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementDTO"
-                }
-              },
-              "supportData": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Galdur_Domain_Models_JobAdvertisements_JobAdvertisementListSupportData"
-                  }
-                ]
-              },
-              "totalRecords": {
-                "type": "integer",
-                "format": "int32"
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementListSupportData": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "postCodes": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeListViewModel"
-              }
-            ]
-          },
-          "serviceAreas": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ServiceAreas_ServiceAreaDTO"
-            }
-          },
-          "education": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationItem"
-            }
-          },
-          "consultants": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Users_ApplicationUserDTO"
-            }
-          },
-          "languageKnowledge": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "languageValues": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_SelectItem"
-            }
-          },
-          "employmentArrangements": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_EmploymentArrangement_EmploymentArrangementDTO"
-            }
-          },
-          "jobCodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobCodes_JobCodeDTO"
-            }
-          },
-          "drivingLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_DrivingLicenses_DrivingLicensesDTO"
-            }
-          },
-          "heavyMachineryLicenses": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_HeavyMachineryLicenses_HeavyMachineryLicensesDTO"
-            }
-          },
-          "types": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementType_JobAdvertisementTypeDTO"
-            }
-          },
-          "status": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_JobAdvertisementStatus_JobAdvertisementStatusDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_Postcodes_PostcodeListViewModel": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "regions": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeRegionDTO"
-                }
-              },
-              "postcodes": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
-                }
-              },
-              "supportData": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeSupportData"
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
-      "Galdur_Domain_Models_Settings_Postcodes_PostcodeRegionDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "districts": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDistrictDTO"
-            }
-          },
-          "postcodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_Postcodes_PostcodeDistrictDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "postcodes": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_Postcodes_PostcodeSupportData": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "regions": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeSelectItem"
-            }
-          },
-          "districts": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Postcodes_PostcodeSelectItem"
-            }
-          },
-          "serviceAreas": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ServiceAreas_ServiceAreaDTO"
-            }
-          }
-        }
-      },
-      "Galdur_Domain_Models_Settings_Postcodes_PostcodeSelectItem": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_Users_ApplicationUserDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "person": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Persons_PersonDTO"
-              }
-            ]
-          },
-          "roles": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "type": "string"
-            }
-          },
-          "isCurrentUser": {
-            "type": "boolean"
-          },
-          "userSettings": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Users_ApplicationUserSettingsDTO"
-              }
-            ]
-          }
-        }
-      },
-      "Galdur_Domain_Models_Users_ApplicationUserSettingsDTO": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Galdur_Domain_Models_DTOBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "applicationUserId": {
-                "type": "string",
-                "nullable": true
-              },
-              "landingPage": {
-                "type": "string",
-                "nullable": true
-              }
-            }
-          }
-        ]
       },
       "Galdur_External_Domain_Models_SupportData_DelistingReasonDTO": {
         "allOf": [
