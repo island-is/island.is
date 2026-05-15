@@ -6,8 +6,12 @@ export function getConfigcatClient(): IConfigCatClient {
   if (!configCatClient) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const configcat = require('configcat-node')
+    const sdkKey = process.env.CONFIGCAT_SDK_KEY
+    if (!sdkKey) {
+      throw new Error('Missing CONFIGCAT_SDK_KEY environment variable')
+    }
     configCatClient = configcat.getClient(
-      process.env.CONFIGCAT_SDK_KEY,
+      sdkKey,
       configcat.PollingMode.AutoPoll,
       {
         pollIntervalSeconds: 60,

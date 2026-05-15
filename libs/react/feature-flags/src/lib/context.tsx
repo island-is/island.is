@@ -73,6 +73,8 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   }, [loading])
 
   // Stable context — identity never changes, getValue reads from flagsRef.
+  // Note: the user parameter is accepted for interface compatibility but
+  // ignored — flags are evaluated server-side for the authenticated user.
   const contextRef = useRef<FeatureFlagClient>({
     getValue: async <T extends SettingValue>(
       key: string,

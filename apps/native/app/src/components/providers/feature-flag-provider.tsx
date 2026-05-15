@@ -47,10 +47,14 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   )
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-  // Keep the module-level cache in sync for non-React usages
+  // Keep the module-level cache in sync for non-React usages.
+  // Only update once the query has actually returned data to avoid
+  // writing an empty map that makes "not loaded" look like "no flags".
   useEffect(() => {
-    setFeatureFlagCache(flags)
-  }, [flags])
+    if (data?.featureFlags?.flags) {
+      setFeatureFlagCache(flags)
+    }
+  }, [data, flags])
 
   const context = useMemo<FeatureFlagClient>(
     () => ({
