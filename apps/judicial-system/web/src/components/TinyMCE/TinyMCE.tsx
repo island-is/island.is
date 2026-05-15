@@ -1,12 +1,15 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Editor } from '@tinymce/tinymce-react'
+import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 
 import { ErrorMessage } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
 import * as styles from './TinyMCE.css'
+
+type ToolbarToggleButtonInstanceApi = Ui.Toolbar.ToolbarToggleButtonInstanceApi
 
 const hexToRgb = (hex: string) => {
   const r = parseInt(hex.slice(1, 3), 16)
@@ -70,15 +73,16 @@ const TinyMCE = ({
   required,
 }: Props) => {
   const editorId = useId()
-  const initialValueRef = useRef(defaultValue ?? '')
-  const [focused, setFocused] = useState(false)
-  const [pickerOpen, setPickerOpen] = useState(false)
-  const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 })
+  const [focused, setFocused] = useState<boolean>(false)
+  const [pickerOpen, setPickerOpen] = useState<boolean>(false)
+  const [pickerPos, setPickerPos] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  })
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const editorRef = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const highlightBtnApiRef = useRef<any>(null)
+  const initialValueRef = useRef(defaultValue ?? '')
+  const editorRef = useRef<TinyMCEEditor | null>(null)
+  const highlightBtnApiRef = useRef<ToolbarToggleButtonInstanceApi | null>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
   const highlightGroupRef = useRef<HTMLElement | null>(null)
 
