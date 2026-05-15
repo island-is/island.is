@@ -34,7 +34,6 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
-  GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationResponse,
   GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
