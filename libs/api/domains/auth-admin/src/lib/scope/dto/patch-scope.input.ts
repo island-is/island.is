@@ -75,6 +75,27 @@ export class AdminPatchScopeInput {
   @Field(() => [String], { nullable: true })
   removedTagIds?: string[]
 
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      'Absolute set of supported delegation types for the scope. When provided, the backend computes added/removed delegation types per environment based on each environment\'s current state, so the same input can be safely fanned out across environments. Takes precedence over addedDelegationTypes/removedDelegationTypes when supplied.',
+  })
+  supportedDelegationTypes?: string[]
+
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      'Absolute set of category IDs for the scope. When provided, the backend computes added/removed category IDs per environment based on each environment\'s current state, so the same input can be safely fanned out across environments. Takes precedence over addedCategoryIds/removedCategoryIds when supplied.',
+  })
+  categoryIds?: string[]
+
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      'Absolute set of tag IDs for the scope. When provided, the backend computes added/removed tag IDs per environment based on each environment\'s current state, so the same input can be safely fanned out across environments. Takes precedence over addedTagIds/removedTagIds when supplied.',
+  })
+  tagIds?: string[]
+
   @Field(() => Boolean, {
     nullable: true,
     description:

@@ -92,16 +92,12 @@ export const PermissionDelegations = ({
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
     supportedDelegationTypes: string[]
-    addedDelegationTypes: string[]
-    removedDelegationTypes: string[]
     originUrl: string
     targetLinkUri: string
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
     supportedDelegationTypes,
-    addedDelegationTypes: [],
-    removedDelegationTypes: [],
     originUrl: parsedUrl.originUrl,
     targetLinkUri: parsedUrl.targetLinkUri,
   })
@@ -161,14 +157,6 @@ export const PermissionDelegations = ({
   const [categoriesTagsDirty, setCategoriesTagsDirty] =
     useEnvironmentState(false)
 
-  // Baseline IDs only reset on env change, not after saves — keeps sync diffs accurate
-  const [baselineCategoryIds] = useEnvironmentState<string[]>(
-    selectedPermission.categoryIds ?? [],
-  )
-  const [baselineTagIds] = useEnvironmentState<string[]>(
-    selectedPermission.tagIds ?? [],
-  )
-
   useEffect(() => {
     if (!showCategoriesAndTags || categoriesLoading || tagsLoading) return
     setSelectedCategories(
@@ -225,9 +213,15 @@ export const PermissionDelegations = ({
 
   const showUrlErrors = urlFieldBlurred && urlPartiallyFilled
 
+  const delegationTypesDirty = !isEqual(
+    [...(inputValues.supportedDelegationTypes ?? [])].sort(),
+    [...(supportedDelegationTypes ?? [])].sort(),
+  )
+
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
       if (urlDirty) return true
+      if (delegationTypesDirty) return true
       if (!showCategoriesAndTags) return false
       return categoriesTagsDirty
     },
@@ -238,6 +232,7 @@ export const PermissionDelegations = ({
       selectedCategories,
       selectedTags,
       urlDirty,
+      delegationTypesDirty,
     ],
   )
 
@@ -252,58 +247,24 @@ export const PermissionDelegations = ({
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split('-')[1]
 
-    if (checked) {
-      const newInputValues = { ...inputValues }
-      // should not be in removed delegation types if field is checked
-      if (inputValues.removedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes =
-          inputValues.removedDelegationTypes.filter((t) => t !== type)
+    setInputValues((prev) => {
+      const isPresent = prev.supportedDelegationTypes.includes(type)
+      if (checked && !isPresent) {
+        return {
+          ...prev,
+          supportedDelegationTypes: [...prev.supportedDelegationTypes, type],
+        }
       }
-
-      // if not in supported delegation types, user is adding it for the first time
-      if (!supportedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes = [
-          ...inputValues.addedDelegationTypes,
-          type,
-        ]
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
+      if (!checked && isPresent) {
+        return {
+          ...prev,
+          supportedDelegationTypes: prev.supportedDelegationTypes.filter(
+            (t) => t !== type,
+          ),
+        }
       }
-
-      // if already in supported delegation types, user is re-adding it
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    } else {
-      const newInputValues = { ...inputValues }
-      // should not be in added delegation types if field is not checked
-      if (inputValues.addedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes =
-          inputValues.addedDelegationTypes.filter((t) => t !== type)
-      }
-      // should not be in supported delegation types if field is not checked
-      if (inputValues.supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes =
-          inputValues.supportedDelegationTypes.filter((t) => t !== type)
-      }
-
-      // if not in removed delegation types, user is removing it for the first time
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes = [
-          ...inputValues.removedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    }
+      return prev
+    })
   }
 
   return (
@@ -374,11 +335,6 @@ export const PermissionDelegations = ({
                                       selectedCategories.map((c) => c.value),
                                     )}
                                   />
-                                  <input
-                                    type="hidden"
-                                    name="originalCategoryIds"
-                                    value={JSON.stringify(baselineCategoryIds)}
-                                  />
                                   <Select
                                     value={selectedCategories}
                                     options={categories}
@@ -432,11 +388,6 @@ export const PermissionDelegations = ({
                                     value={JSON.stringify(
                                       selectedTags.map((t) => t.value),
                                     )}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="originalTagIds"
-                                    value={JSON.stringify(baselineTagIds)}
                                   />
                                   <Select
                                     value={selectedTags}
@@ -554,16 +505,13 @@ export const PermissionDelegations = ({
             </Stack>
           ),
         )}
-        {inputValues.removedDelegationTypes.map((type) => (
-          <Hidden key={type} print screen>
-            <input type="hidden" name="removedDelegationTypes" value={type} />
-          </Hidden>
-        ))}
-        {inputValues.addedDelegationTypes.map((type) => (
-          <Hidden key={type} print screen>
-            <input type="hidden" name="addedDelegationTypes" value={type} />
-          </Hidden>
-        ))}
+        <Hidden print screen>
+          <input
+            type="hidden"
+            name="supportedDelegationTypes"
+            value={JSON.stringify(inputValues.supportedDelegationTypes ?? [])}
+          />
+        </Hidden>
       </Stack>
     </FormCard>
   )
