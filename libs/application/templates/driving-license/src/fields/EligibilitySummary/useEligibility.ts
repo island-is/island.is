@@ -39,6 +39,7 @@ export interface UseEligibilityResult {
 
 export const useEligibility = (
   application: Application,
+  is65RenewalRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -85,9 +86,6 @@ export const useEligibility = (
 
     return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
-
-  const is65RenewalRedesignEnabled =
-    getValueViaPath(application.answers, 'is65RenewalRedesignEnabled') === true
 
   const usesNewPhotoSelector =
     applicationFor === BE ||
@@ -138,6 +136,7 @@ export const useEligibility = (
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
+        is65RenewalRedesignEnabled,
       ),
     }
   }

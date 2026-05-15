@@ -1501,6 +1501,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-error-helptext-required',
     defaultMessage: 'Help text is required',
   },
+  idpProvidersErrorLevelRequired: {
+    id: 'ap.ids-admin:idp-providers-error-level-required',
+    defaultMessage: 'Level is required',
+  },
   idpProvidersErrorLevelRange: {
     id: 'ap.ids-admin:idp-providers-error-level-range',
     defaultMessage: 'Level must be between 1 and 4',
@@ -1721,6 +1725,141 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
+  },
+  createTenant: {
+    id: 'ap.ids-admin:create-tenant',
+    defaultMessage: 'Create domain',
+  },
+  tenantSearchPlaceholder: {
+    id: 'ap.ids-admin:tenant-search-placeholder',
+    defaultMessage: 'Search by name, domain identifier or national id',
+  },
+  editTenant: {
+    id: 'ap.ids-admin:edit-tenant',
+    defaultMessage: 'Edit domain',
+  },
+  deleteTenant: {
+    id: 'ap.ids-admin:delete-tenant',
+    defaultMessage: 'Delete domain',
+  },
+  deleteTenantConfirm: {
+    id: 'ap.ids-admin:delete-tenant-confirm',
+    defaultMessage:
+      'Are you sure you want to delete the domain "{name}"? This action cannot be undone.',
+  },
+  deleteTenantDescription: {
+    id: 'ap.ids-admin:delete-tenant-description',
+    defaultMessage:
+      'Permanently delete this domain. Not possible while clients, scopes, or scope groups still reference it.',
+  },
+  deleteTenantSuccess: {
+    id: 'ap.ids-admin:delete-tenant-success',
+    defaultMessage: 'Domain deleted',
+  },
+  deleteTenantError: {
+    id: 'ap.ids-admin:delete-tenant-error',
+    defaultMessage: 'Failed to delete domain',
+  },
+  createTenantSuccess: {
+    id: 'ap.ids-admin:create-tenant-success',
+    defaultMessage: 'Domain created',
+  },
+  createTenantError: {
+    id: 'ap.ids-admin:create-tenant-error',
+    defaultMessage: 'Failed to create domain',
+  },
+  updateTenantSuccess: {
+    id: 'ap.ids-admin:update-tenant-success',
+    defaultMessage: 'Domain updated',
+  },
+  updateTenantError: {
+    id: 'ap.ids-admin:update-tenant-error',
+    defaultMessage: 'Failed to update domain',
+  },
+  tenantName: {
+    id: 'ap.ids-admin:tenant-name',
+    defaultMessage: 'Name',
+  },
+  tenantNamePlaceholder: {
+    id: 'ap.ids-admin:tenant-name-placeholder',
+    defaultMessage: '@mitt.lén',
+  },
+  tenantNameHelper: {
+    id: 'ap.ids-admin:tenant-name-helper',
+    defaultMessage:
+      'Must start with @ and contain only lowercase letters, digits, dots, hyphens or underscores.',
+  },
+  tenantNameTooltip: {
+    id: 'ap.ids-admin:tenant-name-tooltip',
+    defaultMessage: 'The identifier of this domain',
+  },
+  tenantNationalIdTooltip: {
+    id: 'ap.ids-admin:tenant-national-id-tooltip',
+    defaultMessage: 'National ID associated with this domain',
+  },
+  tenantDisplayNameTooltip: {
+    id: 'ap.ids-admin:tenant-display-name-tooltip',
+    defaultMessage: 'The display name for this domain',
+  },
+  tenantDescriptionTooltip: {
+    id: 'ap.ids-admin:tenant-description-tooltip',
+    defaultMessage: 'The description of this domain',
+  },
+  tenantContactEmailTooltip: {
+    id: 'ap.ids-admin:tenant-contact-email-tooltip',
+    defaultMessage: 'The contact email for this domain',
+  },
+  tenantNationalId: {
+    id: 'ap.ids-admin:tenant-national-id',
+    defaultMessage: 'National id',
+  },
+  tenantDisplayName: {
+    id: 'ap.ids-admin:tenant-display-name',
+    defaultMessage: 'Display name',
+  },
+  tenantDescription: {
+    id: 'ap.ids-admin:tenant-description',
+    defaultMessage: 'Description',
+  },
+  tenantContactEmail: {
+    id: 'ap.ids-admin:tenant-contact-email',
+    defaultMessage: 'Contact email',
+  },
+  errorTenantName: {
+    id: 'ap.ids-admin:error-tenant-name',
+    defaultMessage:
+      'Name must start with @ and contain only lowercase letters, digits, dots, hyphens or underscores',
+  },
+  errorNationalId: {
+    id: 'ap.ids-admin:error-national-id',
+    defaultMessage: 'National id must be a valid 10 digit kennitala',
+  },
+  errorRequired: {
+    id: 'ap.ids-admin:error-required',
+    defaultMessage: 'This field is required',
+  },
+  errorUnsafeChars: {
+    id: 'ap.ids-admin:error-unsafe-chars',
+    defaultMessage: 'Contains invalid characters',
+  },
+  errorEmail: {
+    id: 'ap.ids-admin:error-email',
+    defaultMessage: 'Must be a valid email address',
+  },
+  tenantHasReferences: {
+    id: 'ap.ids-admin:tenant-has-references',
+    defaultMessage:
+      'This domain cannot be deleted because it still has applications, permissions, or permission groups. Please delete them first and try again.',
+  },
+  publishTenantEnvDesc: {
+    id: 'ap.ids-admin:publish-tenant-env-desc',
+    defaultMessage:
+      'This domain does not exist in the selected environment yet. Choose an environment to copy from and the domain will be published.',
+  },
+  partiallyCreatedTenant: {
+    id: 'ap.ids-admin:partially-created-tenant',
+    defaultMessage:
+      'Domain was only created in some of the selected environments. You can use the edit page to publish it to the remaining environments.',
   },
   deletedCategory: {
     id: 'ap.ids-admin:deleted-category',
