@@ -83,6 +83,48 @@ const TinyMCE = ({
     }
   }, [pickerOpen])
 
+  const handleNodeChange = (editor: TinyMCEEditor) => (e: { element: Element }) => {
+    let node: HTMLElement | null = e.element as HTMLElement
+    while (node && node !== editor.getBody()) {
+      const bg: string = node.style?.backgroundColor ?? ''
+      if (bg && bg !== 'transparent') {
+        const match = HIGHLIGHT_COLORS.find(
+          ({ color }) => hexToRgb(color) === bg,
+        )
+        if (match) {
+          setSelectedColor(match.color)
+          return
+        }
+      }
+      node = node.parentElement
+    }
+    setSelectedColor(null)
+  }
+
+  const setupHighlightButton = (editor: TinyMCEEditor) => {
+    editor.ui.registry.addToggleButton('highlightcolor', {
+      icon: 'highlight-bg-color',
+      tooltip: 'Highlight',
+      onAction: (api) => {
+        highlightBtnApiRef.current = api
+        const container = editor.getContainer()
+        const btn = container.querySelector<HTMLElement>(
+          '[aria-label="Highlight"]',
+        )
+        if (btn) {
+          highlightGroupRef.current = btn
+          const rect = btn.getBoundingClientRect()
+          setPickerPos({ top: rect.bottom + 4, left: rect.left })
+        }
+        setPickerOpen((open) => !open)
+      },
+      onSetup: (api) => {
+        highlightBtnApiRef.current = api
+        return () => undefined
+      },
+    })
+  }
+
   return (
     <div>
       <div
@@ -122,45 +164,8 @@ const TinyMCE = ({
                 setFocused(false)
                 onBlur?.(editor.getContent())
               })
-              editor.on('NodeChange', (e) => {
-                let node: HTMLElement | null = e.element as HTMLElement
-                while (node && node !== editor.getBody()) {
-                  const bg: string = node.style?.backgroundColor ?? ''
-                  if (bg && bg !== 'transparent') {
-                    const match = HIGHLIGHT_COLORS.find(
-                      ({ color }) => hexToRgb(color) === bg,
-                    )
-                    if (match) {
-                      setSelectedColor(match.color)
-                      return
-                    }
-                  }
-                  node = node.parentElement
-                }
-                setSelectedColor(null)
-              })
-
-              editor.ui.registry.addToggleButton('highlightcolor', {
-                icon: 'highlight-bg-color',
-                tooltip: 'Highlight',
-                onAction: (api) => {
-                  highlightBtnApiRef.current = api
-                  const container = editor.getContainer()
-                  const btn = container.querySelector<HTMLElement>(
-                    '[aria-label="Highlight"]',
-                  )
-                  if (btn) {
-                    highlightGroupRef.current = btn
-                    const rect = btn.getBoundingClientRect()
-                    setPickerPos({ top: rect.bottom + 4, left: rect.left })
-                  }
-                  setPickerOpen((open) => !open)
-                },
-                onSetup: (api) => {
-                  highlightBtnApiRef.current = api
-                  return () => undefined
-                },
-              })
+              editor.on('NodeChange', handleNodeChange(editor))
+              setupHighlightButton(editor)
             },
             paste_word_valid_elements: 'p,b,strong,i,em,span,br',
             paste_retain_style_properties:
