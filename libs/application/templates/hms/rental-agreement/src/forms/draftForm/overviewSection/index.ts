@@ -57,7 +57,7 @@ export const overviewSection = buildSection({
         }),
         // Property address
         buildOverviewField({
-          id: 'rentalInfoOverview',
+          id: 'rentalPropertyOverview',
           title: m.overview.propertyInfoHeader,
           items: rentalPropertyOverview,
           backId: Routes.PROPERTYSEARCH,

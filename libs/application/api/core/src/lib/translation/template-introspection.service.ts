@@ -8,6 +8,7 @@ import {
   FormItemTypes,
 } from '@island.is/application/types'
 import type {
+  Application,
   Form,
   FormNode,
   FormLeaf,
@@ -15,11 +16,15 @@ import type {
   SubSection,
   MultiField,
   Field,
+  Option,
   RadioField,
   RepeaterItem,
   StaticText,
   FormText,
+  FormTextArray,
   FormTextWithLocale,
+  FormValue,
+  ExternalData,
   DataProviderItem,
   TableRepeaterField,
   FieldsRepeaterField,
@@ -29,12 +34,16 @@ import type {
   AlertMessageField,
   FileUploadField,
   Schema,
+  OverviewField,
+  KeyValueItem,
+  SubmitField,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationCustomFieldMessageDescriptors,
 } from '@island.is/application/template-loader'
 import type { MessageDescriptor } from 'react-intl'
+import type { Locale } from '@island.is/shared/types'
 
 export interface ValidationMessageDescriptorInfo extends MessageDescriptorInfo {
   fieldPath: string
@@ -130,6 +139,11 @@ export interface ScreenIntrospection {
   checkboxBackgroundColor?: string | null
   /** 0 | 1 | 2, matches `CheckboxField.spacing` / `CheckboxController` default 2. */
   checkboxSpacing?: number | null
+  /**
+   * `TEXT` / `PHONE` / `DATE` / `SELECT` / etc.: mirrors template `field.backgroundColor` (`'white' | 'blue'`).
+   * Translation workspace preview defaults to blue when unset; only `'white'` yields a white input.
+   */
+  inputBackgroundColor?: string | null
   /** `TABLE_REPEATER`: one descriptor per table column (visual order, left to right). */
   tableRepeaterColumnHeaders?: MessageDescriptorInfo[]
   /** `TABLE_REPEATER`: `extractStaticText` of optional mini-form title (resolve via descriptors). */
@@ -175,6 +189,10 @@ export interface ScreenIntrospection {
   fileUploadButtonLabel?: string | null
   /** `FILEUPLOAD`: static text of the introduction rendered above the upload area. */
   fileUploadIntroduction?: string | null
+  /** `SUBMIT`: matches `SubmitField.placement` (`footer` renders in preview chrome). */
+  submitPlacement?: string | null
+  /** `SUBMIT`: template actions for translation preview / footer buttons. */
+  submitActions?: SubmitActionIntrospection[]
 }
 
 export interface MessageDescriptorInfo {
@@ -188,6 +206,14 @@ export interface RadioOptionIntrospection {
   value: string
   labelMessageId?: string | null
   labelDefaultMessage?: string | null
+}
+
+/** Submit button labels for admin translation preview (static or message-backed). */
+export interface SubmitActionIntrospection {
+  event: string
+  labelMessageId?: string | null
+  labelDefaultMessage?: string | null
+  buttonType: string
 }
 
 const NAMESPACE_REGEX = /^[\w.]+:\w+(\.\w+)*$/
@@ -558,11 +584,64 @@ function walkExternalDataSourceItem(
   }
 }
 
+function stubApplicationForOptionPreview(): Application {
+  return {
+    answers: {},
+    externalData: {},
+    id: '',
+    state: '',
+    typeId: '',
+    applicant: '',
+    assignees: [],
+    applicantActors: [],
+    modified: new Date(),
+    created: new Date(),
+    attachments: {},
+    status: 'draft',
+  } as unknown as Application
+}
+
+/**
+ * Evaluate `MaybeWithApplicationAndFieldAndLocale<Option[]>` so radio/checkbox previews
+ * can show labels when templates pass option factories (e.g. `getOtherFeesPayeeOptions`).
+ */
+function tryResolveOptionsArrayForPreview(
+  options: RadioField['options'] | CheckboxField['options'],
+  fieldContext: RadioField | CheckboxField,
+): Option[] | undefined {
+  if (Array.isArray(options)) {
+    return options
+  }
+  if (typeof options !== 'function') {
+    return undefined
+  }
+  const stubApp = stubApplicationForOptionPreview()
+  const locales: Locale[] = ['is', 'en']
+  for (const locale of locales) {
+    try {
+      const result = (
+        options as (
+          application: Application,
+          field: Field,
+          locale: Locale,
+        ) => Option[]
+      )(stubApp, fieldContext, locale)
+      if (Array.isArray(result)) {
+        return result
+      }
+    } catch {
+      // Factory may require real answers; try next locale or give up.
+    }
+  }
+  return undefined
+}
+
 function extractFieldOptionsForPreview(
   options: RadioField['options'] | CheckboxField['options'],
+  fieldContext: RadioField | CheckboxField,
 ): RadioOptionIntrospection[] | undefined {
-  const raw = options
-  if (typeof raw === 'function' || !Array.isArray(raw)) {
+  const raw = tryResolveOptionsArrayForPreview(options, fieldContext)
+  if (!raw) {
     return undefined
   }
   return raw.map((option) => {
@@ -593,13 +672,13 @@ function extractFieldOptionsForPreview(
 function extractRadioPreviewOptions(
   field: RadioField,
 ): RadioOptionIntrospection[] | undefined {
-  return extractFieldOptionsForPreview(field.options)
+  return extractFieldOptionsForPreview(field.options, field)
 }
 
 function extractCheckboxPreviewOptions(
   field: CheckboxField,
 ): RadioOptionIntrospection[] | undefined {
-  return extractFieldOptionsForPreview(field.options)
+  return extractFieldOptionsForPreview(field.options, field)
 }
 
 function extractMessageDescriptorsFromField(
@@ -988,8 +1067,12 @@ function walkRepeaterItemToScreen(
   let checkboxBackgroundColor: string | null | undefined
   let checkboxSpacing: number | null | undefined
 
-  if (item.component === 'radio' && Array.isArray(item.options)) {
-    const pseudo = { options: item.options } as unknown as RadioField
+  if (item.component === 'radio' && item.options) {
+    const pseudo = {
+      id,
+      type: FieldTypes.RADIO,
+      options: item.options,
+    } as RadioField
     radioOptions = extractRadioPreviewOptions(pseudo)
     if (typeof (item as { largeButtons?: boolean }).largeButtons === 'boolean') {
       radioLargeButtons = (item as { largeButtons?: boolean }).largeButtons
@@ -998,8 +1081,12 @@ function walkRepeaterItemToScreen(
       radioBackgroundColor = item.backgroundColor
     }
   }
-  if (item.component === 'checkbox' && Array.isArray(item.options)) {
-    const pseudo = { options: item.options } as unknown as CheckboxField
+  if (item.component === 'checkbox' && item.options) {
+    const pseudo = {
+      id,
+      type: FieldTypes.CHECKBOX,
+      options: item.options,
+    } as CheckboxField
     checkboxOptions = extractCheckboxPreviewOptions(pseudo)
     const cb = item as { large?: boolean; strong?: boolean }
     checkboxLarge = typeof cb.large === 'boolean' ? cb.large : true
@@ -1008,6 +1095,22 @@ function walkRepeaterItemToScreen(
       checkboxBackgroundColor = item.backgroundColor
     } else {
       checkboxBackgroundColor = 'blue'
+    }
+  }
+
+  let inputBackgroundColor: string | null | undefined
+  if (
+    item.component !== 'radio' &&
+    item.component !== 'checkbox' &&
+    (item.component === 'input' ||
+      item.component === 'phone' ||
+      item.component === 'date' ||
+      item.component === 'select' ||
+      item.component === 'selectAsync' ||
+      item.component === 'nationalIdWithName')
+  ) {
+    if (item.backgroundColor === 'white' || item.backgroundColor === 'blue') {
+      inputBackgroundColor = item.backgroundColor
     }
   }
 
@@ -1040,6 +1143,7 @@ function walkRepeaterItemToScreen(
     checkboxStrong,
     checkboxBackgroundColor,
     checkboxSpacing,
+    inputBackgroundColor: inputBackgroundColor ?? null,
   }
 
   if (item.component === 'nationalIdWithName') {
@@ -1310,6 +1414,140 @@ function walkStaticTableScreen(st: StaticTableField): ScreenIntrospection {
   }
 }
 
+/**
+ * Template `field.backgroundColor` for input-like fields (exposed to translation preview as `inputBackgroundColor`).
+ */
+function extractInputBackgroundColorFromLeaf(
+  leaf: FormLeaf,
+): string | null | undefined {
+  const withBg = new Set<FieldTypes>([
+    FieldTypes.TEXT,
+    FieldTypes.EMAIL,
+    FieldTypes.PHONE,
+    FieldTypes.DATE,
+    FieldTypes.SELECT,
+    FieldTypes.ASYNC_SELECT,
+    FieldTypes.BANK_ACCOUNT,
+    FieldTypes.COMPANY_SEARCH,
+    FieldTypes.NATIONAL_ID_WITH_NAME,
+    FieldTypes.COPY_LINK,
+    FieldTypes.HIDDEN_INPUT,
+    FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE,
+    FieldTypes.FIND_VEHICLE,
+    FieldTypes.VEHICLE_RADIO,
+    FieldTypes.VEHICLE_SELECT,
+    FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+  ])
+  if (!withBg.has(leaf.type as FieldTypes)) {
+    return undefined
+  }
+  const bg = (leaf as { backgroundColor?: string }).backgroundColor
+  if (bg === 'white' || bg === 'blue') {
+    return bg
+  }
+  return undefined
+}
+
+function extractDescriptorsFromFormTextMaybeArray(
+  text: FormText | FormTextArray | undefined,
+): MessageDescriptorInfo[] {
+  if (!text) return []
+  if (typeof text === 'function') return []
+  if (Array.isArray(text)) {
+    let acc: MessageDescriptorInfo[] = []
+    for (const t of text) {
+      acc = mergeMessageDescriptors(
+        acc,
+        extractMessageDescriptorsFromFormText(t as FormText),
+      )
+    }
+    return acc
+  }
+  return extractMessageDescriptorsFromFormText(text as FormText)
+}
+
+function extractDescriptorsFromKeyValueItem(
+  item: KeyValueItem,
+): MessageDescriptorInfo[] {
+  let out = extractDescriptorsFromFormTextMaybeArray(item.keyText)
+  out = mergeMessageDescriptors(
+    out,
+    extractDescriptorsFromFormTextMaybeArray(item.valueText),
+  )
+  return out
+}
+
+function extractSubmitActionsForPreview(
+  sf: SubmitField,
+): SubmitActionIntrospection[] {
+  return sf.actions.map((action) => {
+    const event =
+      typeof action.event === 'object'
+        ? String((action.event as { type: string }).type)
+        : String(action.event)
+    const label = action.name
+    if (isMessageDescriptor(label)) {
+      return {
+        event,
+        labelMessageId: String(label.id),
+        labelDefaultMessage: (label.defaultMessage as string | undefined) ?? null,
+        buttonType: action.type,
+      }
+    }
+    if (typeof label === 'function') {
+      return {
+        event,
+        labelDefaultMessage: event,
+        buttonType: action.type,
+      }
+    }
+    if (typeof label === 'string') {
+      return {
+        event,
+        labelDefaultMessage: label,
+        buttonType: action.type,
+      }
+    }
+    return {
+      event,
+      labelDefaultMessage: extractStaticText(label as StaticText),
+      buttonType: action.type,
+    }
+  })
+}
+
+/**
+ * Best-effort: run overview `items(answers, …)` with stub inputs so row-level
+ * FormText message ids can appear on the OVERVIEW screen for translation tooling.
+ */
+function extractOverviewItemsDescriptorsBestEffort(
+  field: OverviewField,
+): MessageDescriptorInfo[] {
+  const collected: MessageDescriptorInfo[] = []
+  const itemsFn = field.items
+  if (typeof itemsFn !== 'function') {
+    return collected
+  }
+  const stubAnswers = {} as FormValue
+  const stubExternal = {} as ExternalData
+  const locales = ['is', 'en'] as const
+  const stubNi = '0000000000'
+  for (const locale of locales) {
+    try {
+      const rows = itemsFn(stubAnswers, stubExternal, stubNi, locale)
+      if (!Array.isArray(rows)) continue
+      for (const row of rows) {
+        for (const d of extractDescriptorsFromKeyValueItem(row)) {
+          addDescriptorIfNew(collected, d)
+        }
+      }
+    } catch {
+      // Overview factories often require populated answers; ignore.
+    }
+  }
+  return collected
+}
+
 function walkFormLeaf(
   leaf: FormLeaf,
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
@@ -1343,6 +1581,8 @@ function walkFormLeaf(
   let marginBottom: unknown = null
   let paddingTop: unknown = null
   let titleVariant: string | null = null
+  let submitPlacementOut: string | null | undefined
+  let submitActionsOut: SubmitActionIntrospection[] | undefined
 
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
     descriptors.push(...extractMessageDescriptorsFromFormText(leaf.title))
@@ -1422,6 +1662,23 @@ function walkFormLeaf(
   } else {
     const field = leaf as Field
     let fromField = extractMessageDescriptorsFromField(field)
+    if (leaf.type === FieldTypes.SUBMIT) {
+      const sf = leaf as SubmitField
+      for (const action of sf.actions) {
+        fromField = mergeMessageDescriptors(
+          fromField,
+          extractMessageDescriptorsFromFormText(action.name),
+        )
+      }
+      submitPlacementOut = sf.placement ?? 'footer'
+      submitActionsOut = extractSubmitActionsForPreview(sf)
+    }
+    if (leaf.type === FieldTypes.OVERVIEW) {
+      fromField = mergeMessageDescriptors(
+        fromField,
+        extractOverviewItemsDescriptorsBestEffort(field as OverviewField),
+      )
+    }
     if (leaf.type === FieldTypes.NATIONAL_ID_WITH_NAME) {
       const nif = leaf as NationalIdWithNameField
       fromField = enrichNationalIdWithNameFieldDescriptors(nif, fromField)
@@ -1521,6 +1778,8 @@ function walkFormLeaf(
     }
   }
 
+  const inputBackgroundColor = extractInputBackgroundColorFromLeaf(leaf)
+
   let alertType: string | null | undefined
   let alertMessage: string | null | undefined
 
@@ -1576,10 +1835,17 @@ function walkFormLeaf(
     checkboxStrong,
     checkboxBackgroundColor,
     checkboxSpacing,
+    inputBackgroundColor,
     alertType,
     alertMessage,
     ...nifMeta,
     ...fileUploadMeta,
+    ...(submitPlacementOut !== undefined
+      ? {
+          submitPlacement: submitPlacementOut,
+          submitActions: submitActionsOut,
+        }
+      : {}),
   }
 }
 

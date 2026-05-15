@@ -28,7 +28,8 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   onNavClick: (nav: ScreenIntrospection, location: SidebarNavLocation) => void
   formatMessage: FormatMessage
   selectedScreen: ScreenIntrospection | null
-  currentDescriptors: MessageDescriptor[]
+  screenMessageDescriptors: MessageDescriptor[]
+  allApplicationMessageDescriptors: MessageDescriptor[]
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
   getPersistedForLocale: (messageKey: string) => string
@@ -59,7 +60,8 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   onNavClick,
   formatMessage,
   selectedScreen,
-  currentDescriptors,
+  screenMessageDescriptors,
+  allApplicationMessageDescriptors,
   editedValues,
   activeLocale,
   getPersistedForLocale,
@@ -80,6 +82,26 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   isTranslating,
 }: TranslationWorkspaceStatesTabsPanelProps) => {
   const [activeTab, setActiveTabRaw] = useState('states')
+  const [stringsListScope, setStringsListScope] = useState<
+    'screen' | 'application'
+  >('screen')
+
+  const stringsTabDescriptors = useMemo(() => {
+    const raw =
+      stringsListScope === 'application'
+        ? allApplicationMessageDescriptors
+        : screenMessageDescriptors
+    const seen = new Set<string>()
+    return raw.filter((d) => {
+      if (seen.has(d.id)) return false
+      seen.add(d.id)
+      return true
+    })
+  }, [
+    stringsListScope,
+    allApplicationMessageDescriptors,
+    screenMessageDescriptors,
+  ])
   const setActiveTab = (tab: string) => {
     setActiveTabRaw(tab)
     onActiveTabChange?.(tab)
@@ -128,7 +150,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   )
 
   const totalStringCount =
-    currentDescriptors.length +
+    stringsTabDescriptors.length +
     (showValidationErrors ? validationDescriptors.length : 0)
 
   const tabs = [
@@ -139,7 +161,10 @@ export const TranslationWorkspaceStatesTabsPanel = ({
       content: (
         <TabsPanelStringsTab
           selectedScreen={selectedScreen}
-          currentDescriptors={currentDescriptors}
+          visibleDescriptors={stringsTabDescriptors}
+          stringsListScope={stringsListScope}
+          onStringsListScopeChange={setStringsListScope}
+          applicationStringCount={allApplicationMessageDescriptors.length}
           editedValues={editedValues}
           activeLocale={activeLocale}
           getPersistedForLocale={getPersistedForLocale}

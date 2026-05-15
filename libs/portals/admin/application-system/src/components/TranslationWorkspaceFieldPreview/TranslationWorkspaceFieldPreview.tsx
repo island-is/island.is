@@ -1,6 +1,5 @@
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
 import {
   AlertMessage,
   Box,
@@ -43,6 +42,7 @@ import {
   noop,
   PLACEHOLDER_TYPES,
   PREVIEW_EXCLUDED_FIELD_TYPES,
+  previewWorkspaceInputBackgroundColor,
   TEXT_DISPLAY_TYPES,
   TEXT_DISPLAY_TYPES_ALWAYS_MARKDOWN,
 } from '../../utils/translationWorkspaceFieldConstants'
@@ -55,8 +55,14 @@ import {
 import { FieldTypes } from '@island.is/application/types'
 import type { CustomField, Application } from '@island.is/application/types'
 import { filterPreviewMultiFieldChildren } from '../../utils/translationWorkspaceMultiFieldChildren'
+import { TranslationWorkspaceOverviewFieldPreview } from '../TranslationWorkspaceOverviewFieldPreview/TranslationWorkspaceOverviewFieldPreview'
 import { CustomFieldErrorBoundary } from '../CustomFieldErrorBoundary/CustomFieldErrorBoundary'
 import { focusedFieldHighlight } from '../TranslationWorkspacePreviewArea/TranslationWorkspacePreviewArea.css'
+import type { PreviewFieldComponent } from '../../utils/previewFieldRegistry'
+import {
+  buildPreviewFieldFromScreen,
+  TRANSLATION_WORKSPACE_UI_FIELD_TYPES,
+} from '../../utils/buildPreviewFieldFromScreen'
 
 const PREVIEW_APPLICATION_BASE: Application = {
   id: 'preview',
@@ -85,18 +91,33 @@ type TranslationWorkspaceRepeaterNestedProps = {
   focusedFieldId?: string | null
   fieldErrorOverrides?: Set<string>
   previewFieldValues?: Record<string, string>
-  customFields?: Record<string, FC<any>>
+  previewFields?: Record<string, PreviewFieldComponent>
   previewApplication: Application
 }
 
-const CustomFieldFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const methods = useForm({ mode: 'onBlur' })
-  return <FormProvider {...methods}>{children}</FormProvider>
+const inferTranslationWorkspaceShowFieldName = (
+  screen: ScreenIntrospection,
+): boolean => {
+  if (
+    screen.type === FieldTypes.RADIO ||
+    screen.type === FieldTypes.CHECKBOX
+  ) {
+    return false
+  }
+  if (
+    screen.type === FieldTypes.TITLE ||
+    screen.type === FieldTypes.DIVIDER ||
+    screen.type === FieldTypes.ALERT_MESSAGE
+  ) {
+    return false
+  }
+  if (screen.type === FieldTypes.DESCRIPTION) {
+    return Boolean(screen.title)
+  }
+  return true
 }
 
-function buildMockCustomField(
-  screen: ScreenIntrospection,
-): CustomField {
+const buildMockCustomField = (screen: ScreenIntrospection): CustomField => {
   return {
     id: screen.id,
     type: FieldTypes.CUSTOM,
@@ -772,6 +793,8 @@ const NationalIdWithNameFieldPreview = ({
   const showPhone = screen.nationalIdWithNameShowPhoneField === true
   const showEmail = screen.nationalIdWithNameShowEmailField === true
 
+  const inputBg = previewWorkspaceInputBackgroundColor(screen)
+
   const phoneLabel = showPhone
     ? screen.nationalIdWithNamePhoneLabelText
       ? resolveTranslatableStaticText(
@@ -806,7 +829,7 @@ const NationalIdWithNameFieldPreview = ({
             label={nationalIdLabel}
             name={`${key}.__preview.nationalId`}
             placeholder="######-####"
-            backgroundColor="blue"
+            backgroundColor={inputBg}
             readOnly
           />
         </GridColumn>
@@ -815,7 +838,7 @@ const NationalIdWithNameFieldPreview = ({
             label={nameLabel}
             name={`${key}.__preview.name`}
             readOnly
-            backgroundColor="blue"
+            backgroundColor={inputBg}
           />
         </GridColumn>
       </GridRow>
@@ -829,7 +852,7 @@ const NationalIdWithNameFieldPreview = ({
               <Input
                 label={phoneLabel}
                 name={`${key}.__preview.phone`}
-                backgroundColor="blue"
+                backgroundColor={inputBg}
                 readOnly
               />
             </GridColumn>
@@ -843,7 +866,7 @@ const NationalIdWithNameFieldPreview = ({
                 label={emailLabel}
                 name={`${key}.__preview.email`}
                 type="email"
-                backgroundColor="blue"
+                backgroundColor={inputBg}
                 readOnly
               />
             </GridColumn>
@@ -863,7 +886,7 @@ const FieldsRepeaterFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
-  customFields,
+  previewFields,
   previewApplication,
 }: {
   screen: ScreenIntrospection
@@ -966,7 +989,7 @@ const FieldsRepeaterFieldPreview = ({
                   focusedFieldId={focusedFieldId}
                   fieldErrorOverrides={fieldErrorOverrides}
                   previewFieldValues={previewFieldValues}
-                  customFields={customFields}
+                  previewFields={previewFields}
                   previewApplication={previewApplication}
                 />
               </GridColumn>
@@ -997,7 +1020,7 @@ const TableRepeaterFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
-  customFields,
+  previewFields,
   previewApplication,
 }: {
   screen: ScreenIntrospection
@@ -1141,7 +1164,7 @@ const TableRepeaterFieldPreview = ({
                       focusedFieldId={focusedFieldId}
                       fieldErrorOverrides={fieldErrorOverrides}
                       previewFieldValues={previewFieldValues}
-                      customFields={customFields}
+                      previewFields={previewFields}
                       previewApplication={previewApplication}
                     />
                   </GridColumn>
@@ -1231,7 +1254,7 @@ const LeafFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
-  customFields,
+  previewFields,
   previewApplication,
 }: {
   screen: ScreenIntrospection
@@ -1242,30 +1265,78 @@ const LeafFieldPreview = ({
   focusedFieldId?: string | null
   fieldErrorOverrides?: Set<string>
   previewFieldValues?: Record<string, string>
-  customFields?: Record<string, FC<any>>
+  previewFields?: Record<string, PreviewFieldComponent>
   previewApplication: Application
 }) => {
   if (PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)) {
     return null
   }
 
-  if (screen.type === 'CUSTOM' && screen.component) {
-    const CustomComponent = customFields?.[screen.component]
+  const label = resolvePreviewLabel(screen, resolvePreviewString)
+  const key = screen.id
+  const layout = fieldPreviewLayoutProps(screen)
+  const hasErrorOverride = fieldErrorOverrides?.has(screen.id) === true
+
+  const fieldErrorMessage = (() => {
+    if (hasErrorOverride) {
+      const descriptors = validationDescriptorsByPath?.[screen.id]
+      if (descriptors && descriptors.length > 0) {
+        return resolvePreviewString(descriptors[0].id, descriptors[0].defaultMessage)
+      }
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+    if (!showValidationErrors || !validationDescriptorsByPath) return undefined
+    const descriptors = validationDescriptorsByPath[screen.id]
+    if (!descriptors || descriptors.length === 0) return undefined
+    const d = descriptors[0]
+    return resolvePreviewString(d.id, d.defaultMessage)
+  })()
+
+  const registry = previewFields ?? {}
+  const componentName = screen.component ?? ''
+  const PreviewCtrl =
+    componentName !== '' ? registry[componentName] : undefined
+
+  if (
+    PreviewCtrl &&
+    screen.type !== FieldTypes.CUSTOM &&
+    TRANSLATION_WORKSPACE_UI_FIELD_TYPES.has(screen.type)
+  ) {
+    const builtField = buildPreviewFieldFromScreen(screen)
+    if (builtField) {
+      return (
+        <Box key={key} {...layout}>
+          <CustomFieldErrorBoundary componentName={componentName}>
+            <PreviewCtrl
+              application={previewApplication}
+              field={builtField}
+              error={fieldErrorMessage}
+              errors={{}}
+              showFieldName={inferTranslationWorkspaceShowFieldName(screen)}
+              goToScreen={noop}
+              refetch={noop}
+            />
+          </CustomFieldErrorBoundary>
+        </Box>
+      )
+    }
+  }
+
+  if (screen.type === FieldTypes.CUSTOM && screen.component) {
+    const CustomComponent = registry[screen.component]
     if (CustomComponent) {
       const mockField = buildMockCustomField(screen)
       return (
-        <Box key={screen.id}>
+        <Box key={key} {...layout}>
           <CustomFieldErrorBoundary componentName={screen.component}>
-            <CustomFieldFormProvider>
-              <CustomComponent
-                application={previewApplication}
-                field={mockField}
-                error={undefined}
-                errors={{}}
-                goToScreen={noop}
-                refetch={noop}
-              />
-            </CustomFieldFormProvider>
+            <CustomComponent
+              application={previewApplication}
+              field={mockField}
+              error={undefined}
+              errors={{}}
+              goToScreen={noop}
+              refetch={noop}
+            />
           </CustomFieldErrorBoundary>
         </Box>
       )
@@ -1285,27 +1356,6 @@ const LeafFieldPreview = ({
       </Box>
     )
   }
-
-  const label = resolvePreviewLabel(screen, resolvePreviewString)
-  const key = screen.id
-  const layout = fieldPreviewLayoutProps(screen)
-  const isFocused = focusedFieldId != null && screen.id === focusedFieldId
-  const hasErrorOverride = fieldErrorOverrides?.has(screen.id) === true
-
-  const fieldErrorMessage = (() => {
-    if (hasErrorOverride) {
-      const descriptors = validationDescriptorsByPath?.[screen.id]
-      if (descriptors && descriptors.length > 0) {
-        return resolvePreviewString(descriptors[0].id, descriptors[0].defaultMessage)
-      }
-      return formatMessage(coreErrorMessages.defaultError)
-    }
-    if (!showValidationErrors || !validationDescriptorsByPath) return undefined
-    const descriptors = validationDescriptorsByPath[screen.id]
-    if (!descriptors || descriptors.length === 0) return undefined
-    const d = descriptors[0]
-    return resolvePreviewString(d.id, d.defaultMessage)
-  })()
 
   if (screen.type === 'EXTERNAL_DATA_SOURCE') {
     return (
@@ -1414,7 +1464,7 @@ const LeafFieldPreview = ({
         focusedFieldId={focusedFieldId}
         fieldErrorOverrides={fieldErrorOverrides}
         previewFieldValues={previewFieldValues}
-        customFields={customFields}
+        previewFields={previewFields}
         previewApplication={previewApplication}
       />
     )
@@ -1431,7 +1481,7 @@ const LeafFieldPreview = ({
         focusedFieldId={focusedFieldId}
         fieldErrorOverrides={fieldErrorOverrides}
         previewFieldValues={previewFieldValues}
-        customFields={customFields}
+        previewFields={previewFields}
         previewApplication={previewApplication}
       />
     )
@@ -1459,6 +1509,7 @@ const LeafFieldPreview = ({
             value={inputPreviewValue ?? ''}
             hasError={!!fieldErrorMessage}
             errorMessage={fieldErrorMessage}
+            backgroundColor={previewWorkspaceInputBackgroundColor(screen)}
           />
         </Box>
       </Box>
@@ -1486,11 +1537,13 @@ const LeafFieldPreview = ({
           handleChange={noop}
           hasError={!!fieldErrorMessage}
           errorMessage={fieldErrorMessage}
+          backgroundColor={previewWorkspaceInputBackgroundColor(screen)}
         />
       </Box>
     )
   }
 
+  // Tier B: keep handcrafted select until introspection exposes option values/labels (`SelectFormField`).
   if (
     screen.type === 'SELECT' ||
     screen.type === 'VEHICLE_SELECT' ||
@@ -1505,6 +1558,7 @@ const LeafFieldPreview = ({
           isDisabled
           hasError={!!fieldErrorMessage}
           errorMessage={fieldErrorMessage}
+          backgroundColor={previewWorkspaceInputBackgroundColor(screen)}
         />
       </Box>
     )
@@ -1613,11 +1667,13 @@ const LeafFieldPreview = ({
     )
   }
 
-  if (screen.type === 'SUBMIT') {
+  if (screen.type === FieldTypes.OVERVIEW) {
     return (
-      <Box key={key} {...layout}>
-        <Button size="small">{label}</Button>
-      </Box>
+      <TranslationWorkspaceOverviewFieldPreview
+        screen={screen}
+        resolvePreviewString={resolvePreviewString}
+        formatMessage={formatMessage}
+      />
     )
   }
 
@@ -1665,7 +1721,7 @@ export interface TranslationWorkspaceFieldPreviewProps {
   focusedFieldId?: string | null
   fieldErrorOverrides?: Set<string>
   previewFieldValues?: Record<string, string>
-  customFields?: Record<string, FC<any>>
+  previewFields?: Record<string, PreviewFieldComponent>
   previewApplication: Application
 }
 
@@ -1682,7 +1738,7 @@ export const TranslationWorkspaceFieldPreview = ({
   focusedFieldId,
   fieldErrorOverrides,
   previewFieldValues,
-  customFields,
+  previewFields,
   previewApplication,
 }: TranslationWorkspaceFieldPreviewProps) => {
   if (screen.type === 'MULTI_FIELD') {
@@ -1727,7 +1783,7 @@ export const TranslationWorkspaceFieldPreview = ({
                     focusedFieldId={focusedFieldId}
                     fieldErrorOverrides={fieldErrorOverrides}
                     previewFieldValues={previewFieldValues}
-                    customFields={customFields}
+                    previewFields={previewFields}
                     previewApplication={previewApplication}
                   />
                 </Box>
@@ -1753,7 +1809,7 @@ export const TranslationWorkspaceFieldPreview = ({
         focusedFieldId={focusedFieldId}
         fieldErrorOverrides={fieldErrorOverrides}
         previewFieldValues={previewFieldValues}
-        customFields={customFields}
+        previewFields={previewFields}
         previewApplication={previewApplication}
       />
     </Box>

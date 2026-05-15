@@ -14,6 +14,13 @@ export interface RadioOptionIntrospection {
   labelDefaultMessage?: string | null
 }
 
+export interface SubmitActionIntrospection {
+  event: string
+  labelMessageId?: string | null
+  labelDefaultMessage?: string | null
+  buttonType: string
+}
+
 export interface ScreenIntrospection {
   id: string
   type: string
@@ -42,6 +49,8 @@ export interface ScreenIntrospection {
   checkboxStrong?: boolean | null
   checkboxBackgroundColor?: string | null
   checkboxSpacing?: number | null
+  /** Mirrors template `field.backgroundColor` for input-like fields; preview defaults to blue when unset. */
+  inputBackgroundColor?: string | null
   tableRepeaterColumnHeaders?: MessageDescriptor[] | null
   tableRepeaterFormTitle?: string | null
   tableRepeaterAddItemButtonText?: string | null
@@ -79,6 +88,9 @@ export interface ScreenIntrospection {
   fileUploadButtonLabel?: string | null
   /** `FILEUPLOAD`: static text of the introduction rendered above the upload area. */
   fileUploadIntroduction?: string | null
+  /** `SUBMIT`: `footer` (default) vs in-flow `screen` (matches `buildSubmitField`). */
+  submitPlacement?: string | null
+  submitActions?: SubmitActionIntrospection[] | null
 }
 
 /** Where in the template tree a sidebar row was clicked (for debugging / tooling). */

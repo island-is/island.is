@@ -37,6 +37,7 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   checkboxStrong
   checkboxBackgroundColor
   checkboxSpacing
+  inputBackgroundColor
   tableRepeaterColumnHeaders {
     id
     defaultMessage
@@ -88,6 +89,13 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   fileUploadDescription
   fileUploadButtonLabel
   fileUploadIntroduction
+  submitPlacement
+  submitActions {
+    event
+    labelMessageId
+    labelDefaultMessage
+    buttonType
+  }
 }
 
 query getApplicationTemplateList {

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type FC } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ApplicationTypes } from '@island.is/application/types'
 import { getApplicationUIFields } from '@island.is/application/template-loader'
+import type { PreviewFieldComponent } from '../utils/previewFieldRegistry'
 
-type CustomFieldMap = Record<string, FC<any>>
+type CustomFieldMap = Record<string, PreviewFieldComponent>
 
-export function useTemplateCustomFields(typeId: string | undefined) {
+export const useTemplateCustomFields = (typeId: string | undefined) => {
   const [fields, setFields] = useState<CustomFieldMap>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)

@@ -107,6 +107,21 @@ export class RadioOptionIntrospectionGql {
 }
 
 @ObjectType()
+export class SubmitActionIntrospectionGql {
+  @Field()
+  event!: string
+
+  @Field(() => String, { nullable: true })
+  labelMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  labelDefaultMessage?: string | null
+
+  @Field()
+  buttonType!: string
+}
+
+@ObjectType()
 export class StaticTableSummaryRowGql {
   @Field(() => MessageDescriptorGql)
   label!: MessageDescriptorGql
@@ -188,6 +203,9 @@ export class ScreenIntrospectionGql {
 
   @Field(() => Int, { nullable: true })
   checkboxSpacing?: number | null
+
+  @Field(() => String, { nullable: true })
+  inputBackgroundColor?: string | null
 
   @Field(() => [MessageDescriptorGql], { nullable: true })
   tableRepeaterColumnHeaders?: MessageDescriptorGql[] | null
@@ -272,6 +290,12 @@ export class ScreenIntrospectionGql {
 
   @Field(() => String, { nullable: true })
   fileUploadIntroduction?: string | null
+
+  @Field(() => String, { nullable: true })
+  submitPlacement?: string | null
+
+  @Field(() => [SubmitActionIntrospectionGql], { nullable: true })
+  submitActions?: SubmitActionIntrospectionGql[] | null
 
   @Field(() => [ScreenIntrospectionGql], { nullable: true })
   children?: ScreenIntrospectionGql[]

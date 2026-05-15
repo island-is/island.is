@@ -1,3 +1,4 @@
+import { FieldTypes } from '@island.is/application/types'
 import type { ScreenIntrospection } from '../types/translationWorkspace'
 import { PREVIEW_EXCLUDED_FIELD_TYPES } from './translationWorkspaceFieldConstants'
 
@@ -35,6 +36,7 @@ export const filterPreviewMultiFieldChildren = (
 
   return withoutRedundantCombined.filter(
     (c) =>
+      !(c.type === FieldTypes.SUBMIT && c.submitPlacement !== 'screen') &&
       !(
         c.type === 'ALERT_MESSAGE' &&
         c.id === APPLICANT_EMAIL_PHONE_READONLY_ALERT_ID

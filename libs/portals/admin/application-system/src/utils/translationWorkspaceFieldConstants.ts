@@ -1,3 +1,5 @@
+import type { ScreenIntrospection } from '../types/translationWorkspace'
+
 export const INPUT_FIELD_TYPES = new Set([
   'TEXT',
   'PHONE',
@@ -40,7 +42,6 @@ export const PLACEHOLDER_TYPES = new Set([
   'SLIDER',
   'IMAGE',
   'PDF_LINK_BUTTON',
-  'OVERVIEW',
 ])
 
 export const noop = () => {
@@ -53,3 +54,9 @@ export const PREVIEW_EXCLUDED_FIELD_TYPES = new Set([
   'HIDDEN_INPUT',
   'HIDDEN_INPUT_WITH_WATCHED_VALUE',
 ])
+
+/** Island-ui input background: blue by default in translation preview; white only when the template sets `backgroundColor: 'white'`. */
+export const previewWorkspaceInputBackgroundColor = (
+  screen: Pick<ScreenIntrospection, 'inputBackgroundColor'>,
+): 'blue' | 'white' =>
+  screen.inputBackgroundColor === 'white' ? 'white' : 'blue'

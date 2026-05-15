@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import { useMemo } from 'react'
 import type { Application } from '@island.is/application/types'
 import {
   Box,
@@ -7,6 +7,7 @@ import {
   FormStepperV2,
   Section,
 } from '@island.is/island-ui/core'
+import type { ButtonTypes } from '@island.is/island-ui/core/types'
 import { coreMessages } from '@island.is/application/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
@@ -22,9 +23,51 @@ import {
   buildSubSectionNavigationScreen,
 } from '../../utils/translationWorkspaceNavigation'
 import { resolveTranslatableStaticText } from '../../utils/translationWorkspaceStaticText'
+import {
+  mergePreviewFieldRegistry,
+  type PreviewFieldComponent,
+} from '../../utils/previewFieldRegistry'
+import { resolveSubmitActionLabel } from '../../utils/translationWorkspaceFooterSubmit'
 import { TranslationWorkspaceFieldPreview } from '../TranslationWorkspaceFieldPreview/TranslationWorkspaceFieldPreview'
 import { TranslationWorkspaceFormLogo } from '../TranslationWorkspaceFormLogo/TranslationWorkspaceFormLogo'
+import { TranslationWorkspacePreviewShell } from '../TranslationWorkspacePreviewShell/TranslationWorkspacePreviewShell'
 import * as styles from './TranslationWorkspacePreviewArea.css'
+
+type SubmitPreviewButton = Omit<ButtonTypes, 'circle'> & {
+  icon?: 'checkmark' | 'close' | 'pencil'
+}
+
+const SUBMIT_PREVIEW_BUTTON_MAP: Record<string, SubmitPreviewButton> = {
+  primary: {
+    icon: 'checkmark',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  sign: {
+    icon: 'pencil',
+    colorScheme: 'default',
+    variant: 'primary',
+  },
+  subtle: {
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
+  signGhost: {
+    icon: 'pencil',
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
+  reject: {
+    icon: 'close',
+    colorScheme: 'destructive',
+    variant: 'primary',
+  },
+  rejectGhost: {
+    icon: 'close',
+    colorScheme: 'destructive',
+    variant: 'ghost',
+  },
+}
 
 export interface TranslationWorkspacePreviewAreaProps {
   previewScreens: ScreenIntrospection[]
@@ -48,8 +91,13 @@ export interface TranslationWorkspacePreviewAreaProps {
   focusedFieldId: string | null
   fieldErrorOverrides: Set<string>
   previewFieldValues: Record<string, string>
-  customFields?: Record<string, FC<any>>
+  /** Optional template `getFields` overrides merged over `@island.is/application/ui-fields`. */
+  customFields?: Record<string, PreviewFieldComponent>
   previewApplication: Application
+  /** Translation Workspace locale used by preview `intl` bridge and form context. */
+  activeLocale: 'is' | 'en'
+  /** `buildSubmitField` with `placement: 'footer'` — actions rendered in preview chrome. */
+  footerSubmitScreen?: ScreenIntrospection
 }
 
 export const TranslationWorkspacePreviewArea = ({
@@ -72,21 +120,33 @@ export const TranslationWorkspacePreviewArea = ({
   previewFieldValues,
   customFields,
   previewApplication,
+  activeLocale,
+  footerSubmitScreen,
 }: TranslationWorkspacePreviewAreaProps) => {
+  const mergedPreviewFields = useMemo(
+    () => mergePreviewFieldRegistry(customFields),
+    [customFields],
+  )
+
   if (previewScreens.length === 0) {
     return (
-      <Box
-        paddingTop={[3, 6, 10]}
-        borderRadius="large"
-        background="white"
-        padding={[3, 5, 8]}
-      >
-        <Text color="dark300">
-          Select a section from the states panel to preview.
-        </Text>
-      </Box>
+      <div className={styles.previewAreaBottomMargin}>
+        <Box
+          paddingTop={[3, 6, 10]}
+          borderRadius="large"
+          background="white"
+          padding={[3, 5, 8]}
+        >
+          <Text color="dark300">
+            Select a section from the states panel to preview.
+          </Text>
+        </Box>
+      </div>
     )
   }
+
+  const footerSubmitActions = footerSubmitScreen?.submitActions ?? []
+  const showTemplateFooterButtons = footerSubmitActions.length > 0
 
   const resolveStepTitle = (
     title: string | null | undefined,
@@ -102,7 +162,9 @@ export const TranslationWorkspacePreviewArea = ({
     )
 
   return (
-    <div className={styles.previewWrapper}>
+    <div
+      className={`${styles.previewAreaBottomMargin} ${styles.previewWrapper}`}
+    >
       <div className={styles.previewFormColumn}>
         <Box
           paddingTop={[3, 6, 10]}
@@ -127,21 +189,28 @@ export const TranslationWorkspacePreviewArea = ({
                     )
                   : ''}
               </Text>
-              {previewScreens.map((screen) => (
-                <TranslationWorkspaceFieldPreview
-                  key={screen.id}
-                  screen={screen}
-                  resolvePreviewString={resolvePreviewString}
-                  formatMessage={formatMessage as PreviewFormatMessage}
-                  showValidationErrors={showValidationErrors}
-                  validationDescriptorsByPath={validationDescriptorsByPath}
-                  focusedFieldId={focusedFieldId}
-                  fieldErrorOverrides={fieldErrorOverrides}
-                  previewFieldValues={previewFieldValues}
-                  customFields={customFields}
-                  previewApplication={previewApplication}
-                />
-              ))}
+              <TranslationWorkspacePreviewShell
+                activeLocale={activeLocale}
+                previewScreens={previewScreens}
+                previewFieldValues={previewFieldValues}
+                resolvePreviewString={resolvePreviewString}
+              >
+                {previewScreens.map((screen) => (
+                  <TranslationWorkspaceFieldPreview
+                    key={screen.id}
+                    screen={screen}
+                    resolvePreviewString={resolvePreviewString}
+                    formatMessage={formatMessage as PreviewFormatMessage}
+                    showValidationErrors={showValidationErrors}
+                    validationDescriptorsByPath={validationDescriptorsByPath}
+                    focusedFieldId={focusedFieldId}
+                    fieldErrorOverrides={fieldErrorOverrides}
+                    previewFieldValues={previewFieldValues}
+                    previewFields={mergedPreviewFields}
+                    previewApplication={previewApplication}
+                  />
+                ))}
+              </TranslationWorkspacePreviewShell>
             </Box>
 
             <Box
@@ -155,9 +224,36 @@ export const TranslationWorkspacePreviewArea = ({
               justifyContent="spaceBetween"
             >
               <Box display="inlineFlex" padding={2} paddingRight="none">
-                <Button icon="arrowForward" type="button">
-                  {formatMessage(coreMessages.buttonNext)}
-                </Button>
+                {showTemplateFooterButtons ? (
+                  footerSubmitActions.map((action, idx) => {
+                    const cfg =
+                      SUBMIT_PREVIEW_BUTTON_MAP[action.buttonType] ??
+                      SUBMIT_PREVIEW_BUTTON_MAP['primary']
+                    const label = resolveSubmitActionLabel(
+                      action,
+                      resolvePreviewString,
+                    )
+                    return (
+                      <Box
+                        key={`${action.event}-${idx}`}
+                        marginLeft={idx === 0 ? 0 : 2}
+                      >
+                        <Button
+                          type="button"
+                          variant={cfg.variant}
+                          icon={cfg.icon}
+                          colorScheme={cfg.colorScheme as any}
+                        >
+                          {label || formatMessage(coreMessages.buttonSubmit)}
+                        </Button>
+                      </Box>
+                    )
+                  })
+                ) : (
+                  <Button icon="arrowForward" type="button">
+                    {formatMessage(coreMessages.buttonNext)}
+                  </Button>
+                )}
               </Box>
               <Box
                 display={['none', 'inlineFlex']}

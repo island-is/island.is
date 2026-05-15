@@ -11,13 +11,13 @@ interface State {
 }
 
 export class CustomFieldErrorBoundary extends Component<Props, State> {
-  state: State = { error: null }
+  override state: State = { error: null }
 
   static getDerivedStateFromError(error: Error): State {
     return { error }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  override componentDidCatch(error: Error, info: ErrorInfo) {
     console.warn(
       `[CustomFieldErrorBoundary] "${this.props.componentName}" crashed:`,
       error,
@@ -25,7 +25,7 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
     )
   }
 
-  render() {
+  override render() {
     if (this.state.error) {
       return (
         <Box
@@ -35,7 +35,7 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
           background="red100"
         >
           <Text variant="eyebrow" color="red600">
-            CUSTOM: {this.props.componentName}
+            Preview · {this.props.componentName}
           </Text>
           <Text variant="small" color="dark300">
             {this.state.error.message}

@@ -229,6 +229,18 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationGoogleTranslateAll',
     defaultMessage: 'Þýða allt',
   },
+  translationStringsScopeScreen: {
+    id: 'admin-portal.application-system:translationStringsScopeScreen',
+    defaultMessage: 'Texti á þessum skjá',
+  },
+  translationStringsScopeApplication: {
+    id: 'admin-portal.application-system:translationStringsScopeApplication',
+    defaultMessage: 'Texti í allri umsókninni',
+  },
+  translationStringsAllApplicationHeading: {
+    id: 'admin-portal.application-system:translationStringsAllApplicationHeading',
+    defaultMessage: 'Allur texti í umsókn',
+  },
   translationReview: {
     id: 'admin-portal.application-system:translationReview',
     defaultMessage: 'Samþykkja',
@@ -384,7 +396,8 @@ export const m = defineMessages({
   },
   translationPublishConfirm: {
     id: 'admin-portal.application-system:translationPublishConfirm',
-    defaultMessage: 'Ertu viss um að þú viljir birta þessar þýðingar? Þær verða sýnilegar notendum.',
+    defaultMessage:
+      'Ertu viss um að þú viljir birta þessar þýðingar? Þær verða sýnilegar notendum.',
   },
   translationPublishCancel: {
     id: 'admin-portal.application-system:translationPublishCancel',
@@ -408,7 +421,8 @@ export const m = defineMessages({
   },
   translationRollbackConfirm: {
     id: 'admin-portal.application-system:translationRollbackConfirm',
-    defaultMessage: 'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi birtar þýðingar verða yfirskrifaðar.',
+    defaultMessage:
+      'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi birtar þýðingar verða yfirskrifaðar.',
   },
   translationRollbackSuccess: {
     id: 'admin-portal.application-system:translationRollbackSuccess',
@@ -441,5 +455,18 @@ export const m = defineMessages({
   translationActorLabel: {
     id: 'admin-portal.application-system:translationActorLabel',
     defaultMessage: 'Umboðsaðili: {actorNationalId}',
+  },
+  translationWorkspaceOverviewPreviewHint: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewHint',
+    defaultMessage:
+      'Raðir í yfirliti koma fram út frá svörum í umsókn. Þýðingahamur sýnir aðeins útlit; texta sem birtist mögulega hér má finna undir "Strengir" -> "Texti í allri umsókninni"',
+  },
+  translationWorkspaceOverviewPreviewStubKey: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewStubKey',
+    defaultMessage: 'Dálkur',
+  },
+  translationWorkspaceOverviewPreviewStubValue: {
+    id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewStubValue',
+    defaultMessage: 'Gildi',
   },
 })

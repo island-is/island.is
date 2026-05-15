@@ -25,6 +25,7 @@ import {
   shortenForToast,
 } from '../../utils/translationWorkspaceErrors'
 import { PREVIEW_EXCLUDED_FIELD_TYPES } from '../../utils/translationWorkspaceFieldConstants'
+import { findFooterSubmitScreen } from '../../utils/translationWorkspaceFooterSubmit'
 import {
   buildSectionNavigationScreen,
   buildSubSectionNavigationScreen,
@@ -218,18 +219,26 @@ export const TranslationWorkspace = () => {
     ])
   }, [selectedLocation, introspection])
 
-  const currentDescriptors = useMemo(() => {
-    if (selectedScreen) {
-      const all = [...selectedScreen.messageDescriptors]
-      if (selectedScreen.children) {
-        for (const child of selectedScreen.children) {
-          all.push(...child.messageDescriptors)
-        }
+  const footerSubmitScreen = useMemo(
+    () => findFooterSubmitScreen(previewScreens),
+    [previewScreens],
+  )
+
+  const screenMessageDescriptors = useMemo((): MessageDescriptor[] => {
+    if (!selectedScreen) return []
+    const all = [...selectedScreen.messageDescriptors]
+    if (selectedScreen.children) {
+      for (const child of selectedScreen.children) {
+        all.push(...child.messageDescriptors)
       }
-      return all
     }
-    return introspection?.allMessageDescriptors ?? []
-  }, [selectedScreen, introspection])
+    return all
+  }, [selectedScreen])
+
+  const allApplicationMessageDescriptors = useMemo(
+    () => (introspection?.allMessageDescriptors ?? []) as MessageDescriptor[],
+    [introspection],
+  )
 
   const handleValueChange = useCallback(
     (messageKey: string, value: string) => {
@@ -286,17 +295,26 @@ export const TranslationWorkspace = () => {
     [googleTranslate, handleValueChange],
   )
 
+  const GOOGLE_TRANSLATE_BATCH_SIZE = 100
+
   const handleGoogleTranslateAll = useCallback(
     async (items: Array<{ id: string; sourceText: string }>) => {
       if (items.length === 0) return
       try {
-        const { data } = await googleTranslate({
-          variables: { input: { texts: items.map((i) => i.sourceText) } },
-        })
-        const translations = data?.googleTranslateStrings?.translations ?? []
-        for (let i = 0; i < items.length; i++) {
-          if (translations[i]) {
-            handleValueChange(items[i].id, translations[i])
+        for (
+          let offset = 0;
+          offset < items.length;
+          offset += GOOGLE_TRANSLATE_BATCH_SIZE
+        ) {
+          const slice = items.slice(offset, offset + GOOGLE_TRANSLATE_BATCH_SIZE)
+          const { data } = await googleTranslate({
+            variables: { input: { texts: slice.map((i) => i.sourceText) } },
+          })
+          const translations = data?.googleTranslateStrings?.translations ?? []
+          for (let i = 0; i < slice.length; i++) {
+            if (translations[i]) {
+              handleValueChange(slice[i].id, translations[i])
+            }
           }
         }
       } catch (err) {
@@ -643,6 +661,8 @@ export const TranslationWorkspace = () => {
             previewFieldValues={previewFieldValues}
             customFields={customFields}
             previewApplication={previewApplication}
+            activeLocale={activeLocale}
+            footerSubmitScreen={footerSubmitScreen}
           />
         </div>
         <div className={workspaceStyles.workspaceNavAside}>
@@ -653,7 +673,8 @@ export const TranslationWorkspace = () => {
             onNavClick={handleSidebarNavClick}
             formatMessage={formatMessage}
             selectedScreen={selectedScreen}
-            currentDescriptors={currentDescriptors}
+            screenMessageDescriptors={screenMessageDescriptors}
+            allApplicationMessageDescriptors={allApplicationMessageDescriptors}
             editedValues={editedValues}
             activeLocale={activeLocale}
             getPersistedForLocale={getPersistedForLocale}
