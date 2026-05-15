@@ -17,8 +17,4 @@ export class UpdateApplicationInput {
   @IsObject()
   @IsOptional()
   answers?: object
-
-  @Field(() => Boolean, { nullable: true })
-  @IsOptional()
-  skipValidation?: boolean
 }

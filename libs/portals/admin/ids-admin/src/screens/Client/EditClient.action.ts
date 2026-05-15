@@ -3,7 +3,10 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AuthAdminEnvironment,
+  AuthAdminEnvironmentFailure,
+} from '@island.is/api/schema'
 
 import {
   UpdateClientDocument,
@@ -19,10 +22,15 @@ import {
 } from './EditClient.schema'
 
 export type EditClientResult = RouterActionResponse<
-  UpdateClientMutation['patchAuthAdminClient'],
+  UpdateClientMutation['patchAuthAdminClient']['environments'],
   ValidateFormDataResult<MergedFormDataSchema>['errors'],
   keyof typeof ClientFormTypes
->
+> & {
+  failedEnvironments?: Pick<
+    AuthAdminEnvironmentFailure,
+    'environment' | 'message'
+  >[]
+}
 
 export const editClientAction: WrappedActionFn =
   ({ client }) =>
@@ -95,9 +103,13 @@ export const editClientAction: WrappedActionFn =
         return globalErrorResponse
       }
 
+      const failedEnvironments =
+        response.data?.patchAuthAdminClient.failedEnvironments ?? []
+
       return {
-        data: response.data?.patchAuthAdminClient ?? null,
+        data: response.data?.patchAuthAdminClient.environments ?? null,
         intent,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     } catch (error) {
       return globalErrorResponse

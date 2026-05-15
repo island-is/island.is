@@ -137,6 +137,7 @@ export class PoliceController {
       theCase.defendants?.flatMap((d) =>
         d.nationalId ? [{ id: d.id, nationalId: d.nationalId }] : [],
       ),
+      theCase.type,
     )
   }
 

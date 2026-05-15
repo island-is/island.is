@@ -13,6 +13,7 @@ export type PruningApplication = Pick<
   | 'externalData'
   | 'typeId'
   | 'state'
+  | 'status'
   | 'applicant'
   | 'applicantActors'
 >

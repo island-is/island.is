@@ -21,7 +21,7 @@ import {
  */
 export const useSyncDefendantsFromPolice = () => {
   const client = useApolloClient()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
   const { createDefendant } = useDefendants()
   const syncingRef = useRef(false)
 
@@ -98,7 +98,7 @@ export const useSyncDefendantsFromPolice = () => {
               defendants: [...(prev.defendants ?? []), ...newDefendants],
             }))
 
-            client.refetchQueries({
+            await client.refetchQueries({
               include: [PoliceCaseInfoDocument],
               onQueryUpdated(observableQuery) {
                 const caseId = (
@@ -109,6 +109,8 @@ export const useSyncDefendantsFromPolice = () => {
                 return caseId === workingCase.id
               },
             })
+
+            refreshCase()
           }
 
           syncingRef.current = false
