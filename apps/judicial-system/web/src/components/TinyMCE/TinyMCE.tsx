@@ -138,8 +138,7 @@ const TinyMCE = ({
         <Editor
           id={editorId}
           apiKey={process.env.TINY_MCE_API_KEY}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onInit={(_: any, editor: any) => {
+          onInit={(_, editor) => {
             editorRef.current = editor
           }}
           init={{
@@ -155,22 +154,19 @@ const TinyMCE = ({
                 onBlur?.(editor.getContent())
               })
               editor.on('NodeChange', (e) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                let node: any = e.element
+                let node: HTMLElement | null = e.element as HTMLElement
                 while (node && node !== editor.getBody()) {
-                  if (node.nodeType === 1) {
-                    const bg: string = node.style?.backgroundColor ?? ''
-                    if (bg && bg !== 'transparent') {
-                      const match = HIGHLIGHT_COLORS.find(
-                        ({ color }) => hexToRgb(color) === bg,
-                      )
-                      if (match) {
-                        setSelectedColor(match.color)
-                        return
-                      }
+                  const bg: string = node.style?.backgroundColor ?? ''
+                  if (bg && bg !== 'transparent') {
+                    const match = HIGHLIGHT_COLORS.find(
+                      ({ color }) => hexToRgb(color) === bg,
+                    )
+                    if (match) {
+                      setSelectedColor(match.color)
+                      return
                     }
                   }
-                  node = node.parentNode
+                  node = node.parentElement
                 }
                 setSelectedColor(null)
               })
