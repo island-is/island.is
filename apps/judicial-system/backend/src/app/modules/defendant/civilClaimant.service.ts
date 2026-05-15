@@ -64,7 +64,7 @@ export class CivilClaimantService {
     }
   }
 
-  private async pruneDefendantIds(
+  private async filterDefendantIdsByPoliceCaseNumbers(
     caseId: string,
     policeCaseNumbers: string[],
     currentDefendantIds?: string[],
@@ -104,19 +104,23 @@ export class CivilClaimantService {
     const policeCaseNumbersForValidation =
       update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? []
 
-    const shouldPruneDefendantIds =
+    const shouldFilterDefendantIdsByPoliceCaseNumbers =
       update.policeCaseNumbers !== undefined ||
       update.defendantIds !== undefined
 
-    if (shouldPruneDefendantIds) {
+    if (shouldFilterDefendantIdsByPoliceCaseNumbers) {
       const currentDefendantIds =
         update.defendantIds ?? civilClaimant.defendantIds
-      const prunedDefendantIds = await this.pruneDefendantIds(
-        caseId,
-        policeCaseNumbersForValidation,
-        currentDefendantIds,
-      )
-      effectiveUpdate = { ...effectiveUpdate, defendantIds: prunedDefendantIds }
+      const filteredDefendantIds =
+        await this.filterDefendantIdsByPoliceCaseNumbers(
+          caseId,
+          policeCaseNumbersForValidation,
+          currentDefendantIds,
+        )
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        defendantIds: filteredDefendantIds,
+      }
     }
 
     const [numberOfAffectedRows, civilClaimants] =

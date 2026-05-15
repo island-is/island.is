@@ -226,14 +226,14 @@ export const CivilClaimantFields = ({
         .map((d) => d.id),
     )
 
-    const prunedDefendantIds = (civilClaimant.defendantIds ?? []).filter((id) =>
-      newAvailableDefendantIds.has(id),
+    const filteredDefendantIds = (civilClaimant.defendantIds ?? []).filter(
+      (id) => newAvailableDefendantIds.has(id),
     )
 
     handleSetAndSendCivilClaimantToServer({
       civilClaimantId: civilClaimant.id,
       policeCaseNumbers: newPoliceCaseNumbers,
-      defendantIds: prunedDefendantIds,
+      defendantIds: filteredDefendantIds,
     })
   }
 
