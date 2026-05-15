@@ -173,17 +173,16 @@ const TinyMCE = ({
 
               editor.ui.registry.addToggleButton('highlightcolor', {
                 icon: 'highlight-bg-color',
+                tooltip: 'Highlight',
                 onAction: (api) => {
                   highlightBtnApiRef.current = api
                   const container = editor.getContainer()
-                  // Toolbar groups: [0]=bold+italic [1]=indent+outdent [2]=highlightcolor [3]=fullscreen
-                  const groups = container.querySelectorAll<HTMLElement>(
-                    '.tox-toolbar__group',
+                  const btn = container.querySelector<HTMLElement>(
+                    '[aria-label="Highlight"]',
                   )
-                  const group = groups[2]
-                  if (group) {
-                    highlightGroupRef.current = group
-                    const rect = group.getBoundingClientRect()
+                  if (btn) {
+                    highlightGroupRef.current = btn
+                    const rect = btn.getBoundingClientRect()
                     setPickerPos({ top: rect.bottom + 4, left: rect.left })
                   }
                   setPickerOpen((open) => !open)

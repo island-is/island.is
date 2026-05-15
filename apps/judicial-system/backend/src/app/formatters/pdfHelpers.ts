@@ -501,6 +501,7 @@ interface Run {
 export interface RichTextBlock {
   runs: Run[]
   indent: number
+  softBreak?: boolean
 }
 
 const extractBgColor = (style: string): string | null => {
@@ -569,9 +570,28 @@ const collectBlocksFromNodes = (
       const pIndent = paddingMatch
         ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
         : 0
-      const runs: Run[] = []
-      collectRuns(children, false, false, false, runs)
-      blocks.push({ runs, indent: indent + pIndent })
+
+      const segments: ChildNode[][] = [[]]
+      for (const child of children) {
+        if (child.type === 'tag' && (child as Element).name === 'br') {
+          segments.push([])
+        } else {
+          segments[segments.length - 1].push(child)
+        }
+      }
+      if (segments.length > 1 && segments[segments.length - 1].length === 0) {
+        segments.pop()
+      }
+
+      for (let s = 0; s < segments.length; s++) {
+        const runs: Run[] = []
+        collectRuns(segments[s], false, false, false, runs)
+        blocks.push({
+          runs,
+          indent: indent + pIndent,
+          softBreak: s < segments.length - 1,
+        })
+      }
     } else {
       blocks.push(...collectBlocksFromNodes(children, indent))
     }
@@ -608,6 +628,7 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
     const width = doc.page.width - doc.page.margins.right - leftX
     const blockY = doc.y
     let currentX = leftX
+    const paragraphGap = block.softBreak ? 0 : 1
 
     for (let i = 0; i < block.runs.length; i++) {
       const run = block.runs[i]
@@ -663,11 +684,11 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
       if (i === 0) {
         doc.text(run.text, leftX, blockY, {
           continued: !isLast,
-          paragraphGap: 1,
+          paragraphGap,
           width,
         })
       } else {
-        doc.text(run.text, { continued: !isLast, paragraphGap: 1 })
+        doc.text(run.text, { continued: !isLast, paragraphGap })
       }
 
       currentX += doc.widthOfString(run.text)
