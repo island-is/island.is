@@ -1,12 +1,14 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react'
 
 import { ErrorMessage } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
+import HighlightColorPicker, {
+  HIGHLIGHT_COLORS,
+} from './HighlightColorPicker'
 import * as styles from './TinyMCE.css'
 
 type ToolbarToggleButtonInstanceApi = Ui.Toolbar.ToolbarToggleButtonInstanceApi
@@ -16,39 +18,6 @@ const hexToRgb = (hex: string) => {
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
   return `rgb(${r}, ${g}, ${b})`
-}
-
-const HIGHLIGHT_COLORS = [
-  { label: 'Yellow', color: theme.color.yellow400 },
-  { label: 'Blue', color: theme.color.blue100 },
-  { label: 'Mint', color: theme.color.mint200 },
-  { label: 'Rose', color: theme.color.roseTinted200 },
-  { label: 'Purple', color: theme.color.purple200 },
-]
-
-const containerVariants = {
-  hidden: { opacity: 0, scale: 0.92, y: -6 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      duration: 0.15,
-      ease: 'easeOut' as const,
-      staggerChildren: 0.03,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.92,
-    y: -6,
-    transition: { duration: 0.12, ease: 'easeIn' as const },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, scale: 0.5 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.12 } },
 }
 
 interface Props {
@@ -209,56 +178,27 @@ const TinyMCE = ({
         />
         <AnimatePresence>
           {pickerOpen && (
-            <motion.div
+            <HighlightColorPicker
               ref={pickerRef}
-              className={styles.colorPicker}
-              style={{ top: pickerPos.top, left: pickerPos.left }}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-            >
-              {HIGHLIGHT_COLORS.map(({ label: colorLabel, color }) => (
-                <motion.button
-                  key={color}
-                  type="button"
-                  className={`${styles.colorSwatch}${
-                    selectedColor === color
-                      ? ` ${styles.colorSwatchSelected}`
-                      : ''
-                  }`}
-                  style={{ background: color }}
-                  aria-label={colorLabel}
-                  variants={itemVariants}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    editorRef.current?.execCommand('HiliteColor', false, color)
-                    setSelectedColor(color)
-                    setPickerOpen(false)
-                  }}
-                />
-              ))}
-              <motion.button
-                type="button"
-                className={styles.removeColor}
-                aria-label="Remove highlight"
-                variants={itemVariants}
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  if (selectedColor) {
-                    editorRef.current?.execCommand(
-                      'HiliteColor',
-                      false,
-                      selectedColor,
-                    )
-                  }
-                  setSelectedColor(null)
-                  setPickerOpen(false)
-                }}
-              >
-                ✕
-              </motion.button>
-            </motion.div>
+              position={pickerPos}
+              selectedColor={selectedColor}
+              onSelectColor={(color) => {
+                editorRef.current?.execCommand('HiliteColor', false, color)
+                setSelectedColor(color)
+                setPickerOpen(false)
+              }}
+              onRemoveColor={() => {
+                if (selectedColor) {
+                  editorRef.current?.execCommand(
+                    'HiliteColor',
+                    false,
+                    selectedColor,
+                  )
+                }
+                setSelectedColor(null)
+                setPickerOpen(false)
+              }}
+            />
           )}
         </AnimatePresence>
       </div>
