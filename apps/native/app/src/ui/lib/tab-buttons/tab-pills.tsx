@@ -19,7 +19,7 @@ const Pill = styled.Pressable<{ isSelected: boolean }>`
     isSelected ? theme.color.blue400 : theme.color.blue100};
 `
 
-const PillText = styled(Typography)<{ isSelected: boolean }>`
+const PillText = styled(Typography) <{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.color.white : theme.color.blue400};
 `
@@ -95,7 +95,7 @@ export const TabPills = ({
       ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 16 }}
+      style={{ marginTop: 16, paddingHorizontal: 16 }}
       contentContainerStyle={{ gap: 8 }}
       onLayout={onContainerLayout}
       onScroll={onScroll}
