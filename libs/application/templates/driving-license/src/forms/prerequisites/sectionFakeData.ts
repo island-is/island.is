@@ -161,6 +161,10 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei — gervi engin gæðamynd',
             },
             {
+              value: 'metadata-only',
+              label: 'Já — gervi gæðamynd, en pohto-bita vantar (eldri skrá)',
+            },
+            {
               value: 'real',
               label: 'Raunveruleg gögn (sækja í RLS)',
             },

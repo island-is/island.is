@@ -35,6 +35,7 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationResponse,
+  GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -229,7 +230,7 @@ export class VmstUnemploymentClientService {
 
   async withdrawUnemploymentApplication(
     requestParameter: UnemploymentApplicationWithdrawApplicationRequest,
-  ): Promise<GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationResponse> {
+  ): Promise<GaldurDomainModelsBaseViewModel> {
     const api = await this.createApiClient(
       UnemploymentApplicationApi,
       'clients-vmst-unemployment',

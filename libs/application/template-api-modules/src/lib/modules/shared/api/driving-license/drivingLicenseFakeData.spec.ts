@@ -46,6 +46,19 @@ describe('drivingLicenseFakeData builders', () => {
       })
       expect(result).toBeNull()
     })
+
+    it('returns metadata-only shape when hasRLSPhoto is "metadata-only"', () => {
+      const result = buildFakeQualityPhotoAndSignature({
+        ...baseFakeData,
+        hasRLSPhoto: 'metadata-only',
+      })
+      expect(result).toMatchObject({
+        imageId: expect.any(Number),
+        imageTypeId: 1,
+        imageTypeName: 'Passamynd',
+        pohto: null,
+      })
+    })
   })
 
   describe('buildFakeAllPhotosFromThjodskra', () => {

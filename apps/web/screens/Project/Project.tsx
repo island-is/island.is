@@ -194,20 +194,6 @@ const ProjectPage: Screen<PageProps> = ({
               )}
             </Box>
           )}
-          {subpage.showDateOfTheMostRecentReview &&
-            subpage.contentLastReviewed && (
-              <Box paddingTop={2}>
-                <Text variant="small">
-                  {`${n(
-                    'contentLastReviewedLabel',
-                    activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
-                  )}: ${format(
-                    new Date(subpage.contentLastReviewed),
-                    'do MMMM yyyy',
-                  )}`}
-                </Text>
-              </Box>
-            )}
         </Box>
       )}
       {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
@@ -289,6 +275,21 @@ const ProjectPage: Screen<PageProps> = ({
           })}
         </Stack>
       )}
+      {!!subpage &&
+        subpage.showDateOfTheMostRecentReview &&
+        subpage.contentLastReviewed && (
+          <Box paddingTop={2} className="rs_read">
+            <Text variant="small">
+              {`${n(
+                'contentLastReviewedLabel',
+                activeLocale === 'is' ? 'Síðast uppfært' : 'Last updated',
+              )}: ${format(
+                new Date(subpage.contentLastReviewed),
+                'do MMMM yyyy',
+              )}`}
+            </Text>
+          </Box>
+        )}
     </>
   )
 

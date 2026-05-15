@@ -4,6 +4,8 @@ import {
   GaldurExternalDomainRequestsUpdateApplicantRequest,
   GaldurDomainModelsSettingsBanksBankDTO,
   GaldurDomainModelsSettingsLedgersLedgerDTO,
+  GaldurExternalDomainModelsEducationDTO,
+  GaldurExternalDomainModelsApplicantLanguageAbilityDTO,
 } from '@island.is/clients/vmst-unemployment'
 import {
   EducationInAnswers,
@@ -51,6 +53,39 @@ export const generateAnswers = (
 
   const euresAgreement = getValueViaPath<YesOrNoEnum>(answers, 'euresAgreement')
 
+  const previousEducationHistory =
+    getValueViaPath<Array<GaldurExternalDomainModelsEducationDTO>>(
+      externalData,
+      'currentApplicationInformation.data.currentApplication.educationHistory',
+    ) || []
+
+  const combinedEducation: GaldurExternalDomainModelsEducationDTO[] = [
+    ...previousEducationHistory,
+    ...(educationHistory?.map((x) => ({
+      educationProgramId: x.levelOfStudy ?? '',
+      educationDegreeId: x.degree ?? '',
+      educationSubjectId: x.courseOfStudy ?? '',
+      yearFinished: x.endDate ? parseInt(x.endDate, 10) : null,
+    })) ?? []),
+  ]
+
+  const previousLanguageSkills =
+    getValueViaPath<
+      Array<GaldurExternalDomainModelsApplicantLanguageAbilityDTO>
+    >(
+      externalData,
+      'currentApplicationInformation.data.currentApplication.languageAbility',
+    ) || []
+
+  const combinedLanguageSkills: GaldurExternalDomainModelsApplicantLanguageAbilityDTO[] =
+    [
+      ...previousLanguageSkills,
+      ...(languages?.map((x) => ({
+        languageId: x.language,
+        abilityId: x.skill,
+      })) ?? []),
+    ]
+
   return {
     currentAddressDifferent:
       otherAddress?.currentAddressIsNotDifferent &&
@@ -68,14 +103,7 @@ export const generateAnswers = (
     preferredJobs: jobWishes?.map((x) => {
       return { jobCodeId: x }
     }),
-    educationHistory: educationHistory?.map((x) => {
-      return {
-        educationProgramId: x.levelOfStudy,
-        educationDegreeId: x.degree,
-        educationSubjectId: x.courseOfStudy,
-        yearFinished: x.endDate ? parseInt(x.endDate) : undefined,
-      }
-    }),
+    educationHistory: combinedEducation,
     drivingLicenses:
       licenses?.hasDrivingLicense?.[0] === YES
         ? licenses.drivingLicenseTypes
@@ -84,12 +112,7 @@ export const generateAnswers = (
       licenses?.hasHeavyMachineryLicense?.[0] === YES
         ? licenses.heavyMachineryLicensesTypes
         : [],
-    languageAbility: languages?.map((x) => {
-      return {
-        languageId: x.language,
-        abilityId: x.skill,
-      }
-    }),
+    languageAbility: combinedLanguageSkills,
     saveEURES: euresAgreement === YES ? true : false,
   }
 }
