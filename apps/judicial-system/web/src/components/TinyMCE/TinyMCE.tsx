@@ -29,6 +29,7 @@ interface Props {
   disabled?: boolean
   errorMessage?: string
   required?: boolean
+  'data-testid'?: string
 }
 
 const TinyMCE = ({
@@ -40,6 +41,7 @@ const TinyMCE = ({
   disabled,
   errorMessage,
   required,
+  'data-testid': dataTestId,
 }: Props) => {
   const editorId = useId()
   const [focused, setFocused] = useState<boolean>(false)
@@ -126,7 +128,7 @@ const TinyMCE = ({
   }
 
   return (
-    <div>
+    <div data-testid={dataTestId}>
       <div
         className={[
           styles.wrapper,

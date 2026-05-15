@@ -1439,6 +1439,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               <Box>
                 <SectionHeading title="Bókanir" />
                 <TinyMCE
+                  data-testid="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
                   defaultValue={courtSession.entries || ''}
