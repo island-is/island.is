@@ -142,9 +142,9 @@ const TinyMCE = ({
             editorRef.current = editor
           }}
           init={{
+            height: 450,
             plugins: 'lists fullscreen',
-            toolbar:
-              'bold italic | indent outdent | highlightcolor | fullscreen',
+            toolbar: 'bold italic indent outdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
             setup: (editor) => {
