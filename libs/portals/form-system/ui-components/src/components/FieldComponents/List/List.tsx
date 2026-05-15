@@ -15,8 +15,12 @@ import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
 import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
 import { m } from '../../../lib/messages'
 import { Action, ApplicationState } from '../../../lib'
-import { DATA_FROM_URL, removeTypename } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
+import {
+  DATA_FROM_URL,
+  GET_ORGANIZATION_ZENDESK_INSTANCE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
+import { useLazyQuery, useMutation } from '@apollo/client'
 
 interface Props {
   item: FormSystemField
@@ -67,6 +71,7 @@ export const List = ({
   const [dataFromUrl] = useMutation(DATA_FROM_URL)
   const [urlList, setUrlList] = useState<(FormSystemListItem | null)[]>([])
   const [dataFromUrlHasError, setDataFromUrlHasError] = useState(false)
+  const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE)
 
   let listType = item.fieldSettings?.listType
   if (!listType) {
@@ -88,6 +93,18 @@ export const List = ({
   }> => {
     if (!shouldFetch || !slug) return { list: [], placeholderFromUrl: null }
 
+    let zendeskInstance: string | undefined = undefined
+    if (
+      item.fieldSettings?.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+      item.fieldSettings?.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+    ) {
+      const data = await getZendeskInstance({
+        variables: { input: { nationalId: orgNationalId } },
+        fetchPolicy: 'cache-first',
+      })
+      zendeskInstance = data?.data?.formSystemOrganizationZendeskInstance
+    }
+
     try {
       const { data } = await dataFromUrl({
         variables: {
@@ -96,6 +113,7 @@ export const List = ({
             isTest: Boolean(isTest),
             fieldId: item.id,
             orgNationalId,
+            zendeskInstance,
           },
         },
       })
@@ -131,7 +149,6 @@ export const List = ({
       try {
         const { list, placeholderFromUrl } = await handleFetchListFromUrl()
 
-        console.log('placeholderFromUrl after fetch:', placeholderFromUrl)
         dispatch?.({
           type: 'SET_FIELD_LIST',
           payload: {
@@ -224,14 +241,14 @@ export const List = ({
   }, [selected])
 
   useEffect(() => {
-    if (shouldFetch) trigger(item.id)
-  }, [isLoading, shouldFetch, trigger, item.id])
+    if (!shouldFetch) return
+    if (isLoading) return
+    if (dataFromUrlHasError) trigger(item.id) // only show fetch failure
+  }, [shouldFetch, isLoading, dataFromUrlHasError, trigger, item.id])
 
   const externalPlaceholder = state?.externalListPlaceholders?.find(
     (p) => p.fieldId === item.id,
   )?.placeholder
-
-  if (externalPlaceholder?.[lang]) console.log('halllllló')
 
   const placeholder =
     externalPlaceholder?.[lang] ||
@@ -240,13 +257,13 @@ export const List = ({
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={`${item.id}.${valueIndex}`}
       control={control}
       defaultValue={getValue(item, 'label', valueIndex)?.[lang] ?? ''}
       rules={{
         required:
-          item.isRequired && !isLoading
+          item.isRequired && !isLoading && !(shouldFetch && dataFromUrlHasError)
             ? { value: true, message: formatMessage(m.required) }
             : false,
         validate: () => {

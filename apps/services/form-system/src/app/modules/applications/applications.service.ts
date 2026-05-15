@@ -29,7 +29,6 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Form } from '../forms/models/form.model'
@@ -1072,6 +1071,7 @@ export class ApplicationsService {
       )
     }
     const fieldType = field.fieldType
+
     let response = new DataFromUrlResDto()
 
     if (

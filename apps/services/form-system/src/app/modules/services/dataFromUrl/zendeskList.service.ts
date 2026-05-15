@@ -14,11 +14,11 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 export class ZendeskListService {
   enhancedFetch: EnhancedFetchAPI
 
-  private readonly TENANT_ID = 'digitaliceland'
-  // private readonly TENANT_ID =
-  //   process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD ?? 'digitaliceland'
-
-  private readonly API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
+  private readonly DEFAULT_INSTANCE =
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD
+  private readonly DEFAULT_API_KEY =
+    process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
+  private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
 
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
     this.enhancedFetch = createEnhancedFetch({
@@ -33,30 +33,36 @@ export class ZendeskListService {
     fieldSettings: FieldSettings,
     dataFromUrlRequestDto: DataFromUrlReqDto,
   ): Promise<DataFromUrlResDto> {
-    // const zendeskInstance = ZENDESK_INSTANCES[this.TENANT_ID]
-    const zendeskInstance = this.TENANT_ID
-    // if (!zendeskInstance) {
-    //   this.logger.error(
-    //     `No Zendesk instance configuration found for tenant ${this.TENANT_ID}`,
-    //   )
-    //   throw new Error(
-    //     `No Zendesk instance configuration found for tenant ${this.TENANT_ID}`,
-    //   )
-    // }
+    let zendeskInstance = this.DEFAULT_INSTANCE
+    let apiKey = this.DEFAULT_API_KEY
+
+    const instanceInfo = dataFromUrlRequestDto.zendeskInstance
+    if (instanceInfo) {
+      const parsed: ZendeskInstanceConfig = JSON.parse(instanceInfo)
+      if (parsed.serviceSystemInstance) {
+        zendeskInstance = parsed.serviceSystemInstance
+        if (zendeskInstance === 'heilsa') {
+          apiKey = this.HEILSA_API_KEY
+        }
+      }
+    }
+
+    if (!zendeskInstance || !apiKey) {
+      this.logger.error(
+        `No Zendesk instance or api key configuration found for slug ${dataFromUrlRequestDto.slug}. FieldId: ${dataFromUrlRequestDto.fieldId}`,
+      )
+      return { isError: true }
+    }
 
     let url = ''
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
-    const credentials = Buffer.from(`${username}:${this.API_KEY}`).toString(
-      'base64',
-    )
+    const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     if (fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT) {
       const customObjectKey = fieldSettings.zendeskCustomObjectKey
       const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
-      // url = `${zendeskUrl}/api/v2/custom_objects/test_gogn/records?page[size]=100`
       url = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}/records?page[size]=100`
-      // const placeholderUrl = `${zendeskUrl}/api/v2/custom_objects/test_gogn/fields`
       const placeholderUrl = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}`
       const placeholder = await this.getCustomObjectPlaceholder(
         placeholderUrl,
@@ -72,13 +78,6 @@ export class ZendeskListService {
     const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
     url = `${zendeskUrl}/api/v2/ticket_fields/${ticketFieldId}`
 
-    // const brandId = '30220057411090'
-    // console.log('fieldSettings:', fieldSettings)
-    // const ticketFieldId = fieldSettings.zendeskTicketFieldId
-    // console.log('ticketFieldId:', ticketFieldId)
-    // const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
-    // url = `${zendeskUrl}/api/v2/ticket_fields/${ticketFieldId}`
-
     try {
       const response = await this.enhancedFetch(url, {
         method: 'GET',
@@ -92,9 +91,7 @@ export class ZendeskListService {
         this.logger.error(
           `Failed to fetch ticket fields from Zendesk. Status: ${response.status}, StatusText: ${response.statusText}`,
         )
-        throw new Error(
-          `Failed to fetch ticket fields from Zendesk. Status: ${response.status}`,
-        )
+        return { isError: true }
       }
 
       let result = new DataFromUrlResDto()
@@ -125,25 +122,7 @@ export class ZendeskListService {
           value: record.name,
           isSelected: false,
         }))
-
-        console.log('Zendesk custom object response data:', data)
       }
-
-      // const data: ZendeskFieldOptionsResponse = await response.json()
-      // console.log('Zendesk API response data:', data.ticket_field.title)
-
-      // const result = new DataFromUrlResDto()
-      // result.list = data.ticket_field.custom_field_options.map((option) => ({
-      //   id: '1',
-      //   displayOrder: 0,
-      //   label: { is: option.name, en: option.name },
-      //   value: option.value,
-      //   isSelected: option.default,
-      // }))
-      // result.placeholder = {
-      //   is: data.ticket_field.title,
-      //   en: data.ticket_field.title,
-      // }
 
       return result
     } catch (error) {
@@ -169,16 +148,10 @@ export class ZendeskListService {
         this.logger.error(
           `Failed to fetch custom object placeholder from Zendesk. Status: ${response.status}, StatusText: ${response.statusText}`,
         )
-        throw new Error(
-          `Failed to fetch custom object placeholder from Zendesk. Status: ${response.status}`,
-        )
       }
 
       const data = await response.json()
-      console.log('Zendesk custom object placeholder response data:', data)
       if (data.custom_object && data.custom_object.title) {
-        console.log('Custom object fields:', data.custom_object_fields)
-
         return { is: data.custom_object.title, en: data.custom_object.title }
       }
 
@@ -211,19 +184,14 @@ export class ZendeskListService {
         this.logger.error(
           `Failed to fetch data from Zendesk. Status: ${response.status}, StatusText: ${response.statusText}`,
         )
-        throw new Error(
-          `Failed to fetch data from Zendesk. Status: ${response.status}`,
-        )
+        return { isError: true }
       }
 
-      // const data = await response.json()
       const data: ZendeskCustomObjectResponse = await response.json()
       records = records.concat(data.custom_object_records)
 
       nextUrl = data.meta.has_more ? data.links?.next ?? null : null
     }
-
-    console.log(`length of records fetched from Zendesk: ${records.length}`)
 
     const result = new DataFromUrlResDto()
 
@@ -235,9 +203,14 @@ export class ZendeskListService {
       isSelected: false,
     }))
 
-    console.log(`result list length: ${result.list?.length}`)
     return result
   }
+}
+
+type ZendeskInstanceConfig = {
+  serviceSystemInstance: string
+  serviceSystemBrandID: string
+  kennitala: string
 }
 
 interface ZendeskCustomObjectResponse {

@@ -63,6 +63,11 @@ export class DataFromUrlReqDto {
   @IsOptional()
   fieldType?: string
 
+  @IsString()
+  @ApiPropertyOptional()
+  @IsOptional()
+  zendeskInstance?: string
+
   //   @ApiPropertyOptional({ type: [InputValue] })
   //   @ValidateNested({ each: true })
   //   @Type(() => InputValue)
