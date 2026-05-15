@@ -22,3 +22,14 @@ export const getSortedJobCodes = (
 
   return sorted
 }
+
+export const getJobCodeOptions = (
+  externalData: ExternalData,
+  locale?: Locale,
+) => {
+  const sorted = getSortedJobCodes(externalData, locale)
+  return sorted.map((job) => ({
+    value: job.id ?? '',
+    label: (locale === 'is' ? job.name : job.english ?? job.name) || '',
+  }))
+}
