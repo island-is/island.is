@@ -4,9 +4,9 @@ import {
   CanApplyForCategoryResult,
   DrivingAssessment,
   QualityPhoto,
-} from '..'
-import * as v4 from '../v4'
-import * as v5 from '../v5'
+} from '../..'
+import * as v4 from '../../v4'
+import * as v5 from '../../v5'
 import {
   CanApplyErrorCodeBTemporary,
   CanApplyErrorCodeRenewal65,
@@ -17,13 +17,13 @@ import {
   DrivingLicenseV4V5Dto,
   Jurisdiction,
   Remark,
-} from './drivingLicenseApi.types'
-import { handleCreateResponse } from './utils/handleCreateResponse'
+} from '../drivingLicenseApi.types'
+import { handleCreateResponse } from '../utils/handleCreateResponse'
 import {
   DtoV5PracticePermitDto,
   DtoV5DriverLicenseWithoutImagesDto,
   DtoImagesFromThjodskraDto,
-} from '../v5'
+} from '../../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
