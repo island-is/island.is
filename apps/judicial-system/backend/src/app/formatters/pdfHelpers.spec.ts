@@ -81,10 +81,13 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs).toHaveLength(0)
   })
 
-  it('adds a newline run for <br>', () => {
+  it('splits into separate blocks at <br>', () => {
     const blocks = htmlToBlocks('<p>line1<br>line2</p>')
-    const texts = blocks[0].runs.map((r) => r.text)
-    expect(texts).toContain('\n')
+    expect(blocks).toHaveLength(2)
+    expect(blocks[0].runs[0].text).toBe('line1')
+    expect(blocks[0].softBreak).toBe(true)
+    expect(blocks[1].runs[0].text).toBe('line2')
+    expect(blocks[1].softBreak).toBeFalsy()
   })
 
   describe('malformed HTML', () => {
