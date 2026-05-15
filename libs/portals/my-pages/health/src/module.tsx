@@ -144,6 +144,10 @@ const HealthMessages = lazy(() =>
   import('./screens/HealthMessages/HealthMessages'),
 )
 
+const NewHealthMessage = lazy(() =>
+  import('./screens/HealthMessages/NewHealthMessage'),
+)
+
 const HealthMessageDetail = lazy(() =>
   import('./screens/HealthMessages/HealthMessageDetail'),
 )
@@ -635,6 +639,15 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <HealthMessages />,
+    },
+    {
+      name: hm.healthMessagesNewTitle,
+      path: HealthPaths.HealthMessagesNew,
+      key: 'HealthMessages',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <NewHealthMessage />,
     },
     {
       name: m.messages,

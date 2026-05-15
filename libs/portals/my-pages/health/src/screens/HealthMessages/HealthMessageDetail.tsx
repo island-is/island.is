@@ -1,10 +1,12 @@
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Input,
   Text,
 } from '@island.is/island-ui/core'
@@ -13,7 +15,7 @@ import { CardLoader, getInitials, m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import HealthMessageActionBar from './HealthMessageActionBar'
 import {
@@ -60,9 +62,9 @@ const UserInitialsAvatar = ({ name }: { name: string }) => (
   </Box>
 )
 
-const formatMessageDateTime = (iso: string) => {
+const formatMessageDateTime = (iso: string, locale: string) => {
   const d = new Date(iso)
-  return new Intl.DateTimeFormat('is-IS', {
+  return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -73,9 +75,12 @@ const formatMessageDateTime = (iso: string) => {
 
 const HealthMessageDetail = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
+  const location = useLocation()
+  const justCreated =
+    (location.state as { justCreated?: boolean } | null)?.justCreated ?? false
 
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
@@ -132,7 +137,11 @@ const HealthMessageDetail = () => {
   if (!item) {
     return (
       <Box padding={6}>
-        <Text>{formatMessage(messages.healthMessageNotFound)}</Text>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.healthMessageNotFound)}
+        />
       </Box>
     )
   }
@@ -237,7 +246,7 @@ const HealthMessageDetail = () => {
                         {senderName}
                       </Text>
                       <Text variant="medium">
-                        {formatMessageDateTime(msg.messageSentAt)}
+                        {formatMessageDateTime(msg.messageSentAt, lang)}
                       </Text>
                     </Box>
                   </Box>
@@ -258,19 +267,24 @@ const HealthMessageDetail = () => {
                       display="flex"
                       flexWrap="wrap"
                       columnGap={2}
+                      rowGap={1}
                       marginBottom={3}
                     >
                       {msg.attachments.map((file) => (
-                        <Button
+                        <Box
                           key={file.id}
-                          size="small"
-                          variant="utility"
-                          icon="document"
-                          iconType="outline"
-                          onClick={() => undefined}
+                          display="flex"
+                          alignItems="center"
+                          columnGap={1}
                         >
-                          {file.fileName}
-                        </Button>
+                          <Icon
+                            icon="document"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
+                          <Text variant="small">{file.fileName}</Text>
+                        </Box>
                       ))}
                     </Box>
                   )}
@@ -290,6 +304,17 @@ const HealthMessageDetail = () => {
                 >
                   {formatMessage(m.replyDocument)}
                 </Button>
+              </Box>
+            )}
+
+            {/* Sent confirmation banner */}
+            {justCreated && !replyOpen && (
+              <Box marginTop={4}>
+                <AlertMessage
+                  type="success"
+                  title={formatMessage(messages.healthMessageSentTitle)}
+                  message={formatMessage(messages.healthMessageSentText)}
+                />
               </Box>
             )}
 
@@ -346,19 +371,7 @@ const HealthMessageDetail = () => {
                   />
                 </Box>
 
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                >
-                  <Button
-                    variant="utility"
-                    icon="share"
-                    iconType="outline"
-                    onClick={() => undefined}
-                  >
-                    {formatMessage(messages.healthMessageUploadFile)}
-                  </Button>
+                <Box display="flex" justifyContent="flexEnd">
                   <Button
                     size="small"
                     onClick={handleReply}

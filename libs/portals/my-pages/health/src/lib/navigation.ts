@@ -120,6 +120,12 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthMessagesDetail,
           navHide: true,
         },
+        {
+          name: messages.healthMessagesNewTitle,
+          path: HealthPaths.HealthMessagesNew,
+          navHide: true,
+          breadcrumbHide: true,
+        },
       ],
     },
     {

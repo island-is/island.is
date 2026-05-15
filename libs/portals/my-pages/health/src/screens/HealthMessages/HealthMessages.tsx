@@ -19,7 +19,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { HealthDirectorateHealthMessageStatusFilter } from '@island.is/api/schema'
@@ -57,7 +57,6 @@ const HealthMessages = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const [filterOpenOnly, setFilterOpenOnly] = useState(false)
   const [filterStarred, setFilterStarred] = useState(false)
   const [filterArchived, setFilterArchived] = useState(false)
   const [query, setQuery] = useState('')
@@ -66,8 +65,6 @@ const HealthMessages = () => {
     variables: {
       ...(filterArchived
         ? { status: HealthDirectorateHealthMessageStatusFilter.archived }
-        : filterOpenOnly
-        ? { status: HealthDirectorateHealthMessageStatusFilter.active }
         : {}),
       ...(filterStarred ? { starred: true } : {}),
     },
@@ -129,7 +126,6 @@ const HealthMessages = () => {
               </Box>
             }
             onFilterClear={() => {
-              setFilterOpenOnly(false)
               setFilterStarred(false)
               setFilterArchived(false)
               setQuery('')
@@ -139,16 +135,7 @@ const HealthMessages = () => {
               <Text variant="h5" marginBottom={2}>
                 {formatMessage(m.filterBy)}
               </Text>
-              <Button
-                variant={filterOpenOnly ? 'primary' : 'utility'}
-                size="small"
-                onClick={() => setFilterOpenOnly((v) => !v)}
-              >
-                {filterOpenOnly
-                  ? formatMessage(messages.healthMessagesShowAll)
-                  : formatMessage(messages.healthMessagesShowOpen)}
-              </Button>
-              <Box paddingTop={2}>
+              <Box>
                 <Checkbox
                   id="filter-starred"
                   label={formatMessage(messages.healthMessagesFilterStarred)}
@@ -171,7 +158,7 @@ const HealthMessages = () => {
               variant="primary"
               size="small"
               iconType="outline"
-              onClick={() => undefined}
+              onClick={() => navigate(HealthPaths.HealthMessagesNew)}
             >
               {formatMessage(messages.healthMessagesCreate)}
             </Button>
@@ -216,19 +203,19 @@ const HealthMessages = () => {
                 paddingX={2}
                 paddingY="p2"
                 columnGap={2}
-                cursor="pointer"
-                onClick={() =>
-                  navigate(
-                    HealthPaths.HealthMessagesDetail.replace(':id', item.id),
-                  )
-                }
               >
-                {/* Left: logo + text */}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  columnGap={2}
-                  minWidth={0}
+                {/* Left: logo + text (navigable link) */}
+                <Link
+                  to={HealthPaths.HealthMessagesDetail.replace(':id', item.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    minWidth: 0,
+                    flexGrow: 1,
+                    textDecoration: 'none',
+                    color: 'inherit',
+                  }}
                 >
                   <CircleLogo
                     fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
@@ -239,7 +226,7 @@ const HealthMessages = () => {
                       {item.title}
                     </Text>
                   </Box>
-                </Box>
+                </Link>
 
                 {/* Right: date above, icons below */}
                 <Box
@@ -257,16 +244,14 @@ const HealthMessages = () => {
                     colorScheme="negative"
                     bookmarked={item.isStarred}
                     archived={item.isArchived}
-                    onFav={(e) => {
-                      e.stopPropagation()
+                    onFav={() => {
                       if (item.isStarred) {
                         unstarMessage({ variables: { id: item.id } })
                       } else {
                         starMessage({ variables: { id: item.id } })
                       }
                     }}
-                    onStash={(e) => {
-                      e.stopPropagation()
+                    onStash={() => {
                       if (item.isArchived) {
                         unarchiveMessage({ variables: { id: item.id } })
                       } else {
