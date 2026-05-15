@@ -3335,7 +3335,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmation_CreateJobSearchConfirmationResponse"
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
                 }
               }
             }
