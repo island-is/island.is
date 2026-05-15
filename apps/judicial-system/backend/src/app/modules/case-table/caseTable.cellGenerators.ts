@@ -593,11 +593,10 @@ const appealCaseType: CaseTableCellGenerator<StringGroupValue> = {
     const indictmentType = generateIndictmentCaseType(c.indictmentSubtypes)
 
     if (c.appealCase?.rulingFile?.userGeneratedFilename) {
+      const fileName = c.appealCase.rulingFile.userGeneratedFilename
+      const prefix = `${c.courtCaseNumber ?? ''} `
       indictmentType.push(
-        c.appealCase.rulingFile.userGeneratedFilename.replace(
-          `${c.courtCaseNumber ?? ''} `,
-          '',
-        ),
+        fileName.startsWith(prefix) ? fileName.slice(prefix.length) : fileName,
       )
     }
 

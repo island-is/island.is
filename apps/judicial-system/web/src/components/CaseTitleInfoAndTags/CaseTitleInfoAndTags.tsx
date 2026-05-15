@@ -28,11 +28,12 @@ const CaseTitleInfoAndTags: FC = () => {
   const rulingOrderFile = targetAppealCase?.rulingFileId
     ? workingCase.caseFiles?.find((f) => f.id === targetAppealCase.rulingFileId)
     : undefined
+  const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
+  const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
   const title = rulingOrderFile
-    ? rulingOrderFile.userGeneratedFilename?.replace(
-        `${workingCase.courtCaseNumber ?? ''} `,
-        '',
-      ) ?? 'Úrskurður'
+    ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
+        ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
+        : rulingOrderFileName) ?? 'Úrskurður'
     : titleForCase(formatMessage, workingCase)
 
   return (
