@@ -32,6 +32,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useMatomoTrackSearch } from '@island.is/matomo'
 import {
+  AISummaryCard,
   Card,
   CardTagsProps,
   FilterTag,
@@ -825,6 +826,7 @@ const Search: Screen<CategoryProps> = ({
                   </Text>
                 </Box>
               )}
+              <AISummaryCard query={q} locale={activeLocale} />
             </Stack>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
               <Stack space={2}>
