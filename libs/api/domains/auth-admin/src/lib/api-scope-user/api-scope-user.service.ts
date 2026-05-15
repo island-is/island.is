@@ -76,7 +76,6 @@ export class ApiScopeUserService extends MultiEnvironmentService {
       if (entry.status === 'rejected') {
         this.logger.error(
           'Failed to fetch API scope user in one environment',
-          entry.reason as Error,
         )
         continue
       }
