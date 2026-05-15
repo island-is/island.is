@@ -27,7 +27,6 @@ import {
   isIndictmentCase,
   isRequestCase,
   stringTypes,
-  TrackedNotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 

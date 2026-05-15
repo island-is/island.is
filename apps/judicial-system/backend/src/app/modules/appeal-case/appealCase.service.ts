@@ -32,8 +32,6 @@ import {
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
-  RequestCaseNotificationType,
-  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'

@@ -21,7 +21,7 @@ import {
   DefendantPlea,
   Gender,
   Notification,
-  NotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -85,7 +85,7 @@ export const createCaseResentExplanation = (
 }
 
 export const hasSentNotification = (
-  notificationType: NotificationType,
+  notificationType: TrackedNotificationType,
   notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
@@ -114,7 +114,7 @@ export const isReopenedCOACase = (
 ): boolean => {
   return (
     appealState !== AppealCaseState.COMPLETED &&
-    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
+    hasSentNotification(TrackedNotificationType.APPEAL_COMPLETED, notifications)
       .hasSent
   )
 }

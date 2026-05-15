@@ -22,7 +22,7 @@ import {
 import {
   CaseCustodyRestrictions,
   CaseType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -108,7 +108,7 @@ export const HearingArrangements = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],
@@ -207,7 +207,7 @@ export const HearingArrangements = () => {
 
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
               )
 
               if (notificationSent) {
@@ -227,7 +227,7 @@ export const HearingArrangements = () => {
 
               sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
                 true,
               )
               router.push(`${navigateTo}/${workingCase.id}`)
