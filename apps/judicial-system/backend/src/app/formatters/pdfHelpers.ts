@@ -640,9 +640,13 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
         const lineHeight = doc.currentLineHeight(true)
         const h = doc.currentLineHeight(false)
         // Shift rect up by half the descender height to centre around visible glyphs
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const descender =
-          (Math.abs((doc as any)._font?.descender ?? 200) / 1000) * baseFontSize
+          (Math.abs(
+            (doc as PDFKit.PDFDocument & { _font?: { descender?: number } })
+              ._font?.descender ?? 200,
+          ) /
+            1000) *
+          baseFontSize
         const hPad = 1
 
         // Simulate word-wrap to draw one highlight rect per laid-out line
