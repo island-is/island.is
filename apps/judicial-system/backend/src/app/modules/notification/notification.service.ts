@@ -5,17 +5,14 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  AppealCaseNotificationType,
-  IndictmentCaseNotificationType,
-  type User,
-} from '@island.is/judicial-system/types'
-import {
   CaseState,
   RequestCaseNotificationType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { type Case } from '../repository'
+import { UserInitiatedNotificationType } from './dto/notification.dto'
 import { SendNotificationResponse } from './models/sendNotification.response'
 
 @Injectable()
@@ -23,7 +20,9 @@ export class NotificationService {
   constructor(private readonly eventService: EventService) {}
 
   private addMessageForNotificationToQueue(
-    type: RequestCaseNotificationType,
+    type:
+      | UserInitiatedNotificationType
+      | RequestCaseNotificationType.ADVOCATE_ASSIGNED,
     user: User,
     theCase: Case,
   ): void {
@@ -36,13 +35,13 @@ export class NotificationService {
   }
 
   async addMessagesForNotificationToQueue(
-    type: RequestCaseNotificationType,
+    type: UserInitiatedNotificationType,
     eventOnly = false,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
     switch (type) {
-      case RequestCaseNotificationType.READY_FOR_COURT:
+      case UserInitiatedNotificationType.READY_FOR_COURT:
         this.addMessageForNotificationToQueue(type, user, theCase)
 
         if (theCase.state === CaseState.RECEIVED) {
@@ -53,7 +52,7 @@ export class NotificationService {
           })
         }
         break
-      case RequestCaseNotificationType.COURT_DATE:
+      case UserInitiatedNotificationType.COURT_DATE:
         if (eventOnly) {
           this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
@@ -69,11 +68,11 @@ export class NotificationService {
           this.addMessageForNotificationToQueue(type, user, theCase)
         }
         break
-      case RequestCaseNotificationType.HEADS_UP:
-      case AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as string:
-      case AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as string:
-      case RequestCaseNotificationType.CASE_FILES_UPDATED:
-      case IndictmentCaseNotificationType.RULING_ORDER_ADDED as string:
+      case UserInitiatedNotificationType.HEADS_UP:
+      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED as string:
+      case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED as string:
+      case UserInitiatedNotificationType.CASE_FILES_UPDATED:
+      case UserInitiatedNotificationType.RULING_ORDER_ADDED as string:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:
