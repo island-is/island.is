@@ -5,8 +5,8 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  RequestCaseNotificationType,
   CaseType,
+  RequestCaseNotificationType,
   TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 

@@ -2,8 +2,8 @@ import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
-  RequestCaseNotificationType,
   CaseState,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

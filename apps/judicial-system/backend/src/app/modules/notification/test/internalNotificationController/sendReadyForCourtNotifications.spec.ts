@@ -10,13 +10,13 @@ import {
   RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  RequestCaseNotificationType,
   CaseState,
   CaseType,
   DateType,
   IndictmentSubtype,
-  TrackedNotificationType,
+  RequestCaseNotificationType,
   RequestSharedWithDefender,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

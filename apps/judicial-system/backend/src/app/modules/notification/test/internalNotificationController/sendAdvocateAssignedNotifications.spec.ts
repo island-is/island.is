@@ -5,9 +5,9 @@ import { ConfigType } from '@island.is/nest/config'
 
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  RequestCaseNotificationType,
   CaseType,
   DateType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

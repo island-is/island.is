@@ -12,7 +12,6 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  RequestCaseNotificationType,
   CaseState,
   CaseType,
   DefendantEventType,
@@ -20,6 +19,7 @@ import {
   DefenderChoice,
   isIndictmentCase,
   isPrisonAdminUser,
+  RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
