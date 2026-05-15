@@ -12,7 +12,7 @@ export interface IdpProviderFormData {
   name: string
   description: string
   helptext: string
-  level: number
+  level: number | ''
 }
 
 export const emptyForm: IdpProviderFormData = {

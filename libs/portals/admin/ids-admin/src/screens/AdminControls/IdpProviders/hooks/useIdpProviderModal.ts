@@ -235,6 +235,7 @@ export const useIdpProviderModal = ({
   }
 
   const handlePublish = async (targetEnvironment: AuthAdminEnvironment) => {
+    if (formData.level === '') return
     try {
       await publishToEnvironment({
         variables: {

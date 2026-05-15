@@ -132,9 +132,18 @@ export const IdpProviderModal = ({ modal }: IdpProviderModalProps) => {
                 <Input
                   name="level"
                   label={formatMessage(m.idpProvidersLevel)}
-                  value={String(modal.formData.level)}
+                  value={
+                    modal.formData.level === ''
+                      ? ''
+                      : String(modal.formData.level)
+                  }
                   onChange={(e) => {
-                    const val = parseInt(e.target.value, 10)
+                    const raw = e.target.value
+                    if (raw === '') {
+                      modal.setFormField('level', '')
+                      return
+                    }
+                    const val = parseInt(raw, 10)
                     if (!isNaN(val)) {
                       modal.setFormField('level', val)
                     }

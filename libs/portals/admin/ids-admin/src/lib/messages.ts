@@ -1461,6 +1461,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-error-helptext-required',
     defaultMessage: 'Help text is required',
   },
+  idpProvidersErrorLevelRequired: {
+    id: 'ap.ids-admin:idp-providers-error-level-required',
+    defaultMessage: 'Level is required',
+  },
   idpProvidersErrorLevelRange: {
     id: 'ap.ids-admin:idp-providers-error-level-range',
     defaultMessage: 'Level must be between 1 and 4',
