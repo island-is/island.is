@@ -13,6 +13,7 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { environments } from '../constants/environments'
 import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
@@ -63,11 +64,6 @@ const retryLink = new RetryLink({
 
 let cognitoBrowserOpen = false
 
-// Keep in sync with LOCK_SCREEN_SUPPRESS_MAX_MS in stores/auth-store.ts.
-// Inlined here because client.ts uses getAuthStoreRef() instead of importing
-// auth-store directly to avoid a circular dependency.
-const LOCK_SCREEN_SUPPRESS_MAX_MS = 15 * 60 * 1000
-
 const triggerCognitoReauth = ({
   clearStaleToken,
 }: {
@@ -84,10 +80,8 @@ const triggerCognitoReauth = ({
     !cognitoBrowserOpen
   ) {
     cognitoBrowserOpen = true
-    // Suppress the app-lock screen while the Cognito browser is open. iOS
-    // Keychain autofill in the Microsoft login page briefly backgrounds the
-    // app, which would otherwise trigger the AuthLayout AppState listener and
-    // push /app-lock, dismissing the FORM_SHEET webview.
+    // Suppress app-lock: iOS Keychain autofill backgrounds the app and would
+    // otherwise dismiss the FORM_SHEET webview via the AppState listener.
     getAuthStoreRef().setState({
       lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
     })
@@ -110,7 +104,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 
   if (networkError) {
-    // Cognito proxy served the HTML login page (no token / cookie path)
+    // Cognito proxy served the HTML login page
     if (networkError.name === 'ServerParseError') {
       const parseError = networkError as ServerParseError
       const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
@@ -121,11 +115,12 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
       }
     }
 
-    // Cognito proxy rejected an expired Bearer token in X-Cognito-Token: 401
-    // (only applies in non-prod environments where the API is fronted by Cognito)
+    // 401 from the Cognito proxy (non-prod only). response.url guards against
+    // 401s from the API behind it, which a Cognito reauth wouldn't fix.
     if (
       networkError.name === 'ServerError' &&
       (networkError as ServerError).statusCode === 401 &&
+      (networkError as ServerError).response?.url?.includes('cognito') &&
       environmentStore.getState().environment.idsIssuer !==
         environments.prod.idsIssuer
     ) {

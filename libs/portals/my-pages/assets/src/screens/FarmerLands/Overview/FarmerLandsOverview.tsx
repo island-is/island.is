@@ -48,6 +48,7 @@ export const FarmerLandsOverview = () => {
               icon={{ name: 'search' }}
               backgroundColor="blue"
               size="xs"
+              label={formatMessage(m.searchLabel)}
               value={search ?? ''}
               onChange={(search) => {
                 setSearch(search.target.value)

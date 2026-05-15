@@ -1,5 +1,6 @@
 export enum IDSAdminPaths {
   IDSAdmin = '/innskraningarkerfi',
+  IDSAdminTenantEdit = '/innskraningarkerfi/:tenant/breyta',
   // Permissions
   IDSAdminPermissions = '/innskraningarkerfi/:tenant/rettindi',
   IDSAdminPermissionsCreate = '/innskraningarkerfi/:tenant/rettindi/stofna',
@@ -13,6 +14,8 @@ export enum IDSAdminPaths {
   IDSAdminControlsApiScopeUsers = '/innskraningarkerfi/admin-controls/api-scope-users',
   IDSAdminControlsGrantTypes = '/innskraningarkerfi/admin-controls/grant-types',
   IDSAdminControlsIdpProviders = '/innskraningarkerfi/admin-controls/idp-providers',
+  IDSAdminControlsTranslations = '/innskraningarkerfi/admin-controls/translations',
+  IDSAdminControlsLanguages = '/innskraningarkerfi/admin-controls/languages',
 }
 
 export enum IDSAdminExternalPaths {

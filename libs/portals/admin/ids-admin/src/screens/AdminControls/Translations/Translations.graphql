@@ -1,0 +1,86 @@
+query GetTranslations($input: AuthAdminTranslationsInput!) {
+  authAdminTranslations(input: $input) {
+    rows {
+      language
+      className
+      property
+      key
+      value
+      availableEnvironments
+    }
+    totalCount
+  }
+}
+
+query GetTranslation($input: AuthAdminTranslationKeyInput!) {
+  authAdminTranslation(input: $input) {
+    language
+    className
+    property
+    key
+    availableEnvironments
+    environments {
+      environment
+      value
+    }
+  }
+}
+
+query GetTranslationLanguages {
+  authAdminTranslationLanguages {
+    isoKey
+    description
+    englishDescription
+  }
+}
+
+query GetTranslationConfiguredEnvironments {
+  authAdminTranslationConfiguredEnvironments
+}
+
+mutation CreateTranslation($input: CreateAuthAdminTranslationInput!) {
+  createAuthAdminTranslation(input: $input) {
+    language
+    className
+    property
+    key
+    availableEnvironments
+    environments {
+      environment
+      value
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation UpdateTranslation($input: UpdateAuthAdminTranslationInput!) {
+  updateAuthAdminTranslation(input: $input) {
+    language
+    className
+    property
+    key
+    availableEnvironments
+    environments {
+      environment
+      value
+    }
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}
+
+mutation DeleteTranslation($input: DeleteAuthAdminTranslationInput!) {
+  deleteAuthAdminTranslation(input: $input) {
+    success
+    affectedEnvironments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}

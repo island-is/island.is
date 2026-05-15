@@ -126,9 +126,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
   },
+  save: {
+    id: 'ap.ids-admin:save',
+    defaultMessage: 'Save',
+  },
   edit: {
     id: 'ap.ids-admin:edit',
     defaultMessage: 'Edit',
+  },
+  environments: {
+    id: 'ap.ids-admin:environments',
+    defaultMessage: 'Environments',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
@@ -692,6 +700,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
   },
+  partiallySaved: {
+    id: 'ap.ids-admin:partially-saved',
+    defaultMessage: 'Saved in some environments. Operation failed on: {envs}',
+  },
   globalErrorMessage: {
     id: 'ap.ids-admin:global-error-message',
     defaultMessage: 'An error occurred',
@@ -1131,18 +1143,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
     defaultMessage: 'Are you sure you want to delete this API scope user?',
   },
-  apiScopeUsersDeleteButton: {
-    id: 'ap.ids-admin:api-scope-users-delete-button',
-    defaultMessage: 'Delete',
-  },
   /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
     defaultMessage: 'Edit',
-  },
-  apiScopeUsersSaveButton: {
-    id: 'ap.ids-admin:api-scope-users-save-button',
-    defaultMessage: 'Save',
   },
   /** @deprecated Use m.create instead */
   apiScopeUsersCreateButton: {
@@ -1215,10 +1219,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-environment',
     defaultMessage: 'Choose at least one environment.',
   },
-  apiScopeUsersEnvironments: {
-    id: 'ap.ids-admin:api-scope-users-environments',
-    defaultMessage: 'Environments',
-  },
   apiScopeUsersDeleteSelectEnvironments: {
     id: 'ap.ids-admin:api-scope-users-delete-select-environments',
     defaultMessage: 'Select environments to delete from',
@@ -1262,22 +1262,6 @@ export const m = defineMessages({
   grantTypesDescription: {
     id: 'ap.ids-admin:grant-types-description',
     defaultMessage: 'Description',
-  },
-  grantTypesSaveButton: {
-    id: 'ap.ids-admin:grant-types-save-button',
-    defaultMessage: 'Save',
-  },
-  grantTypesCreateButton: {
-    id: 'ap.ids-admin:grant-types-create-button',
-    defaultMessage: 'Create',
-  },
-  grantTypesCancelButton: {
-    id: 'ap.ids-admin:grant-types-cancel-button',
-    defaultMessage: 'Cancel',
-  },
-  grantTypesDeleteButton: {
-    id: 'ap.ids-admin:grant-types-delete-button',
-    defaultMessage: 'Archive',
   },
   grantTypesDeleteConfirmTitle: {
     id: 'ap.ids-admin:grant-types-delete-confirm-title',
@@ -1352,14 +1336,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-delete-environment-required',
     defaultMessage: 'Select at least one environment to archive from',
   },
-  grantTypesEnvironments: {
-    id: 'ap.ids-admin:grant-types-environments',
-    defaultMessage: 'Environments',
-  },
-  grantTypesRestoreButton: {
-    id: 'ap.ids-admin:grant-types-restore-button',
-    defaultMessage: 'Restore',
-  },
   grantTypesRestoreConfirmTitle: {
     id: 'ap.ids-admin:grant-types-restore-confirm-title',
     defaultMessage: 'Restore Grant Type',
@@ -1424,18 +1400,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-level',
     defaultMessage: 'Level',
   },
-  idpProvidersEnvironments: {
-    id: 'ap.ids-admin:idp-providers-environments',
-    defaultMessage: 'Environments',
-  },
-  idpProvidersSaveButton: {
-    id: 'ap.ids-admin:idp-providers-save-button',
-    defaultMessage: 'Save',
-  },
-  idpProvidersDeleteButton: {
-    id: 'ap.ids-admin:idp-providers-delete-button',
-    defaultMessage: 'Delete',
-  },
   idpProvidersDeleteConfirmTitle: {
     id: 'ap.ids-admin:idp-providers-delete-confirm-title',
     defaultMessage: 'Delete IDP Provider',
@@ -1497,6 +1461,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-error-helptext-required',
     defaultMessage: 'Help text is required',
   },
+  idpProvidersErrorLevelRequired: {
+    id: 'ap.ids-admin:idp-providers-error-level-required',
+    defaultMessage: 'Level is required',
+  },
   idpProvidersErrorLevelRange: {
     id: 'ap.ids-admin:idp-providers-error-level-range',
     defaultMessage: 'Level must be between 1 and 4',
@@ -1517,6 +1485,222 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-partial-failure',
     defaultMessage: 'Operation failed on: {environments}',
   },
+  translationsTitle: {
+    id: 'ap.ids-admin:translations-title',
+    defaultMessage: 'Translations',
+  },
+  translationsIntro: {
+    id: 'ap.ids-admin:translations-intro',
+    defaultMessage: 'Manage translations',
+  },
+  translationsSearchPlaceholder: {
+    id: 'ap.ids-admin:translations-search-placeholder',
+    defaultMessage: 'Search by value, key, or class name',
+  },
+  translationsCreateNew: {
+    id: 'ap.ids-admin:translations-create-new',
+    defaultMessage: 'Create translation',
+  },
+  translationsEditTitle: {
+    id: 'ap.ids-admin:translations-edit-title',
+    defaultMessage: 'Edit translation',
+  },
+  translationsLanguage: {
+    id: 'ap.ids-admin:translations-language',
+    defaultMessage: 'Language',
+  },
+  translationsLanguageShort: {
+    id: 'ap.ids-admin:translations-language-short',
+    defaultMessage: 'Lang',
+  },
+  translationsClassName: {
+    id: 'ap.ids-admin:translations-class-name',
+    defaultMessage: 'Class name',
+  },
+  translationsClassNameShort: {
+    id: 'ap.ids-admin:translations-class-name-short',
+    defaultMessage: 'Class',
+  },
+  translationsProperty: {
+    id: 'ap.ids-admin:translations-property',
+    defaultMessage: 'Property',
+  },
+  translationsKey: {
+    id: 'ap.ids-admin:translations-key',
+    defaultMessage: 'Key',
+  },
+  translationsValue: {
+    id: 'ap.ids-admin:translations-value',
+    defaultMessage: 'Value',
+  },
+  translationsDeleteConfirmTitle: {
+    id: 'ap.ids-admin:translations-delete-confirm-title',
+    defaultMessage: 'Delete translation',
+  },
+  translationsDeleteConfirmMessage: {
+    id: 'ap.ids-admin:translations-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this translation?',
+  },
+  translationsDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:translations-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  translationsDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:translations-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  translationsCreateSuccess: {
+    id: 'ap.ids-admin:translations-create-success',
+    defaultMessage: 'Translation created successfully',
+  },
+  translationsUpdateSuccess: {
+    id: 'ap.ids-admin:translations-update-success',
+    defaultMessage: 'Translation updated successfully',
+  },
+  translationsDeleteSuccess: {
+    id: 'ap.ids-admin:translations-delete-success',
+    defaultMessage: 'Translation deleted successfully',
+  },
+  translationsPublishSuccess: {
+    id: 'ap.ids-admin:translations-publish-success',
+    defaultMessage: 'Translation published to {environment}',
+  },
+  translationsError: {
+    id: 'ap.ids-admin:translations-error',
+    defaultMessage: 'An error occurred',
+  },
+  translationsNoResults: {
+    id: 'ap.ids-admin:translations-no-results',
+    defaultMessage: 'No translations found',
+  },
+  translationsErrorLanguageRequired: {
+    id: 'ap.ids-admin:translations-error-language-required',
+    defaultMessage: 'Language is required',
+  },
+  translationsErrorClassNameRequired: {
+    id: 'ap.ids-admin:translations-error-class-name-required',
+    defaultMessage: 'Class name is required',
+  },
+  translationsErrorPropertyRequired: {
+    id: 'ap.ids-admin:translations-error-property-required',
+    defaultMessage: 'Property is required',
+  },
+  translationsErrorKeyRequired: {
+    id: 'ap.ids-admin:translations-error-key-required',
+    defaultMessage: 'Key is required',
+  },
+  translationsErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:translations-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  translationsErrorAlreadyExists: {
+    id: 'ap.ids-admin:translations-error-already-exists',
+    defaultMessage: 'A translation with this key already exists',
+  },
+  translationsPartialFailure: {
+    id: 'ap.ids-admin:translations-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
+  languages: {
+    id: 'ap.ids-admin:languages',
+    defaultMessage: 'Languages',
+  },
+  languagesIntro: {
+    id: 'ap.ids-admin:languages-intro',
+    defaultMessage: 'Manage available languages',
+  },
+  languagesSearchPlaceholder: {
+    id: 'ap.ids-admin:languages-search-placeholder',
+    defaultMessage: 'Search by ISO key or description',
+  },
+  languagesCreateNew: {
+    id: 'ap.ids-admin:languages-create-new',
+    defaultMessage: 'Create language',
+  },
+  languagesEditTitle: {
+    id: 'ap.ids-admin:languages-edit-title',
+    defaultMessage: 'Edit language',
+  },
+  languagesIsoKey: {
+    id: 'ap.ids-admin:languages-iso-key',
+    defaultMessage: 'ISO key',
+  },
+  languagesDescription: {
+    id: 'ap.ids-admin:languages-description',
+    defaultMessage: 'Description',
+  },
+  languagesEnglishDescription: {
+    id: 'ap.ids-admin:languages-english-description',
+    defaultMessage: 'English description',
+  },
+  languagesDeleteConfirmTitle: {
+    id: 'ap.ids-admin:languages-delete-confirm-title',
+    defaultMessage: 'Delete language',
+  },
+  languagesDeleteConfirmMessage: {
+    id: 'ap.ids-admin:languages-delete-confirm-message',
+    defaultMessage: 'Are you sure you want to delete this language?',
+  },
+  languagesDeleteSelectEnvironments: {
+    id: 'ap.ids-admin:languages-delete-select-environments',
+    defaultMessage: 'Select environments to delete from',
+  },
+  languagesDeleteEnvironmentRequired: {
+    id: 'ap.ids-admin:languages-delete-environment-required',
+    defaultMessage: 'Select at least one environment to delete from',
+  },
+  languagesCreateSuccess: {
+    id: 'ap.ids-admin:languages-create-success',
+    defaultMessage: 'Language created successfully',
+  },
+  languagesUpdateSuccess: {
+    id: 'ap.ids-admin:languages-update-success',
+    defaultMessage: 'Language updated successfully',
+  },
+  languagesDeleteSuccess: {
+    id: 'ap.ids-admin:languages-delete-success',
+    defaultMessage: 'Language deleted successfully',
+  },
+  languagesPublishSuccess: {
+    id: 'ap.ids-admin:languages-publish-success',
+    defaultMessage: 'Language published to {environment}',
+  },
+  languagesError: {
+    id: 'ap.ids-admin:languages-error',
+    defaultMessage: 'An error occurred',
+  },
+  languagesNoResults: {
+    id: 'ap.ids-admin:languages-no-results',
+    defaultMessage: 'No languages found',
+  },
+  languagesErrorIsoKeyRequired: {
+    id: 'ap.ids-admin:languages-error-iso-key-required',
+    defaultMessage: 'ISO key is required',
+  },
+  languagesErrorIsoKeyPattern: {
+    id: 'ap.ids-admin:languages-error-iso-key-pattern',
+    defaultMessage: 'ISO key must be 2-5 lowercase letters',
+  },
+  languagesErrorDescriptionRequired: {
+    id: 'ap.ids-admin:languages-error-description-required',
+    defaultMessage: 'Description is required',
+  },
+  languagesErrorEnglishDescriptionRequired: {
+    id: 'ap.ids-admin:languages-error-english-description-required',
+    defaultMessage: 'English description is required',
+  },
+  languagesErrorEnvironmentRequired: {
+    id: 'ap.ids-admin:languages-error-environment-required',
+    defaultMessage: 'Select at least one environment',
+  },
+  languagesErrorAlreadyExists: {
+    id: 'ap.ids-admin:languages-error-already-exists',
+    defaultMessage: 'A language with this ISO key already exists',
+  },
+  languagesPartialFailure: {
+    id: 'ap.ids-admin:languages-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
     defaultMessage: 'Client ID already exists',
@@ -1527,6 +1711,10 @@ export const m = defineMessages({
   },
   delete: {
     id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  archive: {
+    id: 'ap.ids-admin:archive',
     defaultMessage: 'Archive',
   },
   closeDeleteModal: {
@@ -1717,6 +1905,141 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
       'Should legal representative automatically get this permission for their clients.',
+  },
+  createTenant: {
+    id: 'ap.ids-admin:create-tenant',
+    defaultMessage: 'Create domain',
+  },
+  tenantSearchPlaceholder: {
+    id: 'ap.ids-admin:tenant-search-placeholder',
+    defaultMessage: 'Search by name, domain identifier or national id',
+  },
+  editTenant: {
+    id: 'ap.ids-admin:edit-tenant',
+    defaultMessage: 'Edit domain',
+  },
+  deleteTenant: {
+    id: 'ap.ids-admin:delete-tenant',
+    defaultMessage: 'Delete domain',
+  },
+  deleteTenantConfirm: {
+    id: 'ap.ids-admin:delete-tenant-confirm',
+    defaultMessage:
+      'Are you sure you want to delete the domain "{name}"? This action cannot be undone.',
+  },
+  deleteTenantDescription: {
+    id: 'ap.ids-admin:delete-tenant-description',
+    defaultMessage:
+      'Permanently delete this domain. Not possible while clients, scopes, or scope groups still reference it.',
+  },
+  deleteTenantSuccess: {
+    id: 'ap.ids-admin:delete-tenant-success',
+    defaultMessage: 'Domain deleted',
+  },
+  deleteTenantError: {
+    id: 'ap.ids-admin:delete-tenant-error',
+    defaultMessage: 'Failed to delete domain',
+  },
+  createTenantSuccess: {
+    id: 'ap.ids-admin:create-tenant-success',
+    defaultMessage: 'Domain created',
+  },
+  createTenantError: {
+    id: 'ap.ids-admin:create-tenant-error',
+    defaultMessage: 'Failed to create domain',
+  },
+  updateTenantSuccess: {
+    id: 'ap.ids-admin:update-tenant-success',
+    defaultMessage: 'Domain updated',
+  },
+  updateTenantError: {
+    id: 'ap.ids-admin:update-tenant-error',
+    defaultMessage: 'Failed to update domain',
+  },
+  tenantName: {
+    id: 'ap.ids-admin:tenant-name',
+    defaultMessage: 'Name',
+  },
+  tenantNamePlaceholder: {
+    id: 'ap.ids-admin:tenant-name-placeholder',
+    defaultMessage: '@mitt.lén',
+  },
+  tenantNameHelper: {
+    id: 'ap.ids-admin:tenant-name-helper',
+    defaultMessage:
+      'Must start with @ and contain only lowercase letters, digits, dots, hyphens or underscores.',
+  },
+  tenantNameTooltip: {
+    id: 'ap.ids-admin:tenant-name-tooltip',
+    defaultMessage: 'The identifier of this domain',
+  },
+  tenantNationalIdTooltip: {
+    id: 'ap.ids-admin:tenant-national-id-tooltip',
+    defaultMessage: 'National ID associated with this domain',
+  },
+  tenantDisplayNameTooltip: {
+    id: 'ap.ids-admin:tenant-display-name-tooltip',
+    defaultMessage: 'The display name for this domain',
+  },
+  tenantDescriptionTooltip: {
+    id: 'ap.ids-admin:tenant-description-tooltip',
+    defaultMessage: 'The description of this domain',
+  },
+  tenantContactEmailTooltip: {
+    id: 'ap.ids-admin:tenant-contact-email-tooltip',
+    defaultMessage: 'The contact email for this domain',
+  },
+  tenantNationalId: {
+    id: 'ap.ids-admin:tenant-national-id',
+    defaultMessage: 'National id',
+  },
+  tenantDisplayName: {
+    id: 'ap.ids-admin:tenant-display-name',
+    defaultMessage: 'Display name',
+  },
+  tenantDescription: {
+    id: 'ap.ids-admin:tenant-description',
+    defaultMessage: 'Description',
+  },
+  tenantContactEmail: {
+    id: 'ap.ids-admin:tenant-contact-email',
+    defaultMessage: 'Contact email',
+  },
+  errorTenantName: {
+    id: 'ap.ids-admin:error-tenant-name',
+    defaultMessage:
+      'Name must start with @ and contain only lowercase letters, digits, dots, hyphens or underscores',
+  },
+  errorNationalId: {
+    id: 'ap.ids-admin:error-national-id',
+    defaultMessage: 'National id must be a valid 10 digit kennitala',
+  },
+  errorRequired: {
+    id: 'ap.ids-admin:error-required',
+    defaultMessage: 'This field is required',
+  },
+  errorUnsafeChars: {
+    id: 'ap.ids-admin:error-unsafe-chars',
+    defaultMessage: 'Contains invalid characters',
+  },
+  errorEmail: {
+    id: 'ap.ids-admin:error-email',
+    defaultMessage: 'Must be a valid email address',
+  },
+  tenantHasReferences: {
+    id: 'ap.ids-admin:tenant-has-references',
+    defaultMessage:
+      'This domain cannot be deleted because it still has applications, permissions, or permission groups. Please delete them first and try again.',
+  },
+  publishTenantEnvDesc: {
+    id: 'ap.ids-admin:publish-tenant-env-desc',
+    defaultMessage:
+      'This domain does not exist in the selected environment yet. Choose an environment to copy from and the domain will be published.',
+  },
+  partiallyCreatedTenant: {
+    id: 'ap.ids-admin:partially-created-tenant',
+    defaultMessage:
+      'Domain was only created in some of the selected environments. You can use the edit page to publish it to the remaining environments.',
   },
   deletedCategory: {
     id: 'ap.ids-admin:deleted-category',

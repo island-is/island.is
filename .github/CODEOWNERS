@@ -30,6 +30,7 @@
 /libs/application/templates/signature-collection                                                                             @island-is/norda
 /libs/application/templates/social-insurance-administration/                                                                 @island-is/norda
 /libs/application/templates/transport-authority/                                                                             @island-is/norda
+/libs/application/templates/vmst/                                                                                            @island-is/norda
 /libs/application/template-api-modules/                                                                                      @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/                                                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/                                                       @island-is/norda
@@ -38,6 +39,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/inao/                                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                        @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/                                                       @island-is/norda
 
 /*                                                                                                                           @island-is/core
 /libs/api/domains/identity/                                                                                                  @island-is/core
@@ -427,6 +429,9 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                        @island-is/origo
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
 /libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
+/libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
+/libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
+/libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
@@ -521,6 +526,14 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/unemployment-benefits/                                      @island-is/origo
 /libs/api/domains/vmst-applications/                                                                                         @island-is/origo
 /libs/clients/vmst-unemployment/                                                                                             @island-is/origo
+
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-search                                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
+
+
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops

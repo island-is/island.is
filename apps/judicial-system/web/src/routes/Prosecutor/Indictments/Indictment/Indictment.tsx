@@ -441,7 +441,10 @@ const Indictment = () => {
   const initialize = useCallback(() => {
     const indictmentCounts = workingCase.indictmentCounts || []
 
-    if (indictmentCounts.length === 0) {
+    if (
+      indictmentCounts.length === 0 &&
+      workingCase.origin !== CaseOrigin.LOKE
+    ) {
       handleCreateIndictmentCount()
     }
 

@@ -245,6 +245,14 @@ paths:
   /api/v2/Verdict/getCaseTypes:
     get:
       summary: Get all case types
+      parameters:
+        - name: akvardanir
+          in: query
+          required: false
+          schema:
+            type: integer
+            enum: [0, 1]
+          description: 'Filter by case type category. 1 returns only determination case types, 0 returns only verdict case types. Omit to return all.'
       responses:
         '200':
           description: Successful response
@@ -417,17 +425,38 @@ paths:
       parameters:
         - name: orderBy
           in: query
+          required: false
           schema:
             type: string
           description: "Field and order (e.g., 'publishDate DESC')"
         - name: page
           in: query
+          required: false
           schema:
             type: integer
+            default: 1
         - name: limit
           in: query
+          required: false
           schema:
             type: integer
+            default: 10
+        - name: searchTerm
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Text to search for in determination content'
+        - name: caseTypes
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: 'Filter by case types (e.g., caseTypes[]=Kæruleyfi)'
       responses:
         '200':
           description: Successful response
