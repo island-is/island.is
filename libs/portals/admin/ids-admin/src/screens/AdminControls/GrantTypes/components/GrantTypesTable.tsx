@@ -104,7 +104,7 @@ export const GrantTypesTable = ({
           <T.Row>
             <T.HeadData>{formatMessage(m.grantTypesName)}</T.HeadData>
             <T.HeadData>{formatMessage(m.grantTypesDescription)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.grantTypesEnvironments)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
             <T.HeadData>{/* Actions/Archived */}</T.HeadData>
           </T.Row>
         </T.Head>
