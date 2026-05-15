@@ -74,9 +74,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     const environmentsData: ApiScopeUserEnvironmentData[] = []
     for (const entry of settled) {
       if (entry.status === 'rejected') {
-        this.logger.error(
-          'Failed to fetch API scope user in one environment',
-        )
+        this.logger.error('Failed to fetch API scope user in one environment')
         continue
       }
       const { environment, result } = entry.value
