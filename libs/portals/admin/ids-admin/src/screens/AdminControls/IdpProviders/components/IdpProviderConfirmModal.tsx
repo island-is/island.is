@@ -116,7 +116,7 @@ export const IdpProviderConfirmModal = ({
             {formatMessage(m.cancel)}
           </Button>
           <Button colorScheme="destructive" onClick={handleConfirm}>
-            {formatMessage(m.idpProvidersDeleteButton)}
+            {formatMessage(m.delete)}
           </Button>
         </Box>
       </Box>
