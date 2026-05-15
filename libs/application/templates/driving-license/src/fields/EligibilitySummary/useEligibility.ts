@@ -13,11 +13,11 @@ import {
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  QUALITY_IMAGE_TYPE_IDS,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
+import { hasUsableRlsQualityPhoto } from '../../lib/utils'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -104,14 +104,9 @@ export const useEligibility = (
         fakeData?.hasRLSPhoto === 'real'
 
       if (thjodskraOrRLSIsReal) {
-        const qualityPhotoAndSignature = getValueViaPath<{
-          imageTypeId?: number | null
-          pohto?: string | null
-        }>(application.externalData, 'qualityPhotoAndSignature.data')
-        const qualityPhotoConfirmed =
-          QUALITY_IMAGE_TYPE_IDS.includes(
-            qualityPhotoAndSignature?.imageTypeId ?? 0,
-          ) && !!qualityPhotoAndSignature?.pohto
+        const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+          application.externalData,
+        )
 
         const thjodskraPhotos =
           getValueViaPath<{
@@ -152,18 +147,8 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  // BE and redesigned 65+ both use the new photo selector (Thjóðskrá +
-  // RLS quality photo) and gate eligibility on having a usable photo.
   const computeUsablePhoto = () => {
-    const qualityPhotoAndSignature = getValueViaPath<{
-      imageTypeId?: number | null
-      pohto?: string | null
-    }>(application.externalData, 'qualityPhotoAndSignature.data')
-
-    const qualityPhotoConfirmed =
-      QUALITY_IMAGE_TYPE_IDS.includes(
-        qualityPhotoAndSignature?.imageTypeId ?? 0,
-      ) && !!qualityPhotoAndSignature?.pohto
+    if (hasUsableRlsQualityPhoto(application.externalData)) return true
 
     const thjodskraPhotos =
       getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(
@@ -171,11 +156,7 @@ export const useEligibility = (
         'allPhotosFromThjodskra.data',
       )?.images ?? []
 
-    const hasThjodskraFacial = thjodskraPhotos.some(
-      (p) => p.contentSpecification === 'FACIAL',
-    )
-
-    return qualityPhotoConfirmed || hasThjodskraFacial
+    return thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
   }
 
   if (application.answers.applicationFor === BE) {
