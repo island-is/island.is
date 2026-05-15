@@ -10,9 +10,9 @@ import {
 import {
   CaseDecision,
   CaseIndictmentRulingDecision,
-  RequestCaseNotificationType,
   CaseState,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

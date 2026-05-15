@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  RequestCaseNotificationType,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

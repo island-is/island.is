@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  RequestCaseNotificationType,
   CaseType,
   InstitutionType,
+  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
