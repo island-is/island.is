@@ -96,7 +96,7 @@ export const colorPicker = style({
 export const colorSwatch = style({
   width: 24,
   height: 24,
-  border: `1px solid rgba(0,0,0,0.12)`,
+  border: `${theme.border.width.standard}px solid rgba(0,0,0,0.12)`,
   borderRadius: theme.border.radius.standard,
   cursor: 'pointer',
   padding: 0,
@@ -112,7 +112,7 @@ export const colorSwatchSelected = style({
 export const removeColor = style({
   width: 24,
   height: 24,
-  border: `1px solid rgba(0,0,0,0.12)`,
+  border: `${theme.border.width.standard}px solid rgba(0,0,0,0.12)`,
   borderRadius: theme.border.radius.standard,
   cursor: 'pointer',
   background: 'transparent',
