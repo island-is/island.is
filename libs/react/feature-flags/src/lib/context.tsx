@@ -6,7 +6,14 @@ import {
 } from '@island.is/feature-flags'
 import { gql, useQuery } from '@apollo/client'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import React, { FC, createContext, useContext, useEffect, useMemo, useRef } from 'react'
+import React, {
+  FC,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 
 type FeatureFlagRecord = Record<string, boolean | string>
 
