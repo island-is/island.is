@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Editor } from '@tinymce/tinymce-react'
 import type { Editor as TinyMCEEditor, Ui } from 'tinymce'
+import { Editor } from '@tinymce/tinymce-react'
 
 import { ErrorMessage } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
