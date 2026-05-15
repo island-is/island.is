@@ -241,6 +241,7 @@ query Case($input: CaseQueryInput!) {
     childCase {
       id
       created
+      modified
       type
       origin
       policeCaseNumbers
