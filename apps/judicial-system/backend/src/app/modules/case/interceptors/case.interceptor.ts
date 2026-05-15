@@ -597,7 +597,7 @@ const transformCase = (
       .filter(
         (file) =>
           !isDefence ||
-          canDefenceUserViewCivilClaimCaseFile((user as User).nationalId, {
+          canDefenceUserViewCivilClaimCaseFile(user?.nationalId, {
             category: file.category,
             civilClaimantId: file.civilClaimantId,
             defendants: theCase.defendants,
