@@ -101,7 +101,7 @@ export enum EventNotificationType {
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR = 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
 }
 
-export const notificationTypes = Object.values(TrackedNotificationType)
+export const trackedNotificationTypes = Object.values(TrackedNotificationType)
 
 export enum NotificationDispatchType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,

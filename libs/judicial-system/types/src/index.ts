@@ -53,7 +53,7 @@ export {
   DefendantNotificationType,
   CivilClaimantNotificationType,
   EventNotificationType,
-  notificationTypes,
+  trackedNotificationTypes,
 } from './lib/notification'
 
 export {
