@@ -137,7 +137,7 @@ const Summary: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={appendAppealCaseIdQuery(
-              shouldUseAppealWithdrawnRoutes(workingCase)
+              shouldUseAppealWithdrawnRoutes(targetAppealCase)
                 ? `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
                 : `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
               targetAppealCase?.id,

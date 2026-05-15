@@ -40,10 +40,13 @@ const useSections = (
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
+  const router = useRouter()
+  // COA stepper + step validators operate on the appeal-case row identified
+  // by `?appealCaseId=…` (Step 10). The hook resolves it from FormContext +
+  // router query; in production the FormContext working case matches the
+  // working case passed to `getSections`, so closure capture is fine.
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
-  // Closure-captures `targetAppealCase` so the 38 call sites below don't have
-  // to thread it through. COA step validators read from it (Step 10).
   const validateFormStepper = (
     isActiveSubSectionValid: boolean,
     steps: string[],
@@ -65,7 +68,6 @@ const useSections = (
       : true
   }
 
-  const router = useRouter()
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 
@@ -1243,10 +1245,14 @@ const useSections = (
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
     const { id } = workingCase
-    const appealRulingDecision = workingCase.appealCase?.appealRulingDecision
-    const appealState = workingCase.appealCase?.appealState
+    // For COA users on ruling-order rows, the stepper reflects the target
+    // appeal-case row (resolved via `?appealCaseId=…`). Other users / pages
+    // fall back to the case-level appeal because the hook defaults to it
+    // when no query param is present.
+    const appealRulingDecision = targetAppealCase?.appealRulingDecision
+    const appealState = targetAppealCase?.appealState
     const useAppealWithdrawnSections =
-      shouldUseAppealWithdrawnRoutes(workingCase)
+      shouldUseAppealWithdrawnRoutes(targetAppealCase)
 
     return [
       {
@@ -1453,9 +1459,9 @@ const useSections = (
             },
           ]
         : []),
-      ...(!workingCase.appealCase?.appealState ||
-      (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
-        !workingCase.appealCase?.appealReceivedByCourtDate)
+      ...(!targetAppealCase?.appealState ||
+      (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
+        !targetAppealCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]
