@@ -60,16 +60,24 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
+    const settled = await Promise.allSettled(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerFindOneRaw({
+            xQueryNationalId: nationalId,
+          }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerFindOneRaw({
-          xQueryNationalId: nationalId,
-        }),
-      )
-
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error('Failed to fetch API scope user in one environment')
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
 
@@ -98,49 +106,63 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     input: ApiScopeUsersInput,
   ): Promise<ApiScopeUsersPayload> {
+    // Pull every matching row from each environment so we can merge by
+    // nationalId. Per-env pagination would silently drop users that only
+    // exist in one environment.
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meApiScopeUsersControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    // Build a map of nationalId -> environments the user exists in
-    const envMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      { row: GeneratedApiScopeUser; envs: Environment[] }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `API scope user count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const existing = envMap.get(row.nationalId) ?? []
-          existing.push(environment)
-          envMap.set(row.nationalId, existing)
+          const existing = rowMap.get(row.nationalId)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(row.nationalId, { row, envs: [environment] })
+          }
         }
       }
     }
 
-    // Use the first successful environment as the primary result for pagination
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedApiScopeUser) => ({
-            nationalId: row.nationalId,
-            name: row.name ?? undefined,
-            email: row.email,
-            availableEnvironments: envMap.get(row.nationalId),
-          })),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      a.row.nationalId.localeCompare(b.row.nationalId),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs }) => ({
+        nationalId: row.nationalId,
+        name: row.name ?? undefined,
+        email: row.email,
+        availableEnvironments: envs,
+      })),
+      totalCount: allRows.length,
+    }
   }
 
   async createApiScopeUser(
