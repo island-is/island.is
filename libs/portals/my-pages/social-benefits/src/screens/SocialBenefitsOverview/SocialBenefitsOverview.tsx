@@ -1,3 +1,4 @@
+import type { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -24,11 +25,20 @@ const getStatusTag = (
   variant: resolveStatusTagVariant(status),
 })
 
+const is404Error = (error?: ApolloError) =>
+  error?.graphQLErrors.some(
+    (e) =>
+      (e.extensions as { problem?: { status?: number } })?.problem?.status ===
+      404,
+  )
+
 const SocialBenefitsOverview = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetApplicationsOverviewQuery()
   const overview = data?.vmstApplicationsOverview
-  const vmstReady = !loading && !error
+  const hasNon404Error = !!error && !is404Error(error)
+  const vmstReady = !loading && !hasNon404Error
+  console.log(error)
 
   return (
     <IntroWrapper
@@ -37,7 +47,7 @@ const SocialBenefitsOverview = () => {
     >
       <Stack space={3}>
         {loading && <ActionCardLoader repeat={2} />}
-        {!loading && error && (
+        {!loading && hasNon404Error && (
           <AlertMessage
             type="error"
             message={formatMessage(sharedMessages.vmstFetchError)}

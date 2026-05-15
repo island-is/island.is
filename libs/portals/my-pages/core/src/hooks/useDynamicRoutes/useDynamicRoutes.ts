@@ -64,6 +64,10 @@ export const useDynamicRoutes = () => {
 
   const { data: vmstOverview, loading: vmstLoading } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
+    {
+      errorPolicy: 'ignore',
+      onError: () => undefined,
+    },
   )
 
   useEffect(() => {

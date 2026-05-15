@@ -48,6 +48,8 @@ import {
   VmstApplicationStatus,
   resolveApplicationStatus,
 } from './vmstApplicationStatus'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
@@ -301,11 +303,23 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
 
-    const response = await api.applicantResolve({
-      galdurXRoadAPIModelsResolveApplicantRequest: {
-        ssn: auth.nationalId,
-      },
-    })
+    let response
+    try {
+      response = await api.applicantResolve({
+        galdurXRoadAPIModelsResolveApplicantRequest: {
+          ssn: auth.nationalId,
+        },
+      })
+    } catch (e) {
+      if (e.status === 404) {
+        throw new ProblemError({
+          status: 404,
+          type: ProblemType.HTTP_NOT_FOUND,
+          title: 'Applicant not found',
+        })
+      }
+      throw e
+    }
     if (!response?.applicantId) {
       throw new Error('Failed to fetch applicant Id')
     }
