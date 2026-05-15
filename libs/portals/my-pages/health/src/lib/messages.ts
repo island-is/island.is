@@ -1891,7 +1891,7 @@ export const messages = defineMessages({
     defaultMessage: 'Ný skilaboð',
     id: 'sp.health:health-messages-create',
   },
-healthMessagesFilterStarred: {
+  healthMessagesFilterStarred: {
     defaultMessage: 'Stjörnumerkt',
     id: 'sp.health:health-messages-filter-starred',
   },
@@ -1928,7 +1928,7 @@ healthMessagesFilterStarred: {
     defaultMessage: 'skilmála',
     id: 'sp.health:health-messages-new-terms-link-text',
   },
-healthMessageNotFound: {
+  healthMessageNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
   },
@@ -1936,7 +1936,7 @@ healthMessageNotFound: {
     defaultMessage: 'Til: {arg}',
     id: 'sp.health:health-message-to',
   },
-healthMessageSend: {
+  healthMessageSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },

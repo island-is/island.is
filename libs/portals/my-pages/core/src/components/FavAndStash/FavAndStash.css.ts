@@ -11,10 +11,13 @@ globalStyle(`${filterActionButtons} button`, {
   boxShadow: 'none',
 })
 
-globalStyle(`${filterActionButtons} button:hover, ${filterActionButtons} button:focus-visible`, {
-  backgroundColor: theme.color.blue100,
-  boxShadow: 'none',
-})
+globalStyle(
+  `${filterActionButtons} button:hover, ${filterActionButtons} button:focus-visible`,
+  {
+    backgroundColor: theme.color.blue100,
+    boxShadow: 'none',
+  },
+)
 
 export const hoverWhite = style({})
 globalStyle(`${hoverWhite} button:hover, ${hoverWhite} button:focus-visible`, {

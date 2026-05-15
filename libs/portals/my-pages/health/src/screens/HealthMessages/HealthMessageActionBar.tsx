@@ -58,7 +58,9 @@ const HealthMessageActionBar = ({
           />
         </Tooltip>
       )}
-      <Tooltip text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}>
+      <Tooltip
+        text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
+      >
         <Button
           circle
           icon="fileTrayEmpty"
@@ -67,7 +69,9 @@ const HealthMessageActionBar = ({
           onClick={onStash}
         />
       </Tooltip>
-      <Tooltip text={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}>
+      <Tooltip
+        text={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
+      >
         <Button
           circle
           icon="star"

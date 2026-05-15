@@ -187,9 +187,7 @@ const HealthMessages = () => {
             </Text>
           </Box>
 
-          {filtered.length === 0 && (
-            <EmptyState title={messages.noData} />
-          )}
+          {filtered.length === 0 && <EmptyState title={messages.noData} />}
 
           <Stack space={0}>
             {filtered.map((item) => (

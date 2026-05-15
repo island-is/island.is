@@ -56,7 +56,11 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
     >
       {onStash && (
         <Tooltip
-          text={archived ? (stashLabels?.remove ?? formatMessage(m.removeFromStorage)) : (stashLabels?.add ?? formatMessage(m.addToStorage))}
+          text={
+            archived
+              ? stashLabels?.remove ?? formatMessage(m.removeFromStorage)
+              : stashLabels?.add ?? formatMessage(m.addToStorage)
+          }
         >
           <Button
             circle

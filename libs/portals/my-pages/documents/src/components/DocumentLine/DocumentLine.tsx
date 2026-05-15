@@ -415,38 +415,36 @@ export const DocumentLine: FC<Props> = ({
                   <LoadingDots single />
                 </Box>
               )}
-              {(hasFocusOrHover || isBookmarked) &&
-                !fileLoading &&
-                !asFrame && (
-                  <FavAndStash
-                    bookmarked={isBookmarked}
-                    colorScheme={
-                      !unread && !isHovered && !active ? 'negative' : 'light'
-                    }
-                    stashLabels={{
-                      add: formatMessage(m.addToStorage),
-                      remove: formatMessage(messages.moveToInbox),
-                    }}
-                    onFav={
-                      isBookmarked || hasFocusOrHover
-                        ? async (e) => {
-                            e.stopPropagation()
-                            const newValue = !isBookmarked
-                            setOptimisticBookmarked(newValue)
-                            try {
-                              await submitMailAction(
-                                newValue ? 'bookmark' : 'unbookmark',
-                                documentLine.id,
-                              )
-                              refetch(fetchObject)
-                            } catch {
-                              setOptimisticBookmarked(!newValue)
-                            }
+              {(hasFocusOrHover || isBookmarked) && !fileLoading && !asFrame && (
+                <FavAndStash
+                  bookmarked={isBookmarked}
+                  colorScheme={
+                    !unread && !isHovered && !active ? 'negative' : 'light'
+                  }
+                  stashLabels={{
+                    add: formatMessage(m.addToStorage),
+                    remove: formatMessage(messages.moveToInbox),
+                  }}
+                  onFav={
+                    isBookmarked || hasFocusOrHover
+                      ? async (e) => {
+                          e.stopPropagation()
+                          const newValue = !isBookmarked
+                          setOptimisticBookmarked(newValue)
+                          try {
+                            await submitMailAction(
+                              newValue ? 'bookmark' : 'unbookmark',
+                              documentLine.id,
+                            )
+                            refetch(fetchObject)
+                          } catch {
+                            setOptimisticBookmarked(!newValue)
                           }
-                        : undefined
-                    }
-                  />
-                )}
+                        }
+                      : undefined
+                  }
+                />
+              )}
               {isUrgent && <UrgentTag />}
             </Box>
           </Box>

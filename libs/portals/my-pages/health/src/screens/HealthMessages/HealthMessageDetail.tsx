@@ -213,8 +213,8 @@ const HealthMessageDetail = () => {
             {item.messages.map((msg, index) => {
               const isPatient = msg.direction === 'PATIENT'
               const senderName = isPatient
-                ? (userInfo.profile.name ?? '')
-                : (msg.senderGroupName ?? item.lastSenderGroupName ?? '')
+                ? userInfo.profile.name ?? ''
+                : msg.senderGroupName ?? item.lastSenderGroupName ?? ''
 
               return (
                 <Box key={msg.id}>

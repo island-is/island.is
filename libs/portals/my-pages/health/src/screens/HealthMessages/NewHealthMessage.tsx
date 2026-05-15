@@ -11,7 +11,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, IntroWrapper, getInitials, m } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  IntroWrapper,
+  getInitials,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -48,10 +53,9 @@ const NewHealthMessage = () => {
   const [messageText, setMessageText] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
 
-  const { data, loading, error } =
-    useGetHealthMessagingRecipientsForNewQuery({
-      variables: { locale: lang },
-    })
+  const { data, loading, error } = useGetHealthMessagingRecipientsForNewQuery({
+    variables: { locale: lang },
+  })
 
   const [createMessage, { loading: sending }] = useCreateHealthMessageMutation()
 
@@ -64,7 +68,8 @@ const NewHealthMessage = () => {
       .filter((t) => !t.isCertificate)
       .map((t) => ({ label: t.title, value: t.patientInitiatedTypeCode })) ?? []
 
-  const selectedOption = typeOptions.find((o) => o.value === selectedTypeCode) ?? null
+  const selectedOption =
+    typeOptions.find((o) => o.value === selectedTypeCode) ?? null
 
   const canSubmit =
     !!selectedTypeCode && !!messageText.trim() && termsAccepted && !sending
@@ -141,13 +146,17 @@ const NewHealthMessage = () => {
                   <Box marginBottom={3}>
                     <Select
                       name="service-type"
-                      label={formatMessage(messages.healthMessagesNewSelectService)}
+                      label={formatMessage(
+                        messages.healthMessagesNewSelectService,
+                      )}
                       placeholder={formatMessage(
                         messages.healthMessagesNewSelectServicePlaceholder,
                       )}
                       options={typeOptions}
                       value={selectedOption}
-                      onChange={(opt) => setSelectedTypeCode(opt?.value ?? null)}
+                      onChange={(opt) =>
+                        setSelectedTypeCode(opt?.value ?? null)
+                      }
                       backgroundColor="blue"
                       required
                     />
@@ -173,7 +182,11 @@ const NewHealthMessage = () => {
                       id="terms-accept"
                       checked={termsAccepted}
                       onChange={(e) => setTermsAccepted(e.target.checked)}
-                      label={`${formatMessage(messages.healthMessagesNewTermsAccept)} ${formatMessage(messages.healthMessagesNewTermsLinkText)}`}
+                      label={`${formatMessage(
+                        messages.healthMessagesNewTermsAccept,
+                      )} ${formatMessage(
+                        messages.healthMessagesNewTermsLinkText,
+                      )}`}
                     />
                   </Box>
 
