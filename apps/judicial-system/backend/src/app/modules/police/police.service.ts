@@ -173,7 +173,6 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
-    evidenceType: z.string().nullish(),
     fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
@@ -218,7 +217,6 @@ export class PoliceService {
   ): string {
     return [
       policeCaseNumber.trim(),
-      file.evidenceType?.trim(),
       file.fullName?.trim(),
       file.externalVendorFileName.trim(),
     ]
