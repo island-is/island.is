@@ -31,7 +31,6 @@
 /libs/application/templates/social-insurance-administration/                                                                 @island-is/norda
 /libs/application/templates/transport-authority/                                                                             @island-is/norda
 /libs/application/templates/vmst/                                                                                            @island-is/norda
-/libs/application/templates/vmst/                                                                                            @island-is/norda
 /libs/application/template-api-modules/                                                                                      @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/                                                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/                                                       @island-is/norda
