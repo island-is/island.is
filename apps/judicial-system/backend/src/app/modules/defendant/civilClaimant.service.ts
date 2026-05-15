@@ -68,12 +68,8 @@ export class CivilClaimantService {
     caseId: string,
     policeCaseNumbers: string[],
     currentDefendantIds?: string[],
-  ): Promise<string[] | undefined> {
-    if (!currentDefendantIds?.length) {
-      return currentDefendantIds
-    }
-
-    if (!policeCaseNumbers.length) {
+  ): Promise<string[]> {
+    if (!currentDefendantIds?.length || !policeCaseNumbers.length) {
       return []
     }
 
@@ -101,25 +97,17 @@ export class CivilClaimantService {
   ): Promise<CivilClaimant> {
     let effectiveUpdate = { ...update }
 
-    const policeCaseNumbersForValidation =
-      update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? []
-
-    const shouldFilterDefendantIdsByPoliceCaseNumbers =
+    if (
       update.policeCaseNumbers !== undefined ||
       update.defendantIds !== undefined
-
-    if (shouldFilterDefendantIdsByPoliceCaseNumbers) {
-      const currentDefendantIds =
-        update.defendantIds ?? civilClaimant.defendantIds
-      const filteredDefendantIds =
-        await this.filterDefendantIdsByPoliceCaseNumbers(
-          caseId,
-          policeCaseNumbersForValidation,
-          currentDefendantIds,
-        )
+    ) {
       effectiveUpdate = {
         ...effectiveUpdate,
-        defendantIds: filteredDefendantIds,
+        defendantIds: await this.filterDefendantIdsByPoliceCaseNumbers(
+          caseId,
+          update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? [],
+          update.defendantIds ?? civilClaimant.defendantIds,
+        ),
       }
     }
 

@@ -16,11 +16,11 @@ export const canDefenceUserViewCivilClaimCaseFile = (
     return false
   }
 
-  if (!args.category || args.category !== CaseFileCategory.CIVIL_CLAIM) {
-    return true
-  }
-
-  if (!args.civilClaimantId) {
+  if (
+    !args.civilClaimantId ||
+    !args.category ||
+    args.category !== CaseFileCategory.CIVIL_CLAIM
+  ) {
     return true
   }
 
