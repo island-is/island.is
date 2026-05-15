@@ -79,6 +79,11 @@ export const buildFakeQualitySignature = (
 export const buildFakeQualityPhotoAndSignature = (
   fakeData: DrivingLicenseFakeData,
 ) => {
+  // 'real' (or any non-yes/no value) means: don't substitute, let the data
+  // provider call real RLS. Returning undefined is the sentinel for that.
+  if (fakeData.hasRLSPhoto === 'real') {
+    return undefined
+  }
   if (fakeData.hasRLSPhoto === YES) {
     return {
       imageId: 1,
@@ -100,6 +105,10 @@ export const buildFakeQualityPhotoAndSignature = (
 export const buildFakeAllPhotosFromThjodskra = (
   fakeData: DrivingLicenseFakeData,
 ) => {
+  // 'real' = don't substitute; data provider will call real Þjóðskrá.
+  if (fakeData.hasThjodskraPhoto === 'real') {
+    return undefined
+  }
   if (fakeData.hasThjodskraPhoto === YES) {
     return {
       images: [

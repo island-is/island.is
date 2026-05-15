@@ -1,4 +1,6 @@
-import { getModelToken } from '@nestjs/sequelize'
+import type { Transaction } from 'sequelize'
+
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,8 +15,10 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   IndictmentSubtype,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
@@ -29,6 +33,8 @@ jest.mock('../../case/internalCase.service.ts')
 jest.mock('../../subpoena/subpoena.service.ts')
 
 export const createTestingPoliceModule = async () => {
+  const transaction = {} as Transaction
+
   const policeModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
@@ -53,6 +59,16 @@ export const createTestingPoliceModule = async () => {
         },
       },
       {
+        provide: getConnectionToken(),
+        useValue: {
+          transaction: jest.fn(
+            async (fn: (transaction: Transaction) => unknown) => {
+              await fn(transaction)
+            },
+          ),
+        },
+      },
+      {
         provide: getModelToken(IndictmentSubtype),
         useValue: {
           findOne: jest.fn(),
@@ -61,9 +77,20 @@ export const createTestingPoliceModule = async () => {
       {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
-          assignDefendantPoliceCaseNumbers: jest
-            .fn()
-            .mockResolvedValue(undefined),
+          assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
+        },
+      },
+      {
+        provide: IndictmentCountService,
+        useValue: {
+          createWithPoliceCaseNumber: jest.fn().mockResolvedValue({}),
+        },
+      },
+      {
+        provide: CaseRepositoryService,
+        useValue: {
+          findById: jest.fn().mockResolvedValue({}),
+          update: jest.fn().mockResolvedValue({}),
         },
       },
     ],
@@ -84,6 +111,13 @@ export const createTestingPoliceModule = async () => {
       CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
+  const indictmentCountService = policeModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
+  const caseRepositoryService = policeModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
   policeModule.close()
 
   return {
@@ -92,5 +126,7 @@ export const createTestingPoliceModule = async () => {
     policeService,
     policeController,
     caseDefendantPoliceCaseNumberRepositoryService,
+    indictmentCountService,
+    caseRepositoryService,
   }
 }

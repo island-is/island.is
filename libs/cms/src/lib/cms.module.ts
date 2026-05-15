@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { ConfigModule } from '@island.is/nest/config'
 import {
   CmsResolver,
   ArticleResolver,
@@ -18,6 +19,7 @@ import {
   IntroLinkImageResolver,
   GenericListResolver,
   FeaturedGenericListItemsResolver,
+  OrganizationResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -38,9 +40,22 @@ import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEnt
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 import { OrganizationPageResolver } from './organizationPage.resolver'
 import { OrganizationZendeskInstanceByNationalIdLoader } from './loaders/organizationZendeskInstanceByNationalId.loader'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [
+    HttpModule,
+    TerminusModule,
+    PowerBiConfig.registerOptional(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [FeatureFlagConfig],
+    }),
+    FeatureFlagModule,
+  ],
   providers: [
     CmsResolver,
     ArticleResolver,
@@ -76,6 +91,7 @@ import { OrganizationZendeskInstanceByNationalIdLoader } from './loaders/organiz
     GenericListResolver,
     FeaturedGenericListItemsResolver,
     OrganizationPageResolver,
+    OrganizationResolver,
   ],
   exports: [
     ContentfulRepository,
