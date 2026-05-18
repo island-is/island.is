@@ -3,6 +3,7 @@ import {
   ApiV5,
   DRIVING_LICENSE_API_VERSION_V5,
   DtoV5DeprivationDto,
+  DtoV5PenaltyPointDetailDto,
 } from '@/v5'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
@@ -32,6 +33,18 @@ export class PenaltyPointsService {
 
   public async deprivations(user: User): Promise<Array<DtoV5DeprivationDto>> {
     return this.serviceWithAuth(user).apiDrivinglicenseV5DeprivationsGet({
+      apiVersion: DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: user.authorization,
+    })
+  }
+
+  public async penaltyPointDetails(
+    user: User,
+  ): Promise<Array<DtoV5PenaltyPointDetailDto>> {
+    return this.serviceWithAuth(
+      user,
+    ).apiDrivinglicenseV5PenaltypointsDetailsGet({
       apiVersion: DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: user.authorization,
