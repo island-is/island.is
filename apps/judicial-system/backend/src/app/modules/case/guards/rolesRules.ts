@@ -223,7 +223,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
     CaseTransition.COMPLETE,
-    CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 
@@ -238,7 +238,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
     CaseTransition.COMPLETE,
-    CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 
@@ -250,7 +250,7 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.COMPLETE,
-    CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 

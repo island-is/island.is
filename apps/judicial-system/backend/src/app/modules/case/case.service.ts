@@ -1835,30 +1835,15 @@ export class CaseService {
     }
 
     if (update.reopenReason !== undefined) {
-      if (!isIndictmentCase(theCase.type) || !isCompletedCase(theCase.state)) {
-        throw new ForbiddenException(
-          'Cannot set reopenReason on a non-completed indictment case',
-        )
-      }
-
-      if (
-        theCase.appealCase &&
-        (theCase.appealCase.appealState === AppealCaseState.APPEALED ||
-          theCase.appealCase.appealState === AppealCaseState.RECEIVED)
-      ) {
-        throw new ForbiddenException(
-          'Cannot reopen a case with an active appeal',
-        )
+      if (!isIndictmentCase(theCase.type)) {
+        throw new ForbiddenException('Cannot reopen a non-indictment case')
       }
 
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
       update.reopenReason = `${header}\n${update.reopenReason}`
-      update.state = CaseState.RECEIVED
-      update.indictmentDecision = IndictmentDecision.POSTPONING
-      update.postponedIndefinitelyExplanation = 'Mál enduropnað'
-      update.indictmentReviewerId = null
+      update = transitionCase(CaseTransition.REOPEN, theCase, user, update)
 
       await Promise.all(
         (theCase.defendants ?? []).flatMap((defendant) => [

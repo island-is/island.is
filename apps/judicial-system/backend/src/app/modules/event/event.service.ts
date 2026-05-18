@@ -41,7 +41,7 @@ const errorEmojis = [
 ]
 
 type CaseEvent =
-  | CaseTransition
+  | Exclude<CaseTransition, CaseTransition.CORRECT>
   | 'ARCHIVE'
   | 'CREATE'
   | 'CREATE_XRD'
@@ -77,7 +77,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
+  [CaseTransition.REOPEN]: ':recycle: Mál enduropnað',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',

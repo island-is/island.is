@@ -44,6 +44,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
@@ -326,7 +327,9 @@ export class CaseController {
     )
 
     // No need to wait
-    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
+    if (transition.transition !== CaseTransition.CORRECT) {
+      this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
+    }
 
     return updatedCase ?? theCase
   }
