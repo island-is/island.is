@@ -109,7 +109,7 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(
+    await sendNotification(
       workingCase.id,
       TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
     )

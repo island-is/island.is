@@ -371,8 +371,8 @@ const HearingArrangements = () => {
             text: formatMessage(m.modal.secondaryButtonText, {
               courtDateHasChanged,
             }),
-            onClick: () => {
-              sendNotification(
+            onClick: async () => {
+              await sendNotification(
                 workingCase.id,
                 TrackedNotificationType.COURT_DATE,
                 true,

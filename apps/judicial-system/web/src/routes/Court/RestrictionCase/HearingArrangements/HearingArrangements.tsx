@@ -222,10 +222,10 @@ export const HearingArrangements = () => {
             text: formatMessage(m.modal.shared.secondaryButtonText, {
               courtDateHasChanged,
             }),
-            onClick: () => {
+            onClick: async () => {
               setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
-              sendNotification(
+              await sendNotification(
                 workingCase.id,
                 TrackedNotificationType.COURT_DATE,
                 true,
