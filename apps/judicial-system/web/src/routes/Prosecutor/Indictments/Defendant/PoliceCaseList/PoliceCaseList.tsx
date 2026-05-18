@@ -435,7 +435,6 @@ export const PoliceCaseList = () => {
         continue
       }
 
-      console.log('place date subtypes', { place, date, subtypes })
 
       updates.push({
         index: idx,
