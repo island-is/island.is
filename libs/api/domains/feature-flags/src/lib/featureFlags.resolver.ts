@@ -3,7 +3,10 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { FeatureFlagAttributesInput, FeatureFlagValues } from './featureFlags.model'
+import {
+  FeatureFlagAttributesInput,
+  FeatureFlagValues,
+} from './featureFlags.model'
 import { FeatureFlagsService } from './featureFlags.service'
 
 @UseGuards(IdsUserGuard)
@@ -16,7 +19,10 @@ export class FeatureFlagsResolver {
   })
   featureFlags(
     @CurrentUser() user: User,
-    @Args('attributes', { type: () => FeatureFlagAttributesInput, nullable: true })
+    @Args('attributes', {
+      type: () => FeatureFlagAttributesInput,
+      nullable: true,
+    })
     attributes?: FeatureFlagAttributesInput,
   ): Promise<FeatureFlagValues> {
     return this.service.getAllForUser(user, attributes)

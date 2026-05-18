@@ -82,7 +82,10 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 
   const context = useMemo<FeatureFlagClient>(
     () => ({
-      getValue: async (key: string, defaultValue: boolean | string | number) => {
+      getValue: async (
+        key: string,
+        defaultValue: boolean | string | number,
+      ) => {
         return flags[key] ?? defaultValue
       },
       dispose: () => {},
