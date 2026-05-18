@@ -92,7 +92,8 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
       }
       return flagsRef.current
     },
-    dispose: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    dispose() {},
   })
 
   return (
