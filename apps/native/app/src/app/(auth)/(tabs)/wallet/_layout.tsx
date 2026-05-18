@@ -1,23 +1,17 @@
 import { Stack } from 'expo-router'
-import { Platform } from 'react-native'
-import { useTheme } from 'styled-components'
+
+import { tabScreenOptions } from '../../../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: 'index',
 }
 
 export default function WalletLayout() {
-  const theme = useTheme()
   return (
     <Stack
       initialRouteName="index"
       screenOptions={{
-        headerTransparent: Platform.OS === 'ios',
-        headerStyle:
-          Platform.OS === 'android'
-            ? { backgroundColor: theme.color.white }
-            : undefined,
-        headerShadowVisible: false,
+        ...tabScreenOptions,
       }}
     >
       <Stack.Screen
