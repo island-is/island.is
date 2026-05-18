@@ -58,11 +58,16 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
   // Refetch flags when auth state changes (login, logout, user switch).
+  // On logout, clear the cache so non-React code doesn't see stale flags.
   const prevAuthRef = useRef(authorizeResult)
   useEffect(() => {
     if (prevAuthRef.current !== authorizeResult) {
       prevAuthRef.current = authorizeResult
-      refetch()
+      if (authorizeResult) {
+        refetch()
+      } else {
+        setFeatureFlagCache({})
+      }
     }
   }, [authorizeResult, refetch])
 

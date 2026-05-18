@@ -66,11 +66,11 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   }
 
   useEffect(() => {
-    if (!loading && readyRef.current) {
+    if ((!loading || !isAuthenticated) && readyRef.current) {
       readyRef.current.resolve()
       readyRef.current = null
     }
-  }, [loading])
+  }, [loading, isAuthenticated])
 
   // Stable context — identity never changes, getValue reads from flagsRef.
   // Note: the user parameter is accepted for interface compatibility but

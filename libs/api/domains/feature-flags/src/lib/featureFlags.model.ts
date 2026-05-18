@@ -13,5 +13,5 @@ export class FeatureFlagAttributesInput {
 @ObjectType('FeatureFlagValues')
 export class FeatureFlagValues {
   @Field(() => GraphQLJSONObject)
-  flags!: Record<string, boolean | string>
+  flags!: Record<string, boolean | string | number>
 }
