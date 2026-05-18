@@ -32,10 +32,8 @@ describe('PoliceController - Get police case info', () => {
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
 
-    const {
-      policeController,
-      caseDefendantPoliceCaseNumberRepositoryService,
-    } = await createTestingPoliceModule()
+    const { policeController, caseDefendantPoliceCaseNumberRepositoryService } =
+      await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
@@ -227,14 +225,12 @@ describe('PoliceController - Get police case info', () => {
           expect.objectContaining({ transaction: expect.any(Object) }),
         )
 
-        const passedLinks =
-          assignDefendantPoliceCaseNumbers.mock.calls[0][1] as Array<{
-            policeCaseNumber: string
-          }>
+        const passedLinks = assignDefendantPoliceCaseNumbers.mock
+          .calls[0][1] as Array<{
+          policeCaseNumber: string
+        }>
         expect(
-          passedLinks.some(
-            (l) => l.policeCaseNumber === '007-2020-000057',
-          ),
+          passedLinks.some((l) => l.policeCaseNumber === '007-2020-000057'),
         ).toBe(false)
       })
 
