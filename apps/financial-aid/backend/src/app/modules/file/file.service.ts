@@ -6,6 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 
 import { CloudFrontService } from './cloudFront.service'
+import { ApplicationSystemApiService } from './applicationSystemApi.service'
 
 import { FileType } from '@island.is/financial-aid/shared/lib'
 
@@ -14,6 +15,8 @@ import {
   ApplicationFileModel,
   CreateFilesModel,
 } from './models'
+
+import { ApplicationModel } from '../application/models/application.model'
 
 import { environment } from '../../../environments'
 import { CreateFileDto } from './dto'
@@ -28,6 +31,7 @@ export class FileService {
     @InjectModel(ApplicationFileModel)
     private readonly fileModel: typeof ApplicationFileModel,
     private readonly cloudFrontService: CloudFrontService,
+    private readonly applicationSystemApiService: ApplicationSystemApiService,
     private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -105,7 +109,20 @@ export class FileService {
   async createSignedUrlForFileId(id: string): Promise<SignedUrlModel> {
     const file = await this.fileModel.findOne({
       where: { id },
+      include: [{ model: ApplicationModel, attributes: ['applicationSystemId'] }],
     })
+
+    const applicationSystemId = (file as any).application?.applicationSystemId
+
+    if (applicationSystemId) {
+      const url = await this.tryGetPresignedUrlFromApplicationSystem(
+        file.key,
+        applicationSystemId,
+      )
+      if (url) {
+        return { key: file.key, url }
+      }
+    }
 
     const s3Url = await this.tryGetS3PresignedUrl(
       file.key,
@@ -125,10 +142,29 @@ export class FileService {
   ): Promise<SignedUrlModel[]> {
     const allFiles = await this.fileModel.findAll({
       where: { applicationId },
+      include: [{ model: ApplicationModel, attributes: ['applicationSystemId'] }],
     })
+
+    const applicationSystemId = (allFiles[0] as any)?.application
+      ?.applicationSystemId
+
+    let presignedUrlMap: Map<string, string> | null = null
+    if (applicationSystemId) {
+      presignedUrlMap =
+        await this.applicationSystemApiService.getPresignedUrlsForApplication(
+          applicationSystemId,
+        )
+    }
 
     return await Promise.all(
       allFiles.map(async (file) => {
+        if (presignedUrlMap && presignedUrlMap.size > 0) {
+          const url = presignedUrlMap.get(file.key)
+          if (url) {
+            return { key: file.key, url }
+          }
+        }
+
         const s3Url = await this.tryGetS3PresignedUrl(
           file.key,
           file.applicationId,
@@ -144,6 +180,22 @@ export class FileService {
     )
   }
 
+  private async tryGetPresignedUrlFromApplicationSystem(
+    fileKey: string,
+    applicationSystemId: string,
+  ): Promise<string | null> {
+    if (!applicationSystemId) {
+      return null
+    }
+
+    const presignedUrlMap =
+      await this.applicationSystemApiService.getPresignedUrlsForApplication(
+        applicationSystemId,
+      )
+
+    return presignedUrlMap.get(fileKey) ?? null
+  }
+
   private async tryGetS3PresignedUrl(
     fileKey: string,
     applicationId: string,
@@ -153,10 +205,6 @@ export class FileService {
       return null
     }
 
-    // New files from buildFileUploadField have key = "{uuid}_{name}.{ext}"
-    // and are stored in S3 at "{applicationId}/{key}".
-    // Old CloudFront files have key = "{applicationId}/{filename}"
-    // and are not in the application-system S3 bucket.
     const keysToTry = [
       `${applicationId}/${fileKey}`,
       fileKey,

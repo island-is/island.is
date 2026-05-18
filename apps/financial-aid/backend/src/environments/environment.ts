@@ -30,6 +30,14 @@ const prodConfig = {
   },
   oskBaseUrl: process.env.OSK_BASE_URL,
   applicationSystemBaseUrl: process.env.APPLICATION_SYSTEM_BASE_URL,
+  applicationSystemApiUrl: process.env.APPLICATION_SYSTEM_API_URL ?? '',
+  applicationSystemApiAuth: {
+    clientId: process.env.APPLICATION_SYSTEM_API_CLIENT_ID ?? '',
+    clientSecret: process.env.APPLICATION_SYSTEM_API_CLIENT_SECRET ?? '',
+    tokenUrl: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}/connect/token`
+      : '',
+  },
   veitaBaseUrl: process.env.VEITA_BASE_URL,
   audit: {
     defaultNamespace: '@samband.is/financial-aid',
@@ -65,6 +73,13 @@ const devConfig = {
   applicationSystemBaseUrl:
     process.env.APPLICATION_SYSTEM_BASE_URL ??
     'http://localhost:4242/umsoknir/fjarhagsadstod',
+  applicationSystemApiUrl:
+    process.env.APPLICATION_SYSTEM_API_URL ?? 'http://localhost:4242',
+  applicationSystemApiAuth: {
+    clientId: process.env.APPLICATION_SYSTEM_API_CLIENT_ID ?? '',
+    clientSecret: process.env.APPLICATION_SYSTEM_API_CLIENT_SECRET ?? '',
+    tokenUrl: 'https://identity-server.dev01.devland.is/connect/token',
+  },
   veitaBaseUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
   audit: {
     defaultNamespace: '@samband.is/financial-backend',

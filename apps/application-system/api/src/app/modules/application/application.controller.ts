@@ -75,6 +75,7 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
+import { AttachmentPresignedUrlsResponseDto } from './dto/attachmentPresignedUrls.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import {
@@ -980,6 +981,58 @@ export class ApplicationController {
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }
+  }
+
+  @Get('applications/:id/attachments/presigned-urls')
+  @Scopes(ApplicationScope.read)
+  @BypassDelegation()
+  @Documentation({
+    description:
+      'Gets presigned urls for all attachments of an application. Intended for service-to-service use.',
+    response: { status: 200, type: AttachmentPresignedUrlsResponseDto },
+    request: {
+      query: {},
+      params: {
+        id: {
+          type: 'string',
+          description: 'application id',
+          required: true,
+        },
+      },
+    },
+  })
+  async getAllAttachmentPresignedURLs(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<AttachmentPresignedUrlsResponseDto> {
+    const existingApplication = await this.applicationService.findOneById(id)
+
+    if (!existingApplication) {
+      throw new NotFoundException(`Application with id ${id} not found`)
+    }
+
+    if (
+      !existingApplication.attachments ||
+      Object.keys(existingApplication.attachments).length === 0
+    ) {
+      return { attachments: [] }
+    }
+
+    const attachments = await Promise.all(
+      Object.entries(
+        existingApplication.attachments as Record<string, string>,
+      ).map(async ([key, fileName]) => {
+        try {
+          const { url } = await this.fileService.getAttachmentPresignedURL(
+            fileName,
+          )
+          return { key, url: url ?? '' }
+        } catch {
+          return { key, url: '' }
+        }
+      }),
+    )
+
+    return { attachments: attachments.filter((a) => a.url !== '') }
   }
 
   @Scopes(ApplicationScope.write)

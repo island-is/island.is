@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -47,6 +48,9 @@ export class ApplicationFileModel extends Model<
   })
   @ApiProperty()
   applicationId: string
+
+  @BelongsTo(() => ApplicationModel)
+  application: ApplicationModel
 
   @Column({
     type: DataType.STRING,
