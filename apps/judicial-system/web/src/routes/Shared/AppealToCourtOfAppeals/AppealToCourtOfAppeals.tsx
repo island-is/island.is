@@ -49,9 +49,7 @@ const AppealToCourtOfAppeals = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id, rulingFileId: rulingFileIdQuery } = router.query
-  const rulingFileId =
-    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
+  const rulingFileId = router.query.rulingFileId?.toString()
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -92,7 +90,7 @@ const AppealToCourtOfAppeals = () => {
         ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
         : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
