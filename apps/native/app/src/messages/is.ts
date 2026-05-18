@@ -498,7 +498,7 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara til útlanda?',
   'licenseDetail.driversLicense.alert.description':
     'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
