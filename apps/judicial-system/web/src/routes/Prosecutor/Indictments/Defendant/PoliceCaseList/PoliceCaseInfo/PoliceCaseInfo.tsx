@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo, useRef } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
@@ -25,8 +25,7 @@ export const PoliceCaseInfo: FC<Props> = ({
   onAddPoliceCaseInfo,
 }) => {
   const { formatMessage } = useIntl()
-  const { workingCase, refreshCase } = useContext(FormContext)
-  const hasRefreshedRef = useRef(false)
+  const { workingCase } = useContext(FormContext)
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: { input: { caseId: workingCase.id } },
@@ -36,11 +35,6 @@ export const PoliceCaseInfo: FC<Props> = ({
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return
-      }
-
-      if (!hasRefreshedRef.current) {
-        hasRefreshedRef.current = true
-        refreshCase()
       }
 
       onPoliceCaseInfoLoaded(data.policeCaseInfo)
