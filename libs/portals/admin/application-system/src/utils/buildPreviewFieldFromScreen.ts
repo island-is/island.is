@@ -2,21 +2,42 @@ import type {
   Field,
   FieldWidth,
   FormText,
+  MessageWithLinkButtonField,
   Option,
   SubmitField,
   TitleVariants,
   CallToAction,
+  LinkField,
 } from '@island.is/application/types'
 import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
+import type { ScreenIntrospectionNodeFieldsFragment } from '../queries/translations.generated'
 import type {
   RadioOptionIntrospection,
   ScreenIntrospection,
 } from '../types/translationWorkspace'
 import { previewWorkspaceInputBackgroundColor } from './translationWorkspaceFieldConstants'
 import { fieldPreviewLayoutProps } from './translationWorkspaceStaticText'
+
+/** Mirrors `ScreenIntrospectionGql` / fragment fields not yet on manual `ScreenIntrospection`. */
+type MessageWithLinkIntrospectionSlice = Partial<
+  Pick<
+    ScreenIntrospectionNodeFieldsFragment,
+    | 'messageWithLinkUrl'
+    | 'messageWithLinkMessageStatic'
+    | 'messageWithLinkMessageId'
+    | 'messageWithLinkButtonTitleStatic'
+    | 'messageWithLinkButtonTitleMessageId'
+    | 'messageWithLinkMessageColor'
+  >
+>
+
+/** Introspection node shape as used by the preview field builder (GraphQL-aligned). */
+export type BuildPreviewFieldScreen =
+  ScreenIntrospection &
+  MessageWithLinkIntrospectionSlice
 
 const asFieldWidth = (w: string | null | undefined): FieldWidth | undefined => {
   if (w === 'half' || w === 'full') {
@@ -43,10 +64,16 @@ const optionFromIntrospection = (o: RadioOptionIntrospection): Option => {
  * Tier-A preview: reconstruct enough of the template `Field` for `@island.is/application/ui-fields`.
  */
 export const buildPreviewFieldFromScreen = (
-  screen: ScreenIntrospection,
+  screen: BuildPreviewFieldScreen,
 ): Field | null => {
   const layout = fieldPreviewLayoutProps(screen)
   const width = asFieldWidth(screen.width)
+
+  const defaultMsgForKey = (key: string | null | undefined) =>
+    key
+      ? screen.messageDescriptors.find((d) => d.id === key)?.defaultMessage ??
+        ''
+      : ''
 
   const base = {
     id: screen.id,
@@ -184,6 +211,94 @@ export const buildPreviewFieldFromScreen = (
       } as Field
     }
 
+    case FieldTypes.LINK: {
+      const titleMsgId = screen.linkFieldTitleMessageId
+      const titleFormText: FormText = titleMsgId
+        ? {
+            id: titleMsgId,
+            defaultMessage: defaultMsgForKey(titleMsgId) ?? '',
+          }
+        : (screen.title ?? '')
+      const linkMsgId = screen.linkFieldLinkMessageId
+      const linkFormText: FormText = linkMsgId
+        ? {
+            id: linkMsgId,
+            defaultMessage: defaultMsgForKey(linkMsgId) ?? '',
+          }
+        : (screen.linkFieldLinkText ?? '')
+      const s3MsgId = screen.linkFieldS3KeyMessageId
+      const s3FormText: FormText = s3MsgId
+        ? {
+            id: s3MsgId,
+            defaultMessage: defaultMsgForKey(s3MsgId) ?? '',
+          }
+        : (screen.linkFieldS3KeyText ?? '')
+
+      const variant =
+        screen.linkFieldVariant === 'text' ? ('text' as const) : ('ghost' as const)
+      const justifyContent =
+        screen.linkFieldJustifyContent === 'center'
+          ? ('center' as const)
+          : screen.linkFieldJustifyContent === 'flexEnd'
+            ? ('flexEnd' as const)
+            : ('flexStart' as const)
+
+      const iconProps: LinkField['iconProps'] | undefined =
+        screen.linkFieldIcon != null && screen.linkFieldIcon !== ''
+          ? {
+              icon: screen.linkFieldIcon as NonNullable<
+                LinkField['iconProps']
+              >['icon'],
+              type:
+                screen.linkFieldIconType === 'filled' ? 'filled' : 'outline',
+            }
+          : undefined
+
+      return {
+        ...base,
+        type: FieldTypes.LINK,
+        component: FieldComponents.LINK,
+        title: titleFormText,
+        link: linkFormText,
+        s3key: s3FormText,
+        variant,
+        justifyContent,
+        ...(iconProps ? { iconProps } : {}),
+      } as LinkField
+    }
+
+    case FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD: {
+      const msgId = screen.messageWithLinkMessageId
+      const message: FormText = msgId
+        ? {
+            id: msgId,
+            defaultMessage: defaultMsgForKey(msgId) ?? '',
+          }
+        : (screen.messageWithLinkMessageStatic ?? '')
+      const btnId = screen.messageWithLinkButtonTitleMessageId
+      const buttonTitle: FormText = btnId
+        ? {
+            id: btnId,
+            defaultMessage: defaultMsgForKey(btnId) ?? '',
+          }
+        : (screen.messageWithLinkButtonTitleStatic ?? '')
+      const msgColorRaw = screen.messageWithLinkMessageColor
+      const messageColor =
+        msgColorRaw != null && msgColorRaw !== ''
+          ? (msgColorRaw as MessageWithLinkButtonField['messageColor'])
+          : undefined
+
+      return {
+        ...base,
+        type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+        component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+        url: screen.messageWithLinkUrl ?? '#',
+        message,
+        buttonTitle,
+        ...(messageColor ? { messageColor } : {}),
+      } as MessageWithLinkButtonField
+    }
+
     case FieldTypes.CHECKBOX: {
       const options = (screen.checkboxOptions ?? []).map(optionFromIntrospection)
       if (options.length === 0) {
@@ -225,4 +340,6 @@ export const TRANSLATION_WORKSPACE_UI_FIELD_TYPES: ReadonlySet<string> =
     FieldTypes.RADIO,
     FieldTypes.DATE,
     FieldTypes.SUBMIT,
+    FieldTypes.LINK,
+    FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
   ])

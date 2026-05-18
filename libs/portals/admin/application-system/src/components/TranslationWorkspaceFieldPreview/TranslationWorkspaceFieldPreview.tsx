@@ -63,6 +63,8 @@ import {
   buildPreviewFieldFromScreen,
   TRANSLATION_WORKSPACE_UI_FIELD_TYPES,
 } from '../../utils/buildPreviewFieldFromScreen'
+import { resolveTranslationWorkspaceGraphicsComponent } from '../TranslationWorkspaceGraphicsSvg/TranslationWorkspaceGraphicsSvg'
+import * as translationWorkspaceGraphicsSvg from '../TranslationWorkspaceGraphicsSvg/TranslationWorkspaceGraphicsSvg.css'
 
 const PREVIEW_APPLICATION_BASE: Application = {
   id: 'preview',
@@ -107,7 +109,9 @@ const inferTranslationWorkspaceShowFieldName = (
   if (
     screen.type === FieldTypes.TITLE ||
     screen.type === FieldTypes.DIVIDER ||
-    screen.type === FieldTypes.ALERT_MESSAGE
+    screen.type === FieldTypes.ALERT_MESSAGE ||
+    screen.type === FieldTypes.LINK ||
+    screen.type === FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
   ) {
     return false
   }
@@ -144,6 +148,25 @@ const descriptionTitleVariantToText = (
     return v
   }
   return 'h3'
+}
+
+/** First breakpoint value for translation preview (matches `ImageFormField` mobile-first idea). */
+const previewImageFieldWidthCss = (raw: unknown): string => {
+  const first = Array.isArray(raw) ? raw[0] : raw
+  if (first === 'full') return '100%'
+  if (first === '50%') return '50%'
+  if (first === 'auto') return 'auto'
+  if (typeof first === 'string') return first
+  return '100%'
+}
+
+const previewImageFieldJustifyContent = (
+  raw: unknown,
+): 'flexStart' | 'center' | 'flexEnd' => {
+  const first = Array.isArray(raw) ? raw[0] : raw
+  if (first === 'center') return 'center'
+  if (first === 'right') return 'flexEnd'
+  return 'flexStart'
 }
 
 const DescriptionFieldPreview = ({
@@ -1498,18 +1521,34 @@ const LeafFieldPreview = ({
 
   if (INPUT_FIELD_TYPES.has(screen.type)) {
     const inputPreviewValue = previewFieldValues?.[screen.id]
+    const isTextarea =
+      screen.type === FieldTypes.TEXT && screen.textFieldVariant === 'textarea'
+    const placeholderResolved =
+      screen.inputPlaceholder != null && screen.inputPlaceholder !== ''
+        ? resolveTranslatableStaticText(
+            screen.inputPlaceholder,
+            screen.messageDescriptors,
+            resolvePreviewString,
+          ).trim()
+        : ''
     return (
       <Box key={key} {...layout}>
         <Box paddingTop={2}>
           <Input
             label={label}
             name={key}
-            placeholder={label}
+            placeholder={placeholderResolved || undefined}
             readOnly
             value={inputPreviewValue ?? ''}
             hasError={!!fieldErrorMessage}
             errorMessage={fieldErrorMessage}
             backgroundColor={previewWorkspaceInputBackgroundColor(screen)}
+            textarea={isTextarea}
+            rows={
+              isTextarea && screen.textFieldRows != null
+                ? screen.textFieldRows
+                : undefined
+            }
           />
         </Box>
       </Box>
@@ -1648,6 +1687,84 @@ const LeafFieldPreview = ({
     )
   }
 
+  if (screen.type === FieldTypes.DISPLAY) {
+    const titleVariantDisplay: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' = (() => {
+      const v = screen.titleVariant
+      if (v === 'h1' || v === 'h2' || v === 'h3' || v === 'h4' || v === 'h5') {
+        return v
+      }
+      return 'h4'
+    })()
+    const titleText =
+      screen.title != null && screen.title !== ''
+        ? resolveTranslatableStaticText(
+            screen.title,
+            screen.messageDescriptors,
+            resolvePreviewString,
+          ).trim()
+        : ''
+    const labelDm = screen.displayLabelMessageId
+      ? screen.messageDescriptors.find(
+          (d) => d.id === screen.displayLabelMessageId,
+        )?.defaultMessage
+      : undefined
+    const suffixDm = screen.displaySuffixMessageId
+      ? screen.messageDescriptors.find(
+          (d) => d.id === screen.displaySuffixMessageId,
+        )?.defaultMessage
+      : undefined
+    const inputLabel =
+      screen.displayLabelMessageId != null
+        ? resolvePreviewString(screen.displayLabelMessageId, labelDm).trim()
+        : (screen.displayLabelStatic ?? '')
+    const suffixText =
+      screen.displaySuffixMessageId != null
+        ? resolvePreviewString(screen.displaySuffixMessageId, suffixDm).trim()
+        : (screen.displaySuffixStatic ?? '').trim()
+    const stubValue = previewFieldValues?.[screen.id] ?? '—'
+    return (
+      <Box key={key} {...layout}>
+        <Box paddingY={3} display="flex" flexDirection="column">
+          <Box width="full">
+            {titleText !== '' && (
+              <Text
+                variant={titleVariantDisplay}
+                as={titleVariantDisplay}
+                paddingBottom={1}
+              >
+                {titleText}
+              </Text>
+            )}
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="flexEnd"
+              columnGap={2}
+            >
+              <Box flexGrow={1}>
+                <Input
+                  id={key}
+                  name={key}
+                  label={inputLabel || undefined}
+                  readOnly
+                  value={stubValue}
+                  hasError={!!fieldErrorMessage}
+                  errorMessage={fieldErrorMessage}
+                  backgroundColor="blue"
+                />
+              </Box>
+              {suffixText !== '' && (
+                <Text variant="small" paddingBottom={2}>
+                  {suffixText}
+                </Text>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    )
+  }
+
   if (TEXT_DISPLAY_TYPES.has(screen.type)) {
     return (
       <Box key={key} {...layout}>
@@ -1663,6 +1780,93 @@ const LeafFieldPreview = ({
     return (
       <Box key={key} {...layout}>
         <Divider />
+      </Box>
+    )
+  }
+
+  if (screen.type === FieldTypes.IMAGE) {
+    const titleV: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' = (() => {
+      const v = screen.titleVariant
+      if (
+        v === 'h1' ||
+        v === 'h2' ||
+        v === 'h3' ||
+        v === 'h4' ||
+        v === 'h5'
+      ) {
+        return v
+      }
+      return 'h4'
+    })()
+    const titleText =
+      screen.title != null && screen.title !== ''
+        ? resolveTranslatableStaticText(
+            screen.title,
+            screen.messageDescriptors,
+            resolvePreviewString,
+          ).trim()
+        : ''
+    const imgWidth = previewImageFieldWidthCss(screen.imageWidth)
+    const justify = previewImageFieldJustifyContent(screen.imagePosition)
+    const GraphicsSvgComponent = resolveTranslationWorkspaceGraphicsComponent(
+      screen.imageSvgComponentName,
+    )
+    return (
+      <Box key={key} {...layout}>
+        {titleText !== '' && (
+          <Box marginBottom={1}>
+            <Text variant={titleV} as={titleV}>
+              {titleText}
+            </Text>
+          </Box>
+        )}
+        <Box
+          display={screen.imagePosition != null ? 'flex' : 'block'}
+          justifyContent={justify}
+        >
+          {screen.imageUrl ? (
+            <img
+              src={screen.imageUrl}
+              alt={screen.imageAlt ?? ''}
+              style={{
+                width: imgWidth,
+                height: 'auto',
+                maxWidth: '100%',
+                display: 'block',
+              }}
+            />
+          ) : GraphicsSvgComponent ? (
+            <Box
+              style={{
+                width: imgWidth,
+                maxWidth: '100%',
+              }}
+              className={
+                imgWidth !== 'auto'
+                  ? translationWorkspaceGraphicsSvg.svgContained
+                  : undefined
+              }
+            >
+              <GraphicsSvgComponent />
+            </Box>
+          ) : screen.imageSvgComponentName ? (
+            <Box
+              padding={4}
+              border="standard"
+              borderRadius="standard"
+              background="blue100"
+              width="full"
+            >
+              <Text variant="small" color="dark400">
+                SVG: {screen.imageSvgComponentName}
+              </Text>
+            </Box>
+          ) : (
+            <Text variant="small" color="dark300">
+              Image
+            </Text>
+          )}
+        </Box>
       </Box>
     )
   }

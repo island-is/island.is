@@ -39,6 +39,14 @@ export interface ScreenIntrospection {
   paddingTop?: unknown
   /** Template `titleVariant` when present (e.g. DESCRIPTION fields). */
   titleVariant?: string | null
+  /** `DISPLAY`: react-intl id for input `label` when message-backed. */
+  displayLabelMessageId?: string | null
+  /** `DISPLAY`: react-intl id for input `suffix` when message-backed. */
+  displaySuffixMessageId?: string | null
+  /** `DISPLAY`: static `label` string when not message-backed. */
+  displayLabelStatic?: string | null
+  /** `DISPLAY`: static `suffix` string when not message-backed. */
+  displaySuffixStatic?: string | null
   messageDescriptors: MessageDescriptor[]
   children?: ScreenIntrospection[] | null
   radioOptions?: RadioOptionIntrospection[] | null
@@ -51,6 +59,19 @@ export interface ScreenIntrospection {
   checkboxSpacing?: number | null
   /** Mirrors template `field.backgroundColor` for input-like fields; preview defaults to blue when unset. */
   inputBackgroundColor?: string | null
+  /** `TEXT`: mirrors `TextField.variant` (e.g. `textarea`). */
+  textFieldVariant?: string | null
+  /** `TEXT`: textarea `rows` when set in the template. */
+  textFieldRows?: number | null
+  /** Static/default placeholder string when the field defines `placeholder`; resolve via `messageDescriptors` in preview. */
+  inputPlaceholder?: string | null
+  /** `IMAGE`: asset URL when the template uses a string `image`. */
+  imageUrl?: string | null
+  /** `IMAGE`: SVG component name when `image` is a React component. */
+  imageSvgComponentName?: string | null
+  imageAlt?: string | null
+  imageWidth?: unknown
+  imagePosition?: unknown
   tableRepeaterColumnHeaders?: MessageDescriptor[] | null
   tableRepeaterFormTitle?: string | null
   tableRepeaterAddItemButtonText?: string | null
@@ -88,6 +109,36 @@ export interface ScreenIntrospection {
   fileUploadButtonLabel?: string | null
   /** `FILEUPLOAD`: static text of the introduction rendered above the upload area. */
   fileUploadIntroduction?: string | null
+  /** `LINK`: static URL / path when `link` is not message-backed. */
+  linkFieldLinkText?: string | null
+  /** `LINK`: react-intl id when `link` is message-backed. */
+  linkFieldLinkMessageId?: string | null
+  /** `LINK`: static S3 key when `s3key` is not message-backed. */
+  linkFieldS3KeyText?: string | null
+  /** `LINK`: react-intl id when `s3key` is message-backed. */
+  linkFieldS3KeyMessageId?: string | null
+  /** `LINK`: react-intl id when the button label (`title`) is message-backed. */
+  linkFieldTitleMessageId?: string | null
+  /** `LINK`: matches template `variant`. */
+  linkFieldVariant?: string | null
+  /** `LINK`: matches template `justifyContent`. */
+  linkFieldJustifyContent?: string | null
+  /** `LINK`: matches `iconProps.icon`. */
+  linkFieldIcon?: string | null
+  /** `LINK`: matches `iconProps.type`. */
+  linkFieldIconType?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: outbound link URL from template. */
+  messageWithLinkUrl?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: static `message` when not message-backed. */
+  messageWithLinkMessageStatic?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: react-intl id for `message` when message-backed. */
+  messageWithLinkMessageId?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: static `buttonTitle` when not message-backed. */
+  messageWithLinkButtonTitleStatic?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: react-intl id for `buttonTitle`. */
+  messageWithLinkButtonTitleMessageId?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: optional `messageColor` token string from template. */
+  messageWithLinkMessageColor?: string | null
   /** `SUBMIT`: `footer` (default) vs in-flow `screen` (matches `buildSubmitField`). */
   submitPlacement?: string | null
   submitActions?: SubmitActionIntrospection[] | null

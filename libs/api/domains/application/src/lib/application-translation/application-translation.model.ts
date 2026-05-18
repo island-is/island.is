@@ -177,6 +177,18 @@ export class ScreenIntrospectionGql {
   @Field(() => String, { nullable: true })
   titleVariant?: string | null
 
+  @Field(() => String, { nullable: true })
+  displayLabelMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  displaySuffixMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  displayLabelStatic?: string | null
+
+  @Field(() => String, { nullable: true })
+  displaySuffixStatic?: string | null
+
   @Field(() => [MessageDescriptorGql])
   messageDescriptors!: MessageDescriptorGql[]
 
@@ -206,6 +218,30 @@ export class ScreenIntrospectionGql {
 
   @Field(() => String, { nullable: true })
   inputBackgroundColor?: string | null
+
+  @Field(() => String, { nullable: true })
+  textFieldVariant?: string | null
+
+  @Field(() => Int, { nullable: true })
+  textFieldRows?: number | null
+
+  @Field(() => String, { nullable: true })
+  inputPlaceholder?: string | null
+
+  @Field(() => String, { nullable: true })
+  imageUrl?: string | null
+
+  @Field(() => String, { nullable: true })
+  imageSvgComponentName?: string | null
+
+  @Field(() => String, { nullable: true })
+  imageAlt?: string | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  imageWidth?: unknown
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  imagePosition?: unknown
 
   @Field(() => [MessageDescriptorGql], { nullable: true })
   tableRepeaterColumnHeaders?: MessageDescriptorGql[] | null
@@ -290,6 +326,51 @@ export class ScreenIntrospectionGql {
 
   @Field(() => String, { nullable: true })
   fileUploadIntroduction?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldLinkText?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldLinkMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldS3KeyText?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldS3KeyMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldTitleMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldVariant?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldJustifyContent?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldIcon?: string | null
+
+  @Field(() => String, { nullable: true })
+  linkFieldIconType?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkUrl?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkMessageStatic?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkButtonTitleStatic?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkButtonTitleMessageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  messageWithLinkMessageColor?: string | null
 
   @Field(() => String, { nullable: true })
   submitPlacement?: string | null

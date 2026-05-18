@@ -16,6 +16,10 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   marginBottom
   paddingTop
   titleVariant
+  displayLabelMessageId
+  displaySuffixMessageId
+  displayLabelStatic
+  displaySuffixStatic
   messageDescriptors {
     id
     defaultMessage
@@ -38,6 +42,14 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   checkboxBackgroundColor
   checkboxSpacing
   inputBackgroundColor
+  textFieldVariant
+  textFieldRows
+  inputPlaceholder
+  imageUrl
+  imageSvgComponentName
+  imageAlt
+  imageWidth
+  imagePosition
   tableRepeaterColumnHeaders {
     id
     defaultMessage
@@ -89,6 +101,21 @@ fragment ScreenIntrospectionNodeFields on ScreenIntrospectionGql {
   fileUploadDescription
   fileUploadButtonLabel
   fileUploadIntroduction
+  linkFieldLinkText
+  linkFieldLinkMessageId
+  linkFieldS3KeyText
+  linkFieldS3KeyMessageId
+  linkFieldTitleMessageId
+  linkFieldVariant
+  linkFieldJustifyContent
+  linkFieldIcon
+  linkFieldIconType
+  messageWithLinkUrl
+  messageWithLinkMessageStatic
+  messageWithLinkMessageId
+  messageWithLinkButtonTitleStatic
+  messageWithLinkButtonTitleMessageId
+  messageWithLinkMessageColor
   submitPlacement
   submitActions {
     event

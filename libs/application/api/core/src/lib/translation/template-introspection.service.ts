@@ -37,6 +37,11 @@ import type {
   OverviewField,
   KeyValueItem,
   SubmitField,
+  DisplayField,
+  TextField,
+  ImageField,
+  LinkField,
+  MessageWithLinkButtonField,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -144,6 +149,15 @@ export interface ScreenIntrospection {
    * Translation workspace preview defaults to blue when unset; only `'white'` yields a white input.
    */
   inputBackgroundColor?: string | null
+  /** `TEXT`: mirrors `TextField.variant` (e.g. `text`, `textarea`, `currency`). */
+  textFieldVariant?: string | null
+  /** `TEXT`: `rows` when `variant` is `textarea`. */
+  textFieldRows?: number | null
+  /**
+   * Static / default-language snippet for `placeholder` when present (mirrors `title`);
+   * resolve translatable copy via `messageDescriptors` in the preview.
+   */
+  inputPlaceholder?: string | null
   /** `TABLE_REPEATER`: one descriptor per table column (visual order, left to right). */
   tableRepeaterColumnHeaders?: MessageDescriptorInfo[]
   /** `TABLE_REPEATER`: `extractStaticText` of optional mini-form title (resolve via descriptors). */
@@ -193,6 +207,54 @@ export interface ScreenIntrospection {
   submitPlacement?: string | null
   /** `SUBMIT`: template actions for translation preview / footer buttons. */
   submitActions?: SubmitActionIntrospection[]
+  /** `DISPLAY`: message id for `label` when the template uses a react-intl descriptor. */
+  displayLabelMessageId?: string | null
+  /** `DISPLAY`: message id for `suffix` when the template uses a react-intl descriptor. */
+  displaySuffixMessageId?: string | null
+  /** `DISPLAY`: plain string `label` when `label` is not message-backed. */
+  displayLabelStatic?: string | null
+  /** `DISPLAY`: plain string `suffix` when `suffix` is not message-backed. */
+  displaySuffixStatic?: string | null
+  /** `IMAGE`: URL when the template `image` prop is a string. */
+  imageUrl?: string | null
+  /** `IMAGE`: component `name` / `displayName` when `image` is an SVG React component. */
+  imageSvgComponentName?: string | null
+  /** `IMAGE`: `alt` text when set. */
+  imageAlt?: string | null
+  /** `IMAGE`: `imageWidth` (`string` or per-breakpoint array). */
+  imageWidth?: unknown
+  /** `IMAGE`: `imagePosition` (`string` or per-breakpoint array). */
+  imagePosition?: unknown
+  /** `LINK`: `extractStaticText` of `link` when not message-backed. */
+  linkFieldLinkText?: string | null
+  /** `LINK`: react-intl id when `link` is a `MessageDescriptor`. */
+  linkFieldLinkMessageId?: string | null
+  /** `LINK`: `extractStaticText` of `s3key` when not message-backed. */
+  linkFieldS3KeyText?: string | null
+  /** `LINK`: react-intl id when `s3key` is a `MessageDescriptor`. */
+  linkFieldS3KeyMessageId?: string | null
+  /** `LINK`: react-intl id when `title` (button label) is a `MessageDescriptor`. */
+  linkFieldTitleMessageId?: string | null
+  /** `LINK`: `variant` from template (`ghost` \| `text`). */
+  linkFieldVariant?: string | null
+  /** `LINK`: `justifyContent` from template. */
+  linkFieldJustifyContent?: string | null
+  /** `LINK`: `iconProps.icon` when set. */
+  linkFieldIcon?: string | null
+  /** `LINK`: `iconProps.type` when set (`outline` \| `filled`). */
+  linkFieldIconType?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: outbound link URL/path from template. */
+  messageWithLinkUrl?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: `extractStaticText` of `message` when not message-backed. */
+  messageWithLinkMessageStatic?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: react-intl id when `message` is message-backed. */
+  messageWithLinkMessageId?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: static `buttonTitle` when not message-backed. */
+  messageWithLinkButtonTitleStatic?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: react-intl id when `buttonTitle` is message-backed. */
+  messageWithLinkButtonTitleMessageId?: string | null
+  /** `MESSAGE_WITH_LINK_BUTTON_FIELD`: optional `messageColor` from template (`Text` color token string). */
+  messageWithLinkMessageColor?: string | null
 }
 
 export interface MessageDescriptorInfo {
@@ -681,6 +743,117 @@ function extractCheckboxPreviewOptions(
   return extractFieldOptionsForPreview(field.options, field)
 }
 
+function extractDisplayFieldMessageDescriptors(
+  df: DisplayField,
+): MessageDescriptorInfo[] {
+  const extra: MessageDescriptorInfo[] = []
+  if (df.label != null && isMessageDescriptor(df.label)) {
+    extra.push({
+      id: String(df.label.id),
+      defaultMessage: df.label.defaultMessage as string | undefined,
+      description: df.label.description as string | undefined,
+    })
+  }
+  if (df.suffix != null && isMessageDescriptor(df.suffix)) {
+    extra.push({
+      id: String(df.suffix.id),
+      defaultMessage: df.suffix.defaultMessage as string | undefined,
+      description: df.suffix.description as string | undefined,
+    })
+  }
+  return extra
+}
+
+function displayFieldStaticIntrospectionFromLeaf(leaf: FormLeaf):
+  | {
+      displayLabelMessageId: string | null
+      displaySuffixMessageId: string | null
+      displayLabelStatic: string | null
+      displaySuffixStatic: string | null
+    }
+  | Record<string, never> {
+  if (leaf.type !== FieldTypes.DISPLAY) {
+    return {}
+  }
+  const df = leaf as DisplayField
+  let displayLabelMessageId: string | null = null
+  let displaySuffixMessageId: string | null = null
+  let displayLabelStatic: string | null = null
+  let displaySuffixStatic: string | null = null
+  if (df.label != null) {
+    if (isMessageDescriptor(df.label)) {
+      displayLabelMessageId = String(df.label.id)
+    } else {
+      displayLabelStatic = df.label
+    }
+  }
+  if (df.suffix != null) {
+    if (isMessageDescriptor(df.suffix)) {
+      displaySuffixMessageId = String(df.suffix.id)
+    } else {
+      displaySuffixStatic = df.suffix
+    }
+  }
+  return {
+    displayLabelMessageId,
+    displaySuffixMessageId,
+    displayLabelStatic,
+    displaySuffixStatic,
+  }
+}
+
+function textFieldIntrospectionFromLeaf(leaf: FormLeaf):
+  | {
+      textFieldVariant: string
+      textFieldRows?: number | null
+    }
+  | Record<string, never> {
+  if (leaf.type !== FieldTypes.TEXT) {
+    return {}
+  }
+  const tf = leaf as TextField
+  const variant = tf.variant ?? 'text'
+  if (variant === 'textarea' && typeof tf.rows === 'number') {
+    return {
+      textFieldVariant: variant,
+      textFieldRows: tf.rows,
+    }
+  }
+  return { textFieldVariant: variant }
+}
+
+function imageFieldIntrospectionFromLeaf(leaf: FormLeaf):
+  | {
+      imageUrl: string | null
+      imageSvgComponentName: string | null
+      imageAlt: string | null
+      imageWidth: unknown
+      imagePosition: unknown
+    }
+  | Record<string, never> {
+  if (leaf.type !== FieldTypes.IMAGE) {
+    return {}
+  }
+  const im = leaf as ImageField
+  let imageUrl: string | null = null
+  let imageSvgComponentName: string | null = null
+  if (typeof im.image === 'string') {
+    imageUrl = im.image
+  } else if (typeof im.image === 'function') {
+    const fn = im.image as Function & { displayName?: string }
+    const name = (fn.displayName || fn.name || '').trim()
+    imageSvgComponentName =
+      name && name !== 'anonymous' ? name : null
+  }
+  return {
+    imageUrl,
+    imageSvgComponentName,
+    imageAlt: im.alt ?? null,
+    imageWidth: im.imageWidth ?? null,
+    imagePosition: im.imagePosition ?? null,
+  }
+}
+
 function extractMessageDescriptorsFromField(
   field: Field,
 ): MessageDescriptorInfo[] {
@@ -762,6 +935,19 @@ function extractMessageDescriptorsFromField(
       f.emailLabel as FormText | undefined,
     ),
   )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(f.link as FormText | undefined),
+  )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      f.buttonTitle as FormText | undefined,
+    ),
+  )
+  descriptors.push(
+    ...extractMessageDescriptorsFromFormText(
+      f.s3key as FormText | undefined,
+    ),
+  )
 
   const propsRaw = f.props
   if (propsRaw && typeof propsRaw === 'object') {
@@ -777,7 +963,12 @@ function extractMessageDescriptorsFromField(
     }
   }
 
-  return descriptors
+  return mergeMessageDescriptors(
+    descriptors,
+    field.type === FieldTypes.DISPLAY
+      ? extractDisplayFieldMessageDescriptors(field as DisplayField)
+      : [],
+  )
 }
 
 function mergeMessageDescriptors(
@@ -1583,6 +1774,7 @@ function walkFormLeaf(
   let titleVariant: string | null = null
   let submitPlacementOut: string | null | undefined
   let submitActionsOut: SubmitActionIntrospection[] | undefined
+  let inputPlaceholder: string | null = null
 
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
     descriptors.push(...extractMessageDescriptorsFromFormText(leaf.title))
@@ -1725,6 +1917,16 @@ function walkFormLeaf(
         fu.introduction as StaticText | undefined,
       )
     }
+    if ('placeholder' in field && field.placeholder !== undefined) {
+      const ph = field.placeholder as FormText | undefined
+      if (typeof ph === 'function') {
+        const extracted = tryInvokeFormTextFunction(ph as Function)
+        fromField = mergeMessageDescriptors(fromField, extracted.descriptors)
+        inputPlaceholder = extracted.staticText
+      } else {
+        inputPlaceholder = extractStaticText(ph as StaticText | undefined)
+      }
+    }
     descriptors.push(...fromField)
     description = extractStaticText(
       leafRecord.description as StaticText | undefined,
@@ -1809,6 +2011,71 @@ function walkFormLeaf(
     }
   }
 
+  const linkFieldExtras =
+    leaf.type === FieldTypes.LINK
+      ? (() => {
+          const lf = leaf as LinkField
+          return {
+            linkFieldLinkText: extractStaticText(lf.link as StaticText | undefined),
+            linkFieldLinkMessageId:
+              lf.link != null && isMessageDescriptor(lf.link)
+                ? String(lf.link.id)
+                : null,
+            linkFieldS3KeyText: extractStaticText(
+              lf.s3key as StaticText | undefined,
+            ),
+            linkFieldS3KeyMessageId:
+              lf.s3key != null && isMessageDescriptor(lf.s3key)
+                ? String(lf.s3key.id)
+                : null,
+            linkFieldTitleMessageId:
+              lf.title != null && isMessageDescriptor(lf.title)
+                ? String(lf.title.id)
+                : null,
+            linkFieldVariant:
+              lf.variant === 'text' || lf.variant === 'ghost'
+                ? lf.variant
+                : null,
+            linkFieldJustifyContent:
+              lf.justifyContent === 'center' ||
+              lf.justifyContent === 'flexEnd' ||
+              lf.justifyContent === 'flexStart'
+                ? lf.justifyContent
+                : null,
+            linkFieldIcon:
+              lf.iconProps?.icon != null ? String(lf.iconProps.icon) : null,
+            linkFieldIconType:
+              lf.iconProps?.type != null ? String(lf.iconProps.type) : null,
+          }
+        })()
+      : {}
+
+  const messageWithLinkExtras =
+    leaf.type === FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
+      ? (() => {
+          const mf = leaf as MessageWithLinkButtonField
+          return {
+            messageWithLinkUrl: mf.url ?? null,
+            messageWithLinkMessageStatic: extractStaticText(
+              mf.message as StaticText | undefined,
+            ),
+            messageWithLinkMessageId:
+              mf.message != null && isMessageDescriptor(mf.message)
+                ? String(mf.message.id)
+                : null,
+            messageWithLinkButtonTitleStatic: extractStaticText(
+              mf.buttonTitle as StaticText | undefined,
+            ),
+            messageWithLinkButtonTitleMessageId:
+              mf.buttonTitle != null && isMessageDescriptor(mf.buttonTitle)
+                ? String(mf.buttonTitle.id)
+                : null,
+            messageWithLinkMessageColor:
+              mf.messageColor != null ? String(mf.messageColor) : null,
+          }
+        })()
+      : {}
+
   return {
     id: leaf.id ?? '',
     type: leaf.type ?? 'FIELD',
@@ -1836,16 +2103,22 @@ function walkFormLeaf(
     checkboxBackgroundColor,
     checkboxSpacing,
     inputBackgroundColor,
+    inputPlaceholder,
     alertType,
     alertMessage,
     ...nifMeta,
     ...fileUploadMeta,
+    ...displayFieldStaticIntrospectionFromLeaf(leaf),
+    ...textFieldIntrospectionFromLeaf(leaf),
+    ...imageFieldIntrospectionFromLeaf(leaf),
     ...(submitPlacementOut !== undefined
       ? {
           submitPlacement: submitPlacementOut,
           submitActions: submitActionsOut,
         }
       : {}),
+    ...linkFieldExtras,
+    ...messageWithLinkExtras,
   }
 }
 
