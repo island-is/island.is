@@ -71,6 +71,8 @@ export const useDynamicRoutes = () => {
   const { data: vmstOverview, loading: vmstLoading } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
     {
+      // This gets called on /minarsidur and returns 404 for most users (if they don't belong in VMST system). Its okay if this silently fails instead of cluttering logs.
+      // User will still see "Atvinnuleysisbætur" tab under /minarsidur/framfaersla where we fetch data again and user is met with an appropriate success/error
       errorPolicy: 'ignore',
       onError: () => undefined,
       skip: !vmstEnabled,

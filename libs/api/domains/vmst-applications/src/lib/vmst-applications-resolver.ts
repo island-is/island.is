@@ -152,7 +152,7 @@ export class VMSTApplicationsResolver {
     name: 'vmstAttachment',
   })
   @Audit()
-  async getAttachment(@Args('id', { type: () => String }) id: string) {
+  async getAttachment(@Args('id') id: string) {
     return this.vmstApplicationsService.getAttachment(id)
   }
 }
