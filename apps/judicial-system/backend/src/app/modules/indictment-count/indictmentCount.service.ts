@@ -54,16 +54,6 @@ export class IndictmentCountService {
     return indictmentCount
   }
 
-  async findByCaseId(
-    caseId: string,
-    transaction?: Transaction,
-  ): Promise<IndictmentCount[]> {
-    return this.indictmentCountModel.findAll({
-      where: { caseId },
-      ...(transaction ? { transaction } : {}),
-    })
-  }
-
   async create(caseId: string): Promise<IndictmentCount> {
     return this.indictmentCountModel.create({ caseId })
   }
