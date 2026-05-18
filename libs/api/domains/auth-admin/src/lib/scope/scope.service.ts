@@ -21,6 +21,8 @@ import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 
+const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
+
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
   /**
@@ -212,18 +214,29 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<ScopesByTenantsPayload> {
     const uniqueIds = Array.from(new Set(tenantIds))
 
+    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
+    if (limitedIds.length < uniqueIds.length) {
+      this.logger.warn(
+        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+      )
+    }
+
     const settled = await Promise.allSettled(
-      uniqueIds.map(async (tenantId) => ({
+      limitedIds.map(async (tenantId) => ({
         tenantId,
         payload: await this.getScopes(user, tenantId),
       })),
     )
 
-    const data = settled.flatMap((result) =>
-      result.status === 'fulfilled'
-        ? [{ tenantId: result.value.tenantId, data: result.value.payload.data }]
-        : [],
-    )
+    const data = settled.flatMap((result, index) => {
+      if (result.status === 'fulfilled') {
+        return [
+          { tenantId: result.value.tenantId, data: result.value.payload.data },
+        ]
+      }
+      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      return []
+    })
 
     return { data }
   }
