@@ -70,6 +70,19 @@ export const updateFormFn = async (
                   is: info?.is ?? '',
                   en: info?.en ?? '',
                 })) ?? [],
+              additionalPremises:
+                newForm.completedSectionInfo?.additionalPremises?.map(
+                  (premise) => ({
+                    title: {
+                      is: premise?.title?.is ?? '',
+                      en: premise?.title?.en ?? '',
+                    },
+                    description: {
+                      is: premise?.description?.is ?? '',
+                      en: premise?.description?.en ?? '',
+                    },
+                  }),
+                ) ?? [],
             },
             dependencies: newForm.dependencies ?? [],
             lastModifiedBy: userName,

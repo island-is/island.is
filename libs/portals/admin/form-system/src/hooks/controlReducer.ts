@@ -338,6 +338,16 @@ type InputSettingsActions =
       }
     }
   | {
+      type: 'SET_ADDITIONAL_PREMISES'
+      payload: {
+        newValue: {
+          title: FormSystemLanguageType
+          description: FormSystemLanguageType
+        }[]
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
       type: 'SET_ANY_FIELD_SETTING'
       payload: {
         property: string
@@ -1756,6 +1766,8 @@ export const controlReducer = (
             en: '',
           },
           additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          additionalPremises:
+            form.completedSectionInfo?.additionalPremises ?? [],
         },
       }
       return {
@@ -1785,6 +1797,8 @@ export const controlReducer = (
               [lang]: newValue,
             },
             additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+            additionalPremises:
+              form.completedSectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1810,6 +1824,8 @@ export const controlReducer = (
               en: '',
             },
             additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+            additionalPremises:
+              form.completedSectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1829,9 +1845,38 @@ export const controlReducer = (
             en: '',
           },
           additionalInfo: action.payload.newValue,
+          additionalPremises:
+            form.completedSectionInfo?.additionalPremises ?? [],
         },
       }
       action.payload.update(newForm)
+      return {
+        ...state,
+        form: newForm,
+      }
+    }
+    case 'SET_ADDITIONAL_PREMISES': {
+      const { newValue, update } = action.payload
+      const newForm = {
+        ...form,
+        completedSectionInfo: {
+          ...(form.completedSectionInfo ?? {}),
+          title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+            is: '',
+            en: '',
+          },
+          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+            is: '',
+            en: '',
+          },
+          additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          additionalPremises: Array.isArray(newValue)
+            ? newValue
+            : form.completedSectionInfo?.additionalPremises ?? [],
+        },
+      }
+      update(newForm)
       return {
         ...state,
         form: newForm,

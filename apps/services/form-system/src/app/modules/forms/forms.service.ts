@@ -163,6 +163,7 @@ export class FormsService {
           cs.confirmationText ??= { is: '', en: '' }
 
           cs.additionalInfo ??= []
+          cs.additionalPremises ??= []
         }
 
         return dto
@@ -244,6 +245,7 @@ export class FormsService {
       confirmationHeader: { is: '', en: '' },
       confirmationText: { is: '', en: '' },
       additionalInfo: [],
+      additionalPremises: [],
     } as CompletedSectionInfo
 
     const newForm = await this.formModel.create({
@@ -721,6 +723,7 @@ export class FormsService {
       cs.confirmationHeader ??= { is: '', en: '' }
       cs.confirmationText ??= { is: '', en: '' }
       cs.additionalInfo ??= []
+      cs.additionalPremises ??= []
     }
 
     return response
