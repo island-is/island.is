@@ -4,29 +4,37 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
+import { Platform } from 'react-native'
+import * as Application from 'expo-application'
 import { gql, useQuery } from '@apollo/client'
 import { useAuthStore } from '@/stores/auth-store'
 import { setFeatureFlagCache } from '@/lib/feature-flag-client'
 
-type FeatureFlagRecord = Record<string, boolean | string>
+type FeatureFlagRecord = Record<string, boolean | string | number>
 
 const FEATURE_FLAGS_QUERY = gql`
-  query FeatureFlags {
-    featureFlags {
+  query FeatureFlags($attributes: FeatureFlagAttributesInput) {
+    featureFlags(attributes: $attributes) {
       flags
     }
   }
 `
+
+const clientAttributes = {
+  appVersion: Application.nativeApplicationVersion ?? undefined,
+  os: Platform.OS.toLowerCase(),
+}
 
 const EMPTY_FLAGS: FeatureFlagRecord = {}
 
 export interface FeatureFlagClient {
   getValue(
     key: string,
-    defaultValue: boolean | string,
-  ): Promise<boolean | string>
+    defaultValue: boolean | string | number,
+  ): Promise<boolean | string | number>
   dispose(): void
 }
 
@@ -41,11 +49,22 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 }) => {
   const { authorizeResult } = useAuthStore()
   const isAuthenticated = !!authorizeResult
-  const { data } = useQuery<{ featureFlags: { flags: FeatureFlagRecord } }>(
-    FEATURE_FLAGS_QUERY,
-    { skip: !isAuthenticated },
-  )
+  const { data, refetch } = useQuery<{
+    featureFlags: { flags: FeatureFlagRecord }
+  }>(FEATURE_FLAGS_QUERY, {
+    skip: !isAuthenticated,
+    variables: { attributes: clientAttributes },
+  })
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
+
+  // Refetch flags when auth state changes (login, logout, user switch).
+  const prevAuthRef = useRef(authorizeResult)
+  useEffect(() => {
+    if (prevAuthRef.current !== authorizeResult) {
+      prevAuthRef.current = authorizeResult
+      refetch()
+    }
+  }, [authorizeResult, refetch])
 
   // Keep the module-level cache in sync for non-React usages.
   // Only update once the query has actually returned data to avoid
@@ -58,7 +77,7 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 
   const context = useMemo<FeatureFlagClient>(
     () => ({
-      getValue: async (key: string, defaultValue: boolean | string) => {
+      getValue: async (key: string, defaultValue: boolean | string | number) => {
         return flags[key] ?? defaultValue
       },
       dispose: () => {},

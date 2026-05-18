@@ -15,7 +15,7 @@ import React, {
   useRef,
 } from 'react'
 
-type FeatureFlagRecord = Record<string, boolean | string>
+type FeatureFlagRecord = Record<string, boolean | string | number>
 
 const FEATURE_FLAGS_QUERY = gql`
   query FeatureFlags {

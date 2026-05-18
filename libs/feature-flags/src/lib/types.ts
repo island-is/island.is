@@ -21,7 +21,7 @@ export interface FeatureFlagClient {
   ) => Promise<SettingTypeOf<T>>
   getAllValues: (
     user?: FeatureFlagUser,
-  ) => Promise<Record<string, boolean | string>>
+  ) => Promise<Record<string, boolean | string | number>>
 }
 
 export interface FeatureFlagClientProps {

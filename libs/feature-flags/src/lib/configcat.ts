@@ -56,11 +56,12 @@ export const createFeatureFlagClient = (
       user?: FeatureFlagUser,
     ): Promise<Record<string, boolean | string>> => {
       const keyValues = await client.getAllValuesAsync(toConfigCatUser(user))
-      const result: Record<string, boolean | string> = {}
+      const result: Record<string, boolean | string | number> = {}
       for (const kv of keyValues) {
         if (
           typeof kv.settingValue === 'boolean' ||
-          typeof kv.settingValue === 'string'
+          typeof kv.settingValue === 'string' ||
+          typeof kv.settingValue === 'number'
         ) {
           result[kv.settingKey] = kv.settingValue
         }
