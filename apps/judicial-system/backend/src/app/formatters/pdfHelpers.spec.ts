@@ -21,6 +21,7 @@ describe('htmlToBlocks', () => {
           { text: 'Hello world', bold: false, italic: false, highlight: false },
         ],
         indent: 0,
+        softBreak: false,
       },
     ])
   })
