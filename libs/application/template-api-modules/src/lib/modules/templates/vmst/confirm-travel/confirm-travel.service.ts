@@ -13,6 +13,8 @@ import {
 } from '@island.is/application/templates/vmst/confirm-travel'
 import { FetchError } from '@island.is/clients/middlewares'
 
+const OVERLAPPING_PERIOD = 'OVERLAPPING_PERIOD'
+
 @Injectable()
 export class ConfirmTravelService extends BaseTemplateApiService {
   constructor(
@@ -88,8 +90,11 @@ export class ConfirmTravelService extends BaseTemplateApiService {
       )
 
       const body =
-        e instanceof FetchError ? (e.body as { message?: string }) : undefined
-      const summary = body?.message || ''
+        e instanceof FetchError
+          ? (e.body as { message?: string; code?: string })
+          : undefined
+      const summary =
+        body?.code === OVERLAPPING_PERIOD && body.message ? body.message : ''
 
       throw new TemplateApiError(
         {
