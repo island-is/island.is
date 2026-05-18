@@ -31,7 +31,7 @@ import {
   NationalRegistryV3UserApi,
   NationalRegistryV3SpouseApi,
 } from '../dataProviders'
-import { ApplicantsInfo } from '../shared'
+import { extractParticipants } from '../shared'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -186,19 +186,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
-            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+            const { landlords, tenants } = extractParticipants(
               application.answers,
-              'parties.landlordInfo.table',
-            )
-            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
-              application.answers,
-              'parties.tenantInfo.table',
             )
             const landlordNames = landlords
-              ?.map((l) => l.nationalIdWithName.name)
+              .map((l) => l.nationalIdWithName.name)
               .join(', ')
             const tenantNames = tenants
-              ?.map((t) => t.nationalIdWithName.name)
+              .map((t) => t.nationalIdWithName.name)
               .join(', ')
             const args: Array<{ key: string; value: string }> = []
             if (address) args.push({ key: 'address', value: address })
@@ -285,19 +280,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
-            const landlords = getValueViaPath<Array<ApplicantsInfo>>(
+            const { landlords, tenants } = extractParticipants(
               application.answers,
-              'parties.landlordInfo.table',
-            )
-            const tenants = getValueViaPath<Array<ApplicantsInfo>>(
-              application.answers,
-              'parties.tenantInfo.table',
             )
             const landlordNames = landlords
-              ?.map((l) => l.nationalIdWithName.name)
+              .map((l) => l.nationalIdWithName.name)
               .join(', ')
             const tenantNames = tenants
-              ?.map((t) => t.nationalIdWithName.name)
+              .map((t) => t.nationalIdWithName.name)
               .join(', ')
             const args: Array<{ key: string; value: string }> = []
             if (address) args.push({ key: 'address', value: address })

@@ -386,7 +386,9 @@ export class VerdictsClientService {
           courts: [COURT_OF_APPEAL],
         },
       }),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+        akvardanir: 0,
+      }),
       goproVerdictApi.getCaseTypesV2({
         requestData: {
           courts: ALL_DISTRICT_COURTS,
@@ -745,11 +747,17 @@ export class VerdictsClientService {
     return lawyers
   }
 
-  async getSupremeCourtDeterminations(input: { page: number }) {
+  async getSupremeCourtDeterminations(input: {
+    page: number
+    caseTypes?: string[]
+    searchTerm?: string
+  }) {
     const response =
       await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
         page: input.page ?? 1,
         limit: 10,
+        caseTypes: input.caseTypes ? input.caseTypes : undefined,
+        searchTerm: input.searchTerm ? input.searchTerm : undefined,
       })
 
     return {
@@ -913,5 +921,12 @@ export class VerdictsClientService {
     return {
       items: response.items ?? [],
     }
+  }
+
+  async getSupremeCourtDeterminationCaseTypes() {
+    const response = await this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+      akvardanir: 1,
+    })
+    return response.items ?? []
   }
 }

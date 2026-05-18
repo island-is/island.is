@@ -14,7 +14,6 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { ControlContext } from '../../../../../context/ControlContext'
-import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
 import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
@@ -30,7 +29,6 @@ export const BaseInput = () => {
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
@@ -41,6 +39,24 @@ export const BaseInput = () => {
   const screen = control.form.screens?.find(
     (s) => s && s.id === currentItem.screenId,
   )
+
+  const selectList =
+    fieldTypes
+      ?.filter((fieldType): fieldType is NonNullable<typeof fieldType> =>
+        Boolean(fieldType?.id),
+      )
+      .filter(
+        (fieldType) =>
+          form.hasPayment || fieldType.id !== FieldTypesEnum.PAYMENT_QUANTITY,
+      )
+      .map((fieldType) => ({
+        value: fieldType.id ?? '',
+        label: fieldType.name?.is ?? fieldType.id ?? '',
+      }))
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, 'is', { sensitivity: 'base' }),
+      ) ?? []
+
   const renderDescription = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
       return true

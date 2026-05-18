@@ -1,5 +1,5 @@
 import { getValueViaPath, YES, NO } from '@island.is/application/core'
-import { ExternalData } from '@island.is/application/types'
+import { ExternalData, Application } from '@island.is/application/types'
 import {
   GaldurExternalDomainModelsBankAccountDTO,
   GaldurExternalDomainModelsEducationDTO,
@@ -10,34 +10,41 @@ import { getBankLedgerValues } from './getBankLedgerValues'
 
 const APP_PATH = 'currentApplicationInformation.data.currentApplication'
 
-export const getOtherAddressDefault = (externalData: ExternalData) =>
-  getValueViaPath<string>(externalData, `${APP_PATH}.currentAddress`) ?? ''
+export const getOtherAddressDefault = (application: Application) =>
+  getValueViaPath<string>(
+    application.externalData,
+    `${APP_PATH}.currentAddress`,
+  ) ?? ''
 
 export const getCurrentAddressIsNotDifferentDefault = (
-  externalData: ExternalData,
+  application: Application,
 ) => {
   const isDifferent =
     getValueViaPath<boolean>(
-      externalData,
+      application.externalData,
       `${APP_PATH}.currentAddressDifferent`,
     ) ?? false
 
   return isDifferent ? [] : [YES]
 }
 
-export const getOtherPostcodeDefault = (externalData: ExternalData) =>
-  getValueViaPath<string>(externalData, `${APP_PATH}.currentPostCodeId`) ?? ''
+export const getOtherPostcodeDefault = (application: Application) =>
+  getValueViaPath<string>(
+    application.externalData,
+    `${APP_PATH}.currentPostCodeId`,
+  ) ?? ''
 
-export const getPasswordDefault = (externalData: ExternalData) =>
-  getValueViaPath<string>(externalData, `${APP_PATH}.passCode`) ?? ''
+export const getPasswordDefault = (application: Application) =>
+  getValueViaPath<string>(application.externalData, `${APP_PATH}.passCode`) ??
+  ''
 
-export const getBankAccountDefault = (externalData: ExternalData) => {
+export const getBankAccountDefault = (application: Application) => {
   const bankAccount = getValueViaPath<GaldurExternalDomainModelsBankAccountDTO>(
-    externalData,
+    application.externalData,
     `${APP_PATH}.bankAccount`,
   )
   const bankLedgerValues = getBankLedgerValues(
-    externalData,
+    application.externalData,
     bankAccount?.bankId ?? '',
     bankAccount?.ledgerId ?? '',
   )
@@ -48,19 +55,19 @@ export const getBankAccountDefault = (externalData: ExternalData) => {
   }
 }
 
-export const getDefaultJobWishes = (externalData: ExternalData) => {
+export const getDefaultJobWishes = (application: Application) => {
   const jobs =
     getValueViaPath<GaldurExternalDomainModelsApplicantPreferredJobDTO[]>(
-      externalData,
+      application.externalData,
       `${APP_PATH}.preferredJobs`,
     ) ?? []
   return jobs.map((job) => job.jobCodeId ?? '').filter(Boolean)
 }
 
-export const getDefaultEducation = (externalData: ExternalData) => {
+export const getDefaultEducation = (application: Application) => {
   const education =
     getValueViaPath<Array<GaldurExternalDomainModelsEducationDTO>>(
-      externalData,
+      application.externalData,
       `${APP_PATH}.educationHistory`,
     ) || []
   return education.map((edu) => ({
@@ -68,20 +75,40 @@ export const getDefaultEducation = (externalData: ExternalData) => {
     degree: edu.educationDegreeId ?? '',
     courseOfStudy: edu.educationSubjectId ?? '',
     endDate: edu.yearFinished?.toString() ?? '',
-    readOnly: true as const,
+    readOnly: true,
   }))
 }
 
-export const getDefaultDrivingLicenses = (externalData: ExternalData) =>
+export const getDefaultHasDrivingLicense = (application: Application) => {
+  const defaults = getDefaultDrivingLicenses(application)
+  return defaults.length > 0 ? ['yes'] : []
+}
+
+export const getDefaultDrivingLicenceTypes = (externalData: ExternalData) =>
   getValueViaPath<string[]>(externalData, `${APP_PATH}.drivingLicenses`) ?? []
 
-export const getDefaultHeavyMachineryLicenses = (externalData: ExternalData) =>
+export const getDefaultDrivingLicenses = (application: Application) =>
+  getDefaultDrivingLicenceTypes(application.externalData)
+
+export const getDefaultHasHeavyMachineryLicense = (
+  application: Application,
+) => {
+  const defaults = getDefaultHeavyMachineryLicenses(application)
+  return defaults.length > 0 ? ['yes'] : []
+}
+
+export const getDefaultHeavyMachineryLicenceTypes = (
+  externalData: ExternalData,
+) =>
   getValueViaPath<string[]>(externalData, `${APP_PATH}.workMachineRights`) ?? []
 
-export const getDefaultLanguages = (externalData: ExternalData) => {
+export const getDefaultHeavyMachineryLicenses = (application: Application) =>
+  getDefaultHeavyMachineryLicenceTypes(application.externalData)
+
+export const getDefaultLanguages = (application: Application) => {
   const currentLanguages =
     getValueViaPath<GaldurExternalDomainModelsApplicantLanguageAbilityDTO[]>(
-      externalData,
+      application.externalData,
       `${APP_PATH}.languageAbility`,
     ) ?? []
   return currentLanguages.map((lang) => ({
@@ -91,9 +118,9 @@ export const getDefaultLanguages = (externalData: ExternalData) => {
   }))
 }
 
-export const getDefaultEures = (externalData: ExternalData) => {
+export const getDefaultEures = (application: Application) => {
   const saveEURES = getValueViaPath<boolean>(
-    externalData,
+    application.externalData,
     `${APP_PATH}.saveEURES`,
   )
   return saveEURES ? YES : NO
