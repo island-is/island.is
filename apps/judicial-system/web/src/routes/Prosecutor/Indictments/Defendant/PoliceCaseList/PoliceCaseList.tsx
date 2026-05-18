@@ -425,16 +425,9 @@ export const PoliceCaseList = () => {
         subtypes = policeCaseInfo.subtypes
       }
 
-      console.log('place date subtypes', {
-        policeCaseNumber: policeCaseInfo.policeCaseNumber,
-        place,
-        date,
-        subtypes,
-      })
       if (!place && !date && !subtypes) {
         continue
       }
-
 
       updates.push({
         index: idx,
