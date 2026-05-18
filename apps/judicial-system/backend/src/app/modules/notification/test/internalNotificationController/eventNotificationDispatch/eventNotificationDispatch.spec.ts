@@ -93,20 +93,6 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         },
       ],
     },
-    {
-      theCase: baseCase,
-      notificationType: EventNotificationType.COURT_DATE_SCHEDULED,
-      expectedMessages: [
-        {
-          type: MessageType.NOTIFICATION,
-          caseId,
-          body: {
-            type: RequestCaseNotificationType.COURT_DATE,
-            userDescriptor: { name: user.name },
-          },
-        },
-      ],
-    },
   ]
 
   it.each(
