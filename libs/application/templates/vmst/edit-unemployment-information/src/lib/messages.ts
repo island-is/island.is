@@ -224,6 +224,11 @@ export const application = defineMessages({
     defaultMessage: 'Tungumálafærni',
     description: `language ability label`,
   },
+  languageRepeaterLabel: {
+    id: 'vmst.eui.application:languageRepeaterLabel',
+    defaultMessage: 'Tungumál',
+    description: `Language repeater label`,
+  },
   addLanguageLabel: {
     id: 'vmst.eui.application:addLanguageLabel',
     defaultMessage: 'Bæta við tungumáli',

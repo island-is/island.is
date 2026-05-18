@@ -1,6 +1,6 @@
 import {
   ApiProtectedV1PensionCalculatorPostRequest,
-  TrWebApiServicesCommonClientsModelsYearWithMonthsDto,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto,
   TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -214,7 +214,7 @@ export const getPensionCalculationHighlightedItems = (
 
 export const toYearWithMonths = (
   raw:
-    | TrWebApiServicesCommonClientsModelsYearWithMonthsDto[]
+    | TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceYearWithMonthsDto[]
     | null
     | undefined,
 ): YearWithMonths[] | undefined => {

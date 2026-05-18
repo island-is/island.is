@@ -51,6 +51,7 @@ export const useIdpProviderModal = ({
   >([])
   const [loadingIdpProvider, setLoadingIdpProvider] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
   const lastHandledFetcherData = useRef<IdpProvidersActionResult | null>(null)
 
   const [fetchIdpProvider] = useLazyQuery<
@@ -75,6 +76,11 @@ export const useIdpProviderModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setFormErrors({})
+    setSaveOnAllEnvs(false)
+  }, [])
+
+  const toggleSaveOnAllEnvs = useCallback(() => {
+    setSaveOnAllEnvs((prev) => !prev)
   }, [])
 
   useEffect(() => {
@@ -217,14 +223,19 @@ export const useIdpProviderModal = ({
 
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
-    } else if (isEditing && userAvailableEnvironments.length > 0) {
-      submitData.set('environments', JSON.stringify(userAvailableEnvironments))
+    } else if (isEditing) {
+      const targets =
+        saveOnAllEnvs && userAvailableEnvironments.length > 1
+          ? userAvailableEnvironments
+          : [selectedEnvResult.environment]
+      submitData.set('environments', JSON.stringify(targets))
     }
 
     fetcher.submit(submitData, { method: 'post' })
   }
 
   const handlePublish = async (targetEnvironment: AuthAdminEnvironment) => {
+    if (formData.level === '') return
     try {
       await publishToEnvironment({
         variables: {
@@ -314,6 +325,8 @@ export const useIdpProviderModal = ({
     environmentOptions,
     selectedEnvResult,
     configuredEnvironments,
+    userAvailableEnvironments,
+    saveOnAllEnvs,
     openCreateModal,
     openEditModal,
     resetModalState,
@@ -322,6 +335,7 @@ export const useIdpProviderModal = ({
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,
+    toggleSaveOnAllEnvs,
   }
 }
 

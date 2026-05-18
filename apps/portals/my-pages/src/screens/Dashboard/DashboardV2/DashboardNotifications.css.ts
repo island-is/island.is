@@ -16,15 +16,12 @@ export const accessDeniedImage = style({
   height: 180,
 })
 
-export const notificationSenderLogoWrapper = style({
-  width: 40,
-  height: 40,
-  flexShrink: 0,
-  borderRadius: '50%',
-  backgroundColor: theme.color.blue100,
+export const notificationSenderLogoImage = style({
+  height: 'auto',
+  width: 'auto',
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  maxHeight: 28,
+  maxWidth: 28,
 })
 
 export const notificationLink = style({
@@ -32,11 +29,6 @@ export const notificationLink = style({
   textDecoration: 'none',
 })
 
-export const notificationSenderLogoImage = style({
-  width: 24,
-  height: 24,
-  objectFit: 'contain',
-})
 export const notificationRowMobileFull = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
