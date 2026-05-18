@@ -65,7 +65,6 @@ export default function DocumentCommunicationsScreen() {
   const theme = useTheme()
   const intl = useIntl()
   const formatDate = useDateTimeFormatter()
-  const [shouldScroll, setShouldScroll] = useState(false)
   const [actionsHeight, setActionsHeight] = useState(0)
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
@@ -111,7 +110,11 @@ export default function DocumentCommunicationsScreen() {
 
   useEffect(() => {
     if (!isSkeleton && comments.length > 0) {
-      setShouldScroll(true)
+      // Scroll to the bottom of the list after the toggle animation duration
+      const timer = setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true })
+      }, TOGGLE_ANIMATION_DURATION)
+      return () => clearTimeout(timer)
     }
   }, [isSkeleton, comments.length])
 
@@ -143,32 +146,11 @@ export default function DocumentCommunicationsScreen() {
     [comments.length],
   )
 
-  const data = [
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-  ]
-
-  // const data = useMemo(
-  //   () => (isSkeleton ? createSkeletonArr(8) : comments),
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [isSkeleton, docRes.data],
-  // ) as FlatListItem[]
+  const data = useMemo(
+    () => (isSkeleton ? createSkeletonArr(8) : comments),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isSkeleton, docRes.data],
+  ) as FlatListItem[]
 
   const ticketIdValue = `#${document?.ticket?.id ?? ticketId ?? ''}`
 
@@ -201,6 +183,7 @@ export default function DocumentCommunicationsScreen() {
       />
       <View style={{ flexDirection: 'column', flex: 1 }}>
         <Animated.FlatList
+          ref={flatListRef}
           keyExtractor={keyExtractor}
           initialNumToRender={50}
           data={data}

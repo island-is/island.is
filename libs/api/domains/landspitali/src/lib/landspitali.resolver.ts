@@ -9,6 +9,7 @@ import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPa
 import { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPaymentUrl.input'
 import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaymentUrl.response'
 import { Catalog } from './dto/catalog.response'
+import { MenuResponse } from './dto/menu.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -40,5 +41,16 @@ export class LandspitaliResolver {
   })
   async getCatalog(): Promise<Catalog> {
     return this.landspitaliService.getCatalog()
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => MenuResponse, {
+    name: 'webLandspitaliMenu',
+  })
+  async getMenu(
+    @Args('selectedDate', { type: () => String, nullable: true })
+    selectedDate?: string,
+  ): Promise<MenuResponse> {
+    return this.landspitaliService.getMeals(selectedDate)
   }
 }
