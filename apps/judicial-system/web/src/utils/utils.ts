@@ -26,14 +26,12 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export const mapStringToGender = (gender?: string | null): Gender | undefined => {
-  const normalized = gender?.trim().toLowerCase()
+export const mapStringToGender = (
+  gender?: string | null,
+): Gender | undefined => {
+  const normalizedGender = gender?.trim().toLowerCase()
 
-  if (!normalized) {
-    return undefined
-  }
-
-  switch (normalized) {
+  switch (normalizedGender) {
     case 'male':
     case 'karl':
       return Gender.MALE
