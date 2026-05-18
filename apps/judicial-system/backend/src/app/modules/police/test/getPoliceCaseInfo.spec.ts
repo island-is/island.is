@@ -3,12 +3,12 @@ import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseType, User } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
-import { IndictmentCountService } from '../../indictment-count/indictmentCount.service'
-import { Case, CaseRepositoryService } from '../../repository'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from '../../repository'
+import { Case } from '../../repository'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
 
 jest.mock('isomorphic-fetch')
@@ -27,8 +27,7 @@ type GivenWhenThen = (
 describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
   let assignDefendantPoliceCaseNumbers: jest.Mock
-  let mockIndictmentCountService: IndictmentCountService
-  let mockCaseRepositoryService: CaseRepositoryService
+  let findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
 
   beforeEach(async () => {
     ;(fetch as jest.Mock).mockReset()
@@ -36,14 +35,12 @@ describe('PoliceController - Get police case info', () => {
     const {
       policeController,
       caseDefendantPoliceCaseNumberRepositoryService,
-      indictmentCountService,
-      caseRepositoryService,
     } = await createTestingPoliceModule()
 
     assignDefendantPoliceCaseNumbers =
       caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers as jest.Mock
-    mockIndictmentCountService = indictmentCountService
-    mockCaseRepositoryService = caseRepositoryService
+    findDistinctPoliceCaseNumbersByCaseIds =
+      caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds as jest.Mock
 
     givenWhenThen = async (
       caseId: string,
@@ -79,7 +76,6 @@ describe('PoliceController - Get police case info', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      // getCaseUnitsFromPolice (GetRVMalseiningar)
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
@@ -153,35 +149,16 @@ describe('PoliceController - Get police case info', () => {
       ).toBe(false)
     })
 
-    it('should assign defendant-linked police case numbers from police case units', () => {
-      expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
-      expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
-        caseId,
-        expect.arrayContaining([
-          {
-            defendantId: '11111111-1111-1111-1111-111111111111',
-            policeCaseNumber: '007-2021-000001',
-          },
-          {
-            defendantId: '11111111-1111-1111-1111-111111111111',
-            policeCaseNumber: '007-2020-000103',
-          },
-          {
-            defendantId: '11111111-1111-1111-1111-111111111111',
-            policeCaseNumber: '007-2020-000057',
-          },
-        ]),
-        expect.objectContaining({ transaction: expect.any(Object) }),
-      )
+    it('should not assign defendant links for numbers not already on the case', () => {
+      expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
     })
   })
 
-  describe('indictment counts and auto-fill for indictment cases', () => {
+  describe('defendant linking for existing police case numbers', () => {
     const theUser = {} as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      type: CaseType.INDICTMENT,
       defendants: [
         {
           id: '11111111-1111-1111-1111-111111111111',
@@ -191,185 +168,107 @@ describe('PoliceController - Get police case info', () => {
       ],
     } as Case
 
-    const policeResponse = [
-      {
-        upprunalegtMalsnumer: '007-2021-000001',
-        brotFra: '2021-02-23T13:17:00',
-        gotuHeiti: 'Testgata',
-        gotuNumer: '3',
-        sveitafelag: 'Testbær',
-        artalNrGreinLidur: null,
-      },
-      {
-        upprunalegtMalsnumer: '007-2020-000103',
-        brotFra: '2021-02-23T13:17:00',
-        gotuHeiti: null,
-        gotuNumer: null,
-        sveitafelag: null,
-        artalNrGreinLidur: null,
-      },
-      {
-        upprunalegtMalsnumer: '007-2020-000057',
-        brotFra: '2021-02-23T13:17:00',
-        gotuHeiti: null,
-        gotuNumer: null,
-        sveitafelag: null,
-        artalNrGreinLidur: null,
-      },
-    ]
-
-    describe('when some police case numbers are new and none have indictment counts', () => {
+    describe('when some police case numbers already exist on the case', () => {
       let then: Then
 
       beforeEach(async () => {
-        assignDefendantPoliceCaseNumbers.mockResolvedValueOnce([
-          '007-2020-000103',
-          '007-2020-000057',
-        ])
+        findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValueOnce(
+          new Map([[caseId, ['007-2021-000001', '007-2020-000103']]]),
+        )
 
         const mockFetch = fetch as jest.Mock
         mockFetch.mockResolvedValueOnce({
           ok: true,
-          json: async () => policeResponse,
+          json: async () => [
+            {
+              upprunalegtMalsnumer: '007-2021-000001',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Testgata',
+              gotuNumer: '3',
+              sveitafelag: 'Testbær',
+              artalNrGreinLidur: null,
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000103',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: null,
+              gotuNumer: null,
+              sveitafelag: null,
+              artalNrGreinLidur: null,
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000057',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: null,
+              gotuNumer: null,
+              sveitafelag: null,
+              artalNrGreinLidur: null,
+            },
+          ],
         })
 
         then = await givenWhenThen(caseId, theUser, theCase)
       })
 
-      it('should create indictment counts for all police case numbers missing them', () => {
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledTimes(3)
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledWith(caseId, '007-2021-000001', expect.any(Object))
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledWith(caseId, '007-2020-000103', expect.any(Object))
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledWith(caseId, '007-2020-000057', expect.any(Object))
-      })
-
-      it('should auto-fill crime scenes for all linked police case numbers', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+      it('should only assign defendant links for police case numbers already on the case', () => {
+        expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledTimes(1)
+        expect(assignDefendantPoliceCaseNumbers).toHaveBeenCalledWith(
           caseId,
-          expect.objectContaining({
-            crimeScenes: expect.objectContaining({
-              '007-2021-000001': {
-                place: 'Testgata 3, Testbær',
-                date: new Date('2021-02-23T13:17:00'),
-              },
-              '007-2020-000103': {
-                place: '',
-                date: new Date('2021-02-23T13:17:00'),
-              },
-              '007-2020-000057': {
-                place: '',
-                date: new Date('2021-02-23T13:17:00'),
-              },
-            }),
-          }),
+          expect.arrayContaining([
+            {
+              defendantId: '11111111-1111-1111-1111-111111111111',
+              policeCaseNumber: '007-2021-000001',
+            },
+            {
+              defendantId: '11111111-1111-1111-1111-111111111111',
+              policeCaseNumber: '007-2020-000103',
+            },
+          ]),
           expect.objectContaining({ transaction: expect.any(Object) }),
         )
+
+        const passedLinks =
+          assignDefendantPoliceCaseNumbers.mock.calls[0][1] as Array<{
+            policeCaseNumber: string
+          }>
+        expect(
+          passedLinks.some(
+            (l) => l.policeCaseNumber === '007-2020-000057',
+          ),
+        ).toBe(false)
       })
 
-      it('should still return police case info', () => {
+      it('should still return all police case info', () => {
         expect(then.result).toHaveLength(3)
       })
     })
 
-    describe('when all police case numbers already have indictment counts', () => {
+    describe('when no police case numbers exist on the case yet', () => {
       beforeEach(async () => {
-        assignDefendantPoliceCaseNumbers.mockResolvedValueOnce([])
-        ;(mockIndictmentCountService.findByCaseId as jest.Mock).mockResolvedValueOnce([
-          { policeCaseNumber: '007-2021-000001' },
-          { policeCaseNumber: '007-2020-000103' },
-          { policeCaseNumber: '007-2020-000057' },
-        ])
+        findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValueOnce(
+          new Map([[caseId, []]]),
+        )
 
         const mockFetch = fetch as jest.Mock
         mockFetch.mockResolvedValueOnce({
           ok: true,
-          json: async () => policeResponse,
+          json: async () => [
+            {
+              upprunalegtMalsnumer: '007-2021-000001',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Testgata',
+              gotuNumer: '3',
+              sveitafelag: 'Testbær',
+              artalNrGreinLidur: null,
+            },
+          ],
         })
 
         await givenWhenThen(caseId, theUser, theCase)
       })
 
-      it('should not create any indictment counts', () => {
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('when existing police case numbers are missing indictment counts', () => {
-      beforeEach(async () => {
-        assignDefendantPoliceCaseNumbers.mockResolvedValueOnce([])
-        ;(mockIndictmentCountService.findByCaseId as jest.Mock).mockResolvedValueOnce([
-          { policeCaseNumber: '007-2021-000001' },
-        ])
-
-        const mockFetch = fetch as jest.Mock
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => policeResponse,
-        })
-
-        await givenWhenThen(caseId, theUser, theCase)
-      })
-
-      it('should backfill the missing indictment counts', () => {
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledTimes(2)
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledWith(caseId, '007-2020-000103', expect.any(Object))
-        expect(
-          mockIndictmentCountService.createWithPoliceCaseNumber,
-        ).toHaveBeenCalledWith(caseId, '007-2020-000057', expect.any(Object))
-      })
-    })
-
-    describe('when crime scene data already exists', () => {
-      beforeEach(async () => {
-        assignDefendantPoliceCaseNumbers.mockResolvedValueOnce([])
-        ;(mockIndictmentCountService.findByCaseId as jest.Mock).mockResolvedValueOnce([
-          { policeCaseNumber: '007-2021-000001' },
-          { policeCaseNumber: '007-2020-000103' },
-          { policeCaseNumber: '007-2020-000057' },
-        ])
-        ;(mockCaseRepositoryService.findById as jest.Mock).mockResolvedValueOnce({
-          crimeScenes: {
-            '007-2021-000001': {
-              place: 'User-entered place',
-              date: new Date('2024-01-01'),
-            },
-            '007-2020-000103': {
-              place: 'Another place',
-              date: new Date('2024-02-01'),
-            },
-            '007-2020-000057': {
-              place: 'Third place',
-              date: new Date('2024-03-01'),
-            },
-          },
-          indictmentSubtypes: {},
-        })
-
-        const mockFetch = fetch as jest.Mock
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => policeResponse,
-        })
-
-        await givenWhenThen(caseId, theUser, theCase)
-      })
-
-      it('should not overwrite existing crime scene data', () => {
-        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      it('should not assign any defendant links', () => {
+        expect(assignDefendantPoliceCaseNumbers).not.toHaveBeenCalled()
       })
     })
   })
@@ -385,7 +284,6 @@ describe('PoliceController - Get police case info', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      // getDefendantsFromPolice
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
@@ -396,7 +294,6 @@ describe('PoliceController - Get police case info', () => {
         ],
       })
 
-      // getCaseUnitsFromPolice (GetRVMalseiningar)
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
@@ -445,7 +342,6 @@ describe('PoliceController - Get police case info', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      // getDefendantsFromPolice
       mockFetch.mockResolvedValueOnce({
         ok: false,
         text: () => 'Some error for getDefendantsFromPolice',

@@ -28,12 +28,8 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import {
   CaseState,
   CaseType,
-  type CrimeSceneMap,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
-  IndictmentSubtype as IndictmentSubtypeEnum,
-  type IndictmentSubtypeMap,
-  isIndictmentCase,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -1071,46 +1067,10 @@ export class PoliceService {
     return links
   }
 
-  private buildAutoFillUpdates(
-    cases: PoliceCaseInfo[],
-    policeCaseNumbers: string[],
-    existingCrimeScenes?: CrimeSceneMap,
-    existingSubtypes?: IndictmentSubtypeMap,
-  ): { crimeScenes: CrimeSceneMap; indictmentSubtypes: IndictmentSubtypeMap } {
-    const lookup = new Map(cases.map((c) => [c.policeCaseNumber, c]))
-    const crimeScenes: CrimeSceneMap = {}
-    const indictmentSubtypes: IndictmentSubtypeMap = {}
-
-    for (const policeCaseNumber of policeCaseNumbers) {
-      const info = lookup.get(policeCaseNumber)
-      if (!info) {
-        continue
-      }
-
-      const scene = existingCrimeScenes?.[policeCaseNumber]
-      if (!scene?.place && !scene?.date) {
-        crimeScenes[policeCaseNumber] = { place: info.place, date: info.date }
-      }
-
-      const subTypes = existingSubtypes?.[policeCaseNumber]
-      if (
-        (!subTypes || subTypes.length === 0) &&
-        info.subtypes &&
-        info.subtypes.length > 0
-      ) {
-        indictmentSubtypes[policeCaseNumber] =
-          info.subtypes as IndictmentSubtypeEnum[]
-      }
-    }
-
-    return { crimeScenes, indictmentSubtypes }
-  }
-
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
     defendants: { id: string; nationalId: string }[] = [],
-    caseType?: CaseType,
   ): Promise<PoliceCaseInfo[]> {
     try {
       const nationalIdsToUse =
@@ -1138,79 +1098,25 @@ export class PoliceService {
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
         await this.sequelize.transaction(async (transaction: Transaction) => {
-          await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-            caseId,
-            defendantPoliceCaseNumberLinks,
-            { transaction },
+          const existingPcnMap =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
+              [caseId],
+              { transaction },
+            )
+          const existingPoliceCaseNumbers = new Set(
+            existingPcnMap.get(caseId) ?? [],
           )
 
-          if (caseType && isIndictmentCase(caseType)) {
-            const allLinkedPoliceCaseNumbers = [
-              ...new Set(
-                defendantPoliceCaseNumberLinks.map((l) => l.policeCaseNumber),
-              ),
-            ]
+          const linksForExistingNumbers = defendantPoliceCaseNumberLinks.filter(
+            (link) => existingPoliceCaseNumbers.has(link.policeCaseNumber),
+          )
 
-            const existingCounts =
-              await this.indictmentCountService.findByCaseId(
-                caseId,
-                transaction,
-              )
-            const coveredPoliceCaseNumbers = new Set(
-              existingCounts
-                .map((c) => c.policeCaseNumber)
-                .filter((pcn): pcn is string => !!pcn),
+          if (linksForExistingNumbers.length > 0) {
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+              caseId,
+              linksForExistingNumbers,
+              { transaction },
             )
-
-            const missingPoliceCaseNumbers = allLinkedPoliceCaseNumbers.filter(
-              (pcn) => !coveredPoliceCaseNumbers.has(pcn),
-            )
-
-            for (const policeCaseNumber of missingPoliceCaseNumbers) {
-              await this.indictmentCountService.createWithPoliceCaseNumber(
-                caseId,
-                policeCaseNumber,
-                transaction,
-              )
-            }
-
-            const theCase = await this.caseRepositoryService.findById(caseId, {
-              transaction,
-            })
-
-            if (theCase) {
-              const fills = this.buildAutoFillUpdates(
-                cases,
-                allLinkedPoliceCaseNumbers,
-                theCase.crimeScenes,
-                theCase.indictmentSubtypes,
-              )
-
-              const updates: {
-                crimeScenes?: CrimeSceneMap
-                indictmentSubtypes?: IndictmentSubtypeMap
-              } = {}
-
-              if (Object.keys(fills.crimeScenes).length > 0) {
-                updates.crimeScenes = {
-                  ...theCase.crimeScenes,
-                  ...fills.crimeScenes,
-                }
-              }
-
-              if (Object.keys(fills.indictmentSubtypes).length > 0) {
-                updates.indictmentSubtypes = {
-                  ...theCase.indictmentSubtypes,
-                  ...fills.indictmentSubtypes,
-                }
-              }
-
-              if (updates.crimeScenes || updates.indictmentSubtypes) {
-                await this.caseRepositoryService.update(caseId, updates, {
-                  transaction,
-                })
-              }
-            }
           }
         })
       }

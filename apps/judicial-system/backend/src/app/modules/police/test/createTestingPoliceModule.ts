@@ -78,6 +78,9 @@ export const createTestingPoliceModule = async () => {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
           assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
+          findDistinctPoliceCaseNumbersByCaseIds: jest
+            .fn()
+            .mockResolvedValue(new Map()),
         },
       },
       {
