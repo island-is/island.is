@@ -86,10 +86,15 @@ export class ConfirmTravelService extends BaseTemplateApiService {
       this.logger.error(
         '[VMST-Travel-confirmation] - Error submitting travel confirmation',
       )
+
+      const body =
+        e instanceof FetchError ? (e.body as { message?: string }) : undefined
+      const summary = body?.message || ''
+
       throw new TemplateApiError(
         {
           title: errorMsgs.submitError,
-          summary: errorMsgs.submitError,
+          summary,
         },
         500,
       )
