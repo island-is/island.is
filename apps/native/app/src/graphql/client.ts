@@ -115,12 +115,10 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
       }
     }
 
-    // 401 from the Cognito proxy (non-prod only). response.url guards against
-    // 401s from the API behind it, which a Cognito reauth wouldn't fix.
+    // 401 from the Cognito proxy (non-prod only).
     if (
       networkError.name === 'ServerError' &&
       (networkError as ServerError).statusCode === 401 &&
-      (networkError as ServerError).response?.url?.includes('cognito') &&
       environmentStore.getState().environment.idsIssuer !==
         environments.prod.idsIssuer
     ) {
