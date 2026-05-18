@@ -103,7 +103,7 @@ export const SearchResultsContent = ({
       )}
       {!error && !noData && (
         <InfoCardGrid
-          maxColumnCount={isGridLayout ? 1 : 2}
+          maxColumnCount={isGridLayout ? 2 : 1}
           variant="detailed"
           cards={
             grants
