@@ -116,6 +116,10 @@ export const outlined = style({
       borderColor: theme.color.mint200,
       color: theme.color.mint800,
     },
+    [`&${variants.yellow}`]: {
+      borderColor: theme.color.yellow600,
+      color: theme.color.dark400,
+    },
     [`&${variants.disabled}`]: {
       borderColor: theme.color.dark100,
       color: theme.color.dark200,
