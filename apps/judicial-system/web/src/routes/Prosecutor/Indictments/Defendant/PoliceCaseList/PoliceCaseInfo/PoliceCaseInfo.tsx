@@ -66,7 +66,6 @@ export const PoliceCaseInfo: FC<Props> = ({
     return sorted
   }, [data])
 
-
   const availablePoliceCases = useMemo(() => {
     return policeCaseInfo.filter(
       (caseInfo) =>
