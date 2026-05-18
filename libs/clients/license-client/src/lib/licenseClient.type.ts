@@ -2,7 +2,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { VinnuvelaDto } from '@island.is/clients/adr-and-machine-license'
 
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
-import { DriverLicenseDto } from '@island.is/clients/driving-license'
+import { DtoV5DriverLicenseDto } from '@island.is/clients/driving-license'
 import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Staediskortamal } from '@island.is/clients/p-card'
 import {
@@ -42,7 +42,7 @@ export enum LicenseType {
 export interface LicenseResults {
   [LicenseType.AdrLicense]: FlattenedAdrDto
   [LicenseType.DisabilityLicense]: OrorkuSkirteini
-  [LicenseType.DrivingLicense]: DriverLicenseDto
+  [LicenseType.DrivingLicense]: DtoV5DriverLicenseDto
   [LicenseType.HuntingLicense]: HuntingLicenseDto
   [LicenseType.Ehic]: BasicCardInfoDTO
   [LicenseType.FirearmLicense]: FirearmLicenseDto

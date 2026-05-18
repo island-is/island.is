@@ -94,10 +94,6 @@ export const updateNamespace = async (
   messages: MessageDict,
   locales: Locales,
 ) => {
-  namespace.fields.internalTitle = {
-    [DEFAULT_LOCALE]: namespace.fields.namespace[DEFAULT_LOCALE],
-  }
-
   namespace.fields.defaults[DEFAULT_LOCALE] = updateDefaultsObject(
     namespace,
     messages,

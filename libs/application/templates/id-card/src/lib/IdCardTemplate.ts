@@ -179,7 +179,9 @@ const IdCardTemplate: ApplicationTemplate<
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.IdCardPruned].templateId,
-              ...(nationalId && { internalBody: nationalId }),
+              ...(nationalId && {
+                args: [{ key: 'internalBody', value: nationalId }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({

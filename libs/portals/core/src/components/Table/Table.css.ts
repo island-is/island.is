@@ -23,6 +23,16 @@ export const line = style({
   position: 'absolute',
 })
 
+export const sortButton = style({
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  font: 'inherit',
+  cursor: 'pointer',
+  textAlign: 'left',
+  width: '100%',
+})
+
 export const container = style({
   '::before': {
     content: '',

@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CmsModule } from '@island.is/cms'
+import { Client } from '../clients/models/client.model'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
@@ -39,6 +40,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
     TranslationModule,
     SequelizeModule.forFeature([
       Domain,
+      Client,
       IdentityResource,
       ApiScope,
       ApiResource,

@@ -77,12 +77,9 @@ export const TabPills = ({
     [selectedTab, scrollSelectedIntoView],
   )
 
-  const onScroll = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      scrollXRef.current = e.nativeEvent.contentOffset.x
-    },
-    [],
-  )
+  const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollXRef.current = e.nativeEvent.contentOffset.x
+  }, [])
 
   const onPillLayout = useCallback(
     (index: number, e: LayoutChangeEvent) => {
@@ -98,7 +95,7 @@ export const TabPills = ({
       ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 16 }}
+      style={{ marginTop: 16, paddingHorizontal: 16 }}
       contentContainerStyle={{ gap: 8 }}
       onLayout={onContainerLayout}
       onScroll={onScroll}

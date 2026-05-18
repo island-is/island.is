@@ -3,6 +3,43 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 
+const EDUCATION_PATH =
+  'currentApplicationInformation.data.supportData.education'
+
+export const findDegreeLabel = (
+  application: Application,
+  value: string,
+): string => {
+  const education =
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+      application.externalData,
+      EDUCATION_PATH,
+    ) ?? []
+  for (const program of education) {
+    const match = program.degrees?.find((d) => d.id === value)
+    if (match) return match.name ?? value
+  }
+  return value
+}
+
+export const findCourseLabel = (
+  application: Application,
+  value: string,
+): string => {
+  const education =
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+      application.externalData,
+      EDUCATION_PATH,
+    ) ?? []
+  for (const program of education) {
+    for (const degree of program.degrees ?? []) {
+      const match = degree.subjects?.find((s) => s.id === value)
+      if (match) return match.name ?? value
+    }
+  }
+  return value
+}
+
 export const getLevelsOfStudyOptions = (
   application: Application,
   locale: Locale,

@@ -34,7 +34,7 @@ const mapParticipantInfo = (participant: ApplicantsInfo): ApplicantsInfo => {
   }
 }
 
-const extractParticipants = (
+export const extractParticipants = (
   answers: Application['answers'],
 ): ParticipantsSection => {
   const applicantRole = getValueViaPath<string>(

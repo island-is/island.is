@@ -84,6 +84,7 @@ export const useApiScopeUserModal = ({
   const [originalHadName, setOriginalHadName] = useState(false)
   const [loadingUser, setLoadingUser] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
+  const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
   const lastHandledFetcherData = useRef<ApiScopeUsersActionResult | null>(null)
 
   const [environmentsData, setEnvironmentsData] = useState<
@@ -130,6 +131,11 @@ export const useApiScopeUserModal = ({
     setEnvironmentsData([])
     setEditEnvironment(null)
     setEditScopeOptions(null)
+    setSaveOnAllEnvs(false)
+  }, [])
+
+  const toggleSaveOnAllEnvs = useCallback(() => {
+    setSaveOnAllEnvs((prev) => !prev)
   }, [])
 
   useEffect(() => {
@@ -341,7 +347,11 @@ export const useApiScopeUserModal = ({
     if (!isEditing && selectedEnvironments.length > 0) {
       submitData.set('environments', JSON.stringify(selectedEnvironments))
     } else if (isEditing && editEnvironment) {
-      submitData.set('environments', JSON.stringify([editEnvironment]))
+      const targets =
+        saveOnAllEnvs && userAvailableEnvironments.length > 1
+          ? userAvailableEnvironments
+          : [editEnvironment]
+      submitData.set('environments', JSON.stringify(targets))
     }
 
     fetcher.submit(submitData, { method: 'post' })
@@ -507,6 +517,8 @@ export const useApiScopeUserModal = ({
     editEnvironment,
     selectedEnvResult,
     configuredEnvironments,
+    userAvailableEnvironments,
+    saveOnAllEnvs,
     accessControlledScopes,
     openCreateModal,
     openEditModal,
@@ -517,6 +529,7 @@ export const useApiScopeUserModal = ({
     handleEnvironmentSwitch,
     handleScopeChange,
     setFormField,
+    toggleSaveOnAllEnvs,
   }
 }
 

@@ -21,7 +21,7 @@ const variantConfig = {
     message: m.grantTypesDeleteConfirmMessage,
     environmentLabel: m.grantTypesDeleteSelectEnvironments,
     environmentError: m.grantTypesDeleteEnvironmentRequired,
-    confirmLabel: m.grantTypesDeleteButton,
+    confirmLabel: m.archive,
     confirmColorScheme: 'destructive' as const,
   },
   restore: {
@@ -29,7 +29,7 @@ const variantConfig = {
     message: m.grantTypesRestoreConfirmMessage,
     environmentLabel: m.grantTypesRestoreSelectEnvironments,
     environmentError: m.grantTypesRestoreEnvironmentRequired,
-    confirmLabel: m.grantTypesRestoreButton,
+    confirmLabel: m.restore,
     confirmColorScheme: 'default' as const,
   },
 }
@@ -80,7 +80,7 @@ export const GrantTypeConfirmModal = ({
       isVisible
       label={formatMessage(config.title)}
       onClose={onClose}
-      closeButtonLabel={formatMessage(m.grantTypesCancelButton)}
+      closeButtonLabel={formatMessage(m.cancel)}
       scrollType="outside"
     >
       <Box paddingX={4}>
@@ -136,7 +136,7 @@ export const GrantTypeConfirmModal = ({
           columnGap={2}
         >
           <Button variant="ghost" onClick={onClose}>
-            {formatMessage(m.grantTypesCancelButton)}
+            {formatMessage(m.cancel)}
           </Button>
           <Button
             colorScheme={config.confirmColorScheme}
