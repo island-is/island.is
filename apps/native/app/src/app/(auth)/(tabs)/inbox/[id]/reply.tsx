@@ -9,6 +9,7 @@ import { StackScreen } from '@/components/stack-screen'
 import { LoadingIcon } from '@/components/nav-loading-spinner/loading-icon'
 import { Pressable } from '@/components/pressable/pressable'
 import {
+  GetDocumentDocument,
   useDocumentReplyMutation,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
@@ -96,6 +97,7 @@ export default function DocumentReplyScreen() {
 
   const [sendMessage, { loading: sendMessageLoading }] =
     useDocumentReplyMutation({
+      refetchQueries: [GetDocumentDocument],
       onCompleted: (data) => {
         if (data.documentsV2Reply?.id) {
           setMessage('')
