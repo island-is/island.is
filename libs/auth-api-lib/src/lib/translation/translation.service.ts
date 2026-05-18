@@ -61,6 +61,69 @@ export class TranslationService {
     })
   }
 
+  /**
+   * Searches translations across value, key and className. Returns all when
+   * no search string is provided.
+   */
+  async searchTranslations(
+    searchString: string | undefined,
+    page: number,
+    count: number,
+  ): Promise<{ rows: Translation[]; count: number }> {
+    if (!searchString || searchString.trim().length === 0) {
+      return this.findAndCountAllTranslations(page, count)
+    }
+
+    const trimmed = searchString.trim()
+    const wildcard = `%${trimmed}%`
+    const offset = (page - 1) * count
+
+    return this.translationModel.findAndCountAll({
+      where: {
+        [Op.or]: [
+          { value: { [Op.iLike]: wildcard } },
+          { key: { [Op.iLike]: wildcard } },
+          { className: { [Op.iLike]: wildcard } },
+          { property: { [Op.iLike]: wildcard } },
+        ],
+      },
+      limit: count,
+      offset,
+      order: ['language', 'className', 'key', 'property'],
+    })
+  }
+
+  /**
+   * Searches languages across isoKey, description and englishDescription.
+   * Returns all when no search string is provided.
+   */
+  async searchLanguages(
+    searchString: string | undefined,
+    page: number,
+    count: number,
+  ): Promise<{ rows: Language[]; count: number }> {
+    if (!searchString || searchString.trim().length === 0) {
+      return this.findAndCountAllLanguages(page, count)
+    }
+
+    const trimmed = searchString.trim()
+    const wildcard = `%${trimmed}%`
+    const offset = (page - 1) * count
+
+    return this.languageModel.findAndCountAll({
+      where: {
+        [Op.or]: [
+          { isoKey: { [Op.iLike]: wildcard } },
+          { description: { [Op.iLike]: wildcard } },
+          { englishDescription: { [Op.iLike]: wildcard } },
+        ],
+      },
+      limit: count,
+      offset,
+      order: ['isoKey'],
+    })
+  }
+
   /** Get's all translations */
   async findAllTranslations(): Promise<Translation[]> {
     return this.translationModel.findAll()

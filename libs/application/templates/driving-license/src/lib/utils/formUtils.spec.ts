@@ -5,6 +5,7 @@ import {
   needsHealthCertificateCondition,
   allowFakeCondition,
   hasCompletedPrerequisitesStep,
+  hasUsableRlsQualityPhoto,
 } from './formUtils'
 import { NO, YES } from '@island.is/application/core'
 
@@ -136,5 +137,54 @@ describe('hasCompletedPrerequisitesStep', () => {
         }),
       }),
     ).toBe(false)
+  })
+})
+
+describe('hasUsableRlsQualityPhoto', () => {
+  const wrap = (data: unknown) =>
+    ({
+      qualityPhotoAndSignature: {
+        data,
+        date: new Date(),
+        status: 'success' as const,
+      },
+    } as any)
+
+  it('returns true when RLS returns imageId + binary', () => {
+    expect(
+      hasUsableRlsQualityPhoto(
+        wrap({ imageId: 1390033, imageTypeId: 1, pohto: 'base64data' }),
+      ),
+    ).toBe(true)
+  })
+
+  // Regression: legacy RLS records return metadata + signature but no photo
+  // binary. Submission resolves photo by reference (imageId) so the user
+  // should still pass eligibility and see the option.
+  it('returns true when imageId is present but pohto is null', () => {
+    expect(
+      hasUsableRlsQualityPhoto(
+        wrap({
+          imageId: 1390033,
+          imageTypeId: 1,
+          imageTypeName: 'Passamynd',
+          pohto: null,
+        }),
+      ),
+    ).toBe(true)
+  })
+
+  it('returns false when imageId is null', () => {
+    expect(hasUsableRlsQualityPhoto(wrap({ imageId: null, pohto: null }))).toBe(
+      false,
+    )
+  })
+
+  it('returns false when externalData is empty', () => {
+    expect(hasUsableRlsQualityPhoto({})).toBe(false)
+  })
+
+  it('returns false when data is null', () => {
+    expect(hasUsableRlsQualityPhoto(wrap(null))).toBe(false)
   })
 })

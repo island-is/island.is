@@ -13,11 +13,11 @@ import {
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  QUALITY_IMAGE_TYPE_IDS,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
+import { hasUsableRlsQualityPhoto } from '../../lib/utils'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -94,39 +94,25 @@ export const useEligibility = (
   if (usingFakeData) {
     let hasPhoto: boolean
     if (usesNewPhotoSelector) {
-      // When a photo source is set to 'real', the data provider falls through
-      // to RLS, so externalData reflects whatever the logged-in user actually
-      // has. For 'yes' it's faked into externalData; for 'no' it's empty.
-      // In all three cases, reading externalData via the same logic the real
-      // path uses gives us the correct hasPhoto.
-      const thjodskraOrRLSIsReal =
-        fakeData?.hasThjodskraPhoto === 'real' ||
-        fakeData?.hasRLSPhoto === 'real'
+      // 'real' falls through to RLS/Þjóðskrá and populates externalData with
+      // real data. 'yes' / 'no' / 'metadata-only' all inject their fake shape
+      // into externalData via the data provider. So in every case the right
+      // answer comes from reading externalData through the same predicates
+      // the real path uses.
+      const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+        application.externalData,
+      )
 
-      if (thjodskraOrRLSIsReal) {
-        const qualityPhotoAndSignature = getValueViaPath<{
-          imageTypeId?: number | null
-          pohto?: string | null
-        }>(application.externalData, 'qualityPhotoAndSignature.data')
-        const qualityPhotoConfirmed =
-          QUALITY_IMAGE_TYPE_IDS.includes(
-            qualityPhotoAndSignature?.imageTypeId ?? 0,
-          ) && !!qualityPhotoAndSignature?.pohto
+      const thjodskraPhotos =
+        getValueViaPath<{
+          images?: Array<{ contentSpecification?: string }>
+        }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
+        []
+      const hasThjodskraFacial = thjodskraPhotos.some(
+        (p) => p.contentSpecification === 'FACIAL',
+      )
 
-        const thjodskraPhotos =
-          getValueViaPath<{
-            images?: Array<{ contentSpecification?: string }>
-          }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
-          []
-        const hasThjodskraFacial = thjodskraPhotos.some(
-          (p) => p.contentSpecification === 'FACIAL',
-        )
-
-        hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
-      } else {
-        hasPhoto =
-          fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
-      }
+      hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
     } else {
       hasPhoto = fakeData?.qualityPhoto === YES
     }
@@ -152,18 +138,8 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  // BE and redesigned 65+ both use the new photo selector (Thjóðskrá +
-  // RLS quality photo) and gate eligibility on having a usable photo.
   const computeUsablePhoto = () => {
-    const qualityPhotoAndSignature = getValueViaPath<{
-      imageTypeId?: number | null
-      pohto?: string | null
-    }>(application.externalData, 'qualityPhotoAndSignature.data')
-
-    const qualityPhotoConfirmed =
-      QUALITY_IMAGE_TYPE_IDS.includes(
-        qualityPhotoAndSignature?.imageTypeId ?? 0,
-      ) && !!qualityPhotoAndSignature?.pohto
+    if (hasUsableRlsQualityPhoto(application.externalData)) return true
 
     const thjodskraPhotos =
       getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(
@@ -171,11 +147,7 @@ export const useEligibility = (
         'allPhotosFromThjodskra.data',
       )?.images ?? []
 
-    const hasThjodskraFacial = thjodskraPhotos.some(
-      (p) => p.contentSpecification === 'FACIAL',
-    )
-
-    return qualityPhotoConfirmed || hasThjodskraFacial
+    return thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
   }
 
   if (application.answers.applicationFor === BE) {
