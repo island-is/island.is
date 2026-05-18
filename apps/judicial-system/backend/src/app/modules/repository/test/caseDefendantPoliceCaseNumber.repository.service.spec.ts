@@ -212,9 +212,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
   describe('assignDefendantPoliceCaseNumbers', () => {
     it('returns only genuinely new police case numbers not previously on the case', async () => {
-      mockModel.findAll.mockResolvedValue([
-        { policeCaseNumber: '007-1' },
-      ])
+      mockModel.findAll.mockResolvedValue([{ policeCaseNumber: '007-1' }])
 
       const result = await service.assignDefendantPoliceCaseNumbers(
         'case-1',
