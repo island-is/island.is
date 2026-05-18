@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useParams } from 'react-router-dom'
 import type { GroupBase, MultiValue } from 'react-select'
 
-import { useApolloClient } from '@apollo/client'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import {
   Box,
@@ -23,11 +23,7 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { useTenantsQuery } from '../../Tenants/Tenants.generated'
-import {
-  GetAvailableScopesDocument,
-  GetAvailableScopesQuery,
-  GetAvailableScopesQueryVariables,
-} from './Permissions.generated'
+import { useGetAvailableScopesByTenantsQuery } from './Permissions.generated'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -53,7 +49,6 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
     selectedEnvironment: { environment },
     actionData,
   } = useClient()
-  const apolloClient = useApolloClient()
 
   const [permissions, setPermissions] = useEnvironmentState<
     AuthAdminClientAllowedScope[]
@@ -67,10 +62,11 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const [pendingScopes, setPendingScopes] = useEnvironmentState<
     MultiValue<ScopeOption>
   >([])
-  const [tenantScopes, setTenantScopes] = useState<TenantScopes[]>([])
-  const [scopesLoading, setScopesLoading] = useState(false)
+  const [hasOpened, setHasOpened] = useState(false)
 
-  const { data: tenantsData, loading: tenantsLoading } = useTenantsQuery()
+  const { data: tenantsData, loading: tenantsLoading } = useTenantsQuery({
+    skip: !hasOpened,
+  })
 
   useEffect(() => {
     if (
@@ -87,59 +83,33 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
     return tenants.filter((t) => t.availableEnvironments.includes(environment))
   }, [tenantsData, environment])
 
-  useEffect(() => {
-    if (availableTenants.length === 0) {
-      setTenantScopes([])
-      setScopesLoading(false)
-      return
+  const tenantLabels = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const t of availableTenants) {
+      map.set(t.id, getTranslatedValue(t.defaultEnvironment.displayName, locale))
     }
+    return map
+  }, [availableTenants, locale])
 
-    let cancelled = false
-    setScopesLoading(true)
+  const { data: scopesData, loading: scopesLoading } =
+    useGetAvailableScopesByTenantsQuery({
+      skip: !hasOpened || availableTenants.length === 0,
+      variables: { input: { tenantIds: availableTenants.map((t) => t.id) } },
+    })
 
-    Promise.allSettled(
-      availableTenants.map((t) =>
-        apolloClient
-          .query<GetAvailableScopesQuery, GetAvailableScopesQueryVariables>({
-            query: GetAvailableScopesDocument,
-            variables: { input: { tenantId: t.id } },
-          })
-          .then((result) => ({ tenant: t, result })),
-      ),
-    )
-      .then((settled) => {
-        if (cancelled) return
-
-        const next: TenantScopes[] = []
-        for (const s of settled) {
-          if (s.status !== 'fulfilled') continue
-          const { tenant: t, result } = s.value
-          const scopes = (result.data?.authAdminScopes?.data ?? [])
-            .map((scope) =>
-              scope.environments.find((e) => e.environment === environment),
-            )
-            .filter(isDefined) as AuthAdminClientAllowedScope[]
-
-          next.push({
-            tenantId: t.id,
-            tenantLabel: getTranslatedValue(
-              t.defaultEnvironment.displayName,
-              locale,
-            ),
-            scopes,
-          })
-        }
-
-        setTenantScopes(next)
-      })
-      .finally(() => {
-        if (!cancelled) setScopesLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [availableTenants, environment, locale, apolloClient])
+  const tenantScopes = useMemo<TenantScopes[]>(() => {
+    const groups = scopesData?.authAdminScopesByTenants?.data ?? []
+    return groups.flatMap((group) => {
+      const tenantLabel = tenantLabels.get(group.tenantId)
+      if (!tenantLabel) return []
+      const scopes = group.data
+        .map((scope) =>
+          scope.environments.find((e) => e.environment === environment),
+        )
+        .filter(isDefined) as AuthAdminClientAllowedScope[]
+      return [{ tenantId: group.tenantId, tenantLabel, scopes }]
+    })
+  }, [scopesData, tenantLabels, environment])
 
   const scopePool = useMemo(() => {
     const map = new Map<string, AuthAdminClientAllowedScope>()
@@ -175,14 +145,14 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
 
     const OTHER_GROUP_KEY = '__other__'
     for (const scope of removedScopes) {
-      const tenantId = scope.domainName || OTHER_GROUP_KEY
+      const tenantId =
+        scope.domainName && groupMap.has(scope.domainName)
+          ? scope.domainName
+          : OTHER_GROUP_KEY
       let entry = groupMap.get(tenantId)
       if (!entry) {
         entry = {
-          label:
-            tenantId === OTHER_GROUP_KEY
-              ? formatMessage(m.permissionsOtherTenantGroup)
-              : tenantId,
+          label: formatMessage(m.permissionsOtherTenantGroup),
           scopes: new Map(),
         }
         groupMap.set(tenantId, entry)
@@ -268,12 +238,22 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const hasData =
     permissions.length > 0 || addedScopes.length > 0 || removedScopes.length > 0
 
-  const hasPendingInput = pendingScopes.length > 0
-
   const customValidation = useCallback(
-    () => addedScopes.length > 0 || removedScopes.length > 0,
-    [addedScopes, removedScopes],
+    () =>
+      addedScopes.length > 0 ||
+      removedScopes.length > 0 ||
+      pendingScopes.length > 0,
+    [addedScopes, removedScopes, pendingScopes],
   )
+
+  // Commit any pending multi-select selections into addedScopes synchronously
+  // so the hidden inputs are in the DOM before react-router serializes the form.
+  const handleSubmit = () => {
+    if (pendingScopes.length === 0) return
+    flushSync(() => {
+      handleAddPending()
+    })
+  }
 
   return (
     <FormCard
@@ -282,8 +262,12 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
         br: <br />,
       })}
       customValidation={customValidation}
-      submitDisabled={hasPendingInput}
-      intent={hasData ? ClientFormTypes.permissions : undefined}
+      onSubmit={handleSubmit}
+      intent={
+        hasData || pendingScopes.length > 0
+          ? ClientFormTypes.permissions
+          : undefined
+      }
       shouldSupportMultiEnvironment={false}
       headerMarginBottom={3}
     >
@@ -303,6 +287,7 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
               setPendingScopes(value as MultiValue<ScopeOption>)
             }
             isMulti
+            onMenuOpen={() => setHasOpened(true)}
             isLoading={tenantsLoading || scopesLoading}
             noOptionsMessage={formatMessage(m.permissionsModalNoScopes)}
             filterConfig={{

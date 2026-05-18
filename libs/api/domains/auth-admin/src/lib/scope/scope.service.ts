@@ -15,6 +15,7 @@ import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
 import { ScopeUser } from './models/scope-user.model'
 import { ScopesPayload } from './dto/scopes.payload'
+import { ScopesByTenantsPayload } from './dto/scopes-by-tenants.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
@@ -200,6 +201,33 @@ export class ScopeService extends MultiEnvironmentService {
         hasNextPage: false,
       },
     }
+  }
+
+  /**
+   * Gets all scopes for the given tenants in a single fan-out, so the browser
+   * only pays one round-trip to the GraphQL API. Per-tenant failures are
+   * tolerated — failed tenants are omitted from the response.
+   */
+  async getScopesByTenants(
+    user: User,
+    tenantIds: string[],
+  ): Promise<ScopesByTenantsPayload> {
+    const uniqueIds = Array.from(new Set(tenantIds))
+
+    const settled = await Promise.allSettled(
+      uniqueIds.map(async (tenantId) => ({
+        tenantId,
+        payload: await this.getScopes(user, tenantId),
+      })),
+    )
+
+    const data = settled.flatMap((result) =>
+      result.status === 'fulfilled'
+        ? [{ tenantId: result.value.tenantId, data: result.value.payload.data }]
+        : [],
+    )
+
+    return { data }
   }
 
   /**
