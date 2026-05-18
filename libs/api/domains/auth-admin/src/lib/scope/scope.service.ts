@@ -204,9 +204,7 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Gets all scopes for the given tenants in a single fan-out, so the browser
-   * only pays one round-trip to the GraphQL API. Per-tenant failures are
-   * tolerated — failed tenants are omitted from the response.
+   * Gets all scopes for the given tenants in a single fan-out.
    */
   async getScopesByTenants(
     user: User,
