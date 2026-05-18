@@ -122,6 +122,7 @@ export const ApplicantOverview = () => {
           variant="utility"
           text={formatMessage(um.applicantEditInfo)}
           size="small"
+          icon="pencil"
         />
       </Box>
       <Stack space={0}>
