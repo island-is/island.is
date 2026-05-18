@@ -236,6 +236,62 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('indictment completed for some defendants with ruling dates', () => {
+    const rulingDate = '2026-02-23'
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+          rulingDate,
+        },
+        {
+          defendantId: defendantId2,
+          rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+        },
+      ],
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should set created to 23:59:59.999 UTC on the ruling date when provided', () => {
+      const expectedCreated = new Date(rulingDate)
+      expectedCreated.setUTCHours(23, 59, 59, 999)
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        1,
+        DefendantEventType.INDICTMENT_DISMISSED,
+        caseId,
+        defendantId1,
+        user,
+        transaction,
+        expectedCreated,
+      )
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        2,
+        DefendantEventType.INDICTMENT_CANCELLED,
+        caseId,
+        defendantId2,
+        user,
+        transaction,
+        undefined,
+      )
+    })
+  })
+
   describe('indictment completed for some defendants with invalid defendant id', () => {
     const indictmentCase = {
       ...theCase,
