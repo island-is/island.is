@@ -8,8 +8,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 // Resolves which AppealCase the current page should operate on when the URL
-// identifies it indirectly via the ruling-order file id (`?rulingFileId=…`,
-// Step 6e — indictment-overview routes navigating into the appeal-submission
+// identifies it indirectly via the ruling-order file id (`?rulingFileId=…` —
+// indictment-overview routes navigating into the appeal-submission
 // flow). Defaults to the case-level appeal when no query param is set,
 // preserving today's behavior for legacy URLs.
 

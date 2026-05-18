@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 // Resolves which AppealCase a Court of Appeals detail page should operate on.
-// COA list rows route with `?appealCaseId=…` (Step 8c) — the appeal id
+// COA list rows route with `?appealCaseId=…` — the appeal id
 // directly identifies the row. Defaults to the case-level appeal when no
 // query param is set, preserving today's behavior for legacy URLs.
 
@@ -16,11 +16,7 @@ export const resolveTargetAppealCaseByAppealCaseId = (
   workingCase: Case,
   appealCaseId: string | undefined,
 ): AppealCase | undefined | null => {
-  if (!appealCaseId) {
-    return workingCase.appealCase
-  }
-
-  if (workingCase.appealCase?.id === appealCaseId) {
+  if (!appealCaseId || workingCase.appealCase?.id === appealCaseId) {
     return workingCase.appealCase
   }
 
