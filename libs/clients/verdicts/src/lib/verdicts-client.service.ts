@@ -654,7 +654,9 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
-          hearingTime: sanitizeHtml(agenda.length ?? ''),
+          hearingTime: !agenda.court?.code?.startsWith('hd')
+            ? sanitizeHtml(agenda.length ?? '')
+            : undefined,
         })
       }
     } else {
