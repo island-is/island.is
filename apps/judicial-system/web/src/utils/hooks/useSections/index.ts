@@ -42,7 +42,7 @@ const useSections = (
   const { formatMessage } = useIntl()
   const router = useRouter()
   // COA stepper + step validators operate on the appeal-case row identified
-  // by `?appealCaseId=…` (Step 10). The hook resolves it from FormContext +
+  // by `?appealCaseId=…`. The hook resolves it from FormContext +
   // router query; in production the FormContext working case matches the
   // working case passed to `getSections`, so closure capture is fine.
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()

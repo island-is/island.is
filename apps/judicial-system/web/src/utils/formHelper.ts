@@ -221,7 +221,7 @@ export type stepValidationsType = {
 }
 
 // COA step validations operate on the appeal-case row identified by the
-// `?appealCaseId=…` URL query (Step 10). Callers (currently `useSections`)
+// `?appealCaseId=…` URL query. Callers (currently `useSections`)
 // resolve the target appeal and pass it in; non-COA callers can pass
 // `theCase.appealCase` or omit the argument — the default is `undefined`,
 // which causes the COA validators to fail-closed (acceptable since non-COA
