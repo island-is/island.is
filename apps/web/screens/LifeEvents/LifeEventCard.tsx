@@ -40,23 +40,18 @@ export const LifeEventCard = ({
       <Text variant="h3" color="purple600" truncate>
         {heading}
       </Text>
-      <Box display="flex" flexDirection="row" style={{ height: 140 }}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="flexEnd"
-          style={{ flex: 1, minWidth: 0 }}
-        >
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="spaceBetween"
+        style={{ height: 140 }}
+      >
+        <Box display="flex" flexDirection="column" justifyContent="flexEnd">
           {limitedFeaturedItems.length > 0 && (
             <FeaturedItemTags featuredItems={limitedFeaturedItems} truncate />
           )}
         </Box>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          style={{ flex: 1 }}
-        >
+        <Box display="flex" justifyContent="center" alignItems="center">
           {imgSrc && <img src={imgSrc} alt={imgAlt} className={styles.image} />}
         </Box>
       </Box>

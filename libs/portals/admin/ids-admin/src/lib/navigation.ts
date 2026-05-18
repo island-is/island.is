@@ -39,6 +39,12 @@ export const idsAdminNav: PortalNavigationItem = {
       ],
     },
     {
+      name: m.settings,
+      path: IDSAdminPaths.IDSAdminTenantEdit,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
       name: m.documentation,
       description: m.documentationDescription,
       path: IDSAdminExternalPaths.Docs,
@@ -87,6 +93,18 @@ export const idsAdminControlsNav: PortalNavigationItem = {
         {
           name: m.idpProviders,
           path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.translationsTitle,
+          path: IDSAdminPaths.IDSAdminControlsTranslations,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.languages,
+          path: IDSAdminPaths.IDSAdminControlsLanguages,
           description: m.idsAdmin,
           activeIfExact: true,
         },

@@ -13,11 +13,11 @@ import {
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  QUALITY_IMAGE_TYPE_IDS,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
+import { hasUsableRlsQualityPhoto } from '../../lib/utils'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -39,6 +39,7 @@ export interface UseEligibilityResult {
 
 export const useEligibility = (
   application: Application,
+  is65RenewalRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -86,17 +87,42 @@ export const useEligibility = (
     return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
 
+  const usesNewPhotoSelector =
+    applicationFor === BE ||
+    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled)
+
   if (usingFakeData) {
-    const hasPhoto =
-      applicationFor === BE
-        ? fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
-        : fakeData?.qualityPhoto === YES
+    let hasPhoto: boolean
+    if (usesNewPhotoSelector) {
+      // 'real' falls through to RLS/Þjóðskrá and populates externalData with
+      // real data. 'yes' / 'no' / 'metadata-only' all inject their fake shape
+      // into externalData via the data provider. So in every case the right
+      // answer comes from reading externalData through the same predicates
+      // the real path uses.
+      const qualityPhotoConfirmed = hasUsableRlsQualityPhoto(
+        application.externalData,
+      )
+
+      const thjodskraPhotos =
+        getValueViaPath<{
+          images?: Array<{ contentSpecification?: string }>
+        }>(application.externalData, 'allPhotosFromThjodskra.data')?.images ??
+        []
+      const hasThjodskraFacial = thjodskraPhotos.some(
+        (p) => p.contentSpecification === 'FACIAL',
+      )
+
+      hasPhoto = qualityPhotoConfirmed || hasThjodskraFacial
+    } else {
+      hasPhoto = fakeData?.qualityPhoto === YES
+    }
     return {
       loading: false,
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
+        is65RenewalRedesignEnabled,
       ),
     }
   }
@@ -112,16 +138,8 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  if (application.answers.applicationFor === BE) {
-    const qualityPhotoAndSignature = getValueViaPath<{
-      imageTypeId?: number | null
-      pohto?: string | null
-    }>(application.externalData, 'qualityPhotoAndSignature.data')
-
-    const qualityPhotoConfirmed =
-      QUALITY_IMAGE_TYPE_IDS.includes(
-        qualityPhotoAndSignature?.imageTypeId ?? 0,
-      ) && !!qualityPhotoAndSignature?.pohto
+  const computeUsablePhoto = () => {
+    if (hasUsableRlsQualityPhoto(application.externalData)) return true
 
     const thjodskraPhotos =
       getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(
@@ -129,11 +147,11 @@ export const useEligibility = (
         'allPhotosFromThjodskra.data',
       )?.images ?? []
 
-    const hasThjodskraFacial = thjodskraPhotos.some(
-      (p) => p.contentSpecification === 'FACIAL',
-    )
+    return thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
+  }
 
-    const hasUsablePhotoForBE = qualityPhotoConfirmed || hasThjodskraFacial
+  if (application.answers.applicationFor === BE) {
+    const hasUsablePhoto = computeUsablePhoto()
 
     return {
       loading: loading,
@@ -141,12 +159,12 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            hasUsablePhotoForBE,
+            hasUsablePhoto,
         requirements: [
           ...eligibility,
           {
             key: RequirementKey.hasNoPhoto,
-            requirementMet: hasUsablePhotoForBE,
+            requirementMet: hasUsablePhoto,
           },
         ],
       },
@@ -169,6 +187,11 @@ export const useEligibility = (
         remarksCannotRenew65.includes(remark.code),
       ) ?? false
 
+    // When the redesign is on, also require a usable photo (same as BE).
+    const hasUsablePhoto = is65RenewalRedesignEnabled
+      ? computeUsablePhoto()
+      : true
+
     const requirements = [
       ...eligibility,
       ...(hasExtendedLicense
@@ -176,6 +199,14 @@ export const useEligibility = (
             {
               key: RequirementKey.noExtendedDrivingLicense,
               requirementMet: false,
+            },
+          ]
+        : []),
+      ...(is65RenewalRedesignEnabled
+        ? [
+            {
+              key: RequirementKey.hasNoPhoto,
+              requirementMet: hasUsablePhoto,
             },
           ]
         : []),
@@ -188,7 +219,8 @@ export const useEligibility = (
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             !hasExtendedLicense &&
-            !hasAnyInvalidRemarks,
+            !hasAnyInvalidRemarks &&
+            hasUsablePhoto,
         requirements,
       },
     }
