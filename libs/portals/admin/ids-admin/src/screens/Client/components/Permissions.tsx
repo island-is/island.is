@@ -86,7 +86,10 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const tenantLabels = useMemo(() => {
     const map = new Map<string, string>()
     for (const t of availableTenants) {
-      map.set(t.id, getTranslatedValue(t.defaultEnvironment.displayName, locale))
+      map.set(
+        t.id,
+        getTranslatedValue(t.defaultEnvironment.displayName, locale),
+      )
     }
     return map
   }, [availableTenants, locale])
