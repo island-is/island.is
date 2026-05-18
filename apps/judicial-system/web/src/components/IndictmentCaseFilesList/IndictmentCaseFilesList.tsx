@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Icon,
@@ -14,6 +15,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   hasGeneratedCourtRecordPdf,
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -26,6 +28,7 @@ import {
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
+  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -47,6 +50,8 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
+import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
@@ -279,7 +284,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-
+  const { features } = useContext(FeatureContext)
+  const showRulingOrderAppealMenu = features.includes(
+    Feature.APPEAL_RULING_ORDER,
+  )
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
@@ -638,10 +646,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                <RenderFiles
-                  caseFiles={filteredFiles.rulingOrders}
-                  onOpenFile={onOpen}
-                />
+                {showRulingOrderAppealMenu ? (
+                  filteredFiles.rulingOrders.map((file) => (
+                    <RulingOrderFileRow
+                      key={file.id}
+                      file={file}
+                      onOpenFile={onOpen}
+                    />
+                  ))
+                ) : (
+                  <RenderFiles
+                    caseFiles={filteredFiles.rulingOrders}
+                    onOpenFile={onOpen}
+                  />
+                )}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
@@ -671,6 +689,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
+            {showRulingOrderAppealMenu &&
+              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+                <Box>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return null
+                      }
+                      return (
+                        <RulingOrderAppealFilesAccordion
+                          key={appealCase.id}
+                          appealCase={appealCase}
+                          rulingFile={rulingFile}
+                          onOpenFile={onOpen}
+                        />
+                      )
+                    })}
+                  </Accordion>
+                </Box>
+              )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}

@@ -122,13 +122,6 @@ export class ApplicationLifeCycleService {
         if (!application) {
           continue // Or handle missing application
         }
-        // Convert the JSON Record<string, string> args to the Array<ArgumentDto> format
-        const argsArray = Object.entries(notification.args || {}).map(
-          ([key, value]) => ({
-            key,
-            value: String(value),
-          }),
-        )
         // Handle applicant actors (delegations) vs normal applicant
         if (
           application.applicantActors &&
@@ -142,7 +135,7 @@ export class ApplicationLifeCycleService {
                 recipient: actor,
                 onBehalfOf: { nationalId: application.applicant },
                 templateId: notification.template,
-                args: argsArray,
+                args: notification.args || [],
               },
             })
           })
@@ -153,7 +146,7 @@ export class ApplicationLifeCycleService {
             dto: {
               recipient: application.applicant,
               templateId: notification.template,
-              args: argsArray,
+              args: notification.args || [],
             },
           })
         }
@@ -356,16 +349,7 @@ export class ApplicationLifeCycleService {
                   nationalId: application.applicant,
                 },
                 templateId: pruneMessage.notificationTemplateId,
-                args: [
-                  {
-                    key: 'externalBody',
-                    value: pruneMessage.externalBody || '',
-                  },
-                  {
-                    key: 'internalBody',
-                    value: pruneMessage.internalBody || '',
-                  },
-                ],
+                args: pruneMessage.args ?? [],
               }
               notificationArray.push(notification)
             })
@@ -373,16 +357,7 @@ export class ApplicationLifeCycleService {
             const notification = {
               recipient: application.applicant,
               templateId: pruneMessage.notificationTemplateId,
-              args: [
-                {
-                  key: 'externalBody',
-                  value: pruneMessage.externalBody || '',
-                },
-                {
-                  key: 'internalBody',
-                  value: pruneMessage.internalBody || '',
-                },
-              ],
+              args: pruneMessage.args ?? [],
             }
             notificationArray.push(notification)
           }

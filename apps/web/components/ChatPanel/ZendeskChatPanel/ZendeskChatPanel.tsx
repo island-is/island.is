@@ -25,6 +25,7 @@ export const ZendeskChatPanel = ({
   pushUp = false,
   chatBubbleVariant = 'circle',
   urlTrackingTicketId,
+  chatBubbleTitle,
 }: ZendeskChatPanelProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -105,6 +106,7 @@ export const ZendeskChatPanel = ({
       pushUp={pushUp}
       loading={isLoading}
       isVisible={!isChatOpen}
+      title={chatBubbleTitle}
     />
   )
 }

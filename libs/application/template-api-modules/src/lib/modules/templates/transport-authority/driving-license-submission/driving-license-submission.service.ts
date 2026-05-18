@@ -31,6 +31,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
 import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
+import { messages as drivingLicenseMessages } from '@island.is/application/templates/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
@@ -185,12 +186,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
     application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
-    // If using fake data, skip calling RLS and pretend submission succeeded
+    // If using fake data, skip calling RLS and pretend submission succeeded.
+    // Opt-in escape hatch: fakeData.submitToRLS = 'yes' bypasses this
+    // short-circuit so devs can still exercise the real RLS submission path
+    // (with whatever fake-derived biometric IDs etc. are in externalData) for
+    // integration testing.
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       answers,
       'fakeData.useFakeData',
     )
-    if (useFakeData === YES) {
+    const fakeDataSubmitToRLS = getValueViaPath<'yes' | 'no'>(
+      answers,
+      'fakeData.submitToRLS',
+    )
+    if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
       return {
         success: true,
         errorMessage: null,
@@ -236,20 +245,150 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
 
     if (applicationFor === 'B-full-renewal-65') {
-      return this.drivingLicenseService.renewDrivingLicense65AndOver(
-        auth.authorization.replace('Bearer ', ''),
-        {
-          districtId: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          ...(deliveryMethod
-            ? {
-                pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
-                sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              }
-            : {}),
-        },
+      const is65RenewalRedesignEnabled = getValueViaPath<boolean>(
+        answers,
+        'is65RenewalRedesignEnabled',
       )
+
+      if (!is65RenewalRedesignEnabled) {
+        // Legacy 65+ submit path. Used while the redesign flag is OFF in
+        // prod and during the post-deploy rollout window. Removed once the
+        // flag has been ON in prod long enough that no flag-OFF submissions
+        // reach this branch.
+        return this.drivingLicenseService.renewDrivingLicense65AndOver(
+          auth.authorization,
+          {
+            jurisdiction: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            ...(deliveryMethod
+              ? {
+                  pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+                  sendPlasticToPerson: deliveryMethod === Pickup.POST,
+                }
+              : {}),
+          },
+        )
+      }
+
+      const renewalEmail = getValueViaPath<string>(answers, 'email')
+      const renewalPhone = formatPhoneNumber(
+        getValueViaPath<string>(answers, 'phone') ?? '',
+      )
+      const selectedRenewalPhoto = getValueViaPath<string>(
+        answers,
+        'selectLicensePhoto',
+      )
+
+      let renewalPhotoBiometricsId: string | null = null
+      let renewalSignatureBiometricsId: string | null = null
+
+      if (selectedRenewalPhoto === 'qualityPhoto') {
+        const qualityPhotoData = application.externalData
+          ?.qualityPhotoAndSignature?.data as {
+          pohto?: string | null
+          imageTypeId?: number | null
+        } | null
+
+        if (!qualityPhotoData?.pohto) {
+          this.log(
+            'error',
+            'User selected qualityPhoto but no quality photo exists in externalData',
+            {},
+          )
+        }
+      } else if (selectedRenewalPhoto) {
+        const allThjodskraPhotos =
+          getValueViaPath<
+            Array<{ biometricId: string; contentSpecification: string }>
+          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+          []
+
+        const facialPhotos = allThjodskraPhotos.filter(
+          (p) => p.contentSpecification === 'FACIAL',
+        )
+
+        const isValidFacial = facialPhotos.some(
+          (p) => p.biometricId === selectedRenewalPhoto,
+        )
+
+        if (!isValidFacial) {
+          this.log(
+            'error',
+            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+            { selectedPhoto: selectedRenewalPhoto },
+          )
+        }
+
+        renewalPhotoBiometricsId = isValidFacial ? selectedRenewalPhoto : null
+        renewalSignatureBiometricsId = isValidFacial
+          ? allThjodskraPhotos.find(
+              (p) => p.contentSpecification === 'SIGNATURE',
+            )?.biometricId ?? null
+          : null
+      }
+
+      let renewalContentList:
+        | Array<{
+            fileName: string
+            fileExtension: string
+            contentType: string
+            content: string
+            description: string
+          }>
+        | undefined
+
+      try {
+        const files = await this.attachmentS3Service.getFiles(application, [
+          'healthCertificate',
+        ])
+
+        renewalContentList = files
+          .filter((f) => f.fileContent)
+          .map((f) => {
+            const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
+            const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
+            return {
+              fileName: f.fileName,
+              fileExtension: ext,
+              contentType: getContentType(f.fileName),
+              content: f.fileContent,
+              description: 'Laeknisvottord',
+            }
+          })
+      } catch (e) {
+        this.log('error', 'Failed to read health certificate files from S3', {
+          e,
+        })
+        throw e
+      }
+
+      if (!renewalContentList || renewalContentList.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProviderSubmit,
+            summary: drivingLicenseMessages.healthCertificateRequired,
+          },
+          400,
+        )
+      }
+
+      return this.drivingLicenseService.applyForRenewal65(auth.authorization, {
+        jurisdiction: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        primaryPhoneNumber: renewalPhone,
+        studentEmail: renewalEmail ?? '',
+        ...(deliveryMethod
+          ? {
+              pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            }
+          : {}),
+        contentList: renewalContentList,
+        photoBiometricsId: renewalPhotoBiometricsId,
+        signatureBiometricsId: renewalSignatureBiometricsId,
+      })
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId
@@ -403,8 +542,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           throw new TemplateApiError(
             {
               title: coreErrorMessages.failedDataProviderSubmit,
-              summary:
-                'Health certificate is required but no valid files were found',
+              summary: drivingLicenseMessages.healthCertificateRequired,
             },
             400,
           )

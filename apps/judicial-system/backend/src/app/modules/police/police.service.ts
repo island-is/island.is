@@ -1,6 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
+import { Sequelize, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
@@ -13,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,28 +25,32 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type {
-  SubpoenaPoliceDocumentInfo,
-  User,
-  VerdictPoliceDocumentInfo,
-} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  type CrimeSceneMap,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
+  IndictmentSubtype as IndictmentSubtypeEnum,
+  type IndictmentSubtypeMap,
+  isIndictmentCase,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  type SubpoenaPoliceDocumentInfo,
+  type User,
+  type VerdictPoliceDocumentInfo,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
+import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   DateLog,
   Defendant,
   IndictmentSubtype,
@@ -168,6 +173,7 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
+    fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
     registeredAt: z.string().nullish(),
@@ -204,6 +210,19 @@ export class PoliceService {
       gogn: z.optional(z.array(this.policeDigitalCaseFileStructure)),
     }),
   )
+
+  private buildDigitalCaseFileName(
+    file: z.infer<typeof this.policeDigitalCaseFileStructure>,
+    policeCaseNumber: string,
+  ): string {
+    return [
+      policeCaseNumber.trim(),
+      file.fullName?.trim(),
+      file.externalVendorFileName.trim(),
+    ]
+      .filter((part): part is string => Boolean(part))
+      .join(', ')
+  }
 
   private subpoenaStructure = z.object({
     acknowledged: z.boolean().nullish(),
@@ -250,6 +269,7 @@ export class PoliceService {
   private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentSubtype)
     private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
@@ -260,6 +280,10 @@ export class PoliceService {
     private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CaseDefendantPoliceCaseNumberRepositoryService))
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -492,9 +516,7 @@ export class PoliceService {
       const response: z.infer<typeof this.digitalCaseFilesStructure> =
         await res.json()
 
-      this.digitalCaseFilesStructure.parse(response)
-
-      return response
+      return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
@@ -667,7 +689,10 @@ export class PoliceService {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
           id: file.id.toString(),
-          name: file.externalVendorFileName,
+          name: this.buildDigitalCaseFileName(
+            file,
+            filesPerCaseNumber.malsnumer,
+          ),
           policeCaseNumber: filesPerCaseNumber.malsnumer,
           policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
@@ -1046,10 +1071,36 @@ export class PoliceService {
     return links
   }
 
+  private buildAutoFillUpdates(
+    cases: PoliceCaseInfo[],
+    newPoliceCaseNumbers: string[],
+  ): { crimeScenes: CrimeSceneMap; indictmentSubtypes: IndictmentSubtypeMap } {
+    const lookup = new Map(cases.map((c) => [c.policeCaseNumber, c]))
+    const crimeScenes: CrimeSceneMap = {}
+    const indictmentSubtypes: IndictmentSubtypeMap = {}
+
+    for (const policeCaseNumber of newPoliceCaseNumbers) {
+      const info = lookup.get(policeCaseNumber)
+      if (!info) {
+        continue
+      }
+
+      crimeScenes[policeCaseNumber] = { place: info.place, date: info.date }
+
+      if (info.subtypes && info.subtypes.length > 0) {
+        indictmentSubtypes[policeCaseNumber] =
+          info.subtypes as IndictmentSubtypeEnum[]
+      }
+    }
+
+    return { crimeScenes, indictmentSubtypes }
+  }
+
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
     defendants: { id: string; nationalId: string }[] = [],
+    caseType?: CaseType,
   ): Promise<PoliceCaseInfo[]> {
     try {
       const nationalIdsToUse =
@@ -1076,10 +1127,63 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-          caseId,
-          defendantPoliceCaseNumberLinks,
-        )
+        await this.sequelize.transaction(async (transaction: Transaction) => {
+          const newPoliceCaseNumbers =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+              caseId,
+              defendantPoliceCaseNumberLinks,
+              { transaction },
+            )
+
+          if (
+            newPoliceCaseNumbers.length > 0 &&
+            caseType &&
+            isIndictmentCase(caseType)
+          ) {
+            for (const policeCaseNumber of newPoliceCaseNumbers) {
+              await this.indictmentCountService.createWithPoliceCaseNumber(
+                caseId,
+                policeCaseNumber,
+                transaction,
+              )
+            }
+
+            const newFills = this.buildAutoFillUpdates(
+              cases,
+              newPoliceCaseNumbers,
+            )
+
+            const theCase = await this.caseRepositoryService.findById(caseId, {
+              transaction,
+            })
+            if (theCase) {
+              const updates: {
+                crimeScenes?: CrimeSceneMap
+                indictmentSubtypes?: IndictmentSubtypeMap
+              } = {}
+
+              if (Object.keys(newFills.crimeScenes).length > 0) {
+                updates.crimeScenes = {
+                  ...theCase.crimeScenes,
+                  ...newFills.crimeScenes,
+                }
+              }
+
+              if (Object.keys(newFills.indictmentSubtypes).length > 0) {
+                updates.indictmentSubtypes = {
+                  ...theCase.indictmentSubtypes,
+                  ...newFills.indictmentSubtypes,
+                }
+              }
+
+              if (updates.crimeScenes || updates.indictmentSubtypes) {
+                await this.caseRepositoryService.update(caseId, updates, {
+                  transaction,
+                })
+              }
+            }
+          }
+        })
       }
 
       return cases
