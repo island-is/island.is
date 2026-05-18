@@ -101,7 +101,7 @@ const AddRulingOrder: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(
+      await sendNotification(
         workingCase.id,
         TrackedNotificationType.RULING_ORDER_ADDED,
       )
