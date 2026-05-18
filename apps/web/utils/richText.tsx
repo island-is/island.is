@@ -101,6 +101,7 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LandspitaliMenu } from '../components/connected/LandspitaliMenu'
 import { LandsretturCourtOfAppealAppeals } from '../components/connected/LandsretturCourtOfAppealAppeals'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
@@ -270,6 +271,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Lyfjastofnun/Pharmacies':
       connectedComponent = <PharmaciesAccordion />
+      break
+    case 'Landspitali/Menu':
+      connectedComponent = <LandspitaliMenu slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

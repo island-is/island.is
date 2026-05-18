@@ -8,6 +8,8 @@ import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { createClientAction } from './screens/Client/CreateClient/CreateClient.action'
 import { tenantsLoader } from './screens/Tenants/Tenants.loader'
+import { editTenantLoader } from './screens/Tenants/EditTenant/EditTenant.loader'
+import { editTenantAction } from './screens/Tenants/EditTenant/EditTenant.action'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
@@ -22,12 +24,17 @@ import { grantTypesLoader } from './screens/AdminControls/GrantTypes/GrantTypes.
 import { grantTypesAction } from './screens/AdminControls/GrantTypes/GrantTypes.action'
 import { idpProvidersLoader } from './screens/AdminControls/IdpProviders/IdpProviders.loader'
 import { idpProvidersAction } from './screens/AdminControls/IdpProviders/IdpProviders.action'
+import { translationsLoader } from './screens/AdminControls/Translations/Translations.loader'
+import { translationsAction } from './screens/AdminControls/Translations/Translations.action'
+import { languagesLoader } from './screens/AdminControls/Languages/Languages.loader'
+import { languagesAction } from './screens/AdminControls/Languages/Languages.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 // Tenant
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const Tenants = lazy(() => import('./screens/Tenants/Tenants'))
+const EditTenant = lazy(() => import('./screens/Tenants/EditTenant'))
 
 // Client
 const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
@@ -55,6 +62,12 @@ const GrantTypes = lazy(() =>
 )
 const IdpProviders = lazy(() =>
   import('./screens/AdminControls/IdpProviders/IdpProviders'),
+)
+const Translations = lazy(() =>
+  import('./screens/AdminControls/Translations/Translations'),
+)
+const Languages = lazy(() =>
+  import('./screens/AdminControls/Languages/Languages'),
 )
 
 const allowedScopes: string[] = [
@@ -141,6 +154,26 @@ export const idsAdminModule: PortalModule = {
                         backPath: IDSAdminPaths.IDSAdmin,
                       },
                     },
+                    {
+                      name: m.translationsTitle,
+                      path: IDSAdminPaths.IDSAdminControlsTranslations,
+                      element: <Translations />,
+                      loader: translationsLoader(props),
+                      action: translationsAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
+                    {
+                      name: m.languages,
+                      path: IDSAdminPaths.IDSAdminControlsLanguages,
+                      element: <Languages />,
+                      loader: languagesLoader(props),
+                      action: languagesAction(props),
+                      handle: {
+                        backPath: IDSAdminPaths.IDSAdmin,
+                      },
+                    },
                   ],
                 },
               ]
@@ -166,6 +199,18 @@ export const idsAdminModule: PortalModule = {
               backPath: IDSAdminPaths.IDSAdmin,
             },
             children: [
+              {
+                name: m.editTenant,
+                path: IDSAdminPaths.IDSAdminTenantEdit,
+                enabled: showAdminControls,
+                navHide: !showAdminControls,
+                element: <EditTenant />,
+                loader: editTenantLoader(props),
+                action: editTenantAction(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminClients,
+                },
+              },
               {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminClients,

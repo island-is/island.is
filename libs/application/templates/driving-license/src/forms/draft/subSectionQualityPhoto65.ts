@@ -1,14 +1,19 @@
 import {
+  buildAlertMessageField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildDescriptionField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { m } from '../../lib/messages'
-import { B_FULL_RENEWAL_65, QUALITY_IMAGE_TYPE_IDS } from '../../lib/constants'
-import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
+import { requirementsMessages, m } from '../../lib/messages'
+import { B_FULL_RENEWAL_65 } from '../../lib/constants'
+import {
+  hasNoDrivingLicenseInOtherCountry,
+  hasUsableRlsQualityPhoto,
+  isVisible,
+} from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
 
 interface ThjodskraImage {
@@ -32,6 +37,26 @@ export const subSectionQualityPhoto65 = buildSubSection({
       title: m.photoSelectionTitle,
       description: m.photoSelectionDescription,
       children: [
+        buildAlertMessageField({
+          id: 'noUsablePhotoAlert',
+          title: requirementsMessages.beLicenseQualityPhotoTitle,
+          message: requirementsMessages.beLicenseQualityPhotoDescription,
+          alertType: 'warning',
+          condition: (_answers, externalData) => {
+            const thjodskraPhotos =
+              getValueViaPath<ThjodskraImage[]>(
+                externalData,
+                'allPhotosFromThjodskra.data.images',
+              ) ?? []
+            const hasThjodskraFacial = thjodskraPhotos.some(
+              (p) => p.contentSpecification === 'FACIAL',
+            )
+
+            return (
+              !hasThjodskraFacial && !hasUsableRlsQualityPhoto(externalData)
+            )
+          },
+        }),
         buildRadioField({
           id: 'selectLicensePhoto',
           title: '',
@@ -53,15 +78,7 @@ export const subSectionQualityPhoto65 = buildSubSection({
               return facialPhotos[0].biometricId
             }
 
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            if (hasUsableRlsQualityPhoto(externalData)) {
               return 'qualityPhoto'
             }
 
@@ -93,21 +110,20 @@ export const subSectionQualityPhoto65 = buildSubSection({
               })
             }
 
-            // Quality photo from getqualityphotoandsignature
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            // Quality photo from getqualityphotoandsignature. The binary
+            // (`pohto`) may be null for legacy records — createPhotoComponent
+            // falls back to a placeholder, and submission resolves the photo
+            // by reference, so offer the option whenever a record exists.
+            if (hasUsableRlsQualityPhoto(externalData)) {
+              const photoAndSig = getValueViaPath<{ pohto?: string | null }>(
+                externalData,
+                'qualityPhotoAndSignature.data',
+              )
               options.push({
                 value: 'qualityPhoto',
                 label: m.useDriversLicenseImage,
                 illustration: createPhotoComponent(
-                  photoAndSig.pohto ?? undefined,
+                  photoAndSig?.pohto ?? undefined,
                 ),
               })
             }
