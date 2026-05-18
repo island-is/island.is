@@ -63,7 +63,7 @@ export const CivilClaimantFields = ({
   uploadFiles: TUploadFile[]
   addUploadFiles: (
     files: FileWithPreviewURL[],
-    overRides?: Partial<TUploadFile>,
+    overrides?: Partial<TUploadFile>,
   ) => TUploadFile[]
   updateUploadFile: (file: TUploadFile, newId?: string) => void
   removeUploadFile: (file: TUploadFile) => void
