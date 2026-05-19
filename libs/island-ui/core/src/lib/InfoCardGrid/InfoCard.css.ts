@@ -12,23 +12,27 @@ const gridContainerBase = {
   justifyContent: 'stretch',
 }
 
+export const cardBase = style({
+  minWidth: '320px',
+})
+
 export const infoCardHeader = style({
-  height: '48px',
+  minHeight: '48px',
 })
 
-export const gridContainerOneColumn = style({
+export const gridContainerMaxTwoColumns = style({
   ...gridContainerBase,
-  gridTemplateColumns: '1fr',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
 })
 
-export const gridContainerTwoColumn = style({
+export const gridContainerMaxThreeColumn = style({
   ...gridContainerBase,
-  gridTemplateColumns: '1fr 1fr',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
 })
 
-export const gridContainerThreeColumn = style({
+export const gridContainerMaxOneColumn = style({
   ...gridContainerBase,
-  gridTemplateColumns: '1fr 1fr 1fr',
+  gridTemplateColumns: 'minmax(320px, 1fr)',
 })
 
 export const iconBox = style({})
