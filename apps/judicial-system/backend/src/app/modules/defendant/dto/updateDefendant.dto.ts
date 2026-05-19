@@ -154,7 +154,7 @@ export class UpdateDefendantDto {
   @IsOptional()
   @IsEnum(IndictmentCaseReviewDecision)
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision | null
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   @IsOptional()
   @IsBoolean()
@@ -164,5 +164,5 @@ export class UpdateDefendantDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

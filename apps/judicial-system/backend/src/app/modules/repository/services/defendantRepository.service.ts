@@ -9,16 +9,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  DefendantPlea,
-  DefenderChoice,
-  Gender,
-  IndictmentCaseReviewDecision,
-  PunishmentType,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
-
 import { Defendant } from '../models/defendant.model'
+import { UpdateDefendant } from '../types/caseRepository.types'
 
 interface FindOneOptions {
   where?: FindOptions['where']
@@ -48,34 +40,6 @@ interface UpdateDefendantOptions {
 
 interface DeleteDefendantOptions {
   transaction: Transaction
-}
-
-interface UpdateDefendant {
-  noNationalId?: boolean
-  nationalId?: string
-  dateOfBirth?: string
-  name?: string
-  gender?: Gender
-  address?: string
-  citizenship?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  defenderChoice?: DefenderChoice
-  defendantPlea?: DefendantPlea
-  subpoenaType?: SubpoenaType
-  requestedDefenderChoice?: DefenderChoice
-  requestedDefenderNationalId?: string
-  requestedDefenderName?: string
-  isDefenderChoiceConfirmed?: boolean
-  caseFilesSharedWithDefender?: boolean
-  isSentToPrisonAdmin?: boolean
-  punishmentType?: PunishmentType
-  isAlternativeService?: boolean
-  alternativeServiceDescription?: string
-  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
-  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
 }
 
 @Injectable()
