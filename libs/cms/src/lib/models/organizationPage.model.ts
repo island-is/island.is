@@ -5,6 +5,7 @@ import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 import { IOrganizationPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
+import { FooterItem, mapFooterItem } from './footerItem.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Link, mapLink } from './link.model'
 import { Image, mapImage } from './image.model'
@@ -157,6 +158,9 @@ export class OrganizationPage {
   @CacheField(() => [Link], { nullable: true })
   externalLinks?: Array<Link>
 
+  @CacheField(() => [FooterItem], { nullable: true })
+  footerItems?: Array<FooterItem>
+
   @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
 
@@ -237,6 +241,7 @@ export const mapOrganizationPage = ({
       .map(safelyMapSliceUnion)
       .filter(Boolean),
     externalLinks: (fields.externalLinks ?? []).map(mapLink),
+    footerItems: (fields.footerItems ?? []).map(mapFooterItem),
     alertBanner: fields.alertBanner
       ? mapAlertBanner(fields.alertBanner)
       : undefined,

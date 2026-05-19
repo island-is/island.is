@@ -101,6 +101,7 @@ const NotificationMenu = ({
             {(data?.userNotificationsOverview?.data ?? []).map((item, i) => (
               <NotificationLine
                 key={item.metadata.created ?? i}
+                id={item.id}
                 onClickCallback={onClose}
                 data={item}
               />

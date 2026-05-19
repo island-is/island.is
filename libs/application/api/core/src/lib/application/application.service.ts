@@ -601,7 +601,7 @@ export class ApplicationService {
     notifications: {
       template: string
       schedule_time: Date
-      args?: Record<string, unknown>
+      args?: Array<{ key: string; value: string }>
     }[],
   ) {
     if (!notifications.length) return

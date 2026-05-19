@@ -143,4 +143,16 @@ export const m = defineMessages({
     defaultMessage:
       '{moduleName} er ekki lengur aðgengileg forsjáraðilum 16 ára barna og eldri. Barnið getur veitt þér rafrænt umboð. Sjá nánar um takmarkaðan aðgang forsjáraðila við 16 ára aldur.',
   },
+  tableCaption: {
+    id: 'portals:table-caption',
+    defaultMessage: 'Tafla',
+  },
+  tableExpandColumn: {
+    id: 'portals:table-expand-column',
+    defaultMessage: 'Skoða nánar',
+  },
+  tableSortHint: {
+    id: 'portals:table-sort-hint',
+    defaultMessage: 'Takkar í dálkahausum stýra röðun þess dálks',
+  },
 })

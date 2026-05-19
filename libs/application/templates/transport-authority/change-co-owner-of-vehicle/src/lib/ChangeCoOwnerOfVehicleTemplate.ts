@@ -246,7 +246,7 @@ const template: ApplicationTemplate<
                   NotificationConfig[
                     NotificationType.ChangeCoOwnerOfVehiclePruned
                   ].templateId,
-                internalBody: plate ?? '',
+                args: [{ key: 'internalBody', value: plate ?? '' }],
               }
             },
           },

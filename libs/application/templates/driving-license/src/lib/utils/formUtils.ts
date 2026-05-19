@@ -88,6 +88,16 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
   )
 }
 
+// RLS exposes the photo binary (`pohto`) inconsistently — some legacy records
+// return metadata + signature but a null photo blob. Submission resolves the
+// photo by reference (imageId), so binary presence is irrelevant for whether
+// a usable quality photo exists. Gate on the record, not the blob.
+export const hasUsableRlsQualityPhoto = (externalData: ExternalData): boolean =>
+  getValueViaPath<{ imageId?: number | null }>(
+    externalData,
+    'qualityPhotoAndSignature.data',
+  )?.imageId != null
+
 export const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
     'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'

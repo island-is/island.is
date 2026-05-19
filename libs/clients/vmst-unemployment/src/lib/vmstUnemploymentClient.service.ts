@@ -22,11 +22,11 @@ import {
   ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
+  GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
@@ -34,6 +34,8 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
+  GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -429,6 +431,45 @@ export class VmstUnemploymentClientService {
 
     return await api.applicantGetJobSearchConfirmationEligibility({
       id: applicantId,
+    })
+  }
+
+  async checkConfirmTravelEligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetForeignTravelEligibility({
+      id: applicantId,
+    })
+  }
+
+  async submitTravelConfirmation(
+    auth: User,
+    request: GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
+  ): Promise<void> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+    await api.applicantCreateForeignTravel({
+      id: applicantId,
+      galdurExternalDomainRequestsApplicantCreateForeignStayRequest: request,
     })
   }
 

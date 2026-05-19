@@ -152,10 +152,6 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
   [DELIVERY_FEE]: 'AY145',
 }
 
-// RLS image type IDs that indicate a quality-certified photo for BE license
-// 1 = standard quality photo, 11 = quality scanned photo
-export const QUALITY_IMAGE_TYPE_IDS = [1, 11]
-
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
 export const codesRequiringHealthCertificate = ['400', '01.06']
 export const codesExtendedLicenseCategories = [
@@ -200,6 +196,14 @@ export enum States {
 
 type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
 
+// Fake-photo modes for hasThjodskraPhoto / hasRLSPhoto:
+//   'yes'           — inject a fake photo
+//   'no'            — inject "no photo" (fake empty)
+//   'real'          — fall through to real RLS / Þjóðskrá data (default)
+//   'metadata-only' — inject the prod-observed legacy-record shape:
+//                     metadata returned, photo binary missing (RLS only)
+export type FakePhotoMode = 'yes' | 'no' | 'real' | 'metadata-only'
+
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
@@ -207,6 +211,6 @@ export interface DrivingLicenseFakeData {
   remarks?: YesOrNo
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
-  hasThjodskraPhoto?: YesOrNo
-  hasRLSPhoto?: YesOrNo
+  hasThjodskraPhoto?: FakePhotoMode
+  hasRLSPhoto?: FakePhotoMode
 }

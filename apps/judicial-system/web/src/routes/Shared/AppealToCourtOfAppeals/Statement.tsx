@@ -27,6 +27,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -39,6 +40,7 @@ import {
   useAppealCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -53,9 +55,6 @@ const Statement = () => {
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id, rulingFileId: rulingFileIdQuery } = router.query
-  const rulingFileId =
-    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -74,21 +73,16 @@ const Statement = () => {
     caseId: workingCase.id,
   })
 
+  // Statement events target the specific appeal-case row.
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
+  const targetAppealCaseId = targetAppealCase?.id
+
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
     civilClaimantId,
-    rulingFileId,
+    targetAppealCase?.rulingFileId,
   )
-
-  // Statement events target the specific appeal-case row. For ruling-order
-  // appeals, look up the matching row by rulingFileId; otherwise use the
-  // case-level appeal.
-  const targetAppealCaseId = rulingFileId
-    ? workingCase.rulingOrderAppealCases?.find(
-        (a) => a.rulingFileId === rulingFileId,
-      )?.id
-    : workingCase.appealCase?.id
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -108,7 +102,7 @@ const Statement = () => {
         ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
         : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -156,7 +150,7 @@ const Statement = () => {
       status: FileUploadStatus.done,
       defendantId,
       civilClaimantId,
-      rulingFileId,
+      rulingFileId: targetAppealCase?.rulingFileId,
     })
   }
 
@@ -166,7 +160,7 @@ const Statement = () => {
       [category],
       file,
       user,
-      rulingFileId,
+      targetAppealCase?.rulingFileId,
     )
   }
   const appealStatementFiles = uploadFiles.filter((file) =>
@@ -187,12 +181,13 @@ const Statement = () => {
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
-          {(workingCase.prosecutorPostponedAppealDate ||
-            workingCase.accusedPostponedAppealDate) && (
-            <Text variant="h5" as="h5">
-              {getAppealActorText(workingCase)}
-            </Text>
-          )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={targetAppealCase?.rulingFileId}
+          />
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         {user && (
           <>

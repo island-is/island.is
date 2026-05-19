@@ -8,13 +8,12 @@ import {
   Hidden,
   Logo,
 } from '@island.is/island-ui/core'
-import { helperStyles, theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
 import { hasNotificationScopes } from '@island.is/auth/scopes'
 import {
-  LinkResolver,
   ServicePortalPaths,
   formatPlausiblePathToParams,
   m,
@@ -44,6 +43,27 @@ import NotificationButton from '../Notifications/NotificationButton'
 import { SearchInput } from '../SearchInput/SearchInput'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
+
+const DocumentsLink = ({
+  className,
+  children,
+  'aria-label': ariaLabel,
+  onClick,
+}: {
+  className?: string
+  children?: React.ReactNode
+  'aria-label'?: string
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>
+}) => (
+  <Link
+    to={DocumentsPaths.ElectronicDocumentsRoot}
+    className={className}
+    aria-label={ariaLabel}
+    onClick={onClick}
+  >
+    {children}
+  </Link>
+)
 
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
@@ -221,28 +241,20 @@ export const Header = ({
                       )}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
-                          <LinkResolver
-                            href={DocumentsPaths.ElectronicDocumentsRoot}
-                            callback={() =>
+                          <Button
+                            as={DocumentsLink}
+                            icon="mail"
+                            iconType="outline"
+                            colorScheme="white"
+                            size="small"
+                            variant="utility"
+                            aria-label={formatMessage(m.openDocuments)}
+                            onClick={() =>
                               myPagesHeaderDocumentsClick(
                                 formatPlausiblePathToParams(location.pathname),
                               )
                             }
-                          >
-                            <Button
-                              icon="mail"
-                              iconType="outline"
-                              colorScheme="white"
-                              size="small"
-                              type="span"
-                              variant="utility"
-                              aria-label={formatMessage(m.openDocuments)}
-                              unfocusable
-                            />
-                            <span className={helperStyles.srOnly}>
-                              {formatMessage(m.openDocuments)}
-                            </span>
-                          </LinkResolver>
+                          />
                         </Box>
                       </Hidden>
 
