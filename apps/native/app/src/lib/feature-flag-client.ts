@@ -1,6 +1,5 @@
 type FeatureFlagRecord = Record<string, boolean | string | number>
 
-// Cached feature flag values, populated by FeatureFlagProvider on mount.
 let flagCache: FeatureFlagRecord = {}
 
 export function setFeatureFlagCache(flags: FeatureFlagRecord) {

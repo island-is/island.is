@@ -57,8 +57,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   })
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-  // Refetch flags when auth state changes (login, logout, user switch).
-  // On logout, clear the cache so non-React code doesn't see stale flags.
   const prevAuthRef = useRef(authorizeResult)
   useEffect(() => {
     if (prevAuthRef.current !== authorizeResult) {
@@ -71,9 +69,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
     }
   }, [authorizeResult, refetch])
 
-  // Keep the module-level cache in sync for non-React usages.
-  // Only update once the query has actually returned data to avoid
-  // writing an empty map that makes "not loaded" look like "no flags".
   useEffect(() => {
     if (data?.featureFlags?.flags) {
       setFeatureFlagCache(flags)

@@ -79,10 +79,7 @@ export const idsAdminModule: PortalModule = {
     )
     const showAdminControls =
       isSuperUser &&
-      (await featureFlagClient.getValue(Features.showIdsAdminControls, false, {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      }))
+      (await featureFlagClient.getValue(Features.showIdsAdminControls, false))
 
     return [
       {

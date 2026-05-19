@@ -50,8 +50,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   const flagsRef = useRef<FeatureFlagRecord>(EMPTY_FLAGS)
   flagsRef.current = flags
 
-  // Pending resolvers — getValue() calls that arrive before the query
-  // completes will await this promise, matching the old ConfigCat behavior.
   const readyRef = useRef<{
     resolve: () => void
     promise: Promise<void>
@@ -72,9 +70,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
     }
   }, [loading, isAuthenticated])
 
-  // Stable context — identity never changes, getValue reads from flagsRef.
-  // Note: the user parameter is accepted for interface compatibility but
-  // ignored — flags are evaluated server-side for the authenticated user.
   const contextRef = useRef<FeatureFlagClient>({
     getValue: async <T extends SettingValue>(
       key: string,
