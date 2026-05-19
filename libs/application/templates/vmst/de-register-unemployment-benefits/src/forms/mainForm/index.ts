@@ -37,6 +37,23 @@ export const MainForm = buildForm({
           required: true,
           defaultValue: '',
           marginBottom: 'gutter',
+          minDate: (application) => {
+            const minDate = getValueViaPath<string>(
+              application.externalData,
+              'supportData.data.dateMin',
+            )
+            return minDate ? new Date(minDate) : new Date()
+          },
+          maxDate: (application) => {
+            const maxDate = getValueViaPath<string>(
+              application.externalData,
+              'supportData.data.dateMax',
+            )
+            if (maxDate) return new Date(maxDate)
+            const fallback = new Date()
+            fallback.setDate(fallback.getDate() + 30)
+            return fallback
+          },
         }),
         buildRadioField({
           id: 'reason',

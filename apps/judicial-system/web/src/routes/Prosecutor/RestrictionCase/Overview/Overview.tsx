@@ -48,7 +48,7 @@ import {
   CaseLegalProvisions,
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -109,7 +109,10 @@ export const Overview = () => {
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      ? await sendNotification(
+          workingCase.id,
+          TrackedNotificationType.READY_FOR_COURT,
+        )
       : false
 
     // An SMS should have been sent

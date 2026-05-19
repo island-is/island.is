@@ -6,6 +6,12 @@ import { Navigate } from 'react-router-dom'
 export const redirects: PortalRoute[] = [
   {
     name: m.vehiclesBulkMileage,
+    path: AssetsPaths.AssetsVehiclesBulkMileageRegistrationOld,
+    enabled: true,
+    element: <Navigate to={AssetsPaths.AssetsVehiclesBulkMileage} replace />,
+  },
+  {
+    name: m.vehiclesBulkMileage,
     path: AssetsPaths.AssetsVehiclesBulkMileageOld,
     enabled: true,
     element: <Navigate to={AssetsPaths.AssetsVehiclesBulkMileage} replace />,
