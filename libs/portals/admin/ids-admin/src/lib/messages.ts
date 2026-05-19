@@ -554,7 +554,7 @@ export const m = defineMessages({
   allowOfflineAccessDescription: {
     id: 'ap.ids-admin:allow-offline-access-description',
     defaultMessage:
-      'Allows the client to request the offline_access scope. This results in refresh tokens which can used to get access tokens according to the refresh token lifecycle settings',
+      'Allows the client to request the offline_access scope. This results in refresh tokens which can be used to get access tokens according to the refresh token lifecycle settings',
   },
   supportsTokenExchange: {
     id: 'ap.ids-admin:supports-token-exchange',
@@ -1898,7 +1898,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeLegalRepresentativeDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
-      'Should legal representative automatically get this api scope for their clients.',
+      'Should legal representatives automatically get this api scope for their clients.',
   },
   createTenant: {
     id: 'ap.ids-admin:create-tenant',
