@@ -19,6 +19,7 @@ import {
   DefendantNotificationType,
   InstitutionType,
   isIndictmentCase,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -68,7 +69,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
   private async sendEmails(
     theCase: Case,
-    notificationType: DefendantNotificationType,
+    notificationType: TrackedNotificationType,
     subject: string,
     body: string,
     to: { name?: string; email?: string }[],
@@ -116,7 +117,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
+      TrackedNotificationType.DEFENDANT_SELECTED_DEFENDER,
       formattedSubject,
       formattedBody,
       [
@@ -152,7 +153,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
+      TrackedNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
       formattedSubject,
       formattedBody,
       [
@@ -171,7 +172,7 @@ export class DefendantNotificationService extends BaseNotificationService {
   private shouldSendDefendantNotification(
     theCase: Case,
     defendant: Defendant,
-    notificationType: DefendantNotificationType,
+    notificationType: TrackedNotificationType,
   ): boolean {
     if (!defendant.defenderEmail || !defendant.isDefenderChoiceConfirmed) {
       return false
@@ -244,7 +245,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     const shouldSendCourtDateFollowUp = this.shouldSendDefendantNotification(
       theCase,
       defendant,
-      DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+      TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
     const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
     const hasFutureArraignmentDate =
@@ -292,7 +293,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     const recipients = await Promise.all([promise])
     const result = await this.recordNotification(
       theCase.id,
-      DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+      TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
       recipients,
     )
 
@@ -306,7 +307,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     const shouldSend = this.shouldSendDefendantNotification(
       theCase,
       defendant,
-      DefendantNotificationType.DEFENDER_ASSIGNED,
+      TrackedNotificationType.DEFENDER_ASSIGNED,
     )
 
     if (shouldSend) {
@@ -331,7 +332,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
       return this.sendEmails(
         theCase,
-        DefendantNotificationType.DEFENDER_ASSIGNED,
+        TrackedNotificationType.DEFENDER_ASSIGNED,
         formattedSubject,
         formattedBody,
         [{ name: defendant.defenderName, email: defendant.defenderEmail }],
@@ -380,7 +381,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      TrackedNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
       [
@@ -427,7 +428,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
+      TrackedNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
       [

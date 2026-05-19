@@ -9,8 +9,8 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
-  notificationTypes,
   stringTypes,
+  trackedNotificationTypes,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
@@ -305,7 +305,7 @@ export const caseInclude: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: notificationTypes },
+    where: { type: trackedNotificationTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
