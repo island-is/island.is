@@ -743,7 +743,8 @@ export class HealthDirectorateService {
       attachments: input.attachments?.map((a) => ({
         fileName: a.fileName,
         description: a.description,
-        contentType: a.contentType as ConversationAttachmentRequestDto['contentType'],
+        contentType:
+          a.contentType as ConversationAttachmentRequestDto['contentType'],
         contentBase64: a.contentBase64,
       })),
     }
@@ -778,7 +779,8 @@ export class HealthDirectorateService {
       attachments: input.attachments?.map((a) => ({
         fileName: a.fileName,
         description: a.description,
-        contentType: a.contentType as ConversationAttachmentRequestDto['contentType'],
+        contentType:
+          a.contentType as ConversationAttachmentRequestDto['contentType'],
         contentBase64: a.contentBase64,
       })),
     }

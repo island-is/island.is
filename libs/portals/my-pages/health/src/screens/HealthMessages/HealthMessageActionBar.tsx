@@ -47,7 +47,12 @@ const HealthMessageActionBar = ({
 
   return (
     <>
-      <Box className={styles.filterBtns} display="flex" alignItems="center" columnGap={1}>
+      <Box
+        className={styles.filterBtns}
+        display="flex"
+        alignItems="center"
+        columnGap={1}
+      >
         {onReply && (
           <Tooltip text={formatMessage(m.replyDocument)}>
             <Button
