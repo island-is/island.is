@@ -21,6 +21,7 @@ import {
   DateType,
   DefendantEventType,
   EventType,
+  IndictmentCaseNotificationType,
   indictmentCases,
   IndictmentDecision,
   InstitutionType,
@@ -817,8 +818,8 @@ describe('CaseController - Update', () => {
       then = await givenWhenThen(caseId, user, nonIndictmentCase, caseToUpdate)
     })
 
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
+    it('should throw BadRequestException', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
     })
   })
 
@@ -1032,7 +1033,7 @@ describe('CaseController - Update', () => {
         type: MessageType.NOTIFICATION,
         user,
         caseId,
-        body: { type: CaseNotificationType.INDICTMENT_REOPENED },
+        body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
       })
     })
   })

@@ -1986,7 +1986,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const publicProsecutorEmail = hasSentToPublicProsecutor
       ? await this.institutionContactRepositoryService.getInstitutionContact(
           this.config.publicProsecutorId,
-          CaseNotificationType.INDICTMENT_REOPENED,
+          IndictmentCaseNotificationType.INDICTMENT_REOPENED,
         )
       : null
 
@@ -2031,7 +2031,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     return this.recordNotification(
       theCase.id,
-      CaseNotificationType.INDICTMENT_REOPENED,
+      TrackedNotificationType.INDICTMENT_REOPENED,
       recipients,
     )
   }
@@ -4143,7 +4143,7 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendRulingOrderAddedNotifications(theCase)
       case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED as string:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
-      case CaseNotificationType.INDICTMENT_REOPENED:
+      case IndictmentCaseNotificationType.INDICTMENT_REOPENED as string:
         return this.sendIndictmentReopenedNotifications(theCase)
       default:
         throw new InternalServerErrorException(

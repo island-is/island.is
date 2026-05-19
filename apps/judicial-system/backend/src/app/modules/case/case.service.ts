@@ -6,7 +6,6 @@ import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
   BadRequestException,
-  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -978,7 +977,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_REOPENED },
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
     })
   }
 
@@ -1838,14 +1837,6 @@ export class CaseService {
     }
 
     if (update.reopenReason !== undefined) {
-      if (!isIndictmentCase(theCase.type)) {
-        throw new ForbiddenException('Cannot reopen a non-indictment case')
-      }
-
-      if (!update.reopenReason.trim()) {
-        throw new BadRequestException('Reopen reason cannot be empty')
-      }
-
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`

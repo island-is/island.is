@@ -3,9 +3,10 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
   CaseType,
   EventType,
+  IndictmentCaseNotificationType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -38,7 +39,7 @@ describe('InternalNotificationController - Send indictment reopened notification
 
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.INDICTMENT_REOPENED,
+    type: IndictmentCaseNotificationType.INDICTMENT_REOPENED as unknown as RequestCaseNotificationType,
   }
 
   const prosecutorSubject = `Mál ${courtCaseNumber} enduropnað`
