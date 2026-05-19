@@ -66,4 +66,14 @@ export class UpdateCivilClaimantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isSpokespersonConfirmed?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
+
+  @Allow()
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  readonly defendantIds?: string[]
 }

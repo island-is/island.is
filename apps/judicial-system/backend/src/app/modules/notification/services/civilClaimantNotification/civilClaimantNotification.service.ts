@@ -14,7 +14,10 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
+import {
+  CivilClaimantNotificationType,
+  TrackedNotificationType,
+} from '@island.is/judicial-system/types'
 
 import { EventService } from '../../../event'
 import {
@@ -53,7 +56,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
   private async sendEmails(
     civilClaimant: CivilClaimant,
     theCase: Case,
-    notificationType: CivilClaimantNotificationType,
+    notificationType: TrackedNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
   ) {
@@ -106,7 +109,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     }
 
     const hasSentNotificationBefore = this.hasReceivedNotification(
-      CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+      TrackedNotificationType.SPOKESPERSON_ASSIGNED,
       civilClaimant.spokespersonEmail,
       theCase.notifications,
     )
@@ -131,7 +134,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       return this.sendEmails(
         civilClaimant,
         theCase,
-        CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+        TrackedNotificationType.SPOKESPERSON_ASSIGNED,
         strings.civilClaimantSpokespersonAssignedSubject,
         strings.civilClaimantSpokespersonAssignedBody,
       )
