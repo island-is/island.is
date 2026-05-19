@@ -4,6 +4,7 @@ query ShipRegistrySailorCertificates {
       id
       title
       validToDate
+      status
       school
       issueDate
     }
@@ -12,6 +13,7 @@ query ShipRegistrySailorCertificates {
       type
       rightsCategories
       validToDate
+      status
       certificateNumber
       issueDate
     }
