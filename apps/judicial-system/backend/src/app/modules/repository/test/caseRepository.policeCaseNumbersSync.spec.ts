@@ -216,6 +216,33 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
       expect(built.policeCaseNumbers).toEqual(['x'])
     })
+
+    it('resolves policeCaseNumbers for included merged cases', async () => {
+      const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
+      const rootCase = stubCase('root-case-id', ['legacy-root'])
+      Object.assign(rootCase, {
+        mergedCases: [mergedCase],
+      })
+
+      caseModel.findOne.mockResolvedValue(rootCase)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([
+          ['root-case-id', ['007-2024-root']],
+          ['merged-case-id', ['007-2024-merged']],
+        ]),
+      )
+
+      await caseRepositoryService.findOne({
+        where: { id: 'root-case-id' },
+      })
+
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        expect.arrayContaining([rootCase, mergedCase]),
+        { transaction: undefined },
+      )
+      expect(rootCase.policeCaseNumbers).toEqual(['007-2024-root'])
+      expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
+    })
   })
 
   describe('create', () => {

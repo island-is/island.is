@@ -46,4 +46,10 @@ export class CivilClaimant {
 
   @Field(() => Boolean, { nullable: true })
   readonly isSpokespersonConfirmed?: boolean
+
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
+
+  @Field(() => [String], { nullable: true })
+  readonly defendantIds?: string[]
 }

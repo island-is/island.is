@@ -188,6 +188,7 @@ const SubPage: Screen<SubPageProps> = ({
           : 'Search the service web',
       )}
       pageData={serviceWebPage}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>

@@ -105,6 +105,27 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
                     <Select.Option value="circle">Blue circle</Select.Option>
                   </Select>
                 </Flex>
+                <Flex flexDirection="column">
+                  <FormControl.Label>Chat Bubble Hover Text</FormControl.Label>
+                  <TextInput
+                    value={
+                      value?.[locale]?.[WebChatType.Zendesk]?.chatBubbleTitle ??
+                      ''
+                    }
+                    onChange={(event) => {
+                      updateValue((previousValue) => ({
+                        ...previousValue,
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.Zendesk]: {
+                            ...previousValue?.[locale]?.[WebChatType.Zendesk],
+                            chatBubbleTitle: event.target.value.trim(),
+                          },
+                        },
+                      }))
+                    }}
+                  />
+                </Flex>
               </Flex>
             </Flex>
           </FormControl>

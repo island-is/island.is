@@ -31,6 +31,7 @@ import {
   NationalRegistryV3UserApi,
   NationalRegistryV3SpouseApi,
 } from '../dataProviders'
+import { extractParticipants } from '../shared'
 import { dataSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -185,11 +186,26 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
+            const { landlords, tenants } = extractParticipants(
+              application.answers,
+            )
+            const landlordNames = landlords
+              .map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantNames = tenants
+              .map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
                   .templateId,
-              ...(address && { internalBody: address }),
+              ...(args.length > 0 && { args }),
             }
           }),
           onEntry: defineTemplateApi({
@@ -264,11 +280,26 @@ const RentalAgreementTemplate: ApplicationTemplate<
               application.answers,
               'registerProperty.searchresults.address',
             )
+            const { landlords, tenants } = extractParticipants(
+              application.answers,
+            )
+            const landlordNames = landlords
+              .map((l) => l.nationalIdWithName.name)
+              .join(', ')
+            const tenantNames = tenants
+              .map((t) => t.nationalIdWithName.name)
+              .join(', ')
+            const args: Array<{ key: string; value: string }> = []
+            if (address) args.push({ key: 'address', value: address })
+            if (landlordNames)
+              args.push({ key: 'landlordNames', value: landlordNames })
+            if (tenantNames)
+              args.push({ key: 'tenantNames', value: tenantNames })
             return {
               notificationTemplateId:
                 NotificationConfig[NotificationType.RentalAgreementPruned]
                   .templateId,
-              ...(address && { internalBody: address }),
+              ...(args.length > 0 && { args }),
             }
           }),
           onEntry: defineTemplateApi({

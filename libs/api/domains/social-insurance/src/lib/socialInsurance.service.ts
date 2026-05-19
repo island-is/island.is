@@ -8,9 +8,9 @@ import {
   SocialInsuranceAdministrationPaymentTypesOverviewService,
   SocialInsuranceAdministrationPensionCalculatorService,
   SocialInsuranceAdministrationPersonalTaxCreditService,
-  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -46,8 +46,11 @@ import {
   mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
+import { parseTaxBracketAction } from './mappers/parseTaxBracketAction'
 import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
+import { TaxBracketAction } from './enums/taxBracketAction'
+import { PersonalTaxCreditSpouseInfo } from './models/personalTaxCredit/spouseInfo.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -291,30 +294,33 @@ export class SocialInsuranceService {
 
   async setTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
   }
 
   async editTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
   }
 
   async discontinueTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+  async getPaymentTypes(
+    user: User,
+    locale: Locale,
+  ): Promise<PaymentTypeOverview[] | null> {
     const data = await this.paymentTypesOverviewClient
       .getPaymentTypesOverview(user)
       .catch(handle404)
-    return data ? data.map(mapPaymentTypeOverview) : null
+    return data ? data.map((row) => mapPaymentTypeOverview(row, locale)) : null
   }
 
   async getChildBenefits(
@@ -324,5 +330,35 @@ export class SocialInsuranceService {
       .getChildBenefitsInformation(user)
       .catch(handle404)
     return data ? data.map(mapChildBenefitInformation) : null
+  }
+
+  async getTaxBracket(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracket(user)
+      .catch(handle404)
+    return parseTaxBracketAction(data?.taxBracket)
+  }
+
+  async setTaxBracket(user: User, taxBracket: TaxBracketAction): Promise<void> {
+    return this.personalTaxCreditClient.setTaxBracket(user, taxBracket)
+  }
+
+  async getSpouseInfo(user: User): Promise<PersonalTaxCreditSpouseInfo | null> {
+    const data = await this.personalTaxCreditClient
+      .getSpouseInfo(user)
+      .catch(handle404)
+    if (!data?.nationalId) return null
+    return {
+      nationalId: data.nationalId,
+      name: data.name ?? undefined,
+      isDeceased: data.isDeceased ?? undefined,
+    }
+  }
+
+  async getTaxBracketAction(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracketActions(user)
+      .catch(handle404)
+    return parseTaxBracketAction(data ?? undefined)
   }
 }
