@@ -5,8 +5,8 @@ import { NotificationsService } from '../../../../notification/notifications.ser
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiModuleActionProps } from '../../../../types'
 import type { Logger } from '@island.is/logging'
-import { TemplateApiModuleActionProps } from '@/lib/types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { S3Service } from '@island.is/nest/aws'
@@ -177,6 +177,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
                 fileName,
                 fileType: mimeType,
                 data: content,
+                ownerId: application.id,
               },
             },
           )
@@ -227,6 +228,35 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
           summary: coreErrorMessages.failedDataProvider,
         },
         500,
+      )
+    }
+
+    // Phase 3: Link created attachments to the applicant
+    // TODO: Replace with getValueViaPath from application.externalData once
+    // the 3rd party confirms business logic around applicantId resolution
+    const applicantId = 'PLACEHOLDER'
+
+    const linkResponse =
+      await this.vmstUnemploymentClientService.createApplicantRequestedAttachments(
+        {
+          applicantId,
+          galdurExternalDomainRequestsApplicantSubmitAttachmentRequestRequest:
+            createdAttachments.map((a) => ({
+              attachmentId: a.attachmentId,
+            })),
+        },
+      )
+
+    if (!linkResponse.success) {
+      this.logger.error(
+        `[VMST-Submit-Documents] - Failed to link attachments to applicant: ${linkResponse.errorMessage}`,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: linkResponse.errorMessage ?? '',
+        },
+        400,
       )
     }
 

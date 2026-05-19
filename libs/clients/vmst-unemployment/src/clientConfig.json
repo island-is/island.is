@@ -2280,9 +2280,7 @@
             "JWT": []
           }
         ]
-      }
-    },
-    "/api/applicants/{applicantId}/attachments/requests/{dataRequestId}": {
+      },
       "post": {
         "tags": [
           "Applicant"
@@ -2300,17 +2298,6 @@
               "format": "guid"
             },
             "x-position": 1
-          },
-          {
-            "name": "dataRequestId",
-            "in": "path",
-            "required": true,
-            "description": "Auðkenni gangaöflunar.",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 2
           }
         ],
         "requestBody": {
@@ -2326,7 +2313,7 @@
             }
           },
           "required": true,
-          "x-position": 3
+          "x-position": 2
         },
         "responses": {
           "200": {
@@ -8220,10 +8207,6 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "requestId": {
-            "type": "string",
-            "format": "guid"
-          },
           "attachmentId": {
             "type": "string",
             "format": "guid"
@@ -8509,6 +8492,11 @@
             "nullable": true
           },
           "attachmentTypeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "ownerId": {
             "type": "string",
             "format": "guid",
             "nullable": true
