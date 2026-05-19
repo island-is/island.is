@@ -34,7 +34,6 @@ import { receptionAndAssignment as strings } from './ReceptionAndAssignment.stri
 const ReceptionAndAssignment = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
-  const id = router.query.id
   const { formatMessage } = useIntl()
 
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
@@ -137,7 +136,7 @@ const ReceptionAndAssignment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={
             isIndictment
-              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
               : getStandardUserDashboardRoute(user)
           }
           onNextButtonClick={() => handleNavigationTo(getNextRoute)}
