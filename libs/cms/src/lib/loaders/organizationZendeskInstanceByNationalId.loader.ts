@@ -19,14 +19,14 @@ export class OrganizationZendeskInstanceByNationalIdLoader
   async loadOrganizationZendeskInstance(
     organizationKeys: readonly string[],
   ): Promise<Array<ShortTitle>> {
-    const organizationTitles =
+    const zendeskInstanceInfo =
       await this.cmsContentfulService.getOrganizationZendeskInstance(
         organizationKeys as string[],
         'kennitala',
         'is',
       )
 
-    return organizationTitles
+    return zendeskInstanceInfo
   }
 
   generateDataLoader(): OrganizationZendeskInstanceByNationalIdDataLoader {
