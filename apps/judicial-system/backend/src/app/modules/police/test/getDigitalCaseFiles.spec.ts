@@ -59,7 +59,6 @@ describe('PoliceController - Get digital case files', () => {
               {
                 id: '1723e662-6514-4aab-9b03-6b7778939a47',
                 rvMalID: 766,
-                evidenceType: 'Video',
                 fullName: 'John Doe',
                 externalVendorFileName: 'Recording 1',
                 externalVendorID: '2359',
@@ -77,7 +76,7 @@ describe('PoliceController - Get digital case files', () => {
       expect(then.result).toEqual([
         {
           id: '1723e662-6514-4aab-9b03-6b7778939a47',
-          name: '007-2026-000007, Video, John Doe, Recording 1',
+          name: '007-2026-000007, John Doe, Recording 1',
           policeCaseNumber: '007-2026-000007',
           policeExternalVendorId: '2359',
           displayDate: new Date('2026-04-17T12:19:21.537'),
@@ -102,7 +101,6 @@ describe('PoliceController - Get digital case files', () => {
               {
                 id: '6cab5177-bfa7-4998-8c09-b4884fca0ae6',
                 rvMalID: 766,
-                evidenceType: null,
                 fullName: null,
                 externalVendorFileName: 'Recording 2',
                 externalVendorID: '2360',
@@ -159,7 +157,6 @@ describe('PoliceController - Get digital case files', () => {
               {
                 id: '4bdc60ee-8d39-49b1-a0bc-dad2feb4c490',
                 rvMalID: 766,
-                evidenceType: '   ',
                 fullName: '\t',
                 externalVendorFileName: '  Recording 4  ',
                 externalVendorID: '2362',
@@ -202,7 +199,6 @@ describe('PoliceController - Get digital case files', () => {
               {
                 id: '6fd92208-b460-4f60-ae5c-d8d6f9d4f42d',
                 rvMalID: 766,
-                evidenceType: null,
                 fullName: null,
                 externalVendorFileName: 'Recording 5',
                 externalVendorID: '2363',

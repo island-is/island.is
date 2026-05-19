@@ -2,6 +2,26 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    errorTitle: {
+      id: 'web.supremeCourt.determinations:listPage.errorTitle',
+      defaultMessage: 'Villa',
+      description: 'Titill á villumeðhöndlun á listasíðu',
+    },
+    error: {
+      id: 'web.supremeCourt.determinations:listPage.error',
+      defaultMessage: 'Ekki tókst að sækja ákvarðanir',
+      description: 'Texti á villumeðhöndlun á listasíðu',
+    },
+    all: {
+      id: 'web.supremeCourt.determinations:listPage.all',
+      defaultMessage: 'Allt',
+      description: 'Texti á "Allt" tagi',
+    },
+    searchPlaceholder: {
+      id: 'web.supremeCourt.determinations:listPage.searchPlaceholder',
+      defaultMessage: 'Leita í ákvörðunum',
+      description: 'Placeholder á leitar input',
+    },
     heading: {
       id: 'web.supremeCourt.determinations:listPage.heading',
       defaultMessage: 'Ákvarðanir',

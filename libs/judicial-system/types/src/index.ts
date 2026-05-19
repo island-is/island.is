@@ -43,16 +43,17 @@ export {
 export type { Institution } from './lib/institution'
 
 export {
-  CaseNotificationType,
+  RequestCaseNotificationType,
+  IndictmentCaseNotificationType,
+  AppealCaseNotificationType,
   SubpoenaNotificationType,
-  NotificationType,
+  TrackedNotificationType,
   InstitutionNotificationType,
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
-  IndictmentCaseNotificationType,
   EventNotificationType,
-  notificationTypes,
+  trackedNotificationTypes,
 } from './lib/notification'
 
 export {

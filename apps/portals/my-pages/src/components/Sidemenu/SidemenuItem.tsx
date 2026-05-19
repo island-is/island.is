@@ -35,7 +35,7 @@ const SidemenuItem = ({
         borderColor={isHovered ? 'blue400' : 'blue200'}
         borderRadius="standard"
         className={cn(styles.itemBlock, {
-          [`${styles.item}`]: itemTextHover || item.active,
+          [`${styles.item}`]: item.active,
         })}
         background="white"
         onMouseEnter={(value) => toggleIsHovered(value)}

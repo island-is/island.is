@@ -198,7 +198,11 @@ export class FileController {
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules() // This endpoint is not used by any role at the moment
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,

@@ -231,7 +231,7 @@ const useS3Upload = (
   caseId: string,
   defendantId?: string,
   civilClaimantId?: string,
-  rulingFileId?: string,
+  rulingFileId?: string | null,
 ) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()

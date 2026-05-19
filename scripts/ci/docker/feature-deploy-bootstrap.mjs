@@ -63,6 +63,9 @@ async function main() {
 
   const content = {
     namespaces: Array.from(namespacesToAdd),
+    namespaceLabels: {
+      namespaceType: 'feature',
+    },
     grantNamespacesEnabled: true,
     grantNamespaces: Array.from(nsGrantsToAdd),
   }
