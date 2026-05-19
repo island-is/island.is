@@ -69,11 +69,12 @@ export const AccordionFormField = ({
             application.externalData,
             null,
           )
-          newVisibility[child.id] = isVisible
+          const resolvedId = resolveFieldId(child, application, undefined)
+          newVisibility[resolvedId] = isVisible
 
           if (
-            prevVisibilityRef.current[child.id] !== undefined &&
-            prevVisibilityRef.current[child.id] !== isVisible
+            prevVisibilityRef.current[resolvedId] !== undefined &&
+            prevVisibilityRef.current[resolvedId] !== isVisible
           ) {
             conditionChanged = true
           }
@@ -128,9 +129,14 @@ export const AccordionFormField = ({
                         childField.type !== FieldTypes.CHECKBOX &&
                         childField.width === 'half'
                       const span = isHalfColumn ? '1/2' : '1/1'
+                      const resolvedId = resolveFieldId(
+                        childField,
+                        application,
+                        undefined,
+                      )
                       return (
                         <GridColumn
-                          key={childField.id}
+                          key={resolvedId}
                           span={['1/1', '1/1', '1/1', span]}
                           paddingBottom={2}
                         >
