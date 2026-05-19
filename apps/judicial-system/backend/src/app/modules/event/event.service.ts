@@ -41,7 +41,7 @@ const errorEmojis = [
 ]
 
 type CaseEvent =
-  | Exclude<CaseTransition, CaseTransition.CORRECT>
+  | CaseTransition
   | 'ARCHIVE'
   | 'CREATE'
   | 'CREATE_XRD'
@@ -65,6 +65,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
