@@ -1,6 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
+  ConversationAttachmentRequestDto,
   ConversationMessageDto,
   ConversationStatusFilter,
   CreateConversationRequestDto,
@@ -13,6 +14,8 @@ import {
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
@@ -84,6 +87,10 @@ export class HealthDirectorateService {
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   /* Organ Donation */
@@ -649,12 +656,20 @@ export class HealthDirectorateService {
 
   private mapMessageAttachment(
     a: ConversationAttachmentDto,
+    conversationId: string,
+    messageId: string,
   ): HealthDirectorateHealthMessageAttachment {
-    return { id: a.id, fileName: a.fileName, description: a.description }
+    return {
+      id: a.id,
+      fileName: a.fileName,
+      description: a.description,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/messages/${conversationId}/${messageId}/${a.id}`,
+    }
   }
 
   private mapMessageEntry(
     m: ConversationMessageDto,
+    conversationId: string,
   ): HealthDirectorateHealthMessageEntry {
     return {
       id: m.id,
@@ -663,7 +678,9 @@ export class HealthDirectorateService {
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
       senderGroupName: m.senderGroupName,
-      attachments: m.attachments.map((a) => this.mapMessageAttachment(a)),
+      attachments: m.attachments.map((a) =>
+        this.mapMessageAttachment(a, conversationId, m.id),
+      ),
     }
   }
 
@@ -709,7 +726,7 @@ export class HealthDirectorateService {
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
       isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m)),
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
     }
   }
 
@@ -721,11 +738,12 @@ export class HealthDirectorateService {
       nodeId: input.nodeId,
       groupId: input.groupId,
       patientInitiatedTypeCode: input.patientInitiatedTypeCode,
-      title: input.title,
+      title: input.title ?? '',
       messageTextContent: input.messageTextContent,
       attachments: input.attachments?.map((a) => ({
         fileName: a.fileName,
         description: a.description,
+        contentType: a.contentType as ConversationAttachmentRequestDto['contentType'],
         contentBase64: a.contentBase64,
       })),
     }
@@ -746,7 +764,7 @@ export class HealthDirectorateService {
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
       isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m)),
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
     }
   }
 
@@ -760,6 +778,7 @@ export class HealthDirectorateService {
       attachments: input.attachments?.map((a) => ({
         fileName: a.fileName,
         description: a.description,
+        contentType: a.contentType as ConversationAttachmentRequestDto['contentType'],
         contentBase64: a.contentBase64,
       })),
     }
@@ -780,7 +799,7 @@ export class HealthDirectorateService {
       isArchived: c.isArchived,
       patientCanReply: c.patientCanReply,
       isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m)),
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
     }
   }
 

@@ -6,12 +6,16 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Input,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, getInitials, m } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  formSubmit,
+  getInitials,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -271,20 +275,15 @@ const HealthMessageDetail = () => {
                       marginBottom={3}
                     >
                       {msg.attachments.map((file) => (
-                        <Box
+                        <Button
                           key={file.id}
-                          display="flex"
-                          alignItems="center"
-                          columnGap={1}
+                          variant="utility"
+                          icon="document"
+                          iconType="outline"
+                          onClick={() => formSubmit(file.downloadServiceURL)}
                         >
-                          <Icon
-                            icon="document"
-                            type="outline"
-                            size="small"
-                            color="blue400"
-                          />
-                          <Text variant="small">{file.fileName}</Text>
-                        </Box>
+                          {file.fileName}
+                        </Button>
                       ))}
                     </Box>
                   )}

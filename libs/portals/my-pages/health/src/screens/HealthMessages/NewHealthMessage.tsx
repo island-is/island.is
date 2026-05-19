@@ -13,6 +13,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  EmptyState,
   IntroWrapper,
   getInitials,
   m,
@@ -107,7 +108,10 @@ const NewHealthMessage = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && (
+      {!loading && !error && !recipient && (
+        <EmptyState title={messages.healthMessagesNoRecipient} />
+      )}
+      {!loading && !error && recipient && (
         <GridContainer>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '10/12']}>

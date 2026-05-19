@@ -10,4 +10,7 @@ export class HealthDirectorateHealthMessageAttachment {
 
   @Field({ nullable: true })
   description?: string
+
+  @Field()
+  downloadServiceURL!: string
 }

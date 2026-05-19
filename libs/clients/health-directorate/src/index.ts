@@ -39,6 +39,7 @@ export {
 } from './lib/clients'
 export {
   ConversationAttachmentDto,
+  ConversationAttachmentRequestDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,

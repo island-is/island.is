@@ -46,45 +46,56 @@ const HealthMessageActionBar = ({
   ]
 
   return (
-    <Box className={styles.filterBtns} display="flex" alignItems="center">
-      {onReply && (
-        <Tooltip text={formatMessage(m.replyDocument)}>
+    <>
+      <Box className={styles.filterBtns} display="flex" alignItems="center" columnGap={1}>
+        {onReply && (
+          <Tooltip text={formatMessage(m.replyDocument)}>
+            <Button
+              circle
+              icon="undo"
+              iconType="outline"
+              size="medium"
+              colorScheme="light"
+              aria-label={formatMessage(m.replyDocument)}
+              onClick={onReply}
+            />
+          </Tooltip>
+        )}
+        <Tooltip
+          text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
+        >
           <Button
             circle
-            icon="undo"
-            iconType="outline"
+            icon="fileTrayEmpty"
+            iconType={archived ? 'filled' : 'outline'}
+            size="medium"
             colorScheme="light"
-            onClick={onReply}
+            aria-label={formatMessage(
+              archived ? m.removeFromStorage : m.addToStorage,
+            )}
+            onClick={onStash}
           />
         </Tooltip>
-      )}
-      <Tooltip
-        text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
-      >
-        <Button
-          circle
-          icon="fileTrayEmpty"
-          iconType={archived ? 'filled' : 'outline'}
-          colorScheme="light"
-          onClick={onStash}
-        />
-      </Tooltip>
-      <Tooltip
-        text={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
-      >
-        <Button
-          circle
-          icon="star"
-          iconType={bookmarked ? 'filled' : 'outline'}
-          colorScheme="light"
-          onClick={onFav}
-        />
-      </Tooltip>
+        <Tooltip
+          text={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
+        >
+          <Button
+            circle
+            icon="star"
+            iconType={bookmarked ? 'filled' : 'outline'}
+            size="medium"
+            colorScheme="light"
+            aria-label={formatMessage(
+              bookmarked ? m.removeFavorite : m.addFavorite,
+            )}
+            onClick={onFav}
+          />
+        </Tooltip>
+      </Box>
       <DropdownMenu
         icon="ellipsisVertical"
         iconType="filled"
         items={dropdownItems}
-        menuClassName={styles.dropdownMenu}
         disclosure={
           <span className={styles.actionsButton}>
             <Tooltip text={formatMessage(m.actions)}>
@@ -98,7 +109,7 @@ const HealthMessageActionBar = ({
           </span>
         }
       />
-    </Box>
+    </>
   )
 }
 

@@ -1953,6 +1953,10 @@ export const messages = defineMessages({
       'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-message-sent-text',
   },
+  healthMessagesNoRecipient: {
+    defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
+    id: 'sp.health:health-messages-no-recipient',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',

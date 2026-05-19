@@ -18,6 +18,7 @@ query GetHealthMessageDetail($id: String!) {
         id
         fileName
         description
+        downloadServiceURL
       }
     }
   }
@@ -59,6 +60,7 @@ mutation ReplyToHealthMessage(
         id
         fileName
         description
+        downloadServiceURL
       }
     }
   }

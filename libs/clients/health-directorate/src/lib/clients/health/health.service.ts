@@ -21,6 +21,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
   meConversationControllerStarConversationV1,
@@ -642,6 +643,27 @@ export class HealthDirectorateHealthService {
     await withAuthContext(auth, () =>
       data(meConversationControllerUnstarConversationV1({ path: { id } })),
     )
+  }
+
+  public async getMessageAttachment(
+    auth: Auth,
+    conversationId: string,
+    messageId: string,
+    attachmentId: number,
+  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
+    const result = await withAuthContext(auth, () =>
+      meConversationControllerGetMessageAttachmentV1({
+        path: { id: conversationId, messageId, attachmentId },
+        parseAs: 'arrayBuffer',
+      }),
+    )
+    if (!result.data) return null
+    return {
+      data: result.data as ArrayBuffer,
+      contentType:
+        result.response.headers.get('content-type') ??
+        'application/octet-stream',
+    }
   }
 
   public async getMessagingRecipients(

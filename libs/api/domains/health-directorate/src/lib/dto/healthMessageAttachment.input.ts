@@ -9,5 +9,8 @@ export class HealthDirectorateMessageAttachmentInput {
   description?: string
 
   @Field()
+  contentType!: string
+
+  @Field()
   contentBase64!: string
 }

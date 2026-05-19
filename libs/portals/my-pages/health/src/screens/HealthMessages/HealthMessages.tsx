@@ -170,97 +170,107 @@ const HealthMessages = () => {
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>
-          <Box
-            background="blue100"
-            borderColor="blue200"
-            borderBottomWidth="standard"
-            display="flex"
-            justifyContent="spaceBetween"
-            paddingX={2}
-            paddingY={2}
-          >
-            <Text variant="medium" fontWeight="semiBold">
-              {formatMessage(m.messages)}
-            </Text>
-            <Text variant="medium" fontWeight="semiBold">
-              {formatMessage(messages.date)}
-            </Text>
-          </Box>
-
-          {filtered.length === 0 && <EmptyState title={messages.noData} />}
-
-          <Stack space={0}>
-            {filtered.map((item) => (
+          {filtered.length === 0 ? (
+            <EmptyState title={messages.noData} />
+          ) : (
+            <>
               <Box
-                key={item.id}
-                display="flex"
-                alignItems="center"
-                justifyContent="spaceBetween"
+                background="blue100"
                 borderColor="blue200"
                 borderBottomWidth="standard"
+                display="flex"
+                justifyContent="spaceBetween"
                 paddingX={2}
-                paddingY="p2"
-                columnGap={2}
+                paddingY={2}
               >
-                {/* Left: logo + text (navigable link) */}
-                <Link
-                  to={HealthPaths.HealthMessagesDetail.replace(':id', item.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 16,
-                    minWidth: 0,
-                    flexGrow: 1,
-                    textDecoration: 'none',
-                    color: 'inherit',
-                  }}
-                >
-                  <CircleLogo
-                    fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
-                  />
-                  <Box minWidth={0}>
-                    <Text variant="medium">{item.lastSenderGroupName}</Text>
-                    <Text color="blue400" truncate fontWeight="regular">
-                      {item.title}
-                    </Text>
-                  </Box>
-                </Link>
-
-                {/* Right: date above, icons below */}
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="flexEnd"
-                  style={{ flexShrink: 0 }}
-                >
-                  <Text variant="medium">
-                    {item.lastMessageSentAt
-                      ? formatDate(item.lastMessageSentAt)
-                      : ''}
-                  </Text>
-                  <FavAndStash
-                    colorScheme="negative"
-                    bookmarked={item.isStarred}
-                    archived={item.isArchived}
-                    onFav={() => {
-                      if (item.isStarred) {
-                        unstarMessage({ variables: { id: item.id } })
-                      } else {
-                        starMessage({ variables: { id: item.id } })
-                      }
-                    }}
-                    onStash={() => {
-                      if (item.isArchived) {
-                        unarchiveMessage({ variables: { id: item.id } })
-                      } else {
-                        archiveMessage({ variables: { id: item.id } })
-                      }
-                    }}
-                  />
-                </Box>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(m.messages)}
+                </Text>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.date)}
+                </Text>
               </Box>
-            ))}
-          </Stack>
+              <Stack space={0}>
+                {filtered.map((item) => (
+                  <Box
+                    key={item.id}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="spaceBetween"
+                    borderColor="blue200"
+                    borderBottomWidth="standard"
+                    paddingX={2}
+                    paddingY="p2"
+                    columnGap={2}
+                  >
+                    {/* Left: logo + text (navigable link) */}
+                    <Link
+                      to={HealthPaths.HealthMessagesDetail.replace(
+                        ':id',
+                        item.id,
+                      )}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 16,
+                        minWidth: 0,
+                        flexGrow: 1,
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                      <CircleLogo
+                        fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
+                      />
+                      <Box minWidth={0}>
+                        <Text variant="medium">{item.lastSenderGroupName}</Text>
+                        <Text
+                          color="blue400"
+                          truncate
+                          fontWeight={item.isRead ? 'regular' : 'semiBold'}
+                        >
+                          {item.title}
+                        </Text>
+                      </Box>
+                    </Link>
+
+                    {/* Right: date above, icons below */}
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="flexEnd"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <Text variant="medium">
+                        {item.lastMessageSentAt
+                          ? formatDate(item.lastMessageSentAt)
+                          : ''}
+                      </Text>
+                      <FavAndStash
+                        colorScheme="negative"
+                        bookmarked={item.isStarred}
+                        archived={item.isArchived}
+                        onFav={() => {
+                          if (item.isStarred) {
+                            unstarMessage({ variables: { id: item.id } })
+                          } else {
+                            starMessage({ variables: { id: item.id } })
+                          }
+                        }}
+                        onStash={() => {
+                          if (item.isArchived) {
+                            unarchiveMessage({ variables: { id: item.id } })
+                          } else {
+                            archiveMessage({ variables: { id: item.id } })
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </>
+          )}
         </>
       )}
     </IntroWrapper>
