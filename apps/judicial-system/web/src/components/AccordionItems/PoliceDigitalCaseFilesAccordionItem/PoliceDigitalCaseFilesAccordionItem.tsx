@@ -23,7 +23,7 @@ const PoliceDigitalCaseFilesAccordionItem: FC<Props> = ({
 }) => {
   return (
     <AccordionItem
-      id="id_7"
+      id="police-digital-case-files"
       label={
         <Box display="flex" alignItems="center">
           <Text variant="h3" as="span">
