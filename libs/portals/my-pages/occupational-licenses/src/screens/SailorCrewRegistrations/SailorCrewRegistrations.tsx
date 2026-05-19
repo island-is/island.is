@@ -38,15 +38,27 @@ const SailorCrewRegistrations = () => {
           tabs={[
             {
               label: formatMessage(om.sailorTabSeaService),
-              content: <SailorCrewRegistrationsSeaService />,
+              content: (
+                <Box marginTop={6}>
+                  <SailorCrewRegistrationsSeaService />
+                </Box>
+              ),
             },
             {
               label: formatMessage(om.sailorTabExemptions),
-              content: <SailorCrewRegistrationsExemptions />,
+              content: (
+                <Box marginTop={6}>
+                  <SailorCrewRegistrationsExemptions />
+                </Box>
+              ),
             },
             {
               label: formatMessage(om.sailorTabMaritimeBooks),
-              content: <SailorCrewRegistrationsMaritimeBooks />,
+              content: (
+                <Box marginTop={6}>
+                  <SailorCrewRegistrationsMaritimeBooks />
+                </Box>
+              ),
             },
           ]}
         />

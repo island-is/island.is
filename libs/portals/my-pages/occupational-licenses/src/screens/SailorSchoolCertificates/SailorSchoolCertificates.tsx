@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Input, Stack } from '@island.is/island-ui/core'
+import { Box, FilterInput, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -25,8 +25,10 @@ const SailorSchoolCertificates = () => {
   const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
-  const schoolCertificates =
-    data?.shipRegistrySailorCertificates?.schoolCertificates ?? []
+  const schoolCertificates = useMemo(
+    () => data?.shipRegistrySailorCertificates?.schoolCertificates ?? [],
+    [data],
+  )
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(
@@ -90,17 +92,16 @@ const SailorSchoolCertificates = () => {
         <Problem type="no_data" noBorder={false} />
       )}
       {!loading && !error && schoolCertificates.length > 0 && (
-        <Stack space={3}>
-          <Input
-            name="schoolCertificateSearch"
-            label={formatMessage(m.inputSearchTerm)}
-            placeholder={formatMessage(m.inputSearchTerm)}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            icon={{ type: 'outline', name: 'search' }}
-            size="xs"
-            backgroundColor="blue"
-          />
+        <Stack space={2}>
+          <Box width="half">
+            <FilterInput
+              name="schoolCertificateSearch"
+              placeholder={formatMessage(m.inputSearchTerm)}
+              value={search}
+              onChange={(val) => setSearch(val)}
+              backgroundColor="blue"
+            />
+          </Box>
           {filtered.length === 0 ? (
             <Problem type="no_data" noBorder={false} />
           ) : (

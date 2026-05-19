@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Input, Stack, Text } from '@island.is/island-ui/core'
+import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
-  // TODO: uncomment when URL is known
-  // LinkButton,
+  LinkButton,
   NestedTable,
   Table,
   createColumnHelper,
@@ -92,36 +91,39 @@ export const SailorCrewRegistrationsExemptions = () => {
   )
 
   return (
-    <Stack space={3}>
+    <Box>
       <Text>{formatMessage(om.sailorExemptionsIntro)}</Text>
-      {/* TODO: uncomment when URL is known
-      <LinkButton
-        to="#"
-        text={formatMessage(om.sailorExemptionsLinkText)}
-        icon="open"
-        variant="utility"
-      /> */}
-      <Input
-        name="exemptionSearch"
-        label={formatMessage(m.inputSearchTerm)}
-        placeholder={formatMessage(m.inputSearchTerm)}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        icon={{ type: 'outline', name: 'search' }}
-        size="xs"
-        backgroundColor="blue"
-      />
-      {filtered.length === 0 ? (
-        <Problem type="no_data" noBorder={false} />
-      ) : (
-        <Table
-          columns={columns}
-          data={filtered}
-          emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}
-          mobileTitleKey="shipName"
-          renderExpandedRow={renderExpanded}
+      <Box marginTop={3}>
+        <LinkButton
+          to="#"
+          text={formatMessage(om.sailorExemptionsLinkText)}
+          icon="open"
+          variant="utility"
+          disabled
         />
-      )}
-    </Stack>
+      </Box>
+      <Box marginTop={6} width="half">
+        <FilterInput
+          name="exemptionSearch"
+          placeholder={formatMessage(m.inputSearchTerm)}
+          value={search}
+          onChange={(val) => setSearch(val)}
+          backgroundColor="blue"
+        />
+      </Box>
+      <Box marginTop={2}>
+        {filtered.length === 0 ? (
+          <Problem type="no_data" noBorder={false} />
+        ) : (
+          <Table
+            columns={columns}
+            data={filtered}
+            emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}
+            mobileTitleKey="shipName"
+            renderExpandedRow={renderExpanded}
+          />
+        )}
+      </Box>
+    </Box>
   )
 }
