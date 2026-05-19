@@ -75,7 +75,7 @@ const SailorRightCertificates = () => {
       data={[
         {
           title: formatMessage(
-            om.sailorRightCertificatesExpandCertificateNumber,
+            om.licenseNumber,
           ),
           value: row.original.certificateNumber ?? '-',
         },

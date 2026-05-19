@@ -16,7 +16,8 @@ const SailorCrewRegistrations = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage } = useLocale()
 
-  // TODO: Replace stubs with generated hook when domain module exposes registrationExemptions/maritimeBooks
+  // TODO: Replace loading/error/data stubs with a real generated hook when the domain module
+  // exposes registrationExemptions and maritimeBooks — not just the data fields
   const loading = false
   const error = undefined
 

@@ -216,10 +216,6 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-right-certificates-column-valid-date',
     defaultMessage: 'Gildisdagsetning',
   },
-  sailorRightCertificatesExpandCertificateNumber: {
-    id: 'sp.occupational-licenses:sailor-right-certificates-expand-certificate-number',
-    defaultMessage: 'Skírteinisnúmer',
-  },
   sailorRightCertificatesExpandIssueDate: {
     id: 'sp.occupational-licenses:sailor-right-certificates-expand-issue-date',
     defaultMessage: 'Útgáfudagur',
