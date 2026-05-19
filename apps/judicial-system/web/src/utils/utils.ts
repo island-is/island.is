@@ -148,14 +148,16 @@ export const getDefendantPleaText = (
   }
 }
 
-export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
+export const shouldUseAppealWithdrawnRoutes = (
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return (
-    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
-    (!theCase.appealCase?.appealAssistant ||
-      !theCase.appealCase?.appealCaseNumber ||
-      !theCase.appealCase?.appealJudge1 ||
-      !theCase.appealCase?.appealJudge2 ||
-      !theCase.appealCase?.appealJudge3)
+    appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+    (!appealCase.appealAssistant ||
+      !appealCase.appealCaseNumber ||
+      !appealCase.appealJudge1 ||
+      !appealCase.appealJudge2 ||
+      !appealCase.appealJudge3)
   )
 }
 
