@@ -28,7 +28,7 @@ import UploadFiles, {
 } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -101,7 +101,10 @@ const AddRulingOrder: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(workingCase.id, NotificationType.RULING_ORDER_ADDED)
+      await sendNotification(
+        workingCase.id,
+        TrackedNotificationType.RULING_ORDER_ADDED,
+      )
     }
 
     setVisibleModal(undefined)
