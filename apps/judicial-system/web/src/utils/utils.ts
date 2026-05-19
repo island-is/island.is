@@ -26,14 +26,27 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export const mapStringToGender = (gender?: string | null): Gender | undefined =>
-  gender?.toLowerCase() === 'male'
-    ? Gender.MALE
-    : gender?.toLowerCase() === 'female'
-    ? Gender.FEMALE
-    : gender?.toLowerCase() === 'other'
-    ? Gender.OTHER
-    : undefined
+export const mapStringToGender = (
+  gender?: string | null,
+): Gender | undefined => {
+  const normalizedGender = gender?.trim().toLowerCase()
+
+  switch (normalizedGender) {
+    case 'male':
+    case 'karl':
+      return Gender.MALE
+    case 'female':
+    case 'kona':
+      return Gender.FEMALE
+    case 'other':
+    case 'kynsegin/annað':
+    case 'kynsegin':
+    case 'annað':
+      return Gender.OTHER
+    default:
+      return undefined
+  }
+}
 
 export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
