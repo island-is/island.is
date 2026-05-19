@@ -74,9 +74,7 @@ const SailorRightCertificates = () => {
     <NestedTable
       data={[
         {
-          title: formatMessage(
-            om.licenseNumber,
-          ),
+          title: formatMessage(om.licenseNumber),
           value: row.original.certificateNumber ?? '-',
         },
         {
