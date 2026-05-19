@@ -9,5 +9,6 @@ query PoliceDigitalCaseFiles($input: PoliceDigitalCaseFilesQueryInput!) {
     displayDate
     orderWithinChapter
     isDeletable
+    isNew
   }
 }

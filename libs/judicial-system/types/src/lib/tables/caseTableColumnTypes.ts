@@ -4,6 +4,7 @@ export interface CaseTableColumn {
 const caseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
+const appealCaseType: CaseTableColumn = { title: 'Tegund' }
 const appealState: CaseTableColumn = { title: 'Staða' }
 const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
@@ -34,6 +35,7 @@ export const caseTableColumns = {
   caseNumber,
   defendants,
   caseType,
+  appealCaseType,
   appealState,
   courtOfAppealsHead,
   validFromTo,

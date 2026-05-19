@@ -1,5 +1,7 @@
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
+import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
+import { ConfirmTravelService } from './vmst/confirm-travel/confirm-travel.service'
 import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
 import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
 import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
@@ -288,6 +290,7 @@ export const modules = [
   ConfirmJobSearchModule,
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
+  ConfirmTravelModule,
 ]
 
 export const services = [
@@ -386,4 +389,5 @@ export const services = [
   ConfirmJobSearchService,
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
+  ConfirmTravelService,
 ]
