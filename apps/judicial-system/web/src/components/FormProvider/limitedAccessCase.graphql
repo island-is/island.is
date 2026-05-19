@@ -572,6 +572,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      policeCaseNumbers
+      defendantIds
     }
     victims {
       id

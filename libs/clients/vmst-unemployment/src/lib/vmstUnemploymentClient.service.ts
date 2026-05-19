@@ -22,7 +22,6 @@ import {
   ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
@@ -35,6 +34,7 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'

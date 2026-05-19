@@ -446,9 +446,25 @@ export class SubpoenaService {
     try {
       const civilClaimPdfs: string[] = []
       const civilClaimFiles =
-        theCase.caseFiles?.filter(
-          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-        ) ?? []
+        theCase.caseFiles?.filter((caseFile) => {
+          if (caseFile.category !== CaseFileCategory.CIVIL_CLAIM) {
+            return false
+          }
+
+          if (!caseFile.civilClaimantId) {
+            return true
+          }
+
+          const claimant = theCase.civilClaimants?.find(
+            (c) => c.id === caseFile.civilClaimantId,
+          )
+
+          if (!claimant?.defendantIds?.length) {
+            return true
+          }
+
+          return claimant.defendantIds.includes(defendant.id)
+        }) ?? []
 
       for (const civilClaimFile of civilClaimFiles) {
         const civilClaimPdf = await this.fileService.getCaseFileFromS3(
