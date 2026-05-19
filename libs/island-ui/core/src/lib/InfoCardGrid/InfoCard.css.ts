@@ -32,7 +32,10 @@ export const gridContainerMaxThreeColumn = style({
 
 export const gridContainerMaxOneColumn = style({
   ...gridContainerBase,
-  gridTemplateColumns: 'minmax(320px, 1fr))',
+export const gridContainerMaxOneColumn = style({
+  ...gridContainerBase,
+  gridTemplateColumns: 'minmax(320px, 1fr)',
+})
 })
 
 export const iconBox = style({})
