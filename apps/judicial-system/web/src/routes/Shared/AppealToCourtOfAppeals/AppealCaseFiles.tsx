@@ -33,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -103,7 +103,10 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(workingCase.id, NotificationType.APPEAL_CASE_FILES_UPDATED)
+    sendNotification(
+      workingCase.id,
+      TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+    )
 
     setVisibleModal(true)
   }, [

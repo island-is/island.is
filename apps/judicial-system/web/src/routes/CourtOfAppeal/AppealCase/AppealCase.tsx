@@ -18,7 +18,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  NotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -103,7 +103,7 @@ const AppealCase: FC = () => {
   const sendNotifications = () => {
     return sendNotification(
       workingCase.id,
-      NotificationType.APPEAL_JUDGES_ASSIGNED,
+      TrackedNotificationType.APPEAL_JUDGES_ASSIGNED,
     )
   }
 
@@ -116,7 +116,7 @@ const AppealCase: FC = () => {
 
     if (
       hasSentNotification(
-        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        TrackedNotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
       ).hasSent ||
       isReopenedCOACase(

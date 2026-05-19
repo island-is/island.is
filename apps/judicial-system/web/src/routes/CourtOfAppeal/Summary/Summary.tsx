@@ -22,7 +22,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
@@ -76,7 +76,7 @@ const Summary: FC = () => {
   const handleNextButtonClick = async () => {
     if (
       hasSentNotification(
-        NotificationType.APPEAL_COMPLETED,
+        TrackedNotificationType.APPEAL_COMPLETED,
         workingCase.notifications,
       ).hasSent
     ) {

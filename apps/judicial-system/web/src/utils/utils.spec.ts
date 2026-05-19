@@ -14,7 +14,7 @@ import {
   Gender,
   InstitutionType,
   Notification,
-  NotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -115,7 +115,7 @@ describe('Utils', () => {
       // Arrange
       const n1 = undefined
       const n2: Notification[] = []
-      const nt = NotificationType.COURT_DATE
+      const nt = TrackedNotificationType.COURT_DATE
 
       // Act
       const res1 = hasSentNotification(nt, n1).hasSent
@@ -134,7 +134,7 @@ describe('Utils', () => {
           id: faker.datatype.uuid(),
           created: faker.date.future().toISOString(),
           caseId: faker.datatype.uuid(),
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [
             {
               success: false,
@@ -146,7 +146,7 @@ describe('Utils', () => {
           id: faker.datatype.uuid(),
           created: faker.date.past().toISOString(),
           caseId: faker.datatype.uuid(),
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [
             {
               success: true,
@@ -155,7 +155,7 @@ describe('Utils', () => {
           ],
         },
       ]
-      const nt = NotificationType.COURT_DATE
+      const nt = TrackedNotificationType.COURT_DATE
 
       // Act
       const res = hasSentNotification(nt, n).hasSent
@@ -172,7 +172,7 @@ describe('Utils', () => {
           id: faker.datatype.uuid(),
           created: faker.date.future().toISOString(),
           caseId: faker.datatype.uuid(),
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [
             {
               success: true,
@@ -181,7 +181,7 @@ describe('Utils', () => {
           ],
         },
       ]
-      const nt = NotificationType.REVOKED
+      const nt = TrackedNotificationType.REVOKED
 
       // Act
       const res = hasSentNotification(nt, n).hasSent
@@ -198,7 +198,7 @@ describe('Utils', () => {
           id: faker.datatype.uuid(),
           created: faker.date.future().toISOString(),
           caseId: faker.datatype.uuid(),
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [
             {
               success: true,
@@ -210,7 +210,7 @@ describe('Utils', () => {
           id: faker.datatype.uuid(),
           created: faker.date.past().toISOString(),
           caseId: faker.datatype.uuid(),
-          type: NotificationType.COURT_DATE,
+          type: TrackedNotificationType.COURT_DATE,
           recipients: [
             {
               success: true,
@@ -219,7 +219,7 @@ describe('Utils', () => {
           ],
         },
       ]
-      const nt = NotificationType.COURT_DATE
+      const nt = TrackedNotificationType.COURT_DATE
 
       // Act
       const res = hasSentNotification(nt, n).hasSent

@@ -4,11 +4,13 @@ import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
 import {
+  AppealCaseNotificationType,
   AppealCaseRulingDecision,
   CaseDecision,
-  CaseNotificationType,
   CaseState,
   CaseType,
+  RequestCaseNotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -87,7 +89,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
           } as Case,
           {
             user: { id: userId } as User,
-            type: CaseNotificationType.APPEAL_COMPLETED,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
