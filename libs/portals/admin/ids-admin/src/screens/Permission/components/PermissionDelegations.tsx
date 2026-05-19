@@ -248,19 +248,18 @@ export const PermissionDelegations = ({
     const type = field.split('-')[1]
 
     setInputValues((prev) => {
-      const isPresent = prev.supportedDelegationTypes.includes(type)
+      const currentTypes = prev.supportedDelegationTypes ?? []
+      const isPresent = currentTypes.includes(type)
       if (checked && !isPresent) {
         return {
           ...prev,
-          supportedDelegationTypes: [...prev.supportedDelegationTypes, type],
+          supportedDelegationTypes: [...currentTypes, type],
         }
       }
       if (!checked && isPresent) {
         return {
           ...prev,
-          supportedDelegationTypes: prev.supportedDelegationTypes.filter(
-            (t) => t !== type,
-          ),
+          supportedDelegationTypes: currentTypes.filter((t) => t !== type),
         }
       }
       return prev
