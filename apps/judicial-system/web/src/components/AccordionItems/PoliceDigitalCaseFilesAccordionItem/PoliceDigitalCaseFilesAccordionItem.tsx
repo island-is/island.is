@@ -64,9 +64,7 @@ const PoliceDigitalCaseFilesAccordionItem: FC<Props> = ({
             transition={{ duration: 0.2 }}
           >
             {!digitalCaseFiles?.length ? (
-              <Text>
-                Engin rafræn gögn fylgja kröfunni í Réttarvörslugátt.
-              </Text>
+              <Text>Engin rafræn gögn fylgja kröfunni í Réttarvörslugátt.</Text>
             ) : (
               <Text marginBottom={2}>
                 Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar. Allar
