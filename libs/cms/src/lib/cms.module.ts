@@ -39,6 +39,7 @@ import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTit
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 import { OrganizationPageResolver } from './organizationPage.resolver'
+import { OrganizationZendeskInstanceByNationalIdLoader } from './loaders/organizationZendeskInstanceByNationalId.loader'
 import {
   FeatureFlagConfig,
   FeatureFlagModule,
@@ -80,6 +81,7 @@ import {
     OrganizationTitleEnByNationalIdLoader,
     OrganizationTitleByEntryIdLoader,
     OrganizationLogoByEntryIdLoader,
+    OrganizationZendeskInstanceByNationalIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
@@ -105,6 +107,7 @@ import {
     OrganizationTitleEnByNationalIdLoader,
     OrganizationTitleByEntryIdLoader,
     OrganizationLogoByEntryIdLoader,
+    OrganizationZendeskInstanceByNationalIdLoader,
     CmsElasticsearchService,
   ],
 })

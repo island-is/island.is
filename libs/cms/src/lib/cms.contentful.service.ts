@@ -248,6 +248,34 @@ export class CmsContentfulService {
     })
   }
 
+  async getOrganizationZendeskInstance(
+    organizationKeys: string[],
+    searchByField: keyof types.IOrganizationFields,
+    locale?: 'en' | 'is',
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: `fields.serviceSystemInstance,fields.serviceSystemBrandID,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationKeys.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
+      .catch(errorHandler('getOrganizationZendeskInstance'))
+
+    return organizationKeys.map((key) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields[searchByField] === key,
+        )
+
+        return JSON.stringify(organization?.fields) ?? null
+      }
+    })
+  }
+
   async getOrganizationTitles(
     organizationKeys: string[],
     searchByField: keyof types.IOrganizationFields,
