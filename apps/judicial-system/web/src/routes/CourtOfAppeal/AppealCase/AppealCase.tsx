@@ -18,7 +18,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  type AppealCase as TAppealCase,
   TrackedNotificationType,
   User,
   UserRole,
@@ -28,8 +27,11 @@ import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/fo
 import {
   useAppealCase,
   useCase,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  appendAppealCaseIdQuery,
+  applyAppealCaseUpdate,
   hasSentNotification,
   isReopenedCOACase,
 } from '@island.is/judicial-system-web/src/utils/utils'
@@ -53,13 +55,13 @@ const assignees: Record<Assignees, { id: string; assignee: string }> = {
 
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { sendNotification, sendNotificationError, isSendingNotification } =
     useCase()
   const { updateAppealCase } = useAppealCase()
 
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
@@ -79,23 +81,23 @@ const AppealCase: FC = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
-        workingCase.appealCase?.appealJudge1?.id !== user.id &&
-        workingCase.appealCase?.appealJudge2?.id !== user.id &&
-        workingCase.appealCase?.appealJudge3?.id !== user.id,
+        targetAppealCase?.appealJudge1?.id !== user.id &&
+        targetAppealCase?.appealJudge2?.id !== user.id &&
+        targetAppealCase?.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
       return { label: judge.name ?? '', value: judge.id, judge }
     })
 
   const defaultJudges: { key: Assignees; judge: User | undefined | null }[] = [
-    { key: 'judge1', judge: workingCase.appealCase?.appealJudge1 },
-    { key: 'judge2', judge: workingCase.appealCase?.appealJudge2 },
-    { key: 'judge3', judge: workingCase.appealCase?.appealJudge3 },
+    { key: 'judge1', judge: targetAppealCase?.appealJudge1 },
+    { key: 'judge2', judge: targetAppealCase?.appealJudge2 },
+    { key: 'judge3', judge: targetAppealCase?.appealJudge3 },
   ]
 
   const defaultAssistant = assistants?.find(
     (assistant: AssistantSelectOption) =>
-      assistant.value === workingCase.appealCase?.appealAssistant?.id,
+      assistant.value === targetAppealCase?.appealAssistant?.id,
   )
 
   const sendNotifications = () => {
@@ -105,7 +107,10 @@ const AppealCase: FC = () => {
     )
   }
 
-  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
+  const previousUrl = appendAppealCaseIdQuery(
+    `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+    targetAppealCase?.id,
+  )
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
     setNavigateTo(destination)
 
@@ -115,11 +120,16 @@ const AppealCase: FC = () => {
         workingCase.notifications,
       ).hasSent ||
       isReopenedCOACase(
-        workingCase.appealCase?.appealState,
+        targetAppealCase?.appealState,
         workingCase.notifications,
       )
     ) {
-      router.push(`${destination}/${id}`)
+      router.push(
+        appendAppealCaseIdQuery(
+          `${destination}/${workingCase.id}`,
+          targetAppealCase?.id,
+        ),
+      )
     } else {
       await sendNotifications()
       setModalVisible(true)
@@ -130,10 +140,10 @@ const AppealCase: FC = () => {
     key: 'assistant' | 'judge1' | 'judge2' | 'judge3',
     assignee: User,
   ) => {
-    if (workingCase?.appealCase?.id) {
+    if (targetAppealCase?.id) {
       const updatedAppealCase = await updateAppealCase(
         workingCase.id,
-        workingCase.appealCase.id,
+        targetAppealCase.id,
         { [assignees[key].id]: assignee.id },
       )
 
@@ -141,13 +151,11 @@ const AppealCase: FC = () => {
         return
       }
 
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        appealCase: {
-          ...prevWorkingCase.appealCase,
+      setWorkingCase((prev) =>
+        applyAppealCaseUpdate(prev, targetAppealCase.id, {
           [assignees[key].assignee]: assignee,
-        } as TAppealCase,
-      }))
+        }),
+      )
     }
   }
 
@@ -232,7 +240,7 @@ const AppealCase: FC = () => {
               handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
             }}
             nextButtonText={formatMessage(strings.nextButtonText)}
-            nextIsDisabled={!isCourtOfAppealCaseStepValid(workingCase)}
+            nextIsDisabled={!isCourtOfAppealCaseStepValid(targetAppealCase)}
           />
         </FormContentContainer>
       </PageLayout>
@@ -251,7 +259,13 @@ const AppealCase: FC = () => {
             )}
             primaryButton={{
               text: formatMessage(strings.modalPrimaryButton),
-              onClick: () => router.push(`${navigateTo}/${id}`),
+              onClick: () =>
+                router.push(
+                  appendAppealCaseIdQuery(
+                    `${navigateTo}/${workingCase.id}`,
+                    targetAppealCase?.id,
+                  ),
+                ),
             }}
             secondaryButton={
               sendNotificationError

@@ -43,7 +43,6 @@ const courtOfAppealsRequestCasesAccessWhereOptions = {
 const courtOfAppealsIndictmentsAccessWhereOptions = {
   is_archived: false,
   type: indictmentCases,
-  state: completedIndictmentCaseStates,
   [Op.or]: [
     {
       '$appealCase.appeal_state$': [
@@ -54,6 +53,18 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
     {
       '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
       '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
+    },
+    {
+      '$rulingOrderAppealCases.appeal_state$': [
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
+      ],
+    },
+    {
+      '$rulingOrderAppealCases.appeal_state$': AppealCaseState.WITHDRAWN,
+      '$rulingOrderAppealCases.appeal_received_by_court_date$': {
+        [Op.not]: null,
+      },
     },
   ],
 }

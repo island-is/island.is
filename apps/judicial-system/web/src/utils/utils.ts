@@ -26,14 +26,27 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-export const mapStringToGender = (gender?: string | null): Gender | undefined =>
-  gender?.toLowerCase() === 'male'
-    ? Gender.MALE
-    : gender?.toLowerCase() === 'female'
-    ? Gender.FEMALE
-    : gender?.toLowerCase() === 'other'
-    ? Gender.OTHER
-    : undefined
+export const mapStringToGender = (
+  gender?: string | null,
+): Gender | undefined => {
+  const normalizedGender = gender?.trim().toLowerCase()
+
+  switch (normalizedGender) {
+    case 'male':
+    case 'karl':
+      return Gender.MALE
+    case 'female':
+    case 'kona':
+      return Gender.FEMALE
+    case 'other':
+    case 'kynsegin/annað':
+    case 'kynsegin':
+    case 'annað':
+      return Gender.OTHER
+    default:
+      return undefined
+  }
+}
 
 export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
@@ -639,6 +652,38 @@ export const getCurrentUserStatementDate = (
   }
 
   return undefined
+}
+
+// Appends `?appealCaseId=…` to a path when the param is set. COA detail-page
+// navigation handlers use this to forward the query param to the next screen
+// so ruling-order rows keep resolving to the right appeal across navigations.
+export const appendAppealCaseIdQuery = (
+  path: string,
+  appealCaseId: string | undefined,
+): string => (appealCaseId ? `${path}?appealCaseId=${appealCaseId}` : path)
+
+// Returns a new Case with `update` merged into the appeal-case slot that
+// matches `targetAppealCaseId`. For optimistic `setWorkingCase` updates from
+// COA detail pages — ruling-order rows need their updates routed into
+// `rulingOrderAppealCases[i]` rather than the case-level `appealCase`.
+export const applyAppealCaseUpdate = (
+  workingCase: Case,
+  targetAppealCaseId: string,
+  update: Partial<AppealCase>,
+): Case => {
+  if (workingCase.appealCase?.id === targetAppealCaseId) {
+    return {
+      ...workingCase,
+      appealCase: { ...workingCase.appealCase, ...update },
+    }
+  }
+
+  return {
+    ...workingCase,
+    rulingOrderAppealCases: workingCase.rulingOrderAppealCases?.map((a) =>
+      a.id === targetAppealCaseId ? { ...a, ...update } : a,
+    ),
+  }
 }
 
 export const areAllDefenderDefendantsCancelledOrDismissed = (

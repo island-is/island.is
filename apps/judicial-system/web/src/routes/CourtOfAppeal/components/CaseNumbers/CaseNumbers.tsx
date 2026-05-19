@@ -2,11 +2,13 @@ import { FC, useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const CaseNumbers: FC = () => {
   const { workingCase } = useContext(FormContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
-  if (!workingCase.appealCase?.appealCaseNumber) {
+  if (!targetAppealCase?.appealCaseNumber) {
     return (
       <Text as="h3" variant="default" fontWeight="semiBold" marginBottom={1}>
         Málsnr. Héraðsdóms {workingCase.courtCaseNumber}
@@ -17,7 +19,7 @@ const CaseNumbers: FC = () => {
   return (
     <Box marginBottom={7}>
       <Text as="h2" variant="h2">
-        Mál nr. {workingCase.appealCase?.appealCaseNumber}
+        Mál nr. {targetAppealCase.appealCaseNumber}
       </Text>
       <Text as="h3" variant="default" fontWeight="semiBold">
         Málsnr. Héraðsdóms {workingCase.courtCaseNumber}
