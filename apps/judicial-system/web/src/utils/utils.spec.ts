@@ -25,6 +25,7 @@ import {
   getDefaultDefendantGender,
   hasSentNotification,
   isAppealFileCategoryVisible,
+  mapStringToGender,
 } from './utils'
 
 describe('Utils', () => {
@@ -226,6 +227,31 @@ describe('Utils', () => {
       // Assert
       expect(res).toEqual(true)
     })
+  })
+
+  describe('mapStringToGender', () => {
+    test.each([
+      ['male', Gender.MALE],
+      ['MALE', Gender.MALE],
+      ['Karl', Gender.MALE],
+      [' karl ', Gender.MALE],
+      ['female', Gender.FEMALE],
+      ['FEMALE', Gender.FEMALE],
+      ['Kona', Gender.FEMALE],
+      [' kona ', Gender.FEMALE],
+      ['other', Gender.OTHER],
+      ['OTHER', Gender.OTHER],
+      ['Kynsegin/Annað', Gender.OTHER],
+    ])('maps %s to %s', (input, expected) => {
+      expect(mapStringToGender(input)).toBe(expected)
+    })
+
+    test.each([undefined, null, '', '   ', 'unknown'])(
+      'returns undefined for %s',
+      (input) => {
+        expect(mapStringToGender(input)).toBeUndefined()
+      },
+    )
   })
 
   describe('getDefaultDefendantGender', () => {

@@ -153,7 +153,22 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
 }
 
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
-export const codesRequiringHealthCertificate = ['400', '01.06']
+// Remark codes that trigger the BE health-certificate upload. Mirrors EU
+// Directive 2006/126/EC Annex I §5 (vision / hearing / prosthesis), per
+// Samgöngustofa regulation. Administrative codes (e.g. `71` samrit) must
+// not be in this list.
+export const codesRequiringHealthCertificate = [
+  '01',
+  '01.01',
+  '01.02',
+  '01.05',
+  '01.06',
+  '01.07',
+  '02',
+  '03',
+  '03.01',
+  '03.02',
+]
 export const codesExtendedLicenseCategories = [
   'C1',
   'C1E',

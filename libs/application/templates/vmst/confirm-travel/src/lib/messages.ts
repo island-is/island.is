@@ -148,7 +148,7 @@ export const errorMessages = {
   cannotApplyErrorSummary: {
     id: 'vmst.ct.application:errorMessages.cannotApplyErrorSummary',
     defaultMessage:
-      'Samkvæmt sóttum gögnum getur viðkomandi tilkynnt um dvöl erlendis, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki tilkynnt um dvöl erlendis, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
     description: `Error summary when user can not apply`,
   },
   submitError: {
