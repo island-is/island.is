@@ -753,6 +753,9 @@
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-equality": [
+        "libs/clients/directorate-of-equality/src/index.ts"
+      ],
       "@island.is/clients/directorate-of-immigration": [
         "libs/clients/directorate-of-immigration/src/index.ts"
       ],
@@ -856,10 +859,10 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/lyfjastofnun-pharmacies": [
         "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
       ],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
