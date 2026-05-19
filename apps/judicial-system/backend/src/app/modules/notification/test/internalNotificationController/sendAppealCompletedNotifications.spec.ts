@@ -31,7 +31,7 @@ interface Then {
 type GivenWhenThen = (
   defenderNationalId?: string,
   appealRulingDecision?: AppealCaseRulingDecision,
-  notifications?: { type: CaseNotificationType }[],
+  notifications?: { type: TrackedNotificationType }[],
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -69,7 +69,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     givenWhenThen = async (
       defenderNationalId?: string,
       appealRulingDecision?: AppealCaseRulingDecision,
-      notifications?: { type: CaseNotificationType }[],
+      notifications?: { type: TrackedNotificationType }[],
     ) => {
       const then = {} as Then
 
@@ -193,7 +193,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
 
     beforeEach(async () => {
       then = await givenWhenThen(uuid(), AppealCaseRulingDecision.CHANGED, [
-        { type: CaseNotificationType.APPEAL_COMPLETED },
+        { type: TrackedNotificationType.APPEAL_COMPLETED },
       ])
     })
 
