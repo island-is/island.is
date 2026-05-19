@@ -1842,6 +1842,10 @@ export class CaseService {
         throw new ForbiddenException('Cannot reopen a non-indictment case')
       }
 
+      if (!update.reopenReason.trim()) {
+        throw new BadRequestException('Reopen reason cannot be empty')
+      }
+
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`

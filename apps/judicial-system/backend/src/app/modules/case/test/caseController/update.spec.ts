@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import {
   capitalize,
@@ -846,6 +846,34 @@ describe('CaseController - Update', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
     })
   })
+
+  describe.each(['', '   ', '\n\t '])(
+    'reopen indictment case with empty reopenReason %p',
+    (emptyReason) => {
+      const completedIndictmentCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+      } as Case
+
+      const caseToUpdate = { reopenReason: emptyReason } as UpdateCaseDto
+
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          caseId,
+          user,
+          completedIndictmentCase,
+          caseToUpdate,
+        )
+      })
+
+      it('should throw BadRequestException', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+      })
+    },
+  )
 
   describe('reopen indictment case with active appeal', () => {
     const completedIndictmentCase = {
