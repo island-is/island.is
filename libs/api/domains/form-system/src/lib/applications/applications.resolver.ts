@@ -152,17 +152,17 @@ export class ApplicationsResolver {
     return this.applicationsService.deleteApplication(user, input)
   }
 
-  @Query(() => String, {
-    name: 'formSystemOrganizationZendeskInstance',
-    nullable: true,
-  })
-  async getOrganizationZendeskInstance(
-    @Args('input', { type: () => GetOrganizationAdminInput })
-    input: GetOrganizationAdminInput,
-    @Loader(OrganizationZendeskInstanceByNationalIdLoader)
-    organizationZendeskInstanceLoader: OrganizationZendeskInstanceByNationalIdDataLoader,
-    @CurrentUser() _user: User,
-  ): Promise<ShortTitle> {
-    return organizationZendeskInstanceLoader.load(input.nationalId)
-  }
+  // @Query(() => String, {
+  //   name: 'formSystemOrganizationZendeskInstance',
+  //   nullable: true,
+  // })
+  // async getOrganizationZendeskInstance(
+  //   @Args('input', { type: () => GetOrganizationAdminInput })
+  //   input: GetOrganizationAdminInput,
+  //   @Loader(OrganizationZendeskInstanceByNationalIdLoader)
+  //   organizationZendeskInstanceLoader: OrganizationZendeskInstanceByNationalIdDataLoader,
+  //   @CurrentUser() _user: User,
+  // ): Promise<ShortTitle> {
+  //   return organizationZendeskInstanceLoader.load(input.nationalId)
+  // }
 }

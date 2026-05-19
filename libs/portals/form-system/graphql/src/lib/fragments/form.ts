@@ -35,6 +35,10 @@ export const FormFragment = gql`
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
+    organizationZendeskInstance {
+      zendeskInstance
+      zendeskBrandId
+    }
     completedSectionInfo {
       ...CompletedSectionInfo
     }

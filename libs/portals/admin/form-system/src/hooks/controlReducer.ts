@@ -207,6 +207,14 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE'
+      payload: {
+        zendeskInstance: string
+        zendeskBrandId: string
+        organizationId?: string
+      }
+    }
+  | {
       type: 'CHANGE_ZENDESK_INTERNAL'
       payload: {
         value: boolean
@@ -910,6 +918,20 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE': {
+      const { zendeskInstance, zendeskBrandId } = action.payload
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          organizationZendeskInstance: {
+            zendeskInstance,
+            zendeskBrandId,
+          },
         },
       }
       return updatedState

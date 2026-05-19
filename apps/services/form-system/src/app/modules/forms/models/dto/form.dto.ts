@@ -6,6 +6,7 @@ import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { OrganizationZendeskInstanceDto } from '../../../organizations/models/dto/organizationZendeskInstance.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -76,6 +77,9 @@ export class FormDto {
 
   @ApiProperty()
   hasSummaryScreen!: boolean
+
+  @ApiProperty({ type: OrganizationZendeskInstanceDto })
+  organizationZendeskInstance!: OrganizationZendeskInstanceDto
 
   @ApiProperty({ type: CompletedSectionInfo })
   completedSectionInfo!: CompletedSectionInfo

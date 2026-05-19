@@ -1,6 +1,10 @@
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
-import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import {
+  GET_ORGANIZATION_ZENDESK_INSTANCE,
+  UPDATE_FIELD,
+  UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
@@ -14,6 +18,11 @@ import {
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../context/ControlContext'
+
+type ZendeskInstanceConfig = {
+  serviceSystemInstance: string
+  serviceSystemBrandID: string
+}
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -29,6 +38,10 @@ export const SubmissionUrls = () => {
   const { form, isReadOnly } = control
   const [updateField] = useMutation(UPDATE_FIELD)
   const [showInput, setShowInput] = useState(false)
+  const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE)
+  const [updateOrganizationZendeskInstance] = useMutation(
+    UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+  )
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
 
@@ -68,6 +81,17 @@ export const SubmissionUrls = () => {
       )
     }
   }
+
+  // const updateZendeskInstance = async () => {
+  //   await updateOrganizationZendeskInstance({
+  //     variables: {
+  //       input: {
+  //         serviceSystemInstance: 'your_instance',
+  //         serviceSystemBrandID: 'your_brand_id',
+  //       },
+  //     },
+  //   })
+  // }
 
   return (
     <Stack space={2}>
@@ -167,8 +191,40 @@ export const SubmissionUrls = () => {
             type: 'CHANGE_SUBMISSION_URL',
             payload: { value: e.target.id },
           })
+
           formUpdate({ ...form, submissionServiceUrl: e.target.id })
           await persistZendeskApplicantRequirements()
+          const data = await getZendeskInstance({
+            variables: { input: { nationalId: form.organizationNationalId } },
+            fetchPolicy: 'cache-first',
+          })
+          const zendeskInstanceInfo =
+            data?.data?.formSystemOrganizationZendeskInstance
+          const parsed: ZendeskInstanceConfig = JSON.parse(zendeskInstanceInfo)
+          if (
+            parsed.serviceSystemInstance !==
+              form.organizationZendeskInstance?.zendeskInstance ||
+            parsed.serviceSystemBrandID !==
+              form.organizationZendeskInstance?.zendeskBrandId
+          ) {
+            console.log('Updating form with new Zendesk instance info', parsed)
+            controlDispatch({
+              type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+              payload: {
+                zendeskInstance: parsed.serviceSystemInstance,
+                zendeskBrandId: parsed.serviceSystemBrandID,
+              },
+            })
+            await updateOrganizationZendeskInstance({
+              variables: {
+                input: {
+                  zendeskInstance: parsed.serviceSystemInstance,
+                  zendeskBrandId: parsed.serviceSystemBrandID,
+                  organizationId: form.organizationId,
+                },
+              },
+            })
+          }
         }}
       />
 

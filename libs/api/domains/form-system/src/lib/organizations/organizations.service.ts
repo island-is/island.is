@@ -5,9 +5,12 @@ import { ApolloError } from '@apollo/client'
 import {
   OrganizationsApi,
   OrganizationsControllerFindAdminRequest,
+  OrganizationsControllerUpdateZendeskInstanceRequest,
+  OrganizationZendeskInstanceDto,
 } from '@island.is/clients/form-system'
 import { GetOrganizationAdminInput } from '../../dto/organization.input'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
+import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
 
 @Injectable()
 export class OrganizationsService {
@@ -43,5 +46,16 @@ export class OrganizationsService {
     )
 
     return response as OrganizationAdmin
+  }
+
+  async updateOrganizationZendeskInstance(
+    auth: User,
+    input: OrganizationZendeskInstanceInput,
+  ): Promise<void> {
+    await this.organizationsApiWithAuth(
+      auth,
+    ).organizationsControllerUpdateZendeskInstance({
+      organizationZendeskInstanceDto: input as OrganizationZendeskInstanceDto,
+    })
   }
 }

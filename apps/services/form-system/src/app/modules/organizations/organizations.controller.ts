@@ -4,8 +4,17 @@ import {
   Param,
   VERSION_NEUTRAL,
   UseGuards,
+  Put,
+  Body,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
 import {
   CurrentUser,
@@ -16,6 +25,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
+import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -37,5 +47,27 @@ export class OrganizationsController {
     @Param('nationalId') nationalId: string,
   ): Promise<OrganizationAdminDto> {
     return await this.organizationsService.findAdmin(user, nationalId)
+  }
+
+  @ApiOperation({
+    summary: 'Update zendesk instance and brandId for organization',
+  })
+  @ApiNoContentResponse({
+    description: 'Update zendesk instance and brandId for organization',
+  })
+  @ApiBody({ type: OrganizationZendeskInstanceDto })
+  @Put('zendesk')
+  async updateZendeskInstance(
+    @CurrentUser()
+    user: User,
+    @Body() organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
+  ): Promise<void> {
+    console.log(
+      'updateZendeskInstance called with',
+      organizationZendeskInstanceDto,
+    )
+    return await this.organizationsService.updateZendeskInstance(
+      organizationZendeskInstanceDto,
+    )
   }
 }

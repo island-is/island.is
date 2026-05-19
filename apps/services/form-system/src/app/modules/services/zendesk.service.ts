@@ -10,7 +10,6 @@ import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ZENDESK_INSTANCES } from './zendesk-mapping/zendesk-instances'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
@@ -43,9 +42,7 @@ export class ZendeskService {
 
     if (applicationDto.isTest === false && environment.production === true) {
       const orgNationalId = applicationDto.organizationNationalId
-      const instance = ZENDESK_INSTANCES.find(
-        (i) => i.nationalId === orgNationalId,
-      )?.instance
+      const instance = 'asdf'
 
       tenantId = instance ?? this.PROD_TENANT_ID
     }

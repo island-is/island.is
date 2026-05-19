@@ -12,6 +12,7 @@ import { ListType } from './listItem.model'
 import { Option } from './option.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
+import { OrganizationZendeskInstance } from './organizationZendeskInstance.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -92,6 +93,9 @@ export class Form {
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
+
+  @Field(() => OrganizationZendeskInstance, { nullable: true })
+  organizationZendeskInstance?: OrganizationZendeskInstance
 
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo

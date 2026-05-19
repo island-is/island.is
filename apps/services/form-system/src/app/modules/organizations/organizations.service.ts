@@ -17,6 +17,7 @@ import {
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 
 @Injectable()
 export class OrganizationsService {
@@ -95,5 +96,24 @@ export class OrganizationsService {
       })
 
     return organizationAdminDto
+  }
+
+  async updateZendeskInstance(
+    organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
+  ): Promise<void> {
+    const { zendeskInstance, zendeskBrandId, organizationId } =
+      organizationZendeskInstanceDto
+    const organization = await this.organizationModel.findByPk(organizationId)
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with ID ${organizationId} not found`,
+      )
+    }
+
+    organization.zendeskInstance = zendeskInstance
+    organization.zendeskBrandId = zendeskBrandId
+
+    await organization.save()
   }
 }
