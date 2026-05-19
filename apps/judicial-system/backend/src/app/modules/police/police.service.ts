@@ -28,12 +28,8 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import {
   CaseState,
   CaseType,
-  type CrimeSceneMap,
   getServiceDateFromSupplements,
   IndictmentCaseSubtypes,
-  IndictmentSubtype as IndictmentSubtypeEnum,
-  type IndictmentSubtypeMap,
-  isIndictmentCase,
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
@@ -173,7 +169,6 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
-    evidenceType: z.string().nullish(),
     fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
@@ -218,7 +213,6 @@ export class PoliceService {
   ): string {
     return [
       policeCaseNumber.trim(),
-      file.evidenceType?.trim(),
       file.fullName?.trim(),
       file.externalVendorFileName.trim(),
     ]
@@ -1073,36 +1067,10 @@ export class PoliceService {
     return links
   }
 
-  private buildAutoFillUpdates(
-    cases: PoliceCaseInfo[],
-    newPoliceCaseNumbers: string[],
-  ): { crimeScenes: CrimeSceneMap; indictmentSubtypes: IndictmentSubtypeMap } {
-    const lookup = new Map(cases.map((c) => [c.policeCaseNumber, c]))
-    const crimeScenes: CrimeSceneMap = {}
-    const indictmentSubtypes: IndictmentSubtypeMap = {}
-
-    for (const policeCaseNumber of newPoliceCaseNumbers) {
-      const info = lookup.get(policeCaseNumber)
-      if (!info) {
-        continue
-      }
-
-      crimeScenes[policeCaseNumber] = { place: info.place, date: info.date }
-
-      if (info.subtypes && info.subtypes.length > 0) {
-        indictmentSubtypes[policeCaseNumber] =
-          info.subtypes as IndictmentSubtypeEnum[]
-      }
-    }
-
-    return { crimeScenes, indictmentSubtypes }
-  }
-
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
     defendants: { id: string; nationalId: string }[] = [],
-    caseType?: CaseType,
   ): Promise<PoliceCaseInfo[]> {
     try {
       const nationalIdsToUse =
@@ -1130,60 +1098,25 @@ export class PoliceService {
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
         await this.sequelize.transaction(async (transaction: Transaction) => {
-          const newPoliceCaseNumbers =
-            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-              caseId,
-              defendantPoliceCaseNumberLinks,
+          const existingPcnMap =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
+              [caseId],
               { transaction },
             )
+          const existingPoliceCaseNumbers = new Set(
+            existingPcnMap.get(caseId) ?? [],
+          )
 
-          if (
-            newPoliceCaseNumbers.length > 0 &&
-            caseType &&
-            isIndictmentCase(caseType)
-          ) {
-            for (const policeCaseNumber of newPoliceCaseNumbers) {
-              await this.indictmentCountService.createWithPoliceCaseNumber(
-                caseId,
-                policeCaseNumber,
-                transaction,
-              )
-            }
+          const linksForExistingNumbers = defendantPoliceCaseNumberLinks.filter(
+            (link) => existingPoliceCaseNumbers.has(link.policeCaseNumber),
+          )
 
-            const newFills = this.buildAutoFillUpdates(
-              cases,
-              newPoliceCaseNumbers,
+          if (linksForExistingNumbers.length > 0) {
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+              caseId,
+              linksForExistingNumbers,
+              { transaction },
             )
-
-            const theCase = await this.caseRepositoryService.findById(caseId, {
-              transaction,
-            })
-            if (theCase) {
-              const updates: {
-                crimeScenes?: CrimeSceneMap
-                indictmentSubtypes?: IndictmentSubtypeMap
-              } = {}
-
-              if (Object.keys(newFills.crimeScenes).length > 0) {
-                updates.crimeScenes = {
-                  ...theCase.crimeScenes,
-                  ...newFills.crimeScenes,
-                }
-              }
-
-              if (Object.keys(newFills.indictmentSubtypes).length > 0) {
-                updates.indictmentSubtypes = {
-                  ...theCase.indictmentSubtypes,
-                  ...newFills.indictmentSubtypes,
-                }
-              }
-
-              if (updates.crimeScenes || updates.indictmentSubtypes) {
-                await this.caseRepositoryService.update(caseId, updates, {
-                  transaction,
-                })
-              }
-            }
           }
         })
       }

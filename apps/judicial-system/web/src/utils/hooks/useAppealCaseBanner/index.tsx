@@ -13,7 +13,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
   isDistrictCourtUser,
-  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { appealRuling } from '@island.is/judicial-system-web/messages'
@@ -27,7 +26,7 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   InstitutionType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
@@ -147,7 +146,7 @@ const useAppealCaseBanner = () => {
   const hasCurrentUserSentStatement = Boolean(currentUserStatementDate)
 
   const appealCompletedDate = hasSentNotification(
-    NotificationType.APPEAL_COMPLETED,
+    TrackedNotificationType.APPEAL_COMPLETED,
     workingCase.notifications,
   ).date
 
