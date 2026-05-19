@@ -5,7 +5,7 @@ import * as styles from './LoadingDots.css'
 
 interface LoadingDotsProps {
   single?: boolean
-  color?: 'blue' | 'white' | 'gradient'
+  color?: 'blue' | 'white' | 'black' | 'gradient'
   size?: 'small' | 'medium' | 'large'
 }
 

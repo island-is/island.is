@@ -8,11 +8,12 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
+  Text,
 } from '@island.is/island-ui/core'
-import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -35,6 +36,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -45,7 +47,10 @@ import {
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  usePoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -120,6 +125,9 @@ export const Overview = () => {
 
     setModal('caseSubmittedModal')
   }
+
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
@@ -271,6 +279,13 @@ export const Overview = () => {
                   <CaseFileList caseId={workingCase.id} files={caseFiles} />
                 </Box>
               </AccordionItem>
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                />
+              )}
               {(workingCase.comments ||
                 workingCase.caseFilesComments ||
                 workingCase.caseResentExplanation) && (

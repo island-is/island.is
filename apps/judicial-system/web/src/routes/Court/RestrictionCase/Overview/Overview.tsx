@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
@@ -35,6 +36,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
@@ -45,6 +47,7 @@ import {
 import {
   UploadState,
   useCourtUpload,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
@@ -58,6 +61,8 @@ export const JudgeOverview = () => {
   const router = useRouter()
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
   const {
     defendants,
     policeCaseNumbers,
@@ -239,6 +244,13 @@ export const JudgeOverview = () => {
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
                   user={user}
+                />
+              )}
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
                 />
               )}
             </Accordion>
