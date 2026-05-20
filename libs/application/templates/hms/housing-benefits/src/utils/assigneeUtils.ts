@@ -430,7 +430,9 @@ export const getUnsignedApprovalNames = (
 }
 
 const assigneeNameFromNationalId = (
-  assigneeMembers: ReturnType<typeof getHouseholdMembersOver18ExcludingApplicant>,
+  assigneeMembers: ReturnType<
+    typeof getHouseholdMembersOver18ExcludingApplicant
+  >,
   nationalId: string,
 ): string => {
   const normalized = normalizeAssigneeNationalId(nationalId)

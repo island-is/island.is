@@ -267,8 +267,7 @@ const excludeRejectedHouseholdMembers = (
   const rejected = getRejectedAssigneeNationalIdSet(answers)
   if (rejected.size === 0) return members
   return members.filter(
-    (m) =>
-      !rejected.has(normalizeHouseholdMemberNationalId(m.nationalId)),
+    (m) => !rejected.has(normalizeHouseholdMemberNationalId(m.nationalId)),
   )
 }
 

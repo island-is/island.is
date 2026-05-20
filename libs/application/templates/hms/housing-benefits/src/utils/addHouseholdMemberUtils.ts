@@ -37,9 +37,9 @@ const assigneeDisplayName = (
   )?.name
   if (fromHousehold?.trim()) return fromHousehold.trim()
 
-  const registry = application.externalData[`${key}.assigneeNationalRegistry`] as
-    | { data?: { fullName?: string } }
-    | undefined
+  const registry = application.externalData[
+    `${key}.assigneeNationalRegistry`
+  ] as { data?: { fullName?: string } } | undefined
   const fromRegistry = registry?.data?.fullName?.trim()
   if (fromRegistry) return fromRegistry
 
@@ -74,7 +74,8 @@ export const getRejectedAssigneeNationalIdSet = (
 const isRejectedAssignee = (
   application: Application,
   nationalId: string,
-): boolean => getRejectedAssigneeNationalIdSet(application).has(normalizeKt(nationalId))
+): boolean =>
+  getRejectedAssigneeNationalIdSet(application).has(normalizeKt(nationalId))
 
 /**
  * Repeater rows with rejected assignees removed (for persisting on state entry).

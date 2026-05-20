@@ -41,8 +41,7 @@ export const applicantSubmitMessages = defineMessages({
   },
   assigneeRejectedAlertMessage: {
     id: 'hb.application:applicantSubmit.assigneeRejectedAlertMessage',
-    defaultMessage:
-      'Allir heimilismenn hafa tekið afstöðu til umsóknarinnar.',
+    defaultMessage: 'Allir heimilismenn hafa tekið afstöðu til umsóknarinnar.',
     description:
       'Alert message when all household members have taken a position, including rejections',
   },
