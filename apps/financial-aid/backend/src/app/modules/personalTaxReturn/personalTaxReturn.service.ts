@@ -68,7 +68,10 @@ export class PersonalTaxReturnService {
 
       const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
 
-      const presignedUrl = await this.fileService.createSignedUrl(folder, fileName)
+      const presignedUrl = await this.fileService.createSignedUrl(
+        folder,
+        fileName,
+      )
 
       const base64 = Base64.atob(taxReturn.content)
       const size = base64.length

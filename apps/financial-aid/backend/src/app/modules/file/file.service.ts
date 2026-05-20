@@ -22,8 +22,7 @@ import { environment } from '../../../environments'
 import { CreateFileDto } from './dto'
 import { CreateFilesDto } from './dto/createFiles.dto'
 
-const downloadExpirationSeconds =
-  environment.files.getTimeToLiveMinutes * 60
+const downloadExpirationSeconds = environment.files.getTimeToLiveMinutes * 60
 
 @Injectable()
 export class FileService {
@@ -95,8 +94,7 @@ export class FileService {
   ): Promise<SignedUrlModel> {
     const bucket = environment.files.applicationAttachmentBucket
     const key = `${folder}/${fileName}`
-    const uploadExpirationSeconds =
-      environment.files.postTimeToLiveMinutes * 60
+    const uploadExpirationSeconds = environment.files.postTimeToLiveMinutes * 60
 
     const url = await this.s3Service.getPresignedUploadUrl(
       { bucket, key },
@@ -109,7 +107,9 @@ export class FileService {
   async createSignedUrlForFileId(id: string): Promise<SignedUrlModel> {
     const file = await this.fileModel.findOne({
       where: { id },
-      include: [{ model: ApplicationModel, attributes: ['applicationSystemId'] }],
+      include: [
+        { model: ApplicationModel, attributes: ['applicationSystemId'] },
+      ],
     })
 
     if (!file) {
@@ -147,7 +147,9 @@ export class FileService {
   ): Promise<SignedUrlModel[]> {
     const allFiles = await this.fileModel.findAll({
       where: { applicationId },
-      include: [{ model: ApplicationModel, attributes: ['applicationSystemId'] }],
+      include: [
+        { model: ApplicationModel, attributes: ['applicationSystemId'] },
+      ],
     })
 
     const applicationSystemId = (allFiles[0] as any)?.application
@@ -213,9 +215,7 @@ export class FileService {
     }
 
     const keysToTry = [
-      ...(applicationSystemId
-        ? [`${applicationSystemId}/${fileKey}`]
-        : []),
+      ...(applicationSystemId ? [`${applicationSystemId}/${fileKey}`] : []),
       `${applicationId}/${fileKey}`,
       fileKey,
     ]

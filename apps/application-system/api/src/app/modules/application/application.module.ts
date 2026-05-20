@@ -51,7 +51,11 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     AuthPublicApiClientModule,
     IdentityClientModule,
   ],
-  controllers: [ApplicationController, AdminController, ApplicationInternalController],
+  controllers: [
+    ApplicationController,
+    AdminController,
+    ApplicationInternalController,
+  ],
   providers: [
     ApplicationAccessService,
     ApplicationValidationService,

@@ -78,9 +78,7 @@ const Files = ({
         },
       },
     }).then((response) => {
-      window.open(
-        response.data?.createMunicipalitiesFinancialAidSignedUrl?.url,
-      )
+      window.open(response.data?.createMunicipalitiesFinancialAidSignedUrl?.url)
     })
   }
 

@@ -96,8 +96,7 @@ const MissingFiles = ({
 
       try {
         const currentApplicationId =
-          application.externalData.currentApplication.data
-            ?.currentApplicationId
+          application.externalData.currentApplication.data?.currentApplicationId
         if (!currentApplicationId) {
           throw new Error()
         }
@@ -164,9 +163,7 @@ const MissingFiles = ({
         <FileUploadController
           id={fileType}
           application={application as unknown as Application}
-          error={
-            filesError ? formatMessage(filesText.errorMessage) : undefined
-          }
+          error={filesError ? formatMessage(filesText.errorMessage) : undefined}
           header={formatMessage(filesText.header)}
           description={formatMessage(filesText.description)}
           buttonLabel={formatMessage(filesText.buttonLabel)}
