@@ -40,6 +40,7 @@ export enum PermissionFormTypes {
   ACCESS_CONTROL = 'ACCESS_CONTROL',
   DELEGATIONS = 'DELEGATIONS',
   CATEGORIES_AND_TAGS = 'CATEGORIES_AND_TAGS',
+  APPLICATIONS = 'APPLICATIONS',
 }
 
 const contentSchema = z
@@ -228,6 +229,19 @@ const categoriesAndTagsSchema = z
     },
   )
 
+const applicationsSchema = z
+  .object({
+    addedScopeClientIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
+    removedScopeClientIds: z
+      .string()
+      .optional()
+      .transform(safeParseStringArray),
+  })
+  .merge(defaultEnvironmentSchema)
+
 export const schema = {
   [PermissionFormTypes.CONTENT]: contentSchema,
   [PermissionFormTypes.SECURITY_AND_CAPABILITIES]:
@@ -236,9 +250,11 @@ export const schema = {
   [PermissionFormTypes.DELEGATIONS]: delegationsSchema,
   // CATEGORIES_AND_TAGS is now merged into CONTENT
   [PermissionFormTypes.CATEGORIES_AND_TAGS]: categoriesAndTagsSchema,
+  [PermissionFormTypes.APPLICATIONS]: applicationsSchema,
 }
 
 export type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
   typeof schema[PermissionFormTypes.SECURITY_AND_CAPABILITIES] &
   typeof schema[PermissionFormTypes.ACCESS_CONTROL] &
-  typeof schema[PermissionFormTypes.DELEGATIONS]
+  typeof schema[PermissionFormTypes.DELEGATIONS] &
+  typeof schema[PermissionFormTypes.APPLICATIONS]

@@ -27,8 +27,11 @@ import { environments } from '../shared/constants/environments'
 import { DeleteClientInput } from './dto/delete-client.input'
 import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
+import { ClientsByTenantsPayload } from './dto/clients-by-tenants.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { PatchClientResponse } from './models/patch-client-response.model'
+
+const CLIENTS_BY_TENANTS_FETCH_LIMIT = 100
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -76,6 +79,44 @@ export class ClientsService extends MultiEnvironmentService {
       totalCount: clients.length,
       pageInfo: { hasNextPage: false },
     }
+  }
+
+  /**
+   * Returns clients for multiple tenants, grouped by tenantId.
+   *
+   * Failures for individual tenants are logged and the tenant is omitted
+   * from the result.
+   */
+  async getClientsByTenants(
+    user: User,
+    tenantIds: string[],
+  ): Promise<ClientsByTenantsPayload> {
+    const uniqueIds = Array.from(new Set(tenantIds))
+    const limitedIds = uniqueIds.slice(0, CLIENTS_BY_TENANTS_FETCH_LIMIT)
+    if (limitedIds.length < uniqueIds.length) {
+      this.logger.warn(
+        `getClientsByTenants truncated request from ${uniqueIds.length} to ${CLIENTS_BY_TENANTS_FETCH_LIMIT} tenants`,
+      )
+    }
+
+    const settled = await Promise.allSettled(
+      limitedIds.map(async (tenantId) => ({
+        tenantId,
+        payload: await this.getClients(user, tenantId),
+      })),
+    )
+
+    const data = settled.flatMap((result, index) => {
+      if (result.status === 'fulfilled') {
+        return [
+          { tenantId: result.value.tenantId, data: result.value.payload.data },
+        ]
+      }
+      this.logger.error(`Failed to get clients for tenant ${limitedIds[index]}`)
+      return []
+    })
+
+    return { data }
   }
 
   async getClientById(

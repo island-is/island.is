@@ -696,6 +696,26 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-applications-type',
     defaultMessage: 'Type',
   },
+  permissionApplicationsAdd: {
+    id: 'ap.ids-admin:permission-applications-add',
+    defaultMessage: 'Add application',
+  },
+  permissionApplicationsPlaceholder: {
+    id: 'ap.ids-admin:permission-applications-placeholder',
+    defaultMessage: 'Choose applications…',
+  },
+  permissionApplicationsNoOptions: {
+    id: 'ap.ids-admin:permission-applications-no-options',
+    defaultMessage: 'No applications available',
+  },
+  permissionApplicationsRemove: {
+    id: 'ap.ids-admin:permission-applications-remove',
+    defaultMessage: 'Remove application',
+  },
+  permissionApplicationsOtherTenantGroup: {
+    id: 'ap.ids-admin:permission-applications-other-tenant-group',
+    defaultMessage: 'Other tenants',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',

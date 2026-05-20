@@ -6,10 +6,12 @@ import { User } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { CreateScopeUserInput } from './dto/create-scope-user.input'
 import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
+import { UpdateScopeClientsInput } from './dto/update-scope-clients.input'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
@@ -21,6 +23,7 @@ import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
+import { UpdateScopeClientsResponse } from './models/update-scope-clients-response.model'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -374,6 +377,85 @@ export class ScopeService extends MultiEnvironmentService {
 
     return {
       ...(values.length > 0 && { environments: values }),
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
+  }
+
+  /**
+   * Updates the client access list for a scope by patching each affected
+   * client to add or remove the scope from its allowed scopes. Operates
+   * across the requested environments; per-environment failures are
+   * surfaced to the caller.
+   */
+  async updateScopeClients(
+    user: User,
+    input: UpdateScopeClientsInput,
+  ): Promise<UpdateScopeClientsResponse> {
+    const { tenantId, scopeName, addedClientIds, removedClientIds } = input
+    const targetEnvironments = input.environments
+
+    const operations: Array<{ clientId: string; op: 'add' | 'remove' }> = [
+      ...addedClientIds.map(
+        (clientId) => ({ clientId, op: 'add' as const }),
+      ),
+      ...removedClientIds.map(
+        (clientId) => ({ clientId, op: 'remove' as const }),
+      ),
+    ]
+
+    const successfulEnvironments: Environment[] = []
+    const failures: EnvironmentFailure[] = []
+
+    for (const environment of targetEnvironments) {
+      if (operations.length === 0) {
+        successfulEnvironments.push(environment)
+        continue
+      }
+
+      const settled = await Promise.allSettled(
+        operations.map(({ clientId, op }) =>
+          this.makeRequest(user, environment, (api) =>
+            api.meClientsControllerUpdateRaw({
+              tenantId,
+              clientId,
+              adminPatchClientDto: {
+                addedScopes: op === 'add' ? [scopeName] : undefined,
+                removedScopes: op === 'remove' ? [scopeName] : undefined,
+              },
+            }),
+          ),
+        ),
+      )
+
+      const errors = settled
+        .map((result, index) => {
+          const { clientId, op } = operations[index]
+          if (result.status === 'rejected') {
+            const message =
+              result.reason instanceof Error
+                ? result.reason.message
+                : String(result.reason ?? 'Unknown error')
+            return `${op === 'add' ? 'Add' : 'Remove'} ${clientId}: ${message}`
+          }
+          return null
+        })
+        .filter((m): m is string => m !== null)
+
+      if (errors.length === 0) {
+        successfulEnvironments.push(environment)
+      } else {
+        const message = `Failed to update scope clients for ${scopeName}: ${errors.join(
+          '; ',
+        )}`
+        this.logger.error(`${message} in environment ${environment}`)
+        failures.push({ environment, message })
+      }
+    }
+
+    return {
+      ...(successfulEnvironments.length > 0 && {
+        environments: successfulEnvironments,
+      }),
       ...(failures.length > 0 && { failedEnvironments: failures }),
     }
   }

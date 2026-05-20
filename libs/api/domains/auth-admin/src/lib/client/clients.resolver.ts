@@ -14,6 +14,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { ClientsService } from './clients.service'
 import { ClientsPayload } from './dto/clients.payload'
+import { ClientsByTenantsInput } from './dto/clients-by-tenants.input'
+import { ClientsByTenantsPayload } from './dto/clients-by-tenants.payload'
 import { Client } from './models/client.model'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientInput } from './dto/client.input'
@@ -40,6 +42,19 @@ export class ClientsResolver {
     @Args('input') input: ClientsInput,
   ): Promise<ClientsPayload> {
     return this.clientsService.getClients(user, input.tenantId)
+  }
+
+  @Query(() => ClientsByTenantsPayload, {
+    name: 'authAdminClientsByTenants',
+    description:
+      'Get clients grouped by tenant for the provided tenant ids. Used for cross-tenant application selection on a scope.',
+  })
+  getClientsByTenants(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ClientsByTenantsInput })
+    input: ClientsByTenantsInput,
+  ): Promise<ClientsByTenantsPayload> {
+    return this.clientsService.getClientsByTenants(user, input.tenantIds)
   }
 
   @Query(() => Client, { name: 'authAdminClient', nullable: true })

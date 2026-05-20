@@ -20,6 +20,7 @@ import { ScopeUser } from './models/scope-user.model'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeUserInput } from './dto/create-scope-user.input'
 import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
+import { UpdateScopeClientsInput } from './dto/update-scope-clients.input'
 import { ScopeService } from './scope.service'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
@@ -34,6 +35,7 @@ import { ScopeCategory } from './models/scope-category.model'
 import { ScopeTag } from './models/scope-tag.model'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
+import { UpdateScopeClientsResponse } from './models/update-scope-clients-response.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
@@ -206,5 +208,16 @@ export class ScopeResolver {
     input: UpdateScopeUsersInput,
   ): Promise<UpdateScopeUsersResponse> {
     return this.scopeService.updateScopeUsers(user, input)
+  }
+
+  @Mutation(() => UpdateScopeClientsResponse, {
+    name: 'updateAuthAdminScopeClients',
+  })
+  updateScopeClients(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => UpdateScopeClientsInput })
+    input: UpdateScopeClientsInput,
+  ): Promise<UpdateScopeClientsResponse> {
+    return this.scopeService.updateScopeClients(user, input)
   }
 }
