@@ -103,6 +103,17 @@ export enum EventNotificationType {
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR = 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
 }
 
+// TODO: Remove this type when we have completed notification separation by type
+export const UmbrellaNotificationType = {
+  ...RequestCaseNotificationType,
+  ...AppealCaseNotificationType,
+  ...IndictmentCaseNotificationType,
+} as const
+export type UmbrellaNotificationType =
+  | RequestCaseNotificationType
+  | AppealCaseNotificationType
+  | IndictmentCaseNotificationType
+
 export const trackedNotificationTypes = Object.values(TrackedNotificationType)
 
 export enum NotificationDispatchType {

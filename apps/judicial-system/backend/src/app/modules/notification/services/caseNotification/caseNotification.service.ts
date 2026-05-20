@@ -54,6 +54,7 @@ import {
   RequestSharedWithDefender,
   SessionArrangements,
   TrackedNotificationType,
+  UmbrellaNotificationType,
   type User,
   UserDescriptor,
   UserRole,
@@ -3961,7 +3962,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   //#region API
   private sendNotification(
-    type: RequestCaseNotificationType,
+    type: UmbrellaNotificationType,
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
@@ -3975,12 +3976,12 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendReceivedByCourtNotifications(theCase)
       case RequestCaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user ?? userDescriptor)
-      case IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED as string:
+      case IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
         return this.sendDistrictCourtUserAssignedNotifications(
           theCase,
           UserRole.DISTRICT_COURT_JUDGE,
         )
-      case IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED as string:
+      case IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
         return this.sendDistrictCourtUserAssignedNotifications(
           theCase,
           UserRole.DISTRICT_COURT_REGISTRAR,
@@ -3995,27 +3996,27 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendAdvocateAssignedNotifications(theCase)
       case RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
-      case AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as string:
+      case AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS:
         return this.sendAppealToCourtOfAppealsNotifications(theCase, user)
-      case AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT as string:
+      case AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT:
         return this.sendAppealReceivedByCourtNotifications(theCase)
-      case AppealCaseNotificationType.APPEAL_STATEMENT as string:
+      case AppealCaseNotificationType.APPEAL_STATEMENT:
         return this.sendAppealStatementNotifications(theCase, user)
-      case AppealCaseNotificationType.APPEAL_COMPLETED as string:
+      case AppealCaseNotificationType.APPEAL_COMPLETED:
         return this.sendAppealCompletedNotifications(theCase)
-      case AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as string:
+      case AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED:
         return this.sendCourtOfAppealJudgeAssignedNotification(theCase)
-      case AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as string:
+      case AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED:
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
-      case AppealCaseNotificationType.APPEAL_WITHDRAWN as string:
+      case AppealCaseNotificationType.APPEAL_WITHDRAWN:
         return this.sendAppealWithdrawnNotifications(theCase, user)
-      case IndictmentCaseNotificationType.INDICTMENT_DENIED as string:
+      case IndictmentCaseNotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
       case RequestCaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
-      case IndictmentCaseNotificationType.RULING_ORDER_ADDED as string:
+      case IndictmentCaseNotificationType.RULING_ORDER_ADDED:
         return this.sendRulingOrderAddedNotifications(theCase)
-      case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED as string:
+      case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
@@ -4025,7 +4026,7 @@ export class CaseNotificationService extends BaseNotificationService {
   }
 
   async sendCaseNotification(
-    type: RequestCaseNotificationType,
+    type: UmbrellaNotificationType,
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
