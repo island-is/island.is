@@ -1,4 +1,7 @@
-import { CivilClaimant, Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CivilClaimant,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getAvailableDefendantsForCivilClaimant = (
   civilClaimant: Pick<CivilClaimant, 'policeCaseNumbers'>,
