@@ -3,8 +3,6 @@ import {
   Button,
   Checkbox,
   Filter,
-  GridColumn,
-  GridRow,
   Icon,
   Input,
   Stack,
@@ -156,9 +154,7 @@ const HealthMessages = () => {
   ])
 
   return (
-    <IntroWrapper title={m.messages} intro={messages.healthMessagesIntro}>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+    <IntroWrapper title={m.messages} intro={messages.healthMessagesIntro} desktopContentSpan="10/12">
           <Box display={['block', 'block', 'block', 'none']} marginBottom={3}>
             <Button
               variant="primary"
@@ -357,8 +353,6 @@ const HealthMessages = () => {
                 </Stack>
               </>
             ))}
-        </GridColumn>
-      </GridRow>
     </IntroWrapper>
   )
 }
