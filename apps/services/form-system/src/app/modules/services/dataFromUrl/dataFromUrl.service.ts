@@ -10,6 +10,7 @@ import { FieldSettings } from '@/app/dataTypes/fieldSettings/fieldSettings.model
 import { DataFromUrlReqDto } from '../../applications/models/dto/dataFromUrl.request.dto'
 import { DataFromUrlResDto } from '../../applications/models/dto/dataFromUrl.response.dto'
 import { AuthService } from '../auth.service'
+import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
 export class DataFromUrlService {
@@ -75,51 +76,23 @@ export class DataFromUrlService {
       })
 
       const responseData = await response.json()
+      const resultList = new DataFromUrlResDto()
+      resultList.placeholder = responseData?.placeholder ?? null
 
-      console.log('responseData:', responseData)
+      resultList.list = responseData.list.map((item: ListItemDto) => ({
+        ...(typeof item === 'object' && item !== null ? item : {}),
+        id: '1',
+        displayOrder: 0,
+      }))
+
+      resultList.isError = Boolean(responseData?.isError)
+
+      return resultList
     } catch (error) {
       this.logger.error(`Error fetching data from URL ${url}: ${error}`)
-      // return { isError: true }
+      const resultList = new DataFromUrlResDto()
+      resultList.isError = true
+      return resultList
     }
-
-    const response = new DataFromUrlResDto()
-    response.placeholder = {
-      is: 'Veldu gildi úr listanum',
-      en: 'Select a value from the list',
-    }
-
-    response.list = [
-      {
-        id: '1',
-        label: {
-          is: 'Galdrakarlinn í Oz 1',
-          en: 'The Wizard of Oz 1',
-        },
-        value: '',
-        displayOrder: 0,
-        isSelected: false,
-      },
-      {
-        id: '1',
-        label: {
-          is: 'Galdrakarlinn í Oz 2',
-          en: 'The Wizard of Oz 2',
-        },
-        value: '',
-        displayOrder: 0,
-        isSelected: false,
-      },
-      {
-        id: '1',
-        label: {
-          is: 'Galdrakarlinn í Oz 3',
-          en: 'The Wizard of Oz 3',
-        },
-        value: '',
-        displayOrder: 0,
-        isSelected: false,
-      },
-    ]
-    return response
   }
 }

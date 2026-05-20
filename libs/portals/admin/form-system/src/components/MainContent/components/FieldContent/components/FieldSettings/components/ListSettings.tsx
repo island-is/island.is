@@ -18,7 +18,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { ListFromUrl } from './ListFromUrl'
 
@@ -56,9 +56,7 @@ export const ListSettings = () => {
     { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
     { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
-    ...(form?.submissionServiceUrl !== 'zendesk'
-      ? [{ label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL }]
-      : []),
+    { label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL },
     {
       label: 'Zendesk forhlaðinn listi',
       value: ListTypesEnum.ZENDESK_FIELD_OPTIONS,
@@ -123,14 +121,21 @@ export const ListSettings = () => {
     }
   }
 
+  useEffect(() => {
+    const listType = currentItem.fieldSettings?.listType
+    setIsCustom(!listType || listType === ListTypesEnum.CUSTOM)
+  }, [currentItem.id])
+
+  const radioName = `listTypeMode-${currentItem.id}`
+
   return (
     <Stack space={2}>
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <>
           <Column span="3/10">
             <RadioButton
-              id="listType-custom"
-              name="listTypeMode"
+              id={`${radioName}-custom`}
+              name={radioName}
               label={formatMessage(m.customList)}
               disabled={isReadOnly}
               checked={isCustom}
@@ -139,8 +144,8 @@ export const ListSettings = () => {
           </Column>
           <Column span="3/10">
             <RadioButton
-              id="listType-predetermined"
-              name="listTypeMode"
+              id={`${radioName}-predetermined`}
+              name={radioName}
               label={formatMessage(m.predeterminedLists)}
               disabled={isReadOnly}
               checked={!isCustom}
