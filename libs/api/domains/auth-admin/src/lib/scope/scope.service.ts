@@ -395,12 +395,11 @@ export class ScopeService extends MultiEnvironmentService {
     const targetEnvironments = input.environments
 
     const operations: Array<{ clientId: string; op: 'add' | 'remove' }> = [
-      ...addedClientIds.map(
-        (clientId) => ({ clientId, op: 'add' as const }),
-      ),
-      ...removedClientIds.map(
-        (clientId) => ({ clientId, op: 'remove' as const }),
-      ),
+      ...addedClientIds.map((clientId) => ({ clientId, op: 'add' as const })),
+      ...removedClientIds.map((clientId) => ({
+        clientId,
+        op: 'remove' as const,
+      })),
     ]
 
     const successfulEnvironments: Environment[] = []

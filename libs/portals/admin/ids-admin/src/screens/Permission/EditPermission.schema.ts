@@ -231,10 +231,7 @@ const categoriesAndTagsSchema = z
 
 const applicationsSchema = z
   .object({
-    addedScopeClientIds: z
-      .string()
-      .optional()
-      .transform(safeParseStringArray),
+    addedScopeClientIds: z.string().optional().transform(safeParseStringArray),
     removedScopeClientIds: z
       .string()
       .optional()
