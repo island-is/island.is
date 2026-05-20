@@ -11,6 +11,7 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
+  VmstApplicationsApplicantAttachment,
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
@@ -134,6 +135,18 @@ export class VMSTApplicationsResolver {
     )
 
     return this.vmstApplicationsService.getApplicantActions(applicantId)
+  }
+
+  @Query(() => [VmstApplicationsApplicantAttachment], {
+    name: 'vmstApplicantAttachments',
+  })
+  @Audit()
+  async getApplicantAttachments(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantAttachments(applicantId)
   }
 
   @Query(() => VmstApplicationsAttachmentTypeList, {

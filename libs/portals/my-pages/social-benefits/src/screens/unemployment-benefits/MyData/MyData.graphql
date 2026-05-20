@@ -40,3 +40,13 @@ query getAttachment($id: String!) {
     size
   }
 }
+
+query getApplicantAttachments {
+  vmstApplicantAttachments {
+    id
+    typeId
+    name
+    contentType
+    created
+  }
+}

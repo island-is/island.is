@@ -3,6 +3,7 @@ import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unempl
 import {
   useGetApplicantAvailableActionsQuery,
   useGetApplicantRequestedAttachmentsQuery,
+  useGetApplicantAttachmentsQuery,
   useGetAttachmentTypesQuery,
   useGetAttachmentLazyQuery,
 } from './MyData.generated'
@@ -50,14 +51,25 @@ const MyData = () => {
     error: attachmentTypesError,
   } = useGetAttachmentTypesQuery()
 
+  const {
+    data: applicantAttachmentsData,
+    loading: applicantAttachmentsLoading,
+    error: applicantAttachmentsError,
+  } = useGetApplicantAttachmentsQuery()
+
   const availableActions = actionsData?.vmstApplicantAvailableActions
   const requestedAttachments =
     attachmentsData?.vmstApplicantRequestedAttachments
   const attachmentTypes =
     attachmentTypesData?.vmstAttachmentTypes?.attachmentTypes
 
-  const loading = actionsLoading || attachmentsLoading || attachmentTypesLoading
-  const attachmentsHasError = !!attachmentsError || !!attachmentTypesError
+  const loading =
+    actionsLoading ||
+    attachmentsLoading ||
+    attachmentTypesLoading ||
+    applicantAttachmentsLoading
+  const attachmentsHasError =
+    !!attachmentsError || !!attachmentTypesError || !!applicantAttachmentsError
 
   const attachmentTypeMap = new Map(
     attachmentTypes?.map((t) => [t.id, t]) ?? [],
@@ -65,8 +77,9 @@ const MyData = () => {
 
   const missingAttachments =
     requestedAttachments?.filter((a) => !a.attachmentId) ?? []
+
   const submittedAttachments =
-    requestedAttachments?.filter((a) => a.attachmentId) ?? []
+    applicantAttachmentsData?.vmstApplicantAttachments ?? []
 
   const getAttachmentName = (attachmentTypeId?: string | null) => {
     if (!attachmentTypeId) return ''
@@ -178,16 +191,14 @@ const MyData = () => {
             {formatMessage(um.myDataSubmittedAttachmentsHeading)}
           </Text>
           <Stack space={0}>
-            {submittedAttachments.map((attachment, index) => (
-              <Box key={attachment.id ?? index}>
+            {submittedAttachments.map((attachment) => (
+              <Box key={attachment.id}>
                 <UserInfoLine
-                  label={getAttachmentName(attachment.attachmentTypeId)}
+                  label={getAttachmentName(attachment.typeId)}
                   button={{
                     title: formatMessage(um.myDataViewDocument),
                     onClick: () => {
-                      if (attachment.attachmentId) {
-                        openAttachment(attachment.attachmentId)
-                      }
+                      openAttachment(attachment.id)
                     },
                   }}
                 />

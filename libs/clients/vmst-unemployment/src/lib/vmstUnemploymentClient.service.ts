@@ -30,6 +30,7 @@ import {
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentListItem,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
@@ -392,6 +393,19 @@ export class VmstUnemploymentClientService {
 
     return await api.applicantGetActions({
       id: applicantId,
+    })
+  }
+
+  async getApplicantAttachments(
+    applicantId: string,
+  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetApplicantAttachments({
+      applicantId,
     })
   }
 

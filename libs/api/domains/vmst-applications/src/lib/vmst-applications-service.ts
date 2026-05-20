@@ -14,6 +14,7 @@ import { VmstApplicationsVacationValidationInput } from './dto/vacationValidatio
 import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
+  VmstApplicationsApplicantAttachment,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 
@@ -153,6 +154,29 @@ export class VMSTApplicationsService {
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsAvailableActions> {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
+  }
+
+  async getApplicantAttachments(
+    applicantId: string,
+  ): Promise<VmstApplicationsApplicantAttachment[]> {
+    const items = await this.vmstUnemploymentService.getApplicantAttachments(
+      applicantId,
+    )
+
+    return items.flatMap((item) => {
+      if (!item.id || !item.name || !item.contentType || !item.created) {
+        return []
+      }
+      return [
+        {
+          id: item.id,
+          typeId: item.typeId ?? null,
+          name: item.name,
+          contentType: item.contentType,
+          created: item.created,
+        },
+      ]
+    })
   }
 
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {
