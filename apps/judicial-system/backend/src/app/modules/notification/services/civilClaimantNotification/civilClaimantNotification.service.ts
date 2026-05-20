@@ -156,7 +156,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
 
     const result = await this.recordNotification(
       theCase.id,
-      TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+      TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
       [recipient],
     )
 

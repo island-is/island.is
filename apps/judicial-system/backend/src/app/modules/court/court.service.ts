@@ -333,9 +333,6 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
-            recipients,
-            fromEmail,
-            fromName,
           },
           reason,
         )
