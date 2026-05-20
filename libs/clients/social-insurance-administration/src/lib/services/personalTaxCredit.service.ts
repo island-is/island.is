@@ -119,24 +119,30 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     user: User,
     input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPostRaw({
+    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput:
         input,
     })
+    if (result.success === false) {
+      throw new Error('SpouseTaxCard update failed')
+    }
   }
 
   async setSpouseTaxCardDueToDeath(
     user: User,
     input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPostRaw({
+    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput:
         input,
     })
+    if (result.success === false) {
+      throw new Error('SpouseTaxCardDueToDeath update failed')
+    }
   }
 
   async getSpouseInfo(

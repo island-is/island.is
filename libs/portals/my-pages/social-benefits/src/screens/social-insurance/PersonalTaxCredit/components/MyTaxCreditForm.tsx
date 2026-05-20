@@ -1,10 +1,16 @@
-import { Box, Checkbox, Select, Stack } from '@island.is/island-ui/core'
+import { Box, Checkbox, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { PercentageInput } from './PercentageInput'
 import { SocialInsuranceYearWithMonths } from '@island.is/api/schema'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { m } from '../../../../lib/messages'
 import { MyTaxCreditState } from '../PersonalTaxCredit'
+import { YearMonthSelect } from './YearMonthSelect'
+import {
+  toYearOptions,
+  toMonthOptions,
+  FORM_MAX_WIDTH,
+} from './taxCreditFormUtils'
 
 interface Props {
   state: MyTaxCreditState
@@ -17,25 +23,6 @@ interface Props {
   isAlreadyRegistered: boolean
   canDiscontinue: boolean
 }
-
-const toYearOptions = (
-  data: SocialInsuranceYearWithMonths[] | null | undefined,
-) =>
-  (data ?? [])
-    .filter((ym): ym is typeof ym & { year: number } => ym.year != null)
-    .map((ym) => ({ label: String(ym.year), value: ym.year }))
-
-const toMonthOptions = (
-  data: SocialInsuranceYearWithMonths[] | null | undefined,
-  year: number | null,
-  lang: string,
-) =>
-  (data?.find((ym) => ym.year === year)?.months ?? []).map((month) => ({
-    label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
-      new Date(2000, month - 1),
-    ),
-    value: month,
-  }))
 
 const REGISTER = 'register' as const
 const UPDATE = 'update' as const
@@ -79,13 +66,27 @@ export const MyTaxCreditForm: FC<Props> = ({
   )
 
   return (
-    <Stack space={3}>
+    <Stack space={2}>
       {!isAlreadyRegistered && (
-        <Box border="standard" borderRadius="large" background="white" padding={3}>
+        <Box
+          border="standard"
+          borderRadius="large"
+          background="blue100"
+          padding={3}
+        >
           <Stack space={3}>
             <Checkbox
               id="register-personal-tax-credit"
-              label={<span style={{ fontWeight: state.action === REGISTER ? 600 : undefined }}>{formatMessage(m.registerPersonalTaxCredit)}</span>}
+              label={
+                <Text
+                  as="span"
+                  fontWeight={
+                    state.action === REGISTER ? 'semiBold' : undefined
+                  }
+                >
+                  {formatMessage(m.registerPersonalTaxCredit)}
+                </Text>
+              }
               checked={state.action === REGISTER}
               disabled={!monthsAndYears?.length}
               onChange={(e) =>
@@ -100,63 +101,30 @@ export const MyTaxCreditForm: FC<Props> = ({
               }
             />
             {state.action === REGISTER && (
-              <Box style={{ maxWidth: 480 }}>
+              <Box style={FORM_MAX_WIDTH}>
                 <Stack space={3}>
-                  <Box display="flex" columnGap={3} alignItems="flexEnd">
-                    <Box flexGrow={1}>
-                      <Select
-                        name="register-year"
-                        label={formatMessage(m.fromWhatTime)}
-                        placeholder={formatMessage(m.theYear)}
-                        size="xs"
-                        backgroundColor="blue"
-                        options={yearOptions}
-                        value={
-                          state.data.year != null
-                            ? yearOptions.find((o) => o.value === state.data.year)
-                            : null
-                        }
-                        onChange={(opt) =>
-                          setState({
-                            action: REGISTER,
-                            data: {
-                              ...state.data,
-                              year: opt ? (opt.value as number) : null,
-                              month: null,
-                            },
-                          })
-                        }
-                        required
-                      />
-                    </Box>
-                    <Box flexGrow={1}>
-                      <Select
-                        name="register-month"
-                        label={formatMessage(m.month)}
-                        placeholder={formatMessage(m.month)}
-                        size="xs"
-                        backgroundColor="blue"
-                        options={registerMonthOptions}
-                        value={
-                          state.data.month != null
-                            ? registerMonthOptions.find(
-                                (o) => o.value === state.data.month,
-                              )
-                            : null
-                        }
-                        onChange={(opt) =>
-                          setState({
-                            action: REGISTER,
-                            data: {
-                              ...state.data,
-                              month: opt ? (opt.value as number) : null,
-                            },
-                          })
-                        }
-                        isDisabled={state.data.year == null}
-                      />
-                    </Box>
-                  </Box>
+                  <YearMonthSelect
+                    yearOptions={yearOptions}
+                    monthOptions={registerMonthOptions}
+                    selectedYear={state.data.year}
+                    selectedMonth={state.data.month}
+                    onYearChange={(year) =>
+                      setState({
+                        action: REGISTER,
+                        data: { ...state.data, year, month: null },
+                      })
+                    }
+                    onMonthChange={(month) =>
+                      setState({
+                        action: REGISTER,
+                        data: { ...state.data, month },
+                      })
+                    }
+                    yearName="register-year"
+                    monthName="register-month"
+                    yearRequired
+                    backgroundColor="white"
+                  />
                   <PercentageInput
                     id="register-percentage"
                     name="register-percentage"
@@ -168,6 +136,7 @@ export const MyTaxCreditForm: FC<Props> = ({
                       })
                     }
                     required
+                    backgroundColor="white"
                   />
                 </Stack>
               </Box>
@@ -178,11 +147,25 @@ export const MyTaxCreditForm: FC<Props> = ({
 
       {isAlreadyRegistered && (
         <>
-          <Box border="standard" borderRadius="large" background="white" padding={3}>
+          <Box
+            border="standard"
+            borderRadius="large"
+            background="white"
+            padding={3}
+          >
             <Stack space={3}>
               <Checkbox
                 id="edit-personal-tax-credit"
-                label={<span style={{ fontWeight: state.action === UPDATE ? 600 : undefined }}>{formatMessage(m.editPersonalTaxCredit)}</span>}
+                label={
+                  <Text
+                    as="span"
+                    fontWeight={
+                      state.action === UPDATE ? 'semiBold' : undefined
+                    }
+                  >
+                    {formatMessage(m.editPersonalTaxCredit)}
+                  </Text>
+                }
                 checked={state.action === UPDATE}
                 onChange={(e) =>
                   setState(
@@ -193,7 +176,7 @@ export const MyTaxCreditForm: FC<Props> = ({
                 }
               />
               {state.action === UPDATE && (
-                <Box style={{ maxWidth: 480 }}>
+                <Box style={FORM_MAX_WIDTH}>
                   <PercentageInput
                     id="edit-percentage"
                     name="edit-percentage"
@@ -207,78 +190,62 @@ export const MyTaxCreditForm: FC<Props> = ({
             </Stack>
           </Box>
 
-          <Box border="standard" borderRadius="large" background="white" padding={3}>
+          <Box
+            border="standard"
+            borderRadius="large"
+            background="white"
+            padding={3}
+          >
             <Stack space={3}>
               <Checkbox
                 id="discontinue-personal-tax-credit"
-                label={<span style={{ fontWeight: state.action === DISCONTINUE ? 600 : undefined }}>{formatMessage(m.discontinuePersonalTaxCredit)}</span>}
+                label={
+                  <Text
+                    as="span"
+                    fontWeight={
+                      state.action === DISCONTINUE ? 'semiBold' : undefined
+                    }
+                  >
+                    {formatMessage(m.discontinuePersonalTaxCredit)}
+                  </Text>
+                }
                 checked={state.action === DISCONTINUE}
-                disabled={!canDiscontinue || !discontinuingMonthsAndYears?.length}
+                disabled={
+                  !canDiscontinue || !discontinuingMonthsAndYears?.length
+                }
                 onChange={(e) =>
                   setState(
                     e.target.checked
-                      ? { action: DISCONTINUE, data: { year: null, month: null } }
+                      ? {
+                          action: DISCONTINUE,
+                          data: { year: null, month: null },
+                        }
                       : { action: null },
                   )
                 }
               />
               {state.action === DISCONTINUE && (
-                <Box style={{ maxWidth: 480 }}>
-                  <Box display="flex" columnGap={3} alignItems="flexEnd">
-                    <Box flexGrow={1}>
-                      <Select
-                        name="discontinue-year"
-                        label={formatMessage(m.fromWhatTime)}
-                        placeholder={formatMessage(m.theYear)}
-                        size="xs"
-                        backgroundColor="blue"
-                        options={discontinueYearOptions}
-                        value={
-                          state.data.year != null
-                            ? discontinueYearOptions.find(
-                                (o) => o.value === state.data.year,
-                              )
-                            : null
-                        }
-                        onChange={(opt) =>
-                          setState({
-                            action: DISCONTINUE,
-                            data: {
-                              year: opt ? (opt.value as number) : null,
-                              month: null,
-                            },
-                          })
-                        }
-                      />
-                    </Box>
-                    <Box flexGrow={1}>
-                      <Select
-                        name="discontinue-month"
-                        label={formatMessage(m.month)}
-                        placeholder={formatMessage(m.month)}
-                        size="xs"
-                        backgroundColor="blue"
-                        options={discontinueMonthOptions}
-                        value={
-                          state.data.month != null
-                            ? discontinueMonthOptions.find(
-                                (o) => o.value === state.data.month,
-                              )
-                            : null
-                        }
-                        onChange={(opt) =>
-                          setState({
-                            action: DISCONTINUE,
-                            data: {
-                              ...state.data,
-                              month: opt ? (opt.value as number) : null,
-                            },
-                          })
-                        }
-                        isDisabled={state.data.year == null}
-                      />
-                    </Box>
-                  </Box>
+                <Box style={FORM_MAX_WIDTH}>
+                  <YearMonthSelect
+                    yearOptions={discontinueYearOptions}
+                    monthOptions={discontinueMonthOptions}
+                    selectedYear={state.data.year}
+                    selectedMonth={state.data.month}
+                    onYearChange={(year) =>
+                      setState({
+                        action: DISCONTINUE,
+                        data: { year, month: null },
+                      })
+                    }
+                    onMonthChange={(month) =>
+                      setState({
+                        action: DISCONTINUE,
+                        data: { ...state.data, month },
+                      })
+                    }
+                    yearName="discontinue-year"
+                    monthName="discontinue-month"
+                  />
                 </Box>
               )}
             </Stack>

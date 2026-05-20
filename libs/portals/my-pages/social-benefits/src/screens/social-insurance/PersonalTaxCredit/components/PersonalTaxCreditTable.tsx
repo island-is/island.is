@@ -25,7 +25,6 @@ const taxCardTypeMessageMap: Record<string, typeof m[keyof typeof m]> = {
   UNKNOWN_TAX_CARD: m.taxCardTypeUnknown,
 }
 
-// Returns the index of the "active" own card: no validTo wins, otherwise latest validTo
 const getActiveOwnCardIndex = (
   taxCards: PersonalTaxCreditTableProps['taxCards'],
 ): number | null =>
@@ -48,7 +47,7 @@ export const PersonalTaxCreditTable = ({
 
   return (
     <Box>
-      <T.Table>
+      <T.Table box={inlineContent ? { overflow: 'visible' } : undefined}>
         <T.Head>
           <T.Row>
             <T.HeadData box={{ background: 'blue100' }} scope="col">
@@ -71,34 +70,32 @@ export const PersonalTaxCreditTable = ({
                 {formatMessage(m.percentage)}
               </Text>
             </T.HeadData>
-            {onEdit && <T.HeadData box={{ background: 'blue100' }} scope="col" />}
+            {onEdit && (
+              <T.HeadData box={{ background: 'blue100' }} scope="col" />
+            )}
           </T.Row>
         </T.Head>
         <T.Body>
           {taxCards.map((card, index) => {
             const showEdit = index === activeOwnCardIndex
             const showInline = !!inlineContent && showEdit
+            const dataBox = {
+              background: showInline ? ('blue100' as const) : undefined,
+              borderColor: showInline
+                ? ('blue100' as const)
+                : ('blue200' as const),
+            }
             return (
               <Fragment
                 key={`${card.type ?? ''}-${card.validFrom ?? ''}-${index}`}
               >
                 <T.Row>
-                  <T.Data
-                    box={{
-                      background: showInline ? 'blue100' : undefined,
-                      borderColor: showInline ? 'blue100' : 'blue200',
-                    }}
-                  >
+                  <T.Data box={dataBox}>
                     {card.type && taxCardTypeMessageMap[card.type]
                       ? formatMessage(taxCardTypeMessageMap[card.type])
                       : '-'}
                   </T.Data>
-                  <T.Data
-                    box={{
-                      background: showInline ? 'blue100' : undefined,
-                      borderColor: showInline ? 'blue100' : 'blue200',
-                    }}
-                  >
+                  <T.Data box={dataBox}>
                     {card.validFrom
                       ? formatDate(card.validFrom, {
                           year: 'numeric',
@@ -107,12 +104,7 @@ export const PersonalTaxCreditTable = ({
                         })
                       : '-'}
                   </T.Data>
-                  <T.Data
-                    box={{
-                      background: showInline ? 'blue100' : undefined,
-                      borderColor: showInline ? 'blue100' : 'blue200',
-                    }}
-                  >
+                  <T.Data box={dataBox}>
                     {card.validTo
                       ? formatDate(card.validTo, {
                           year: 'numeric',
@@ -121,21 +113,11 @@ export const PersonalTaxCreditTable = ({
                         })
                       : '-'}
                   </T.Data>
-                  <T.Data
-                    box={{
-                      background: showInline ? 'blue100' : undefined,
-                      borderColor: showInline ? 'blue100' : 'blue200',
-                    }}
-                  >
+                  <T.Data box={dataBox}>
                     {card.percentage != null ? `${card.percentage}%` : '-'}
                   </T.Data>
                   {onEdit && (
-                    <T.Data
-                      box={{
-                        background: showInline ? 'blue100' : undefined,
-                        borderColor: showInline ? 'blue100' : 'blue200',
-                      }}
-                    >
+                    <T.Data box={dataBox}>
                       {showEdit && (
                         <Button
                           variant="text"
@@ -156,7 +138,10 @@ export const PersonalTaxCreditTable = ({
                     style={{ padding: 0, width: '100%' }}
                     borderColor={showInline ? 'blue200' : 'blue100'}
                   >
-                    <AnimateHeight duration={300} height={showInline ? 'auto' : 0}>
+                    <AnimateHeight
+                      duration={300}
+                      height={showInline ? 'auto' : 0}
+                    >
                       {inlineContent}
                     </AnimateHeight>
                   </T.Data>

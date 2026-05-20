@@ -77,6 +77,35 @@ const hasAnyChanges = (
   spouseState: SpouseTaxCreditState,
 ) => myState.action !== null || spouseState.action !== null
 
+const SpouseSummaryCard = ({
+  heading,
+  body,
+  onEdit,
+  editLabel,
+}: {
+  heading: string
+  body?: string | null
+  onEdit: () => void
+  editLabel: string
+}) => (
+  <Box
+    border="standard"
+    borderRadius="large"
+    padding={4}
+    display="flex"
+    justifyContent="spaceBetween"
+    alignItems="center"
+  >
+    <Stack space={1}>
+      <Text fontWeight="semiBold">{heading}</Text>
+      {body && <Text>{body}</Text>}
+    </Stack>
+    <Button variant="text" size="small" icon="arrowForward" onClick={onEdit}>
+      {editLabel}
+    </Button>
+  </Box>
+)
+
 const PersonalTaxCredit = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
@@ -95,7 +124,8 @@ const PersonalTaxCredit = () => {
     errorPolicy: 'all',
   })
   const [refetching, setRefetching] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditingMyTaxCredit, setIsEditingMyTaxCredit] = useState(false)
+  const [isEditingSpouse, setIsEditingSpouse] = useState(false)
 
   const taxCardAllowance = useTaxCardAllowance()
 
@@ -104,14 +134,17 @@ const PersonalTaxCredit = () => {
   const isAlreadyRegistered = page?.canEdit ?? false
   const hasRegistrations = !!page?.taxCards?.length
 
-  const showEditForm = isEditing || !isAlreadyRegistered
+  const handleEditMyTaxCredit = () => {
+    setIsEditingMyTaxCredit(true)
+  }
 
-  const handleEdit = () => {
-    setIsEditing(true)
+  const handleEditSpouse = () => {
+    setIsEditingSpouse(true)
   }
 
   const handleCancel = () => {
-    setIsEditing(false)
+    setIsEditingMyTaxCredit(false)
+    setIsEditingSpouse(false)
     setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
     setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
   }
@@ -124,7 +157,8 @@ const PersonalTaxCredit = () => {
       setRefetching(false)
       setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
       setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
-      setIsEditing(false)
+      setIsEditingMyTaxCredit(false)
+      setIsEditingSpouse(false)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
     } catch (e) {
       setRefetching(false)
@@ -173,18 +207,19 @@ const PersonalTaxCredit = () => {
         <Problem error={error} noBorder={false} />
       ) : (
         <Stack space={6}>
-          {/* Nýting persónuafsláttar */}
           <Box>
-            <Text variant="h4" marginBottom={3}>
+            <Text variant="h5" marginBottom={3}>
               {formatMessage(m.myTaxCreditUsage)}
             </Text>
 
             {hasRegistrations && (
               <PersonalTaxCreditTable
-                taxCards={page!.taxCards!}
-                onEdit={showEditForm ? handleCancel : handleEdit}
+                taxCards={page?.taxCards ?? []}
+                onEdit={
+                  isEditingMyTaxCredit ? handleCancel : handleEditMyTaxCredit
+                }
                 inlineContent={
-                  showEditForm ? (
+                  isEditingMyTaxCredit ? (
                     <Box paddingY={4} paddingX={4} background="blue100">
                       <Stack space={3}>
                         <MyTaxCreditForm
@@ -213,7 +248,7 @@ const PersonalTaxCredit = () => {
                             disabled={!canSubmit || saving}
                             loading={saving}
                           >
-                            {formatMessage(coreMessages.save)}
+                            {formatMessage(m.confirm)}
                           </Button>
                         </Inline>
                       </Stack>
@@ -223,7 +258,7 @@ const PersonalTaxCredit = () => {
               />
             )}
 
-            {showEditForm && !hasRegistrations && (
+            {!hasRegistrations && (
               <MyTaxCreditForm
                 state={myTaxCredit}
                 setState={setMyTaxCredit}
@@ -235,75 +270,46 @@ const PersonalTaxCredit = () => {
             )}
           </Box>
 
-          {/* Persónuafsláttur maka */}
           <Box>
-            <Text variant="h4" marginBottom={1}>
+            <Text variant="h4" marginBottom={2}>
               {formatMessage(m.spousePersonalTaxCredit)}
             </Text>
-            <Text marginBottom={3}>
-              {formatMessage(m.spousePersonalTaxCreditDescription)}
-            </Text>
+            {(!hasRegistrations || isEditingSpouse) && (
+              <Text marginBottom={3}>
+                {formatMessage(m.spousePersonalTaxCreditDescription)}
+              </Text>
+            )}
 
-            {/* Read-only summary when registered and not editing */}
-            {hasRegistrations && !showEditForm && (
+            {hasRegistrations && !isEditingSpouse && (
               <>
                 {spouseHasGrantedCard && (
-                  <Box
-                    border="standard"
-                    borderRadius="large"
-                    padding={3}
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Text fontWeight="semiBold">
-                        {formatMessage(m.spouseTaxCreditUsingSummaryTitle)}
-                      </Text>
-                      <Text>
-                        {formatMessage(m.spouseTaxCreditUsingSummaryBody)}
-                      </Text>
-                    </Box>
-                    <Button variant="text" onClick={handleEdit}>
-                      {formatMessage(m.edit)}
-                    </Button>
-                  </Box>
+                  <SpouseSummaryCard
+                    heading={formatMessage(m.spouseTaxCreditUsingSummaryTitle)}
+                    body={formatMessage(m.spouseTaxCreditUsingSummaryBody)}
+                    onEdit={handleEditSpouse}
+                    editLabel={formatMessage(m.edit)}
+                  />
                 )}
                 {userIsUsingSpouseCard && spouseInfo && (
-                  <Box
-                    border="standard"
-                    borderRadius="large"
-                    padding={3}
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Text fontWeight="semiBold">
-                        {formatMessage(m.youAreUsingSpouseTaxCreditTitle)}
-                      </Text>
-                      {spouseInfo.name && <Text>{spouseInfo.name}</Text>}
-                    </Box>
-                    <Button variant="text" onClick={handleEdit}>
-                      {formatMessage(m.edit)}
-                    </Button>
-                  </Box>
+                  <SpouseSummaryCard
+                    heading={formatMessage(m.youAreUsingSpouseTaxCreditTitle)}
+                    body={spouseInfo.name}
+                    onEdit={handleEditSpouse}
+                    editLabel={formatMessage(m.edit)}
+                  />
                 )}
                 {!spouseHasGrantedCard && !userIsUsingSpouseCard && (
-                  <SpouseTaxCreditForm
-                    state={spouseTaxCredit}
-                    setState={setSpouseTaxCredit}
-                    monthsAndYears={page?.registrationMonthsAndYears}
-                    spouseName={spouseInfo?.name}
-                    spouseNationalId={spouseInfo?.nationalId}
-                    spouseIsDeceased={spouseInfo?.isDeceased}
+                  <SpouseSummaryCard
+                    heading={formatMessage(m.spousePersonalTaxCredit)}
+                    body={formatMessage(m.spouseNoUsage)}
+                    onEdit={handleEditSpouse}
+                    editLabel={formatMessage(m.edit)}
                   />
                 )}
               </>
             )}
 
-            {/* Edit form for spouse section */}
-            {showEditForm && (
+            {(isEditingSpouse || !hasRegistrations) && (
               <SpouseTaxCreditForm
                 state={spouseTaxCredit}
                 setState={setSpouseTaxCredit}
@@ -315,19 +321,22 @@ const PersonalTaxCredit = () => {
             )}
           </Box>
 
-          {/* Bottom action buttons - only for initial registration (no existing cards) */}
-          {showEditForm && !hasRegistrations && (
-            <Box display="flex" justifyContent="flexEnd">
-              <Inline space={2}>
-                <Button
-                  onClick={handleSave}
-                  disabled={!canSubmit || saving}
-                  loading={saving}
-                >
-                  {formatMessage(m.confirm)}
-                </Button>
-              </Inline>
-            </Box>
+          {(!hasRegistrations ||
+            isEditingSpouse ||
+            spouseTaxCredit.action !== null) && (
+            <Inline space={2} justifyContent="flexEnd">
+              <Button variant="ghost" size="small" onClick={handleCancel}>
+                {formatMessage(m.cancel)}
+              </Button>
+              <Button
+                size="small"
+                onClick={handleSave}
+                disabled={!canSubmit || saving}
+                loading={saving}
+              >
+                {formatMessage(m.confirm)}
+              </Button>
+            </Inline>
           )}
         </Stack>
       )}
