@@ -1,4 +1,9 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  GET_ORGANIZATION_ZENDESK_INSTANCE,
+  UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+} from '@island.is/form-system/graphql'
 import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
@@ -9,11 +14,18 @@ import {
   RadioButton,
   Select,
   Stack,
+  Blockquote,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { ListFromUrl } from './ListFromUrl'
+
+type ZendeskInstanceConfig = {
+  serviceSystemInstance: string
+  serviceSystemBrandID: string
+}
 
 export const ListSettings = () => {
   const {
@@ -29,6 +41,12 @@ export const ListSettings = () => {
   const [isCustom, setIsCustom] = useState(
     !currentItem.fieldSettings?.listType ||
       currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
+  )
+  const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE, {
+    fetchPolicy: 'no-cache',
+  })
+  const [updateOrganizationZendeskInstance] = useMutation(
+    UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
   )
 
   const { formatMessage } = useLocale()
@@ -68,6 +86,41 @@ export const ListSettings = () => {
   const selectPredeterminedRadio = () => {
     if (isReadOnly) return
     setIsCustom(false)
+  }
+
+  const updateZendeskInstance = async () => {
+    const data = await getZendeskInstance({
+      variables: {
+        input: { nationalId: form.organizationNationalId },
+      },
+    })
+    const zendeskInstanceInfo =
+      data?.data?.formSystemOrganizationZendeskInstance
+    const parsed: ZendeskInstanceConfig = JSON.parse(zendeskInstanceInfo)
+
+    if (
+      parsed.serviceSystemInstance !==
+        form.organizationZendeskInstance?.zendeskInstance ||
+      parsed.serviceSystemBrandID !==
+        form.organizationZendeskInstance?.zendeskBrandId
+    ) {
+      controlDispatch({
+        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+        payload: {
+          zendeskInstance: parsed.serviceSystemInstance,
+          zendeskBrandId: parsed.serviceSystemBrandID,
+        },
+      })
+      await updateOrganizationZendeskInstance({
+        variables: {
+          input: {
+            zendeskInstance: parsed.serviceSystemInstance,
+            zendeskBrandId: parsed.serviceSystemBrandID,
+            organizationId: form.organizationId,
+          },
+        },
+      })
+    }
   }
 
   return (
@@ -121,6 +174,12 @@ export const ListSettings = () => {
                       update: updateActiveItem,
                     },
                   })
+                  if (
+                    option?.value === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+                    option?.value === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+                  ) {
+                    updateZendeskInstance()
+                  }
                 }}
               />
             </Column>
@@ -138,7 +197,7 @@ export const ListSettings = () => {
                   }
                   backgroundColor="blue"
                   readOnly={isReadOnly}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     controlDispatch({
                       type: 'SET_ANY_FIELD_SETTING',
                       payload: {
@@ -146,7 +205,7 @@ export const ListSettings = () => {
                         value: e.target.value,
                       },
                     })
-                  }
+                  }}
                   onFocus={(e) => setFocus(e.target.value)}
                   onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
@@ -166,7 +225,7 @@ export const ListSettings = () => {
                   }
                   backgroundColor="blue"
                   readOnly={isReadOnly}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     controlDispatch({
                       type: 'SET_ANY_FIELD_SETTING',
                       payload: {
@@ -174,13 +233,32 @@ export const ListSettings = () => {
                         value: e.target.value,
                       },
                     })
-                  }
+                  }}
                   onFocus={(e) => setFocus(e.target.value)}
                   onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
               </Column>
             )}
           </Row>
+
+          {(currentItem.fieldSettings?.listType ===
+            ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+            currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_CUSTOM_OBJECT) && (
+            <Row>
+              <Column span="10/10">
+                <Blockquote>
+                  <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                    <code>
+                      Zendesk instance:{' '}
+                      {form.organizationZendeskInstance?.zendeskInstance}
+                      .zendesk.com
+                    </code>
+                  </Text>
+                </Blockquote>
+              </Column>
+            </Row>
+          )}
           {currentItem.fieldSettings?.listType ===
             ListTypesEnum.LIST_FROM_URL && <ListFromUrl />}
         </>

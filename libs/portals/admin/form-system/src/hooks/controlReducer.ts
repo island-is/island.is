@@ -204,6 +204,7 @@ type ChangeActions =
       type: 'CHANGE_SUBMISSION_URL'
       payload: {
         value: string
+        useValidate?: boolean
       }
     }
   | {
@@ -884,6 +885,7 @@ export const controlReducer = (
     }
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
+      const useValidate = action.payload.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -918,6 +920,8 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
+          useValidate:
+            useValidate !== undefined ? useValidate : form.useValidate,
         },
       }
       return updatedState

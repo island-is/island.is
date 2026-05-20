@@ -7,7 +7,7 @@ module.exports = {
         {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: '',
+          defaultValue: 'digitaliceland',
         },
         { transaction: t },
       )
