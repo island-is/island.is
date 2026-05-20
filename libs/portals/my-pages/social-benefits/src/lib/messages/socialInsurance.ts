@@ -170,7 +170,8 @@ export const m = defineMessages({
   },
   personalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
-    defaultMessage: 'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
+    defaultMessage:
+      'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026. Bankareikningurinn sem greitt er inn á má nálgast undir “Mínar upplýsingar”.',
   },
   personalTaxCreditNotRegistered: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
@@ -316,5 +317,46 @@ export const m = defineMessages({
   noPaymentTypesFound: {
     id: 'sp.social-insurance-maintenance:no-payment-types-found',
     defaultMessage: 'Engar greiðslutegundir fundust.',
+  },
+  myTaxCreditUsage: {
+    id: 'sp.social-insurance-maintenance:my-tax-credit-usage',
+    defaultMessage: 'Nýting persónuafsláttar',
+  },
+  spouseTaxCreditUsingSummaryTitle: {
+    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-title',
+    defaultMessage: 'Maki nýtir persónuafslátt',
+  },
+  spouseTaxCreditUsingSummaryBody: {
+    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-body',
+    defaultMessage: 'Maki hefur leyfi til að nýta persónuafláttinn þinn.',
+  },
+  youAreUsingSpouseTaxCreditTitle: {
+    id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
+    defaultMessage: 'Þú nýtir persónuafslátt maka',
+  },
+  spousePersonalTaxCreditDescription: {
+    id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit-description',
+    defaultMessage:
+      'Þú getur leyft maka þínum að nota skattkortið þitt, allt að 100% af persónuafslætti. Ekki má nota skattkort beggja samtímis. Einnig má nýta skattkort látins maka í allt að 9 mánuði.',
+  },
+  edit: {
+    id: 'sp.social-insurance-maintenance:edit',
+    defaultMessage: 'Breyta',
+  },
+  cancel: {
+    id: 'sp.social-insurance-maintenance:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  confirm: {
+    id: 'sp.social-insurance-maintenance:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  taxCardTypeSpouseUsing: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using',
+    defaultMessage: 'Skattkort í nýtingu mak',
+  },
+  taxCardTypeSpouseUsingYours: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using-yours',
+    defaultMessage: 'Maki þinn nýtir',
   },
 })

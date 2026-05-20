@@ -85,7 +85,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSetTaxCardAllowancePost({
+    ).apiProtectedV1PersonalTaxCreditSetTaxCardAllowancePostRaw({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput:
         input,
     })
@@ -97,7 +97,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditEditTaxCardAllowancePut({
+    ).apiProtectedV1PersonalTaxCreditEditTaxCardAllowancePutRaw({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput:
         input,
     })
@@ -109,7 +109,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditDiscontinueTaxCardAllowancePost({
+    ).apiProtectedV1PersonalTaxCreditDiscontinueTaxCardAllowancePostRaw({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput:
         input,
     })
@@ -121,7 +121,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPost({
+    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPostRaw({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput:
         input,
     })
@@ -133,7 +133,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPost({
+    ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPostRaw({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput:
         input,
     })
@@ -166,6 +166,6 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   async setTaxBracket(user: User, taxBracket: string): Promise<void> {
     await this.personalTaxCreditApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditTaxBracketPost({ body: taxBracket })
+    ).apiProtectedV1PersonalTaxCreditTaxBracketPostRaw({ body: taxBracket })
   }
 }

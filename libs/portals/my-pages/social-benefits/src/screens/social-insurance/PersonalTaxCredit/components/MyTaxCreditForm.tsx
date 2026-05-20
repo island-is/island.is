@@ -1,6 +1,5 @@
-import { Box, Button, Checkbox, Select, Stack } from '@island.is/island-ui/core'
+import { Box, Checkbox, Select, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { PercentageInput } from './PercentageInput'
 import { SocialInsuranceYearWithMonths } from '@island.is/api/schema'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
@@ -17,8 +16,6 @@ interface Props {
     | undefined
   isAlreadyRegistered: boolean
   canDiscontinue: boolean
-  saving: boolean
-  onSave: () => void
 }
 
 const toYearOptions = (
@@ -40,19 +37,6 @@ const toMonthOptions = (
     value: month,
   }))
 
-const isValid = (state: MyTaxCreditState): boolean => {
-  if (state.action === 'register') {
-    return !!(state.data.year && state.data.month && state.data.percentage)
-  }
-  if (state.action === 'update') {
-    return !!state.data.percentage
-  }
-  if (state.action === 'discontinue') {
-    return !!(state.data.year && state.data.month)
-  }
-  return false
-}
-
 const REGISTER = 'register' as const
 const UPDATE = 'update' as const
 const DISCONTINUE = 'discontinue' as const
@@ -64,8 +48,6 @@ export const MyTaxCreditForm: FC<Props> = ({
   discontinuingMonthsAndYears,
   isAlreadyRegistered,
   canDiscontinue,
-  saving,
-  onSave,
 }) => {
   const { formatMessage, lang } = useLocale()
 
@@ -97,214 +79,212 @@ export const MyTaxCreditForm: FC<Props> = ({
   )
 
   return (
-    <Box>
-      <Stack space={3}>
-        <Checkbox
-          id="register-personal-tax-credit"
-          label={formatMessage(m.registerPersonalTaxCredit)}
-          checked={state.action === REGISTER}
-          disabled={isAlreadyRegistered || !monthsAndYears?.length}
-          onChange={(e) =>
-            setState(
-              e.target.checked
-                ? {
-                    action: REGISTER,
-                    data: { year: null, month: null, percentage: '' },
-                  }
-                : { action: null },
-            )
-          }
-        />
-        {state.action === REGISTER && (
-          <Box paddingLeft={7}>
-            <Box style={{ maxWidth: 480 }}>
-              <Stack space={3}>
-                <Box display="flex" columnGap={3} alignItems="flexEnd">
-                  <Box flexGrow={1}>
-                    <Select
-                      name="register-year"
-                      label={formatMessage(m.fromWhatTime)}
-                      placeholder={formatMessage(m.theYear)}
-                      size="xs"
-                      backgroundColor="blue"
-                      options={yearOptions}
-                      value={
-                        state.data.year != null
-                          ? yearOptions.find((o) => o.value === state.data.year)
-                          : null
+    <Stack space={3}>
+      {!isAlreadyRegistered && (
+        <Box border="standard" borderRadius="large" background="white" padding={3}>
+          <Stack space={3}>
+            <Checkbox
+              id="register-personal-tax-credit"
+              label={<span style={{ fontWeight: state.action === REGISTER ? 600 : undefined }}>{formatMessage(m.registerPersonalTaxCredit)}</span>}
+              checked={state.action === REGISTER}
+              disabled={!monthsAndYears?.length}
+              onChange={(e) =>
+                setState(
+                  e.target.checked
+                    ? {
+                        action: REGISTER,
+                        data: { year: null, month: null, percentage: '' },
                       }
-                      onChange={(opt) =>
-                        setState({
-                          action: REGISTER,
-                          data: {
-                            ...state.data,
-                            year: opt ? (opt.value as number) : null,
-                            month: null,
-                          },
-                        })
-                      }
-                      required
-                    />
+                    : { action: null },
+                )
+              }
+            />
+            {state.action === REGISTER && (
+              <Box style={{ maxWidth: 480 }}>
+                <Stack space={3}>
+                  <Box display="flex" columnGap={3} alignItems="flexEnd">
+                    <Box flexGrow={1}>
+                      <Select
+                        name="register-year"
+                        label={formatMessage(m.fromWhatTime)}
+                        placeholder={formatMessage(m.theYear)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={yearOptions}
+                        value={
+                          state.data.year != null
+                            ? yearOptions.find((o) => o.value === state.data.year)
+                            : null
+                        }
+                        onChange={(opt) =>
+                          setState({
+                            action: REGISTER,
+                            data: {
+                              ...state.data,
+                              year: opt ? (opt.value as number) : null,
+                              month: null,
+                            },
+                          })
+                        }
+                        required
+                      />
+                    </Box>
+                    <Box flexGrow={1}>
+                      <Select
+                        name="register-month"
+                        label={formatMessage(m.month)}
+                        placeholder={formatMessage(m.month)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={registerMonthOptions}
+                        value={
+                          state.data.month != null
+                            ? registerMonthOptions.find(
+                                (o) => o.value === state.data.month,
+                              )
+                            : null
+                        }
+                        onChange={(opt) =>
+                          setState({
+                            action: REGISTER,
+                            data: {
+                              ...state.data,
+                              month: opt ? (opt.value as number) : null,
+                            },
+                          })
+                        }
+                        isDisabled={state.data.year == null}
+                      />
+                    </Box>
                   </Box>
-                  <Box flexGrow={1}>
-                    <Select
-                      name="register-month"
-                      label={formatMessage(m.month)}
-                      placeholder={formatMessage(m.month)}
-                      size="xs"
-                      backgroundColor="blue"
-                      options={registerMonthOptions}
-                      value={
-                        state.data.month != null
-                          ? registerMonthOptions.find(
-                              (o) => o.value === state.data.month,
-                            )
-                          : null
-                      }
-                      onChange={(opt) =>
-                        setState({
-                          action: REGISTER,
-                          data: {
-                            ...state.data,
-                            month: opt ? (opt.value as number) : null,
-                          },
-                        })
-                      }
-                      isDisabled={state.data.year == null}
-                    />
-                  </Box>
-                </Box>
-                <PercentageInput
-                  id="register-percentage"
-                  name="register-percentage"
-                  value={state.data.percentage}
-                  onChange={(value) =>
-                    setState({
-                      action: REGISTER,
-                      data: { ...state.data, percentage: value },
-                    })
-                  }
-                  required
-                />
-              </Stack>
-            </Box>
-          </Box>
-        )}
+                  <PercentageInput
+                    id="register-percentage"
+                    name="register-percentage"
+                    value={state.data.percentage}
+                    onChange={(value) =>
+                      setState({
+                        action: REGISTER,
+                        data: { ...state.data, percentage: value },
+                      })
+                    }
+                    required
+                  />
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      )}
 
-        <Checkbox
-          id="edit-personal-tax-credit"
-          label={formatMessage(m.editPersonalTaxCredit)}
-          checked={state.action === UPDATE}
-          disabled={!isAlreadyRegistered}
-          onChange={(e) =>
-            setState(
-              e.target.checked
-                ? { action: UPDATE, data: { percentage: '' } }
-                : { action: null },
-            )
-          }
-        />
-        {state.action === UPDATE && (
-          <Box paddingLeft={7}>
-            <Box style={{ maxWidth: 480 }}>
-              <PercentageInput
-                id="edit-percentage"
-                name="edit-percentage"
-                value={state.data.percentage}
-                onChange={(value) =>
-                  setState({ action: UPDATE, data: { percentage: value } })
+      {isAlreadyRegistered && (
+        <>
+          <Box border="standard" borderRadius="large" background="white" padding={3}>
+            <Stack space={3}>
+              <Checkbox
+                id="edit-personal-tax-credit"
+                label={<span style={{ fontWeight: state.action === UPDATE ? 600 : undefined }}>{formatMessage(m.editPersonalTaxCredit)}</span>}
+                checked={state.action === UPDATE}
+                onChange={(e) =>
+                  setState(
+                    e.target.checked
+                      ? { action: UPDATE, data: { percentage: '' } }
+                      : { action: null },
+                  )
                 }
               />
-            </Box>
-          </Box>
-        )}
-
-        <Checkbox
-          id="discontinue-personal-tax-credit"
-          label={formatMessage(m.discontinuePersonalTaxCredit)}
-          checked={state.action === DISCONTINUE}
-          disabled={!canDiscontinue || !discontinuingMonthsAndYears?.length}
-          onChange={(e) =>
-            setState(
-              e.target.checked
-                ? { action: DISCONTINUE, data: { year: null, month: null } }
-                : { action: null },
-            )
-          }
-        />
-        {state.action === DISCONTINUE && (
-          <Box paddingLeft={7}>
-            <Box style={{ maxWidth: 480 }}>
-              <Box display="flex" columnGap={3} alignItems="flexEnd">
-                <Box flexGrow={1}>
-                  <Select
-                    name="discontinue-year"
-                    label={formatMessage(m.fromWhatTime)}
-                    placeholder={formatMessage(m.theYear)}
-                    size="xs"
-                    backgroundColor="blue"
-                    options={discontinueYearOptions}
-                    value={
-                      state.data.year != null
-                        ? discontinueYearOptions.find(
-                            (o) => o.value === state.data.year,
-                          )
-                        : null
-                    }
-                    onChange={(opt) =>
-                      setState({
-                        action: DISCONTINUE,
-                        data: {
-                          year: opt ? (opt.value as number) : null,
-                          month: null,
-                        },
-                      })
+              {state.action === UPDATE && (
+                <Box style={{ maxWidth: 480 }}>
+                  <PercentageInput
+                    id="edit-percentage"
+                    name="edit-percentage"
+                    value={state.data.percentage}
+                    onChange={(value) =>
+                      setState({ action: UPDATE, data: { percentage: value } })
                     }
                   />
                 </Box>
-                <Box flexGrow={1}>
-                  <Select
-                    name="discontinue-month"
-                    label={formatMessage(m.month)}
-                    placeholder={formatMessage(m.month)}
-                    size="xs"
-                    backgroundColor="blue"
-                    options={discontinueMonthOptions}
-                    value={
-                      state.data.month != null
-                        ? discontinueMonthOptions.find(
-                            (o) => o.value === state.data.month,
-                          )
-                        : null
-                    }
-                    onChange={(opt) =>
-                      setState({
-                        action: DISCONTINUE,
-                        data: {
-                          ...state.data,
-                          month: opt ? (opt.value as number) : null,
-                        },
-                      })
-                    }
-                    isDisabled={state.data.year == null}
-                  />
-                </Box>
-              </Box>
-            </Box>
+              )}
+            </Stack>
           </Box>
-        )}
-      </Stack>
 
-      <Box marginTop={3}>
-        <Button
-          onClick={onSave}
-          disabled={!isValid(state) || saving}
-          loading={saving}
-          size="small"
-        >
-          {formatMessage(coreMessages.save)}
-        </Button>
-      </Box>
-    </Box>
+          <Box border="standard" borderRadius="large" background="white" padding={3}>
+            <Stack space={3}>
+              <Checkbox
+                id="discontinue-personal-tax-credit"
+                label={<span style={{ fontWeight: state.action === DISCONTINUE ? 600 : undefined }}>{formatMessage(m.discontinuePersonalTaxCredit)}</span>}
+                checked={state.action === DISCONTINUE}
+                disabled={!canDiscontinue || !discontinuingMonthsAndYears?.length}
+                onChange={(e) =>
+                  setState(
+                    e.target.checked
+                      ? { action: DISCONTINUE, data: { year: null, month: null } }
+                      : { action: null },
+                  )
+                }
+              />
+              {state.action === DISCONTINUE && (
+                <Box style={{ maxWidth: 480 }}>
+                  <Box display="flex" columnGap={3} alignItems="flexEnd">
+                    <Box flexGrow={1}>
+                      <Select
+                        name="discontinue-year"
+                        label={formatMessage(m.fromWhatTime)}
+                        placeholder={formatMessage(m.theYear)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={discontinueYearOptions}
+                        value={
+                          state.data.year != null
+                            ? discontinueYearOptions.find(
+                                (o) => o.value === state.data.year,
+                              )
+                            : null
+                        }
+                        onChange={(opt) =>
+                          setState({
+                            action: DISCONTINUE,
+                            data: {
+                              year: opt ? (opt.value as number) : null,
+                              month: null,
+                            },
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box flexGrow={1}>
+                      <Select
+                        name="discontinue-month"
+                        label={formatMessage(m.month)}
+                        placeholder={formatMessage(m.month)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={discontinueMonthOptions}
+                        value={
+                          state.data.month != null
+                            ? discontinueMonthOptions.find(
+                                (o) => o.value === state.data.month,
+                              )
+                            : null
+                        }
+                        onChange={(opt) =>
+                          setState({
+                            action: DISCONTINUE,
+                            data: {
+                              ...state.data,
+                              month: opt ? (opt.value as number) : null,
+                            },
+                          })
+                        }
+                        isDisabled={state.data.year == null}
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+            </Stack>
+          </Box>
+        </>
+      )}
+    </Stack>
   )
 }

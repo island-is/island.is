@@ -11,6 +11,8 @@ import {
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -360,5 +362,19 @@ export class SocialInsuranceService {
       .getTaxBracketActions(user)
       .catch(handle404)
     return parseTaxBracketAction(data ?? undefined)
+  }
+
+  async setSpouseTaxCard(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCard(user, input)
+  }
+
+  async setSpouseTaxCardDueToDeath(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }
 }

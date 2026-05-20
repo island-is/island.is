@@ -20,6 +20,8 @@ import { TaxBracketAction } from '../enums/taxBracketAction'
 import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.input'
 import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
 import { DiscontinueTaxCardAllowanceInput } from '../dtos/discontinueTaxCardAllowance.input'
+import { SetSpouseTaxCardInput } from '../dtos/setSpouseTaxCard.input'
+import { SetSpouseTaxCardDueToDeathInput } from '../dtos/setSpouseTaxCardDueToDeath.input'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
 @Resolver()
@@ -118,6 +120,30 @@ export class PersonalTaxCreditResolver {
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.setTaxBracket(user, taxBracket)
+    return true
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'setSocialInsuranceSpouseTaxCard',
+  })
+  @Audit()
+  async setSpouseTaxCard(
+    @Args('input') input: SetSpouseTaxCardInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.setSpouseTaxCard(user, input)
+    return true
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'setSocialInsuranceSpouseTaxCardDueToDeath',
+  })
+  @Audit()
+  async setSpouseTaxCardDueToDeath(
+    @Args('input') input: SetSpouseTaxCardDueToDeathInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.service.setSpouseTaxCardDueToDeath(user, input)
     return true
   }
 }

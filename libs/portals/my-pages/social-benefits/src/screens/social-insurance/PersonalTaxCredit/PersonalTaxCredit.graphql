@@ -46,3 +46,23 @@ mutation setSocialInsurancePersonalTaxCreditTaxBracket(
 ) {
   setSocialInsurancePersonalTaxCreditTaxBracket(taxBracket: $taxBracket)
 }
+
+query getPersonalTaxCreditSpouseInfo {
+  socialInsurancePersonalTaxCreditSpouseInfo {
+    nationalId
+    name
+    isDeceased
+  }
+}
+
+mutation setSocialInsuranceSpouseTaxCard(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
+) {
+  setSocialInsuranceSpouseTaxCard(input: $input)
+}
+
+mutation setSocialInsuranceSpouseTaxCardDueToDeath(
+  $input: SocialInsuranceSetSpouseTaxCardDueToDeathInput!
+) {
+  setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
+}
