@@ -132,7 +132,7 @@ const CivilClaimantAccordionItem: FC<CivilClaimantAccordionItemProps> = (
 
   return (
     <Box
-      component="span"
+      component="div"
       onMouseOver={() =>
         accordionLabelRef.current?.style.setProperty('z-index', '50')
       }
