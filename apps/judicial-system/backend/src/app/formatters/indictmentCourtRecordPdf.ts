@@ -27,6 +27,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
+  addRichText,
   Confirmation,
   drawConfirmation,
   setLineGap,
@@ -316,7 +317,10 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
+    addRichText(
+      doc,
+      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+    )
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
