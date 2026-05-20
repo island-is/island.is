@@ -1088,7 +1088,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             },
@@ -1096,7 +1096,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             },
@@ -1104,7 +1104,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             }
@@ -7077,26 +7077,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -7204,26 +7185,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -7331,26 +7293,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -8885,7 +8828,7 @@
     "/api/v1/ServicePortal/{nationalId}/documents/medicalandrehabilitationpayments/latest": {
       "get": {
         "tags": ["ServicePortal"],
-        "summary": "Returns the latest document for medical and rehabilitation payments",
+        "summary": "Returns the latest document for medical and rehabilitation payments.",
         "parameters": [
           {
             "name": "nationalId",
@@ -16791,7 +16734,7 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Contracts.External.DigitalIceland.Documents.Document": {
+      "TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "nullable": true },
@@ -17070,14 +17013,6 @@
           "month": { "type": "integer", "format": "int32" },
           "year": { "type": "integer", "format": "int32" },
           "percentage": { "type": "integer", "format": "int32" }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult": {
-        "type": "object",
-        "properties": {
-          "canEditPersonalAllowance": { "type": "boolean" },
-          "canDiscontinuePersonalAllowance": { "type": "boolean" }
         },
         "additionalProperties": false
       },

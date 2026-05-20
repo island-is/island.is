@@ -5,7 +5,7 @@ import {
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainApplicationsModelsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
-  TrWebContractsExternalDigitalIcelandDocumentsDocument,
+  TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument,
   TrWebContractsExternalServicePortalNationalRegistryAddress,
 } from '../../../../gen/fetch/v1'
 import { ApplicationWriteApi } from '../../socialInsuranceAdministrationClient.type'
@@ -62,13 +62,13 @@ export class SocialInsuranceAdministrationGeneralApplicationService {
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    documents: Array<TrWebContractsExternalDigitalIcelandDocumentsDocument>,
+    documents: Array<TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument>,
   ): Promise<void> {
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,
-      trWebContractsExternalDigitalIcelandDocumentsDocument: documents,
+      trWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument: documents,
     })
   }
 

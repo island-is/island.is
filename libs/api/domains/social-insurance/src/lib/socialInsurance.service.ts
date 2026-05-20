@@ -266,9 +266,8 @@ export class SocialInsuranceService {
   async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
     const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
 
-    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
-      ? undefined
-      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+    const registrationMonthsAndYears =
+      await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
 
     const discontinuingMonthsAndYears =
       taxCardsResult?.canDiscontinuePersonalAllowance

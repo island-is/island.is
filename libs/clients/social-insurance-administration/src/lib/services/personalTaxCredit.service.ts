@@ -85,7 +85,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditSetTaxCardAllowancePostRaw({
+    ).apiProtectedV1PersonalTaxCreditSetTaxCardAllowancePost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput:
         input,
     })
@@ -97,7 +97,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditEditTaxCardAllowancePutRaw({
+    ).apiProtectedV1PersonalTaxCreditEditTaxCardAllowancePut({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput:
         input,
     })
@@ -109,7 +109,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<void> {
     await this.personalTaxCreditWriteApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditDiscontinueTaxCardAllowancePostRaw({
+    ).apiProtectedV1PersonalTaxCreditDiscontinueTaxCardAllowancePost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput:
         input,
     })
@@ -166,6 +166,6 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   async setTaxBracket(user: User, taxBracket: string): Promise<void> {
     await this.personalTaxCreditApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditTaxBracketPostRaw({ body: taxBracket })
+    ).apiProtectedV1PersonalTaxCreditTaxBracketPost({ body: taxBracket })
   }
 }
