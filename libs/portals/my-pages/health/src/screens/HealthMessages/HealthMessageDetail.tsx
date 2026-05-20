@@ -198,7 +198,7 @@ const HealthMessageDetail = () => {
               display="flex"
               justifyContent="spaceBetween"
               alignItems="center"
-              marginBottom={3}
+              marginBottom={0}
             >
               <Text variant="h3" as="h1">
                 {item.title}
@@ -206,14 +206,20 @@ const HealthMessageDetail = () => {
               <HealthMessageActionBar
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
-                onReply={item.patientCanReply !== false ? () => {
-                  setReplyOpen(true)
-                  setTimeout(
-                    () =>
-                      replyRef.current?.scrollIntoView({ behavior: 'smooth' }),
-                    50,
-                  )
-                } : undefined}
+                onReply={
+                  item.patientCanReply !== false
+                    ? () => {
+                        setReplyOpen(true)
+                        setTimeout(
+                          () =>
+                            replyRef.current?.scrollIntoView({
+                              behavior: 'smooth',
+                            }),
+                          50,
+                        )
+                      }
+                    : undefined
+                }
                 onFav={() => {
                   if (item.isStarred) {
                     unstarMessage({ variables: { id } })
@@ -250,7 +256,8 @@ const HealthMessageDetail = () => {
                   <Box
                     display="flex"
                     flexDirection="row"
-                    paddingTop={3}
+                    style={index === 0 ? { paddingTop: 27 } : undefined}
+                    paddingTop={index === 0 ? undefined : 3}
                     marginBottom={3}
                   >
                     {isPatient ? (
@@ -277,7 +284,7 @@ const HealthMessageDetail = () => {
                   {msg.messageTextContent && (
                     <Box
                       marginBottom={4}
-                      style={{ fontWeight: 'lighter', whiteSpace: 'pre-line' }}
+                      style={{ whiteSpace: 'pre-line', fontWeight: 'lighter' }}
                     >
                       {msg.messageTextContent}
                     </Box>
