@@ -15,6 +15,14 @@ export const SectionInfoFragment = gql`
     additionalInfo {
       ...LanguageFields
     }
+    additionalPremises {
+      title {
+        ...LanguageFields
+      }
+      description {
+        ...LanguageFields
+      }
+    }
   }
   ${LanguageFields}
 `

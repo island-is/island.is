@@ -1,5 +1,7 @@
+import { FormSystemLanguageType } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
@@ -8,11 +10,19 @@ interface Props {
   setExternalDataAgreement: (value: boolean) => void
 }
 
+interface AdditionalPremises {
+  title: FormSystemLanguageType
+  description: FormSystemLanguageType
+}
+
 export const ExternalData = ({ setExternalDataAgreement }: Props) => {
   const { state } = useApplicationContext()
   const { application } = state
+  const { lang } = useLocale()
+  console.log('application', application)
   const { certificationTypes } = application
   const { formatMessage } = useIntl()
+  const additionalPremises = application.sectionInfo?.additionalPremises || []
 
   return (
     <Box>
@@ -54,6 +64,14 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
                 {certificationType?.certificationTypeId}
               </Text>
               <Markdown>{certificationType?.id ?? ''}</Markdown>
+            </div>
+          ))}
+          {additionalPremises.map((premise, index) => (
+            <div key={index}>
+              <Text variant="h4" color="blue400">
+                {premise.title[lang]}
+              </Text>
+              <Markdown>{premise.description[lang] ?? ''}</Markdown>
             </div>
           ))}
         </Stack>

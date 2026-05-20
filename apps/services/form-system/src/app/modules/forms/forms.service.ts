@@ -964,13 +964,13 @@ export class FormsService {
         formId: form.id,
         sectionType: SectionTypes.PREMISES,
         displayOrder: 0,
-        name: { is: 'Forsendur', en: 'Premises' },
+        name: { is: 'Gagnaöflun', en: 'Data collection' },
       } as Section,
       {
         formId: form.id,
         sectionType: SectionTypes.PARTIES,
         displayOrder: 1,
-        name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
+        name: { is: 'Aðilar', en: 'Parties' },
       } as Section,
       {
         formId: form.id,
