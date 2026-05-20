@@ -155,6 +155,13 @@ const CourtOfAppealResult = () => {
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <AllIndictmentCaseFiles />
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
               </>
             ) : (
               <>
