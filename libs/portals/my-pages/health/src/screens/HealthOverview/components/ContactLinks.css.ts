@@ -11,11 +11,6 @@ export const titleText = style({
   },
 })
 
-export const descriptionText = style({
-  fontSize: 14,
-  lineHeight: '24px',
-})
-
 export const telLink = style({
   color: 'inherit',
   textDecoration: 'none',

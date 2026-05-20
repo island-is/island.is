@@ -1,9 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const filterBtns = style({
-  marginRight: theme.spacing[1],
-})
+export const filterBtns = style({})
 
 export const actionsButton = style({
   ':hover': {
@@ -19,13 +17,11 @@ globalStyle(`${filterBtns} button:hover`, {
 
 globalStyle(`${filterBtns} button`, {
   backgroundColor: theme.color.white,
-  width: 40,
-  height: 40,
 })
 
 globalStyle(`${filterBtns} button svg`, {
-  width: 20,
-  height: 20,
+  width: 16,
+  height: 16,
 })
 
 globalStyle(`${actionsButton} span`, {

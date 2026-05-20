@@ -2699,7 +2699,7 @@ export const messages = defineMessages({
   },
   contactNetspjall: {
     id: 'sp.health:contact-netspjall',
-    defaultMessage: 'Netspjall',
+    defaultMessage: 'Netspjall Heilsuveru',
   },
   contactNetspjallDesc: {
     id: 'sp.health:contact-netspjall-desc',

@@ -46,7 +46,7 @@ const HealthMessageActionBar = ({
   ]
 
   return (
-    <>
+    <Box display="flex" alignItems="center" columnGap={1}>
       <Box
         className={styles.filterBtns}
         display="flex"
@@ -59,7 +59,7 @@ const HealthMessageActionBar = ({
               circle
               icon="undo"
               iconType="outline"
-              size="medium"
+              size="small"
               colorScheme="light"
               aria-label={formatMessage(m.replyDocument)}
               onClick={onReply}
@@ -114,7 +114,7 @@ const HealthMessageActionBar = ({
           </span>
         }
       />
-    </>
+    </Box>
   )
 }
 

@@ -34,29 +34,22 @@ const ContactLinks = () => {
       description: formatMessage(messages.contactSendMessageDesc),
       href: heilsuveraUrl,
     },
-    {
-      title: formatMessage(messages.contactBookTime),
-      description: formatMessage(messages.contactBookTimeDesc),
-      href: HealthPaths.HealthAppointments,
-    },
+    // {
+    //   title: formatMessage(messages.contactBookTime),
+    //   description: formatMessage(messages.contactBookTimeDesc),
+    //   href: HealthPaths.HealthAppointments,
+    // },
   ]
 
   const renderDescription = (link: ContactLinkItem) => (
-    <Text
-      variant="small"
-      fontWeight="light"
-      lineHeight="lg"
-      color="dark400"
-      className={styles.descriptionText}
-    >
+    <Text variant="medium" fontWeight="light" lineHeight="lg" color="dark400">
       {link.description}{' '}
       {link.emergencyDescription ? (
         <Text
-          variant="small"
+          variant="medium"
           fontWeight="light"
           lineHeight="lg"
           color="red600"
-          className={styles.descriptionText}
         >
           {link.emergencyDescription}
         </Text>

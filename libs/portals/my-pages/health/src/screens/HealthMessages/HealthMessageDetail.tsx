@@ -188,14 +188,14 @@ const HealthMessageDetail = () => {
               <HealthMessageActionBar
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
-                onReply={() => {
+                onReply={item.patientCanReply !== false ? () => {
                   setReplyOpen(true)
                   setTimeout(
                     () =>
                       replyRef.current?.scrollIntoView({ behavior: 'smooth' }),
                     50,
                   )
-                }}
+                } : undefined}
                 onFav={() => {
                   if (item.isStarred) {
                     unstarMessage({ variables: { id } })
@@ -293,11 +293,11 @@ const HealthMessageDetail = () => {
 
             {/* Reply button — below thread, hidden when form is open */}
             {!replyOpen && item.patientCanReply !== false && (
-              <Box marginTop={3}>
+              <Box marginTop={6}>
                 <Button
                   variant="ghost"
                   size="small"
-                  preTextIcon="undo"
+                  preTextIcon="document"
                   preTextIconType="outline"
                   onClick={() => setReplyOpen(true)}
                 >
