@@ -8,6 +8,7 @@ import {
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
 } from '@island.is/clients/vmst-unemployment'
+import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import {
@@ -113,6 +114,21 @@ export class VMSTApplicationsService {
 
   async getApplicationsOverview(applicantId: string) {
     return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  }
+
+  async getApplicationsOverviewForUser(auth: User) {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      return this.getApplicationsOverview(applicantId)
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return {
+          unemploymentApplication: { isVisible: false },
+          activationGrant: { isVisible: false },
+        }
+      }
+      throw e
+    }
   }
 
   async getApplicantOverview(

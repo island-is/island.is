@@ -88,11 +88,7 @@ export class VMSTApplicationsResolver {
   })
   @Audit()
   async getApplicationsOverview(@CurrentUser() auth: User) {
-    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
-      auth,
-    )
-
-    return this.vmstApplicationsService.getApplicationsOverview(applicantId)
+    return this.vmstApplicationsService.getApplicationsOverviewForUser(auth)
   }
 
   @Query(() => VmstApplicationsApplicantOverview, {
