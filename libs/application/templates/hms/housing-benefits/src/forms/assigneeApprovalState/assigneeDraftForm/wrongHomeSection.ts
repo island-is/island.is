@@ -57,8 +57,14 @@ export const wrongHomeSection = buildSection({
           ],
           clearOnChange: (application) => {
             const answers = application.answers as Record<string, any>
-            const signed =
-              getValueViaPath<Array<string>>(answers, 'signedAssignees') ?? []
+            const completed = new Set([
+              ...(getValueViaPath<Array<string>>(answers, 'signedAssignees') ??
+                []),
+              ...(getValueViaPath<Array<string>>(
+                answers,
+                'rejectedAssignees',
+              ) ?? []),
+            ])
             const suffixes = [
               'assigneeInfo.name',
               'assigneeInfo.nationalId',
@@ -71,7 +77,7 @@ export const wrongHomeSection = buildSection({
 
             const paths: string[] = []
             for (const topKey of Object.keys(answers)) {
-              if (answers[topKey]?.assigneeInfo && !signed.includes(topKey)) {
+              if (answers[topKey]?.assigneeInfo && !completed.has(topKey)) {
                 suffixes.forEach((s) => paths.push(`${topKey}.${s}`))
               }
             }

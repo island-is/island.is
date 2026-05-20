@@ -1,11 +1,14 @@
 import {
   buildMultiField,
   buildOverviewField,
+  buildRadioField,
   buildSection,
+  buildSubmitField,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
-import { ExternalData } from '@island.is/application/types'
+import { DefaultEvents, ExternalData } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
 import {
@@ -13,8 +16,8 @@ import {
   rentalAgreementOverviewItems,
   exemptionSectionOverviewItems,
   exemptionSectionOverviewAttachments,
-  householdMembersOverviewItems,
-  householdMembersOverviewAttachments,
+  applicantSubmitHouseholdMembersOverviewItems,
+  applicantSubmitHouseholdMembersOverviewAttachments,
   incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
@@ -71,12 +74,6 @@ export const applicantOverviewSection = buildSection({
           attachments: exemptionSectionOverviewAttachments,
         }),
         buildOverviewField({
-          id: 'submitHouseholdMembersOverview',
-          title: m.draftMessages.householdMembersSection.title,
-          items: householdMembersOverviewItems,
-          attachments: householdMembersOverviewAttachments,
-        }),
-        buildOverviewField({
           id: 'submitIncomeOverview',
           title: m.draftMessages.incomeSection.title,
           condition: (answers, externalData) => {
@@ -114,6 +111,35 @@ export const applicantOverviewSection = buildSection({
           id: 'submitPaymentOverview',
           title: m.draftMessages.paymentSection.title,
           items: paymentSectionOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'submitHouseholdMembersOverview',
+          title: m.draftMessages.householdMembersSection.title,
+          items: applicantSubmitHouseholdMembersOverviewItems,
+          attachments: applicantSubmitHouseholdMembersOverviewAttachments,
+        }),
+        buildRadioField({
+          id: 'submitAddAssigneeRadio',
+          title: 'Bæta við heimilismanni',
+          options: [
+            { label: m.miscMessages.yes, value: YES },
+            { label: m.miscMessages.no, value: NO },
+          ],
+        }),
+        buildSubmitField({
+          condition: (answers) =>
+            getValueViaPath(answers, 'submitAddAssigneeRadio') === YES,
+          id: 'submitAddAssigneeSubmit',
+          title: 'Bæta við heimilismanni',
+          placement: 'footer',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.EDIT,
+              name: 'Bæta við heimilismanni',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

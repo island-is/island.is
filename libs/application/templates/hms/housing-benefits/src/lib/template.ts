@@ -35,9 +35,12 @@ import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
+  getCompletedAssigneeNationalIdSet,
   needsHouseholdMemberApproval,
   shouldShowApplicantSubmitAccessAgreementSection,
 } from '../utils/assigneeUtils'
+import { getValueViaPath } from '@island.is/application/core'
+import { getHouseholdTableRepeaterWithoutRejectedAssignees } from '../utils/addHouseholdMemberUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -225,6 +228,14 @@ const template: ApplicationTemplate<
               read: 'all',
             },
             {
+              id: Roles.REJECTED_ASSIGNEE,
+              formLoader: () =>
+                import(
+                  '../forms/assigneeApprovalState/assigneeWaitingForm'
+                ).then((module) => Promise.resolve(module.AssigneeWaitingForm)),
+              read: 'all',
+            },
+            {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import(
@@ -249,6 +260,17 @@ const template: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.ASSIGNEE_APPROVAL,
           },
+          [DefaultEvents.REJECT]: [
+            {
+              target: States.APPLICANT_SUBMIT,
+              actions: 'recordRejectedAssignee',
+              cond: 'isLastAssigneeToSign',
+            },
+            {
+              target: States.ASSIGNEE_APPROVAL,
+              actions: 'recordRejectedAssignee',
+            },
+          ],
         },
       },
       [States.APPLICANT_SUBMIT]: {
@@ -278,6 +300,15 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.REJECTED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/applicantSubmitState/assigneeForm').then(
+                  (module) =>
+                    Promise.resolve(module.ApplicantSubmitFormAssigneeVersion),
+                ),
+              read: 'all',
+            },
           ],
         },
         on: {
@@ -288,6 +319,38 @@ const template: ApplicationTemplate<
                 application.answers,
                 application.externalData,
               ),
+          },
+          [DefaultEvents.EDIT]: {
+            target: States.ADD_HOUSEHOLD_MEMBER,
+          },
+        },
+      },
+      [States.ADD_HOUSEHOLD_MEMBER]: {
+        entry: 'prepareAddHouseholdMemberTable',
+        meta: {
+          name: 'Bæta við heimilismanni',
+          progress: 0.8,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/addHouseholdMemberForm').then((module) =>
+                  Promise.resolve(module.AddHouseholdMemberForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.ASSIGNEE_APPROVAL,
+            actions: 'prepareAssigneeReapproval',
           },
         },
       },
@@ -311,6 +374,14 @@ const template: ApplicationTemplate<
             },
             {
               id: Roles.SIGNED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.REJECTED_ASSIGNEE,
               formLoader: () =>
                 import('../forms/inReviewForm').then((module) =>
                   Promise.resolve(module.inReviewForm),
@@ -424,11 +495,9 @@ const template: ApplicationTemplate<
         const normalized = kennitala.isValid(nationalId)
           ? kennitala.sanitize(nationalId)
           : nationalId
-        const signed = (
-          (application.answers?.signedAssignees ?? []) as string[]
-        ).map((id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id))
-        const allSigned = new Set([...signed, normalized])
-        return allSigned.size >= (application.assignees ?? []).length
+        const completed = getCompletedAssigneeNationalIdSet(application)
+        completed.add(normalized)
+        return completed.size >= (application.assignees ?? []).length
       },
     },
     actions: {
@@ -448,6 +517,28 @@ const template: ApplicationTemplate<
         )
         if (!existingSet.has(normalized)) {
           set(application, 'answers.signedAssignees', [...existing, normalized])
+        }
+        return context
+      }),
+      recordRejectedAssignee: assign((context, event) => {
+        const nationalId = (event as Events).nationalId
+        if (!nationalId) return context
+        const { application } = context
+        const normalized = kennitala.isValid(nationalId)
+          ? kennitala.sanitize(nationalId)
+          : nationalId
+        const existing = (application.answers?.rejectedAssignees ??
+          []) as string[]
+        const existingSet = new Set(
+          existing.map((id) =>
+            kennitala.isValid(id) ? kennitala.sanitize(id) : id,
+          ),
+        )
+        if (!existingSet.has(normalized)) {
+          set(application, 'answers.rejectedAssignees', [
+            ...existing,
+            normalized,
+          ])
         }
         return context
       }),
@@ -484,6 +575,33 @@ const template: ApplicationTemplate<
       clearAssignees: assign((context) => {
         const { application } = context
         set(application, 'assignees', [])
+        return context
+      }),
+      prepareAddHouseholdMemberTable: assign((context) => {
+        const { application } = context
+        const filtered =
+          getHouseholdTableRepeaterWithoutRejectedAssignees(application)
+        if (filtered !== undefined) {
+          set(application, 'answers.householdMembersTableRepeater', filtered)
+        }
+        return context
+      }),
+      prepareAssigneeReapproval: assign((context) => {
+        const { application } = context
+        const assigneeKeys = new Set(
+          getAssigneeNationalIds(application).map((id) =>
+            kennitala.isValid(id) ? kennitala.sanitize(id) : id,
+          ),
+        )
+        const signed = (
+          getValueViaPath<string[]>(application.answers, 'signedAssignees') ??
+          []
+        ).filter((id) => {
+          const normalized = kennitala.isValid(id) ? kennitala.sanitize(id) : id
+          return assigneeKeys.has(normalized)
+        })
+        set(application, 'answers.signedAssignees', signed)
+        set(application, 'answers.rejectedAssignees', [])
         return context
       }),
     },

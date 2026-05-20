@@ -1,4 +1,4 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -59,4 +59,18 @@ export const assigneeUseTaxReturnMock = (
   )
   const checkedValue = getValueViaPath<string[]>(answers, checkedValueName)
   return checkedValue ? checkedValue.includes(YES) : false
+}
+
+export const isHouseholdMemberApproved = (
+  answers: FormValue,
+  externalData: ExternalData,
+  user: BffUser | null,
+) => {
+  if (!user) return false
+  const application = { answers, externalData } as Application
+  const approvedRadio = getValueViaPath(
+    answers,
+    nationalIdPreface(application, user, 'approveBeingAHousholdMemberRadio'),
+  )
+  return approvedRadio !== NO
 }

@@ -250,13 +250,64 @@ const getMembersFromAnswers = (
     .filter((member) => member.nationalId || member.name)
 }
 
-export const householdMembersOverviewItems = (
+const normalizeHouseholdMemberNationalId = (id: string) =>
+  (id ?? '').replace(/\D/g, '')
+
+const getRejectedAssigneeNationalIdSet = (answers: FormValue): Set<string> =>
+  new Set(
+    (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? [])
+      .map(normalizeHouseholdMemberNationalId)
+      .filter(Boolean),
+  )
+
+const excludeRejectedHouseholdMembers = (
+  members: Array<HouseholdMember>,
+  answers: FormValue,
+): Array<HouseholdMember> => {
+  const rejected = getRejectedAssigneeNationalIdSet(answers)
+  if (rejected.size === 0) return members
+  return members.filter(
+    (m) =>
+      !rejected.has(normalizeHouseholdMemberNationalId(m.nationalId)),
+  )
+}
+
+const householdMembersToOverviewItems = (
+  members: Array<HouseholdMember>,
+  answerByNationalId: Map<
+    string,
+    HouseholdMember & { file?: Array<{ key: string; name: string }> }
+  >,
+  normalizeId: (id: string) => string,
+): Array<KeyValueItem> => {
+  if (members.length === 0) {
+    return [
+      {
+        width: 'full',
+        keyText: m.draftMessages.overviewSection.householdMembers,
+        valueText: '-',
+      },
+    ]
+  }
+
+  return members.map((member) => {
+    const answerRow = answerByNationalId.get(normalizeId(member.nationalId))
+    const displayName = answerRow?.name || member.name
+    const displayNationalId = answerRow?.nationalId || member.nationalId
+    return {
+      width: 'full' as const,
+      keyText: displayName,
+      valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
+    }
+  })
+}
+
+const householdMembersOverviewItemsCore = (
   answers: FormValue,
   externalData: ExternalData,
-  _userNationalId?: string,
-  _locale?: Locale,
+  excludeRejectedAssignees: boolean,
 ): Array<KeyValueItem> => {
-  const normalizeId = (id: string) => (id ?? '').replace(/\D/g, '')
+  const normalizeId = normalizeHouseholdMemberNationalId
 
   const tableRepeater = getValueViaPath<unknown>(
     answers,
@@ -284,25 +335,15 @@ export const householdMembersOverviewItems = (
       }
     })
 
-    if (members.length === 0) {
-      return [
-        {
-          width: 'full',
-          keyText: m.draftMessages.overviewSection.householdMembers,
-          valueText: '-',
-        },
-      ]
-    }
-    return members.map((member) => {
-      const answerRow = answerByNationalId.get(normalizeId(member.nationalId))
-      const displayName = answerRow?.name || member.name
-      const displayNationalId = answerRow?.nationalId || member.nationalId
-      return {
-        width: 'full' as const,
-        keyText: displayName,
-        valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
-      }
-    })
+    const filteredMembers = excludeRejectedAssignees
+      ? excludeRejectedHouseholdMembers(members, answers)
+      : members
+
+    return householdMembersToOverviewItems(
+      filteredMembers,
+      answerByNationalId,
+      normalizeId,
+    )
   }
 
   const contractMembers = getHouseholdMembersForTable({
@@ -328,33 +369,44 @@ export const householdMembersOverviewItems = (
     }
   })
 
-  if (members.length === 0) {
-    return [
-      {
-        width: 'full',
-        keyText: m.draftMessages.overviewSection.householdMembers,
-        valueText: '-',
-      },
-    ]
-  }
+  const filteredMembers = excludeRejectedAssignees
+    ? excludeRejectedHouseholdMembers(members, answers)
+    : members
 
-  return members.map((member) => {
-    const answerRow = answerByNationalId.get(normalizeId(member.nationalId))
-    const displayName = answerRow?.name || member.name
-    const displayNationalId = answerRow?.nationalId || member.nationalId
-    return {
-      width: 'full' as const,
-      keyText: displayName,
-      valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
-    }
-  })
+  return householdMembersToOverviewItems(
+    filteredMembers,
+    answerByNationalId,
+    normalizeId,
+  )
 }
 
-export const householdMembersOverviewAttachments = (
+export const householdMembersOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> =>
+  householdMembersOverviewItemsCore(answers, externalData, false)
+
+export const applicantSubmitHouseholdMembersOverviewItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> =>
+  householdMembersOverviewItemsCore(answers, externalData, true)
+
+const householdMembersOverviewAttachmentsCore = (
+  answers: FormValue,
+  excludeRejectedAssignees: boolean,
 ): Array<AttachmentItem> => {
-  const answerMembers = getMembersFromAnswers(answers)
+  const rejected = excludeRejectedAssignees
+    ? getRejectedAssigneeNationalIdSet(answers)
+    : new Set<string>()
+  const answerMembers = getMembersFromAnswers(answers).filter(
+    (member) =>
+      !rejected.has(normalizeHouseholdMemberNationalId(member.nationalId)),
+  )
   const attachments: Array<AttachmentItem> = []
 
   answerMembers.forEach((member) => {
@@ -371,6 +423,18 @@ export const householdMembersOverviewAttachments = (
 
   return attachments
 }
+
+export const householdMembersOverviewAttachments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<AttachmentItem> =>
+  householdMembersOverviewAttachmentsCore(answers, false)
+
+export const applicantSubmitHouseholdMembersOverviewAttachments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<AttachmentItem> =>
+  householdMembersOverviewAttachmentsCore(answers, true)
 
 export const incomeSectionOverviewItems = (
   answers: FormValue,

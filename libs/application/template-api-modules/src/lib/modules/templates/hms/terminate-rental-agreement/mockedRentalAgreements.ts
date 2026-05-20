@@ -164,7 +164,7 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
     // Margir leigjendur, margir leigusalar
     {
       dateFrom: '2025-08-01',
-      dateTo: '2026-08-01',
+      dateTo: '2027-08-01',
       indexType: 'Ekki vísitölubundinn',
       baseAmount: 100000,
       contractId: 40442,
@@ -277,7 +277,7 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
     // Margir leigjendur, einn leigusali
     {
       dateFrom: '2025-08-01',
-      dateTo: '2026-08-01',
+      dateTo: '2027-08-01',
       indexType: 'Ekki vísitölubundinn',
       baseAmount: 100000,
       contractId: 40443,
@@ -364,7 +364,7 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
     // Leiguhúsnæði er annað en lögheimili
     {
       dateFrom: '2025-08-01',
-      dateTo: '2026-08-01',
+      dateTo: '2027-08-01',
       indexType: 'Ekki vísitölubundinn',
       baseAmount: 100000,
       contractId: 40444,

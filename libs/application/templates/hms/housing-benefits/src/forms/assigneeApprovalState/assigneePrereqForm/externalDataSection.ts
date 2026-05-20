@@ -14,8 +14,10 @@ import {
 } from '../../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import { isHouseholdMemberApproved } from '../../../utils/conditions'
 
 export const externalDataSection = buildSection({
+  condition: isHouseholdMemberApproved,
   id: 'assigneePrereqExternalData',
   title: m.assigneeApproval.title,
   children: [

@@ -35,4 +35,9 @@ export const assigneeWaiting = defineMessages({
       'Þeir sem hafa ekki enn samþykkt gagnaöflun: \n\n * {names}',
     description: 'List of people who have yet to approve',
   },
+  rejectedList: {
+    id: 'hb.application:assigneeWaiting.rejectedList#markdown',
+    defaultMessage: 'Þeir sem hafa hafnað gagnaöflun: \n\n * {names}',
+    description: 'List of people who have rejected data collection',
+  },
 })

@@ -6,8 +6,10 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import { isHouseholdMemberApproved } from '../../../utils/conditions'
 
 export const otherApprovalSection = buildSection({
+  condition: isHouseholdMemberApproved,
   id: 'assigneePrereqSection',
   title: m.assigneeApproval.prereqMunicipalitySectionTitle,
   children: [

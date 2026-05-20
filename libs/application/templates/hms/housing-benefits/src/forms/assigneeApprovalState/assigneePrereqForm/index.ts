@@ -1,10 +1,10 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
-
 import { externalDataSection } from './externalDataSection'
 import { assigneeMockDataSection } from './mockDataSection'
 import { otherApprovalSection } from './otherApprovalSection'
+import { approveBeingAHousholdMemberSection } from './approveBeingAHousholdMemberSection'
 
 export const AssigneePrereqForm = buildForm({
   id: 'AssigneePrereq',
@@ -14,6 +14,7 @@ export const AssigneePrereqForm = buildForm({
   logo: HmsLogo,
   children: [
     assigneeMockDataSection,
+    approveBeingAHousholdMemberSection,
     otherApprovalSection,
     externalDataSection,
   ],

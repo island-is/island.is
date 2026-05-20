@@ -181,13 +181,31 @@ export const hasAssigneeCompletedPrereq = (
   )
 }
 
+const normalizeNationalIdList = (ids: string[]): string[] =>
+  ids.map((id) => (kennitala.isValid(id) ? kennitala.sanitize(id) : id))
+
 /**
- * Check if this is the last assignee to sign (all have approved).
+ * National IDs of assignees who finished approval (signed or rejected household membership).
+ */
+export const getCompletedAssigneeNationalIdSet = (
+  application: Application,
+): Set<string> => {
+  const signed = normalizeNationalIdList(
+    getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? [],
+  )
+  const rejected = normalizeNationalIdList(
+    getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? [],
+  )
+  return new Set([...signed, ...rejected])
+}
+
+/**
+ * Check if this is the last assignee to complete (all have signed or rejected).
  */
 export const isLastAssigneeToSign = (
-  signedNationalIds: string[],
+  completedNationalIds: string[],
   assignees: string[],
-): boolean => signedNationalIds.length >= assignees.length
+): boolean => new Set(completedNationalIds).size >= assignees.length
 
 /**
  * Gets national IDs of household members over 18 (excluding applicant) for assignees.
@@ -313,13 +331,9 @@ export const getCurrentDraftAssigneeNationalId = (
   application: Application,
 ): string | undefined => {
   const assignees = getAssigneeNationalIds(application)
-  const signed = new Set(
-    (
-      getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []
-    ).map(normalizeAssigneeNationalId),
-  )
+  const completed = getCompletedAssigneeNationalIdSet(application)
   const unsigned = assignees.filter(
-    (id) => !signed.has(normalizeAssigneeNationalId(id)),
+    (id) => !completed.has(normalizeAssigneeNationalId(id)),
   )
   const withPrereqDone = unsigned.filter((id) =>
     hasAssigneeRolePrereqOk(application, normalizeAssigneeNationalId(id)),
@@ -345,13 +359,9 @@ export const getAssigneeNationalIdForUmgengnissamningurForm = (
     return resolved
   }
   const assignees = getAssigneeNationalIds(application)
-  const signed = new Set(
-    (
-      getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? []
-    ).map(normalizeAssigneeNationalId),
-  )
+  const completed = getCompletedAssigneeNationalIdSet(application)
   const unsigned = assignees.filter(
-    (id) => !signed.has(normalizeAssigneeNationalId(id)),
+    (id) => !completed.has(normalizeAssigneeNationalId(id)),
   )
   return unsigned.length === 1 ? unsigned[0] : undefined
 }
@@ -413,13 +423,61 @@ export const getUnsignedApprovalNames = (
 ): string[] => {
   const assigneeMembers =
     getHouseholdMembersOver18ExcludingApplicant(application)
+  const completed = getCompletedAssigneeNationalIdSet(application)
+  return assigneeMembers
+    .filter((m) => !completed.has(normalizeAssigneeNationalId(m.nationalId)))
+    .map((m) => m.name || m.nationalId)
+}
+
+const assigneeNameFromNationalId = (
+  assigneeMembers: ReturnType<typeof getHouseholdMembersOver18ExcludingApplicant>,
+  nationalId: string,
+): string => {
+  const normalized = normalizeAssigneeNationalId(nationalId)
+  const member = assigneeMembers.find(
+    (m) => normalizeAssigneeNationalId(m.nationalId) === normalized,
+  )
+  return member?.name ?? nationalId
+}
+
+export const hasRejectedAssignees = (application: Application): boolean =>
+  (getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? [])
+    .length > 0
+
+/**
+ * Gets names of assignees who signed (excluding the applicant).
+ */
+export const getSignedAssigneeNames = (application: Application): string[] => {
+  const assigneeMembers =
+    getHouseholdMembersOver18ExcludingApplicant(application)
   const signed = (getValueViaPath<string[]>(
     application.answers,
     'signedAssignees',
   ) ?? []) as string[]
-  return assigneeMembers
-    .filter((m) => !signed.includes(m.nationalId))
-    .map((m) => m.name || m.nationalId)
+  return signed
+    .map((nationalId) =>
+      assigneeNameFromNationalId(assigneeMembers, nationalId),
+    )
+    .filter(Boolean)
+}
+
+/**
+ * Gets names of assignees who rejected the application.
+ */
+export const getRejectedAssigneeNames = (
+  application: Application,
+): string[] => {
+  const assigneeMembers =
+    getHouseholdMembersOver18ExcludingApplicant(application)
+  const rejected = (getValueViaPath<string[]>(
+    application.answers,
+    'rejectedAssignees',
+  ) ?? []) as string[]
+  return rejected
+    .map((nationalId) =>
+      assigneeNameFromNationalId(assigneeMembers, nationalId),
+    )
+    .filter(Boolean)
 }
 
 const normalizeKt = (id: string): string =>
@@ -477,9 +535,19 @@ export const findCurrentAssigneeBackId = (
   fieldSuffix: string,
 ): string | undefined => {
   const ans = answers as Record<string, any>
-  const signed = getValueViaPath<string[]>(answers, 'signedAssignees') ?? []
+  const completed = new Set([
+    ...(getValueViaPath<string[]>(answers, 'signedAssignees') ?? []).map(
+      normalizeAssigneeNationalId,
+    ),
+    ...(getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).map(
+      normalizeAssigneeNationalId,
+    ),
+  ])
   for (const key of Object.keys(ans)) {
-    if (ans[key]?.[fieldSuffix] !== undefined && !signed.includes(key)) {
+    if (
+      ans[key]?.[fieldSuffix] !== undefined &&
+      !completed.has(normalizeAssigneeNationalId(key))
+    ) {
       return `${key}.${fieldSuffix}`
     }
   }

@@ -33,6 +33,19 @@ export const applicantSubmitMessages = defineMessages({
     description:
       'Alert message confirming all household members have given consent',
   },
+  assigneeRejectedAlertTitle: {
+    id: 'hb.application:applicantSubmit.assigneeRejectedAlertTitle',
+    defaultMessage: 'Heimilismenn hafa tekið afstöðu',
+    description:
+      'Alert title when all household members have taken a position, including rejections',
+  },
+  assigneeRejectedAlertMessage: {
+    id: 'hb.application:applicantSubmit.assigneeRejectedAlertMessage',
+    defaultMessage:
+      'Allir heimilismenn hafa tekið afstöðu til umsóknarinnar.',
+    description:
+      'Alert message when all household members have taken a position, including rejections',
+  },
   assigneeNextStepsDescription: {
     id: 'hb.application:applicantSubmit.assigneeNextStepsDescription',
     defaultMessage:

@@ -1,6 +1,7 @@
 import { Application } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import {
+  getRejectedAssigneeNames,
   getSignedApprovalNames,
   getUnsignedApprovalNames,
 } from './assigneeUtils'
@@ -20,5 +21,14 @@ export const assigneeWaitingPendingDescription = (
   ...m.assigneeWaiting.pendingList,
   values: {
     names: getUnsignedApprovalNames(application).join(' \n\n * ') || '—',
+  },
+})
+
+export const assigneeWaitingRejectedDescription = (
+  application: Application,
+) => ({
+  ...m.assigneeWaiting.rejectedList,
+  values: {
+    names: getRejectedAssigneeNames(application).join(' \n\n * ') || '—',
   },
 })

@@ -7,10 +7,13 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, FormModes } from '@island.is/application/types'
+import { Application, FormModes, FormValue } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { applicantSubmitMessages as m } from '../../../lib/messages/applicantSubmitMessages'
 import { HikingAndWateringPlants } from '@island.is/application/assets/graphics'
+
+const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
+  (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).length > 0
 
 export const ApplicantSubmitFormAssigneeVersion = buildForm({
   id: 'ApplicantSubmitAssignee',
@@ -31,6 +34,15 @@ export const ApplicantSubmitFormAssigneeVersion = buildForm({
               title: m.assigneeConsentAlertTitle,
               message: m.assigneeConsentAlertMessage,
               alertType: 'success',
+              condition: (answers) => !hasRejectedAssigneesInAnswers(answers),
+              marginBottom: 4,
+            }),
+            buildAlertMessageField({
+              id: 'applicantSubmitAssigneeRejectedNextSteps',
+              title: m.assigneeRejectedAlertTitle,
+              message: m.assigneeRejectedAlertMessage,
+              alertType: 'success',
+              condition: (answers) => hasRejectedAssigneesInAnswers(answers),
               marginBottom: 4,
             }),
             buildDescriptionField({

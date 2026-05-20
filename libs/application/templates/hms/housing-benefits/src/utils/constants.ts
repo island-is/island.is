@@ -17,6 +17,7 @@ export enum States {
   DRAFT = 'draft',
   ASSIGNEE_APPROVAL = 'assigneeApproval',
   APPLICANT_SUBMIT = 'applicantSubmit',
+  ADD_HOUSEHOLD_MEMBER = 'addHouseholdMember',
   EXTRA_DATA = 'extraData',
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
@@ -29,5 +30,6 @@ export enum Roles {
   UNSIGNED_PREREQ_ASSIGNEE = 'unsignedPrereqAssignee',
   UNSIGNED_DRAFT_ASSIGNEE = 'unsignedDraftAssignee',
   SIGNED_ASSIGNEE = 'signedAssignee',
+  REJECTED_ASSIGNEE = 'rejectedAssignee',
   INSTITUTION = 'institution',
 }

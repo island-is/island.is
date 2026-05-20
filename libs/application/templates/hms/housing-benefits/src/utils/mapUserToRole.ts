@@ -85,6 +85,17 @@ export const mapUserToRole = (
     return Roles.SIGNED_ASSIGNEE
   }
 
+  const rejected =
+    getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? []
+  const hasRejected = rejected.some(
+    (id) =>
+      (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
+      normalizedNationalId,
+  )
+  if (hasRejected) {
+    return Roles.REJECTED_ASSIGNEE
+  }
+
   if (hasAssigneeCompletedPrereq(application, normalizedNationalId)) {
     return Roles.UNSIGNED_DRAFT_ASSIGNEE
   }

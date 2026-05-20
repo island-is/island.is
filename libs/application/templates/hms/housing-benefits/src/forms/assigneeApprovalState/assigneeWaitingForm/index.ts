@@ -4,15 +4,20 @@ import {
   buildMultiField,
   buildImageField,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { FormModes } from '@island.is/application/types'
+import { FormModes, FormValue } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { MovingSearching } from '@island.is/application/assets/graphics'
 import {
   assigneeWaitingApprovedDescription,
   assigneeWaitingPendingDescription,
+  assigneeWaitingRejectedDescription,
 } from '../../../utils/assigneeWaitingUtils'
 import * as m from '../../../lib/messages'
+
+const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
+  (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).length > 0
 
 export const AssigneeWaitingForm = buildForm({
   id: 'AssigneeWaiting',
@@ -53,11 +58,18 @@ export const AssigneeWaitingForm = buildForm({
             buildDescriptionField({
               id: 'assigneeWaitingPending',
               description: assigneeWaitingPendingDescription,
+              marginBottom: 4,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingRejected',
+              description: assigneeWaitingRejectedDescription,
+              condition: (answers) => hasRejectedAssigneesInAnswers(answers),
               marginBottom: 8,
             }),
             buildImageField({
               id: 'assigneeWaitingImage',
               image: MovingSearching,
+              marginTop: 4,
             }),
           ],
         }),
