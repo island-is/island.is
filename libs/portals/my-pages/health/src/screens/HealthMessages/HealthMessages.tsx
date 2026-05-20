@@ -3,6 +3,9 @@ import {
   Button,
   Checkbox,
   Filter,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Icon,
   Input,
   Stack,
@@ -99,73 +102,72 @@ const HealthMessages = () => {
     <IntroWrapper
       title={m.messages}
       intro={messages.healthMessagesIntro}
-      buttonGroup={{
-        alignment: 'spaceBetween',
-        actions: [
-          <Filter
-            key="filter"
-            labelClearAll={formatMessage(m.clearAllFilters)}
-            labelClear={formatMessage(m.clearFilter)}
-            labelOpen={formatMessage(m.openFilter)}
-            reverse
-            variant="popover"
-            align="left"
-            filterInput={
-              <Box style={{ width: '100%', maxWidth: 320 }}>
-                <Input
-                  name="messageSearch"
-                  placeholder={formatMessage(
-                    messages.healthMessagesSearchPlaceholder,
-                  )}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  icon={{ type: 'outline', name: 'search' }}
-                  size="sm"
-                  backgroundColor="blue"
-                />
-              </Box>
-            }
-            onFilterClear={() => {
-              setFilterStarred(false)
-              setFilterArchived(false)
-              setQuery('')
-            }}
-          >
-            <Box paddingX={3} paddingY={3}>
-              <Text variant="h5" marginBottom={2}>
-                {formatMessage(m.filterBy)}
-              </Text>
-              <Box>
-                <Checkbox
-                  id="filter-starred"
-                  label={formatMessage(messages.healthMessagesFilterStarred)}
-                  checked={filterStarred}
-                  onChange={(e) => setFilterStarred(e.target.checked)}
-                />
-              </Box>
-              <Box paddingTop={1}>
-                <Checkbox
-                  id="filter-archived"
-                  label={formatMessage(messages.healthMessagesFilterArchived)}
-                  checked={filterArchived}
-                  onChange={(e) => setFilterArchived(e.target.checked)}
-                />
-              </Box>
-            </Box>
-          </Filter>,
-          <Box key="create" style={{ whiteSpace: 'nowrap' }}>
-            <Button
-              variant="primary"
-              size="small"
-              iconType="outline"
-              onClick={() => navigate(HealthPaths.HealthMessagesNew)}
-            >
-              {formatMessage(messages.healthMessagesCreate)}
-            </Button>
-          </Box>,
-        ],
-      }}
     >
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '10/12']}>
+      <Box display="flex" justifyContent="spaceBetween" alignItems="center" marginBottom={3}>
+        <Filter
+          labelClearAll={formatMessage(m.clearAllFilters)}
+          labelClear={formatMessage(m.clearFilter)}
+          labelOpen={formatMessage(m.openFilter)}
+          reverse
+          variant="popover"
+          align="left"
+          filterInput={
+            <Box style={{ width: '100%', maxWidth: 320 }}>
+              <Input
+                name="messageSearch"
+                placeholder={formatMessage(
+                  messages.healthMessagesSearchPlaceholder,
+                )}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                icon={{ type: 'outline', name: 'search' }}
+                size="sm"
+                backgroundColor="blue"
+              />
+            </Box>
+          }
+          onFilterClear={() => {
+            setFilterStarred(false)
+            setFilterArchived(false)
+            setQuery('')
+          }}
+        >
+          <Box paddingX={3} paddingY={3}>
+            <Text variant="h5" marginBottom={2}>
+              {formatMessage(m.filterBy)}
+            </Text>
+            <Box>
+              <Checkbox
+                id="filter-starred"
+                label={formatMessage(messages.healthMessagesFilterStarred)}
+                checked={filterStarred}
+                onChange={(e) => setFilterStarred(e.target.checked)}
+              />
+            </Box>
+            <Box paddingTop={1}>
+              <Checkbox
+                id="filter-archived"
+                label={formatMessage(messages.healthMessagesFilterArchived)}
+                checked={filterArchived}
+                onChange={(e) => setFilterArchived(e.target.checked)}
+              />
+            </Box>
+          </Box>
+        </Filter>
+        <Box style={{ whiteSpace: 'nowrap' }}>
+          <Button
+            variant="primary"
+            size="small"
+            iconType="outline"
+            onClick={() => navigate(HealthPaths.HealthMessagesNew)}
+          >
+            {formatMessage(messages.healthMessagesCreate)}
+          </Button>
+        </Box>
+      </Box>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
@@ -273,6 +275,9 @@ const HealthMessages = () => {
           )}
         </>
       )}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </IntroWrapper>
   )
 }

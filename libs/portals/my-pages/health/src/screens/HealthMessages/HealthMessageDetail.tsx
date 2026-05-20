@@ -124,29 +124,47 @@ const HealthMessageDetail = () => {
 
   if (loading) {
     return (
-      <Box padding={6}>
-        <CardLoader />
-      </Box>
+      <GridContainer>
+        <GridRow marginTop={2}>
+          <GridColumn span={['12/12', '12/12', '10/12']}>
+            <Box padding={6}>
+              <CardLoader />
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     )
   }
 
   if (error) {
     return (
-      <Box padding={6}>
-        <Problem error={error} noBorder={false} />
-      </Box>
+      <GridContainer>
+        <GridRow marginTop={2}>
+          <GridColumn span={['12/12', '12/12', '10/12']}>
+            <Box padding={6}>
+              <Problem error={error} noBorder={false} />
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     )
   }
 
   if (!item) {
     return (
-      <Box padding={6}>
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(messages.healthMessageNotFound)}
-        />
-      </Box>
+      <GridContainer>
+        <GridRow marginTop={2}>
+          <GridColumn span={['12/12', '12/12', '10/12']}>
+            <Box padding={6}>
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(messages.healthMessageNotFound)}
+              />
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     )
   }
 
