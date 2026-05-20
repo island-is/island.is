@@ -28,6 +28,10 @@ import {
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  getAvailableDefendantsForCivilClaimant,
+  isCivilClaimantDefendantSelectionValid,
+} from '@island.is/judicial-system-web/src/utils/civilClaimantUtils'
+import {
   useCivilClaimants,
   useNationalRegistry,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -204,16 +208,15 @@ export const CivilClaimantFields = ({
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
 
-  const availableDefendants = useMemo(() => {
-    if (!civilClaimant.policeCaseNumbers?.length) {
-      return []
-    }
-    return defendants.filter((defendant) =>
-      defendant.policeCaseNumbers?.some((pcn) =>
-        civilClaimant.policeCaseNumbers?.includes(pcn),
-      ),
-    )
-  }, [civilClaimant.policeCaseNumbers, defendants])
+  const availableDefendants = useMemo(
+    () => getAvailableDefendantsForCivilClaimant(civilClaimant, defendants),
+    [civilClaimant, defendants],
+  )
+
+  const isDefendantSelectionInvalid = !isCivilClaimantDefendantSelectionValid(
+    civilClaimant,
+    defendants,
+  )
 
   const handlePoliceCaseNumbersChange = (newPoliceCaseNumbers: string[]) => {
     const newAvailableDefendantIds = new Set(
@@ -511,6 +514,7 @@ export const CivilClaimantFields = ({
                 title="Hverjum beinist krafan gegn?"
                 heading="h4"
                 marginBottom={2}
+                required
               />
               {availableDefendants.map((defendant) => (
                 <Box marginBottom={1} key={defendant.id}>
@@ -526,6 +530,13 @@ export const CivilClaimantFields = ({
                   />
                 </Box>
               ))}
+              {isDefendantSelectionInvalid && (
+                <Text color="red600" variant="eyebrow" marginTop={2}>
+                  {formatMessage(
+                    strings.civilClaimantDefendantSelectionRequired,
+                  )}
+                </Text>
+              )}
             </Box>
           )}
         </BlueBox>

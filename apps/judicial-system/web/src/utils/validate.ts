@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
+import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -312,6 +313,10 @@ export const isProcessingStepValidIndictments = (
         (civilClaimant) =>
           civilClaimant.name &&
           (civilClaimant.policeCaseNumbers?.length ?? 0) > 0 &&
+          isCivilClaimantDefendantSelectionValid(
+            civilClaimant,
+            workingCase.defendants ?? [],
+          ) &&
           validate([
             [
               civilClaimant.nationalId,
