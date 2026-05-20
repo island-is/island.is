@@ -20,7 +20,7 @@ export const Completed = () => {
   const supportEmail = 'island@island.is'
   const { slug } = useParams()
   const { state } = useApplicationContext()
-  const completed = state.application.completedSectionInfo as
+  const completed = state.application.sectionInfo as
     | Partial<FormSystemCompletedSectionInfo>
     | undefined
   const t = completed?.title?.[lang]

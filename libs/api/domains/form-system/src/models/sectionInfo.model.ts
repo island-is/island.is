@@ -10,8 +10,8 @@ export class AdditionalPremise {
   description!: LanguageType
 }
 
-@ObjectType('FormSystemCompletedSectionInfo')
-export class CompletedSectionInfo {
+@ObjectType('FormSystemSectionInfo')
+export class SectionInfo {
   @Field(() => LanguageType)
   title!: LanguageType
 

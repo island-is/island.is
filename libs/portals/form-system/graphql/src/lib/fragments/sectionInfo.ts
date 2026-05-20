@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
 
-export const CompletedSectionInfoFragment = gql`
-  fragment CompletedSectionInfo on FormSystemCompletedSectionInfo {
+export const SectionInfoFragment = gql`
+  fragment SectionInfo on FormSystemSectionInfo {
     title {
       ...LanguageFields
     }

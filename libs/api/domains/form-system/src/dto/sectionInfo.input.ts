@@ -10,8 +10,8 @@ export class AdditionalPremiseInput {
   description!: LanguageTypeInput
 }
 
-@InputType('FormSystemCompletedSectionInfoInput')
-export class CompletedSectionInfoInput {
+@InputType('FormSystemSectionInfoInput')
+export class SectionInfoInput {
   @Field(() => LanguageTypeInput)
   title!: LanguageTypeInput
 

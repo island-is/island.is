@@ -15,7 +15,7 @@ export class AdditionalPremise {
   description!: LanguageType
 }
 
-export class CompletedSectionInfo {
+export class SectionInfo {
   @ApiProperty({ type: LanguageType })
   @ValidateNested()
   @Type(() => LanguageType)

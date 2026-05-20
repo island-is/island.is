@@ -344,7 +344,7 @@ type InputSettingsActions =
           title: FormSystemLanguageType
           description: FormSystemLanguageType
         }[]
-        update: (updatedForm: FormSystemForm) => void
+        update?: (updatedForm: FormSystemForm) => void
       }
     }
   | {
@@ -1751,23 +1751,22 @@ export const controlReducer = (
       const { lang, newValue } = action.payload
       const updatedForm = {
         ...form,
-        completedSectionInfo: {
-          ...(form.completedSectionInfo ?? {}),
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
           title: {
-            ...(form.completedSectionInfo?.title ?? { is: '', en: '' }),
+            ...(form.sectionInfo?.title ?? { is: '', en: '' }),
             [lang]: newValue,
           },
-          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
             is: '',
             en: '',
           },
-          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+          confirmationText: form.sectionInfo?.confirmationText ?? {
             is: '',
             en: '',
           },
-          additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
-          additionalPremises:
-            form.completedSectionInfo?.additionalPremises ?? [],
+          additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+          additionalPremises: form.sectionInfo?.additionalPremises ?? [],
         },
       }
       return {
@@ -1781,24 +1780,22 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          completedSectionInfo: {
-            ...(form.completedSectionInfo ?? {}),
-            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
-            confirmationHeader: form.completedSectionInfo
-              ?.confirmationHeader ?? {
+          sectionInfo: {
+            ...(form.sectionInfo ?? {}),
+            title: form.sectionInfo?.title ?? { is: '', en: '' },
+            confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
               is: '',
               en: '',
             },
             confirmationText: {
-              ...(form.completedSectionInfo?.confirmationText ?? {
+              ...(form.sectionInfo?.confirmationText ?? {
                 is: '',
                 en: '',
               }),
               [lang]: newValue,
             },
-            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
-            additionalPremises:
-              form.completedSectionInfo?.additionalPremises ?? [],
+            additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+            additionalPremises: form.sectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1809,23 +1806,22 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          completedSectionInfo: {
-            ...(form.completedSectionInfo ?? {}),
-            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+          sectionInfo: {
+            ...(form.sectionInfo ?? {}),
+            title: form.sectionInfo?.title ?? { is: '', en: '' },
             confirmationHeader: {
-              ...(form.completedSectionInfo?.confirmationHeader ?? {
+              ...(form.sectionInfo?.confirmationHeader ?? {
                 is: '',
                 en: '',
               }),
               [lang]: newValue,
             },
-            confirmationText: form.completedSectionInfo?.confirmationText ?? {
+            confirmationText: form.sectionInfo?.confirmationText ?? {
               is: '',
               en: '',
             },
-            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
-            additionalPremises:
-              form.completedSectionInfo?.additionalPremises ?? [],
+            additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+            additionalPremises: form.sectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1833,20 +1829,19 @@ export const controlReducer = (
     case 'SET_COMPLETED_ADDITIONAL_INFO': {
       const newForm = {
         ...form,
-        completedSectionInfo: {
-          ...(form.completedSectionInfo ?? {}),
-          title: form.completedSectionInfo?.title ?? { is: '', en: '' },
-          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
+          title: form.sectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
             is: '',
             en: '',
           },
-          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+          confirmationText: form.sectionInfo?.confirmationText ?? {
             is: '',
             en: '',
           },
           additionalInfo: action.payload.newValue,
-          additionalPremises:
-            form.completedSectionInfo?.additionalPremises ?? [],
+          additionalPremises: form.sectionInfo?.additionalPremises ?? [],
         },
       }
       action.payload.update(newForm)
@@ -1859,24 +1854,26 @@ export const controlReducer = (
       const { newValue, update } = action.payload
       const newForm = {
         ...form,
-        completedSectionInfo: {
-          ...(form.completedSectionInfo ?? {}),
-          title: form.completedSectionInfo?.title ?? { is: '', en: '' },
-          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
+          title: form.sectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
             is: '',
             en: '',
           },
-          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+          confirmationText: form.sectionInfo?.confirmationText ?? {
             is: '',
             en: '',
           },
-          additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          additionalInfo: form.sectionInfo?.additionalInfo ?? [],
           additionalPremises: Array.isArray(newValue)
             ? newValue
-            : form.completedSectionInfo?.additionalPremises ?? [],
+            : form.sectionInfo?.additionalPremises ?? [],
         },
       }
-      update(newForm)
+      if (update) {
+        update(newForm)
+      }
       return {
         ...state,
         form: newForm,

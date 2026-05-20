@@ -12,6 +12,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
+import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
@@ -35,7 +36,6 @@ import {
   CertificationType,
   CertificationTypes,
 } from '../../dataTypes/certificationTypes/certificationType.model'
-import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
@@ -144,7 +144,7 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
       'lastModifiedBy',
     ]
 
@@ -155,8 +155,8 @@ export class FormsService {
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
 
-        if (dto.completedSectionInfo) {
-          const cs = dto.completedSectionInfo
+        if (dto.sectionInfo) {
+          const cs = dto.sectionInfo
 
           cs.title ??= { is: '', en: '' }
           cs.confirmationHeader ??= { is: '', en: '' }
@@ -240,20 +240,20 @@ export class FormsService {
       )
     }
 
-    const completedSectionInfo = {
+    const sectionInfo = {
       title: { is: '', en: '' },
       confirmationHeader: { is: '', en: '' },
       confirmationText: { is: '', en: '' },
       additionalInfo: [],
       additionalPremises: [],
-    } as CompletedSectionInfo
+    } as SectionInfo
 
     const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
       draftTotalSteps: 3,
-      completedSectionInfo,
+      sectionInfo,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -717,8 +717,8 @@ export class FormsService {
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
     }
 
-    if (form.completedSectionInfo) {
-      const cs = form.completedSectionInfo
+    if (form.sectionInfo) {
+      const cs = form.sectionInfo
       cs.title ??= { is: '', en: '' }
       cs.confirmationHeader ??= { is: '', en: '' }
       cs.confirmationText ??= { is: '', en: '' }
@@ -851,7 +851,7 @@ export class FormsService {
       'usePopulate',
       'submissionServiceUrl',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
       'dependencies',
     ]
     const formDto: FormDto = Object.assign(
@@ -1065,7 +1065,7 @@ export class FormsService {
     newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
-    newForm.completedSectionInfo = existingForm.completedSectionInfo
+    newForm.sectionInfo = existingForm.sectionInfo
 
     const sections: Section[] = []
     const screens: Screen[] = []
