@@ -1920,7 +1920,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOrganizationPageFields>(lang, {
         content_type: 'organizationPage',
         'fields.organization.sys.id': organizationId,
-        select: 'fields.footerItems,fields.footerConfig',
+        select: 'fields.footerItems,fields.footerConfig,fields.slug',
         limit: 1,
       })
       .catch((error) => {

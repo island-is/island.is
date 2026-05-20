@@ -48,35 +48,43 @@ const CourseDetails = ({ course }: { course: MenuCourse }) => {
   return (
     <Stack space={3}>
       {course.nutrients?.length ? (
-        <Box
-          display="flex"
-          flexDirection={['column', 'row']}
-          alignItems="center"
-          justifyContent="center"
-          flexWrap="wrap"
-          style={{ gap: '16px' }}
-        >
-          {course.nutrients.map((nutrient, index) => (
-            <Box
-              key={`${nutrient.name ?? 'nutrient'}-${index}`}
-              textAlign="center"
-              style={{ minWidth: '70px' }}
-            >
-              <Text variant="small" color="blue400" fontWeight="semiBold">
-                {formatRoundedNumber(nutrient.amount)}
-              </Text>
-              <Text variant="small" fontWeight="semiBold">
-                {`${nutrient.name ?? formatMessage(m.nutritionFallbackName)}${
-                  nutrient.unit ? ` ${nutrient.unit}` : ''
-                }`}
-              </Text>
-            </Box>
-          ))}
-        </Box>
+        <Stack space={2}>
+          <Text fontWeight="semiBold">{formatMessage(m.nutritionTitle)}:</Text>
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            alignItems="center"
+            justifyContent="center"
+            flexWrap="wrap"
+            style={{ gap: '16px' }}
+          >
+            {course.nutrients.map((nutrient, index) => (
+              <Box
+                key={`${nutrient.name ?? 'nutrient'}-${index}`}
+                textAlign="center"
+                style={{ minWidth: '70px' }}
+              >
+                <Text variant="small" color="blue400" fontWeight="semiBold">
+                  {formatRoundedNumber(nutrient.amount)}
+                </Text>
+                <Text variant="small" fontWeight="semiBold">
+                  {`${nutrient.name ?? formatMessage(m.nutritionFallbackName)}${
+                    nutrient.unit ? ` ${nutrient.unit}` : ''
+                  }`}
+                </Text>
+              </Box>
+            ))}
+          </Box>
+        </Stack>
       ) : null}
 
       {course.labelOfContents ? (
-        <Text variant="small">{course.labelOfContents}</Text>
+        <Stack space={1}>
+          <Text fontWeight="semiBold">
+            {formatMessage(m.ingredientsTitle)}:
+          </Text>
+          <Text variant="small">{course.labelOfContents}</Text>
+        </Stack>
       ) : null}
     </Stack>
   )

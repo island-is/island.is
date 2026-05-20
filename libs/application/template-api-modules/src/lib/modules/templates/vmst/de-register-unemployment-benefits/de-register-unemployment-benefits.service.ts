@@ -59,6 +59,8 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
     return {
       canWithdraw: canWithdraw.isEligible,
       delistingReasons,
+      dateMin: canWithdraw.possibleDateFrom,
+      dateMax: canWithdraw.possibleDateTo,
     }
   }
 

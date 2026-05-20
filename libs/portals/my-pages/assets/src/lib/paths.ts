@@ -9,6 +9,8 @@ export enum AssetsPaths {
 
   // If updated, also update `LinkAssetsVehiclesBulkMileage` in the finance paths file (libs/portals/my-pages/finance/src/lib/paths.ts)
   AssetsVehiclesBulkMileage = '/eignir/okutaeki/skra-kilometrastodu',
+  // Legacy path from mileage-registration module — kept for native app backwards compatibility
+  AssetsVehiclesBulkMileageRegistrationOld = '/eignir/okutaeki/skra-kilometrastodu/skraning',
 
   AssetsVehiclesBulkMileageUpload = '/eignir/okutaeki/skra-kilometrastodu/hlada-upp',
   AssetsVehiclesBulkMileageJobOverview = '/eignir/okutaeki/skra-kilometrastodu/runuverk',
