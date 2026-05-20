@@ -1174,30 +1174,36 @@ export class PoliceService {
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(
-      `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.config.clientId,
-          'X-API-KEY': this.config.policeApiKey,
-        },
-        agent: this.agent,
-        body: JSON.stringify({
-          rvMal_ID: caseId,
-          caseNumber: policeCaseNumber,
-          courtCaseNumber,
-          ssn: defendantNationalId,
-          type: caseType,
-          courtVerdict: caseState,
-          expiringDate: validToDate?.toISOString(),
-          courtVerdictString: caseConclusion,
-          courtDocuments,
-        }),
-      } as RequestInit,
-    )
+    const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
+    const url = usesLegacyPoliceCaseUpdate
+      ? `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`
+      : `${this.xRoadPath}/V4/case/${caseId}`
+
+    const body = {
+      rvMal_ID: caseId,
+      caseNumber: policeCaseNumber,
+      courtCaseNumber,
+      ...(usesLegacyPoliceCaseUpdate
+        ? { ssn: defendantNationalId }
+        : undefined),
+      type: caseType,
+      courtVerdict: caseState,
+      expiringDate: validToDate?.toISOString(),
+      courtVerdictString: caseConclusion,
+      courtDocuments,
+    }
+
+    return this.fetchPoliceCaseApi(url, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify(body),
+    } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
           return true
