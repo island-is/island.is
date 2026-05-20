@@ -70,6 +70,18 @@ const FarmerLandDetail = lazy(() =>
   import('./screens/FarmerLands/Detail/FarmerLandDetail'),
 )
 
+const EstatesOverview = lazy(() =>
+  import('./screens/Estates/Overview/EstatesOverview'),
+)
+
+const EstateDetail = lazy(() =>
+  import('./screens/Estates/Detail/EstateDetail'),
+)
+
+const EstateFiles = lazy(() =>
+  import('./screens/Estates/Files/EstateFiles'),
+)
+
 const VehicleMileage = lazy(() =>
   import('./screens/VehicleMileage/VehicleMileage'),
 )
@@ -159,6 +171,24 @@ export const assetsModule: PortalModule = {
         key: FARMERS_LANDS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <FarmerLandDetail />,
+      },
+      {
+        name: m.myEstates,
+        path: AssetsPaths.AssetsEstates,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <EstatesOverview />,
+      },
+      {
+        name: m.myEstates,
+        path: AssetsPaths.AssetsEstateDetail,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <EstateDetail />,
+      },
+      {
+        name: m.myEstates,
+        path: AssetsPaths.AssetsEstateFiles,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <EstateFiles />,
       },
       {
         name: m.myVehicles,

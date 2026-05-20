@@ -93,6 +93,9 @@
       "@island.is/api/domains/energy-funds": [
         "libs/api/domains/energy-funds/src/index.ts"
       ],
+      "@island.is/api/domains/estates": [
+        "libs/api/domains/estates/src/index.ts"
+      ],
       "@island.is/api/domains/farmers": [
         "libs/api/domains/farmers/src/index.ts"
       ],
@@ -761,6 +764,9 @@
       ],
       "@island.is/clients/district-commissioners-licenses": [
         "libs/clients/district-commissioners-licenses/src/index.ts"
+      ],
+      "@island.is/clients/estates": [
+        "libs/clients/estates/src/index.ts"
       ],
       "@island.is/clients/dmr": ["libs/clients/dmr/src/index.ts"],
       "@island.is/clients/document-provider": [

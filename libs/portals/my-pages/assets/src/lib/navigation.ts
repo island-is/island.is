@@ -150,5 +150,24 @@ export const assetsNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.myEstates,
+      description: m.myEstatesIntro,
+      path: AssetsPaths.AssetsEstates,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: AssetsPaths.AssetsEstateDetail,
+          children: [
+            {
+              name: 'skjol',
+              navHide: true,
+              path: AssetsPaths.AssetsEstateFiles,
+            },
+          ],
+        },
+      ],
+    },
   ],
 }

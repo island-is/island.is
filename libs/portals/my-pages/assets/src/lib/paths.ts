@@ -33,6 +33,10 @@ export enum AssetsPaths {
   AssetsShips = '/eignir/skip',
   AssetsShipDetail = '/eignir/skip/:id',
 
+  AssetsEstates = '/eignir/danarbu',
+  AssetsEstateDetail = '/eignir/danarbu/:id',
+  AssetsEstateFiles = '/eignir/danarbu/:id/skjol',
+
   //LINKS
   //If updated, also update `FinanceTransactionVehicleMileage` in the finance paths file (libs/portals/my-pages/finance/src/lib/paths.ts)
   LinkFinanceTransactionVehicleMileage = '/fjarmal/faerslur/kilometragjald',
