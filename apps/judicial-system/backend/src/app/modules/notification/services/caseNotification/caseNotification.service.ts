@@ -60,7 +60,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  formatCourtCalendarInvitation,
   formatCourtHeadsUpSmsNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
@@ -111,7 +110,7 @@ export class CaseNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly courtService: CourtService,
+    courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly defendantService: DefendantService,
   ) {
@@ -119,6 +118,7 @@ export class CaseNotificationService extends BaseNotificationService {
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
@@ -577,51 +577,6 @@ export class CaseNotificationService extends BaseNotificationService {
   //#endregion
 
   //#region non-indictment COURT_DATE notifications */
-  private async uploadEmailToCourt(
-    theCase: Case,
-    user: UserDescriptor,
-    subject: string,
-    body: string,
-    recipients?: string,
-  ): Promise<void> {
-    try {
-      await this.courtService.createEmail(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        subject,
-        body,
-        recipients ?? '',
-        this.config.email.fromEmail,
-        this.config.email.fromName,
-      )
-    } catch (error) {
-      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
-      this.logger.warn(
-        `Failed to upload email to court for case ${theCase.id}`,
-        { error },
-      )
-    }
-  }
-
-  private getCourtDateCalendarInvite = (
-    theCase: Case,
-    targetDateLog: DateLog,
-  ) => {
-    const { date: scheduledDate, location: courtRoom } = targetDateLog
-    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
-      theCase,
-      courtRoom,
-    )
-    const calendarInvite = this.createICalAttachment({
-      eventOrganizer,
-      scheduledDate,
-      title,
-      location,
-    })
-    return calendarInvite
-  }
 
   private sendCourtDateEmailNotificationToProsecutor(
     theCase: Case,
@@ -3900,8 +3855,6 @@ export class CaseNotificationService extends BaseNotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    // This may result in a defender with no national id getting a link to RVG
-    // TODO: Separate defenders from other recipients and handle no national id
     const sendTo = this.getWithdrawnNotificationRecipients(
       theCase,
       user,
