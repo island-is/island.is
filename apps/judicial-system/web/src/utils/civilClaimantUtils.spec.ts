@@ -1,6 +1,5 @@
 import {
   getAvailableDefendantsForCivilClaimant,
-  isCivilClaimantDefendantSelectionRequired,
   isCivilClaimantDefendantSelectionValid,
 } from './civilClaimantUtils'
 
@@ -47,26 +46,6 @@ describe('civilClaimantUtils', () => {
     })
   })
 
-  describe('isCivilClaimantDefendantSelectionRequired', () => {
-    test('is not required when no defendants match selected police case numbers', () => {
-      expect(
-        isCivilClaimantDefendantSelectionRequired(
-          { policeCaseNumbers: ['007-2024-000099'] },
-          defendants,
-        ),
-      ).toBe(false)
-    })
-
-    test('is required when at least one defendant matches', () => {
-      expect(
-        isCivilClaimantDefendantSelectionRequired(
-          { policeCaseNumbers: ['007-2024-000001'] },
-          defendants,
-        ),
-      ).toBe(true)
-    })
-  })
-
   describe('isCivilClaimantDefendantSelectionValid', () => {
     test('is valid without defendant selection when only unassigned police case numbers are selected', () => {
       expect(
@@ -92,7 +71,7 @@ describe('civilClaimantUtils', () => {
       ).toBe(false)
     })
 
-    test('is valid when at least one defendant is selected', () => {
+    test('is valid when at least one available defendant is selected', () => {
       expect(
         isCivilClaimantDefendantSelectionValid(
           {
@@ -102,6 +81,18 @@ describe('civilClaimantUtils', () => {
           defendants,
         ),
       ).toBe(true)
+    })
+
+    test('is invalid when defendantIds only contain stale or unavailable IDs', () => {
+      expect(
+        isCivilClaimantDefendantSelectionValid(
+          {
+            policeCaseNumbers: ['007-2024-000001'],
+            defendantIds: ['defendant-2', 'deleted-defendant'],
+          },
+          defendants,
+        ),
+      ).toBe(false)
     })
   })
 })

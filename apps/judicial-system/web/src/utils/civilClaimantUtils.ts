@@ -15,19 +15,20 @@ export const getAvailableDefendantsForCivilClaimant = (
   )
 }
 
-export const isCivilClaimantDefendantSelectionRequired = (
-  civilClaimant: Pick<CivilClaimant, 'policeCaseNumbers'>,
-  defendants: Defendant[],
-): boolean =>
-  getAvailableDefendantsForCivilClaimant(civilClaimant, defendants).length > 0
-
 export const isCivilClaimantDefendantSelectionValid = (
   civilClaimant: Pick<CivilClaimant, 'policeCaseNumbers' | 'defendantIds'>,
   defendants: Defendant[],
 ): boolean => {
-  if (!isCivilClaimantDefendantSelectionRequired(civilClaimant, defendants)) {
+  const availableDefendants = getAvailableDefendantsForCivilClaimant(
+    civilClaimant,
+    defendants,
+  )
+
+  if (availableDefendants.length === 0) {
     return true
   }
 
-  return (civilClaimant.defendantIds?.length ?? 0) > 0
+  const availableIds = new Set(availableDefendants.map((d) => d.id))
+
+  return (civilClaimant.defendantIds ?? []).some((id) => availableIds.has(id))
 }
