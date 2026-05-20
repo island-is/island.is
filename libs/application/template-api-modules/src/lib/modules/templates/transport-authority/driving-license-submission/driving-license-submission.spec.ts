@@ -405,4 +405,208 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('B-temp redesign branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let newTemporaryDrivingLicense: jest.Mock
+    let postHealthDeclaration: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'B-temp',
+      email: 'mock@email.com',
+      phone: '9999999',
+      delivery: {
+        deliveryMethod: 'post',
+        jurisdiction: '37',
+      },
+    }
+
+    const thjodskraExternalData = {
+      allPhotosFromThjodskra: {
+        data: {
+          images: [
+            { biometricId: 'facial-1', contentSpecification: 'FACIAL' },
+            { biometricId: 'sig-1', contentSpecification: 'SIGNATURE' },
+          ],
+        },
+        status: 'success' as const,
+        date: new Date(),
+      },
+    }
+
+    beforeEach(async () => {
+      newTemporaryDrivingLicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+      postHealthDeclaration = jest.fn(async () => undefined)
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { newTemporaryDrivingLicense, postHealthDeclaration },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('passes no biometric IDs when the persisted flag is off, even if selectLicensePhoto is set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: false,
+          selectLicensePhoto: 'facial-1',
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(newTemporaryDrivingLicense).toHaveBeenCalledTimes(1)
+
+      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+    })
+
+    it('resolves photo and signature biometric IDs when a Thjodskra photo is selected', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          selectLicensePhoto: 'facial-1',
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+    })
+
+    it('sends null biometric IDs when the RLS quality photo is selected', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          selectLicensePhoto: 'qualityPhoto',
+        },
+        externalData: {
+          qualityPhotoAndSignature: {
+            data: { pohto: 'somebase64' },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+      expect(postHealthDeclaration).not.toHaveBeenCalled()
+    })
+
+    it('carries biometric IDs on both postHealthDeclaration and newTemporaryDrivingLicense when a health certificate is needed', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          isBTempRedesignEnabled: true,
+          selectLicensePhoto: 'facial-1',
+          healthDeclaration: { hasEpilepsy: 'yes' },
+        },
+        externalData: thjodskraExternalData,
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+
+      expect(postHealthDeclaration).toHaveBeenCalledTimes(1)
+      const [, healthModel] = postHealthDeclaration.mock.calls[0]
+      expect(healthModel).toMatchObject({
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+
+      expect(newTemporaryDrivingLicense).toHaveBeenCalledTimes(1)
+      const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
+      expect(input).toMatchObject({
+        photoBiometricsId: 'facial-1',
+        signatureBiometricsId: 'sig-1',
+      })
+    })
+  })
 })

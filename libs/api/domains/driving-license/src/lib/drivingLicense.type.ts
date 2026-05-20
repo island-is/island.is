@@ -41,6 +41,8 @@ export interface NewTemporaryDrivingLicenseInput {
   email: string
   phone: string
   sendLicenseInMail: boolean
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewBEDrivingLicenseContentItem {

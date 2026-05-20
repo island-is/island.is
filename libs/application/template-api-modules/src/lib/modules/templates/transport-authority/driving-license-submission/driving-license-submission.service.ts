@@ -228,13 +228,19 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       nationalId: string,
       answers: FormValue,
       auth: User,
+      photoBiometricsId?: string | null,
+      signatureBiometricsId?: string | null,
     ) => {
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
-          PostTemporaryLicenseWithHealthDeclarationMapper(
-            answers as DrivingLicenseSchema,
-          ),
+          {
+            ...PostTemporaryLicenseWithHealthDeclarationMapper(
+              answers as DrivingLicenseSchema,
+            ),
+            photoBiometricsId,
+            signatureBiometricsId,
+          },
           auth.authorization.split(' ')[1] ?? '',
         )
         .catch((e) => {
@@ -403,8 +409,83 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             : DrivingLicenseCategory.BE,
       })
     } else if (applicationFor === 'B-temp') {
+      // Photo selection only applies to the redesigned B-temp flow. Gate on
+      // the *persisted* flag (captured into answers by a hidden input during
+      // prerequisites) — not on the mere presence of `selectLicensePhoto` —
+      // so a draft created while the flag was on does not keep sending
+      // biometric IDs after the flag is turned off. Flag off → both IDs stay
+      // null and the calls are identical to the pre-redesign behaviour.
+      const isBTempRedesignEnabled =
+        getValueViaPath<boolean>(answers, 'isBTempRedesignEnabled') === true
+
+      let photoBiometricsId: string | null = null
+      let signatureBiometricsId: string | null = null
+
+      if (isBTempRedesignEnabled) {
+        const selectedPhoto = getValueViaPath<string>(
+          answers,
+          'selectLicensePhoto',
+        )
+
+        if (selectedPhoto === 'qualityPhoto') {
+          // User selected the RLS quality photo — RLS already has it, so no
+          // biometric IDs are sent. Verify it actually exists for logging.
+          const qualityPhotoData = application.externalData
+            ?.qualityPhotoAndSignature?.data as {
+            pohto?: string | null
+          } | null
+
+          if (!qualityPhotoData?.pohto) {
+            this.log(
+              'error',
+              'User selected qualityPhoto but no quality photo exists in externalData',
+              {},
+            )
+          }
+
+          photoBiometricsId = null
+          signatureBiometricsId = null
+        } else if (selectedPhoto) {
+          // User selected a Thjodskra photo — validate against FACIAL entries.
+          const allThjodskraPhotos =
+            getValueViaPath<
+              Array<{ biometricId: string; contentSpecification: string }>
+            >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+            []
+
+          const facialPhotos = allThjodskraPhotos.filter(
+            (p) => p.contentSpecification === 'FACIAL',
+          )
+
+          const isValidFacial = facialPhotos.some(
+            (p) => p.biometricId === selectedPhoto,
+          )
+
+          if (!isValidFacial) {
+            this.log(
+              'error',
+              'Selected photo biometricId does not match any FACIAL Thjodskra photo',
+              { selectedPhoto },
+            )
+          }
+
+          photoBiometricsId = isValidFacial ? selectedPhoto : null
+          signatureBiometricsId = isValidFacial
+            ? allThjodskraPhotos.find(
+                (p) => p.contentSpecification === 'SIGNATURE',
+              )?.biometricId ?? null
+            : null
+        }
+      }
+
       if (needsHealthCert) {
-        await postHealthDeclaration(nationalId, answers, auth)
+        await postHealthDeclaration(
+          nationalId,
+          answers,
+          auth,
+          photoBiometricsId,
+          signatureBiometricsId,
+        )
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
@@ -419,6 +500,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           teacherNationalId: teacher,
           email: email,
           phone: phone,
+          photoBiometricsId,
+          signatureBiometricsId,
         },
       )
     } else if (applicationFor === 'BE') {
