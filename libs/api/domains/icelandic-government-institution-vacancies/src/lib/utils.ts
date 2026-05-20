@@ -129,7 +129,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
 
     for (const title of locationTitles) {
       locations.push({
-        postalCode: item.postCode ?? undefined,
+        postalCode: Number(item.postCode) || undefined,
         title,
       })
     }
@@ -199,7 +199,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
 
     for (const title of locationTitles) {
       locations.push({
-        postalCode: vacancy.postCode ?? undefined,
+        postalCode: Number(vacancy.postCode) || undefined,
         title,
       })
     }
@@ -251,7 +251,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
         'tasksAndResponsibilities',
       ),
       convertHtmlToContentfulRichText(vacancy.moreInfo ?? '', 'description'),
-      convertHtmlToContentfulRichText('', 'salaryTerms'),
+      convertHtmlToContentfulRichText(vacancy.salaryTerms ?? '', 'salaryTerms'),
     ])
 
     return {
