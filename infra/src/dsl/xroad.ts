@@ -579,7 +579,7 @@ export const NationalRegistryAuthB2C = new XroadConf({
       prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
+      dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
         'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
