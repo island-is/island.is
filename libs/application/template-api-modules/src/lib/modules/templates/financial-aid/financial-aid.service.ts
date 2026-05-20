@@ -94,7 +94,10 @@ export class FinancialAidService extends BaseTemplateApiService {
         })
       : []
 
-    const formatFiles = (files: ApplicationAnswerFile[], type: FileType) => {
+    const formatFiles = (
+      files: (ApplicationAnswerFile & { size?: number })[],
+      type: FileType,
+    ) => {
       if (!files || files.length <= 0) {
         return []
       }
@@ -102,7 +105,7 @@ export class FinancialAidService extends BaseTemplateApiService {
         return {
           name: f.name ?? '',
           key: f.key ?? '',
-          size: 0,
+          size: f.size ?? 0,
           type: type,
         }
       })

@@ -14,11 +14,17 @@ interface AttachmentPresignedUrlsResponse {
   attachments: AttachmentPresignedUrl[]
 }
 
+const PRESIGNED_URL_CACHE_TTL_MS = 60_000
+
 @Injectable()
 export class ApplicationSystemApiService {
   private readonly baseUrl: string
   private cachedToken: string | null = null
   private tokenExpiresAt = 0
+  private presignedUrlCache = new Map<
+    string,
+    { map: Map<string, string>; expiresAt: number }
+  >()
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -78,6 +84,12 @@ export class ApplicationSystemApiService {
   async getPresignedUrlsForApplication(
     applicationSystemId: string,
   ): Promise<Map<string, string>> {
+    const now = Date.now()
+    const cached = this.presignedUrlCache.get(applicationSystemId)
+    if (cached && now < cached.expiresAt) {
+      return cached.map
+    }
+
     if (!this.baseUrl) {
       this.logger.warn(
         'APPLICATION_SYSTEM_API_URL not configured, cannot fetch presigned URLs',
@@ -114,6 +126,11 @@ export class ApplicationSystemApiService {
       for (const attachment of data.attachments) {
         urlMap.set(attachment.key, attachment.url)
       }
+
+      this.presignedUrlCache.set(applicationSystemId, {
+        map: urlMap,
+        expiresAt: now + PRESIGNED_URL_CACHE_TTL_MS,
+      })
 
       return urlMap
     } catch (error) {

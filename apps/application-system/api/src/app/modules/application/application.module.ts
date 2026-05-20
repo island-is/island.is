@@ -9,6 +9,7 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import { AdminController } from './admin.controller'
 import { ApplicationController } from './application.controller'
+import { ApplicationInternalController } from './application-internal.controller'
 import { environment } from '../../../environments'
 
 import { ApplicationAccessService } from './tools/applicationAccess.service'
@@ -50,7 +51,7 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     AuthPublicApiClientModule,
     IdentityClientModule,
   ],
-  controllers: [ApplicationController, AdminController],
+  controllers: [ApplicationController, AdminController, ApplicationInternalController],
   providers: [
     ApplicationAccessService,
     ApplicationValidationService,

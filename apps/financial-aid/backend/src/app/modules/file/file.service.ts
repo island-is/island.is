@@ -112,6 +112,10 @@ export class FileService {
       include: [{ model: ApplicationModel, attributes: ['applicationSystemId'] }],
     })
 
+    if (!file) {
+      throw new Error(`File with id ${id} not found`)
+    }
+
     const applicationSystemId = (file as any).application?.applicationSystemId
 
     if (applicationSystemId) {
@@ -127,6 +131,7 @@ export class FileService {
     const s3Url = await this.tryGetS3PresignedUrl(
       file.key,
       file.applicationId,
+      applicationSystemId,
     )
     if (s3Url) {
       return { key: file.key, url: s3Url }
@@ -168,6 +173,7 @@ export class FileService {
         const s3Url = await this.tryGetS3PresignedUrl(
           file.key,
           file.applicationId,
+          applicationSystemId,
         )
         if (s3Url) {
           return { key: file.key, url: s3Url }
@@ -199,6 +205,7 @@ export class FileService {
   private async tryGetS3PresignedUrl(
     fileKey: string,
     applicationId: string,
+    applicationSystemId?: string,
   ): Promise<string | null> {
     const bucket = environment.files.applicationAttachmentBucket
     if (!bucket) {
@@ -206,6 +213,9 @@ export class FileService {
     }
 
     const keysToTry = [
+      ...(applicationSystemId
+        ? [`${applicationSystemId}/${fileKey}`]
+        : []),
       `${applicationId}/${fileKey}`,
       fileKey,
     ]
