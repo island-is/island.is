@@ -150,29 +150,26 @@ describe('PoliceController - Update Police Case', () => {
     })
 
     it('should update the police case using the v4 endpoint without ssn', async () => {
-      expect(fetch).toHaveBeenCalledWith(
-        `${xRoadPath}/V4/case/${caseId}`,
-        {
-          method: 'PUT',
-          headers: {
-            accept: '*/*',
-            'Content-Type': 'application/json',
-            'X-Road-Client': mockConfig.clientId,
-            'X-API-KEY': mockConfig.policeApiKey,
-          },
-          agent: expect.any(Agent),
-          body: JSON.stringify({
-            rvMal_ID: caseId,
-            caseNumber: policeCaseNumber,
-            courtCaseNumber,
-            type: caseType,
-            courtVerdict: caseState,
-            expiringDate: validToDate,
-            courtVerdictString: caseConclusion,
-            courtDocuments,
-          }),
+      expect(fetch).toHaveBeenCalledWith(`${xRoadPath}/V4/case/${caseId}`, {
+        method: 'PUT',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': mockConfig.clientId,
+          'X-API-KEY': mockConfig.policeApiKey,
         },
-      )
+        agent: expect.any(Agent),
+        body: JSON.stringify({
+          rvMal_ID: caseId,
+          caseNumber: policeCaseNumber,
+          courtCaseNumber,
+          type: caseType,
+          courtVerdict: caseState,
+          expiringDate: validToDate,
+          courtVerdictString: caseConclusion,
+          courtDocuments,
+        }),
+      })
       expect(then.result).toBe(true)
     })
   })
