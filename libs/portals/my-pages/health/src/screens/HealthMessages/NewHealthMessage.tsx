@@ -3,21 +3,19 @@ import {
   Button,
   Checkbox,
   Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Input,
   Select,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
   IntroWrapper,
-  getInitials,
   m,
 } from '@island.is/portals/my-pages/core'
+import MessageAvatar from './MessageAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -28,21 +26,6 @@ import {
   useGetHealthMessagingRecipientsForNewQuery,
   useCreateHealthMessageMutation,
 } from './NewHealthMessage.generated'
-
-const UserInitialsAvatar = ({ name }: { name: string }) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    borderRadius="full"
-    background="blueberry100"
-    style={{ width: 48, height: 48, flexShrink: 0 }}
-  >
-    <Text variant="h5" as="p">
-      {getInitials(name)}
-    </Text>
-  </Box>
-)
 
 const NewHealthMessage = () => {
   useNamespaces('sp.health')
@@ -80,24 +63,28 @@ const NewHealthMessage = () => {
     const selectedType = recipient.allowedMessageTypes.find(
       (t) => t.patientInitiatedTypeCode === selectedTypeCode,
     )
-    const result = await createMessage({
-      variables: {
-        input: {
-          nodeId: recipient.nodeId,
-          groupId: recipient.groupId,
-          patientInitiatedTypeCode: selectedTypeCode!,
-          title: selectedType?.title,
-          messageTextContent: messageText,
+    try {
+      const result = await createMessage({
+        variables: {
+          input: {
+            nodeId: recipient.nodeId,
+            groupId: recipient.groupId,
+            patientInitiatedTypeCode: selectedTypeCode!,
+            title: selectedType?.title,
+            messageTextContent: messageText,
+          },
         },
-      },
-    })
-    const id = result.data?.healthDirectorateCreateHealthMessage?.id
-    if (id) {
-      navigate(HealthPaths.HealthMessagesDetail.replace(':id', id), {
-        state: { justCreated: true },
       })
-    } else {
-      navigate(HealthPaths.HealthMessages)
+      const id = result.data?.healthDirectorateCreateHealthMessage?.id
+      if (id) {
+        navigate(HealthPaths.HealthMessagesDetail.replace(':id', id), {
+          state: { justCreated: true },
+        })
+      } else {
+        navigate(HealthPaths.HealthMessages)
+      }
+    } catch {
+      toast.error(formatMessage(m.errorTitle))
     }
   }
 
@@ -105,6 +92,7 @@ const NewHealthMessage = () => {
     <IntroWrapper
       title={messages.healthMessagesNewTitle}
       intro={messages.healthMessagesNewIntro}
+      desktopContentSpan="10/12"
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
@@ -112,102 +100,89 @@ const NewHealthMessage = () => {
         <EmptyState title={messages.healthMessagesNoRecipient} />
       )}
       {!loading && !error && recipient && (
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '10/12']}>
-              <Box
-                background="white"
-                borderColor="blue200"
-                borderWidth="standard"
-                borderRadius="large"
+        <Box
+          background="white"
+          borderColor="blue200"
+          borderWidth="standard"
+          borderRadius="large"
+        >
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            columnGap={2}
+            paddingX={4}
+            paddingY={3}
+          >
+            <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
+            <Box>
+              <Text variant="medium">
+                {formatMessage(messages.healthMessageTo, {
+                  arg: recipient?.name ?? '',
+                })}
+              </Text>
+              <Text fontWeight="semiBold">
+                {formatMessage(messages.healthMessagesCreate)}
+              </Text>
+            </Box>
+          </Box>
+
+          <Divider />
+
+          <Box paddingX={4} paddingY={4}>
+            <Box marginBottom={3}>
+              <Select
+                name="service-type"
+                label={formatMessage(messages.healthMessagesNewSelectService)}
+                placeholder={formatMessage(
+                  messages.healthMessagesNewSelectServicePlaceholder,
+                )}
+                options={typeOptions}
+                value={selectedOption}
+                onChange={(opt) => setSelectedTypeCode(opt?.value ?? null)}
+                backgroundColor="blue"
+                size="sm"
+                required
+              />
+            </Box>
+
+            <Box marginBottom={3}>
+              <Input
+                textarea
+                rows={8}
+                name="message-body"
+                label={formatMessage(m.messages)}
+                placeholder={formatMessage(
+                  messages.healthMessagesNewBodyPlaceholder,
+                )}
+                backgroundColor="blue"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              />
+            </Box>
+
+            <Box marginBottom={4}>
+              <Checkbox
+                id="terms-accept"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                label={`${formatMessage(
+                  messages.healthMessagesNewTermsAccept,
+                )} ${formatMessage(messages.healthMessagesNewTermsLinkText)}`}
+              />
+            </Box>
+
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                onClick={handleSubmit}
+                loading={sending}
+                disabled={!canSubmit}
               >
-                {/* Header */}
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  columnGap={2}
-                  paddingX={4}
-                  paddingY={3}
-                >
-                  <UserInitialsAvatar name={userInfo.profile.name ?? ''} />
-                  <Box>
-                    <Text variant="medium">
-                      {formatMessage(messages.healthMessageTo, {
-                        arg: recipient?.name ?? '',
-                      })}
-                    </Text>
-                    <Text fontWeight="semiBold">
-                      {formatMessage(messages.healthMessagesCreate)}
-                    </Text>
-                  </Box>
-                </Box>
-
-                <Divider />
-
-                {/* Form */}
-                <Box paddingX={4} paddingY={4}>
-                  <Box marginBottom={3}>
-                    <Select
-                      name="service-type"
-                      label={formatMessage(
-                        messages.healthMessagesNewSelectService,
-                      )}
-                      placeholder={formatMessage(
-                        messages.healthMessagesNewSelectServicePlaceholder,
-                      )}
-                      options={typeOptions}
-                      value={selectedOption}
-                      onChange={(opt) =>
-                        setSelectedTypeCode(opt?.value ?? null)
-                      }
-                      backgroundColor="blue"
-                      required
-                    />
-                  </Box>
-
-                  <Box marginBottom={3}>
-                    <Input
-                      textarea
-                      rows={8}
-                      name="message-body"
-                      label={formatMessage(m.messages)}
-                      placeholder={formatMessage(
-                        messages.healthMessagesNewBodyPlaceholder,
-                      )}
-                      backgroundColor="blue"
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                    />
-                  </Box>
-
-                  <Box marginBottom={4}>
-                    <Checkbox
-                      id="terms-accept"
-                      checked={termsAccepted}
-                      onChange={(e) => setTermsAccepted(e.target.checked)}
-                      label={`${formatMessage(
-                        messages.healthMessagesNewTermsAccept,
-                      )} ${formatMessage(
-                        messages.healthMessagesNewTermsLinkText,
-                      )}`}
-                    />
-                  </Box>
-
-                  <Box display="flex" justifyContent="flexEnd">
-                    <Button
-                      onClick={handleSubmit}
-                      loading={sending}
-                      disabled={!canSubmit}
-                    >
-                      {formatMessage(messages.healthMessageSend)}
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+                {formatMessage(messages.healthMessageSend)}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
       )}
     </IntroWrapper>
   )

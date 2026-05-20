@@ -130,7 +130,6 @@ export const HealthOverview = () => {
 
   return (
     <>
-      {/* Header + appointments on left, contact links on right */}
       <GridRow marginBottom={CONTENT_GAP_LG} alignItems="stretch">
         <GridColumn span={isMobile ? '12/12' : '7/12'}>
           <div className={styles.leftColumn}>
@@ -180,7 +179,6 @@ export const HealthOverview = () => {
           </GridColumn>
         )}
       </GridRow>
-      {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
           data: paymentOverviewData?.rightsPortalCopaymentStatus,

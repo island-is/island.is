@@ -8,14 +8,16 @@ import {
   GridRow,
   Input,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formSubmit,
-  getInitials,
+  formatDateWithTime,
   m,
 } from '@island.is/portals/my-pages/core'
+import MessageAvatar from './MessageAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -36,50 +38,9 @@ type UseParams = {
   id: string
 }
 
-const CircleLogo = ({ organization }: { organization: string }) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    borderRadius="full"
-    background="blue100"
-    style={{ minWidth: 48, height: 48, flexShrink: 0 }}
-  >
-    <Text variant="h5" as="p">
-      {getInitials(organization)}
-    </Text>
-  </Box>
-)
-
-const UserInitialsAvatar = ({ name }: { name: string }) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    borderRadius="full"
-    background="blueberry100"
-    style={{ width: 48, height: 48, flexShrink: 0 }}
-  >
-    <Text variant="h5" as="p">
-      {getInitials(name)}
-    </Text>
-  </Box>
-)
-
-const formatMessageDateTime = (iso: string, locale: string) => {
-  const d = new Date(iso)
-  return new Intl.DateTimeFormat(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(d)
-}
-
 const HealthMessageDetail = () => {
   useNamespaces('sp.health')
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
   const location = useLocation()
@@ -95,17 +56,23 @@ const HealthMessageDetail = () => {
   })
 
   const [markAsRead] = useMarkHealthMessageAsReadMutation()
+  const onMutationError = () => toast.error(formatMessage(m.errorTitle))
+
   const [starMessage] = useStarHealthMessageDetailMutation({
     refetchQueries: ['GetHealthMessageDetail'],
+    onError: onMutationError,
   })
   const [unstarMessage] = useUnstarHealthMessageDetailMutation({
     refetchQueries: ['GetHealthMessageDetail'],
+    onError: onMutationError,
   })
   const [archiveMessage] = useArchiveHealthMessageDetailMutation({
     refetchQueries: ['GetHealthMessageDetail'],
+    onError: onMutationError,
   })
   const [unarchiveMessage] = useUnarchiveHealthMessageDetailMutation({
     refetchQueries: ['GetHealthMessageDetail'],
+    onError: onMutationError,
   })
   const [replyToMessage, { loading: replySending }] =
     useReplyToHealthMessageMutation({
@@ -126,7 +93,7 @@ const HealthMessageDetail = () => {
     return (
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['12/12', '12/12', '10/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <CardLoader />
             </Box>
@@ -140,7 +107,7 @@ const HealthMessageDetail = () => {
     return (
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['12/12', '12/12', '10/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem error={error} noBorder={false} />
             </Box>
@@ -154,7 +121,7 @@ const HealthMessageDetail = () => {
     return (
       <GridContainer>
         <GridRow marginTop={2}>
-          <GridColumn span={['12/12', '12/12', '10/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
             <Box padding={6}>
               <Problem
                 type="no_data"
@@ -170,20 +137,24 @@ const HealthMessageDetail = () => {
 
   const handleReply = async () => {
     if (!replyText.trim()) return
-    await replyToMessage({
-      variables: {
-        id,
-        input: { messageTextContent: replyText },
-      },
-    })
-    setReplyText('')
-    setReplyOpen(false)
+    try {
+      await replyToMessage({
+        variables: {
+          id,
+          input: { messageTextContent: replyText },
+        },
+      })
+      setReplyText('')
+      setReplyOpen(false)
+    } catch {
+      toast.error(formatMessage(m.errorTitle))
+    }
   }
 
   return (
     <GridContainer>
       <GridRow marginTop={2}>
-        <GridColumn span={['12/12', '12/12', '10/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box
             background="white"
             borderColor="blue200"
@@ -193,7 +164,6 @@ const HealthMessageDetail = () => {
             paddingBottom={5}
             paddingX={5}
           >
-            {/* Header: subject + actions */}
             <Box
               display="flex"
               justifyContent="spaceBetween"
@@ -256,14 +226,13 @@ const HealthMessageDetail = () => {
                   <Box
                     display="flex"
                     flexDirection="row"
-                    style={index === 0 ? { paddingTop: 27 } : undefined}
-                    paddingTop={index === 0 ? undefined : 3}
+                    paddingTop={3}
                     marginBottom={3}
                   >
                     {isPatient ? (
-                      <UserInitialsAvatar name={userInfo.profile.name ?? ''} />
+                      <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
                     ) : (
-                      <CircleLogo organization={senderName} />
+                      <MessageAvatar variant="organization" name={senderName} />
                     )}
                     <Box
                       display="flex"
@@ -275,18 +244,15 @@ const HealthMessageDetail = () => {
                         {senderName}
                       </Text>
                       <Text variant="medium">
-                        {formatMessageDateTime(msg.messageSentAt, lang)}
+                        {formatDateWithTime(msg.messageSentAt)}
                       </Text>
                     </Box>
                   </Box>
 
                   {/* Body */}
                   {msg.messageTextContent && (
-                    <Box
-                      marginBottom={4}
-                      style={{ whiteSpace: 'pre-line', fontWeight: 'lighter' }}
-                    >
-                      {msg.messageTextContent}
+                    <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
+                      <Text fontWeight="light">{msg.messageTextContent}</Text>
                     </Box>
                   )}
 
@@ -357,7 +323,7 @@ const HealthMessageDetail = () => {
                   marginBottom={3}
                 >
                   <Box display="flex" flexDirection="row">
-                    <UserInitialsAvatar name={userInfo.profile.name ?? ''} />
+                    <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
                     <Box
                       display="flex"
                       flexDirection="column"

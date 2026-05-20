@@ -3,7 +3,7 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 export const filterActionButtons = style({
   display: 'flex',
-  gap: '2px',
+  gap: '8px',
 })
 
 globalStyle(`${filterActionButtons} button`, {
