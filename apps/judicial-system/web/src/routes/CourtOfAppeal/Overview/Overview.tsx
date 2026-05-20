@@ -138,7 +138,16 @@ const CourtOfAppealOverview = () => {
               />
             )}
             {isIndictment ? (
-              <AllIndictmentCaseFiles />
+              <>
+                <AllIndictmentCaseFiles />
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
+              </>
             ) : (
               <>
                 <Accordion
