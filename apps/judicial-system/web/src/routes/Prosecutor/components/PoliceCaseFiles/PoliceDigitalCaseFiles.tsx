@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Icon, LoadingDots, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { IconAndText } from '@island.is/judicial-system-web/src/components'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import { AnimateChildren } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -67,38 +68,47 @@ export const PoliceDigitalCaseFilesList = ({
             />
           </AnimateChildren>
         ) : (
-          <ul className={styles.grid}>
-            {digitalCaseFiles.map((item, index) => (
-              <motion.li
-                custom={index}
-                initial="hidden"
-                animate="visible"
-                variants={listItemVariants}
-                key={item.id}
-              >
-                <Box
+          <>
+            {digitalCaseFiles.some((f) => f.isDeletable) && (
+              <Box marginBottom={2}>
+                <AlertMessage
+                  type="warning"
+                  message="Sum gögn í þessum lista eru ekki til í IDES. Vinsamlegast eyddu þeim úr þessum lista ef við á."
+                />
+              </Box>
+            )}
+            <ul className={styles.grid}>
+              {digitalCaseFiles.map((item, index) => (
+                <motion.li
+                  custom={index}
+                  initial="hidden"
+                  animate="visible"
+                  variants={listItemVariants}
                   key={item.id}
-                  paddingX={3}
-                  paddingY={2}
-                  background={'blue100'}
-                  borderRadius="standard"
-                  display="flex"
-                  justifyContent="spaceBetween"
                 >
-                  <Text key={`${item.id}`}>{item.name}</Text>
-                  {item.isDeletable && (
-                    <button
-                      type="button"
-                      onClick={() => onRemove(item)}
-                      aria-label="Fjarlægja skrá"
-                    >
-                      <Icon color="blue400" icon="close" />
-                    </button>
-                  )}
-                </Box>
-              </motion.li>
-            ))}
-          </ul>
+                  <Box
+                    key={item.id}
+                    paddingX={3}
+                    paddingY={2}
+                    background={item.isDeletable ? 'red100' : 'blue100'}
+                    borderRadius="standard"
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    alignItems="center"
+                  >
+                    <Text key={`${item.id}`}>{item.name}</Text>
+                    {item.isDeletable && (
+                      <IconButton
+                        icon="close"
+                        colorScheme="red"
+                        onClick={() => onRemove(item)}
+                      />
+                    )}
+                  </Box>
+                </motion.li>
+              ))}
+            </ul>
+          </>
         )}
       </AnimatePresence>
     </Box>
