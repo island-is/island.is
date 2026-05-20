@@ -99,182 +99,196 @@ const HealthMessages = () => {
   }, [items, query])
 
   return (
-    <IntroWrapper
-      title={m.messages}
-      intro={messages.healthMessagesIntro}
-    >
+    <IntroWrapper title={m.messages} intro={messages.healthMessagesIntro}>
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '10/12']}>
-      <Box display="flex" justifyContent="spaceBetween" alignItems="center" marginBottom={3}>
-        <Filter
-          labelClearAll={formatMessage(m.clearAllFilters)}
-          labelClear={formatMessage(m.clearFilter)}
-          labelOpen={formatMessage(m.openFilter)}
-          reverse
-          variant="popover"
-          align="left"
-          filterInput={
-            <Box style={{ width: '100%', maxWidth: 320 }}>
-              <Input
-                name="messageSearch"
-                placeholder={formatMessage(
-                  messages.healthMessagesSearchPlaceholder,
-                )}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                icon={{ type: 'outline', name: 'search' }}
-                size="sm"
-                backgroundColor="blue"
-              />
-            </Box>
-          }
-          onFilterClear={() => {
-            setFilterStarred(false)
-            setFilterArchived(false)
-            setQuery('')
-          }}
-        >
-          <Box paddingX={3} paddingY={3}>
-            <Text variant="h5" marginBottom={2}>
-              {formatMessage(m.filterBy)}
-            </Text>
-            <Box>
-              <Checkbox
-                id="filter-starred"
-                label={formatMessage(messages.healthMessagesFilterStarred)}
-                checked={filterStarred}
-                onChange={(e) => setFilterStarred(e.target.checked)}
-              />
-            </Box>
-            <Box paddingTop={1}>
-              <Checkbox
-                id="filter-archived"
-                label={formatMessage(messages.healthMessagesFilterArchived)}
-                checked={filterArchived}
-                onChange={(e) => setFilterArchived(e.target.checked)}
-              />
-            </Box>
-          </Box>
-        </Filter>
-        <Box style={{ whiteSpace: 'nowrap' }}>
-          <Button
-            variant="primary"
-            size="small"
-            iconType="outline"
-            onClick={() => navigate(HealthPaths.HealthMessagesNew)}
-          >
-            {formatMessage(messages.healthMessagesCreate)}
-          </Button>
-        </Box>
-      </Box>
-      {loading && <CardLoader />}
-      {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && (
-        <>
-          {filtered.length === 0 ? (
-            <EmptyState title={messages.noData} />
-          ) : (
-            <>
-              <Box
-                background="blue100"
-                borderColor="blue200"
-                borderBottomWidth="standard"
-                display="flex"
-                justifyContent="spaceBetween"
-                paddingX={2}
-                paddingY={2}
-              >
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(m.messages)}
-                </Text>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.date)}
-                </Text>
-              </Box>
-              <Stack space={0}>
-                {filtered.map((item) => (
-                  <Box
-                    key={item.id}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="spaceBetween"
-                    borderColor="blue200"
-                    borderBottomWidth="standard"
-                    paddingX={2}
-                    paddingY="p2"
-                    columnGap={2}
-                  >
-                    {/* Left: logo + text (navigable link) */}
-                    <Link
-                      to={HealthPaths.HealthMessagesDetail.replace(
-                        ':id',
-                        item.id,
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={3}
+            >
+              <Filter
+                labelClearAll={formatMessage(m.clearAllFilters)}
+                labelClear={formatMessage(m.clearFilter)}
+                labelOpen={formatMessage(m.openFilter)}
+                reverse
+                variant="popover"
+                align="left"
+                filterInput={
+                  <Box style={{ width: '100%', maxWidth: 320 }}>
+                    <Input
+                      name="messageSearch"
+                      placeholder={formatMessage(
+                        messages.healthMessagesSearchPlaceholder,
                       )}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 16,
-                        minWidth: 0,
-                        flexGrow: 1,
-                        textDecoration: 'none',
-                        color: 'inherit',
-                      }}
-                    >
-                      <CircleLogo
-                        fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
-                      />
-                      <Box minWidth={0}>
-                        <Text variant="medium">{item.lastSenderGroupName}</Text>
-                        <Text
-                          color="blue400"
-                          truncate
-                          fontWeight={item.isRead ? 'regular' : 'semiBold'}
-                        >
-                          {item.title}
-                        </Text>
-                      </Box>
-                    </Link>
-
-                    {/* Right: date above, icons below */}
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="flexEnd"
-                      style={{ flexShrink: 0 }}
-                    >
-                      <Text variant="medium">
-                        {item.lastMessageSentAt
-                          ? formatDate(item.lastMessageSentAt)
-                          : ''}
-                      </Text>
-                      <FavAndStash
-                        colorScheme="negative"
-                        bookmarked={item.isStarred}
-                        archived={item.isArchived}
-                        onFav={() => {
-                          if (item.isStarred) {
-                            unstarMessage({ variables: { id: item.id } })
-                          } else {
-                            starMessage({ variables: { id: item.id } })
-                          }
-                        }}
-                        onStash={() => {
-                          if (item.isArchived) {
-                            unarchiveMessage({ variables: { id: item.id } })
-                          } else {
-                            archiveMessage({ variables: { id: item.id } })
-                          }
-                        }}
-                      />
-                    </Box>
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      icon={{ type: 'outline', name: 'search' }}
+                      size="sm"
+                      backgroundColor="blue"
+                    />
                   </Box>
-                ))}
-              </Stack>
-            </>
-          )}
-        </>
-      )}
+                }
+                onFilterClear={() => {
+                  setFilterStarred(false)
+                  setFilterArchived(false)
+                  setQuery('')
+                }}
+              >
+                <Box paddingX={3} paddingY={3}>
+                  <Text variant="h5" marginBottom={2}>
+                    {formatMessage(m.filterBy)}
+                  </Text>
+                  <Box>
+                    <Checkbox
+                      id="filter-starred"
+                      label={formatMessage(
+                        messages.healthMessagesFilterStarred,
+                      )}
+                      checked={filterStarred}
+                      onChange={(e) => setFilterStarred(e.target.checked)}
+                    />
+                  </Box>
+                  <Box paddingTop={1}>
+                    <Checkbox
+                      id="filter-archived"
+                      label={formatMessage(
+                        messages.healthMessagesFilterArchived,
+                      )}
+                      checked={filterArchived}
+                      onChange={(e) => setFilterArchived(e.target.checked)}
+                    />
+                  </Box>
+                </Box>
+              </Filter>
+              <Box style={{ whiteSpace: 'nowrap' }}>
+                <Button
+                  variant="primary"
+                  size="small"
+                  iconType="outline"
+                  onClick={() => navigate(HealthPaths.HealthMessagesNew)}
+                >
+                  {formatMessage(messages.healthMessagesCreate)}
+                </Button>
+              </Box>
+            </Box>
+            {loading && <CardLoader />}
+            {error && <Problem error={error} noBorder={false} />}
+            {!loading && !error && (
+              <>
+                {filtered.length === 0 ? (
+                  <EmptyState title={messages.noData} />
+                ) : (
+                  <>
+                    <Box
+                      background="blue100"
+                      borderColor="blue200"
+                      borderBottomWidth="standard"
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      paddingX={2}
+                      paddingY={2}
+                    >
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(m.messages)}
+                      </Text>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.date)}
+                      </Text>
+                    </Box>
+                    <Stack space={0}>
+                      {filtered.map((item) => (
+                        <Box
+                          key={item.id}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                          borderColor="blue200"
+                          borderBottomWidth="standard"
+                          paddingX={2}
+                          paddingY="p2"
+                          columnGap={2}
+                        >
+                          {/* Left: logo + text (navigable link) */}
+                          <Link
+                            to={HealthPaths.HealthMessagesDetail.replace(
+                              ':id',
+                              item.id,
+                            )}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 16,
+                              minWidth: 0,
+                              flexGrow: 1,
+                              textDecoration: 'none',
+                              color: 'inherit',
+                            }}
+                          >
+                            <CircleLogo
+                              fallbackIcon={
+                                item.hasAttachment ? 'document' : 'heart'
+                              }
+                            />
+                            <Box minWidth={0}>
+                              <Text variant="medium">
+                                {item.lastSenderGroupName}
+                              </Text>
+                              <Text
+                                color="blue400"
+                                truncate
+                                fontWeight={
+                                  item.isRead ? 'regular' : 'semiBold'
+                                }
+                              >
+                                {item.title}
+                              </Text>
+                            </Box>
+                          </Link>
+
+                          {/* Right: date above, icons below */}
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="flexEnd"
+                            style={{ flexShrink: 0 }}
+                          >
+                            <Text variant="medium">
+                              {item.lastMessageSentAt
+                                ? formatDate(item.lastMessageSentAt)
+                                : ''}
+                            </Text>
+                            <FavAndStash
+                              colorScheme="negative"
+                              bookmarked={item.isStarred}
+                              archived={item.isArchived}
+                              onFav={() => {
+                                if (item.isStarred) {
+                                  unstarMessage({ variables: { id: item.id } })
+                                } else {
+                                  starMessage({ variables: { id: item.id } })
+                                }
+                              }}
+                              onStash={() => {
+                                if (item.isArchived) {
+                                  unarchiveMessage({
+                                    variables: { id: item.id },
+                                  })
+                                } else {
+                                  archiveMessage({ variables: { id: item.id } })
+                                }
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </>
+                )}
+              </>
+            )}
           </GridColumn>
         </GridRow>
       </GridContainer>

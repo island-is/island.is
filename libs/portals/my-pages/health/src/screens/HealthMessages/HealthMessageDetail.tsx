@@ -206,14 +206,20 @@ const HealthMessageDetail = () => {
               <HealthMessageActionBar
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
-                onReply={item.patientCanReply !== false ? () => {
-                  setReplyOpen(true)
-                  setTimeout(
-                    () =>
-                      replyRef.current?.scrollIntoView({ behavior: 'smooth' }),
-                    50,
-                  )
-                } : undefined}
+                onReply={
+                  item.patientCanReply !== false
+                    ? () => {
+                        setReplyOpen(true)
+                        setTimeout(
+                          () =>
+                            replyRef.current?.scrollIntoView({
+                              behavior: 'smooth',
+                            }),
+                          50,
+                        )
+                      }
+                    : undefined
+                }
                 onFav={() => {
                   if (item.isStarred) {
                     unstarMessage({ variables: { id } })
