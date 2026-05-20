@@ -148,6 +148,9 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
 
     const OTHER_GROUP_KEY = '__other__'
     for (const scope of removedScopes) {
+      // Assumes scope.domainName matches a tenant id. They're separate fields
+      // in the schema but equal in current data; anything that doesn't match
+      // falls back to the "Other" group rather than rendering a raw id.
       const tenantId =
         scope.domainName && groupMap.has(scope.domainName)
           ? scope.domainName
