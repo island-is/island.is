@@ -20,6 +20,8 @@ import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+import { PatchScopeResponse } from './models/patch-scope-response.model'
+import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
 const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
 
@@ -67,7 +69,10 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Updates a scope for a specific tenant for the given environments
+   * Updates a scope for a specific tenant for the given environments.
+   *
+   * Per-environment failures are collected and returned alongside the
+   * successful results
    */
   async updateScope({
     user,
@@ -75,7 +80,7 @@ export class ScopeService extends MultiEnvironmentService {
   }: {
     user: User
     input: AdminPatchScopeInput
-  }): Promise<ScopeEnvironment[]> {
+  }): Promise<PatchScopeResponse> {
     if (Object.keys(adminPatchScopeDto).length === 0) {
       throw new Error('Nothing provided to update')
     }
@@ -92,16 +97,24 @@ export class ScopeService extends MultiEnvironmentService {
       }),
     )
 
-    return this.handleSettledPromises(updatedSettledPromises, {
-      mapper: (scope, index) => ({
-        ...scope,
-        scopeName: scope.name,
-        environment: environments[index],
-        categoryIds: scope.categoryIds ?? [],
-        tagIds: scope.tagIds ?? [],
-      }),
-      prefixErrorMessage: `Failed to update scope ${scopeName}`,
-    })
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      updatedSettledPromises,
+      environments,
+      {
+        mapper: (scope, index): ScopeEnvironment => ({
+          ...scope,
+          environment: environments[index],
+          categoryIds: scope.categoryIds ?? [],
+          tagIds: scope.tagIds ?? [],
+        }),
+        prefixErrorMessage: `Failed to update scope ${scopeName}`,
+      },
+    )
+
+    return {
+      environments: values,
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 
   /**
@@ -363,18 +376,20 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Updates the user access list for a scope by adding/removing users
+   * Updates the user access list for a scope by adding/removing users.
+   *
+   * Per-environment failures are collected and returned and
+   * surfaced to the user.
    */
   async updateScopeUsers(
     user: User,
     input: UpdateScopeUsersInput,
-  ): Promise<boolean> {
+  ): Promise<UpdateScopeUsersResponse> {
     const targetEnvironments = input.environments
-    let anySuccess = false
 
-    for (const environment of targetEnvironments) {
-      try {
-        await this.makeRequest(user, environment, (api) =>
+    const settledPromises = await Promise.allSettled(
+      targetEnvironments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
           api.meScopeUsersControllerUpdateScopeUsersRaw({
             tenantId: input.tenantId,
             scopeName: input.scopeName,
@@ -383,16 +398,22 @@ export class ScopeService extends MultiEnvironmentService {
               removedNationalIds: input.removedNationalIds,
             },
           }),
-        )
-        anySuccess = true
-      } catch (error) {
-        this.logger.error(
-          `Failed to update scope users in ${environment}`,
-          error as Error,
-        )
-      }
-    }
+        ),
+      ),
+    )
 
-    return anySuccess
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      settledPromises,
+      targetEnvironments,
+      {
+        mapper: (_value, index) => targetEnvironments[index],
+        prefixErrorMessage: `Failed to update scope users for ${input.scopeName}`,
+      },
+    )
+
+    return {
+      ...(values.length > 0 && { environments: values }),
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 }

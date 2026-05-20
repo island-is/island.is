@@ -81,8 +81,10 @@ describe('ApplicationLifeCycleService', () => {
                 lifecycle: {
                   shouldBePruned: true,
                   pruneMessage: {
-                    externalBody: 'external message',
-                    internalBody: 'internal message',
+                    args: [
+                      { key: 'externalBody', value: 'external message' },
+                      { key: 'internalBody', value: 'internal message' },
+                    ],
                     notificationTemplateId: 'template123',
                   },
                 },
@@ -136,8 +138,10 @@ describe('ApplicationLifeCycleService', () => {
                 lifecycle: {
                   shouldBePruned: true,
                   pruneMessage: {
-                    externalBody: 'external message',
-                    internalBody: 'internal message',
+                    args: [
+                      { key: 'externalBody', value: 'external message' },
+                      { key: 'internalBody', value: 'internal message' },
+                    ],
                     notificationTemplateId: 'template123',
                   },
                 },
@@ -211,8 +215,16 @@ describe('ApplicationLifeCycleService', () => {
                 lifecycle: {
                   shouldBePruned: true,
                   pruneMessage: (app: PruningApplication) => ({
-                    externalBody: `external message for ${app.id}`,
-                    internalBody: `internal message for ${app.id}`,
+                    args: [
+                      {
+                        key: 'externalBody',
+                        value: `external message for ${app.id}`,
+                      },
+                      {
+                        key: 'internalBody',
+                        value: `internal message for ${app.id}`,
+                      },
+                    ],
                     notificationTemplateId: 'template123',
                   }),
                 },

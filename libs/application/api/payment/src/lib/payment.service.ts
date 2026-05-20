@@ -518,8 +518,13 @@ export class PaymentService {
     })
   }
 
-  private async getReturnUrls(applicationId: string) {
+  async getApplicationUrl(applicationId: string) {
     const application = await this.applicationService.findOneById(applicationId)
+    if (!application) {
+      throw new NotFoundException(
+        `application was not found for application id ${applicationId}`,
+      )
+    }
 
     let applicationSlug
     if (application?.typeId) {
@@ -533,6 +538,12 @@ export class PaymentService {
     const baseUrl = new URL(this.config.clientLocationOrigin)
     baseUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
     const baseUrlString = baseUrl.toString()
+
+    return baseUrlString
+  }
+
+  private async getReturnUrls(applicationId: string) {
+    const baseUrlString = await this.getApplicationUrl(applicationId)
 
     return {
       returnUrl: `${baseUrlString}?done`,

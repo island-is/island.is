@@ -32,7 +32,7 @@ import {
 
 import {
   getAppealActorText,
-  getDefenceUserPartyIds,
+  getCurrentUserStatementDate,
   hasSentNotification,
 } from '../../utils'
 import useAppealCase from '../useAppealCase'
@@ -128,10 +128,6 @@ const useAppealCaseBanner = () => {
   } = workingCase
   const {
     appealState,
-    prosecutorStatementDate,
-    defendantStatementDate,
-    defendantStatementDates,
-    civilClaimantStatementDates,
     appealReceivedByCourtDate,
     appealRulingDecision,
     statementDeadline,
@@ -142,30 +138,11 @@ const useAppealCaseBanner = () => {
     isProsecutionUser(user) &&
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
-  // For indictment cases each defender / civil claimant spokesperson sends
-  // their own statement, so resolve the per-party date from the per-appeal
-  // lists by id. Request cases have a single defender, so the aggregated
-  // appealCase.defendantStatementDate is the right answer.
-  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
+  const currentUserStatementDate = getCurrentUserStatementDate(
     workingCase,
+    appealCase,
     user,
   )
-  const currentDefenceStatementDate = isIndictmentCase(workingCase.type)
-    ? defendantId
-      ? defendantStatementDates?.find((d) => d.defendantId === defendantId)
-          ?.statementDate
-      : civilClaimantId
-      ? civilClaimantStatementDates?.find(
-          (c) => c.civilClaimantId === civilClaimantId,
-        )?.statementDate
-      : undefined
-    : defendantStatementDate
-
-  const currentUserStatementDate = isProsecutionUser(user)
-    ? prosecutorStatementDate
-    : isDefenceUser(user)
-    ? currentDefenceStatementDate
-    : undefined
 
   const hasCurrentUserSentStatement = Boolean(currentUserStatementDate)
 

@@ -27,6 +27,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -38,6 +39,7 @@ import {
   useCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -50,9 +52,7 @@ const AppealFiles = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id, rulingFileId: rulingFileIdQuery } = router.query
-  const rulingFileId =
-    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -70,7 +70,7 @@ const AppealFiles = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
-    rulingFileId,
+    targetAppealCase?.rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
@@ -91,7 +91,7 @@ const AppealFiles = () => {
         ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
         : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -135,15 +135,21 @@ const AppealFiles = () => {
       <FormContentContainer>
         <PageTitle>Gögn</PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
-          {(workingCase.prosecutorPostponedAppealDate ||
-            workingCase.accusedPostponedAppealDate) && (
-            <Text variant="h5" as="h5">
-              {getAppealActorText(workingCase)}
-            </Text>
-          )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={targetAppealCase?.rulingFileId}
+          />
+          <Text variant="h5" as="h5">
+            {getAppealActorText(workingCase, targetAppealCase)}
+          </Text>
         </Box>
         <Box
           component="section"
