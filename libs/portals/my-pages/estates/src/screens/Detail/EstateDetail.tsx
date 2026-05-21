@@ -20,7 +20,7 @@ export const EstateDetail = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  // TODO: Replace with real query once `getEstate(id)` GraphQL resolver is available.
+  // TODO: Replace with real query once `estate(id)` GraphQL resolver is available.
   // const { data, loading, error } = useEstateDetailQuery({
   //   variables: { id: id ?? '' },
   //   skip: !id,
@@ -122,8 +122,6 @@ export const EstateDetail = () => {
       {!loading && !error && !estate && (
         <Problem
           type="no_data"
-          title={formatMessage(em.detailTitle)}
-          message={formatMessage(m.noDataFoundDetail)}
           noBorder={false}
         />
       )}

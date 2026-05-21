@@ -1,6 +1,6 @@
 # TODO: implement when API exposes estate detail query
 # query EstateDetail($id: String!) {
-#   getEstate(id: $id) {
+#   estate(id: $id) {
 #     id
 #     caseNumber
 #     deceasedName

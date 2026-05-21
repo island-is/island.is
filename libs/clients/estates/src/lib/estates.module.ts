@@ -29,13 +29,12 @@ export class EstatesClientModule {
         name: 'clients-estates',
         organizationSlug: 'syslumenn',
         authSource: 'context',
-        autoAuth: idsClientConfig.isConfigured
+        autoAuth: idsClientConfig.isConfigured && config.scope.length > 0
           ? {
               mode: 'tokenExchange',
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,
-              // TODO: add syslumenn.is/danarbu scope once available
               scope: config.scope,
             }
           : undefined,

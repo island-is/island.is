@@ -3324,7 +3324,7 @@
         ]
       }
     },
-    "/api/IslandIsEstatePages": {
+    "/api/islandisestatepages": {
       "get": {
         "tags": ["IslandIsEstatePages"],
         "operationId": "IslandIsEstatePages_Get",

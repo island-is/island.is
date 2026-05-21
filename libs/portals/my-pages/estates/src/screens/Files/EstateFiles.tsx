@@ -29,7 +29,7 @@ export const EstateFiles = () => {
   const { id } = useParams<{ id: string }>()
   const [search, setSearch] = useState('')
 
-  // TODO: Replace with real query once `getEstateFiles(id)` GraphQL resolver is available.
+  // TODO: Replace with real query once `estateFiles(id)` GraphQL resolver is available.
   // const { data, loading, error } = useEstateFilesQuery({
   //   variables: { id: id ?? '', searchQuery: search || undefined },
   //   skip: !id,
@@ -78,7 +78,7 @@ export const EstateFiles = () => {
       case 'missing':
         return formatMessage(em.fileStatusMissing)
       default:
-        return status ?? ''
+        return ''
     }
   }
 
@@ -142,7 +142,7 @@ export const EstateFiles = () => {
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>{formatMessage(em.assetDescription)}</T.HeadData>
+              <T.HeadData>{formatMessage(em.fileName)}</T.HeadData>
               <T.HeadData>{formatMessage(em.fileSizeLabel)}</T.HeadData>
               <T.HeadData>{formatMessage(m.status)}</T.HeadData>
               <T.HeadData />
@@ -163,7 +163,7 @@ export const EstateFiles = () => {
                   <Text variant="small">{formatFileSize(file.fileSizeBytes)}</Text>
                 </T.Data>
                 <T.Data>
-                  {file.fileStatus && (
+                  {file.fileStatus && statusLabel(file.fileStatus) && (
                     <Tag variant={statusVariant(file.fileStatus)} outlined>
                       {statusLabel(file.fileStatus)}
                     </Tag>

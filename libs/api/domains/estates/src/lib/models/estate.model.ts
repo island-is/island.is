@@ -3,7 +3,7 @@ import { GraphQLISODateTime } from '@nestjs/graphql'
 import { EstatesRepresentative } from './estateRepresentative.model'
 
 @ObjectType()
-export class EstatesEstate {
+export class Estate {
   @Field(() => ID)
   id!: string
 
@@ -16,7 +16,7 @@ export class EstatesEstate {
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateOfDeath?: Date
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, description: 'Whether the estate case has been closed' })
   isFinished?: boolean
 
   @Field(() => EstatesRepresentative, { nullable: true })

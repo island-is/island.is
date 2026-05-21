@@ -11,6 +11,11 @@ export const estatesNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myEstates,
+      description: m.myEstatesIntro,
+      path: EstatesPaths.EstatesRoot,
+    },
+    {
       name: 'id',
       navHide: true,
       path: EstatesPaths.EstatesDetail,

@@ -175,4 +175,8 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:no-files-found',
     defaultMessage: 'Engin skjöl fundust',
   },
+  fileName: {
+    id: 'sp.estates:file-name',
+    defaultMessage: 'Skjal',
+  },
 })

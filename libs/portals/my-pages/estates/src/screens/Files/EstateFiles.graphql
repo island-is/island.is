@@ -1,6 +1,6 @@
 # TODO: implement when API exposes estate files query
 # query EstateFiles($id: String!, $searchQuery: String) {
-#   getEstateFiles(id: $id, searchQuery: $searchQuery) {
+#   estateFiles(id: $id, searchQuery: $searchQuery) {
 #     data {
 #       id
 #       name

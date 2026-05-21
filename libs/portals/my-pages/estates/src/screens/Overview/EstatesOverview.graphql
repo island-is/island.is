@@ -1,12 +1,11 @@
-# TODO: Uncomment when the estates GraphQL domain is wired in
-# query EstatesOverview {
-#   getEstates {
-#     data {
-#       id
-#       nameOfDeceased
-#       nationalIdOfDeceased
-#       isFinished
-#     }
-#     totalCount
-#   }
-# }
+query EstatesOverview {
+  estates {
+    data {
+      id
+      nameOfDeceased
+      nationalIdOfDeceased
+      isFinished
+    }
+    totalCount
+  }
+}

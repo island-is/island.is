@@ -16,14 +16,12 @@ import {
   GridRow,
   Input,
   Stack,
-  Tag,
 } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNavigate } from 'react-router-dom'
 import { EstatesPaths } from '../../lib/paths'
 
-// TODO: Uncomment and wire up when the GraphQL domain for estates is ready
-// import { useEstatesOverviewQuery } from './EstatesOverview.generated'
+import { useEstatesOverviewQuery } from './EstatesOverview.generated'
 
 export const EstatesOverview = () => {
   useNamespaces('sp.estates')
@@ -32,22 +30,12 @@ export const EstatesOverview = () => {
   const [search, setSearch] = useState('')
   const [showFinished, setShowFinished] = useState(false)
 
-  // TODO: Replace with real query once `getEstates` GraphQL resolver is available.
-  // const { data, loading, error } = useEstatesOverviewQuery({
-  //   variables: { input: { kennitala: userInfo.nationalId } },
-  // })
-  const loading = false
-  const error = undefined
-  const estates: {
-    id: string
-    caseNumber: string
-    deceasedName: string
-    isFinished: boolean
-  }[] = []
+  const { data, loading, error } = useEstatesOverviewQuery()
 
+  const estates = data?.estates?.data ?? []
   const filtered = estates.filter((e) => {
     if (!showFinished && e.isFinished) return false
-    if (search && !e.deceasedName.toLowerCase().includes(search.toLowerCase()))
+    if (search && !e.nameOfDeceased.toLowerCase().includes(search.toLowerCase()))
       return false
     return true
   })
@@ -118,14 +106,14 @@ export const EstatesOverview = () => {
         />
       )}
 
-      <Stack space={4}>
+      <Stack space={2}>
         {!error &&
           filtered.map((estate) => (
             <ActionCard
               key={estate.id}
-              heading={estate.deceasedName}
+              heading={estate.nameOfDeceased}
               headingVariant="h4"
-              text={`${formatMessage(em.caseNumber)}: ${estate.caseNumber}`}
+              text={`${formatMessage(em.caseNumber)}: ${estate.id}`}
               tag={{
                 label: formatMessage(
                   estate.isFinished ? em.statusFinished : em.statusInProgress,

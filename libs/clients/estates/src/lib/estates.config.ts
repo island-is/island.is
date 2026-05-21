@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  // TODO: add syslumenn.is/danarbu scope once available
   scope: z.array(z.string()),
 })
 
@@ -13,9 +12,8 @@ export const EstatesClientConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_ESTATES_PATH',
-      'IS-DEV/GOV/10016/Syslumenn-Protected/islandisestatepages',
+      'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
     ),
-    // TODO: add syslumenn.is/danarbu scope once available
-    scope: [],
+    scope: ['@syslumenn.is/starfsleyfi'],
   }),
 })

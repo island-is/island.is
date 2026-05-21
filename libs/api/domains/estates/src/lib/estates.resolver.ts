@@ -16,24 +16,25 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { EstatesEstate } from './models/estate.model'
-import { EstatesEstatesCollection } from './models/estatesCollection.model'
+import { Estate } from './models/estate.model'
+import { EstatesCollection } from './models/estatesCollection.model'
 import { EstatesDomainService } from './estates.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.estates)
+// TODO: Switch to ApiScope.estates once the scope is provisioned
+@Scopes(ApiScope.internal)
 @FeatureFlag(Features.isServicePortalEstatesEnabled)
 @Audit({ namespace: '@island.is/api/estates' })
-@Resolver(() => EstatesEstate)
+@Resolver(() => Estate)
 export class EstatesResolver {
   constructor(private readonly estatesService: EstatesDomainService) {}
 
-  @Query(() => EstatesEstatesCollection, {
-    name: 'getEstates',
+  @Query(() => EstatesCollection, {
+    name: 'estates',
     nullable: true,
   })
-  async estates(@CurrentUser() user: User): Promise<EstatesEstatesCollection> {
+  async estates(@CurrentUser() user: User): Promise<EstatesCollection> {
     return this.estatesService.getEstates(user)
   }
 }
