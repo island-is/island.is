@@ -5,7 +5,7 @@ import {
   CaseType,
   courtSubtypes,
   EventType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case, EventLog } from '../repository'
@@ -292,7 +292,8 @@ const caseCompletedByCourtOfAppeals = (
   c: Case,
 ): RequestCaseEvent | undefined => {
   const completedByCourtOfAppealsNotification = c.notifications?.find(
-    (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
+    (notification) =>
+      notification.type === TrackedNotificationType.APPEAL_COMPLETED,
   )
 
   if (!completedByCourtOfAppealsNotification) {

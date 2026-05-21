@@ -56,7 +56,6 @@ export const JudgeOverview = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const {
@@ -272,7 +271,7 @@ export const JudgeOverview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,

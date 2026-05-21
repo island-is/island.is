@@ -5,11 +5,14 @@ import { ContextMenuItem } from '../ContextMenu'
 export const useOpenCaseInNewTab = () => {
   const { handleOpenCase } = useCaseList()
 
-  const openCaseInNewTab = (id: string): ContextMenuItem => {
+  const openCaseInNewTab = (
+    id: string,
+    appealCaseId?: string | null,
+  ): ContextMenuItem => {
     return {
       title: 'Opna mál í nýjum flipa',
       icon: 'open',
-      onClick: () => handleOpenCase(id, true),
+      onClick: () => handleOpenCase(id, true, undefined, appealCaseId),
     }
   }
 
