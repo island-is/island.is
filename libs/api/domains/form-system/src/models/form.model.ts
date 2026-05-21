@@ -3,7 +3,6 @@ import {
   FormCertificationType,
   FormCertificationTypeDto,
 } from './certification.model'
-import { CompletedSectionInfo } from './completedSectionInfo'
 import { Field as FieldModel } from './field.model'
 import { FieldType } from './fieldType.model'
 import { FormApplicant } from './formApplicant.model'
@@ -13,6 +12,7 @@ import { Option } from './option.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
 import { OrganizationZendeskInstance } from './organizationZendeskInstance.model'
+import { SectionInfo } from './sectionInfo.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -97,8 +97,8 @@ export class Form {
   @Field(() => OrganizationZendeskInstance, { nullable: true })
   organizationZendeskInstance?: OrganizationZendeskInstance
 
-  @Field(() => CompletedSectionInfo, { nullable: true })
-  completedSectionInfo?: CompletedSectionInfo
+  @Field(() => SectionInfo, { nullable: true })
+  sectionInfo?: SectionInfo
 
   @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDto[]

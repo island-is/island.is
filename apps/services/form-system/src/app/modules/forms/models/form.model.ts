@@ -11,9 +11,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../dataTypes/sectionInfo.model'
 import { Application } from '../../applications/models/application.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { Organization } from '../../organizations/models/organization.model'
@@ -168,7 +168,7 @@ export class Form extends Model<Form> {
       additionalInfo: [],
     }),
   })
-  completedSectionInfo!: CompletedSectionInfo
+  sectionInfo!: SectionInfo
 
   @Column({
     type: DataType.NUMBER,

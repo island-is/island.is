@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client'
-import { CompletedSectionInfoFragment } from './completedSectionInfo'
 import { DependencyFragment } from './dependency'
 import { FieldFragment } from './field'
 import { FormApplicantFragment } from './formApplicant'
 import { LanguageFields } from './languageFields'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
+import { SectionInfoFragment } from './sectionInfo'
 
 export const FormFragment = gql`
   fragment Form on FormSystemForm {
@@ -39,8 +39,8 @@ export const FormFragment = gql`
       zendeskInstance
       zendeskBrandId
     }
-    completedSectionInfo {
-      ...CompletedSectionInfo
+    sectionInfo {
+      ...SectionInfo
     }
     certificationTypes {
       id
@@ -70,5 +70,5 @@ export const FormFragment = gql`
   ${ScreenFragment}
   ${FieldFragment}
   ${DependencyFragment}
-  ${CompletedSectionInfoFragment}
+  ${SectionInfoFragment}
 `

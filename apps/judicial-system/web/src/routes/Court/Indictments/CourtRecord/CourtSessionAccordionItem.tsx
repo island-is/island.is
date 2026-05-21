@@ -46,6 +46,7 @@ import {
   Modal,
   MultipleValueList,
   SectionHeading,
+  TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile, {
   Supplement,
@@ -1437,37 +1438,29 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                <Input
+                <TinyMCE
                   data-testid="entries"
-                  name="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                  value={courtSession.entries || ''}
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                  onChange={(event) => {
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
                     setEntriesErrorMessage('')
-
-                    patchSession(courtSession.id, {
-                      entries: event.target.value,
-                    })
+                    patchSession(courtSession.id, { entries: html })
                   }}
-                  onBlur={(event) => {
+                  onBlur={(html) => {
                     validateAndSetErrorMessage(
                       ['empty'],
-                      event.target.value,
+                      html.replace(/<[^>]*>/g, '').trim(),
                       setEntriesErrorMessage,
                     )
-
                     patchSession(
                       courtSession.id,
-                      { entries: event.target.value },
+                      { entries: html },
                       { persist: true },
                     )
                   }}
-                  hasError={entriesErrorMessage !== ''}
-                  errorMessage={entriesErrorMessage}
-                  rows={15}
+                  errorMessage={entriesErrorMessage || undefined}
                   disabled={courtSession.isConfirmed || false}
-                  textarea
                   required
                 />
               </Box>

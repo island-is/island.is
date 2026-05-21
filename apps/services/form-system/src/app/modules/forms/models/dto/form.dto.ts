@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
@@ -81,8 +81,8 @@ export class FormDto {
   @ApiProperty({ type: OrganizationZendeskInstanceDto })
   organizationZendeskInstance!: OrganizationZendeskInstanceDto
 
-  @ApiProperty({ type: CompletedSectionInfo })
-  completedSectionInfo!: CompletedSectionInfo
+  @ApiProperty({ type: SectionInfo })
+  sectionInfo!: SectionInfo
 
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
