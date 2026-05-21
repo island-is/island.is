@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
   },
+  zoomIn: {
+    id: 'service.portal:zoom-in',
+    defaultMessage: 'Þysja inn',
+  },
+  zoomOut: {
+    id: 'service.portal:zoom-out',
+    defaultMessage: 'Þysja út',
+  },
   more: {
     id: 'service.portal:more',
     defaultMessage: 'Meira',
