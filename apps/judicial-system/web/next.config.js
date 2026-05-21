@@ -24,12 +24,16 @@ const nextConfig = {
     if (!isServer) {
       config.plugins.push(
         new CopyWebpackPlugin({
-          patterns: ['tinymce.min.js', 'plugins', 'skins', 'themes', 'icons'].map(
-            (asset) => ({
-              from: path.join(tinymceDir, asset),
-              to: path.join(__dirname, 'public/tinymce', asset),
-            }),
-          ),
+          patterns: [
+            'tinymce.min.js',
+            'plugins',
+            'skins',
+            'themes',
+            'icons',
+          ].map((asset) => ({
+            from: path.join(tinymceDir, asset),
+            to: path.join(__dirname, 'public/tinymce', asset),
+          })),
         }),
       )
     }
