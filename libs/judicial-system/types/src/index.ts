@@ -43,6 +43,7 @@ export {
 export type { Institution } from './lib/institution'
 
 export {
+  UmbrellaNotificationType,
   RequestCaseNotificationType,
   IndictmentCaseNotificationType,
   AppealCaseNotificationType,
