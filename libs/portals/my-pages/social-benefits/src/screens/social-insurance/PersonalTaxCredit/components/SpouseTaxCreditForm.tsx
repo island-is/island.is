@@ -84,7 +84,11 @@ export const SpouseTaxCreditForm: FC<Props> = ({
               {(spouseName || spouseNationalId) && (
                 <Box>
                   {spouseName && <Text>{spouseName}</Text>}
-                  {spouseNationalId && <Text>{formatMessage(m.nationalId)}: {spouseNationalId}</Text>}
+                  {spouseNationalId && (
+                    <Text>
+                      {formatMessage(m.nationalId)}: {spouseNationalId}
+                    </Text>
+                  )}
                 </Box>
               )}
               <YearMonthSelect
@@ -153,7 +157,11 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 onYearChange={(year) =>
                   setState({
                     action: DECEASED,
-                    data: { year, month: null, percentage: state.data.percentage },
+                    data: {
+                      year,
+                      month: null,
+                      percentage: state.data.percentage,
+                    },
                   })
                 }
                 onMonthChange={(month) =>

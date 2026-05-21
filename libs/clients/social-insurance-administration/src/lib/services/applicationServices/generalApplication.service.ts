@@ -68,7 +68,8 @@ export class SocialInsuranceAdministrationGeneralApplicationService {
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,
-      trWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument: documents,
+      trWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument:
+        documents,
     })
   }
 
