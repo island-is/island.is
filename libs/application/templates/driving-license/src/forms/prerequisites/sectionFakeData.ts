@@ -75,7 +75,7 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: 'student',
+              value: 'none',
               label: 'Engin',
             },
             {
