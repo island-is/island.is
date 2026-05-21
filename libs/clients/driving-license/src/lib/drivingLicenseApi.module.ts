@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { DrivingLicenseApi } from './services/drivingLicenseApi.service'
 import { exportedApis } from './apiConfiguration'
-import { PenaltyPointsService } from './services/penaltyPoints.service'
+import { PenaltyPointsClientService } from './services/penaltyPoints.service'
 
 @Module({
-  providers: [...exportedApis, DrivingLicenseApi],
-  exports: [DrivingLicenseApi, PenaltyPointsService],
+  providers: [...exportedApis, DrivingLicenseApi, PenaltyPointsClientService],
+  exports: [DrivingLicenseApi, PenaltyPointsClientService],
 })
 export class DrivingLicenseApiModule {}
