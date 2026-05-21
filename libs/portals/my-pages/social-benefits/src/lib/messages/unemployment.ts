@@ -217,4 +217,8 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:myDataViewDocument',
     defaultMessage: 'Skoða',
   },
+  myDataAttachmentError: {
+    id: 'sp.social-benefits-unemployment:myDataAttachmentError',
+    defaultMessage: 'Ekki tókst að sækja skjal',
+  },
 })

@@ -31,7 +31,13 @@ export const UnemploymentBenefitsRoot = () => {
   if (error) {
     return (
       <IntroWrapper title={formatMessage(um.unemploymentBenefits)}>
-        <Problem error={error} noBorder={false} />
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessages.noData)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
       </IntroWrapper>
     )
   }
