@@ -131,7 +131,10 @@ export const useSecondarySchoolFilters = (
         ?.filter((value) => Boolean(value))
         .map((value) => ({
           value: String(value),
-          label: value === 'YES' ? 'Já' : 'Nei',
+          label:
+            value === 'YES'
+              ? formatMessage(m.filters.yes)
+              : formatMessage(m.filters.no),
         })) ?? []
 
     return [

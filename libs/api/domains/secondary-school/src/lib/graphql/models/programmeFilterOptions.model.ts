@@ -4,8 +4,8 @@ import { SecondarySchoolSimple } from './schoolSimple.model'
 import { SecondarySchoolCountryArea } from './countryArea.model'
 
 export enum SecondarySchoolIsReferenceProgramme {
-  YES = 'Já',
-  NO = 'Nei',
+  YES,
+  NO,
 }
 
 registerEnumType(SecondarySchoolIsReferenceProgramme, {

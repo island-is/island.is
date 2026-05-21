@@ -124,6 +124,14 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.isReferenceProgramme',
       defaultMessage: 'Viðmiðunarbraut',
     },
+    yes: {
+      id: 'web.secondarySchoolStudies:filters.yes',
+      defaultMessage: 'Já',
+    },
+    no: {
+      id: 'web.secondarySchoolStudies:filters.no',
+      defaultMessage: 'Nei',
+    },
   }),
   home: defineMessages({
     title: {
