@@ -1,0 +1,10 @@
+query GetDriversDeprivations {
+  driversDeprivations {
+    dateFrom
+    dateTo
+    status
+    name
+    type
+    retakeLicense
+  }
+}

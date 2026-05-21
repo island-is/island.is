@@ -8,14 +8,13 @@ import {
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class PenaltyPointsService {
+export class PenaltyPointsClientService {
   constructor(private readonly api: ApiV5) {}
 
   private serviceWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
   //TODO: stop sending tokens around, it's not needed since its't in the request itself
-
   public async penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
     user: User,
   ): Promise<boolean> {

@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-import { DrivingLicenseService } from '../../drivingLicense.service'
+import { DrivingLicenseService } from '../services/drivingLicense.service'
 import { GqlExecutionContext } from '@nestjs/graphql'
 
 @Injectable()
