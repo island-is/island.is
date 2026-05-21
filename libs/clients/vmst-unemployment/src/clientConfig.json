@@ -2377,61 +2377,6 @@
             "JWT": []
           }
         ]
-      },
-      "post": {
-        "tags": [
-          "Applicant"
-        ],
-        "summary": "Skrá umbeðið fylgiskjal",
-        "operationId": "Applicant_CreateApplicantRequestedAttachment",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "description": "Auðkenni umsækjanda.",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Applicant_SubmitAttachmentRequestRequest"
-                }
-              }
-            }
-          },
-          "required": true,
-          "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
       }
     },
     "/api/applicants/{id}/external/rvk": {
@@ -8112,6 +8057,19 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_Applicant_CreateAttachmentEligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Galdur_External_Domain_Requests_Applicant_CreateForeignTravelResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -8589,11 +8547,6 @@
             "nullable": true
           },
           "attachmentTypeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "ownerId": {
             "type": "string",
             "format": "guid",
             "nullable": true
