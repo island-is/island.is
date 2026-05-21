@@ -4,13 +4,21 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { ApplicationMapper } from '../applications/models/application.mapper'
+import {
+  Instance,
+  mapToCustomFields,
+} from '../../../utils/zendeskPartiesCustomFieldIds'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
@@ -66,7 +74,10 @@ export class ZendeskService {
 
     const { name, email } = this.getNameAndEmail(applicationDto)
     const body = this.constructBody(applicationDto)
-    const customFields = this.getCustomFields(applicationDto)
+    const customFields = this.getCustomFields(
+      applicationDto,
+      zendeskInstance as Instance,
+    )
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(
       this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
@@ -427,7 +438,10 @@ export class ZendeskService {
     return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
   }
 
-  private getCustomFields(applicationDto: ApplicationDto): CustomField[] {
+  private getCustomFields(
+    applicationDto: ApplicationDto,
+    zendeskInstance: Instance,
+  ): CustomField[] {
     const customFields: CustomField[] = []
     const sections = applicationDto.sections?.filter(
       (section) =>
@@ -439,6 +453,17 @@ export class ZendeskService {
     sections?.forEach((section) => {
       section?.screens?.forEach((screen) => {
         screen.fields?.forEach((field) => {
+          if (section.sectionType === SectionTypes.PARTIES) {
+            if (
+              field.fieldSettings?.applicantType ===
+              ApplicantTypesEnum.INDIVIDUAL
+            ) {
+              const json = field.values?.[0]?.json ?? {}
+              const mappedApplicant = mapToCustomFields(zendeskInstance, json)
+              customFields.push(...mappedApplicant)
+            }
+          }
+
           if (field.fieldSettings?.zendeskIsCustomField === true) {
             const rawId = field.fieldSettings?.zendeskCustomFieldId
             let customFieldId = 0
