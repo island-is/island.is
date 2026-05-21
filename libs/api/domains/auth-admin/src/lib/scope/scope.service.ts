@@ -97,23 +97,16 @@ export class ScopeService extends MultiEnvironmentService {
       throw new Error('Nothing provided to update')
     }
 
-    const baseDto = { ...adminPatchScopeDto }
-    if (hasAbsoluteCategoryIds) {
-      delete baseDto.addedCategoryIds
-      delete baseDto.removedCategoryIds
-    }
-    if (hasAbsoluteTagIds) {
-      delete baseDto.addedTagIds
-      delete baseDto.removedTagIds
-    }
-    if (hasAbsoluteDelegationTypes) {
-      delete baseDto.addedDelegationTypes
-      delete baseDto.removedDelegationTypes
-    }
-
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
-        const dtoForEnv = { ...baseDto }
+        const perEnvDeltas: {
+          addedCategoryIds?: string[]
+          removedCategoryIds?: string[]
+          addedTagIds?: string[]
+          removedTagIds?: string[]
+          addedDelegationTypes?: string[]
+          removedDelegationTypes?: string[]
+        } = {}
 
         if (needsPerEnvDeltas) {
           const current = await this.makeRequest(user, environment, (api) =>
@@ -135,16 +128,16 @@ export class ScopeService extends MultiEnvironmentService {
             const removed = currentCategoryIds.filter(
               (id) => !desired.includes(id),
             )
-            if (added.length > 0) dtoForEnv.addedCategoryIds = added
-            if (removed.length > 0) dtoForEnv.removedCategoryIds = removed
+            if (added.length > 0) perEnvDeltas.addedCategoryIds = added
+            if (removed.length > 0) perEnvDeltas.removedCategoryIds = removed
           }
 
           if (hasAbsoluteTagIds) {
             const desired = tagIds ?? []
             const added = desired.filter((id) => !currentTagIds.includes(id))
             const removed = currentTagIds.filter((id) => !desired.includes(id))
-            if (added.length > 0) dtoForEnv.addedTagIds = added
-            if (removed.length > 0) dtoForEnv.removedTagIds = removed
+            if (added.length > 0) perEnvDeltas.addedTagIds = added
+            if (removed.length > 0) perEnvDeltas.removedTagIds = removed
           }
 
           if (hasAbsoluteDelegationTypes) {
@@ -155,10 +148,13 @@ export class ScopeService extends MultiEnvironmentService {
             const removed = currentDelegationTypes.filter(
               (id) => !desired.includes(id),
             )
-            if (added.length > 0) dtoForEnv.addedDelegationTypes = added
-            if (removed.length > 0) dtoForEnv.removedDelegationTypes = removed
+            if (added.length > 0) perEnvDeltas.addedDelegationTypes = added
+            if (removed.length > 0)
+              perEnvDeltas.removedDelegationTypes = removed
           }
         }
+
+        const dtoForEnv = { ...adminPatchScopeDto, ...perEnvDeltas }
 
         if (Object.keys(dtoForEnv).length === 0) {
           return this.makeRequest(user, environment, (api) =>
