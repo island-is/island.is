@@ -107,7 +107,7 @@ export const editUnemploymentInfoDataSchema = z.object({
   otherAddress: otherAddressSchema,
   password: z.string().min(4).max(10),
   bankAccount: bankAccountSchema,
-  jobWishes: z.array(z.string()),
+  jobWishes: z.array(z.string()).max(10),
   educationHistory: z.array(educationSchema),
   languageSkills: z.array(languageSkillsSchema),
   licenses: licenseSchema,
