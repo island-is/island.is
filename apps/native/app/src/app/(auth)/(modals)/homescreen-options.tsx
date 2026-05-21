@@ -39,6 +39,9 @@ export default function HomeOptionsScreen() {
   const graphicWidgetEnabled = usePreferencesStore(
     ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
   )
+  const notificationsWidgetEnabled = usePreferencesStore(
+    ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
+  )
 
   const items = [
     {
@@ -49,6 +52,18 @@ export default function HomeOptionsScreen() {
       onValueChange: (value: boolean) => {
         preferencesStore.setState({
           graphicWidgetEnabled: value,
+        })
+      },
+    },
+    // TODO add feature flag
+    {
+      enabled: notificationsWidgetEnabled,
+      label: intl.formatMessage({
+        id: 'homeOptions.notifications',
+      }),
+      onValueChange: (value: boolean) => {
+        preferencesStore.setState({
+          notificationsWidgetEnabled: value,
         })
       },
     },

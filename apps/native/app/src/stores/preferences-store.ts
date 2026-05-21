@@ -27,6 +27,7 @@ export interface PreferencesStore {
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
   appointmentsWidgetEnabled: boolean
+  notificationsWidgetEnabled: boolean
   widgetsInitialised: boolean
   skippedSoftUpdate: boolean
   lastUsedPasskey: number
@@ -70,6 +71,7 @@ const defaultPreferences = {
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
   appointmentsWidgetEnabled: true,
+  notificationsWidgetEnabled: true,
   widgetsInitialised: false,
   skippedSoftUpdate: false,
   lastUsedPasskey: 0,
