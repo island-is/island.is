@@ -23,7 +23,7 @@ import {
 import {
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -78,7 +78,7 @@ const HearingArrangements = () => {
           (workingCase.state !== CaseState.NEW &&
             workingCase.state !== CaseState.DRAFT) ||
           hasSentNotification(
-            NotificationType.HEADS_UP,
+            TrackedNotificationType.HEADS_UP,
             workingCase.notifications,
           ).hasSent
         ) {
@@ -175,7 +175,7 @@ const HearingArrangements = () => {
             onClick: async () => {
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.HEADS_UP,
+                TrackedNotificationType.HEADS_UP,
               )
 
               if (notificationSent) {

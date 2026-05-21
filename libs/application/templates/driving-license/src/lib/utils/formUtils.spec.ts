@@ -6,8 +6,11 @@ import {
   allowFakeCondition,
   hasCompletedPrerequisitesStep,
   hasUsableRlsQualityPhoto,
+  hasHealthRemarks,
+  getHealthCertificateRemarks,
 } from './formUtils'
 import { NO, YES } from '@island.is/application/core'
+import { Remark } from '../types'
 
 describe('isVisible', () => {
   it('returns true when all functions return true', () => {
@@ -186,5 +189,93 @@ describe('hasUsableRlsQualityPhoto', () => {
 
   it('returns false when data is null', () => {
     expect(hasUsableRlsQualityPhoto(wrap(null))).toBe(false)
+  })
+})
+
+describe('hasHealthRemarks', () => {
+  const wrap = (remarks: Remark[] | undefined) =>
+    ({
+      currentLicense: {
+        data: { remarks },
+        date: new Date(),
+        status: 'success' as const,
+      },
+    } as any)
+
+  it('returns false when remarks is empty', () => {
+    expect(hasHealthRemarks(wrap([]))).toBe(false)
+  })
+
+  // Regression: code 71 ("samrit" / duplicate license) is administrative,
+  // not medical. Reported prod shape from a real applicant — the BE form
+  // previously opened the health-certificate upload for this user.
+  it('returns false for administrative code 71 (samrit)', () => {
+    expect(
+      hasHealthRemarks(
+        wrap([
+          {
+            code: '71',
+            description:
+              'Samrit ökuskírteinis nr. (auðkennisstafir ESB/SÞ fyrir þriðju lönd, t.d.„71.987654321.HR").',
+          },
+        ]),
+      ),
+    ).toBe(false)
+  })
+
+  it('returns true for vision subcode 01.06', () => {
+    expect(
+      hasHealthRemarks(
+        wrap([{ code: '01.06', description: 'Gleraugu eða snertilinsur' }]),
+      ),
+    ).toBe(true)
+  })
+
+  it('returns true for parent code 01', () => {
+    expect(
+      hasHealthRemarks(
+        wrap([{ code: '01', description: 'Leiðrétting sjónar og/eða vörn.' }]),
+      ),
+    ).toBe(true)
+  })
+
+  it('returns true when a medical remark is mixed with an administrative one', () => {
+    expect(
+      hasHealthRemarks(
+        wrap([
+          { code: '71', description: 'Samrit' },
+          { code: '02', description: 'Heyrnartæki/samskiptastoð.' },
+        ]),
+      ),
+    ).toBe(true)
+  })
+
+  it('returns false when currentLicense.data is missing', () => {
+    expect(hasHealthRemarks({})).toBe(false)
+  })
+})
+
+describe('getHealthCertificateRemarks', () => {
+  it('returns only allowlisted remarks from a mixed input', () => {
+    const result = getHealthCertificateRemarks([
+      { code: '71', description: 'Samrit' },
+      { code: '01.06', description: 'Gleraugu eða snertilinsur' },
+      { code: '400', description: 'Other restriction' },
+      { code: '03.01', description: 'Stoðtæki fyrir hönd' },
+    ])
+    expect(result.map((r) => r.code)).toEqual(['01.06', '03.01'])
+  })
+
+  it('returns an empty array for undefined input', () => {
+    expect(getHealthCertificateRemarks(undefined)).toEqual([])
+  })
+
+  it('returns an empty array when nothing matches', () => {
+    expect(
+      getHealthCertificateRemarks([
+        { code: '71', description: 'Samrit' },
+        { code: '400', description: 'Other' },
+      ]),
+    ).toEqual([])
   })
 })

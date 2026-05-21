@@ -194,6 +194,7 @@ export const BankAccountFormField = ({
               label={bankNumber}
               placeholder="0000"
               format="####"
+              mask=""
               backgroundColor="blue"
               autoFocus
               clearOnChange={resolveFieldClearOnChange(
@@ -219,6 +220,7 @@ export const BankAccountFormField = ({
               label={ledger}
               placeholder="00"
               format="##"
+              mask=""
               backgroundColor="blue"
               clearOnChange={resolveFieldClearOnChange(
                 { clearOnChange },
@@ -240,6 +242,7 @@ export const BankAccountFormField = ({
               label={accountNumber}
               placeholder="000000"
               format="######"
+              mask=""
               backgroundColor="blue"
               clearOnChange={resolveFieldClearOnChange(
                 { clearOnChange },
