@@ -11,8 +11,10 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
+  VmstApplicationsApplicantAttachment,
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
+  VmstApplicationsAttachment,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -86,12 +88,10 @@ export class VMSTApplicationsResolver {
     name: 'vmstApplicationsOverview',
   })
   @Audit()
-  async getApplicationsOverview(@CurrentUser() auth: User) {
-    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
-      auth,
-    )
-
-    return this.vmstApplicationsService.getApplicationsOverview(applicantId)
+  async getApplicationsOverview(
+    @CurrentUser() auth: User,
+  ): Promise<VmstApplicationsOverview> {
+    return this.vmstApplicationsService.getApplicationsOverviewForUser(auth)
   }
 
   @Query(() => VmstApplicationsApplicantOverview, {
@@ -139,11 +139,31 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.getApplicantActions(applicantId)
   }
 
+  @Query(() => [VmstApplicationsApplicantAttachment], {
+    name: 'vmstApplicantAttachments',
+  })
+  @Audit()
+  async getApplicantAttachments(@CurrentUser() auth: User) {
+    const { applicantId } = await this.vmstApplicationsService.resolveApplicant(
+      auth,
+    )
+
+    return this.vmstApplicationsService.getApplicantAttachments(applicantId)
+  }
+
   @Query(() => VmstApplicationsAttachmentTypeList, {
     name: 'vmstAttachmentTypes',
   })
   @Audit()
   async getAttachmentTypes() {
     return this.vmstApplicationsService.getAttachmentTypes()
+  }
+
+  @Query(() => VmstApplicationsAttachment, {
+    name: 'vmstAttachment',
+  })
+  @Audit()
+  async getAttachment(@Args('id') id: string) {
+    return this.vmstApplicationsService.getAttachment(id)
   }
 }

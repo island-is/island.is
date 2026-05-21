@@ -1897,6 +1897,46 @@
         ]
       }
     },
+    "/api/applicants/{id}/attachments/eligibility": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að stofna fylgiskjöl.",
+        "operationId": "Applicant_GetCreateAttachmentEligibility",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upplýsingar um hvort megi stofna fylgiskjöl.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_CreateAttachmentEligibilityResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/applicants/{id}/foreignTravel": {
       "post": {
         "tags": ["Applicant"],
@@ -2137,49 +2177,6 @@
             "JWT": []
           }
         ]
-      }
-    },
-    "/api/applicants/{applicantId}/attachments/requests": {
-      "get": {
-        "tags": ["Applicant"],
-        "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
-        "operationId": "Applicant_GetApplicantRequestedAttachments",
-        "parameters": [
-          {
-            "name": "applicantId",
-            "in": "path",
-            "required": true,
-            "description": "Auðkenni umsækjanda.",
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Attachment List",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentRequestDTO"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
       },
       "post": {
         "tags": ["Applicant"],
@@ -2220,6 +2217,49 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/attachments/requests": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
+        "operationId": "Applicant_GetApplicantRequestedAttachments",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "description": "Auðkenni umsækjanda.",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentRequestDTO"
+                  }
                 }
               }
             }
@@ -7825,6 +7865,19 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_Applicant_CreateAttachmentEligibilityResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Galdur_External_Domain_Requests_Applicant_CreateForeignTravelResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -8302,11 +8355,6 @@
             "nullable": true
           },
           "attachmentTypeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          },
-          "ownerId": {
             "type": "string",
             "format": "guid",
             "nullable": true
