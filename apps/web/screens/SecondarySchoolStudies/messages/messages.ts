@@ -120,6 +120,10 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.haefnisþrep',
       defaultMessage: 'Hæfniþrep',
     },
+    isReferenceProgramme: {
+      id: 'web.secondarySchoolStudies:filters.isReferenceProgramme',
+      defaultMessage: 'Viðmiðunarbraut',
+    },
   }),
   home: defineMessages({
     title: {

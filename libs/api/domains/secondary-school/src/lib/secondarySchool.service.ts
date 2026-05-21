@@ -5,6 +5,7 @@ import {
   SecondarySchoolProgrammeSimple,
   SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeDetail,
+  SecondarySchoolIsReferenceProgramme,
 } from './graphql/models'
 import {
   SecondarySchoolClient,
@@ -32,7 +33,15 @@ export class SecondarySchoolApi {
   }
 
   async getProgrammeFilterOptions(): Promise<SecondarySchoolProgrammeFilterOptions> {
-    return this.secondarySchoolPublicClient.getFilterOptions()
+    const options = await this.secondarySchoolPublicClient.getFilterOptions()
+
+    return {
+      ...options,
+      isReferenceProgrammeFilterOption:
+        options.isReferenceProgrammeFilterOption?.map(
+          (value) => value as SecondarySchoolIsReferenceProgramme,
+        ) ?? null,
+    }
   }
 
   async getProgrammeById(id: string): Promise<SecondarySchoolProgrammeDetail> {

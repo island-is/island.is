@@ -52,6 +52,7 @@ export const GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY = gql`
           description
         }
       }
+      isReferenceProgramme
     }
   }
 `
@@ -80,6 +81,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_FILTER_OPTIONS_QUERY = gql`
         name
         description
       }
+      isReferenceProgrammeFilterOption
     }
   }
 `
