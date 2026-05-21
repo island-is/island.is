@@ -24,10 +24,7 @@ const nextConfig = {
         new CopyWebpackPlugin({
           patterns: [
             {
-              from: path.join(
-                __dirname,
-                '../../../node_modules/tinymce',
-              ),
+              from: path.join(__dirname, '../../../node_modules/tinymce'),
               to: path.join(__dirname, 'public/tinymce'),
             },
           ],
