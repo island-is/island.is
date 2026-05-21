@@ -230,7 +230,10 @@ const HealthMessageDetail = () => {
                     marginBottom={3}
                   >
                     {isPatient ? (
-                      <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
+                      <MessageAvatar
+                        variant="user"
+                        name={userInfo.profile.name ?? ''}
+                      />
                     ) : (
                       <MessageAvatar variant="organization" name={senderName} />
                     )}
@@ -323,7 +326,10 @@ const HealthMessageDetail = () => {
                   marginBottom={3}
                 >
                   <Box display="flex" flexDirection="row">
-                    <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
+                    <MessageAvatar
+                      variant="user"
+                      name={userInfo.profile.name ?? ''}
+                    />
                     <Box
                       display="flex"
                       flexDirection="column"
