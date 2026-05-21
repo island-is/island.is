@@ -698,19 +698,19 @@ export const m = defineMessages({
   },
   permissionApplicationsAdd: {
     id: 'ap.ids-admin:permission-applications-add',
-    defaultMessage: 'Add application',
+    defaultMessage: 'Add client',
   },
   permissionApplicationsPlaceholder: {
     id: 'ap.ids-admin:permission-applications-placeholder',
-    defaultMessage: 'Choose applications…',
+    defaultMessage: 'Choose clients',
   },
   permissionApplicationsNoOptions: {
     id: 'ap.ids-admin:permission-applications-no-options',
-    defaultMessage: 'No applications available',
+    defaultMessage: 'No clients available',
   },
   permissionApplicationsRemove: {
     id: 'ap.ids-admin:permission-applications-remove',
-    defaultMessage: 'Remove application',
+    defaultMessage: 'Remove clients',
   },
   permissionApplicationsOtherTenantGroup: {
     id: 'ap.ids-admin:permission-applications-other-tenant-group',
