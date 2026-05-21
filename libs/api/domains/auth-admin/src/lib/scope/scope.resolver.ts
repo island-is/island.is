@@ -106,7 +106,11 @@ export class ScopeResolver {
     @Args('input', { type: () => ScopesByTenantsInput })
     input: ScopesByTenantsInput,
   ): Promise<ScopesByTenantsPayload> {
-    return this.scopeService.getScopesByTenants(user, input.tenantIds)
+    return this.scopeService.getScopesByTenants(
+      user,
+      input.tenantIds,
+      input.environment,
+    )
   }
 
   @ResolveField('defaultEnvironment', () => ScopeEnvironment)

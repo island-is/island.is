@@ -97,7 +97,12 @@ const Permissions = ({ allowedScopes }: PermissionsProps) => {
   const { data: scopesData, loading: scopesLoading } =
     useGetAvailableScopesByTenantsQuery({
       skip: !hasOpened || availableTenants.length === 0,
-      variables: { input: { tenantIds: availableTenants.map((t) => t.id) } },
+      variables: {
+        input: {
+          tenantIds: availableTenants.map((t) => t.id),
+          environment,
+        },
+      },
     })
 
   const tenantScopes = useMemo<TenantScopes[]>(() => {
