@@ -162,7 +162,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
         </Box>
       )}
       <InfoCardGrid
-        columns={1}
+        maxColumnCount={1}
         cardsBorder="blue200"
         variant="detailed"
         cards={cards ?? []}

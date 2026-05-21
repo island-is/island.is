@@ -37,6 +37,7 @@ interface Props {
   suffix?: string
   rows?: number
   format?: string | FormatInputValueFunction
+  mask?: string
   required?: boolean
   readOnly?: boolean
   rightAlign?: boolean
@@ -95,6 +96,7 @@ export const InputController = forwardRef(
       currency,
       type = 'text',
       format,
+      mask,
       onChange: onInputChange,
       suffix,
       rows,
@@ -204,6 +206,7 @@ export const InputController = forwardRef(
             type={type as 'text' | 'tel'}
             value={value}
             format={format}
+            mask={mask}
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}

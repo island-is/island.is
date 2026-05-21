@@ -13,7 +13,10 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
+import {
+  SubpoenaNotificationType,
+  TrackedNotificationType,
+} from '@island.is/judicial-system/types'
 
 import { EventService } from '../../../event'
 import { Case, Notification, Recipient } from '../../../repository'
@@ -46,7 +49,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   private async sendEmails(
     theCase: Case,
-    notificationType: SubpoenaNotificationType,
+    notificationType: TrackedNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
     to: { name?: string; email?: string }[],
@@ -88,7 +91,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     return this.sendEmails(
       theCase,
-      SubpoenaNotificationType.SERVICE_SUCCESSFUL,
+      TrackedNotificationType.SERVICE_SUCCESSFUL,
       strings.serviceSuccessfulSubject,
       strings.serviceSuccessfulBody,
       [
@@ -113,7 +116,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     return this.sendEmails(
       theCase,
-      SubpoenaNotificationType.SERVICE_FAILED,
+      TrackedNotificationType.SERVICE_FAILED,
       strings.serviceFailedSubject,
       strings.serviceFailedBody,
       [

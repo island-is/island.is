@@ -157,7 +157,7 @@ const CourtOfAppealOverview = () => {
             previousUrl={getStandardUserDashboardRoute(user)}
             onNextButtonClick={() =>
               handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(workingCase)
+                shouldUseAppealWithdrawnRoutes(targetAppealCase)
                   ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
                   : constants.COURT_OF_APPEAL_CASE_ROUTE,
               )
