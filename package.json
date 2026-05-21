@@ -138,6 +138,7 @@
     "@storybook/core-server": "8.6.14",
     "@tanstack/react-table": "8.21.3",
     "@tinymce/tinymce-react": "6.3.0",
+    "tinymce": "5.10.9",
     "@types/archiver": "6.0.2",
     "@types/faker": "5.5.3",
     "@types/nodemailer": "6.4.1",

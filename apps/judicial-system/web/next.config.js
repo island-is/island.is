@@ -1,4 +1,6 @@
 const { composePlugins, withNx } = require('@nx/next')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const path = require('path')
 
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
@@ -16,6 +18,23 @@ const nextConfig = {
     if (!dev && isServer) {
       config.devtool = 'source-map'
     }
+
+    if (!isServer) {
+      config.plugins.push(
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.join(
+                __dirname,
+                '../../../node_modules/tinymce',
+              ),
+              to: path.join(__dirname, 'public/tinymce'),
+            },
+          ],
+        }),
+      )
+    }
+
     // Important: return the modified config
     return config
   },
@@ -32,7 +51,6 @@ const nextConfig = {
   },
   env: {
     API_MOCKS: process.env.API_MOCKS ?? '',
-    TINY_MCE_API_KEY: process.env.TINY_MCE_API_KEY ?? '',
   },
 }
 
