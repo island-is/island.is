@@ -17,6 +17,7 @@ import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
 import { ScopeUser } from './models/scope-user.model'
 import { ScopesPayload } from './dto/scopes.payload'
+import { ScopesByTenantsPayload } from './dto/scopes-by-tenants.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
@@ -24,6 +25,8 @@ import { PublishScopeInput } from './dto/publish-scope.input'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 import { UpdateScopeClientsResponse } from './models/update-scope-clients-response.model'
+
+const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -72,26 +75,107 @@ export class ScopeService extends MultiEnvironmentService {
    * Updates a scope for a specific tenant for the given environments.
    *
    * Per-environment failures are collected and returned alongside the
-   * successful results
+   * successful results.
+
    */
   async updateScope({
     user,
-    input: { environments, scopeName, tenantId, ...adminPatchScopeDto },
+    input: {
+      environments,
+      scopeName,
+      tenantId,
+      categoryIds,
+      tagIds,
+      supportedDelegationTypes,
+      ...adminPatchScopeDto
+    },
   }: {
     user: User
     input: AdminPatchScopeInput
   }): Promise<PatchScopeResponse> {
-    if (Object.keys(adminPatchScopeDto).length === 0) {
+    const hasAbsoluteCategoryIds = categoryIds !== undefined
+    const hasAbsoluteTagIds = tagIds !== undefined
+    const hasAbsoluteDelegationTypes = supportedDelegationTypes !== undefined
+    const needsPerEnvDeltas =
+      hasAbsoluteCategoryIds || hasAbsoluteTagIds || hasAbsoluteDelegationTypes
+
+    if (Object.keys(adminPatchScopeDto).length === 0 && !needsPerEnvDeltas) {
       throw new Error('Nothing provided to update')
     }
 
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
+        const perEnvDeltas: {
+          addedCategoryIds?: string[]
+          removedCategoryIds?: string[]
+          addedTagIds?: string[]
+          removedTagIds?: string[]
+          addedDelegationTypes?: string[]
+          removedDelegationTypes?: string[]
+        } = {}
+
+        if (needsPerEnvDeltas) {
+          const current = await this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+
+          const currentCategoryIds = current?.categoryIds ?? []
+          const currentTagIds = current?.tagIds ?? []
+          const currentDelegationTypes = current?.supportedDelegationTypes ?? []
+
+          if (hasAbsoluteCategoryIds) {
+            const desired = categoryIds ?? []
+            const added = desired.filter(
+              (id) => !currentCategoryIds.includes(id),
+            )
+            const removed = currentCategoryIds.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedCategoryIds = added
+            if (removed.length > 0) perEnvDeltas.removedCategoryIds = removed
+          }
+
+          if (hasAbsoluteTagIds) {
+            const desired = tagIds ?? []
+            const added = desired.filter((id) => !currentTagIds.includes(id))
+            const removed = currentTagIds.filter((id) => !desired.includes(id))
+            if (added.length > 0) perEnvDeltas.addedTagIds = added
+            if (removed.length > 0) perEnvDeltas.removedTagIds = removed
+          }
+
+          if (hasAbsoluteDelegationTypes) {
+            const desired = supportedDelegationTypes ?? []
+            const added = desired.filter(
+              (id) => !currentDelegationTypes.includes(id),
+            )
+            const removed = currentDelegationTypes.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedDelegationTypes = added
+            if (removed.length > 0)
+              perEnvDeltas.removedDelegationTypes = removed
+          }
+        }
+
+        const dtoForEnv = { ...adminPatchScopeDto, ...perEnvDeltas }
+
+        if (Object.keys(dtoForEnv).length === 0) {
+          return this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+        }
+
         return this.makeRequest(user, environment, (api) =>
           api.meScopesControllerUpdateRaw({
             tenantId,
             scopeName,
-            adminPatchScopeDto,
+            adminPatchScopeDto: dtoForEnv,
           }),
         )
       }),
@@ -169,12 +253,19 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Gets all scopes for all available environments for a specific tenant
+   * Gets all scopes for a specific tenant. By default fans out across all
+   * environments; pass `environment` to fan out to just that one.
    */
-  async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
+  async getScopes(
+    user: User,
+    tenantId: string,
+    environment?: Environment,
+  ): Promise<ScopesPayload> {
+    const targetEnvironments = environment ? [environment] : environments
+
     const scopesSettledPromises = await Promise.allSettled(
-      environments.map((environment) =>
-        this.makeRequest(user, environment, (api) =>
+      targetEnvironments.map((env) =>
+        this.makeRequest(user, env, (api) =>
           api.meScopesControllerFindAllByTenantIdRaw({
             tenantId,
           }),
@@ -190,7 +281,7 @@ export class ScopeService extends MultiEnvironmentService {
             (scope) =>
               ({
                 ...scope,
-                environment: environments[index],
+                environment: targetEnvironments[index],
                 categoryIds: scope.categoryIds ?? [],
                 tagIds: scope.tagIds ?? [],
               } as ScopeEnvironment),
@@ -216,6 +307,44 @@ export class ScopeService extends MultiEnvironmentService {
         hasNextPage: false,
       },
     }
+  }
+
+  /**
+   * Gets all scopes for the given tenants in a single fan-out. If
+   * `environment` is provided, each per-tenant fetch is scoped to that env
+   */
+  async getScopesByTenants(
+    user: User,
+    tenantIds: string[],
+    environment?: Environment,
+  ): Promise<ScopesByTenantsPayload> {
+    const uniqueIds = Array.from(new Set(tenantIds))
+
+    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
+    if (limitedIds.length < uniqueIds.length) {
+      this.logger.warn(
+        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+      )
+    }
+
+    const settled = await Promise.allSettled(
+      limitedIds.map(async (tenantId) => ({
+        tenantId,
+        payload: await this.getScopes(user, tenantId, environment),
+      })),
+    )
+
+    const data = settled.flatMap((result, index) => {
+      if (result.status === 'fulfilled') {
+        return [
+          { tenantId: result.value.tenantId, data: result.value.payload.data },
+        ]
+      }
+      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      return []
+    })
+
+    return { data }
   }
 
   /**

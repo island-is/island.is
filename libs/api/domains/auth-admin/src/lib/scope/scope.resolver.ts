@@ -28,7 +28,9 @@ import { ScopeClientsInput } from './dto/scope-clients.input'
 import { ScopeUsersInput } from './dto/scope-users.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
+import { ScopesByTenantsInput } from './dto/scopes-by-tenants.input'
 import { ScopesPayload } from './dto/scopes.payload'
+import { ScopesByTenantsPayload } from './dto/scopes-by-tenants.payload'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 import { ScopeCategory } from './models/scope-category.model'
@@ -96,6 +98,21 @@ export class ScopeResolver {
     input: ScopesInput,
   ): Promise<ScopesPayload> {
     return this.scopeService.getScopes(user, input.tenantId)
+  }
+
+  @Query(() => ScopesByTenantsPayload, {
+    name: 'authAdminScopesByTenants',
+  })
+  getScopesByTenants(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopesByTenantsInput })
+    input: ScopesByTenantsInput,
+  ): Promise<ScopesByTenantsPayload> {
+    return this.scopeService.getScopesByTenants(
+      user,
+      input.tenantIds,
+      input.environment,
+    )
   }
 
   @ResolveField('defaultEnvironment', () => ScopeEnvironment)

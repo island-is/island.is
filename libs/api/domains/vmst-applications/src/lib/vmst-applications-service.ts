@@ -4,14 +4,18 @@ import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
 } from '@island.is/clients/vmst-unemployment'
+import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
+  VmstApplicationsApplicantAttachment,
+  VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 
@@ -110,8 +114,33 @@ export class VMSTApplicationsService {
     return await this.vmstUnemploymentService.resolveApplicant(auth)
   }
 
-  async getApplicationsOverview(applicantId: string) {
-    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  async getApplicationsOverview(
+    applicantId: string,
+  ): Promise<VmstApplicationsOverview> {
+    const result = await this.vmstUnemploymentService.getApplicationsOverview(
+      applicantId,
+    )
+    return {
+      unemploymentApplication: result.unemploymentApplication ?? undefined,
+      activationGrant: result.activationGrant ?? undefined,
+    }
+  }
+
+  async getApplicationsOverviewForUser(
+    auth: User,
+  ): Promise<VmstApplicationsOverview> {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      return this.getApplicationsOverview(applicantId)
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return {
+          unemploymentApplication: { isVisible: false },
+          activationGrant: { isVisible: false },
+        }
+      }
+      throw e
+    }
   }
 
   async getApplicantOverview(
@@ -138,7 +167,36 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
   }
 
+  async getApplicantAttachments(
+    applicantId: string,
+  ): Promise<VmstApplicationsApplicantAttachment[]> {
+    const items = await this.vmstUnemploymentService.getApplicantAttachments(
+      applicantId,
+    )
+
+    return items.flatMap((item) => {
+      if (!item.id || !item.name || !item.contentType || !item.created) {
+        return []
+      }
+      return [
+        {
+          id: item.id,
+          typeId: item.typeId ?? null,
+          name: item.name,
+          contentType: item.contentType,
+          created: item.created,
+        },
+      ]
+    })
+  }
+
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {
     return this.vmstUnemploymentService.getAttachmentTypes()
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    return this.vmstUnemploymentService.getAttachment(attachmentId)
   }
 }

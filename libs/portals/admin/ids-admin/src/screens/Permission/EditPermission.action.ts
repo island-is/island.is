@@ -23,7 +23,6 @@ import {
   UpdateScopeClientsMutation,
   UpdateScopeClientsMutationVariables,
 } from './components/PermissionApplications.generated'
-import { authAdminEnvironments } from '../../utils/environments'
 import { getIntent } from '../../utils/getIntent'
 import {
   MergedFormDataSchema,
@@ -93,9 +92,10 @@ export const editPermissionAction: WrappedActionFn =
     // then update all environments with the same settings as the current environment intent
     if (sync && syncEnvironments && syncEnvironments.length > 0) {
       environments.push(...syncEnvironments)
-      // If the save in all environments was enabled, then update all environments
+      // If the save in all environments was enabled,
+      // then update every environment the scope is configured in.
     } else if (saveInAllEnvironments) {
-      environments.push(...authAdminEnvironments)
+      environments.push(environment, ...(syncEnvironments ?? []))
     } else {
       // Otherwise, just update the current environment
       environments.push(environment)
