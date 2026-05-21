@@ -33,7 +33,11 @@ export const getRejectedAssigneeNationalIdsFromAnswers = (
       fromRadio.push(kennitala.sanitize(topKey))
     }
   }
-  return [...new Set([...fromList, ...fromRadio].map((id) => normalizeNationalId(id)))]
+  return [
+    ...new Set(
+      [...fromList, ...fromRadio].map((id) => normalizeNationalId(id)),
+    ),
+  ]
 }
 
 export const getRejectedAssigneeNationalIds = (
