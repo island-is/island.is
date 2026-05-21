@@ -33,12 +33,13 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -51,14 +52,7 @@ const AppealFiles = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id, rulingFileId: rulingFileIdQuery } = router.query
-  const rulingFileId =
-    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
-  const targetAppealCase = rulingFileId
-    ? workingCase.rulingOrderAppealCases?.find(
-        (a) => a.rulingFileId === rulingFileId,
-      )
-    : workingCase.appealCase
+  const targetAppealCase = useTargetAppealCaseByRulingFileId()
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -76,7 +70,7 @@ const AppealFiles = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
-    rulingFileId,
+    targetAppealCase?.rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
@@ -97,7 +91,7 @@ const AppealFiles = () => {
         ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
         : constants.INDICTMENTS_OVERVIEW_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -109,7 +103,10 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(workingCase.id, NotificationType.APPEAL_CASE_FILES_UPDATED)
+    sendNotification(
+      workingCase.id,
+      TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+    )
 
     setVisibleModal(true)
   }, [
@@ -151,7 +148,7 @@ const AppealFiles = () => {
           )}
           <RulingFileLabel
             caseFiles={workingCase.caseFiles}
-            rulingFileId={rulingFileId}
+            rulingFileId={targetAppealCase?.rulingFileId}
           />
           <Text variant="h5" as="h5">
             {getAppealActorText(workingCase, targetAppealCase)}

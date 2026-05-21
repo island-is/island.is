@@ -5,18 +5,23 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { DrivingLicense, Remark } from '../lib/types'
+import { DrivingLicense } from '../lib/types'
 import { DrivingLicenseFakeData } from '../lib/constants'
+import { getHealthCertificateRemarks } from '../lib/utils/formUtils'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const remarks: Remark[] =
-    getValueViaPath<DrivingLicense>(
-      application.externalData,
-      'currentLicense.data',
-    )?.remarks || []
+  const rawRemarks = getValueViaPath<DrivingLicense>(
+    application.externalData,
+    'currentLicense.data',
+  )?.remarks
+  const remarks = getHealthCertificateRemarks(rawRemarks)
+  // Stable scalar dep for the effect below — `remarks` is a freshly filtered
+  // array on every render, so depending on it directly would re-fire the
+  // setValue call each render and risk a render loop in react-hook-form.
+  const hasFilteredRemarks = remarks.length > 0
 
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -30,11 +35,11 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     setValue(
       'hasHealthRemarks',
-      !fakeRemarksOff && remarks.length > 0 ? YES : NO,
+      !fakeRemarksOff && hasFilteredRemarks ? YES : NO,
     )
-  }, [remarks, fakeRemarksOff, setValue])
+  }, [hasFilteredRemarks, fakeRemarksOff, setValue])
 
-  if (fakeRemarksOff) {
+  if (fakeRemarksOff || !hasFilteredRemarks) {
     return null
   }
 
@@ -46,7 +51,7 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         message={
           formatMessage(m.healthRemarksDescription) +
             ' ' +
-            remarks?.map((r) => r.description).join(', ') || ''
+            remarks.map((r) => r.description).join(', ') || ''
         }
       />
     </Box>

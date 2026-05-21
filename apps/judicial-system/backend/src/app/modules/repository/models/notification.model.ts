@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { TrackedNotificationType } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
 
@@ -45,10 +45,10 @@ export class Notification extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(NotificationType),
+    values: Object.values(TrackedNotificationType),
   })
-  @ApiProperty({ enum: NotificationType })
-  type!: NotificationType
+  @ApiProperty({ enum: TrackedNotificationType })
+  type!: TrackedNotificationType
 
   @Column({
     type: DataType.ARRAY(DataType.JSON),

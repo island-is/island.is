@@ -20,7 +20,11 @@ import {
   CivilClaimantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case, CivilClaimant } from '../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumber,
+  CivilClaimant,
+} from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 
 @Injectable()
@@ -28,6 +32,8 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
+    @InjectModel(CaseDefendantPoliceCaseNumber)
+    private readonly caseDefendantPoliceCaseNumberModel: typeof CaseDefendantPoliceCaseNumber,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -58,13 +64,55 @@ export class CivilClaimantService {
     }
   }
 
+  private async filterDefendantIdsByPoliceCaseNumbers(
+    caseId: string,
+    policeCaseNumbers: string[],
+    currentDefendantIds?: string[],
+  ): Promise<string[]> {
+    if (!currentDefendantIds?.length || !policeCaseNumbers.length) {
+      return []
+    }
+
+    const validLinks = await this.caseDefendantPoliceCaseNumberModel.findAll({
+      where: {
+        caseId,
+        policeCaseNumber: policeCaseNumbers,
+        defendantId: currentDefendantIds,
+      },
+    })
+
+    const validDefendantIds = new Set(
+      validLinks
+        .map((link) => link.defendantId)
+        .filter((id): id is string => !!id),
+    )
+
+    return currentDefendantIds.filter((id) => validDefendantIds.has(id))
+  }
+
   async update(
     caseId: string,
     civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
+    let effectiveUpdate = { ...update }
+
+    if (
+      update.policeCaseNumbers !== undefined ||
+      update.defendantIds !== undefined
+    ) {
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        defendantIds: await this.filterDefendantIdsByPoliceCaseNumbers(
+          caseId,
+          update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? [],
+          update.defendantIds ?? civilClaimant.defendantIds,
+        ),
+      }
+    }
+
     const [numberOfAffectedRows, civilClaimants] =
-      await this.civilClaimantModel.update(update, {
+      await this.civilClaimantModel.update(effectiveUpdate, {
         where: { id: civilClaimant.id, caseId },
         returning: true,
       })

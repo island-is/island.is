@@ -22,19 +22,21 @@ import {
   ApplicantInfoApi,
   GaldurXRoadAPIModelsApplicantInfoResponse,
   GaldurXRoadAPIModelsApplicantInfoSupportDataResponse,
-  GaldurDomainModelsBaseViewModel,
   UnemploymentApplicationWithdrawApplicationRequest,
   SupportDataApi,
   GaldurExternalDomainModelsSupportDataDelistingReasonDTO,
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentListItem,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -305,6 +307,7 @@ export class VmstUnemploymentClientService {
         ssn: auth.nationalId,
       },
     })
+
     if (!response?.applicantId) {
       throw new Error('Failed to fetch applicant Id')
     }
@@ -390,6 +393,19 @@ export class VmstUnemploymentClientService {
 
     return await api.applicantGetActions({
       id: applicantId,
+    })
+  }
+
+  async getApplicantAttachments(
+    applicantId: string,
+  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetApplicantAttachments({
+      applicantId,
     })
   }
 
@@ -498,5 +514,19 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.applicantUpdateApplicant(requestParameters)
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    const api = await this.createApiClient(
+      AttachmentApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.attachmentGetAttachment({
+      id: attachmentId,
+      includeData: true,
+    })
   }
 }

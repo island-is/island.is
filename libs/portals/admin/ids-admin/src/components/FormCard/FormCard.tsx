@@ -61,6 +61,12 @@ type FormCardProps<Intent> = {
    * Useful when the form has pending input that must be resolved before submission.
    */
   submitDisabled?: boolean
+  /**
+   * Forwarded to the underlying `<Form onSubmit>`. Runs synchronously before
+   * react-router serializes the form, so it pairs with `flushSync` when the
+   * caller needs to commit transient UI state into form-visible fields.
+   */
+  onSubmit?: React.FormEventHandler<HTMLFormElement>
   headerMarginBottom?: 3 | 5
 }
 
@@ -74,6 +80,7 @@ export const FormCard = <Intent extends string>({
   description,
   customValidation,
   submitDisabled,
+  onSubmit,
   headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
@@ -194,7 +201,12 @@ export const FormCard = <Intent extends string>({
   }, [formData, customValidation])
 
   return (
-    <Form ref={formRef} method="post" onChange={onFormChange}>
+    <Form
+      ref={formRef}
+      method="post"
+      onChange={onFormChange}
+      onSubmit={onSubmit}
+    >
       <Box
         padding={4}
         borderRadius="large"
