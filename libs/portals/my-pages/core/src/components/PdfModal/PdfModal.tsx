@@ -116,7 +116,12 @@ export const PdfModal = ({
         </Box>
 
         {/* Right: print, download, close */}
-        <Box columnGap={2} display="flex" alignItems="center" justifyContent="flexEnd">
+        <Box
+          columnGap={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="flexEnd"
+        >
           <Button
             icon="print"
             iconType="filled"
@@ -145,7 +150,12 @@ export const PdfModal = ({
                 className={styles.zoomButton}
                 aria-label={formatMessage(m.closeActiveDocument)}
               >
-                <Icon icon="close" type="outline" size="small" color="blue400" />
+                <Icon
+                  icon="close"
+                  type="outline"
+                  size="small"
+                  color="blue400"
+                />
               </FocusableBox>
             }
           />
