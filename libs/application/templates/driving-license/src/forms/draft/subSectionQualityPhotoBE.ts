@@ -7,8 +7,12 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { BE, QUALITY_IMAGE_TYPE_IDS } from '../../lib/constants'
-import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
+import { BE } from '../../lib/constants'
+import {
+  hasNoDrivingLicenseInOtherCountry,
+  hasUsableRlsQualityPhoto,
+  isVisible,
+} from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
 
 interface ThjodskraImage {
@@ -51,15 +55,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
               return facialPhotos[0].biometricId
             }
 
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            if (hasUsableRlsQualityPhoto(externalData)) {
               return 'qualityPhoto'
             }
 
@@ -91,21 +87,20 @@ export const subSectionQualityPhotoBE = buildSubSection({
               })
             }
 
-            // Quality photo from getqualityphotoandsignature
-            const photoAndSig = getValueViaPath<{
-              imageTypeId?: number | null
-              pohto?: string | null
-            }>(externalData, 'qualityPhotoAndSignature.data')
-
-            if (
-              photoAndSig?.pohto &&
-              QUALITY_IMAGE_TYPE_IDS.includes(photoAndSig?.imageTypeId ?? 0)
-            ) {
+            // Quality photo from getqualityphotoandsignature. The binary
+            // (`pohto`) may be null for legacy records — createPhotoComponent
+            // falls back to a placeholder, and submission resolves the photo
+            // by reference, so offer the option whenever a record exists.
+            if (hasUsableRlsQualityPhoto(externalData)) {
+              const photoAndSig = getValueViaPath<{ pohto?: string | null }>(
+                externalData,
+                'qualityPhotoAndSignature.data',
+              )
               options.push({
                 value: 'qualityPhoto',
                 label: m.useDriversLicenseImage,
                 illustration: createPhotoComponent(
-                  photoAndSig.pohto ?? undefined,
+                  photoAndSig?.pohto ?? undefined,
                 ),
               })
             }

@@ -185,6 +185,12 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
    * (case_id, defendant_id, police_case_number) rows, skipping duplicates
    * via the partial unique index, then removes redundant unassigned rows
    * for the same police case numbers on this case.
+   *
+   * Returns only police case numbers that did not previously exist on
+   * the case at all (neither assigned nor unassigned). We snapshot
+   * existing numbers before the insert rather than relying on
+   * bulkCreate's return value, which in Sequelize v6 incorrectly
+   * includes skipped-duplicate instances.
    */
   async assignDefendantPoliceCaseNumbers(
     caseId: string,
@@ -198,18 +204,23 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     try {
       const { transaction } = options
 
-      const insertedLinks = await this.model.bulkCreate(
+      const existingRows = await this.model.findAll({
+        where: { caseId },
+        attributes: ['policeCaseNumber'],
+        transaction,
+      })
+      const existingPoliceCaseNumbers = new Set(
+        existingRows.map((r) => r.policeCaseNumber),
+      )
+
+      await this.model.bulkCreate(
         links.map(({ defendantId, policeCaseNumber }) => ({
           caseId,
           defendantId,
           policeCaseNumber,
         })),
-        { transaction, ignoreDuplicates: true, returning: true },
+        { transaction, ignoreDuplicates: true },
       )
-
-      const newPoliceCaseNumbers = [
-        ...new Set(insertedLinks.map((link) => link.policeCaseNumber)),
-      ]
 
       const policeCaseNumbers = [
         ...new Set(links.map((l) => l.policeCaseNumber)),
@@ -223,6 +234,10 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
         },
         transaction,
       })
+
+      const newPoliceCaseNumbers = policeCaseNumbers.filter(
+        (pcn) => !existingPoliceCaseNumbers.has(pcn),
+      )
 
       this.logger.debug(
         `Assigned ${links.length} defendant-linked police case number row(s) for case ${caseId}` +

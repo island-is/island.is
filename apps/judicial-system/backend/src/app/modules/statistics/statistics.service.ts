@@ -13,7 +13,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   CaseState,
   CaseType,
   DataGroups,
@@ -23,6 +23,7 @@ import {
   InstitutionType,
   isCompletedCase,
   isIndictmentCase,
+  RequestCaseNotificationType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -374,7 +375,7 @@ export class StatisticsService {
           model: Notification,
           as: 'notifications',
           required: false,
-          where: { type: CaseNotificationType.APPEAL_COMPLETED },
+          where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
           order: [['created', 'DESC']],
           separate: true,
         },

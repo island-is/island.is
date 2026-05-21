@@ -1,7 +1,11 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseNotificationType,
+  RequestCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -35,7 +39,7 @@ describe('NotificationController - Send appeal files updated notifications', () 
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: CaseNotificationType.APPEAL_CASE_FILES_UPDATED,
+          type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as unknown as RequestCaseNotificationType,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -57,7 +61,7 @@ describe('NotificationController - Send appeal files updated notifications', () 
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.APPEAL_CASE_FILES_UPDATED },
+          body: { type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

@@ -150,4 +150,12 @@ export class CivilClaimant extends Model {
   })
   @ApiPropertyOptional({ type: Boolean })
   isSpokespersonConfirmed?: boolean
+
+  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  policeCaseNumbers?: string[]
+
+  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  defendantIds?: string[]
 }

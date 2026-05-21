@@ -32,6 +32,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
   AppealEventLog,
@@ -592,6 +593,16 @@ const transformCase = (
                 user.nationalId,
                 theCase.civilClaimants,
               ))),
+      )
+      .filter(
+        (file) =>
+          !isDefence ||
+          canDefenceUserViewCivilClaimCaseFile(user?.nationalId, {
+            category: file.category,
+            civilClaimantId: file.civilClaimantId,
+            defendants: theCase.defendants,
+            civilClaimants: theCase.civilClaimants,
+          }),
       )
       .map((file) => ({
         ...file.toJSON(),

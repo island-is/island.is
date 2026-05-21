@@ -78,11 +78,15 @@ export const createTestingPoliceModule = async () => {
         provide: CaseDefendantPoliceCaseNumberRepositoryService,
         useValue: {
           assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
+          findDistinctPoliceCaseNumbersByCaseIds: jest
+            .fn()
+            .mockResolvedValue(new Map()),
         },
       },
       {
         provide: IndictmentCountService,
         useValue: {
+          findByCaseId: jest.fn().mockResolvedValue([]),
           createWithPoliceCaseNumber: jest.fn().mockResolvedValue({}),
         },
       },

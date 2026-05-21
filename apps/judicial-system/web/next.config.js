@@ -32,6 +32,7 @@ const nextConfig = {
   },
   env: {
     API_MOCKS: process.env.API_MOCKS ?? '',
+    TINY_MCE_API_KEY: process.env.TINY_MCE_API_KEY ?? '',
   },
 }
 

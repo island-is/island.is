@@ -13,7 +13,6 @@ import {
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   EventNotificationType,
   IndictmentCaseNotificationType,
   InstitutionNotificationType,
@@ -21,6 +20,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  RequestCaseNotificationType,
   ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
@@ -170,14 +170,10 @@ export class NotificationDispatchService {
         },
       })
     } else {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: CaseNotificationType.COURT_DATE,
-          userDescriptor,
-        },
-      })
+      // This path is never hit as EventNotificationType.COURT_DATE_SCHEDULED is only dispatched for indictment cases
+      this.logger.warn(
+        `Attempted to dispatch court date notification for case ${theCase.id} of type ${theCase.type}`,
+      )
     }
   }
 
