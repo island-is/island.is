@@ -10,22 +10,26 @@ import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ApplicationMapper } from '../applications/models/application.mapper'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
-  private readonly SANDBOX_TENANT_ID =
-    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX ??
-    'digitaliceland1715002531'
-  private readonly PROD_TENANT_ID =
-    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD ?? 'digitaliceland'
+  private readonly SANDBOX_INSTANCE =
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX
+  private readonly PROD_INSTANCE =
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD
   private readonly SANDBOX_API_KEY =
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
+  private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
 
   private readonly CHECKBOX_TRUE = 'Valið'
   private readonly CHECKBOX_FALSE = 'Ekki valið'
 
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly applicationMapper: ApplicationMapper,
+  ) {
     this.enhancedFetch = createEnhancedFetch({
       name: 'form-system-zendesk',
       organizationSlug: 'stafraent-island',
@@ -34,39 +38,44 @@ export class ZendeskService {
     })
   }
 
-  async sendToZendesk(applicationDto: ApplicationDto): Promise<boolean> {
+  async sendToZendesk(
+    applicationDto: ApplicationDto,
+    storedInstance?: string,
+  ): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
 
-    let tenantId = this.SANDBOX_TENANT_ID
+    let zendeskInstance = this.SANDBOX_INSTANCE
+    let apiKey = this.SANDBOX_API_KEY
 
     if (applicationDto.isTest === false && environment.production === true) {
-      const orgNationalId = applicationDto.organizationNationalId
-      const instance = 'asdf'
-
-      tenantId = instance ?? this.PROD_TENANT_ID
+      zendeskInstance = storedInstance || this.PROD_INSTANCE
+      apiKey = this.PROD_API_KEY
     }
 
-    const apiKey =
-      applicationDto.isTest === true || environment.production === false
-        ? this.SANDBOX_API_KEY
-        : this.PROD_API_KEY
-    if (!tenantId || !apiKey) {
+    if (zendeskInstance === 'heilsa') {
+      apiKey = this.HEILSA_API_KEY
+    }
+
+    if (!zendeskInstance || !apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
 
-    const zendeskUrl = `https://${tenantId}.zendesk.com`
+    const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     const { name, email } = this.getNameAndEmail(applicationDto)
     const body = this.constructBody(applicationDto)
     const customFields = this.getCustomFields(applicationDto)
     const subject = applicationDto.formName?.is ?? 'No subject'
-    const data = JSON.stringify(applicationDto)
+    const data = JSON.stringify(
+      this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
+        applicationDto,
+      ),
+    )
     const isInternal = applicationDto.zendeskInternal === true
     const applicationId = applicationDto.id ?? ''
 
-    // return true
     const fileToken = await this.uploadFile(
       data,
       applicationId,

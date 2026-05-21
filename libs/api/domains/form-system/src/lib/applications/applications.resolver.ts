@@ -23,13 +23,6 @@ import { NotificationResponse } from '../../models/screen.model'
 import { NotificationInput } from '../../dto/notification.input'
 import { DataFromUrl } from '../../models/dataFromUrl.model'
 import { DataFromUrlInput } from '../../dto/dataFromUrlReq.input'
-import {
-  type OrganizationZendeskInstanceByNationalIdDataLoader,
-  OrganizationZendeskInstanceByNationalIdLoader,
-  ShortTitle,
-} from '@island.is/cms'
-import { GetOrganizationAdminInput } from '../../dto/organization.input'
-import { Loader } from '@island.is/nest/dataloader'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -151,18 +144,4 @@ export class ApplicationsResolver {
   ): Promise<void> {
     return this.applicationsService.deleteApplication(user, input)
   }
-
-  // @Query(() => String, {
-  //   name: 'formSystemOrganizationZendeskInstance',
-  //   nullable: true,
-  // })
-  // async getOrganizationZendeskInstance(
-  //   @Args('input', { type: () => GetOrganizationAdminInput })
-  //   input: GetOrganizationAdminInput,
-  //   @Loader(OrganizationZendeskInstanceByNationalIdLoader)
-  //   organizationZendeskInstanceLoader: OrganizationZendeskInstanceByNationalIdDataLoader,
-  //   @CurrentUser() _user: User,
-  // ): Promise<ShortTitle> {
-  //   return organizationZendeskInstanceLoader.load(input.nationalId)
-  // }
 }

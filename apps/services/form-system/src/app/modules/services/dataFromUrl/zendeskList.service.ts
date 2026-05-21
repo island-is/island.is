@@ -15,7 +15,7 @@ export class ZendeskListService {
   enhancedFetch: EnhancedFetchAPI
 
   private readonly DEFAULT_INSTANCE =
-    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD
+    'process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
   private readonly DEFAULT_API_KEY =
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
   private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
@@ -33,18 +33,13 @@ export class ZendeskListService {
     fieldSettings: FieldSettings,
     dataFromUrlRequestDto: DataFromUrlReqDto,
   ): Promise<DataFromUrlResDto> {
-    let zendeskInstance = this.DEFAULT_INSTANCE
     let apiKey = this.DEFAULT_API_KEY
 
-    const instanceInfo = dataFromUrlRequestDto.zendeskInstance
-    if (instanceInfo) {
-      const parsed: ZendeskInstanceConfig = JSON.parse(instanceInfo)
-      if (parsed.serviceSystemInstance) {
-        zendeskInstance = parsed.serviceSystemInstance
-        if (zendeskInstance === 'heilsa') {
-          apiKey = this.HEILSA_API_KEY
-        }
-      }
+    const zendeskInstance =
+      dataFromUrlRequestDto.zendeskInstance || this.DEFAULT_INSTANCE
+
+    if (zendeskInstance === 'heilsa') {
+      apiKey = this.HEILSA_API_KEY
     }
 
     if (!zendeskInstance || !apiKey) {
@@ -205,12 +200,6 @@ export class ZendeskListService {
 
     return result
   }
-}
-
-type ZendeskInstanceConfig = {
-  serviceSystemInstance: string
-  serviceSystemBrandID: string
-  kennitala: string
 }
 
 interface ZendeskCustomObjectResponse {

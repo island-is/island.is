@@ -1,6 +1,10 @@
 import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsBoolean,
@@ -63,9 +67,11 @@ export class DataFromUrlReqDto {
   @IsOptional()
   fieldType?: string
 
-  @IsString()
-  @ApiPropertyOptional()
-  @IsOptional()
+  // @IsString()
+  // @ApiPropertyOptional()
+  // @IsOptional()
+
+  @ApiHideProperty()
   zendeskInstance?: string
 
   //   @ApiPropertyOptional({ type: [InputValue] })

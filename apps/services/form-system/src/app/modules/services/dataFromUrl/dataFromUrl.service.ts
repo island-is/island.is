@@ -62,8 +62,6 @@ export class DataFromUrlService {
 
     const xRoadPath = `${this.xroadBase}${url}`
 
-    console.log('Requesting data from URL with request body:', request)
-
     try {
       const response = await this.enhancedFetch(xRoadPath, {
         method: 'POST',

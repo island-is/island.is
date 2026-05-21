@@ -13,7 +13,4 @@ export class DataFromUrlInput {
 
   @Field(() => Boolean, { nullable: false })
   isTest!: boolean
-
-  @Field(() => String, { nullable: true })
-  zendeskInstance?: string
 }

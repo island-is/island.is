@@ -10,6 +10,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 import { ZendeskListService } from './dataFromUrl/zendeskList.service'
 import { DataFromUrlService } from './dataFromUrl/dataFromUrl.service'
 import { AuthService } from './auth.service'
+import { ApplicationMapper } from '../applications/models/application.mapper'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthService } from './auth.service'
     ValidationService,
     ZendeskListService,
     DataFromUrlService,
+    ApplicationMapper,
   ],
 })
 export class ServicesModule {}

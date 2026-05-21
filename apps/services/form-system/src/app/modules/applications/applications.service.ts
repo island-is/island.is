@@ -319,7 +319,23 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success = await this.serviceManager.send(applicationDto)
+    let zendeskInstance = ''
+    if (applicationDto.submissionServiceUrl === 'zendesk') {
+      const organization = await this.organizationModel.findByPk(
+        application.organizationId,
+      )
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with id '${application.organizationId}' not found.`,
+        )
+      }
+      zendeskInstance = organization.zendeskInstance ?? ''
+    }
+
+    const success = await this.serviceManager.send(
+      applicationDto,
+      zendeskInstance,
+    )
 
     if (success) {
       try {
@@ -1080,6 +1096,11 @@ export class ApplicationsService {
       (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
         fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
     ) {
+      const organizationInstance = await this.getOrganizationZendeskInfo(
+        dataFromUrlRequestDto.orgNationalId || '',
+      )
+      dataFromUrlRequestDto.zendeskInstance =
+        organizationInstance.zendeskInstance
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
         dataFromUrlRequestDto,
@@ -1230,6 +1251,24 @@ export class ApplicationsService {
       })
       return xroadField
     })
+  }
+
+  private async getOrganizationZendeskInfo(
+    organizationNationalId: string,
+  ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${organizationNationalId}' not found`,
+      )
+    }
+
+    const zendeskInstance = organization.zendeskInstance ?? ''
+    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    return { zendeskInstance, zendeskBrandId }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
