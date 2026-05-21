@@ -23,6 +23,9 @@ export class BasicVehicleInformation {
   @Field(() => String, { nullable: true })
   role?: string | null
 
+  @Field(() => String, { nullable: true })
+  regGroup?: string | null
+
   @Field(() => Int, { nullable: true })
   numberOfAxles?: number | null
 
