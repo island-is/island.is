@@ -28,7 +28,6 @@ const SocialBenefitsOverview = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetApplicationsOverviewQuery()
   const overview = data?.vmstApplicationsOverview
-  const vmstReady = !loading && !error
 
   return (
     <IntroWrapper
@@ -37,13 +36,13 @@ const SocialBenefitsOverview = () => {
     >
       <Stack space={3}>
         {loading && <ActionCardLoader repeat={2} />}
-        {!loading && error && (
+        {!loading && !!error && (
           <AlertMessage
             type="error"
             message={formatMessage(sharedMessages.vmstFetchError)}
           />
         )}
-        {vmstReady && overview?.unemploymentApplication?.isVisible && (
+        {!loading && !error && overview?.unemploymentApplication?.isVisible && (
           <ActionCard
             heading={formatMessage(um.unemploymentBenefits)}
             text={formatMessage(
