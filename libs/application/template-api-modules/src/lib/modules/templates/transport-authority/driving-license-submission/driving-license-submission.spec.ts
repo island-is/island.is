@@ -504,11 +504,11 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(res).toEqual({ success: true })
       expect(newTemporaryDrivingLicense).toHaveBeenCalledTimes(1)
 
+      // Flag off → biometric IDs are omitted entirely (not sent as null),
+      // keeping the RLS request byte-identical to the pre-redesign flow.
       const [, , input] = newTemporaryDrivingLicense.mock.calls[0]
-      expect(input).toMatchObject({
-        photoBiometricsId: null,
-        signatureBiometricsId: null,
-      })
+      expect(input.photoBiometricsId).toBeUndefined()
+      expect(input.signatureBiometricsId).toBeUndefined()
     })
 
     it('resolves photo and signature biometric IDs when a Thjodskra photo is selected', async () => {

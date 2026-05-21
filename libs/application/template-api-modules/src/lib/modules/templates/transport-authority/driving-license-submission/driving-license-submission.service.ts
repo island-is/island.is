@@ -414,12 +414,13 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       // prerequisites) — not on the mere presence of `selectLicensePhoto` —
       // so a draft created while the flag was on does not keep sending
       // biometric IDs after the flag is turned off. Flag off → both IDs stay
-      // null and the calls are identical to the pre-redesign behaviour.
+      // `undefined`, so the keys are omitted from the RLS request bodies
+      // entirely and the calls are byte-identical to the pre-redesign flow.
       const isBTempRedesignEnabled =
         getValueViaPath<boolean>(answers, 'isBTempRedesignEnabled') === true
 
-      let photoBiometricsId: string | null = null
-      let signatureBiometricsId: string | null = null
+      let photoBiometricsId: string | null | undefined
+      let signatureBiometricsId: string | null | undefined
 
       if (isBTempRedesignEnabled) {
         const selectedPhoto = getValueViaPath<string>(
