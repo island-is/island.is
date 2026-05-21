@@ -72,26 +72,107 @@ export class ScopeService extends MultiEnvironmentService {
    * Updates a scope for a specific tenant for the given environments.
    *
    * Per-environment failures are collected and returned alongside the
-   * successful results
+   * successful results.
+
    */
   async updateScope({
     user,
-    input: { environments, scopeName, tenantId, ...adminPatchScopeDto },
+    input: {
+      environments,
+      scopeName,
+      tenantId,
+      categoryIds,
+      tagIds,
+      supportedDelegationTypes,
+      ...adminPatchScopeDto
+    },
   }: {
     user: User
     input: AdminPatchScopeInput
   }): Promise<PatchScopeResponse> {
-    if (Object.keys(adminPatchScopeDto).length === 0) {
+    const hasAbsoluteCategoryIds = categoryIds !== undefined
+    const hasAbsoluteTagIds = tagIds !== undefined
+    const hasAbsoluteDelegationTypes = supportedDelegationTypes !== undefined
+    const needsPerEnvDeltas =
+      hasAbsoluteCategoryIds || hasAbsoluteTagIds || hasAbsoluteDelegationTypes
+
+    if (Object.keys(adminPatchScopeDto).length === 0 && !needsPerEnvDeltas) {
       throw new Error('Nothing provided to update')
     }
 
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
+        const perEnvDeltas: {
+          addedCategoryIds?: string[]
+          removedCategoryIds?: string[]
+          addedTagIds?: string[]
+          removedTagIds?: string[]
+          addedDelegationTypes?: string[]
+          removedDelegationTypes?: string[]
+        } = {}
+
+        if (needsPerEnvDeltas) {
+          const current = await this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+
+          const currentCategoryIds = current?.categoryIds ?? []
+          const currentTagIds = current?.tagIds ?? []
+          const currentDelegationTypes = current?.supportedDelegationTypes ?? []
+
+          if (hasAbsoluteCategoryIds) {
+            const desired = categoryIds ?? []
+            const added = desired.filter(
+              (id) => !currentCategoryIds.includes(id),
+            )
+            const removed = currentCategoryIds.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedCategoryIds = added
+            if (removed.length > 0) perEnvDeltas.removedCategoryIds = removed
+          }
+
+          if (hasAbsoluteTagIds) {
+            const desired = tagIds ?? []
+            const added = desired.filter((id) => !currentTagIds.includes(id))
+            const removed = currentTagIds.filter((id) => !desired.includes(id))
+            if (added.length > 0) perEnvDeltas.addedTagIds = added
+            if (removed.length > 0) perEnvDeltas.removedTagIds = removed
+          }
+
+          if (hasAbsoluteDelegationTypes) {
+            const desired = supportedDelegationTypes ?? []
+            const added = desired.filter(
+              (id) => !currentDelegationTypes.includes(id),
+            )
+            const removed = currentDelegationTypes.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedDelegationTypes = added
+            if (removed.length > 0)
+              perEnvDeltas.removedDelegationTypes = removed
+          }
+        }
+
+        const dtoForEnv = { ...adminPatchScopeDto, ...perEnvDeltas }
+
+        if (Object.keys(dtoForEnv).length === 0) {
+          return this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+        }
+
         return this.makeRequest(user, environment, (api) =>
           api.meScopesControllerUpdateRaw({
             tenantId,
             scopeName,
-            adminPatchScopeDto,
+            adminPatchScopeDto: dtoForEnv,
           }),
         )
       }),
