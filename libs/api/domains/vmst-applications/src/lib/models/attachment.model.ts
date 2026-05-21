@@ -11,9 +11,6 @@ export class VmstApplicationsAttachment {
   @Field()
   contentType!: string
 
-  @Field()
-  created!: string
-
   @Field(() => String, { nullable: true })
   data?: string | null
 

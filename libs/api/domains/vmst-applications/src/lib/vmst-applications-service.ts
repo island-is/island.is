@@ -15,6 +15,7 @@ import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsApplicantAttachment,
+  VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 
@@ -113,11 +114,21 @@ export class VMSTApplicationsService {
     return await this.vmstUnemploymentService.resolveApplicant(auth)
   }
 
-  async getApplicationsOverview(applicantId: string) {
-    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  async getApplicationsOverview(
+    applicantId: string,
+  ): Promise<VmstApplicationsOverview> {
+    const result = await this.vmstUnemploymentService.getApplicationsOverview(
+      applicantId,
+    )
+    return {
+      unemploymentApplication: result.unemploymentApplication ?? undefined,
+      activationGrant: result.activationGrant ?? undefined,
+    }
   }
 
-  async getApplicationsOverviewForUser(auth: User) {
+  async getApplicationsOverviewForUser(
+    auth: User,
+  ): Promise<VmstApplicationsOverview> {
     try {
       const { applicantId } = await this.resolveApplicant(auth)
       return this.getApplicationsOverview(applicantId)

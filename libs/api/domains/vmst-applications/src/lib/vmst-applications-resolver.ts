@@ -88,7 +88,9 @@ export class VMSTApplicationsResolver {
     name: 'vmstApplicationsOverview',
   })
   @Audit()
-  async getApplicationsOverview(@CurrentUser() auth: User) {
+  async getApplicationsOverview(
+    @CurrentUser() auth: User,
+  ): Promise<VmstApplicationsOverview> {
     return this.vmstApplicationsService.getApplicationsOverviewForUser(auth)
   }
 
