@@ -14,9 +14,4 @@ export class UpdateApplicationDto {
     stepsFinished: number
     totalSteps: number
   }
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly skipValidation?: boolean
 }

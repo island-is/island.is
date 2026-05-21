@@ -334,7 +334,7 @@ export default function HealthOverviewScreen() {
   const organDonationData =
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
