@@ -25,9 +25,8 @@ import { ClientType } from '../../../components/ClientType'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import {
   useGetScopeClientsQuery,
-  useGetClientsByTenantsQuery,
+  useGetGrantableClientsQuery,
 } from './PermissionApplications.generated'
-import { useTenantsQuery } from '../../Tenants/Tenants.generated'
 
 type ScopeClient = {
   clientId: string
@@ -106,76 +105,48 @@ export const PermissionApplications = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData])
 
-  const { data: tenantsData, loading: tenantsLoading } = useTenantsQuery({
-    skip: !hasOpened,
-  })
-
-  const availableTenants = useMemo(() => {
-    const tenants = tenantsData?.authAdminTenants?.data ?? []
-    return tenants.filter((t) =>
-      t.availableEnvironments.includes(selectedEnvironment),
-    )
-  }, [tenantsData, selectedEnvironment])
-
-  const tenantLabels = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const t of availableTenants) {
-      map.set(
-        t.id,
-        getTranslatedValue(t.defaultEnvironment.displayName, locale),
-      )
-    }
-    return map
-  }, [availableTenants, locale])
-
   const { data: clientsData, loading: clientsLoading } =
-    useGetClientsByTenantsQuery({
-      skip: !hasOpened || availableTenants.length === 0,
-      variables: { input: { tenantIds: availableTenants.map((t) => t.id) } },
+    useGetGrantableClientsQuery({
+      skip: !hasOpened,
+      variables: { input: { environment: selectedEnvironment } },
     })
 
   const groupedOptions = useMemo<GroupBase<ClientOption>[]>(() => {
     const excluded = new Set<string>(clients.map((c) => c.clientId))
 
-    const groups = clientsData?.authAdminClientsByTenants?.data ?? []
-    const groupEntries = groups.flatMap((group) => {
-      const tenantLabel = tenantLabels.get(group.tenantId)
-      if (!tenantLabel) return []
-      return [{ tenantId: group.tenantId, tenantLabel, clients: group.data }]
-    })
+    const grantable = clientsData?.authAdminGrantableClients ?? []
 
-    // Current tenant first
-    groupEntries.sort((a, b) => {
-      if (a.tenantId === tenant) return -1
-      if (b.tenantId === tenant) return 1
-      return a.tenantLabel.localeCompare(b.tenantLabel)
-    })
+    // Group flat client list by tenantId
+    const byTenant = new Map<string, ClientOption[]>()
+    for (const c of grantable) {
+      if (excluded.has(c.clientId)) continue
+      const translated = getTranslatedValue(c.displayName, locale)
+      const scopeClient: ScopeClient = {
+        clientId: c.clientId,
+        clientType: c.clientType,
+        displayName: c.displayName,
+        tenantId: c.tenantId,
+      }
+      const option: ClientOption = {
+        label: translated ? `${translated} - ${c.clientId}` : c.clientId,
+        value: c.clientId,
+        tenantLabel: c.tenantId,
+        client: scopeClient,
+      }
+      const bucket = byTenant.get(c.tenantId) ?? []
+      bucket.push(option)
+      byTenant.set(c.tenantId, bucket)
+    }
 
-    return groupEntries
-      .map((group) => ({
-        label: group.tenantLabel,
-        options: group.clients
-          .filter((c) => !excluded.has(c.clientId))
-          .map<ClientOption>((c) => {
-            const env = c.defaultEnvironment
-            const displayName = env?.displayName ?? []
-            const translated = getTranslatedValue(displayName, locale)
-            const scopeClient: ScopeClient = {
-              clientId: c.clientId,
-              clientType: c.clientType,
-              displayName,
-              tenantId: env?.tenantId ?? group.tenantId,
-            }
-            return {
-              label: translated ? `${translated} - ${c.clientId}` : c.clientId,
-              value: c.clientId,
-              tenantLabel: group.tenantLabel,
-              client: scopeClient,
-            }
-          }),
-      }))
+    return Array.from(byTenant.entries())
+      .sort(([a], [b]) => {
+        if (a === tenant) return -1
+        if (b === tenant) return 1
+        return a.localeCompare(b)
+      })
+      .map(([tenantId, options]) => ({ label: tenantId, options }))
       .filter((group) => group.options.length > 0)
-  }, [clientsData, clients, tenantLabels, tenant, locale])
+  }, [clientsData, clients, tenant, locale])
 
   const handleAddPending = () => {
     if (pendingClients.length === 0) return
@@ -243,7 +214,7 @@ export const PermissionApplications = () => {
             }
             isMulti
             onMenuOpen={() => setHasOpened(true)}
-            isLoading={tenantsLoading || clientsLoading}
+            isLoading={clientsLoading}
             noOptionsMessage={formatMessage(m.permissionApplicationsNoOptions)}
             filterConfig={{
               stringify: (option) =>

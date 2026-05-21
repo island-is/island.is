@@ -9,23 +9,14 @@ query GetScopeClients($input: ScopeClientsInput!) {
   }
 }
 
-query GetClientsByTenants($input: AuthAdminClientsByTenantsInput!) {
-  authAdminClientsByTenants(input: $input) {
-    data {
-      tenantId
-      data {
-        clientId
-        clientType
-        defaultEnvironment {
-          tenantId
-          clientId
-          clientType
-          displayName {
-            value
-            locale
-          }
-        }
-      }
+query GetGrantableClients($input: AuthAdminGrantableClientsInput!) {
+  authAdminGrantableClients(input: $input) {
+    clientId
+    tenantId
+    clientType
+    displayName {
+      value
+      locale
     }
   }
 }

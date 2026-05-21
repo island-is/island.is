@@ -14,8 +14,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { ClientsService } from './clients.service'
 import { ClientsPayload } from './dto/clients.payload'
-import { ClientsByTenantsInput } from './dto/clients-by-tenants.input'
-import { ClientsByTenantsPayload } from './dto/clients-by-tenants.payload'
+import { GrantableClientsInput } from './dto/grantable-clients.input'
+import { GrantableClient } from './models/grantable-client.model'
 import { Client } from './models/client.model'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientInput } from './dto/client.input'
@@ -44,17 +44,16 @@ export class ClientsResolver {
     return this.clientsService.getClients(user, input.tenantId)
   }
 
-  @Query(() => ClientsByTenantsPayload, {
-    name: 'authAdminClientsByTenants',
-    description:
-      'Get clients grouped by tenant for the provided tenant ids. Used for cross-tenant application selection on a scope.',
+  @Query(() => [GrantableClient], {
+    name: 'authAdminGrantableClients',
+    description: 'Get all clients across tenants for the given environment.',
   })
-  getClientsByTenants(
+  getGrantableClients(
     @CurrentUser() user: User,
-    @Args('input', { type: () => ClientsByTenantsInput })
-    input: ClientsByTenantsInput,
-  ): Promise<ClientsByTenantsPayload> {
-    return this.clientsService.getClientsByTenants(user, input.tenantIds)
+    @Args('input', { type: () => GrantableClientsInput })
+    input: GrantableClientsInput,
+  ): Promise<GrantableClient[]> {
+    return this.clientsService.getGrantableClients(user, input.environment)
   }
 
   @Query(() => Client, { name: 'authAdminClient', nullable: true })
