@@ -18,7 +18,8 @@ export const mapRegistrationExemption = (
   index: number,
 ): SailorRegistrationExemptionDto => ({
   id: String(index),
-  shipRegistrationNo: dto.shipRegistrationNo != null ? String(dto.shipRegistrationNo) : undefined,
+  shipRegistrationNo:
+    dto.shipRegistrationNo != null ? String(dto.shipRegistrationNo) : undefined,
   shipName: dto.shipName,
   rank: dto.rank?.is ?? '',
   advertised: dto.advertised?.is ?? '',

@@ -85,9 +85,7 @@ export const SailorCrewRegistrationsSeaService = () => {
           label={formatMessage(om.sailorColumnRank)}
           placeholder={formatMessage(om.sailorSeaServiceRankAll)}
           options={rankOptions}
-          onChange={(opt) =>
-            setRankId(opt ? Number(opt.value) : undefined)
-          }
+          onChange={(opt) => setRankId(opt ? Number(opt.value) : undefined)}
           isClearable
           size="sm"
           backgroundColor="blue"

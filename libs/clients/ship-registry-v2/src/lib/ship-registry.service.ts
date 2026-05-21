@@ -14,11 +14,26 @@ import {
   RankDto,
   ShipBaseInfoDto,
 } from '../../gen/fetch'
-import { mapMaritimeBook, SailorMaritimeBookDto } from './dtos/sailorMaritimeBook.dto'
-import { mapRegistrationExemption, SailorRegistrationExemptionDto } from './dtos/sailorRegistrationExemption.dto'
-import { mapRightCertificate, SailorRightCertificateDto } from './dtos/sailorRightCertificate.dto'
-import { mapSchoolCertificate, SailorSchoolCertificateDto } from './dtos/sailorSchoolCertificate.dto'
-import type { SailorSeaServiceEntryDto, SailorSeaServiceFilterDto } from './dtos/sailorSeaServiceEntry.dto'
+import {
+  mapMaritimeBook,
+  SailorMaritimeBookDto,
+} from './dtos/sailorMaritimeBook.dto'
+import {
+  mapRegistrationExemption,
+  SailorRegistrationExemptionDto,
+} from './dtos/sailorRegistrationExemption.dto'
+import {
+  mapRightCertificate,
+  SailorRightCertificateDto,
+} from './dtos/sailorRightCertificate.dto'
+import {
+  mapSchoolCertificate,
+  SailorSchoolCertificateDto,
+} from './dtos/sailorSchoolCertificate.dto'
+import type {
+  SailorSeaServiceEntryDto,
+  SailorSeaServiceFilterDto,
+} from './dtos/sailorSeaServiceEntry.dto'
 import { mapShipDetail, type ShipDetailDto } from './dtos/ship.dto'
 
 @Injectable()
@@ -66,9 +81,7 @@ export class ShipRegistryClientV2Service {
     return (response?.data ?? []).map(mapRightCertificate).filter(isDefined)
   }
 
-  async getSailorMaritimeBooks(
-    user: User,
-  ): Promise<SailorMaritimeBookDto[]> {
+  async getSailorMaritimeBooks(user: User): Promise<SailorMaritimeBookDto[]> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(getSailorMaritimeBooksApi()),
     )
@@ -96,9 +109,11 @@ export class ShipRegistryClientV2Service {
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: unknown[] = Array.isArray(response) ? response : (response as any)?.data ?? []
+    const data: unknown[] = Array.isArray(response)
+      ? response
+      : (response as any)?.data ?? []
 
-    return (data as SailorSeaServiceEntryDto[])
+    return data as SailorSeaServiceEntryDto[]
   }
 
   async getRanks(): Promise<RankDto[]> {

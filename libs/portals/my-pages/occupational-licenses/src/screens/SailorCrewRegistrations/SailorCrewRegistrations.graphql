@@ -1,4 +1,6 @@
-query ShipRegistrySailorSeaService($filters: ShipRegistrySeaServiceFilterInput) {
+query ShipRegistrySailorSeaService(
+  $filters: ShipRegistrySeaServiceFilterInput
+) {
   shipRegistrySailorSeaService(filters: $filters) {
     id
     shipName

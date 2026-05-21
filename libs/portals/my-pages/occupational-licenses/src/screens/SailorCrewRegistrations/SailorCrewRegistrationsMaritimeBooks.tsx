@@ -30,8 +30,7 @@ export const SailorCrewRegistrationsMaritimeBooks = () => {
     () =>
       books.filter(
         (b) =>
-          !search ||
-          (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
+          !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
       ),
     [books, search],
   )

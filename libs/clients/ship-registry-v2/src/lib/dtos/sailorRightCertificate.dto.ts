@@ -35,7 +35,9 @@ export const mapRightCertificate = (
     rightsCategories:
       dto.rightTypes && dto.rightTypes !== '-' ? dto.rightTypes : undefined,
     certificateNumber: serialNo,
-    issueDate: dto.issueDate ? parseDate(dto.issueDate) ?? undefined : undefined,
+    issueDate: dto.issueDate
+      ? parseDate(dto.issueDate) ?? undefined
+      : undefined,
     validToDate,
     status,
   }

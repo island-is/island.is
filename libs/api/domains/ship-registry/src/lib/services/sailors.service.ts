@@ -22,13 +22,17 @@ export class SailorsService {
   async getSailorCertificates(
     user: User,
   ): Promise<ShipRegistrySailorCertificates | null> {
-    const [schoolCertificates, rightCertificates, maritimeBooks, registrationExemptions] =
-      await Promise.all([
-        this.shipRegistryClientV2Service.getSailorSchoolCertificates(user),
-        this.shipRegistryClientV2Service.getSailorRightCertificates(user),
-        this.shipRegistryClientV2Service.getSailorMaritimeBooks(user),
-        this.shipRegistryClientV2Service.getSailorRegistrationExemptions(user),
-      ])
+    const [
+      schoolCertificates,
+      rightCertificates,
+      maritimeBooks,
+      registrationExemptions,
+    ] = await Promise.all([
+      this.shipRegistryClientV2Service.getSailorSchoolCertificates(user),
+      this.shipRegistryClientV2Service.getSailorRightCertificates(user),
+      this.shipRegistryClientV2Service.getSailorMaritimeBooks(user),
+      this.shipRegistryClientV2Service.getSailorRegistrationExemptions(user),
+    ])
 
     return mapToSailorCertificates({
       schoolCertificates,
@@ -41,8 +45,9 @@ export class SailorsService {
   async getSailorSeaService(
     filters?: SailorSeaServiceFilterDto,
   ): Promise<ShipRegistrySailorSeaServiceEntry[]> {
-    const entries =
-      await this.shipRegistryClientV2Service.getSailorSeaService(filters)
+    const entries = await this.shipRegistryClientV2Service.getSailorSeaService(
+      filters,
+    )
 
     return mapToSailorSeaService(entries)
   }
