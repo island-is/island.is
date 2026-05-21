@@ -32,7 +32,7 @@ export const Premises = () => {
     setFocus,
     getTranslation,
   } = useContext(ControlContext)
-
+  const { isReadOnly } = control
   const [premises, setPremises] = useState<AdditionalPremises>(
     (control.form.sectionInfo?.additionalPremises as AdditionalPremises) ?? [],
   )
@@ -148,7 +148,12 @@ export const Premises = () => {
         </Text>
 
         <Box flexShrink={0} alignSelf="center">
-          <Button variant="primary" icon="add" onClick={add}>
+          <Button
+            variant="primary"
+            icon="add"
+            onClick={add}
+            disabled={isReadOnly}
+          >
             Bæta við
           </Button>
         </Box>
@@ -169,6 +174,7 @@ export const Premises = () => {
               onClick={() => remove(index)}
               size="small"
               icon="trash"
+              disabled={isReadOnly}
             />
           </Box>
 
@@ -181,6 +187,7 @@ export const Premises = () => {
               onFocus={(e) => setFocus(e.target.value)}
               onBlur={() => onBlur(index, 'title', 'is')}
               backgroundColor="blue"
+              disabled={isReadOnly}
             />
 
             <Input
@@ -193,6 +200,7 @@ export const Premises = () => {
               }
               onBlur={() => onBlur(index, 'title', 'en')}
               backgroundColor="blue"
+              disabled={isReadOnly}
             />
 
             <Input
@@ -205,6 +213,7 @@ export const Premises = () => {
               onFocus={(e) => setFocus(e.target.value)}
               onBlur={() => onBlur(index, 'description', 'is')}
               backgroundColor="blue"
+              disabled={isReadOnly}
             />
 
             <Input
@@ -224,6 +233,7 @@ export const Premises = () => {
               }
               onBlur={() => onBlur(index, 'description', 'en')}
               backgroundColor="blue"
+              disabled={isReadOnly}
             />
           </Stack>
         </Box>

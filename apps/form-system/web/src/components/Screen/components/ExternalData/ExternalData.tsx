@@ -19,7 +19,6 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
   const { state } = useApplicationContext()
   const { application } = state
   const { lang } = useLocale()
-  console.log('application', application)
   const { certificationTypes } = application
   const { formatMessage } = useIntl()
   const additionalPremises = application.sectionInfo?.additionalPremises || []
