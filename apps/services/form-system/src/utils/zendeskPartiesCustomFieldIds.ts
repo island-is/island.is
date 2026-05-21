@@ -42,10 +42,10 @@ type Input = {
   municipality?: string | null
 }
 
-export function mapToCustomFields(
+export const mapToCustomFields = (
   instance: Instance,
   input: Input,
-): CustomField[] {
+): CustomField[] => {
   const mapping = fieldMappings[instance]
 
   return (Object.keys(mapping) as Array<keyof typeof mapping>).flatMap(

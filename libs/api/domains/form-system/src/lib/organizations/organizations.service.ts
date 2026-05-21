@@ -5,7 +5,6 @@ import { ApolloError } from '@apollo/client'
 import {
   OrganizationsApi,
   OrganizationsControllerFindAdminRequest,
-  OrganizationsControllerUpdateZendeskInstanceRequest,
   OrganizationZendeskInstanceDto,
 } from '@island.is/clients/form-system'
 import { GetOrganizationAdminInput } from '../../dto/organization.input'

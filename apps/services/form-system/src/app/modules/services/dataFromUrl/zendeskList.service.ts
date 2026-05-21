@@ -89,7 +89,7 @@ export class ZendeskListService {
         return { isError: true }
       }
 
-      let result = new DataFromUrlResDto()
+      const result = new DataFromUrlResDto()
 
       if (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS) {
         const data: ZendeskFieldOptionsResponse = await response.json()
@@ -163,7 +163,7 @@ export class ZendeskListService {
     url: string,
     credentials: string,
   ): Promise<DataFromUrlResDto> {
-    let records: any[] = []
+    let records: ZendeskCustomObjectResponse['custom_object_records'] = []
     let nextUrl: string | null = url
 
     while (nextUrl) {

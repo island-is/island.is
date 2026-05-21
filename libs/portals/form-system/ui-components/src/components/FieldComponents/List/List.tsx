@@ -15,12 +15,8 @@ import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
 import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
 import { m } from '../../../lib/messages'
 import { Action, ApplicationState } from '../../../lib'
-import {
-  DATA_FROM_URL,
-  GET_ORGANIZATION_ZENDESK_INSTANCE,
-  removeTypename,
-} from '@island.is/form-system/graphql'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { DATA_FROM_URL, removeTypename } from '@island.is/form-system/graphql'
+import { useMutation } from '@apollo/client'
 
 interface Props {
   item: FormSystemField
@@ -157,6 +153,7 @@ export const List = ({
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const listFromUrl = () => urlList
