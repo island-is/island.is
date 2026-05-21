@@ -4,19 +4,15 @@ import {
   buildImageField,
   buildMultiField,
   buildSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { HandShake } from '@island.is/application/assets/graphics'
-import { FormValue } from '@island.is/application/types'
 import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
 import {
   applicantSubmitApprovedAssigneesDescription,
   applicantSubmitRejectedAssigneesDescription,
   applicantSubmitRejectedInfoMessages,
 } from '../../../utils/applicantSubmitInfoUtils'
-
-const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
-  (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).length > 0
+import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 
 export const infoSection = buildSection({
   id: 'applicantSubmitInfoSection',

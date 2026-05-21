@@ -70,6 +70,18 @@ export const actionCardMessages = defineMessages({
     description:
       'History log when assignee approves but the signatory name is unknown',
   },
+  historyAssigneeRejectedWithName: {
+    id: 'hb.application:actionCard.historyAssigneeRejectedWithName',
+    defaultMessage: '{name} hafnaði því að vera heimilismaður',
+    description:
+      'History log when a household assignee rejects; {name} is the signatory',
+  },
+  historyAssigneeRejectedGeneric: {
+    id: 'hb.application:actionCard.historyAssigneeRejectedGeneric',
+    defaultMessage: 'Heimilismaður hafnaði því að vera heimilismaður',
+    description:
+      'History log when assignee rejects but the signatory name is unknown',
+  },
   historyApplicantSubmitted: {
     id: 'hb.application:actionCard.historyApplicantSubmitted',
     defaultMessage: '{applicantName} yfirfór og sendi inn umsókn',

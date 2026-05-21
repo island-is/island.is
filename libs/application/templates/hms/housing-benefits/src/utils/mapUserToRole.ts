@@ -6,6 +6,7 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { Roles } from './constants'
+import { getRejectedAssigneeNationalIds } from './assigneeRejectionUtils'
 
 const hasAssigneeCompletedPrereq = (
   application: Application,
@@ -85,9 +86,7 @@ export const mapUserToRole = (
     return Roles.SIGNED_ASSIGNEE
   }
 
-  const rejected =
-    getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? []
-  const hasRejected = rejected.some(
+  const hasRejected = getRejectedAssigneeNationalIds(application).some(
     (id) =>
       (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
       normalizedNationalId,

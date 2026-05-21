@@ -17,6 +17,7 @@ import {
   formatPhoneNumberWithIcelandicCountryCode,
 } from '@island.is/application/ui-components'
 import * as m from '../lib/messages'
+import { getRejectedAssigneeNationalIdsFromAnswers } from './assigneeRejectionUtils'
 import {
   doesAssigneeAddressMatchRentalContract,
   getHouseholdMembersForTable,
@@ -255,7 +256,7 @@ const normalizeHouseholdMemberNationalId = (id: string) =>
 
 const getRejectedAssigneeNationalIdSet = (answers: FormValue): Set<string> =>
   new Set(
-    (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? [])
+    getRejectedAssigneeNationalIdsFromAnswers(answers)
       .map(normalizeHouseholdMemberNationalId)
       .filter(Boolean),
   )

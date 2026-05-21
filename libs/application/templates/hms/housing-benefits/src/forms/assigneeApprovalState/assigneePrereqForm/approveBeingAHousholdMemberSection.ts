@@ -11,14 +11,16 @@ import {
   buildHiddenInput,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
+import * as m from '../../../lib/messages'
+import { getApplicationCardRentalSummary } from '../../../utils/applicationCardSummary'
 
 export const approveBeingAHousholdMemberSection = buildSection({
   id: 'approveBeingAHousholdMemberSection',
-  title: 'Staðfesting á heimili',
+  title: m.assigneeApproval.householdMemberSectionTitle,
   children: [
     buildMultiField({
       id: 'approveBeingAHousholdMember',
-      title: 'Staðfesting á heimili',
+      title: m.assigneeApproval.householdMemberSectionTitle,
       children: [
         buildRadioField({
           id: (application, user) =>
@@ -27,10 +29,17 @@ export const approveBeingAHousholdMemberSection = buildSection({
               user,
               'approveBeingAHousholdMemberRadio',
             ),
-          title: 'Ert þú heimilismaður í Funafold 10?',
+          title: (application: Application) => ({
+            ...m.assigneeApproval.householdMemberRadioTitle,
+            values: {
+              address:
+                getApplicationCardRentalSummary(application).rentalAddress ||
+                '—',
+            },
+          }),
           options: [
-            { label: 'Yes', value: YES },
-            { label: 'No', value: NO },
+            { label: m.miscMessages.yes, value: YES },
+            { label: m.miscMessages.no, value: NO },
           ],
         }),
         buildSubmitField({
@@ -49,12 +58,12 @@ export const approveBeingAHousholdMemberSection = buildSection({
             )
           },
           id: 'approveBeingAHousholdMemberSubmit',
-          title: 'Halda áfram',
+          title: m.assigneeApproval.prereqContinueButton,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.REJECT,
-              name: 'Hafna umsókn',
+              name: m.assigneeApproval.householdMemberRejectButton,
               type: 'reject',
             },
           ],

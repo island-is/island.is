@@ -17,6 +17,7 @@ import {
   getAddHouseholdMemberTableRepeaterDefaultValue,
   getRejectedAssigneeNamesForAddMemberScreen,
 } from '../../utils/addHouseholdMemberUtils'
+import { hasRejectedAssigneesInAnswers } from '../../utils/assigneeRejectionUtils'
 
 const rejectedAssigneesDescription = (application: Application) => {
   const names = getRejectedAssigneeNamesForAddMemberScreen(application)
@@ -49,9 +50,7 @@ export const addHouseholdMemberSection = buildSection({
         buildDescriptionField({
           id: 'addHouseholdMemberRejectedAssignees',
           description: rejectedAssigneesDescription,
-          condition: (answers) =>
-            (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? [])
-              .length > 0,
+          condition: (answers) => hasRejectedAssigneesInAnswers(answers),
           marginBottom: 4,
         }),
         buildDescriptionField({

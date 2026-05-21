@@ -65,6 +65,21 @@ export const assigneeApproval = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Submit after assignee prerequisites (stays in same state)',
   },
+  householdMemberSectionTitle: {
+    id: 'hb.application:assigneeApproval.householdMemberSectionTitle',
+    defaultMessage: 'Staðfesting á heimili',
+    description: 'Assignee household member confirmation section title',
+  },
+  householdMemberRadioTitle: {
+    id: 'hb.application:assigneeApproval.householdMemberRadioTitle',
+    defaultMessage: 'Ert þú heimilismaður í {address}?',
+    description: 'Assignee confirms they live at the rental address',
+  },
+  householdMemberRejectButton: {
+    id: 'hb.application:assigneeApproval.householdMemberRejectButton',
+    defaultMessage: 'Hafna umsókn',
+    description: 'Reject button when assignee is not a household member',
+  },
   taxTitle: {
     id: 'hb.application:assigneeApproval.taxTitle',
     defaultMessage: 'Skatturinn',

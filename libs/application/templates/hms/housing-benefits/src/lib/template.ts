@@ -39,8 +39,12 @@ import {
   needsHouseholdMemberApproval,
   shouldShowApplicantSubmitAccessAgreementSection,
 } from '../utils/assigneeUtils'
+import { getRejectedAssigneeNationalIds } from '../utils/assigneeRejectionUtils'
 import { getValueViaPath } from '@island.is/application/core'
-import { getHouseholdTableRepeaterWithoutRejectedAssignees } from '../utils/addHouseholdMemberUtils'
+import {
+  getHouseholdTableRepeaterWithoutRejectedAssignees,
+  hasNewHouseholdMembersNeedingApproval,
+} from '../utils/addHouseholdMemberUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -348,10 +352,17 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.ASSIGNEE_APPROVAL,
-            actions: 'prepareAssigneeReapproval',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.ASSIGNEE_APPROVAL,
+              actions: 'prepareAssigneeReapproval',
+              cond: ({ application }: ApplicationContext) =>
+                hasNewHouseholdMembersNeedingApproval(application),
+            },
+            {
+              target: States.APPLICANT_SUBMIT,
+            },
+          ],
         },
       },
       [States.IN_REVIEW]: {
@@ -593,15 +604,17 @@ const template: ApplicationTemplate<
             kennitala.isValid(id) ? kennitala.sanitize(id) : id,
           ),
         )
+        const normalizeAssigneeId = (id: string) =>
+          kennitala.isValid(id) ? kennitala.sanitize(id) : id
         const signed = (
           getValueViaPath<string[]>(application.answers, 'signedAssignees') ??
           []
-        ).filter((id) => {
-          const normalized = kennitala.isValid(id) ? kennitala.sanitize(id) : id
-          return assigneeKeys.has(normalized)
-        })
+        ).filter((id) => assigneeKeys.has(normalizeAssigneeId(id)))
+        const rejected = getRejectedAssigneeNationalIds(application).filter(
+          (id) => assigneeKeys.has(normalizeAssigneeId(id)),
+        )
         set(application, 'answers.signedAssignees', signed)
-        set(application, 'answers.rejectedAssignees', [])
+        set(application, 'answers.rejectedAssignees', rejected)
         return context
       }),
     },

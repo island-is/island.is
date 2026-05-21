@@ -19,6 +19,17 @@ import {
   getRentalAgreementTenantsFlat,
 } from './rentalAgreementUtils'
 import { hasAssigneeRolePrereqOk } from './mapUserToRole'
+import {
+  getRejectedAssigneeNationalIds,
+  getRejectedAssigneeNationalIdsFromAnswers,
+} from './assigneeRejectionUtils'
+
+export {
+  getRejectedAssigneeNationalIds,
+  getRejectedAssigneeNationalIdsFromAnswers,
+  hasRejectedAssignees,
+  hasRejectedAssigneesInAnswers,
+} from './assigneeRejectionUtils'
 
 const comparableNationalId = (nationalId: string): string =>
   kennitala.isValid(nationalId)
@@ -193,10 +204,10 @@ export const getCompletedAssigneeNationalIdSet = (
   const signed = normalizeNationalIdList(
     getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? [],
   )
-  const rejected = normalizeNationalIdList(
-    getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? [],
+  const rejected = getRejectedAssigneeNationalIds(application)
+  return new Set(
+    [...signed, ...rejected].map((id) => comparableNationalId(id)),
   )
-  return new Set([...signed, ...rejected])
 }
 
 /**
@@ -425,7 +436,7 @@ export const getUnsignedApprovalNames = (
     getHouseholdMembersOver18ExcludingApplicant(application)
   const completed = getCompletedAssigneeNationalIdSet(application)
   return assigneeMembers
-    .filter((m) => !completed.has(normalizeAssigneeNationalId(m.nationalId)))
+    .filter((m) => !completed.has(comparableNationalId(m.nationalId)))
     .map((m) => m.name || m.nationalId)
 }
 
@@ -441,10 +452,6 @@ const assigneeNameFromNationalId = (
   )
   return member?.name ?? nationalId
 }
-
-export const hasRejectedAssignees = (application: Application): boolean =>
-  (getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? [])
-    .length > 0
 
 /**
  * Gets names of assignees who signed (excluding the applicant).
@@ -471,11 +478,7 @@ export const getRejectedAssigneeNames = (
 ): string[] => {
   const assigneeMembers =
     getHouseholdMembersOver18ExcludingApplicant(application)
-  const rejected = (getValueViaPath<string[]>(
-    application.answers,
-    'rejectedAssignees',
-  ) ?? []) as string[]
-  return rejected
+  return getRejectedAssigneeNationalIds(application)
     .map((nationalId) =>
       assigneeNameFromNationalId(assigneeMembers, nationalId),
     )
@@ -541,7 +544,7 @@ export const findCurrentAssigneeBackId = (
     ...(getValueViaPath<string[]>(answers, 'signedAssignees') ?? []).map(
       normalizeAssigneeNationalId,
     ),
-    ...(getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).map(
+    ...getRejectedAssigneeNationalIdsFromAnswers(answers).map(
       normalizeAssigneeNationalId,
     ),
   ])

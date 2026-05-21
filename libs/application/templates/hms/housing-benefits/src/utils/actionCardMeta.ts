@@ -138,6 +138,22 @@ export const housingBenefitsActionCards = {
           return ac.historyAssigneeApprovedGeneric
         },
       },
+      {
+        onEvent: DefaultEvents.REJECT,
+        logMessage: (application: Application, subjectNationalId?: string) => {
+          const name = getAssigneeApproverDisplayName(
+            application,
+            subjectNationalId,
+          )
+          if (name) {
+            return {
+              ...ac.historyAssigneeRejectedWithName,
+              values: { name },
+            }
+          }
+          return ac.historyAssigneeRejectedGeneric
+        },
+      },
     ],
   },
   applicantSubmit: {

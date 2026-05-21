@@ -7,13 +7,11 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, FormModes, FormValue } from '@island.is/application/types'
+import { Application, FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { applicantSubmitMessages as m } from '../../../lib/messages/applicantSubmitMessages'
 import { HikingAndWateringPlants } from '@island.is/application/assets/graphics'
-
-const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
-  (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).length > 0
+import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 
 export const ApplicantSubmitFormAssigneeVersion = buildForm({
   id: 'ApplicantSubmitAssignee',

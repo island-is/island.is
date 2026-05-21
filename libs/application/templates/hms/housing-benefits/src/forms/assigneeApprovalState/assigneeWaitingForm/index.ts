@@ -4,9 +4,8 @@ import {
   buildMultiField,
   buildImageField,
   buildDescriptionField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { FormModes, FormValue } from '@island.is/application/types'
+import { FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { MovingSearching } from '@island.is/application/assets/graphics'
 import {
@@ -14,10 +13,8 @@ import {
   assigneeWaitingPendingDescription,
   assigneeWaitingRejectedDescription,
 } from '../../../utils/assigneeWaitingUtils'
+import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 import * as m from '../../../lib/messages'
-
-const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
-  (getValueViaPath<string[]>(answers, 'rejectedAssignees') ?? []).length > 0
 
 export const AssigneeWaitingForm = buildForm({
   id: 'AssigneeWaiting',

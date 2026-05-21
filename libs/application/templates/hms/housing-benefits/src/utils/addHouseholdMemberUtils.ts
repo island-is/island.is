@@ -2,9 +2,12 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import {
+  getAssigneeNationalIds,
+  getCompletedAssigneeNationalIdSet,
   getHouseholdMembersOver18ExcludingApplicant,
   getRejectedAssigneeNames,
 } from './assigneeUtils'
+import { getRejectedAssigneeNationalIds } from './assigneeRejectionUtils'
 import { hasAssigneeRolePrereqOk } from './mapUserToRole'
 import {
   getRentalAgreementTenantsFlat,
@@ -65,11 +68,12 @@ export const getAssigneesCompletedPrereqAndDraft = (
 
 export const getRejectedAssigneeNationalIdSet = (
   application: Application,
-): Set<string> => {
-  const rejected =
-    getValueViaPath<string[]>(application.answers, 'rejectedAssignees') ?? []
-  return new Set(rejected.map((id) => normalizeKt(id)).filter(Boolean))
-}
+): Set<string> =>
+  new Set(
+    getRejectedAssigneeNationalIds(application)
+      .map((id) => normalizeKt(id))
+      .filter(Boolean),
+  )
 
 const isRejectedAssignee = (
   application: Application,
@@ -171,3 +175,16 @@ export const getAddHouseholdMemberTableRepeaterDefaultValue = (
 export const getRejectedAssigneeNamesForAddMemberScreen = (
   application: Application,
 ): string[] => getRejectedAssigneeNames(application)
+
+/**
+ * True when the household table includes an over-18 member who has not yet signed or rejected.
+ * Used after the add-household-member step to skip assignee re-approval when nothing new was added.
+ */
+export const hasNewHouseholdMembersNeedingApproval = (
+  application: Application,
+): boolean => {
+  const completed = getCompletedAssigneeNationalIdSet(application)
+  return getAssigneeNationalIds(application).some(
+    (id) => !completed.has(normalizeKt(id)),
+  )
+}
