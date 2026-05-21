@@ -22,7 +22,7 @@ import { EstatesDomainService } from './estates.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.estates)
 @FeatureFlag(Features.isServicePortalEstatesEnabled)
 @Audit({ namespace: '@island.is/api/estates' })
 @Resolver(() => EstatesEstate)

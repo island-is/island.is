@@ -8,7 +8,7 @@ import {
   LinkButton,
   SYSLUMENN_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../../lib/messages'
+import { estatesMessages as em } from '../../lib/messages'
 import {
   Box,
   GridColumn,

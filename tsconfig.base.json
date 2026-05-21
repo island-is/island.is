@@ -1263,6 +1263,9 @@
       "@island.is/portals/my-pages/information/messages": [
         "libs/portals/my-pages/information/src/lib/messages.ts"
       ],
+      "@island.is/portals/my-pages/estates": [
+        "libs/portals/my-pages/estates/src/index.ts"
+      ],
       "@island.is/portals/my-pages/law-and-order": [
         "libs/portals/my-pages/law-and-order/src/index.ts"
       ],

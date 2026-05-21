@@ -7,7 +7,7 @@ import {
   LinkButton,
   SYSLUMENN_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../../lib/messages'
+import { estatesMessages as em } from '../../lib/messages'
 import {
   ActionCard,
   Box,
@@ -20,7 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNavigate } from 'react-router-dom'
-import { AssetsPaths } from '../../../lib/paths'
+import { EstatesPaths } from '../../lib/paths'
 
 // TODO: Uncomment and wire up when the GraphQL domain for estates is ready
 // import { useEstatesOverviewQuery } from './EstatesOverview.generated'
@@ -138,7 +138,7 @@ export const EstatesOverview = () => {
                 variant: 'text',
                 onClick: () =>
                   navigate(
-                    AssetsPaths.AssetsEstateDetail.replace(':id', estate.id),
+                    EstatesPaths.EstatesDetail.replace(':id', estate.id),
                   ),
               }}
             />

@@ -1,10 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { GraphQLISODateTime } from '@nestjs/graphql'
+import { EstatesRepresentative } from './estateRepresentative.model'
 
 @ObjectType()
 export class EstatesEstate {
-  @Field({ description: 'The probate court case number (dánarbúsnúmer)' })
-  caseNumber!: string
+  @Field(() => ID)
+  id!: string
 
   @Field()
   nameOfDeceased!: string
@@ -14,4 +15,10 @@ export class EstatesEstate {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateOfDeath?: Date
+
+  @Field({ nullable: true })
+  isFinished?: boolean
+
+  @Field(() => EstatesRepresentative, { nullable: true })
+  representative?: EstatesRepresentative
 }

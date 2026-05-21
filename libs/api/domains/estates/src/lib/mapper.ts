@@ -8,10 +8,15 @@ export const mapToEstate = (e: Estate): EstatesEstate | undefined => {
   }
 
   return {
-    caseNumber: e.caseId,
+    id: e.caseId,
     nameOfDeceased: e.deceased.name,
     nationalIdOfDeceased: e.deceased.sid,
     dateOfDeath: e.dateOfDeath ?? undefined,
+    isFinished: e.status?.isOpen !== undefined ? !e.status.isOpen : undefined,
+    representative:
+      e.representative?.name && e.representative?.sid
+        ? { name: e.representative.name, nationalId: e.representative.sid }
+        : undefined,
   }
 }
 

@@ -6,10 +6,10 @@ import {
   IntroWrapper,
   SYSLUMENN_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { estatesMessages as em } from '../../../lib/messages'
+import { estatesMessages as em } from '../../lib/messages'
 import { Box, Button, Tabs } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { AssetsPaths } from '../../../lib/paths'
+import { EstatesPaths } from '../../lib/paths'
 
 // TODO: Uncomment and wire up when the GraphQL domain for estates is ready
 // import { useEstateDetailQuery } from './EstateDetail.generated'
@@ -109,7 +109,7 @@ export const EstateDetail = () => {
             icon="document"
             iconType="outline"
             onClick={() =>
-              navigate(AssetsPaths.AssetsEstateFiles.replace(':id', id ?? ''))
+              navigate(EstatesPaths.EstatesFiles.replace(':id', id ?? ''))
             }
           >
             {formatMessage(em.filesTitle)}
