@@ -15,31 +15,28 @@ export interface SailorRightCertificateDto {
 export const mapRightCertificate = (
   dto: RightCertificateIslandisDto,
 ): SailorRightCertificateDto | undefined => {
-  const serialNo = dto.certificateSerialNo?.value || undefined
-  if (!serialNo) return undefined
+  if (!dto.certificateSerialNo) return undefined
+  const serialNo = String(dto.certificateSerialNo)
 
-  const rawStatus = dto.certificateStatus?.status
+  const validToDate = dto.expirationDate
+    ? parseDate(dto.expirationDate) ?? undefined
+    : undefined
+
   const status: SailorCertificateStatus =
-    rawStatus === 'VALID'
-      ? 'Valid'
-      : rawStatus === 'INVALID'
-      ? 'Invalid'
+    validToDate != null
+      ? validToDate >= new Date()
+        ? 'Valid'
+        : 'Invalid'
       : 'Unknown'
 
   return {
     id: serialNo,
-    type: dto.rightCertificateType?.value ?? undefined,
+    type: dto.rightCertificateType || undefined,
     rightsCategories:
-      dto.rightTypes?.value && dto.rightTypes.value !== '-'
-        ? dto.rightTypes.value
-        : undefined,
+      dto.rightTypes && dto.rightTypes !== '-' ? dto.rightTypes : undefined,
     certificateNumber: serialNo,
-    issueDate: dto.issueDate?.value
-      ? parseDate(dto.issueDate.value) ?? undefined
-      : undefined,
-    validToDate: dto.expirationDate?.value
-      ? parseDate(dto.expirationDate.value) ?? undefined
-      : undefined,
+    issueDate: dto.issueDate ? parseDate(dto.issueDate) ?? undefined : undefined,
+    validToDate,
     status,
   }
 }

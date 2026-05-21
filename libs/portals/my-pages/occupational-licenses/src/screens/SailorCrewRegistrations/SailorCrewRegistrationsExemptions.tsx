@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
+  CardLoader,
   LinkButton,
   NestedTable,
   Table,
@@ -12,30 +13,31 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
-import {
-  DUMMY_EXEMPTIONS,
-  type RegistrationExemptionEntry,
-} from './SailorCrewRegistrations.dummy'
+import { ShipRegistrySailorRegistrationExemption } from '@island.is/api/schema'
+import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
 
-// TODO: Replace DUMMY_EXEMPTIONS with real API data once domain module exposes
-// registrationExemptions { shipRegistrationNo, shipName, rank, advertised,
-//   exemptionLowerStatus, dateFrom, dateTo, numberOfDays }
-
-const columnHelper = createColumnHelper<RegistrationExemptionEntry>()
+const columnHelper =
+  createColumnHelper<ShipRegistrySailorRegistrationExemption>()
 
 export const SailorCrewRegistrationsExemptions = () => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
+  const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
+  const exemptions = useMemo(
+    () => data?.shipRegistrySailorCertificates?.registrationExemptions ?? [],
+    [data],
+  )
+
   const filtered = useMemo(
     () =>
-      DUMMY_EXEMPTIONS.filter(
+      exemptions.filter(
         (e) =>
           !search ||
-          e.shipName.toLowerCase().includes(search.toLowerCase()) ||
-          e.rank.toLowerCase().includes(search.toLowerCase()),
+          (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
+          (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
       ),
-    [search],
+    [exemptions, search],
   )
 
   const columns = useMemo(
@@ -67,24 +69,26 @@ export const SailorCrewRegistrationsExemptions = () => {
     [locale],
   )
 
-  const renderExpanded = (row: Row<RegistrationExemptionEntry>) => (
+  const renderExpanded = (
+    row: Row<ShipRegistrySailorRegistrationExemption>,
+  ) => (
     <NestedTable
       data={[
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandShipNo),
-          value: row.original.shipRegistrationNo,
+          value: row.original.shipRegistrationNo ?? '-',
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandAdvertised),
-          value: row.original.advertised,
+          value: row.original.advertised ?? '-',
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandLowerRank),
-          value: row.original.exemptionLowerStatus,
+          value: row.original.exemptionLowerStatus ?? '-',
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandDays),
-          value: row.original.numberOfDays,
+          value: String(row.original.numberOfDays ?? '-'),
         },
       ]}
     />
@@ -102,28 +106,34 @@ export const SailorCrewRegistrationsExemptions = () => {
           disabled
         />
       </Box>
-      <Box marginTop={6} width="half">
-        <FilterInput
-          name="exemptionSearch"
-          placeholder={formatMessage(m.inputSearchTerm)}
-          value={search}
-          onChange={(val) => setSearch(val)}
-          backgroundColor="blue"
-        />
-      </Box>
-      <Box marginTop={2}>
-        {filtered.length === 0 ? (
-          <Problem type="no_data" noBorder={false} />
-        ) : (
-          <Table
-            columns={columns}
-            data={filtered}
-            emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}
-            mobileTitleKey="shipName"
-            renderExpandedRow={renderExpanded}
-          />
-        )}
-      </Box>
+      {loading && <CardLoader />}
+      {error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && (
+        <>
+          <Box marginTop={6} width="half">
+            <FilterInput
+              name="exemptionSearch"
+              placeholder={formatMessage(m.inputSearchTerm)}
+              value={search}
+              onChange={(val) => setSearch(val)}
+              backgroundColor="blue"
+            />
+          </Box>
+          <Box marginTop={2}>
+            {filtered.length === 0 ? (
+              <Problem type="no_data" noBorder={false} />
+            ) : (
+              <Table
+                columns={columns}
+                data={filtered}
+                emptyMessage={om.sailorCrewRegistrationsExemptionsEmpty}
+                mobileTitleKey="shipName"
+                renderExpandedRow={renderExpanded}
+              />
+            )}
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
+  CardLoader,
   LinkButton,
   Table,
   createColumnHelper,
@@ -10,34 +11,39 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
-import {
-  DUMMY_MARITIME_BOOKS,
-  type MaritimeBookEntry,
-} from './SailorCrewRegistrations.dummy'
+import { ShipRegistrySailorMaritimeBook } from '@island.is/api/schema'
+import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
 
-// TODO: Replace DUMMY_MARITIME_BOOKS with real API data once domain module exposes
-// maritimeBooks { maritimeBookSerial, maritimeBookType, dateFrom, dateTo }
-
-const columnHelper = createColumnHelper<MaritimeBookEntry>()
+const columnHelper = createColumnHelper<ShipRegistrySailorMaritimeBook>()
 
 export const SailorCrewRegistrationsMaritimeBooks = () => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
+  const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
+  const books = useMemo(
+    () => data?.shipRegistrySailorCertificates?.maritimeBooks ?? [],
+    [data],
+  )
+
   const filtered = useMemo(
     () =>
-      DUMMY_MARITIME_BOOKS.filter(
+      books.filter(
         (b) =>
           !search ||
-          b.maritimeBookSerial.toLowerCase().includes(search.toLowerCase()),
+          (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
       ),
-    [search],
+    [books, search],
   )
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('maritimeBookSerial', {
+      columnHelper.accessor('id', {
         header: formatMessage(m.number),
+        cell: ({ getValue }) => getValue() ?? '-',
+      }),
+      columnHelper.accessor('type', {
+        header: formatMessage(om.sailorMaritimeBooksType),
         cell: ({ getValue }) => getValue() ?? '-',
       }),
       columnHelper.accessor('dateFrom', {
@@ -71,27 +77,33 @@ export const SailorCrewRegistrationsMaritimeBooks = () => {
           disabled
         />
       </Box>
-      <Box marginTop={6} width="half">
-        <FilterInput
-          name="maritimeSearch"
-          placeholder={formatMessage(m.inputSearchTerm)}
-          value={search}
-          onChange={(val) => setSearch(val)}
-          backgroundColor="blue"
-        />
-      </Box>
-      <Box marginTop={2}>
-        {filtered.length === 0 ? (
-          <Problem type="no_data" noBorder={false} />
-        ) : (
-          <Table
-            columns={columns}
-            data={filtered}
-            emptyMessage={om.sailorMaritimeBooksEmpty}
-            mobileTitleKey="maritimeBookSerial"
-          />
-        )}
-      </Box>
+      {loading && <CardLoader />}
+      {error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && (
+        <>
+          <Box marginTop={6} width="half">
+            <FilterInput
+              name="maritimeSearch"
+              placeholder={formatMessage(m.inputSearchTerm)}
+              value={search}
+              onChange={(val) => setSearch(val)}
+              backgroundColor="blue"
+            />
+          </Box>
+          <Box marginTop={2}>
+            {filtered.length === 0 ? (
+              <Problem type="no_data" noBorder={false} />
+            ) : (
+              <Table
+                columns={columns}
+                data={filtered}
+                emptyMessage={om.sailorMaritimeBooksEmpty}
+                mobileTitleKey="id"
+              />
+            )}
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

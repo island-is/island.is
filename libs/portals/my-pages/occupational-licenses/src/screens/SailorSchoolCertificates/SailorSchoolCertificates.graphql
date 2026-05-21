@@ -17,5 +17,22 @@ query ShipRegistrySailorCertificates {
       certificateNumber
       issueDate
     }
+    maritimeBooks {
+      id
+      type
+      dateFrom
+      dateTo
+    }
+    registrationExemptions {
+      id
+      shipName
+      shipRegistrationNo
+      rank
+      advertised
+      exemptionLowerStatus
+      dateFrom
+      dateTo
+      numberOfDays
+    }
   }
 }

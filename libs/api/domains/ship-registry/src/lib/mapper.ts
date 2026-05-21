@@ -1,5 +1,7 @@
 import {
+  RankDto,
   SailorCertificatesDto,
+  SailorSeaServiceEntryDto,
   ShipBaseInfoDto,
   ShipCertificateIssueStatus,
   ShipDetailDto,
@@ -17,6 +19,10 @@ import {
 import { ShipRegistrySailorCertificates } from './models/sailorCertificates.model'
 import { ShipRegistrySailorRightCertificate } from './models/sailorRightCertificate.model'
 import { ShipRegistrySailorSchoolCertificate } from './models/sailorSchoolCertificate.model'
+import { ShipRegistrySailorMaritimeBook } from './models/sailorMaritimeBook.model'
+import { ShipRegistrySailorRegistrationExemption } from './models/sailorRegistrationExemption.model'
+import { ShipRegistrySailorSeaServiceEntry } from './models/sailorSeaServiceEntry.model'
+import { ShipRegistryRank } from './models/rank.model'
 import format from 'date-fns/format'
 import { LocaleEnum } from '@island.is/nest/graphql'
 
@@ -181,4 +187,27 @@ export const mapToSailorCertificates = (
     ...c,
     status: mapSailorCertificateStatus(c.status),
   })),
+  maritimeBooks: dto.maritimeBooks.map((b) => ({ ...b })),
+  registrationExemptions: dto.registrationExemptions.map((e) => ({ ...e })),
 })
+
+export const mapToSailorSeaService = (
+  entries: SailorSeaServiceEntryDto[],
+): ShipRegistrySailorSeaServiceEntry[] =>
+  entries.map((e, i) => ({
+    id: e.shipRegistrationNumber ?? String(i),
+    shipName: e.shipName,
+    shipRegistrationNumber: e.shipRegistrationNumber,
+    rank: e.rank,
+    rankCode: e.rankCode,
+    startDate: e.startDate,
+    endDate: e.endDate,
+    numberOfDays: e.numberOfDays,
+  }))
+
+export const mapToRanks = (ranks: RankDto[]): ShipRegistryRank[] =>
+  ranks.map((r) => ({
+    id: String(r.rank_id),
+    name: r.rank,
+    nameEn: r.rank_en,
+  }))

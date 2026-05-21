@@ -295,4 +295,16 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-maritime-books-empty',
     defaultMessage: 'Engar sjóferðabækur fundust',
   },
+  sailorMaritimeBooksType: {
+    id: 'sp.occupational-licenses:sailor-maritime-books-type',
+    defaultMessage: 'Tegund',
+  },
+  sailorSeaServiceRankAll: {
+    id: 'sp.occupational-licenses:sailor-sea-service-rank-all',
+    defaultMessage: 'Allar stöður',
+  },
+  sailorSeaServiceEmpty: {
+    id: 'sp.occupational-licenses:sailor-sea-service-empty',
+    defaultMessage: 'Engar lögskráningardagar fundust',
+  },
 })

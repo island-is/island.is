@@ -15,9 +15,7 @@ export const mapSchoolCertificate = (
   dto: SchoolCertificateIslandIsDto,
   index: number,
 ): SailorSchoolCertificateDto => {
-  const validToDate = dto.validTo?.value
-    ? parseDate(dto.validTo.value) ?? undefined
-    : undefined
+  const validToDate = dto.validTo ? parseDate(dto.validTo) ?? undefined : undefined
 
   const status: SailorCertificateStatus =
     validToDate != null
@@ -28,11 +26,9 @@ export const mapSchoolCertificate = (
 
   return {
     id: String(index),
-    title: dto.schoolCertificate?.value ?? undefined,
-    school: dto.school?.value ?? undefined,
-    issueDate: dto.examDate?.value
-      ? parseDate(dto.examDate.value) ?? undefined
-      : undefined,
+    title: dto.schoolCertificate ?? undefined,
+    school: dto.school ?? undefined,
+    issueDate: dto.examDate ? parseDate(dto.examDate) ?? undefined : undefined,
     validToDate,
     status,
   }

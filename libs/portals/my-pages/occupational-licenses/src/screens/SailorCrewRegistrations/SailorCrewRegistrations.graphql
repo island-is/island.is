@@ -1,0 +1,20 @@
+query ShipRegistrySailorSeaService($filters: ShipRegistrySeaServiceFilterInput) {
+  shipRegistrySailorSeaService(filters: $filters) {
+    id
+    shipName
+    shipRegistrationNumber
+    rank
+    rankCode
+    startDate
+    endDate
+    numberOfDays
+  }
+}
+
+query ShipRegistryRanks {
+  shipRegistryRanks {
+    id
+    name
+    nameEn
+  }
+}
