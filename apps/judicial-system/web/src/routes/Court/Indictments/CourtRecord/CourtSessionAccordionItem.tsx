@@ -1448,9 +1448,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     patchSession(courtSession.id, { entries: html })
                   }}
                   onBlur={(html) => {
+                    // Decode entities (e.g. &nbsp;) and strip tags so an
+                    // otherwise-empty paragraph doesn't pass the required check.
+                    const decodedText =
+                      new DOMParser()
+                        .parseFromString(html, 'text/html')
+                        .body.textContent?.trim() ?? ''
                     validateAndSetErrorMessage(
                       ['empty'],
-                      html.replace(/<[^>]*>/g, '').trim(),
+                      decodedText,
                       setEntriesErrorMessage,
                     )
                     patchSession(
