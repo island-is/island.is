@@ -12,6 +12,7 @@ import {
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -372,7 +373,7 @@ export class SocialInsuranceService {
 
   async setSpouseTaxCardDueToDeath(
     user: User,
-    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }

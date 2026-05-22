@@ -54,7 +54,7 @@ export const useTaxCardAllowance = () => {
     switch (spouseTaxCredit.action) {
       case 'grant': {
         const { year, month, percentage } = spouseTaxCredit.data
-        if (year == null || month == null) break
+        if (year == null || month == null || !percentage) break
         await setSpouse({
           variables: { input: { year, month, percentage: Number(percentage) } },
         })
@@ -62,7 +62,7 @@ export const useTaxCardAllowance = () => {
       }
       case 'deceased': {
         const { year, month, percentage } = spouseTaxCredit.data
-        if (year == null || month == null) break
+        if (year == null || month == null || !percentage) break
         await setSpouseDueToDeath({
           variables: { input: { year, month, percentage: Number(percentage) } },
         })

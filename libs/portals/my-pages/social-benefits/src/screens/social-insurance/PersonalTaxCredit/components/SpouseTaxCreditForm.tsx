@@ -21,9 +21,6 @@ interface Props {
   spouseIsDeceased?: boolean | null
 }
 
-const GRANT = 'grant' as const
-const DECEASED = 'deceased' as const
-
 export const SpouseTaxCreditForm: FC<Props> = ({
   state,
   setState,
@@ -43,7 +40,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
     () =>
       toMonthOptions(
         monthsAndYears,
-        state.action === GRANT ? state.data.year : null,
+        state.action === 'grant' ? state.data.year : null,
         lang,
       ),
     [monthsAndYears, state, lang],
@@ -53,7 +50,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
     () =>
       toMonthOptions(
         monthsAndYears,
-        state.action === DECEASED ? state.data.year : null,
+        state.action === 'deceased' ? state.data.year : null,
         lang,
       ),
     [monthsAndYears, state, lang],
@@ -64,20 +61,20 @@ export const SpouseTaxCreditForm: FC<Props> = ({
       <Checkbox
         id="grant-spouse-tax-credit"
         label={formatMessage(m.grantSpouseTaxCredit)}
-        checked={state.action === GRANT}
+        checked={state.action === 'grant'}
         disabled={!!spouseIsDeceased}
         onChange={(e) =>
           setState(
             e.target.checked
               ? {
-                  action: GRANT,
+                  action: 'grant',
                   data: { year: null, month: null, percentage: '' },
                 }
               : { action: null },
           )
         }
       />
-      {state.action === GRANT && (
+      {state.action === 'grant' && (
         <Box paddingLeft={7}>
           <Box style={FORM_MAX_WIDTH}>
             <Stack space={3}>
@@ -86,7 +83,9 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                   {spouseName && <Text>{spouseName}</Text>}
                   {spouseNationalId && (
                     <Text>
-                      {formatMessage(m.nationalIdWithValue, { value: spouseNationalId })}
+                      {formatMessage(m.nationalIdWithValue, {
+                        value: spouseNationalId,
+                      })}
                     </Text>
                   )}
                 </Box>
@@ -98,13 +97,13 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 selectedMonth={state.data.month}
                 onYearChange={(year) =>
                   setState({
-                    action: GRANT,
+                    action: 'grant',
                     data: { ...state.data, year, month: null },
                   })
                 }
                 onMonthChange={(month) =>
                   setState({
-                    action: GRANT,
+                    action: 'grant',
                     data: { ...state.data, month },
                   })
                 }
@@ -118,7 +117,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 value={state.data.percentage}
                 onChange={(value) =>
                   setState({
-                    action: GRANT,
+                    action: 'grant',
                     data: { ...state.data, percentage: value },
                   })
                 }
@@ -132,20 +131,20 @@ export const SpouseTaxCreditForm: FC<Props> = ({
       <Checkbox
         id="spouse-deceased-tax-credit"
         label={formatMessage(m.spouseDeceasedTaxCredit)}
-        checked={state.action === DECEASED}
+        checked={state.action === 'deceased'}
         disabled={!spouseIsDeceased}
         onChange={(e) =>
           setState(
             e.target.checked
               ? {
-                  action: DECEASED,
+                  action: 'deceased',
                   data: { year: null, month: null, percentage: '' },
                 }
               : { action: null },
           )
         }
       />
-      {state.action === DECEASED && (
+      {state.action === 'deceased' && (
         <Box paddingLeft={7}>
           <Box style={FORM_MAX_WIDTH}>
             <Stack space={3}>
@@ -156,7 +155,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 selectedMonth={state.data.month}
                 onYearChange={(year) =>
                   setState({
-                    action: DECEASED,
+                    action: 'deceased',
                     data: {
                       year,
                       month: null,
@@ -166,7 +165,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 }
                 onMonthChange={(month) =>
                   setState({
-                    action: DECEASED,
+                    action: 'deceased',
                     data: { ...state.data, month },
                   })
                 }
@@ -180,7 +179,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                 value={state.data.percentage}
                 onChange={(value) =>
                   setState({
-                    action: DECEASED,
+                    action: 'deceased',
                     data: { ...state.data, percentage: value },
                   })
                 }

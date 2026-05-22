@@ -24,10 +24,6 @@ interface Props {
   canDiscontinue: boolean
 }
 
-const REGISTER = 'register' as const
-const UPDATE = 'update' as const
-const DISCONTINUE = 'discontinue' as const
-
 export const MyTaxCreditForm: FC<Props> = ({
   state,
   setState,
@@ -46,7 +42,7 @@ export const MyTaxCreditForm: FC<Props> = ({
     () =>
       toMonthOptions(
         monthsAndYears,
-        state.action === REGISTER ? state.data.year : null,
+        state.action === 'register' ? state.data.year : null,
         lang,
       ),
     [monthsAndYears, state, lang],
@@ -59,7 +55,7 @@ export const MyTaxCreditForm: FC<Props> = ({
     () =>
       toMonthOptions(
         discontinuingMonthsAndYears,
-        state.action === DISCONTINUE ? state.data.year : null,
+        state.action === 'discontinue' ? state.data.year : null,
         lang,
       ),
     [discontinuingMonthsAndYears, state, lang],
@@ -81,26 +77,26 @@ export const MyTaxCreditForm: FC<Props> = ({
                 <Text
                   as="span"
                   fontWeight={
-                    state.action === REGISTER ? 'semiBold' : undefined
+                    state.action === 'register' ? 'semiBold' : undefined
                   }
                 >
                   {formatMessage(m.registerPersonalTaxCredit)}
                 </Text>
               }
-              checked={state.action === REGISTER}
+              checked={state.action === 'register'}
               disabled={!monthsAndYears?.length}
               onChange={(e) =>
                 setState(
                   e.target.checked
                     ? {
-                        action: REGISTER,
+                        action: 'register',
                         data: { year: null, month: null, percentage: '' },
                       }
                     : { action: null },
                 )
               }
             />
-            {state.action === REGISTER && (
+            {state.action === 'register' && (
               <Box style={FORM_MAX_WIDTH}>
                 <Stack space={3}>
                   <YearMonthSelect
@@ -110,13 +106,13 @@ export const MyTaxCreditForm: FC<Props> = ({
                     selectedMonth={state.data.month}
                     onYearChange={(year) =>
                       setState({
-                        action: REGISTER,
+                        action: 'register',
                         data: { ...state.data, year, month: null },
                       })
                     }
                     onMonthChange={(month) =>
                       setState({
-                        action: REGISTER,
+                        action: 'register',
                         data: { ...state.data, month },
                       })
                     }
@@ -131,7 +127,7 @@ export const MyTaxCreditForm: FC<Props> = ({
                     value={state.data.percentage}
                     onChange={(value) =>
                       setState({
-                        action: REGISTER,
+                        action: 'register',
                         data: { ...state.data, percentage: value },
                       })
                     }
@@ -160,29 +156,32 @@ export const MyTaxCreditForm: FC<Props> = ({
                   <Text
                     as="span"
                     fontWeight={
-                      state.action === UPDATE ? 'semiBold' : undefined
+                      state.action === 'update' ? 'semiBold' : undefined
                     }
                   >
                     {formatMessage(m.editPersonalTaxCredit)}
                   </Text>
                 }
-                checked={state.action === UPDATE}
+                checked={state.action === 'update'}
                 onChange={(e) =>
                   setState(
                     e.target.checked
-                      ? { action: UPDATE, data: { percentage: '' } }
+                      ? { action: 'update', data: { percentage: '' } }
                       : { action: null },
                   )
                 }
               />
-              {state.action === UPDATE && (
+              {state.action === 'update' && (
                 <Box style={FORM_MAX_WIDTH}>
                   <PercentageInput
                     id="edit-percentage"
                     name="edit-percentage"
                     value={state.data.percentage}
                     onChange={(value) =>
-                      setState({ action: UPDATE, data: { percentage: value } })
+                      setState({
+                        action: 'update',
+                        data: { percentage: value },
+                      })
                     }
                   />
                 </Box>
@@ -203,13 +202,13 @@ export const MyTaxCreditForm: FC<Props> = ({
                   <Text
                     as="span"
                     fontWeight={
-                      state.action === DISCONTINUE ? 'semiBold' : undefined
+                      state.action === 'discontinue' ? 'semiBold' : undefined
                     }
                   >
                     {formatMessage(m.discontinuePersonalTaxCredit)}
                   </Text>
                 }
-                checked={state.action === DISCONTINUE}
+                checked={state.action === 'discontinue'}
                 disabled={
                   !canDiscontinue || !discontinuingMonthsAndYears?.length
                 }
@@ -217,14 +216,14 @@ export const MyTaxCreditForm: FC<Props> = ({
                   setState(
                     e.target.checked
                       ? {
-                          action: DISCONTINUE,
+                          action: 'discontinue',
                           data: { year: null, month: null },
                         }
                       : { action: null },
                   )
                 }
               />
-              {state.action === DISCONTINUE && (
+              {state.action === 'discontinue' && (
                 <Box style={FORM_MAX_WIDTH}>
                   <YearMonthSelect
                     yearOptions={discontinueYearOptions}
@@ -233,13 +232,13 @@ export const MyTaxCreditForm: FC<Props> = ({
                     selectedMonth={state.data.month}
                     onYearChange={(year) =>
                       setState({
-                        action: DISCONTINUE,
+                        action: 'discontinue',
                         data: { year, month: null },
                       })
                     }
                     onMonthChange={(month) =>
                       setState({
-                        action: DISCONTINUE,
+                        action: 'discontinue',
                         data: { ...state.data, month },
                       })
                     }
