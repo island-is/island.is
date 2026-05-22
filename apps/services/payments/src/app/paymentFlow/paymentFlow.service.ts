@@ -135,7 +135,7 @@ export class PaymentFlowService {
         chargeDetails.catalogItems,
       )
 
-      return await this.sequelize.transaction(async (transaction) => {
+      const result = await this.sequelize.transaction(async (transaction) => {
         const paymentFlow = await this.paymentFlowModel.create(
           {
             ...paymentInfo,
@@ -161,13 +161,6 @@ export class PaymentFlowService {
           },
         )
 
-        await this.logChargeCodeDistribution(
-          paymentFlow.id,
-          'created',
-          undefined,
-          processedCharges,
-        )
-
         return {
           id: paymentFlow.id,
           urls: {
@@ -176,6 +169,15 @@ export class PaymentFlowService {
           },
         }
       })
+
+      await this.logChargeCodeDistribution(
+        result.id,
+        'created',
+        undefined,
+        processedCharges,
+      )
+
+      return result
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
 
