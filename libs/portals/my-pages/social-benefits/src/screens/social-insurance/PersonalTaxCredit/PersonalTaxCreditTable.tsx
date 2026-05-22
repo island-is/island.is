@@ -1,6 +1,9 @@
 import { Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
+import {
+  SocialInsuranceTaxCardSummary,
+  SocialInsuranceTaxCardType,
+} from '@island.is/api/schema'
 import {
   createColumnHelper,
   m as coreMessages,
@@ -23,18 +26,11 @@ import {
   type ReactNode,
 } from 'react'
 import { m } from '../../../lib/messages'
-import type { GetPersonalTaxCreditQuery } from './PersonalTaxCredit.generated'
 
-type TaxCards = NonNullable<
-  NonNullable<
-    GetPersonalTaxCreditQuery['socialInsurancePersonalTaxCredit']
-  >['taxCards']
->
-
-type TaxCard = TaxCards[number]
+type TaxCard = SocialInsuranceTaxCardSummary
 
 type PersonalTaxCreditTableProps = {
-  taxCards: TaxCards
+  taxCards: TaxCard[]
   renderExpandedRow?: (controls: { close: () => void }) => ReactNode
 }
 
@@ -63,7 +59,7 @@ const isPreferredEditableCard = (candidate: TaxCard, current: TaxCard) => {
   return candidate.validTo > current.validTo
 }
 
-const getEditableRowIndex = (taxCards: TaxCards): number | null => {
+const getEditableRowIndex = (taxCards: TaxCard[]): number | null => {
   let editableRowIndex: number | null = null
   for (const [index, card] of taxCards.entries()) {
     if (!isPersonalAllowance(card)) continue
@@ -179,6 +175,7 @@ export const PersonalTaxCreditTable = ({
                 scope={header.id === 'actions' ? undefined : 'col'}
                 aria-hidden={header.id === 'actions' ? true : undefined}
                 box={{ background: 'blue100' }}
+                text={{ variant: 'medium' }}
               >
                 {flexRender(
                   header.column.columnDef.header,

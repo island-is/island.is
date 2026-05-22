@@ -29,7 +29,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
   spouseNationalId,
   spouseIsDeceased,
 }) => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   const yearOptions = useMemo(
     () => toYearOptions(monthsAndYears),
@@ -41,9 +41,9 @@ export const SpouseTaxCreditForm: FC<Props> = ({
       toMonthOptions(
         monthsAndYears,
         state.action === 'grant' ? state.data.year : null,
-        lang,
+        formatMessage,
       ),
-    [monthsAndYears, state, lang],
+    [monthsAndYears, state, formatMessage],
   )
 
   const deceasedMonthOptions = useMemo(
@@ -51,9 +51,9 @@ export const SpouseTaxCreditForm: FC<Props> = ({
       toMonthOptions(
         monthsAndYears,
         state.action === 'deceased' ? state.data.year : null,
-        lang,
+        formatMessage,
       ),
-    [monthsAndYears, state, lang],
+    [monthsAndYears, state, formatMessage],
   )
 
   return (

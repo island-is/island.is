@@ -32,7 +32,7 @@ export const MyTaxCreditForm: FC<Props> = ({
   isAlreadyRegistered,
   canDiscontinue,
 }) => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   const yearOptions = useMemo(
     () => toYearOptions(monthsAndYears),
@@ -43,9 +43,9 @@ export const MyTaxCreditForm: FC<Props> = ({
       toMonthOptions(
         monthsAndYears,
         state.action === 'register' ? state.data.year : null,
-        lang,
+        formatMessage,
       ),
-    [monthsAndYears, state, lang],
+    [monthsAndYears, state, formatMessage],
   )
   const discontinueYearOptions = useMemo(
     () => toYearOptions(discontinuingMonthsAndYears),
@@ -56,9 +56,9 @@ export const MyTaxCreditForm: FC<Props> = ({
       toMonthOptions(
         discontinuingMonthsAndYears,
         state.action === 'discontinue' ? state.data.year : null,
-        lang,
+        formatMessage,
       ),
-    [discontinuingMonthsAndYears, state, lang],
+    [discontinuingMonthsAndYears, state, formatMessage],
   )
 
   return (
