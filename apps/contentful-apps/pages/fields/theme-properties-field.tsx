@@ -90,7 +90,10 @@ const ThemePropertiesField = () => {
               key={color}
               id={color}
               value={color}
-              isChecked={selectedTextColor === color || color === 'dark400'}
+              isChecked={
+                selectedTextColor === color ||
+                (!selectedTextColor && color === 'dark400')
+              }
               onChange={() => {
                 updateState('textColor', color)
               }}
@@ -125,9 +128,7 @@ const ThemePropertiesField = () => {
           variant="transparent"
           size="small"
           style={{ paddingLeft: 0, paddingRight: 0 }}
-          startIcon={
-            showAdvanced ? <ChevronDownIcon /> : <ChevronRightIcon />
-          }
+          startIcon={showAdvanced ? <ChevronDownIcon /> : <ChevronRightIcon />}
           onClick={() => setShowAdvanced((open) => !open)}
         >
           Advanced settings
