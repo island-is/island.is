@@ -28,7 +28,9 @@ export class FeatureFlagsService {
     console.log('[FeatureFlags]', {
       flagCount: Object.keys(flags).length,
       attributes: featureFlagUser.attributes,
-      sampleFlags: Object.entries(flags).slice(0, 5).map(([k, v]) => `${k}=${v}`),
+      sampleFlags: Object.entries(flags)
+        .slice(0, 5)
+        .map(([k, v]) => `${k}=${v}`),
     })
     return { flags }
   }

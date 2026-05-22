@@ -70,10 +70,7 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   }, [loading, isAuthenticated])
 
   const contextRef = useRef<FeatureFlagClient>({
-    getValue: async <T extends SettingValue>(
-      key: string,
-      defaultValue: T,
-    ) => {
+    getValue: async <T extends SettingValue>(key: string, defaultValue: T) => {
       if (readyRef.current) {
         await readyRef.current.promise
       }

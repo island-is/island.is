@@ -5,9 +5,7 @@ import { createClientFactory } from './factory'
 
 const createClientNode = createClientFactory(ConfigCatNode)
 
-const clientTypes = [
-  { create: createClientNode, name: 'Node' },
-]
+const clientTypes = [{ create: createClientNode, name: 'Node' }]
 
 describe('Singleton client', () => {
   clientTypes.forEach((clientType) => {
