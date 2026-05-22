@@ -1,22 +1,35 @@
-query ShipRegistrySailorSeaService(
-  $filters: ShipRegistrySeaServiceFilterInput
+query ShipRegistrySailorCrewRegistrations(
+  $filters: ShipRegistrySeaServiceBookFilterInput
 ) {
-  shipRegistrySailorSeaService(filters: $filters) {
-    id
-    shipName
-    shipRegistrationNumber
-    rank
-    rankCode
-    startDate
-    endDate
-    numberOfDays
-  }
-}
-
-query ShipRegistryRanks {
-  shipRegistryRanks {
-    id
-    name
-    nameEn
+  shipRegistrySailor {
+    seaServiceBook(filters: $filters) {
+      id
+      shipName
+      shipRegistrationNumber
+      rank
+      rankCode
+      startDate
+      endDate
+      numberOfDays
+    }
+    certificates {
+      registrationExemptions {
+        id
+        shipName
+        shipRegistrationNo
+        rank
+        advertised
+        exemptionLowerStatus
+        dateFrom
+        dateTo
+        numberOfDays
+      }
+      maritimeBooks {
+        id
+        type
+        dateFrom
+        dateTo
+      }
+    }
   }
 }

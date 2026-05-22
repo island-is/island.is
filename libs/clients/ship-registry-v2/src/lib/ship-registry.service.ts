@@ -100,12 +100,16 @@ export class ShipRegistryClientV2Service {
   }
 
   async getSailorSeaService(
+    user: User,
     filters?: SailorSeaServiceFilterDto,
   ): Promise<SailorSeaServiceEntryDto[]> {
-    const response = await dataOr404Null(
-      getCrewRegistrationCountByShip({
-        body: filters as never,
-      }),
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        getCrewRegistrationCountByShip({
+          // TODO: OpenAPI spec for POST /sailor/crewregistrationsbyship does not define a request body — regenerate client once spec is updated
+          body: filters as never,
+        }),
+      ),
     )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

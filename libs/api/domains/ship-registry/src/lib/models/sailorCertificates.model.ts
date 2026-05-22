@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { ShipRegistrySailorSchoolCertificate } from './sailorSchoolCertificate.model'
 import { ShipRegistrySailorRightCertificate } from './sailorRightCertificate.model'
 import { ShipRegistrySailorMaritimeBook } from './sailorMaritimeBook.model'
@@ -6,15 +7,19 @@ import { ShipRegistrySailorRegistrationExemption } from './sailorRegistrationExe
 
 @ObjectType()
 export class ShipRegistrySailorCertificates {
-  @Field(() => [ShipRegistrySailorSchoolCertificate])
-  schoolCertificates!: ShipRegistrySailorSchoolCertificate[]
+  @Field(() => [ShipRegistrySailorSchoolCertificate], { nullable: true })
+  schoolCertificates?: ShipRegistrySailorSchoolCertificate[]
 
-  @Field(() => [ShipRegistrySailorRightCertificate])
-  rightCertificates!: ShipRegistrySailorRightCertificate[]
+  @Field(() => [ShipRegistrySailorRightCertificate], { nullable: true })
+  rightCertificates?: ShipRegistrySailorRightCertificate[]
 
-  @Field(() => [ShipRegistrySailorMaritimeBook])
-  maritimeBooks!: ShipRegistrySailorMaritimeBook[]
+  @Field(() => [ShipRegistrySailorMaritimeBook], { nullable: true })
+  maritimeBooks?: ShipRegistrySailorMaritimeBook[]
 
-  @Field(() => [ShipRegistrySailorRegistrationExemption])
-  registrationExemptions!: ShipRegistrySailorRegistrationExemption[]
+  @Field(() => [ShipRegistrySailorRegistrationExemption], { nullable: true })
+  registrationExemptions?: ShipRegistrySailorRegistrationExemption[]
+}
+
+export interface ShipRegistrySailorCertificatesBase {
+  locale: LocaleEnum
 }

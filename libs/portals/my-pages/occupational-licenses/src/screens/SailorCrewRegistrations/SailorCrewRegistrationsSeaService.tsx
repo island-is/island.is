@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, Select, Stack } from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
   Table,
@@ -10,39 +10,17 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
-import { ShipRegistrySailorSeaServiceEntry } from '@island.is/api/schema'
-import {
-  useShipRegistrySailorSeaServiceQuery,
-  useShipRegistryRanksQuery,
-} from './SailorCrewRegistrations.generated'
+import { ShipRegistrySailorSeaServiceBookEntry } from '@island.is/api/schema'
+import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
-const columnHelper = createColumnHelper<ShipRegistrySailorSeaServiceEntry>()
+const columnHelper = createColumnHelper<ShipRegistrySailorSeaServiceBookEntry>()
 
 export const SailorCrewRegistrationsSeaService = () => {
   const { formatMessage, locale } = useLocale()
-  const [rankId, setRankId] = useState<number | undefined>(undefined)
 
-  const { data: ranksData } = useShipRegistryRanksQuery()
-  const rankOptions = useMemo(
-    () =>
-      (ranksData?.shipRegistryRanks ?? []).map((r) => ({
-        label: locale === 'en' ? r.nameEn ?? r.name : r.name,
-        value: r.id,
-      })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ranksData, locale],
-  )
+  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
 
-  const { data, loading, error } = useShipRegistrySailorSeaServiceQuery({
-    variables: {
-      filters: rankId != null ? { rankId } : undefined,
-    },
-  })
-
-  const entries = useMemo(
-    () => data?.shipRegistrySailorSeaService ?? [],
-    [data],
-  )
+  const entries = data?.shipRegistrySailor?.seaServiceBook ?? []
 
   const columns = useMemo(
     () => [
@@ -79,18 +57,6 @@ export const SailorCrewRegistrationsSeaService = () => {
 
   return (
     <Stack space={4}>
-      <Box width="half">
-        <Select
-          name="rankFilter"
-          label={formatMessage(om.sailorColumnRank)}
-          placeholder={formatMessage(om.sailorSeaServiceRankAll)}
-          options={rankOptions}
-          onChange={(opt) => setRankId(opt ? Number(opt.value) : undefined)}
-          isClearable
-          size="sm"
-          backgroundColor="blue"
-        />
-      </Box>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && entries.length === 0 && (

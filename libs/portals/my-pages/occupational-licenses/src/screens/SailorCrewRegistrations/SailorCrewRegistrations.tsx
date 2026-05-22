@@ -11,13 +11,13 @@ import { olMessage as om } from '../../lib/messages'
 import { SailorCrewRegistrationsSeaService } from './SailorCrewRegistrationsSeaService'
 import { SailorCrewRegistrationsExemptions } from './SailorCrewRegistrationsExemptions'
 import { SailorCrewRegistrationsMaritimeBooks } from './SailorCrewRegistrationsMaritimeBooks'
-import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
+import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
 const SailorCrewRegistrations = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage } = useLocale()
 
-  const { loading, error } = useShipRegistrySailorCertificatesQuery()
+  const { loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
 
   return (
     <IntroWrapper

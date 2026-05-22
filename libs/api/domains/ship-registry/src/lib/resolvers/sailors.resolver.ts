@@ -1,12 +1,4 @@
-import {
-  Args,
-  InputType,
-  Field,
-  Float,
-  Int,
-  Query,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
@@ -15,7 +7,7 @@ import {
   ScopesGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   FeatureFlag,
@@ -24,76 +16,71 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { ShipRegistrySailorCertificates } from '../models/sailorCertificates.model'
-import { ShipRegistrySailorSeaServiceEntry } from '../models/sailorSeaServiceEntry.model'
-import { ShipRegistryRank } from '../models/rank.model'
+import { LocaleEnum } from '@island.is/nest/graphql'
+import { ShipRegistrySailor, type ShipRegistrySailorBase } from '../models/sailor.model'
+import { ShipRegistrySailorCertificates, type ShipRegistrySailorCertificatesBase } from '../models/sailorCertificates.model'
+import { ShipRegistrySailorSeaServiceBookEntry } from '../models/sailorSeaServiceBookEntry.model'
+import { SeaServiceBookFilterInput } from '../dto/sailor-sea-service-book-filter.input'
 import { SailorsService } from '../services/sailors.service'
 
-@InputType()
-export class ShipRegistrySeaServiceFilterInput {
-  @Field({ nullable: true })
-  dateFrom?: string
-
-  @Field({ nullable: true })
-  dateTo?: string
-
-  @Field(() => Int, { nullable: true })
-  rankId?: number
-
-  @Field(() => Float, { nullable: true })
-  fromOrEqLength?: number
-
-  @Field(() => Float, { nullable: true })
-  fromOrEqMainEnginePower?: number
-
-  @Field(() => Float, { nullable: true })
-  fromOrEqBruttoWeight?: number
-}
+const namespace = '@island.is/api/ship-registry'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.ships)
 @FeatureFlag(Features.isServicePortalSailorsPageEnabled)
-@Audit({ namespace: '@island.is/api/ship-registry' })
-@Resolver(() => ShipRegistrySailorCertificates)
+@Audit({ namespace })
+@Resolver(() => ShipRegistrySailor)
 export class SailorsResolver {
-  constructor(private readonly sailorsService: SailorsService) {}
+  constructor(
+    private readonly sailorsService: SailorsService,
+    private readonly auditService: AuditService,
+  ) {}
 
-  @Query(() => ShipRegistrySailorCertificates, {
-    name: 'shipRegistrySailorCertificates',
+  @Query(() => ShipRegistrySailor, {
+    name: 'shipRegistrySailor',
     nullable: true,
   })
-  async sailorCertificates(
+  @Audit()
+  async sailor(
     @CurrentUser() user: User,
-  ): Promise<ShipRegistrySailorCertificates | null> {
-    return this.sailorsService.getSailorCertificates(user)
+    @Args('locale', { type: () => LocaleEnum, nullable: true, defaultValue: LocaleEnum.Is })
+    locale: LocaleEnum,
+  ): Promise<ShipRegistrySailorBase> {
+    return { locale }
   }
 
-  @Query(() => [ShipRegistrySailorSeaServiceEntry], {
-    name: 'shipRegistrySailorSeaService',
+  @ResolveField('certificates', () => ShipRegistrySailorCertificates, {
+    nullable: true,
   })
-  async sailorSeaService(
-    @Args('filters', { nullable: true })
-    filters?: ShipRegistrySeaServiceFilterInput,
-  ): Promise<ShipRegistrySailorSeaServiceEntry[]> {
-    return this.sailorsService.getSailorSeaService(
-      filters
-        ? {
-            dateFrom: filters.dateFrom,
-            dateTo: filters.dateTo,
-            rankId: filters.rankId,
-            fromOrEqLength: filters.fromOrEqLength,
-            fromOrEqMainEnginePower: filters.fromOrEqMainEnginePower,
-            fromOrEqBruttoWeight: filters.fromOrEqBruttoWeight,
-          }
-        : undefined,
-    )
+  resolveCertificates(
+    @Context('req') { user }: { user: User },
+    @Parent() { locale }: ShipRegistrySailorBase,
+  ): ShipRegistrySailorCertificatesBase {
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'resolveCertificates',
+      resources: user.nationalId,
+    })
+    return { locale }
   }
 
-  @Query(() => [ShipRegistryRank], {
-    name: 'shipRegistryRanks',
+  @ResolveField('seaServiceBook', () => [ShipRegistrySailorSeaServiceBookEntry], {
+    nullable: true,
   })
-  async ranks(): Promise<ShipRegistryRank[]> {
-    return this.sailorsService.getRanks()
+  async resolveSeaServiceBook(
+    @Context('req') { user }: { user: User },
+    @Parent() { locale }: ShipRegistrySailorBase,
+    @Args('filters', { type: () => SeaServiceBookFilterInput, nullable: true })
+    filters?: SeaServiceBookFilterInput,
+  ): Promise<ShipRegistrySailorSeaServiceBookEntry[]> {
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'resolveSeaServiceBook',
+      resources: user.nationalId,
+    })
+    return this.sailorsService.getSailorSeaServiceBook(user, locale, filters)
   }
 }

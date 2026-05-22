@@ -14,7 +14,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
 import { ShipRegistrySailorRegistrationExemption } from '@island.is/api/schema'
-import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
+import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
 const columnHelper =
   createColumnHelper<ShipRegistrySailorRegistrationExemption>()
@@ -23,11 +23,8 @@ export const SailorCrewRegistrationsExemptions = () => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
-  const exemptions = useMemo(
-    () => data?.shipRegistrySailorCertificates?.registrationExemptions ?? [],
-    [data],
-  )
+  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
+  const exemptions = data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
 
   const filtered = useMemo(
     () =>

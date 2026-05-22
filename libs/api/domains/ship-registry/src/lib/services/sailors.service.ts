@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
+import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2'
 import {
-  SailorSeaServiceFilterDto,
-  ShipRegistryClientV2Service,
-} from '@island.is/clients/ship-registry-v2'
-import {
-  mapToRanks,
-  mapToSailorCertificates,
-  mapToSailorSeaService,
+  mapToSailorMaritimeBooks,
+  mapToSailorRegistrationExemptions,
+  mapToSailorRightCertificates,
+  mapToSailorSchoolCertificates,
+  mapToSailorSeaServiceBook,
 } from '../mapper'
-import { ShipRegistrySailorCertificates } from '../models/sailorCertificates.model'
-import { ShipRegistrySailorSeaServiceEntry } from '../models/sailorSeaServiceEntry.model'
-import { ShipRegistryRank } from '../models/rank.model'
+import { ShipRegistrySailorSchoolCertificate } from '../models/sailorSchoolCertificate.model'
+import { ShipRegistrySailorRightCertificate } from '../models/sailorRightCertificate.model'
+import { ShipRegistrySailorMaritimeBook } from '../models/sailorMaritimeBook.model'
+import { ShipRegistrySailorRegistrationExemption } from '../models/sailorRegistrationExemption.model'
+import { ShipRegistrySailorSeaServiceBookEntry } from '../models/sailorSeaServiceBookEntry.model'
+import { LocaleEnum } from '@island.is/nest/graphql'
+import type { SeaServiceBookFilterInput } from '../dto/sailor-sea-service-book-filter.input'
 
 @Injectable()
 export class SailorsService {
@@ -19,42 +22,53 @@ export class SailorsService {
     private readonly shipRegistryClientV2Service: ShipRegistryClientV2Service,
   ) {}
 
-  async getSailorCertificates(
+  async getSailorSchoolCertificates(
     user: User,
-  ): Promise<ShipRegistrySailorCertificates | null> {
-    const [
-      schoolCertificates,
-      rightCertificates,
-      maritimeBooks,
-      registrationExemptions,
-    ] = await Promise.all([
-      this.shipRegistryClientV2Service.getSailorSchoolCertificates(user),
-      this.shipRegistryClientV2Service.getSailorRightCertificates(user),
-      this.shipRegistryClientV2Service.getSailorMaritimeBooks(user),
-      this.shipRegistryClientV2Service.getSailorRegistrationExemptions(user),
-    ])
-
-    return mapToSailorCertificates({
-      schoolCertificates,
-      rightCertificates,
-      maritimeBooks,
-      registrationExemptions,
-    })
+    locale: LocaleEnum,
+  ): Promise<ShipRegistrySailorSchoolCertificate[]> {
+    const entries =
+      await this.shipRegistryClientV2Service.getSailorSchoolCertificates(user)
+    return mapToSailorSchoolCertificates(entries, locale)
   }
 
-  async getSailorSeaService(
-    filters?: SailorSeaServiceFilterDto,
-  ): Promise<ShipRegistrySailorSeaServiceEntry[]> {
+  async getSailorRightCertificates(
+    user: User,
+    locale: LocaleEnum,
+  ): Promise<ShipRegistrySailorRightCertificate[]> {
+    const entries =
+      await this.shipRegistryClientV2Service.getSailorRightCertificates(user)
+    return mapToSailorRightCertificates(entries, locale)
+  }
+
+  async getSailorMaritimeBooks(
+    user: User,
+    locale: LocaleEnum,
+  ): Promise<ShipRegistrySailorMaritimeBook[]> {
+    const entries =
+      await this.shipRegistryClientV2Service.getSailorMaritimeBooks(user)
+    return mapToSailorMaritimeBooks(entries, locale)
+  }
+
+  async getSailorRegistrationExemptions(
+    user: User,
+    locale: LocaleEnum,
+  ): Promise<ShipRegistrySailorRegistrationExemption[]> {
+    const entries =
+      await this.shipRegistryClientV2Service.getSailorRegistrationExemptions(
+        user,
+      )
+    return mapToSailorRegistrationExemptions(entries, locale)
+  }
+
+  async getSailorSeaServiceBook(
+    user: User,
+    locale: LocaleEnum,
+    filters?: SeaServiceBookFilterInput,
+  ): Promise<ShipRegistrySailorSeaServiceBookEntry[]> {
     const entries = await this.shipRegistryClientV2Service.getSailorSeaService(
+      user,
       filters,
     )
-
-    return mapToSailorSeaService(entries)
-  }
-
-  async getRanks(): Promise<ShipRegistryRank[]> {
-    const ranks = await this.shipRegistryClientV2Service.getRanks()
-
-    return mapToRanks(ranks)
+    return mapToSailorSeaServiceBook(entries, locale)
   }
 }

@@ -14,10 +14,16 @@ export class ShipRegistrySailorRegistrationExemption {
   @Field({ nullable: true })
   rank?: string
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    description: 'TODO: clarify meaning with domain expert',
+  })
   advertised?: string
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    description: 'TODO: clarify meaning with domain expert',
+  })
   exemptionLowerStatus?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })

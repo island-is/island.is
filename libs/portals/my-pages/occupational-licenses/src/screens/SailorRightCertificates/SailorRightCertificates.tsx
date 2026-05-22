@@ -14,9 +14,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
-// Both SailorSchoolCertificates and SailorRightCertificates use the SAME query
-// to ensure shared Apollo cache between screens.
-import { useShipRegistrySailorCertificatesQuery } from '../SailorSchoolCertificates/SailorSchoolCertificates.generated'
+import { useShipRegistrySailorRightCertificatesQuery } from './SailorRightCertificates.generated'
 import { ShipRegistrySailorRightCertificate } from '@island.is/api/schema'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
@@ -27,11 +25,8 @@ const SailorRightCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage, locale } = useLocale()
 
-  const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
-  const rightCertificates = useMemo(
-    () => data?.shipRegistrySailorCertificates?.rightCertificates ?? [],
-    [data],
-  )
+  const { data, loading, error } = useShipRegistrySailorRightCertificatesQuery()
+  const rightCertificates = data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(

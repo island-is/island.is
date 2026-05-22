@@ -1,6 +1,8 @@
 import {
-  RankDto,
-  SailorCertificatesDto,
+  SailorMaritimeBookDto,
+  SailorRegistrationExemptionDto,
+  SailorRightCertificateDto,
+  SailorSchoolCertificateDto,
   SailorSeaServiceEntryDto,
   ShipBaseInfoDto,
   ShipCertificateIssueStatus,
@@ -16,15 +18,21 @@ import {
   ShipRegistryCertificateStatus,
   ShipRegistrySailorCertificateStatus,
 } from './models/enums'
-import { ShipRegistrySailorCertificates } from './models/sailorCertificates.model'
 import { ShipRegistrySailorRightCertificate } from './models/sailorRightCertificate.model'
 import { ShipRegistrySailorSchoolCertificate } from './models/sailorSchoolCertificate.model'
 import { ShipRegistrySailorMaritimeBook } from './models/sailorMaritimeBook.model'
 import { ShipRegistrySailorRegistrationExemption } from './models/sailorRegistrationExemption.model'
-import { ShipRegistrySailorSeaServiceEntry } from './models/sailorSeaServiceEntry.model'
-import { ShipRegistryRank } from './models/rank.model'
+import { ShipRegistrySailorSeaServiceBookEntry } from './models/sailorSeaServiceBookEntry.model'
 import format from 'date-fns/format'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 import { LocaleEnum } from '@island.is/nest/graphql'
+
+const parseDateString = (s: string | undefined): Date | undefined => {
+  if (!s) return undefined
+  const d = parseISO(s)
+  return isValid(d) ? d : undefined
+}
 
 const mapCertificateStatus = (
   raw: ShipCertificateIssueStatus | undefined,
@@ -40,6 +48,19 @@ const mapCertificateStatus = (
       return ShipRegistryCertificateStatus.InInspectionWindow
     default:
       return ShipRegistryCertificateStatus.Unknown
+  }
+}
+
+const mapSailorCertificateStatus = (
+  raw: string | undefined,
+): ShipRegistrySailorCertificateStatus => {
+  switch (raw) {
+    case 'Valid':
+      return ShipRegistrySailorCertificateStatus.Valid
+    case 'Invalid':
+      return ShipRegistrySailorCertificateStatus.Invalid
+    default:
+      return ShipRegistrySailorCertificateStatus.Unknown
   }
 }
 
@@ -163,51 +184,55 @@ export const mapToUserShipFromDetails = (
   }
 }
 
-const mapSailorCertificateStatus = (
-  raw: string | undefined,
-): ShipRegistrySailorCertificateStatus => {
-  switch (raw) {
-    case 'Valid':
-      return ShipRegistrySailorCertificateStatus.Valid
-    case 'Invalid':
-      return ShipRegistrySailorCertificateStatus.Invalid
-    default:
-      return ShipRegistrySailorCertificateStatus.Unknown
-  }
-}
-
-export const mapToSailorCertificates = (
-  dto: SailorCertificatesDto,
-): ShipRegistrySailorCertificates => ({
-  schoolCertificates: dto.schoolCertificates.map((c) => ({
+export const mapToSailorSchoolCertificates = (
+  entries: SailorSchoolCertificateDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorSchoolCertificate[] =>
+  entries.map((c) => ({
     ...c,
+    id: `${c.id}-${locale}`,
     status: mapSailorCertificateStatus(c.status),
-  })),
-  rightCertificates: dto.rightCertificates.map((c) => ({
-    ...c,
-    status: mapSailorCertificateStatus(c.status),
-  })),
-  maritimeBooks: dto.maritimeBooks.map((b) => ({ ...b })),
-  registrationExemptions: dto.registrationExemptions.map((e) => ({ ...e })),
-})
+  }))
 
-export const mapToSailorSeaService = (
+export const mapToSailorRightCertificates = (
+  entries: SailorRightCertificateDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorRightCertificate[] =>
+  entries.map((c) => ({
+    ...c,
+    id: `${c.id}-${locale}`,
+    status: mapSailorCertificateStatus(c.status),
+  }))
+
+export const mapToSailorMaritimeBooks = (
+  entries: SailorMaritimeBookDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorMaritimeBook[] =>
+  entries.map((b) => ({
+    ...b,
+    id: `${b.id}-${locale}`,
+  }))
+
+export const mapToSailorRegistrationExemptions = (
+  entries: SailorRegistrationExemptionDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorRegistrationExemption[] =>
+  entries.map((e) => ({
+    ...e,
+    id: `${e.id}-${locale}`,
+  }))
+
+export const mapToSailorSeaServiceBook = (
   entries: SailorSeaServiceEntryDto[],
-): ShipRegistrySailorSeaServiceEntry[] =>
+  locale: LocaleEnum,
+): ShipRegistrySailorSeaServiceBookEntry[] =>
   entries.map((e, i) => ({
-    id: e.shipRegistrationNumber ?? String(i),
+    id: `${e.shipRegistrationNumber ?? String(i)}-${locale}`,
     shipName: e.shipName,
     shipRegistrationNumber: e.shipRegistrationNumber,
     rank: e.rank,
     rankCode: e.rankCode,
-    startDate: e.startDate,
-    endDate: e.endDate,
+    startDate: parseDateString(e.startDate),
+    endDate: parseDateString(e.endDate),
     numberOfDays: e.numberOfDays,
-  }))
-
-export const mapToRanks = (ranks: RankDto[]): ShipRegistryRank[] =>
-  ranks.map((r) => ({
-    id: String(r.rank_id),
-    name: r.rank,
-    nameEn: r.rank_en,
   }))

@@ -14,7 +14,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
-import { useShipRegistrySailorCertificatesQuery } from './SailorSchoolCertificates.generated'
+import { useShipRegistrySailorSchoolCertificatesQuery } from './SailorSchoolCertificates.generated'
 import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
 
 //TODO: add file export
@@ -24,11 +24,8 @@ const SailorSchoolCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage, locale } = useLocale()
 
-  const { data, loading, error } = useShipRegistrySailorCertificatesQuery()
-  const schoolCertificates = useMemo(
-    () => data?.shipRegistrySailorCertificates?.schoolCertificates ?? [],
-    [data],
-  )
+  const { data, loading, error } = useShipRegistrySailorSchoolCertificatesQuery()
+  const schoolCertificates = data?.shipRegistrySailor?.certificates?.schoolCertificates ?? []
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(

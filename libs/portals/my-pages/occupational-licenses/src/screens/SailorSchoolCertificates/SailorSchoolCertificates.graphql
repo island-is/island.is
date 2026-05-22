@@ -1,38 +1,14 @@
-query ShipRegistrySailorCertificates {
-  shipRegistrySailorCertificates {
-    schoolCertificates {
-      id
-      title
-      validToDate
-      status
-      school
-      issueDate
-    }
-    rightCertificates {
-      id
-      type
-      rightsCategories
-      validToDate
-      status
-      certificateNumber
-      issueDate
-    }
-    maritimeBooks {
-      id
-      type
-      dateFrom
-      dateTo
-    }
-    registrationExemptions {
-      id
-      shipName
-      shipRegistrationNo
-      rank
-      advertised
-      exemptionLowerStatus
-      dateFrom
-      dateTo
-      numberOfDays
+query ShipRegistrySailorSchoolCertificates {
+  shipRegistrySailor {
+    certificates {
+      schoolCertificates {
+        id
+        title
+        validToDate
+        status
+        school
+        issueDate
+      }
     }
   }
 }
