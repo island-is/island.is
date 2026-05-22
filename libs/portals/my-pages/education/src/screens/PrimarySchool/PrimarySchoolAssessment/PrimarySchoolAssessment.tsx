@@ -8,11 +8,11 @@ import { AssessmentAccordionList } from './subsections/AssessmentAccordionList'
 
 export const PrimarySchoolAssessment = () => {
   useNamespaces('sp.education-primary-school')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { studentId } = useParams<{ studentId: string }>()
 
   const { data, loading, error } = usePrimarySchoolAssessmentDataQuery({
-    variables: { studentId: studentId ?? '' },
+    variables: { studentId: studentId ?? '', locale },
     skip: !studentId,
   })
 

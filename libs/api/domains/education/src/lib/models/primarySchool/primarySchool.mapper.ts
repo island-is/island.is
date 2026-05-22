@@ -3,6 +3,7 @@ import type {
   IslandIsSimpleAssignmentResultDto,
   IslandIsStudentDto,
 } from '@island.is/clients/mms/primary-school'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import type { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
 import type { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
 
@@ -14,6 +15,7 @@ export const mapPrimarySchoolStudent = (student: IslandIsStudentDto) => ({
 export const mapAssessment = (
   type: IslandIsAssessmentTypeDto,
   studentId: string,
+  locale: LocaleEnum,
 ): PrimarySchoolAssessment | null => {
   if (!type.id) return null
   return {
@@ -22,6 +24,7 @@ export const mapAssessment = (
     name: type.name ?? undefined,
     description: type.description ?? undefined,
     studentId,
+    locale,
   }
 }
 
@@ -29,10 +32,17 @@ export const mapResult = (
   item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
+  locale: LocaleEnum,
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
+
+  const monthNumber =
+    item.batchNumber != null && item.batchNumber > 0 && item.scheduleStart
+      ? item.scheduleStart.getMonth() + 1
+      : undefined
+
   return {
-    id: item.id,
+    id: `${item.id}-${locale}`,
     schoolYear: item.schoolYear ?? undefined,
     grade: {
       level: item.gradeLevel,
@@ -41,6 +51,7 @@ export const mapResult = (
     period: {
       startDate: item.scheduleStart ?? undefined,
       startDateString: item.scheduleString ?? undefined,
+      monthNumber,
     },
     downloadServiceUrl: `${downloadServiceBaseUrl}/download/v1/education/primary-school/${studentId}/result/${item.id}/pdf`,
   }

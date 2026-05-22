@@ -15,6 +15,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { isDefined } from '@island.is/shared/utils'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import {
@@ -54,6 +55,7 @@ export class PrimarySchoolResolver {
   async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
+    @Args('locale', { type: () => LocaleEnum, nullable: true }) locale: LocaleEnum = LocaleEnum.Is,
     @Args('assessmentId', { nullable: true }) assessmentId?: string,
   ) {
     const subjects = await this.primarySchoolService.getAssessmentSubjects(
@@ -62,7 +64,7 @@ export class PrimarySchoolResolver {
     )
     const all = subjects
       ?.flatMap((s) => s.assessmentTypes ?? [])
-      .map((t) => mapAssessment(t, student.id))
+      .map((t) => mapAssessment(t, student.id, locale))
       .filter(isDefined)
 
     return assessmentId ? all?.filter((a) => a.id === assessmentId) : all

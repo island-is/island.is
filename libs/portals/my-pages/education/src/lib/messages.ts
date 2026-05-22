@@ -123,32 +123,15 @@ export const primarySchoolMessages = defineMessages({
   },
   examSitting: {
     id: 'sp.education-primary-school:exam-sitting',
-    defaultMessage: 'Fyrirlögn',
+    defaultMessage: 'Lagt fyrir',
   },
-  downloadResults: {
-    id: 'sp.education-primary-school:download-results',
-    defaultMessage: 'Sækja niðurstöður',
-  },
-  // Contact type labels
-  contactTypeParent: {
-    id: 'sp.education-primary-school:contact-type-parent',
-    defaultMessage: 'Foreldri',
+  viewResults: {
+    id: 'sp.education-primary-school:view-results',
+    defaultMessage: 'Sjá niðurstöður',
   },
   contactTypeGuardian: {
     id: 'sp.education-primary-school:contact-type-guardian',
-    defaultMessage: 'Forráðamaður',
-  },
-  contactTypeEmergencyContact: {
-    id: 'sp.education-primary-school:contact-type-emergency-contact',
-    defaultMessage: 'Neyðartengiliður',
-  },
-  contactTypeRelative: {
-    id: 'sp.education-primary-school:contact-type-relative',
-    defaultMessage: 'Ættingi',
-  },
-  contactTypeSibling: {
-    id: 'sp.education-primary-school:contact-type-sibling',
-    defaultMessage: 'Systkini',
+    defaultMessage: 'Barn',
   },
 })
 
