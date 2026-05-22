@@ -57,6 +57,14 @@ export class ZendeskListService {
     if (fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT) {
       try {
         const customObjectKey = fieldSettings.zendeskCustomObjectKey
+
+        if (!customObjectKey) {
+          this.logger.error(
+            `Missing zendeskCustomObjectKey for slug ${dataFromUrlRequestDto.slug}. FieldId: ${dataFromUrlRequestDto.fieldId}`,
+          )
+          return { isError: true }
+        }
+
         const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
         url = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}/records?page[size]=100`
         const placeholderUrl = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}`
