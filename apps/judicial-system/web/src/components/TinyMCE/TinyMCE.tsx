@@ -252,7 +252,6 @@ const TinyMCE = ({
           }}
           initialValue={initialValueRef.current}
           onEditorChange={(content) => {
-            console.log('TinyMCE HTML:', content)
             onChange?.(content)
           }}
           disabled={disabled}
