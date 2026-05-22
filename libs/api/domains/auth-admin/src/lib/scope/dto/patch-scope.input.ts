@@ -25,22 +25,19 @@ export class AdminPatchScopeInput {
 
   @Field(() => Boolean, {
     nullable: true,
-    deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecationReason: 'Use supportedDelegationTypes instead',
   })
   grantToLegalGuardians?: boolean
 
   @Field(() => Boolean, {
     nullable: true,
-    deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecationReason: 'Use supportedDelegationTypes instead',
   })
   grantToProcuringHolders?: boolean
 
   @Field(() => Boolean, {
     nullable: true,
-    deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecationReason: 'Use supportedDelegationTypes instead',
   })
   allowExplicitDelegationGrant?: boolean
 
@@ -52,28 +49,30 @@ export class AdminPatchScopeInput {
 
   @Field(() => Boolean, {
     nullable: true,
-    deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecationReason: 'Use supportedDelegationTypes instead',
   })
   grantToPersonalRepresentatives?: boolean
 
-  @Field(() => [String], { nullable: true })
-  addedDelegationTypes?: string[]
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      "Absolute set of supported delegation types for the scope. The backend computes added/removed delegation types per environment based on each environment's current state, so the same input can be safely fanned out across environments.",
+  })
+  supportedDelegationTypes?: string[]
 
-  @Field(() => [String], { nullable: true })
-  removedDelegationTypes?: string[]
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      "Absolute set of category IDs for the scope. The backend computes added/removed category IDs per environment based on each environment's current state, so the same input can be safely fanned out across environments.",
+  })
+  categoryIds?: string[]
 
-  @Field(() => [String], { nullable: true })
-  addedCategoryIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  removedCategoryIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  addedTagIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  removedTagIds?: string[]
+  @Field(() => [String], {
+    nullable: true,
+    description:
+      "Absolute set of tag IDs for the scope. The backend computes added/removed tag IDs per environment based on each environment's current state, so the same input can be safely fanned out across environments.",
+  })
+  tagIds?: string[]
 
   @Field(() => Boolean, {
     nullable: true,

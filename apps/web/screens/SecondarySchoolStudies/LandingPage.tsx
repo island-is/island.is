@@ -150,6 +150,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
       'qualification.level.id',
       'school.id',
       'school.countryArea.id',
+      'isReferenceProgramme',
     ],
   }
 
