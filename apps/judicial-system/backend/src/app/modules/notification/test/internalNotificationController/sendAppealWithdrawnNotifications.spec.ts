@@ -5,9 +5,10 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   InstitutionType,
-  NotificationType,
+  RequestCaseNotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -123,7 +124,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
               role: userRole,
               institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
             } as User,
-            type: CaseNotificationType.APPEAL_WITHDRAWN,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -183,8 +184,8 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
       then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate, [
         {
           caseId,
-          type: NotificationType.APPEAL_JUDGES_ASSIGNED,
-        } as Notification,
+          type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+        } as unknown as Notification,
       ])
     })
     it('should send notification to defender', () => {

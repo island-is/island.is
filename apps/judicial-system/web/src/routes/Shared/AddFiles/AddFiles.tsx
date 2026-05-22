@@ -28,7 +28,7 @@ import UploadFiles, {
 import {
   Case,
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -184,7 +184,10 @@ const AddFiles: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
+      await sendNotification(
+        workingCase.id,
+        TrackedNotificationType.CASE_FILES_UPDATED,
+      )
     }
 
     setVisibleModal(undefined)

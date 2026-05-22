@@ -21,7 +21,7 @@ import {
   DefendantPlea,
   Gender,
   Notification,
-  NotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -98,7 +98,7 @@ export const createCaseResentExplanation = (
 }
 
 export const hasSentNotification = (
-  notificationType: NotificationType,
+  notificationType: TrackedNotificationType,
   notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
@@ -127,7 +127,7 @@ export const isReopenedCOACase = (
 ): boolean => {
   return (
     appealState !== AppealCaseState.COMPLETED &&
-    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
+    hasSentNotification(TrackedNotificationType.APPEAL_COMPLETED, notifications)
       .hasSent
   )
 }
@@ -148,14 +148,16 @@ export const getDefendantPleaText = (
   }
 }
 
-export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
+export const shouldUseAppealWithdrawnRoutes = (
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return (
-    theCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
-    (!theCase.appealCase?.appealAssistant ||
-      !theCase.appealCase?.appealCaseNumber ||
-      !theCase.appealCase?.appealJudge1 ||
-      !theCase.appealCase?.appealJudge2 ||
-      !theCase.appealCase?.appealJudge3)
+    appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+    (!appealCase.appealAssistant ||
+      !appealCase.appealCaseNumber ||
+      !appealCase.appealJudge1 ||
+      !appealCase.appealJudge2 ||
+      !appealCase.appealJudge3)
   )
 }
 

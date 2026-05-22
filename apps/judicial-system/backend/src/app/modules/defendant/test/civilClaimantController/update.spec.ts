@@ -109,9 +109,7 @@ describe('CivilClaimantController - Update', () => {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId,
           elementId: civilClaimantId,
-          body: {
-            type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
-          },
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
         },
       ])
     })
