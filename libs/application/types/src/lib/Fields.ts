@@ -374,6 +374,7 @@ export interface BaseField extends FormItem {
   disabled?: boolean
   width?: FieldWidth
   colSpan?: SpanType
+  clientShowWhen?: FormExpression
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<unknown>
@@ -1119,18 +1120,28 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  clientExpression?: ClientDisplayExpression
+  clientValueExpression?: FormExpression
   value: (answers: FormValue, externalData: ExternalData) => string
 }
 
-export type ClientDisplayExpression =
+export type FormExpressionOperator =
+  | 'GET'
+  | 'SUM'
+  | 'MULTIPLY'
+  | 'EQUALS'
+  | 'IS_EMPTY'
+  | 'NOT'
+  | 'OR'
+  | 'AND'
+  | 'IF'
+
+export type FormExpression =
+  | string
+  | number
+  | boolean
   | {
-      type: 'sum'
-      fields: string[]
-    }
-  | {
-      type: 'multiply'
-      factors: Array<{ field: string } | { value: number }>
+      operator: FormExpressionOperator
+      args: FormExpression[]
     }
 
 export type KeyValueItem = {

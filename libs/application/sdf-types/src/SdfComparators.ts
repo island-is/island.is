@@ -2,10 +2,10 @@ import { Comparators } from '@island.is/application/types'
 
 /**
  * Single source of truth mapping internal Comparators enum values to
- * SDF wire-format strings used in ClientCondition payloads.
+ * SDF wire-format strings used by legacy condition payloads.
  *
- * Both backend (condition-hint.ts) and frontend (evaluateClientCondition.ts)
- * MUST import from here — never hardcode comparator strings.
+ * Backend compatibility code MUST import from here — never hardcode comparator
+ * strings.
  */
 export const SdfComparators: Record<Comparators, string> = {
   [Comparators.EQUALS]: 'eq',

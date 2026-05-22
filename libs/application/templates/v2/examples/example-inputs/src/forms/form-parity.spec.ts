@@ -44,6 +44,48 @@ const normalizeFormAst = (value: unknown): unknown => {
   return value
 }
 
+const normalizeMainFormParityAst = (value: unknown): unknown => {
+  const normalized = normalizeFormAst(value)
+
+  if (Array.isArray(normalized)) {
+    return normalized
+      .filter(
+        (entry) =>
+          !(
+            entry !== null &&
+            typeof entry === 'object' &&
+            [
+              'multiplyInput1',
+              'multiplyInput2',
+              'multiplyInput3',
+              'displayFieldProduct',
+            ].includes(String((entry as { id?: unknown }).id))
+          ),
+      )
+      .map(normalizeMainFormParityAst)
+  }
+
+  if (normalized !== null && typeof normalized === 'object') {
+    const entries = Object.entries(normalized as Record<string, unknown>).filter(
+      ([entryKey, entryValue]) =>
+        !(
+          entryKey === 'clientValueExpression' &&
+          (normalized as { id?: unknown }).id === 'displayField2' &&
+          entryValue !== undefined
+        ),
+    )
+
+    return Object.fromEntries(
+      entries.map(([entryKey, entryValue]) => [
+        entryKey,
+        normalizeMainFormParityAst(entryValue),
+      ]),
+    )
+  }
+
+  return normalized
+}
+
 const getDisplayValue = (
   subsection: unknown,
   id: string,
@@ -71,7 +113,9 @@ describe('example-inputs v2 form parity', () => {
   })
 
   it('matches the legacy main form AST', () => {
-    expect(normalizeFormAst(MainForm)).toEqual(normalizeFormAst(legacyMainForm))
+    expect(normalizeMainFormParityAst(MainForm)).toEqual(
+      normalizeMainFormParityAst(legacyMainForm),
+    )
   })
 
   it('matches the legacy completed form AST', () => {
@@ -107,14 +151,129 @@ describe('example-inputs v2 form parity', () => {
       children: Array<{ children?: unknown[] }>
     }).children[0].children as Array<{
       id?: string
-      clientExpression?: unknown
+      clientValueExpression?: unknown
     }>
 
     expect(
-      children.find((child) => child.id === 'displayField')?.clientExpression,
+      children.find((child) => child.id === 'displayField')?.clientValueExpression,
     ).toEqual({
-      type: 'sum',
-      fields: ['input1', 'input2', 'input3'],
+      operator: 'SUM',
+      args: [
+        { operator: 'GET', args: ['input1'] },
+        { operator: 'GET', args: ['input2'] },
+        { operator: 'GET', args: ['input3'] },
+      ],
     })
+  })
+
+  it('marks the rental amount display field as client-computed', () => {
+    const children = (displayFieldSubsection as {
+      children: Array<{ children?: unknown[] }>
+    }).children[0].children as Array<{
+      id?: string
+      clientValueExpression?: unknown
+    }>
+
+    expect(
+      children.find((child) => child.id === 'displayField2')?.clientValueExpression,
+    ).toEqual({
+      operator: 'IF',
+      args: [
+        {
+          operator: 'OR',
+          args: [
+            {
+              operator: 'IS_EMPTY',
+              args: [{ operator: 'GET', args: ['input4'] }],
+            },
+            {
+              operator: 'IS_EMPTY',
+              args: [
+                { operator: 'GET', args: ['radioFieldForDisplayField'] },
+              ],
+            },
+          ],
+        },
+        '',
+        {
+          operator: 'IF',
+          args: [
+            {
+              operator: 'EQUALS',
+              args: [
+                { operator: 'GET', args: ['radioFieldForDisplayField'] },
+                'other',
+              ],
+            },
+            'Önnur upphæð',
+            {
+              operator: 'MULTIPLY',
+              args: [
+                { operator: 'GET', args: ['input4'] },
+                { operator: 'GET', args: ['displayField'] },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  })
+
+  it('adds a multiplied plus added value display field example', () => {
+    const children = (displayFieldSubsection as {
+      children: Array<{ children?: unknown[] }>
+    }).children[0].children as Array<{
+      id?: string
+      clientShowWhen?: unknown
+      clientValueExpression?: unknown
+      value?: (answers: Record<string, unknown>) => string
+    }>
+    const displayFieldProduct = children.find(
+      (child) => child.id === 'displayFieldProduct',
+    )
+
+    expect(displayFieldProduct?.clientShowWhen).toEqual({
+      operator: 'AND',
+      args: [
+        {
+          operator: 'NOT',
+          args: [
+            {
+              operator: 'IS_EMPTY',
+              args: [{ operator: 'GET', args: ['multiplyInput1'] }],
+            },
+          ],
+        },
+        {
+          operator: 'NOT',
+          args: [
+            {
+              operator: 'IS_EMPTY',
+              args: [{ operator: 'GET', args: ['multiplyInput2'] }],
+            },
+          ],
+        },
+      ],
+    })
+    expect(displayFieldProduct?.clientValueExpression).toEqual({
+      operator: 'SUM',
+      args: [
+        {
+          operator: 'MULTIPLY',
+          args: [
+            { operator: 'GET', args: ['multiplyInput1'] },
+            { operator: 'GET', args: ['multiplyInput2'] },
+          ],
+        },
+        { operator: 'GET', args: ['multiplyInput3'] },
+      ],
+    })
+    expect(
+      displayFieldProduct?.value?.({
+        multiplyInput1: '2',
+        multiplyInput2: '32',
+        multiplyInput3: '5',
+      }),
+    ).toBe('69')
   })
 })

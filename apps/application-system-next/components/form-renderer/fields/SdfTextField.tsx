@@ -112,13 +112,7 @@ export const SdfTextField = ({
               }
               return true
             }}
-            onValueChange={({ value }) => {
-              console.log('[SDF display debug] SdfTextField onValueChange', {
-                id: component.id,
-                value,
-              })
-              handleChange(value)
-            }}
+            onValueChange={({ value }) => handleChange(value)}
           />
         </Box>
       </Box>
@@ -147,10 +141,7 @@ export const SdfTextField = ({
             }
             value={valueStr}
             format={fmt}
-            onValueChange={({ value }) => {
-              console.log('value', value)
-              handleChange(value)
-            }}
+            onValueChange={({ value }) => handleChange(value)}
           />
         </Box>
       </Box>

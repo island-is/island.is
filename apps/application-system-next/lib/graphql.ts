@@ -95,14 +95,24 @@ export interface MultiClientCondition {
 }
 
 export type ClientCondition = SingleClientCondition | MultiClientCondition
-export type ClientDisplayExpression =
+export type FormExpressionOperator =
+  | 'GET'
+  | 'SUM'
+  | 'MULTIPLY'
+  | 'EQUALS'
+  | 'IS_EMPTY'
+  | 'NOT'
+  | 'OR'
+  | 'AND'
+  | 'IF'
+
+export type FormExpression =
+  | string
+  | number
+  | boolean
   | {
-      type: 'sum'
-      fields: string[]
-    }
-  | {
-      type: 'multiply'
-      factors: Array<{ field: string } | { value: number }>
+      operator: FormExpressionOperator
+      args: FormExpression[]
     }
 
 export interface SdfDataTableInput {
@@ -164,10 +174,10 @@ export interface SdfComponentData {
   spacing?: number
   checkboxBackgroundColor?: string
   displayInputLabel?: string
-  clientExpression?: ClientDisplayExpression
+  clientValueExpression?: FormExpression
   titleVariant?: string
   halfWidthOwnline?: boolean
-  clientCondition?: ClientCondition | null
+  clientShowWhen?: FormExpression | null
   componentName?: string
   props?: string
   description?: string
@@ -282,21 +292,7 @@ export const GET_SCREEN_QUERY = `
             textStep
             defaultValue
             width
-            clientCondition {
-              ... on SdfSingleClientCondition {
-                questionId
-                comparator
-                value
-              }
-              ... on SdfMultiClientCondition {
-                on
-                checks {
-                  questionId
-                  comparator
-                  value
-                }
-              }
-            }
+            clientShowWhen
           }
           ... on SdfSelectField {
             id
@@ -309,10 +305,7 @@ export const GET_SCREEN_QUERY = `
             width
             onSelectRefetchTemplateApis
             refetchTargets
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfSearchField {
             id
@@ -326,10 +319,7 @@ export const GET_SCREEN_QUERY = `
             width
             onSelectRefetchTemplateApis
             refetchTargets
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfDataTableField {
             id
@@ -359,10 +349,7 @@ export const GET_SCREEN_QUERY = `
                 }
               }
             }
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfRadioField {
             id
@@ -371,10 +358,7 @@ export const GET_SCREEN_QUERY = `
             disabled
             options { label value }
             width
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfCheckboxField {
             id
@@ -388,10 +372,7 @@ export const GET_SCREEN_QUERY = `
             large
             spacing
             checkboxBackgroundColor
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfDateField {
             id
@@ -402,10 +383,7 @@ export const GET_SCREEN_QUERY = `
             minDate
             maxDate
             width
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfFileUploadField {
             id
@@ -414,10 +392,7 @@ export const GET_SCREEN_QUERY = `
             disabled
             maxSize
             accept
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfPhoneField {
             id
@@ -426,20 +401,14 @@ export const GET_SCREEN_QUERY = `
             required
             disabled
             width
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfNationalIdField {
             id
             label
             required
             disabled
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfDescriptionField {
             id
@@ -447,72 +416,51 @@ export const GET_SCREEN_QUERY = `
             description
             marginTop
             marginBottom
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfSubmitField {
             id
             label
             placement
             actions { event name type }
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfDividerField {
             id
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfKeyValueField {
             id
             label
             value
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfAlertMessageField {
             id
             alertType
             title
             message
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfLinkField {
             id
             label
             url
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfDisplayField {
             id
             label
             displayValue: value
             displayInputLabel
-            clientExpression
+            clientValueExpression
             inputVariant
             textSuffix
             rightAlign
             titleVariant
             halfWidthOwnline
             width
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfSliderField {
             id
@@ -520,10 +468,7 @@ export const GET_SCREEN_QUERY = `
             min
             max
             step
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfExternalDataProviderField {
             id
@@ -536,59 +481,38 @@ export const GET_SCREEN_QUERY = `
           ... on SdfTitleField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfPaginatedSearchableTableField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfNationalIdWithNameField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfFieldsRepeaterField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfOverviewField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfVehiclePermnoWithInfoField {
             id
             label
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfInformationCardField {
             id
             label
             informationCardItems { label value }
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfPaymentChargeOverviewField {
             id
@@ -596,69 +520,48 @@ export const GET_SCREEN_QUERY = `
             paymentChargeLines { description quantity amount }
             paymentChargeTotalLabel
             paymentChargeTotalAmount
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfPdfLinkButtonField {
             id
             pdfDescription
             pdfLinkTitle
             pdfLinkUrl
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfCopyLinkField {
             id
             copyLinkTitle
             copyLinkText
             copyButtonTitle
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfExpandableDescriptionField {
             id
             label
             introText
             expandableDescription: description
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfMessageWithLinkButtonField {
             id
             linkMessage: message
             url
             buttonTitle
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfAccordionField {
             id
             label
             accordionItems: items { label content }
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfStaticTableField {
             id
             label
             header
             staticTableRows: rows
-            clientCondition {
-              ... on SdfSingleClientCondition { questionId comparator value }
-              ... on SdfMultiClientCondition { on checks { questionId comparator value } }
-            }
+            clientShowWhen
           }
           ... on SdfCustomComponent {
             componentName
@@ -711,39 +614,39 @@ export const EXECUTE_ACTION_MUTATION = `
         subSectionIndex
         components {
           __typename
-          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSelectField { id label placeholder required disabled isMulti options { label value } width onSelectRefetchTemplateApis refetchTargets clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSearchField { id label placeholder required disabled options { label value } searchAction minQueryLength width onSelectRefetchTemplateApis refetchTargets clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDataTableField { id label header rows { id cells expandable { rows { id label cells hasCheckbox checkboxKey inputs { key label type min max format suffix } payload defaultValues } } } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfRadioField { id label required disabled options { label value } width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfFileUploadField { id label required disabled maxSize accept clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfPhoneField { id label placeholder required disabled width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfNationalIdField { id label required disabled clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDescriptionField { id label description marginTop marginBottom clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSubmitField { id label placement actions { event name type } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDividerField { id clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfKeyValueField { id label value clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfAlertMessageField { id alertType title message clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfLinkField { id label url clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfDisplayField { id label displayValue: value displayInputLabel clientExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfSliderField { id label min max step clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientShowWhen }
+          ... on SdfSelectField { id label placeholder required disabled isMulti options { label value } width onSelectRefetchTemplateApis refetchTargets clientShowWhen }
+          ... on SdfSearchField { id label placeholder required disabled options { label value } searchAction minQueryLength width onSelectRefetchTemplateApis refetchTargets clientShowWhen }
+          ... on SdfDataTableField { id label header rows { id cells expandable { rows { id label cells hasCheckbox checkboxKey inputs { key label type min max format suffix } payload defaultValues } } } clientShowWhen }
+          ... on SdfRadioField { id label required disabled options { label value } width clientShowWhen }
+          ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientShowWhen }
+          ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientShowWhen }
+          ... on SdfFileUploadField { id label required disabled maxSize accept clientShowWhen }
+          ... on SdfPhoneField { id label placeholder required disabled width clientShowWhen }
+          ... on SdfNationalIdField { id label required disabled clientShowWhen }
+          ... on SdfDescriptionField { id label description marginTop marginBottom clientShowWhen }
+          ... on SdfSubmitField { id label placement actions { event name type } clientShowWhen }
+          ... on SdfDividerField { id clientShowWhen }
+          ... on SdfKeyValueField { id label value clientShowWhen }
+          ... on SdfAlertMessageField { id alertType title message clientShowWhen }
+          ... on SdfLinkField { id label url clientShowWhen }
+          ... on SdfDisplayField { id label displayValue: value displayInputLabel clientValueExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientShowWhen }
+          ... on SdfSliderField { id label min max step clientShowWhen }
           ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
-          ... on SdfTitleField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfPaginatedSearchableTableField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfNationalIdWithNameField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfFieldsRepeaterField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfOverviewField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfVehiclePermnoWithInfoField { id label clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfInformationCardField { id label informationCardItems { label value } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfPaymentChargeOverviewField { id paymentChargeHeading paymentChargeLines { description quantity amount } paymentChargeTotalLabel paymentChargeTotalAmount clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfPdfLinkButtonField { id pdfDescription pdfLinkTitle pdfLinkUrl clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfCopyLinkField { id copyLinkTitle copyLinkText copyButtonTitle clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfExpandableDescriptionField { id label introText expandableDescription: description clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfMessageWithLinkButtonField { id linkMessage: message url buttonTitle clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfAccordionField { id label accordionItems: items { label content } clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
-          ... on SdfStaticTableField { id label header staticTableRows: rows clientCondition { ... on SdfSingleClientCondition { questionId comparator value } ... on SdfMultiClientCondition { on checks { questionId comparator value } } } }
+          ... on SdfTitleField { id label clientShowWhen }
+          ... on SdfPaginatedSearchableTableField { id label clientShowWhen }
+          ... on SdfNationalIdWithNameField { id label clientShowWhen }
+          ... on SdfFieldsRepeaterField { id label clientShowWhen }
+          ... on SdfOverviewField { id label clientShowWhen }
+          ... on SdfVehiclePermnoWithInfoField { id label clientShowWhen }
+          ... on SdfInformationCardField { id label informationCardItems { label value } clientShowWhen }
+          ... on SdfPaymentChargeOverviewField { id paymentChargeHeading paymentChargeLines { description quantity amount } paymentChargeTotalLabel paymentChargeTotalAmount clientShowWhen }
+          ... on SdfPdfLinkButtonField { id pdfDescription pdfLinkTitle pdfLinkUrl clientShowWhen }
+          ... on SdfCopyLinkField { id copyLinkTitle copyLinkText copyButtonTitle clientShowWhen }
+          ... on SdfExpandableDescriptionField { id label introText expandableDescription: description clientShowWhen }
+          ... on SdfMessageWithLinkButtonField { id linkMessage: message url buttonTitle clientShowWhen }
+          ... on SdfAccordionField { id label accordionItems: items { label content } clientShowWhen }
+          ... on SdfStaticTableField { id label header staticTableRows: rows clientShowWhen }
           ... on SdfCustomComponent { componentName props }
           ... on SdfRepeaterComponent { id arrayPath addItemLabel removeItemLabel minItems maxItems items }
         }

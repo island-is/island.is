@@ -75,6 +75,7 @@ export const shouldShowFormItem = (
   user: BffUser | null,
 ): boolean => {
   const { condition } = formItem
+
   if (!condition) {
     return true
   }

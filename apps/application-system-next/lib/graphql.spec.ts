@@ -26,9 +26,14 @@ describe('graphql SDF queries', () => {
     expect(EXECUTE_ACTION_MUTATION).toContain('displayValue: value')
   })
 
-  it('requests client display expressions for display fields', () => {
-    expect(GET_SCREEN_QUERY).toContain('clientExpression')
-    expect(EXECUTE_ACTION_MUTATION).toContain('clientExpression')
+  it('requests value expressions for display fields', () => {
+    expect(GET_SCREEN_QUERY).toContain('clientValueExpression')
+    expect(EXECUTE_ACTION_MUTATION).toContain('clientValueExpression')
+  })
+
+  it('requests clientShowWhen expressions for fields', () => {
+    expect(GET_SCREEN_QUERY).toContain('clientShowWhen')
+    expect(EXECUTE_ACTION_MUTATION).toContain('clientShowWhen')
   })
 
   it('requests inline refetch targets for select and search fields', () => {

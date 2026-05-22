@@ -66,9 +66,13 @@ const components: SdfComponentData[] = [
     id: 'displayField',
     label: 'Display Field',
     inputVariant: 'currency',
-    clientExpression: {
-      type: 'sum',
-      fields: ['input1', 'input2', 'input3'],
+    clientValueExpression: {
+      operator: 'SUM',
+      args: [
+        { operator: 'GET', args: ['input1'] },
+        { operator: 'GET', args: ['input2'] },
+        { operator: 'GET', args: ['input3'] },
+      ],
     },
   },
 ]

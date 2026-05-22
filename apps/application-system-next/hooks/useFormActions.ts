@@ -24,7 +24,8 @@ export const useFormActions = (
 
   // When the page index changes, merge the server snapshot for that screen.
   // Server values must win over answersRef — ref can still hold stale choices from
-  // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break Tier 1/2 showWhen.
+  // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break
+  // server-evaluated showWhen.
   useEffect(() => {
     if (screen.answers) {
       answersRef.current = { ...answersRef.current, ...screen.answers }
@@ -109,7 +110,7 @@ export const useFormActions = (
           setScreen(result)
           // Always merge; never replace with result.answers alone — it only contains
           // fields present on the current page in the DB snapshot, and would drop keys
-          // needed for client-side showWhen on the page we navigate to.
+          // needed for client-side clientShowWhen on the page we navigate to.
           answersRef.current = {
             ...answersRef.current,
             ...(result.answers ?? {}),

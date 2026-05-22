@@ -15,7 +15,10 @@ export const completedForm = new FormBuilder('completedForm', '', {
         (page) => {
           page
             .addLinkField('uiForms.conclusionLink', '', {
-              condition: () => false,
+              showWhen: {
+                field: 'uiForms.conclusionLink',
+                equals: 'false',
+              },
             })
             .addAlertMessageField('uiForms.conclusionAlert', {
               title: 'Congratulations',

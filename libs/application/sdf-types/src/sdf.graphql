@@ -159,7 +159,7 @@ type TextField {
   textNumberMax: Int
   textStep: String
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type SelectField {
@@ -173,7 +173,7 @@ type SelectField {
   onSelectRefetchTemplateApis: [String!]
   refetchTargets: [String!]
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type SelectOption {
@@ -193,7 +193,7 @@ type SearchField {
   onSelectRefetchTemplateApis: [String!]
   refetchTargets: [String!]
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type DataTableInput {
@@ -232,7 +232,7 @@ type DataTableField {
   label: String!
   header: [String!]!
   rows: [DataTableRow!]!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type RadioField {
@@ -242,7 +242,7 @@ type RadioField {
   disabled: Boolean!
   options: [SelectOption!]!
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type CheckboxField {
@@ -252,7 +252,7 @@ type CheckboxField {
   disabled: Boolean!
   options: [SelectOption!]!
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type DateField {
@@ -264,7 +264,7 @@ type DateField {
   minDate: String
   maxDate: String
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type FileUploadField {
@@ -274,7 +274,7 @@ type FileUploadField {
   disabled: Boolean!
   maxSize: Int
   accept: String
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type PhoneField {
@@ -284,7 +284,7 @@ type PhoneField {
   required: Boolean!
   disabled: Boolean!
   width: ComponentWidth
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type NationalIdField {
@@ -292,7 +292,7 @@ type NationalIdField {
   label: String!
   required: Boolean!
   disabled: Boolean!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type CompanySearchField {
@@ -301,7 +301,7 @@ type CompanySearchField {
   placeholder: String
   required: Boolean!
   disabled: Boolean!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type AsyncSelectField {
@@ -310,7 +310,7 @@ type AsyncSelectField {
   placeholder: String
   required: Boolean!
   disabled: Boolean!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type SubmitField {
@@ -318,7 +318,7 @@ type SubmitField {
   label: String!
   placement: String
   actions: [SubmitAction!]!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type SubmitAction {
@@ -329,7 +329,7 @@ type SubmitAction {
 
 type DividerField {
   id: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type DescriptionField {
@@ -338,14 +338,14 @@ type DescriptionField {
   description: String
   marginTop: Int
   marginBottom: Int
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type KeyValueField {
   id: String!
   label: String!
   value: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type AlertMessageField {
@@ -353,24 +353,24 @@ type AlertMessageField {
   alertType: String!
   title: String!
   message: String
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type LinkField {
   id: String!
   label: String!
   url: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type RedirectToServicePortalField {
   id: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type PaymentPendingField {
   id: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type MessageWithLinkButtonField {
@@ -378,7 +378,7 @@ type MessageWithLinkButtonField {
   message: String!
   url: String!
   buttonTitle: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type ExpandableDescriptionField {
@@ -386,14 +386,14 @@ type ExpandableDescriptionField {
   label: String!
   introText: String
   description: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type AccordionField {
   id: String!
   label: String!
   items: [AccordionItem!]!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type AccordionItem {
@@ -404,13 +404,13 @@ type AccordionItem {
 type ActionCardListField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type TableRepeaterField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type StaticTableField {
@@ -418,45 +418,45 @@ type StaticTableField {
   label: String!
   header: [String!]!
   rows: [[String!]!]!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type HiddenInputField {
   id: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type HiddenInputWithWatchedValueField {
   id: String!
   watchValue: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type FindVehicleField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type DisplayField {
   id: String!
   label: String!
   value: String
-  clientExpression: JSON
-  clientCondition: ClientCondition
+  clientValueExpression: JSON
+  clientShowWhen: JSON
 }
 
 type ImageField {
   id: String!
   label: String!
   imageUrl: String
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type BankAccountField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type SliderField {
@@ -465,7 +465,7 @@ type SliderField {
   min: Int!
   max: Int!
   step: Int
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type ExternalDataProviderField {
@@ -486,37 +486,37 @@ type ExternalDataProviderItem {
 type TitleField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type PaginatedSearchableTableField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type NationalIdWithNameField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type FieldsRepeaterField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type OverviewField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type VehiclePermnoWithInfoField {
   id: String!
   label: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type InformationCardItem {
@@ -528,7 +528,7 @@ type InformationCardField {
   id: String!
   label: String!
   informationCardItems: [InformationCardItem!]!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type PaymentChargeLine {
@@ -543,7 +543,7 @@ type PaymentChargeOverviewField {
   paymentChargeLines: [PaymentChargeLine!]!
   paymentChargeTotalLabel: String!
   paymentChargeTotalAmount: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type PdfLinkButtonField {
@@ -551,7 +551,7 @@ type PdfLinkButtonField {
   pdfDescription: String!
   pdfLinkTitle: String!
   pdfLinkUrl: String!
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 type CopyLinkField {
@@ -559,7 +559,7 @@ type CopyLinkField {
   copyLinkTitle: String
   copyLinkText: String!
   copyButtonTitle: String
-  clientCondition: ClientCondition
+  clientShowWhen: JSON
 }
 
 enum ComponentWidth {

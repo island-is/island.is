@@ -1,7 +1,6 @@
 import { FieldTypes } from '@island.is/application/types'
 import { FieldDef } from '@island.is/application/screen-compiler'
 
-import { extractClientCondition } from '../condition-hint'
 import { ComponentDto } from '../dto/screen.dto'
 import {
   FieldMapperContext,
@@ -72,7 +71,7 @@ export const createBaseComponent = (
   disabled: (resolveFieldProp(raw.disabled, application) as boolean) ?? false,
   defaultValue: resolveFieldProp(raw.defaultValue, application),
   width: raw.width === 'half' ? 'HALF' : 'FULL',
-  clientCondition: extractClientCondition(raw.condition),
+  clientShowWhen: raw.clientShowWhen as ComponentDto['clientShowWhen'],
 })
 
 export const applySharedFieldProps = (

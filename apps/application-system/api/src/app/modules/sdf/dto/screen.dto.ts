@@ -117,9 +117,9 @@ export class ComponentDto {
 
   @ApiPropertyOptional({
     description:
-      'Client-evaluable condition hint. Dynamic server-only conditions are omitted.',
+      'Client-evaluable visibility expression.',
   })
-  clientCondition?: SingleClientConditionDto | MultiClientConditionDto | null
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 
   @ApiPropertyOptional()
   options?: unknown
@@ -376,7 +376,7 @@ export class ComponentDto {
 
   /** Display field: serializable expression that the SDF client can evaluate without a backend round-trip. */
   @ApiPropertyOptional()
-  clientExpression?: Record<string, unknown>
+  clientValueExpression?: Record<string, unknown> | string | number | boolean
 
   /** Optional vertical spacing (design system spacing units), e.g. description fields. */
   @ApiPropertyOptional()

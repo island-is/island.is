@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
-import type { ClientCondition } from '../../lib/graphql'
-import { evaluateClientCondition } from '../../lib/evaluateClientCondition'
 import type { ComponentSwitchProps, FieldRendererProps } from './types'
+import { useFormExpressionEvaluator } from '../../hooks/useFormExpressionEvaluator'
 import { SdfAccordionField } from './fields/SdfAccordionField'
 import { SdfAlertMessageField } from './fields/SdfAlertMessageField'
 import { SdfBankAccountField } from './fields/SdfBankAccountField'
@@ -101,21 +100,20 @@ export const ComponentSwitch = ({
   const handleChange = useCallback(
     (value: unknown) => {
       if (component.id) {
-        console.log('[SDF display debug] ComponentSwitch handleChange', {
-          id: component.id,
-          type: component.__typename,
-          value,
-        })
         onAnswerChange(component.id, value)
       }
     },
     [component.id, onAnswerChange],
   )
 
-  const visible = evaluateClientCondition(
-    component.clientCondition as ClientCondition | null | undefined,
+  const clientShowWhenValue = useFormExpressionEvaluator(
+    component.clientShowWhen ?? undefined,
     answers,
   )
+  const visible =
+    component.clientShowWhen === null || component.clientShowWhen === undefined
+      ? true
+      : Boolean(clientShowWhenValue)
 
   if (!visible) return null
 

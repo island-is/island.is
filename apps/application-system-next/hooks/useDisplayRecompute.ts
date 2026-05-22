@@ -12,7 +12,7 @@ const hasServerComputedDisplayFields = (
   components: SdfComponentData[],
 ): boolean =>
   components.some(
-    (c) => c.__typename === 'SdfDisplayField' && !c.clientExpression,
+    (c) => c.__typename === 'SdfDisplayField' && !c.clientValueExpression,
   )
 
 /**

@@ -17,6 +17,7 @@ import {
   SubmitField,
 } from '@island.is/application/types'
 import { PageBuilder } from './PageBuilder'
+import type { PageBuilderOptions } from './PageBuilder'
 import { buildBankAccountField } from '../lib/fieldBuilders'
 
 type SectionBuilderOptions = Omit<Section, 'children' | 'id' | 'title' | 'type'>
@@ -93,8 +94,9 @@ export class SubSectionBuilder<TSchema = unknown> {
     id: string,
     title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
+    opts?: PageBuilderOptions,
   ): this {
-    const pageBuilder = new PageBuilder<TSchema>(id, title)
+    const pageBuilder = new PageBuilder<TSchema>(id, title, opts)
     builderFn(pageBuilder)
     this.children.push(pageBuilder.build())
     return this
@@ -136,8 +138,9 @@ export class SectionBuilder<TSchema = unknown> {
     id: string,
     title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
+    opts?: PageBuilderOptions,
   ): this {
-    const pageBuilder = new PageBuilder<TSchema>(id, title)
+    const pageBuilder = new PageBuilder<TSchema>(id, title, opts)
     builderFn(pageBuilder)
     this.children.push(pageBuilder.build())
     return this

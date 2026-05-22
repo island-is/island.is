@@ -92,7 +92,7 @@ const createRealisticScreenDto = (): ScreenDto => {
         { label: 'Já', value: 'yes' },
         { label: 'Nei', value: 'no' },
       ],
-      clientCondition: undefined,
+      clientShowWhen: undefined,
     },
     {
       id: 'bankAccount',

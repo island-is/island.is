@@ -167,10 +167,12 @@ describe('SDF GraphQL Layer', () => {
               label: 'Conditional',
               required: false,
               disabled: false,
-              clientCondition: {
-                questionId: 'hasSpouse',
-                comparator: 'eq',
-                value: 'yes',
+              clientShowWhen: {
+                operator: 'EQUALS',
+                args: [
+                  { operator: 'GET', args: ['hasSpouse'] },
+                  'yes',
+                ],
               },
             } as ComponentDto,
           ],
@@ -192,7 +194,7 @@ describe('SDF GraphQL Layer', () => {
       expect(result.page.errors[0].message).toBe('Required field')
 
       const comp = result.page.components[0] as unknown as Record<string, unknown>
-      expect(comp.clientCondition).toBeDefined()
+      expect(comp.clientShowWhen).toBeDefined()
     })
   })
 

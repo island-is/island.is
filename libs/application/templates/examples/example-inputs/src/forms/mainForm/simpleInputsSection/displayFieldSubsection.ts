@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildTextField,
+  expr,
   getValueViaPath,
   buildRadioField,
 } from '@island.is/application/core'
@@ -57,10 +58,11 @@ export const displayFieldSubsection = buildSubSection({
           variant: 'currency',
           label: 'Sum of inputs 1, 2 and 3',
           rightAlign: true,
-          clientExpression: {
-            type: 'sum',
-            fields: ['input1', 'input2', 'input3'],
-          },
+          clientValueExpression: expr.sum(
+            expr.get('input1'),
+            expr.get('input2'),
+            expr.get('input3'),
+          ),
           value: (answers) => {
             const value1 = toCurrencyNumber(
               getValueViaPath<string>(answers, 'input1'),

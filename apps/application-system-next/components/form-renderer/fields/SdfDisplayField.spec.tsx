@@ -30,9 +30,13 @@ const baseProps = {
     label: 'Display Field',
     inputVariant: 'currency',
     rightAlign: true,
-    clientExpression: {
-      type: 'sum' as const,
-      fields: ['input1', 'input2', 'input3'],
+    clientValueExpression: {
+      operator: 'SUM' as const,
+      args: [
+        { operator: 'GET' as const, args: ['input1'] },
+        { operator: 'GET' as const, args: ['input2'] },
+        { operator: 'GET' as const, args: ['input3'] },
+      ],
     },
   },
   currentValue: undefined,

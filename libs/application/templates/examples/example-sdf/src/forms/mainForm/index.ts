@@ -1,4 +1,4 @@
-import { FormBuilder } from '@island.is/application/core'
+import { FormBuilder, serverExpr } from '@island.is/application/core'
 import type { Application, DynamicCheck } from '@island.is/application/types'
 import { dataSchema, type ExampleSdfAnswers } from '../../lib/dataSchema'
 import { PlotDetailsApi } from '../../dataProviders'
@@ -205,7 +205,10 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
               { label: 'Rain barrel collection', value: 'rainBarrel' },
             ],
             placeholder: 'Select irrigation type',
-            showWhen: { field: 'needsWaterAccess', equals: 'yes' },
+            showWhen: serverExpr.equals(
+              serverExpr.answer('needsWaterAccess'),
+              'yes',
+            ),
           },
         )
     })

@@ -76,10 +76,10 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
       expect(block).toMatch(/component\.displayValue\s*\?\?/)
     })
 
-    it('evaluates clientExpression before backend overlay or static value', () => {
-      expect(block).toContain('evaluateClientDisplayExpression')
-      expect(block).toMatch(/clientExpressionValue\s*\?\?/)
-      expect(block).toMatch(/clientExpressionValue\s*\?\?[^]*overlayValue\s*\?\?/)
+    it('evaluates clientValueExpression before backend overlay or static value', () => {
+      expect(block).toContain('useFormExpressionEvaluator')
+      expect(block).toMatch(/clientValueExpressionValue\s*\?\?/)
+      expect(block).toMatch(/clientValueExpressionValue\s*\?\?[^]*overlayValue\s*\?\?/)
     })
 
     it('wraps currency/number variants in NumberFormat with Input as the custom input', () => {

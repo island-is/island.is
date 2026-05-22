@@ -4,7 +4,7 @@ import {
   SDF_FIELD_BLOCK_MARGIN_BOTTOM,
   SDF_FIELD_CONTROL_PADDING_TOP,
 } from '../../sdfLayoutTokens'
-import { evaluateClientDisplayExpression } from '../clientDisplayExpression'
+import { useFormExpressionEvaluator } from '../../../hooks/useFormExpressionEvaluator'
 import type { FieldRendererProps } from '../types'
 
 const allowedTitleVariants = new Set([
@@ -43,27 +43,17 @@ export const SdfDisplayField = ({
     : 'h4'
   const overlayValue =
     component.id && displayValues ? displayValues[component.id] : undefined
-  const clientExpressionValue = component.clientExpression
-    ? evaluateClientDisplayExpression(component.clientExpression, answers)
-    : undefined
+  const clientValueExpressionValue = useFormExpressionEvaluator(
+    component.clientValueExpression,
+    answers,
+  )
   const rawValue =
-    clientExpressionValue ??
+    clientValueExpressionValue ??
     overlayValue ??
     (currentValue as string | undefined) ??
     component.displayValue ??
     component.value ??
     ''
-  console.log('[SDF display debug] SdfDisplayField render', {
-    id: component.id,
-    clientExpression: component.clientExpression,
-    answers,
-    clientExpressionValue,
-    overlayValue,
-    currentValue,
-    displayValue: component.displayValue,
-    value: component.value,
-    rawValue,
-  })
   const isCurrency = component.inputVariant === 'currency'
   const isNumber = component.inputVariant === 'number'
   const useNumericFormat = isCurrency || isNumber

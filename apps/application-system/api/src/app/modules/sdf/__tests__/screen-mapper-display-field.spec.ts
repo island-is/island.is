@@ -46,9 +46,13 @@ describe('mapScreenToComponents — display field parity props', () => {
           halfWidthOwnline: true,
           label: 'ISK',
           suffix: ' kr.',
-          clientExpression: {
-            type: 'sum',
-            fields: ['input1', 'input2', 'input3'],
+          clientValueExpression: {
+            operator: 'SUM',
+            args: [
+              { operator: 'GET', args: ['input1'] },
+              { operator: 'GET', args: ['input2'] },
+              { operator: 'GET', args: ['input3'] },
+            ],
           },
           value: (vals: { sourceNumber?: number }) =>
             String((vals?.sourceNumber ?? 0) * 2),
@@ -75,9 +79,13 @@ describe('mapScreenToComponents — display field parity props', () => {
     expect(df1?.halfWidthOwnline).toBe(true)
     expect(df1?.displayInputLabel).toBe('ISK')
     expect(df1?.textSuffix).toBe(' kr.')
-    expect(df1?.clientExpression).toEqual({
-      type: 'sum',
-      fields: ['input1', 'input2', 'input3'],
+    expect(df1?.clientValueExpression).toEqual({
+      operator: 'SUM',
+      args: [
+        { operator: 'GET', args: ['input1'] },
+        { operator: 'GET', args: ['input2'] },
+        { operator: 'GET', args: ['input3'] },
+      ],
     })
     expect(df1?.value).toBe('2000')
 
