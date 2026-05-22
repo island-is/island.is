@@ -68,7 +68,10 @@ const FooterConfigField = () => {
               key={color}
               id={color}
               value={color}
-              isChecked={selectedTextColor === color || color === 'dark400'}
+              isChecked={
+                selectedTextColor === color ||
+                (!selectedTextColor && color === 'dark400')
+              }
               onChange={() => {
                 updateState('textColor', color)
               }}
