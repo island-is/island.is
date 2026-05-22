@@ -9,7 +9,10 @@ export const toYearOptions = (
   data: SocialInsuranceYearWithMonths[] | null | undefined,
 ) =>
   (data ?? [])
-    .filter((ym): ym is SocialInsuranceYearWithMonths & { year: number } => ym.year != null)
+    .filter(
+      (ym): ym is SocialInsuranceYearWithMonths & { year: number } =>
+        ym.year != null,
+    )
     .map((ym) => ({ label: String(ym.year), value: ym.year }))
 
 export const toMonthOptions = (
