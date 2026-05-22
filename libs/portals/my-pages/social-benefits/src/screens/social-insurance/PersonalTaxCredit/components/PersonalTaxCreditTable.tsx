@@ -1,7 +1,10 @@
 import { Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
-import { createColumnHelper, m as coreMessages } from '@island.is/portals/my-pages/core'
+import {
+  createColumnHelper,
+  m as coreMessages,
+} from '@island.is/portals/my-pages/core'
 import { type MessageDescriptor } from 'react-intl'
 import AnimateHeight from 'react-animate-height'
 import {
@@ -11,7 +14,14 @@ import {
   getExpandedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Fragment, useId, useState, useMemo, type ReactNode } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useId,
+  useState,
+  useMemo,
+  type ReactNode,
+} from 'react'
 import { m } from '../../../../lib/messages'
 import type { GetPersonalTaxCreditQuery } from '../PersonalTaxCredit.generated'
 
@@ -44,16 +54,28 @@ const taxCardTypeMessageMap: Record<
   [SocialInsuranceTaxCardType.UNKNOWN_TAX_CARD]: m.taxCardTypeUnknown,
 }
 
-const getActiveOwnCardIndex = (taxCards: TaxCards): number | null =>
-  taxCards.reduce<number | null>((activeIdx, card, index) => {
-    if (card.type !== SocialInsuranceTaxCardType.PERSONAL_TAX_ALLOWANCE)
-      return activeIdx
-    if (activeIdx === null) return index
-    const activeCard = taxCards[activeIdx]
-    if (!card.validTo) return index
-    if (!activeCard.validTo) return activeIdx
-    return card.validTo > activeCard.validTo ? index : activeIdx
-  }, null)
+const isPersonalAllowance = (card: TaxCard) =>
+  card.type === SocialInsuranceTaxCardType.PERSONAL_TAX_ALLOWANCE
+
+const isPreferredEditableCard = (candidate: TaxCard, current: TaxCard) => {
+  if (!candidate.validTo) return true
+  if (!current.validTo) return false
+  return candidate.validTo > current.validTo
+}
+
+const getEditableRowIndex = (taxCards: TaxCards): number | null => {
+  let editableRowIndex: number | null = null
+  for (const [index, card] of taxCards.entries()) {
+    if (!isPersonalAllowance(card)) continue
+    if (
+      editableRowIndex === null ||
+      isPreferredEditableCard(card, taxCards[editableRowIndex])
+    ) {
+      editableRowIndex = index
+    }
+  }
+  return editableRowIndex
+}
 
 const getRowId = (card: TaxCard, index: number) =>
   `${card.type ?? ''}-${card.validFrom ?? ''}-${index}`
@@ -66,9 +88,13 @@ export const PersonalTaxCreditTable = ({
 }: PersonalTaxCreditTableProps) => {
   const { formatMessage, formatDate, locale } = useLocale()
   const tableId = useId()
-  const activeOwnCardIndex = getActiveOwnCardIndex(taxCards)
+  const editableRowIndex = getEditableRowIndex(taxCards)
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    setCollapsingRows(new Set())
+  }, [taxCards]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const columns = useMemo(
     () => [
@@ -85,9 +111,7 @@ export const PersonalTaxCreditTable = ({
         header: formatMessage(m.dateFrom),
         cell: ({ getValue }) => {
           const value = getValue()
-          return value
-            ? formatDate(value)
-            : '-'
+          return value ? formatDate(value) : '-'
         },
       }),
       columnHelper.accessor('validTo', {
@@ -95,9 +119,7 @@ export const PersonalTaxCreditTable = ({
         header: formatMessage(m.dateTo),
         cell: ({ getValue }) => {
           const value = getValue()
-          return value
-            ? formatDate(value)
-            : '-'
+          return value ? formatDate(value) : '-'
         },
       }),
       columnHelper.accessor('percentage', {
@@ -111,7 +133,7 @@ export const PersonalTaxCreditTable = ({
               id: 'actions',
               header: () => null,
               cell: ({ row }) =>
-                row.index === activeOwnCardIndex ? (
+                row.index === editableRowIndex ? (
                   <Button
                     variant="text"
                     size="small"
@@ -121,7 +143,11 @@ export const PersonalTaxCreditTable = ({
                     aria-controls={`${tableId}-expanded-${row.id}`}
                     onClick={() => row.toggleExpanded()}
                   >
-                    {formatMessage(row.getIsExpanded() ? coreMessages.buttonCancel : coreMessages.buttonEdit)}
+                    {formatMessage(
+                      row.getIsExpanded()
+                        ? coreMessages.buttonCancel
+                        : coreMessages.buttonEdit,
+                    )}
                   </Button>
                 ) : null,
             }),
@@ -129,7 +155,7 @@ export const PersonalTaxCreditTable = ({
         : []),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale, renderExpandedRowProp, activeOwnCardIndex],
+    [locale, renderExpandedRowProp, editableRowIndex],
   )
 
   const table = useReactTable({
@@ -180,6 +206,7 @@ export const PersonalTaxCreditTable = ({
                 {row.getVisibleCells().map((cell) => (
                   <T.Data
                     key={cell.id}
+                    text={{ variant: 'medium' }}
                     box={{
                       background: rowBackground,
                       borderBottomWidth:
