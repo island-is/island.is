@@ -11,8 +11,6 @@ export class RegisterTaxCardAllowanceInput {
 
   @Field(() => Int)
   @IsInt()
-  @Min(2000)
-  @Max(2100)
   year!: number
 
   @Field(() => Int)

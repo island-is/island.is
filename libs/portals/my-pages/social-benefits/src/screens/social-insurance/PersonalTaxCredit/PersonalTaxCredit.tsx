@@ -255,7 +255,7 @@ const PersonalTaxCredit = () => {
               />
             )}
 
-            {!hasRegistrations && (
+            {!isAlreadyRegistered && (
               <MyTaxCreditForm
                 state={myTaxCredit}
                 setState={setMyTaxCredit}
