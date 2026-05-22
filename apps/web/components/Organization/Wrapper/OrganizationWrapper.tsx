@@ -42,7 +42,6 @@ import {
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
-  WatsonChatPanel,
   WebChat,
   Webreader,
 } from '@island.is/web/components'
@@ -219,7 +218,7 @@ export const OrganizationHeader: React.FC<
     titleColor:
       (organizationPage.themeProperties
         .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
-    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imagePadding: organizationPage.themeProperties.imagePadding || '0px',
     imageIsFullHeight:
       organizationPage.themeProperties.imageIsFullHeight ?? true,
     imageObjectFit:
@@ -235,7 +234,6 @@ export const OrganizationHeader: React.FC<
     logoAltText: logoAltText,
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
-    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
     isSubpage,
   }
 
