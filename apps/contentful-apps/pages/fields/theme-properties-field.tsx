@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
+  Accordion,
   FormControl,
   Paragraph,
   Radio,
@@ -86,7 +87,7 @@ const ThemePropertiesField = () => {
               key={color}
               id={color}
               value={color}
-              isChecked={selectedTextColor === color}
+              isChecked={selectedTextColor === color || color === 'dark400'}
               onChange={() => {
                 updateState('textColor', color)
               }}
@@ -97,7 +98,7 @@ const ThemePropertiesField = () => {
         </Stack>
       </Stack>
       <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Background Color</FormControl.Label>
+        <FormControl.Label>Background Color (e.g. #FFFFFF)</FormControl.Label>
         <Stack
           paddingLeft="spacingL"
           flexDirection="column"
@@ -112,6 +113,39 @@ const ThemePropertiesField = () => {
           />
         </Stack>
       </Stack>
+      <Accordion>
+        <Accordion.Item title="Advanced Settings">
+          <Stack flexDirection="column" alignItems="flex-start" spacing="none">
+            <FormControl.Label>Image Display</FormControl.Label>
+            <Stack flexDirection="row">
+              <Radio
+                name="imageObjectFitRadio"
+                id="imageObjectFitContain"
+                value="contain"
+                isChecked={
+                  !state.imageObjectFit || state.imageObjectFit === 'contain'
+                }
+                onChange={() => {
+                  updateState('imageObjectFit', 'contain')
+                }}
+              >
+                Show Full Image
+              </Radio>
+              <Radio
+                name="imageObjectFitRadio"
+                id="imageObjectFitCover"
+                value="cover"
+                isChecked={state.imageObjectFit === 'cover'}
+                onChange={() => {
+                  updateState('imageObjectFit', 'cover')
+                }}
+              >
+                Fill Area (Crop Image)
+              </Radio>
+            </Stack>
+          </Stack>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   )
 }

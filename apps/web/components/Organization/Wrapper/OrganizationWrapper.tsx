@@ -231,7 +231,7 @@ export const OrganizationHeader: React.FC<
         ? 'left'
         : organizationPage.themeProperties.imageObjectPosition === 'right'
         ? 'right'
-        : 'center',
+        : 'right',
     logoAltText: logoAltText,
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
