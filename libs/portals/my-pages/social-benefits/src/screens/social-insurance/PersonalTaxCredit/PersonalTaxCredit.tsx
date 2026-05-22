@@ -208,63 +208,69 @@ const PersonalTaxCredit = () => {
               {formatMessage(m.myTaxCreditUsage)}
             </Text>
 
-            {hasRegistrations && (
-              <PersonalTaxCreditTable
-                taxCards={page?.taxCards ?? []}
-                renderExpandedRow={({ close }) => (
-                  <Box paddingY={4} paddingX={4} background="blue100">
-                    <Stack space={3}>
-                      <MyTaxCreditForm
-                        state={myTaxCredit}
-                        setState={setMyTaxCredit}
-                        monthsAndYears={page?.registrationMonthsAndYears}
-                        discontinuingMonthsAndYears={
-                          page?.discontinuingMonthsAndYears
-                        }
-                        isAlreadyRegistered={isAlreadyRegistered}
-                        canDiscontinue={page?.canDiscontinue ?? false}
-                      />
-                      <Inline space={2}>
-                        <Button
-                          variant="primary"
-                          colorScheme="negative"
-                          size="small"
-                          onClick={() => {
-                            handleCancel()
-                            close()
-                          }}
-                        >
-                          {formatMessage(coreMessages.buttonCancel)}
-                        </Button>
-                        <Button
-                          variant="primary"
-                          size="small"
-                          onClick={async () => {
-                            const saved = await handleSave()
-                            if (saved) close()
-                          }}
-                          disabled={!canSubmit || saving}
-                          loading={saving}
-                        >
-                          {formatMessage(coreMessages.submit)}
-                        </Button>
-                      </Inline>
-                    </Stack>
-                  </Box>
-                )}
-              />
-            )}
+            <>
+              {hasRegistrations && (
+                <PersonalTaxCreditTable
+                  taxCards={page?.taxCards ?? []}
+                  renderExpandedRow={({ close }) => (
+                    <Box paddingY={4} paddingX={4} background="blue100">
+                      <Stack space={3}>
+                        <MyTaxCreditForm
+                          state={myTaxCredit}
+                          setState={setMyTaxCredit}
+                          monthsAndYears={page?.registrationMonthsAndYears}
+                          discontinuingMonthsAndYears={
+                            page?.discontinuingMonthsAndYears
+                          }
+                          isAlreadyRegistered={isAlreadyRegistered}
+                          canDiscontinue={page?.canDiscontinue ?? false}
+                        />
+                        <Inline space={2}>
+                          <Button
+                            variant="primary"
+                            colorScheme="negative"
+                            size="small"
+                            onClick={() => {
+                              handleCancel()
+                              close()
+                            }}
+                          >
+                            {formatMessage(coreMessages.buttonCancel)}
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="small"
+                            onClick={async () => {
+                              const saved = await handleSave()
+                              if (saved) close()
+                            }}
+                            disabled={!canSubmit || saving}
+                            loading={saving}
+                          >
+                            {formatMessage(coreMessages.submit)}
+                          </Button>
+                        </Inline>
+                      </Stack>
+                    </Box>
+                  )}
+                />
+              )}
 
-            {!isAlreadyRegistered && (
-              <MyTaxCreditForm
-                state={myTaxCredit}
-                setState={setMyTaxCredit}
-                monthsAndYears={page?.registrationMonthsAndYears}
-                discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
-                isAlreadyRegistered={isAlreadyRegistered}
-                canDiscontinue={page?.canDiscontinue ?? false}
-              />
-            )}
+              {!isAlreadyRegistered && (
+                <Box marginTop={hasRegistrations ? 5 : 0}>
+                  <MyTaxCreditForm
+                    state={myTaxCredit}
+                    setState={setMyTaxCredit}
+                    monthsAndYears={page?.registrationMonthsAndYears}
+                    discontinuingMonthsAndYears={
+                      page?.discontinuingMonthsAndYears
+                    }
+                    isAlreadyRegistered={isAlreadyRegistered}
+                    canDiscontinue={page?.canDiscontinue ?? false}
+                  />
+                </Box>
+              )}
+            </>
           </Box>
 
           <Box>
