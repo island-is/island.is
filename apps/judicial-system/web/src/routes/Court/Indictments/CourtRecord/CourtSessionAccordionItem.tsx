@@ -173,7 +173,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const [readyForInitialization, setReadyForInitialization] = useState(false)
   const [locationErrorMessage, setLocationErrorMessage] = useState<string>('')
   const [entriesErrorMessage, setEntriesErrorMessage] = useState<string>('')
-  const [useRichTextEditor, setUseRichTextEditor] = useState(false)
   const [rulingErrorMessage, setRulingErrorMessage] = useState<string>('')
   const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
   const [draggedMergeFileId, setDraggedMergeFileId] = useState<string | null>(
@@ -1438,84 +1437,32 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 },
               )}
               <Box>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                >
-                  <SectionHeading title="Bókanir" marginBottom={0} />
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon={useRichTextEditor ? 'reader' : 'pencil'}
-                    onClick={() => setUseRichTextEditor((prev) => !prev)}
-                  >
-                    Ritill - beta
-                  </Button>
-                </Box>
-                <Box marginTop={2}>
-                  {useRichTextEditor ? (
-                    <TinyMCE
-                      data-testid="entries"
-                      label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                      placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                      defaultValue={courtSession.entries || ''}
-                      onChange={(html) => {
-                        setEntriesErrorMessage('')
-                        patchSession(courtSession.id, { entries: html })
-                      }}
-                      onBlur={(html) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          html.replace(/<[^>]*>/g, '').trim(),
-                          setEntriesErrorMessage,
-                        )
-                        patchSession(
-                          courtSession.id,
-                          { entries: html },
-                          { persist: true },
-                        )
-                      }}
-                      errorMessage={entriesErrorMessage || undefined}
-                      disabled={courtSession.isConfirmed || false}
-                      required
-                    />
-                  ) : (
-                    <Input
-                      data-testid="entries"
-                      name="entries"
-                      label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                      value={courtSession.entries || ''}
-                      placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                      onChange={(event) => {
-                        setEntriesErrorMessage('')
-
-                        patchSession(courtSession.id, {
-                          entries: event.target.value,
-                        })
-                      }}
-                      onBlur={(event) => {
-                        validateAndSetErrorMessage(
-                          ['empty'],
-                          event.target.value,
-                          setEntriesErrorMessage,
-                        )
-
-                        patchSession(
-                          courtSession.id,
-                          { entries: event.target.value },
-                          { persist: true },
-                        )
-                      }}
-                      hasError={entriesErrorMessage !== ''}
-                      errorMessage={entriesErrorMessage}
-                      rows={15}
-                      disabled={courtSession.isConfirmed || false}
-                      textarea
-                      required
-                    />
-                  )}
-                </Box>
+                <SectionHeading title="Bókanir" />
+                <TinyMCE
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onBlur={(html) => {
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      html.replace(/<[^>]*>/g, '').trim(),
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                />
               </Box>
               <Box>
                 <SectionHeading
