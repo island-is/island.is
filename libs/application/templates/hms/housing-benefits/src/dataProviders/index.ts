@@ -1,8 +1,10 @@
 import {
+  DefaultEvents,
   defineTemplateApi,
   NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { nationalIdPreface } from '../utils/assigneeUtils'
+import { TemplateApiActions } from '../utils/constants'
 
 export {
   ChildrenCustodyInformationApiV3,
@@ -57,4 +59,38 @@ export const AssigneeChildrenCustodyInformationApiV3 = defineTemplateApi({
   action: 'assigneeChildrenCustodyInformation',
   externalDataId: (application, user) =>
     nationalIdPreface(application, user, 'assigneeChildrenCustody'),
+})
+
+export const NotifyAssigneesApi = defineTemplateApi({
+  action: TemplateApiActions.notifyAssignees,
+  externalDataId: 'notifyAssignees',
+  triggerEvent: DefaultEvents.SUBMIT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnAssigneeSubmitApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnAssigneeSubmit,
+  triggerEvent: DefaultEvents.SUBMIT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnAssigneeRejectApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnAssigneeReject,
+  triggerEvent: DefaultEvents.REJECT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnExtraDataRequestedApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnExtraDataRequested,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnApprovedByInstitutionApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnApprovedByInstitution,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnRejectedByInstitutionApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnRejectedByInstitution,
+  throwOnError: true,
 })

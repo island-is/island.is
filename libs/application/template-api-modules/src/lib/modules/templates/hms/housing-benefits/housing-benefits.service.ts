@@ -1,24 +1,39 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
+import { ConfigService } from '@nestjs/config'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   ChildrenCustodyInformationParameters,
+  NotificationType,
 } from '@island.is/application/types'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { TemplateApiModuleActionProps } from '../../../..'
+import {
+  SharedModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../../types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
+import { format as formatKennitala } from 'kennitala'
+import { getConfigValue } from '../../../shared/shared.utils'
 import { ContractStatus } from './types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { mockGetRentalAgreements } from '../terminate-rental-agreement/mockedRentalAgreements'
 import {
   doesDomicileAddressMatchContractProperty,
   filterContractsForHousingBenefits,
+  getApplicantName,
+  getApplicationLink,
+  getPreviouslyNotifiedIds,
+  getRejectReason,
+  getRequestedExtraDataFiles,
+  getRentalAddress,
+  isLastAssigneeToComplete,
+  normalizeNationalId,
 } from './utils'
 import {
   applyMockAssigneeNationalRegistryAddress,
@@ -29,22 +44,308 @@ import {
 } from './utils/mock'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 import { coreErrorMessages } from '@island.is/application/core'
+import {
+  getAssigneeApproverDisplayName,
+  getAssigneeNationalIds,
+} from '@island.is/application/templates/hms/housing-benefits'
 
 @Injectable()
 export class HousingBenefitsService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly homeApi: HomeApi,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super(ApplicationTypes.HOUSING_BENEFITS)
+  }
+
+  private getClientLocationOrigin(): string {
+    return getConfigValue(this.configService, 'clientLocationOrigin') as string
+  }
+
+  private async sendReadyForApplicantSubmitNotification(
+    application: ApplicationWithAttachments,
+  ): Promise<void> {
+    const applicationLink = getApplicationLink(
+      application,
+      this.getClientLocationOrigin(),
+    )
+    const address = getRentalAddress(application)
+
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsReadyForApplicantSubmit,
+      messageParties: {
+        recipient: normalizeNationalId(application.applicant),
+      },
+      applicationId: application.id,
+      args: {
+        applicationLink,
+        address,
+      },
+    })
+  }
+
+  async notifyAssignees({
+    application,
+  }: TemplateApiModuleActionProps): Promise<{ notifiedNationalIds: string[] }> {
+    const applicantNationalId = normalizeNationalId(application.applicant)
+    const applicantName = getApplicantName(application)
+    const address = getRentalAddress(application)
+    const applicationLink = getApplicationLink(
+      application,
+      this.getClientLocationOrigin(),
+    )
+
+    const previouslyNotified = getPreviouslyNotifiedIds(application)
+
+    const recipients = Array.from(
+      new Set(
+        getAssigneeNationalIds(application)
+          .map((id) => normalizeNationalId(id))
+          .filter((id) => id && id !== applicantNationalId),
+      ),
+    ).filter((recipient) => !previouslyNotified.has(recipient))
+
+    if (recipients.length === 0) {
+      return { notifiedNationalIds: [...previouslyNotified] }
+    }
+
+    if (!applicantName) {
+      throw new TemplateApiError('Applicant name is not set', 500)
+    }
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    const results = await Promise.allSettled(
+      recipients.map((recipient) =>
+        this.notificationsService.sendNotification({
+          type: NotificationType.HmsHousingBenefitsNotifyAssignee,
+          messageParties: {
+            recipient,
+            sender: applicantNationalId,
+          },
+          applicationId: application.id,
+          args: {
+            applicantName,
+            applicantNationalId: formatKennitala(applicantNationalId),
+            address,
+            applicationLink,
+          },
+        }),
+      ),
+    )
+
+    const failed = results
+      .map((result, index) => ({ result, recipient: recipients[index] }))
+      .filter(
+        (
+          entry,
+        ): entry is { result: PromiseRejectedResult; recipient: string } =>
+          entry.result.status === 'rejected',
+      )
+
+    if (failed.length > 0) {
+      this.logger.error(
+        'Failed to send housing benefits assignee notifications',
+        {
+          applicationId: application.id,
+          failedRecipients: failed.map(({ recipient, result }) => ({
+            recipient,
+            reason: result.reason,
+          })),
+        },
+      )
+      throw new TemplateApiError(
+        'Failed to send notification to one or more assignees',
+        500,
+      )
+    }
+
+    return {
+      notifiedNationalIds: [...previouslyNotified, ...recipients],
+    }
+  }
+
+  async notifyApplicantOnAssigneeSubmit({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const applicantNationalId = normalizeNationalId(application.applicant)
+    const authNationalId = normalizeNationalId(auth.nationalId)
+
+    if (authNationalId === applicantNationalId) {
+      return
+    }
+
+    if (isLastAssigneeToComplete(application, authNationalId)) {
+      await this.sendReadyForApplicantSubmitNotification(application)
+      return
+    }
+
+    const assigneeName = getAssigneeApproverDisplayName(
+      application,
+      authNationalId,
+    )
+    if (!assigneeName) {
+      throw new TemplateApiError('Assignee name is not set', 500)
+    }
+
+    const applicationLink = getApplicationLink(
+      application,
+      this.getClientLocationOrigin(),
+    )
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsAssigneeApproved,
+      messageParties: {
+        recipient: applicantNationalId,
+        sender: authNationalId,
+      },
+      applicationId: application.id,
+      args: {
+        assigneeName,
+        applicationLink,
+      },
+    })
+  }
+
+  private async sendRejectedByInstitutionNotification(
+    application: ApplicationWithAttachments,
+  ): Promise<void> {
+    const address = getRentalAddress(application)
+    const rejectReason = getRejectReason(application)
+
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsRejectedByInstitution,
+      messageParties: {
+        recipient: normalizeNationalId(application.applicant),
+      },
+      applicationId: application.id,
+      args: {
+        address,
+        rejectReason,
+      },
+    })
+  }
+
+  async notifyApplicantOnExtraDataRequested({
+    application,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const applicationLink = getApplicationLink(
+      application,
+      this.getClientLocationOrigin(),
+    )
+    const address = getRentalAddress(application)
+
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsExtraDataRequested,
+      messageParties: {
+        recipient: normalizeNationalId(application.applicant),
+      },
+      applicationId: application.id,
+      args: {
+        applicationLink,
+        address,
+        files: getRequestedExtraDataFiles(application),
+      },
+    })
+  }
+
+  async notifyApplicantOnApprovedByInstitution({
+    application,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const address = getRentalAddress(application)
+
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsApprovedByInstitution,
+      messageParties: {
+        recipient: normalizeNationalId(application.applicant),
+      },
+      applicationId: application.id,
+      args: {
+        address,
+      },
+    })
+  }
+
+  async notifyApplicantOnRejectedByInstitution({
+    application,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    await this.sendRejectedByInstitutionNotification(application)
+  }
+
+  async notifyApplicantOnAssigneeReject({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const applicantNationalId = normalizeNationalId(application.applicant)
+    const authNationalId = normalizeNationalId(auth.nationalId)
+
+    if (authNationalId === applicantNationalId) {
+      return
+    }
+
+    if (isLastAssigneeToComplete(application, authNationalId)) {
+      await this.sendReadyForApplicantSubmitNotification(application)
+      return
+    }
+
+    const assigneeName = getAssigneeApproverDisplayName(
+      application,
+      authNationalId,
+    )
+    if (!assigneeName) {
+      throw new TemplateApiError('Assignee name is not set', 500)
+    }
+
+    const applicationLink = getApplicationLink(
+      application,
+      this.getClientLocationOrigin(),
+    )
+    const address = getRentalAddress(application)
+
+    if (!address) {
+      throw new TemplateApiError('Rental address is not set', 500)
+    }
+
+    await this.notificationsService.sendNotification({
+      type: NotificationType.HmsHousingBenefitsAssigneeRejected,
+      messageParties: {
+        recipient: applicantNationalId,
+        sender: authNationalId,
+      },
+      applicationId: application.id,
+      args: {
+        assigneeName,
+        address,
+        applicationLink,
+      },
+    })
   }
 
   private homeApiWithAuth(auth: Auth) {
     return this.homeApi.withMiddleware(new AuthMiddleware(auth))
   }
+
   async getRentalAgreements({
     application,
     auth,

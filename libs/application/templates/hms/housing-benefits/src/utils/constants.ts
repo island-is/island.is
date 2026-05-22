@@ -25,6 +25,15 @@ export enum States {
   DELAYED = 'delayed',
 }
 
+export enum TemplateApiActions {
+  notifyAssignees = 'notifyAssignees',
+  notifyApplicantOnAssigneeSubmit = 'notifyApplicantOnAssigneeSubmit',
+  notifyApplicantOnAssigneeReject = 'notifyApplicantOnAssigneeReject',
+  notifyApplicantOnExtraDataRequested = 'notifyApplicantOnExtraDataRequested',
+  notifyApplicantOnApprovedByInstitution = 'notifyApplicantOnApprovedByInstitution',
+  notifyApplicantOnRejectedByInstitution = 'notifyApplicantOnRejectedByInstitution',
+}
+
 export enum Roles {
   APPLICANT = 'applicant',
   UNSIGNED_PREREQ_ASSIGNEE = 'unsignedPrereqAssignee',

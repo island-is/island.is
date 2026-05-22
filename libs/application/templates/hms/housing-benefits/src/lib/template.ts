@@ -30,6 +30,12 @@ import {
   RentalAgreementsApi,
   AssigneeNationalRegistryApi,
   AssigneeChildrenCustodyInformationApiV3,
+  NotifyAssigneesApi,
+  NotifyApplicantOnAssigneeSubmitApi,
+  NotifyApplicantOnAssigneeRejectApi,
+  NotifyApplicantOnExtraDataRequestedApi,
+  NotifyApplicantOnApprovedByInstitutionApi,
+  NotifyApplicantOnRejectedByInstitutionApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
@@ -154,6 +160,7 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.draft,
+          onExit: NotifyAssigneesApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -191,6 +198,10 @@ const template: ApplicationTemplate<
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.assigneeApproval,
+          onExit: [
+            NotifyApplicantOnAssigneeSubmitApi,
+            NotifyApplicantOnAssigneeRejectApi,
+          ],
           roles: [
             {
               id: Roles.UNSIGNED_PREREQ_ASSIGNEE,
@@ -336,6 +347,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
+          onExit: NotifyAssigneesApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -430,6 +442,7 @@ const template: ApplicationTemplate<
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.extraData,
+          onEntry: NotifyApplicantOnExtraDataRequestedApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -463,6 +476,7 @@ const template: ApplicationTemplate<
           status: FormModes.APPROVED,
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.approved,
+          onEntry: NotifyApplicantOnApprovedByInstitutionApi,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -483,6 +497,7 @@ const template: ApplicationTemplate<
           status: FormModes.REJECTED,
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.rejected,
+          onEntry: NotifyApplicantOnRejectedByInstitutionApi,
           roles: [
             {
               id: Roles.APPLICANT,

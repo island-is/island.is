@@ -1,5 +1,6 @@
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Address } from '@island.is/application/types'
+import { normalizeNationalId } from './application'
 
 const normalizeForAddressComparison = (
   val: string | number | null | undefined,
@@ -33,9 +34,6 @@ export const doesDomicileAddressMatchContractProperty = (
       normalizeForAddressComparison(property.postalCode)
   )
 }
-
-export const normalizeNationalId = (nationalId: string): string =>
-  nationalId.replace(/\D/g, '').slice(-10)
 
 export const isApplicantTenantOnContract = (
   contract: Contract,
