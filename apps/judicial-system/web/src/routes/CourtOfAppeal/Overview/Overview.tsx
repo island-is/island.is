@@ -2,7 +2,10 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -158,8 +161,8 @@ const CourtOfAppealOverview = () => {
             onNextButtonClick={() =>
               handleNavigationTo(
                 shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                  ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : constants.COURT_OF_APPEAL_CASE_ROUTE,
+                  ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                  : COURT_OF_APPEAL_CASE_ROUTE,
               )
             }
             nextButtonIcon="arrowForward"

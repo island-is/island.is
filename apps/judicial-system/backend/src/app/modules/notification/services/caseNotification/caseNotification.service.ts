@@ -14,13 +14,13 @@ import { type ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
-  DEFENDER_INDICTMENT_ROUTE,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
-  INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
   ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -342,8 +342,8 @@ export class CaseNotificationService extends BaseNotificationService {
 
     const overviewUrl = `${
       isRestrictionCase(type)
-        ? `${this.config.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}`
-        : `${this.config.clientUrl}${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}`
+        ? `${this.config.clientUrl}${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}`
+        : `${this.config.clientUrl}${PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}`
     }/${id}`
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
@@ -369,7 +369,7 @@ export class CaseNotificationService extends BaseNotificationService {
       formatCourtIndictmentReadyForCourtEmailNotification(
         this.formatMessage,
         theCase,
-        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        `${this.config.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
       )
 
     return this.sendEmail({
@@ -1013,7 +1013,7 @@ export class CaseNotificationService extends BaseNotificationService {
           getHumanReadableCaseIndictmentRulingDecision(
             theCase.indictmentRulingDecision,
           ),
-        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       }),
     }
@@ -1936,7 +1936,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(notifications.indictmentDenied.subject)
     const html = this.formatMessage(notifications.indictmentDenied.body, {
       caseNumber: theCase.policeCaseNumbers[0],
-      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkStart: `<a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
 
@@ -1976,7 +1976,7 @@ export class CaseNotificationService extends BaseNotificationService {
       deadlineDate,
     )}. Sjá nánar á <a href="${
       this.config.clientUrl
-    }${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${
+    }${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${
       theCase.id
     }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
@@ -2036,7 +2036,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
           theCase.court?.name,
-          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          `${this.config.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
           theCase.judge.name,
           theCase.judge.email,
         ),
@@ -2051,7 +2051,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
           theCase.court?.name,
-          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          `${this.config.clientUrl}${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
           theCase.registrar.name,
           theCase.registrar.email,
         ),
@@ -2118,7 +2118,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
           theCase.court?.name,
-          `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+          `${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}`,
           theCase.prosecutor?.name,
           theCase.prosecutor?.email,
         ),
@@ -2507,7 +2507,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
           : undefined
         const defenderHtml = this.formatMessage(
           notifications.caseAppealedToCourtOfAppeals.body,
@@ -2537,7 +2537,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
           : undefined
         const defenderHtml = this.formatMessage(
           notifications.caseAppealedToCourtOfAppeals.body,
@@ -2777,7 +2777,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     for (const recipient of defenceRecipients) {
       const defenderUrl = recipient.nationalId
-        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
         : undefined
       const defenderHtml = this.formatMessage(
         notifications.caseAppealReceivedByCourt.body,
@@ -2915,7 +2915,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
           : undefined
         const defenderHtml = this.formatMessage(
           notifications.caseAppealStatement.body,
@@ -2946,7 +2946,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
       for (const recipient of defenceRecipients) {
         const defenderUrl = recipient.nationalId
-          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+          ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
           : undefined
         const defenderHtml = this.formatMessage(
           notifications.caseAppealStatement.body,
@@ -3197,7 +3197,7 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       for (const recipient of defenceRecipients) {
-        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
         const defenderHtml = this.formatMessage(
           notifications.caseAppealCaseFilesUpdated.body,
           {
@@ -3225,7 +3225,7 @@ export class CaseNotificationService extends BaseNotificationService {
         this.getIndictmentAppealDefenceRecipients(theCase)
 
       for (const recipient of defenceRecipients) {
-        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+        const defenderUrl = `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
         const defenderHtml = this.formatMessage(
           notifications.caseAppealCaseFilesUpdated.body,
           {
@@ -3427,7 +3427,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     for (const recipient of defenceRecipients) {
       const defenderUrl = recipient.nationalId
-        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}`
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
         : undefined
       const defenderHtml = this.formatMessage(
         isReopened

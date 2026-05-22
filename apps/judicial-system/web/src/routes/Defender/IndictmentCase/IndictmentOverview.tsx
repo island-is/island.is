@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE } from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -265,7 +265,7 @@ const IndictmentOverview: FC = () => {
                   icon="add"
                   onClick={() =>
                     router.push(
-                      `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                      `${DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                     )
                   }
                 >

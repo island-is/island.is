@@ -10,7 +10,10 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -271,10 +274,10 @@ export const JudgeOverview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+              DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={uploadState === UploadState.UPLOADING}

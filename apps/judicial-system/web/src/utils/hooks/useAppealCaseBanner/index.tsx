@@ -4,10 +4,10 @@ import router from 'next/router'
 
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import {
-  APPEAL_ROUTE,
-  DEFENDER_APPEAL_ROUTE,
-  DEFENDER_STATEMENT_ROUTE,
-  STATEMENT_ROUTE,
+  DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
+  DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
+  PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -82,10 +82,12 @@ const useAppealCaseBanner = () => {
     useContext(FormContext)
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
-  const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
+  const appealRoute = isDefenceUser(user)
+    ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+    : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
   const statementRoute = isDefenceUser(user)
-    ? DEFENDER_STATEMENT_ROUTE
-    : STATEMENT_ROUTE
+    ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+    : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
 
   const {
     appealCaseModals,
@@ -207,8 +209,8 @@ const useAppealCaseBanner = () => {
         renderLinkButton(
           'Senda greinargerð',
           isDefenceUser(user)
-            ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-            : `${STATEMENT_ROUTE}/${workingCase.id}`,
+            ? `${DEFENDER_APPEAL_CASE_STATEMENT_ROUTE}/${workingCase.id}`
+            : `${PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE}/${workingCase.id}`,
         )
       )
     }
@@ -229,7 +231,9 @@ const useAppealCaseBanner = () => {
         renderLinkButton(
           'Senda greinargerð',
           `${
-            isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+            isDefenceUser(user)
+              ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+              : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
           }/${workingCase.id}`,
         )
       )
@@ -267,9 +271,11 @@ const useAppealCaseBanner = () => {
     ) : (
       renderLinkButton(
         'Senda inn kæru',
-        `${isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
-          workingCase.id
-        }`,
+        `${
+          isDefenceUser(user)
+            ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+            : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
+        }/${workingCase.id}`,
       )
     )
   }

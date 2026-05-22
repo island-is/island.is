@@ -11,7 +11,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
   getStandardUserDashboardRoute,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -326,7 +326,7 @@ export class DefendantNotificationService extends BaseNotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
         defenderHasAccessToRVG,
         // This link only works if the user is already logged in
-        linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       })
 
