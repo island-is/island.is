@@ -283,15 +283,15 @@ const PersonalTaxCredit = () => {
                   spouseHasGrantedCard
                     ? m.spouseTaxCreditUsingSummaryTitle
                     : userIsUsingSpouseCard
-                      ? m.youAreUsingSpouseTaxCreditTitle
-                      : m.spousePersonalTaxCredit,
+                    ? m.youAreUsingSpouseTaxCreditTitle
+                    : m.spousePersonalTaxCredit,
                 )}
                 body={
                   spouseHasGrantedCard
                     ? formatMessage(m.spouseTaxCreditUsingSummaryBody)
                     : userIsUsingSpouseCard
-                      ? spouseInfo?.name
-                      : formatMessage(m.spouseNoUsage)
+                    ? spouseInfo?.name
+                    : formatMessage(m.spouseNoUsage)
                 }
                 onEdit={handleEditSpouse}
                 editLabel={formatMessage(coreMessages.buttonEdit)}
