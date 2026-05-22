@@ -3,7 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
+  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -83,7 +84,7 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
           } as Case,
           {
             user: { id: userId } as User,
-            type: CaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))

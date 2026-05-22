@@ -333,11 +333,7 @@ const Processing: FC = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <Box component="section" marginBottom={10}>
-            <Accordion
-              dividerOnTop={false}
-              dividerOnBottom={false}
-              dividers={false}
-            >
+            <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <AccordionItem
                   key={civilClaimant.id}

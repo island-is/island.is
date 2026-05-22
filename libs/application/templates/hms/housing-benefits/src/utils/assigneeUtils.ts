@@ -205,9 +205,7 @@ export const getCompletedAssigneeNationalIdSet = (
     getValueViaPath<string[]>(application.answers, 'signedAssignees') ?? [],
   )
   const rejected = getRejectedAssigneeNationalIds(application)
-  return new Set(
-    [...signed, ...rejected].map((id) => comparableNationalId(id)),
-  )
+  return new Set([...signed, ...rejected].map((id) => comparableNationalId(id)))
 }
 
 /**
