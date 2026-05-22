@@ -234,7 +234,7 @@ const PersonalTaxCredit = () => {
                             close()
                           }}
                         >
-                          {formatMessage(m.cancel)}
+                          {formatMessage(coreMessages.buttonCancel)}
                         </Button>
                         <Button
                           variant="primary"
@@ -246,7 +246,7 @@ const PersonalTaxCredit = () => {
                           disabled={!canSubmit || saving}
                           loading={saving}
                         >
-                          {formatMessage(m.confirm)}
+                          {formatMessage(coreMessages.submit)}
                         </Button>
                       </Inline>
                     </Stack>
@@ -284,7 +284,7 @@ const PersonalTaxCredit = () => {
                     heading={formatMessage(m.spouseTaxCreditUsingSummaryTitle)}
                     body={formatMessage(m.spouseTaxCreditUsingSummaryBody)}
                     onEdit={handleEditSpouse}
-                    editLabel={formatMessage(m.edit)}
+                    editLabel={formatMessage(coreMessages.buttonEdit)}
                   />
                 )}
                 {userIsUsingSpouseCard && spouseInfo && (
@@ -292,7 +292,7 @@ const PersonalTaxCredit = () => {
                     heading={formatMessage(m.youAreUsingSpouseTaxCreditTitle)}
                     body={spouseInfo.name}
                     onEdit={handleEditSpouse}
-                    editLabel={formatMessage(m.edit)}
+                    editLabel={formatMessage(coreMessages.buttonEdit)}
                   />
                 )}
                 {!spouseHasGrantedCard && !userIsUsingSpouseCard && (
@@ -300,7 +300,7 @@ const PersonalTaxCredit = () => {
                     heading={formatMessage(m.spousePersonalTaxCredit)}
                     body={formatMessage(m.spouseNoUsage)}
                     onEdit={handleEditSpouse}
-                    editLabel={formatMessage(m.edit)}
+                    editLabel={formatMessage(coreMessages.buttonEdit)}
                   />
                 )}
               </>
@@ -323,7 +323,7 @@ const PersonalTaxCredit = () => {
             spouseTaxCredit.action !== null) && (
             <Inline space={2} justifyContent="flexEnd">
               <Button variant="ghost" size="small" onClick={handleCancel}>
-                {formatMessage(m.cancel)}
+                {formatMessage(coreMessages.buttonCancel)}
               </Button>
               <Button
                 size="small"
@@ -331,7 +331,7 @@ const PersonalTaxCredit = () => {
                 disabled={!canSubmit || saving}
                 loading={saving}
               >
-                {formatMessage(m.confirm)}
+                {formatMessage(coreMessages.submit)}
               </Button>
             </Inline>
           )}

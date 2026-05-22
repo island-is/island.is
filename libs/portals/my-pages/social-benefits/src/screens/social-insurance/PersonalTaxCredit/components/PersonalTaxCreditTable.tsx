@@ -1,7 +1,7 @@
 import { Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
-import { createColumnHelper } from '@island.is/portals/my-pages/core'
+import { createColumnHelper, m as coreMessages } from '@island.is/portals/my-pages/core'
 import { type MessageDescriptor } from 'react-intl'
 import AnimateHeight from 'react-animate-height'
 import {
@@ -76,36 +76,29 @@ export const PersonalTaxCreditTable = ({
         id: 'type',
         header: formatMessage(m.type),
         cell: ({ getValue }) => {
-          const type = getValue() as
-            | SocialInsuranceTaxCardType
-            | null
-            | undefined
+          const type = getValue()
           return type ? formatMessage(taxCardTypeMessageMap[type]) : '-'
         },
       }),
       columnHelper.accessor('validFrom', {
         id: 'validFrom',
         header: formatMessage(m.dateFrom),
-        cell: ({ getValue }) =>
-          getValue()
-            ? formatDate(getValue() as string, {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })
-            : '-',
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value
+            ? formatDate(value)
+            : '-'
+        },
       }),
       columnHelper.accessor('validTo', {
         id: 'validTo',
         header: formatMessage(m.dateTo),
-        cell: ({ getValue }) =>
-          getValue()
-            ? formatDate(getValue() as string, {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })
-            : '-',
+        cell: ({ getValue }) => {
+          const value = getValue()
+          return value
+            ? formatDate(value)
+            : '-'
+        },
       }),
       columnHelper.accessor('percentage', {
         id: 'percentage',
@@ -128,7 +121,7 @@ export const PersonalTaxCreditTable = ({
                     aria-controls={`${tableId}-expanded-${row.id}`}
                     onClick={() => row.toggleExpanded()}
                   >
-                    {formatMessage(row.getIsExpanded() ? m.cancel : m.edit)}
+                    {formatMessage(row.getIsExpanded() ? coreMessages.buttonCancel : coreMessages.buttonEdit)}
                   </Button>
                 ) : null,
             }),

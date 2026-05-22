@@ -86,7 +86,7 @@ export const SpouseTaxCreditForm: FC<Props> = ({
                   {spouseName && <Text>{spouseName}</Text>}
                   {spouseNationalId && (
                     <Text>
-                      {formatMessage(m.nationalId)}: {spouseNationalId}
+                      {formatMessage(m.nationalIdWithValue, { value: spouseNationalId })}
                     </Text>
                   )}
                 </Box>

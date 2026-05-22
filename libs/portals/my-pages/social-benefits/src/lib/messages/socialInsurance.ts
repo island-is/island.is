@@ -279,10 +279,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:name',
     defaultMessage: 'Nafn',
   },
-  nationalId: {
-    id: 'sp.social-insurance-maintenance:national-id',
-    defaultMessage: 'Kennitala',
-  },
   calculateMyRights: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights',
     defaultMessage: 'Reikna mín réttindi',
@@ -320,20 +316,16 @@ export const m = defineMessages({
     defaultMessage:
       'Þú getur leyft maka þínum að nota skattkortið þitt, allt að 100% af persónuafslætti. Ekki má nota skattkort beggja samtímis. Einnig má nýta skattkort látins maka í allt að 9 mánuði.',
   },
-  edit: {
-    id: 'sp.social-insurance-maintenance:edit',
-    defaultMessage: 'Breyta',
-  },
-  cancel: {
-    id: 'sp.social-insurance-maintenance:cancel',
-    defaultMessage: 'Hætta við',
-  },
-  confirm: {
-    id: 'sp.social-insurance-maintenance:confirm',
-    defaultMessage: 'Staðfesta',
-  },
   taxCardTypeSpouseUsing: {
     id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using',
     defaultMessage: 'Skattkort í nýtingu maka',
+  },
+  percentagePlaceholder: {
+    id: 'sp.social-insurance-maintenance:percentage-placeholder',
+    defaultMessage: '100%',
+  },
+  nationalIdWithValue: {
+    id: 'sp.social-insurance-maintenance:national-id-with-value',
+    defaultMessage: 'Kennitala: {value}',
   },
 })
