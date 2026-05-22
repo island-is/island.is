@@ -4,11 +4,6 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
-const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
-  // normalizing all types before boosting
-  return defaultBoost
-}
-
 export const searchQuery = (
   {
     queryString,
@@ -30,7 +25,6 @@ export const searchQuery = (
   const should = []
   const must: TagQuery[] = []
   const mustNot: TagQuery[] = []
-  let minimumShouldMatch = 1
 
   // Handle aliases since the search engine has not been configured to support organization aliases
   if (queryString.trim().toLowerCase() === 'tr') {
@@ -120,18 +114,11 @@ export const searchQuery = (
 
   // if we have types restrict the query to those types
   if (types?.length) {
-    minimumShouldMatch++ // now we have to match at least one type and the search query
-    should.push({
+    must.push({
       terms: {
-        type: types.map((type) => {
-          const [value, boost = 1] = type.split('^')
-          return {
-            value,
-            boost: getBoostForType(value, boost),
-          }
-        }),
+        type: types.map((type) => type.split('^')[0]),
       },
-    })
+    } as unknown as TagQuery)
   }
 
   if (tags?.length) {
@@ -197,7 +184,6 @@ export const searchQuery = (
             should,
             must,
             must_not: mustNot,
-            minimum_should_match: minimumShouldMatch,
           },
         },
         functions: [
