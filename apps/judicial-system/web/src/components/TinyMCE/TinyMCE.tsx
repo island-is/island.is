@@ -19,8 +19,14 @@ const hexToRgb = (hex: string) => {
 }
 
 const parseCssColor = (cssColor: string): [number, number, number] | null => {
-  const rgb = cssColor.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
-  if (rgb) return [+rgb[1], +rgb[2], +rgb[3]]
+  const rgb = cssColor.match(
+    /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?/,
+  )
+  if (rgb) {
+    // A fully transparent rgba value is not a visible highlight.
+    if (rgb[4] !== undefined && parseFloat(rgb[4]) === 0) return null
+    return [+rgb[1], +rgb[2], +rgb[3]]
+  }
   const hex6 = cssColor.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
   if (hex6)
     return [parseInt(hex6[1], 16), parseInt(hex6[2], 16), parseInt(hex6[3], 16)]
