@@ -35,10 +35,9 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 }) => {
   const userInfo = useUserInfo()
   const isAuthenticated = !!userInfo?.profile?.nationalId
-  const { data, loading } = useQuery<FeatureFlagsQuery>(
-    FeatureFlagsDocument,
-    { skip: !isAuthenticated },
-  )
+  const { data, loading } = useQuery<FeatureFlagsQuery>(FeatureFlagsDocument, {
+    skip: !isAuthenticated,
+  })
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
   // Use a ref for flags so getValue always reads the latest value
