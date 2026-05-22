@@ -28,7 +28,10 @@ type PersonalTaxCreditTableProps = {
   renderExpandedRow?: (controls: { close: () => void }) => ReactNode
 }
 
-const taxCardTypeMessageMap: Record<SocialInsuranceTaxCardType, MessageDescriptor> = {
+const taxCardTypeMessageMap: Record<
+  SocialInsuranceTaxCardType,
+  MessageDescriptor
+> = {
   [SocialInsuranceTaxCardType.PERSONAL_TAX_ALLOWANCE]:
     m.taxCardTypePersonalTaxAllowance,
   [SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE]:
@@ -73,7 +76,10 @@ export const PersonalTaxCreditTable = ({
         id: 'type',
         header: formatMessage(m.type),
         cell: ({ getValue }) => {
-          const type = getValue() as SocialInsuranceTaxCardType | null | undefined
+          const type = getValue() as
+            | SocialInsuranceTaxCardType
+            | null
+            | undefined
           return type ? formatMessage(taxCardTypeMessageMap[type]) : '-'
         },
       }),
@@ -104,8 +110,7 @@ export const PersonalTaxCreditTable = ({
       columnHelper.accessor('percentage', {
         id: 'percentage',
         header: formatMessage(m.percentage),
-        cell: ({ getValue }) =>
-          getValue() != null ? `${getValue()}%` : '-',
+        cell: ({ getValue }) => (getValue() != null ? `${getValue()}%` : '-'),
       }),
       ...(renderExpandedRowProp
         ? [
