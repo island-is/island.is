@@ -512,9 +512,7 @@ export class ScopeService extends MultiEnvironmentService {
 
   /**
    * Updates the client access list for a scope by patching each affected
-   * client to add or remove the scope from its allowed scopes. Operates
-   * across the requested environments; per-environment failures are
-   * surfaced to the caller.
+   * client to add or remove the scope from its allowed scopes.
    */
   async updateScopeClients(
     user: User,
@@ -523,9 +521,12 @@ export class ScopeService extends MultiEnvironmentService {
     const { tenantId, scopeName, addedClientIds, removedClientIds } = input
     const targetEnvironments = input.environments
 
+    const addedSet = new Set(addedClientIds)
+    const dedupedRemovedIds = removedClientIds.filter((id) => !addedSet.has(id))
+
     const operations: Array<{ clientId: string; op: 'add' | 'remove' }> = [
       ...addedClientIds.map((clientId) => ({ clientId, op: 'add' as const })),
-      ...removedClientIds.map((clientId) => ({
+      ...dedupedRemovedIds.map((clientId) => ({
         clientId,
         op: 'remove' as const,
       })),
