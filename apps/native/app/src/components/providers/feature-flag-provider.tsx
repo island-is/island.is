@@ -57,6 +57,7 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   })
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
+  // Also triggers on token refresh (~5min), which is acceptable.
   const prevAuthRef = useRef(authorizeResult)
   useEffect(() => {
     if (prevAuthRef.current !== authorizeResult) {

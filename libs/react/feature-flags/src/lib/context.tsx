@@ -1,6 +1,5 @@
 import {
   FeatureFlagClient,
-  FeatureFlagUser,
   SettingTypeOf,
   SettingValue,
 } from '@island.is/feature-flags'
@@ -74,7 +73,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
     getValue: async <T extends SettingValue>(
       key: string,
       defaultValue: T,
-      _user?: FeatureFlagUser,
     ) => {
       if (readyRef.current) {
         await readyRef.current.promise
