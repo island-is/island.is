@@ -1770,7 +1770,7 @@ export const m = defineMessages({
   },
   myEstates: {
     id: 'service.portal:my-estates',
-    defaultMessage: 'Dánarbú',
+    defaultMessage: 'Mín Dánarbú',
   },
   myEstatesIntro: {
     id: 'service.portal:my-estates-intro',

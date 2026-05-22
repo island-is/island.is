@@ -11,17 +11,17 @@ import { estatesMessages as em } from '../../lib/messages'
 import {
   ActionCard,
   Box,
-  Checkbox,
-  GridColumn,
-  GridRow,
   Input,
   Stack,
+  Text,
+  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNavigate } from 'react-router-dom'
 import { EstatesPaths } from '../../lib/paths'
 
 import { useEstatesOverviewQuery } from './EstatesOverview.generated'
+import * as styles from './EstatesOverview.css'
 
 export const EstatesOverview = () => {
   useNamespaces('sp.estates')
@@ -35,7 +35,10 @@ export const EstatesOverview = () => {
   const estates = data?.estates?.data ?? []
   const filtered = estates.filter((e) => {
     if (!showFinished && e.isFinished) return false
-    if (search && !e.nameOfDeceased.toLowerCase().includes(search.toLowerCase()))
+    if (
+      search &&
+      !e.nameOfDeceased.toLowerCase().includes(search.toLowerCase())
+    )
       return false
     return true
   })
@@ -60,41 +63,39 @@ export const EstatesOverview = () => {
         ],
       }}
     >
-      <Box marginBottom={3}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12', '4/12']}>
-            <Input
-              icon={{ name: 'search' }}
-              backgroundColor="blue"
-              size="xs"
-              label={formatMessage(em.searchPlaceholder)}
-              placeholder={formatMessage(em.searchPlaceholder)}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              name="estates-search"
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12', '4/12']}>
-            <Box display="flex" alignItems="center" height="full" paddingTop={1}>
-              <Checkbox
-                label={formatMessage(em.showFinished)}
-                checked={showFinished}
-                onChange={(e) => setShowFinished(e.target.checked)}
-                id="show-finished"
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
+      <Box
+        marginBottom={3}
+        display="flex"
+        alignItems="flexEnd"
+        justifyContent="spaceBetween"
+      >
+        <Input
+          icon={{ name: 'search' }}
+          backgroundColor="blue"
+          size="xs"
+          label={formatMessage(m.searchLabel)}
+          placeholder={formatMessage(em.searchPlaceholder)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          name="estates-search"
+        />
+        <ToggleSwitchCheckbox
+          className={styles.toggleSwitch}
+          label={
+            <Text as="span" variant="medium">
+              {formatMessage(em.showFinished)}
+            </Text>
+          }
+          checked={showFinished}
+          onChange={setShowFinished}
+        />
       </Box>
-
       {loading && (
         <Box width="full">
           <CardLoader />
         </Box>
       )}
-
       {error && !loading && <Problem error={error} noBorder={false} />}
-
       {!loading && !error && filtered.length === 0 && (
         <Problem
           type="no_data"
@@ -105,7 +106,6 @@ export const EstatesOverview = () => {
           noBorder={false}
         />
       )}
-
       <Stack space={2}>
         {!error &&
           filtered.map((estate) => (
