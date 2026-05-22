@@ -124,12 +124,12 @@ export class DelegationResolver {
     return this.meDelegationsService.updateDelegation(user, input)
   }
 
-  @Mutation(() => Delegation, { name: 'patchAuthDelegation' })
+  @Mutation(() => Delegation, { name: 'patchAuthDelegation', nullable: true })
   patchDelegation(
     @CurrentUser() user: User,
     @Args('input', { type: () => PatchDelegationInput })
     input: PatchDelegationInput,
-  ): Promise<DelegationDTO> {
+  ): Promise<DelegationDTO | null> {
     return this.meDelegationsService.patchDelegation(user, input)
   }
 

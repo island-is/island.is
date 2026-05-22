@@ -196,11 +196,15 @@ export class MeDelegationsService {
       this.compareScopesByName,
     ).map((s) => s.name)
 
-    return this.patchDelegation(user, {
+    const patched = await this.patchDelegation(user, {
       delegationId,
       updateScopes,
       deleteScopes,
     })
+    if (!patched) {
+      throw new NotFoundException()
+    }
+    return patched
   }
 
   async patchDelegation(
@@ -210,17 +214,19 @@ export class MeDelegationsService {
       updateScopes = [],
       deleteScopes = [],
     }: PatchDelegationInput,
-  ): Promise<DelegationDTO> {
-    const delegation = await this.delegationsApiWithAuth(
+  ): Promise<DelegationDTO | null> {
+    const request = await this.delegationsApiWithAuth(
       user,
-    ).meDelegationsControllerPatch({
+    ).meDelegationsControllerPatchRaw({
       delegationId,
       patchDelegationDTO: {
         deleteScopes,
         updateScopes,
       },
     })
-    return this.includeDomainNameInScopes(delegation)
+    const delegation =
+      request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
   private compareScopesByName(

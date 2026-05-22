@@ -116,6 +116,12 @@ export const CustomDelegationsPermissionsTable = ({
     scopeName?: string,
   ) => {
     if (!delegationId || !scopeName) return
+    const isLastScope = data.totalScopeCount <= 1
+    const queryFieldName =
+      direction === 'outgoing'
+        ? 'authDelegationsGroupedByIdentityOutgoing'
+        : 'authDelegationsGroupedByIdentityIncoming'
+
     try {
       await patchDelegation({
         variables: {
@@ -125,6 +131,30 @@ export const CustomDelegationsPermissionsTable = ({
           },
         },
         update: (cache) => {
+          if (isLastScope) {
+            if (personCacheId) {
+              cache.evict({ id: personCacheId })
+              cache.gc()
+            }
+            cache.modify({
+              fields: {
+                [queryFieldName](
+                  existing: readonly Reference[] = [],
+                  { readField },
+                ) {
+                  return existing.filter(
+                    (ref) =>
+                      !(
+                        readField('nationalId', ref) === data.nationalId &&
+                        readField('type', ref) === data.type
+                      ),
+                  )
+                },
+              },
+            })
+            return
+          }
+
           cache.modify({
             id: personCacheId,
             fields: {
