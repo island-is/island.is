@@ -522,8 +522,13 @@ const extractBgColor = (style: string): string | null => {
 
   if (NON_HIGHLIGHT_BG.has(normalized)) return null
 
-  // rgba(...) with a zero alpha channel is also effectively transparent.
-  if (/rgba?\([^)]*,\s*0*\.?0+\s*\)/.test(normalized)) return null
+  // rgba(...) with a zero alpha channel is also effectively transparent. Match
+  // only the four-component rgba() form so an opaque rgb(r, g, 0) (e.g. yellow)
+  // is not mistaken for transparent.
+  if (
+    /rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0*\.?0+\s*\)/.test(normalized)
+  )
+    return null
 
   return value
 }

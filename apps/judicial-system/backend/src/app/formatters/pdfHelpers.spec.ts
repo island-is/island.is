@@ -82,6 +82,15 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ highlight: false })
   })
 
+  it('keeps an opaque rgb highlight whose blue channel is zero', () => {
+    // rgb(255, 255, 0) is yellow, not transparent — it must not be mistaken
+    // for a zero-alpha rgba value.
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgb(255, 255, 0);">yellow</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: 'rgb(255, 255, 0)' })
+  })
+
   it('produces multiple runs within one paragraph', () => {
     const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
     expect(blocks[0].runs).toHaveLength(3)
