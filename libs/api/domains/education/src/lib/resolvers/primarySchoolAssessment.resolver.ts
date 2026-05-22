@@ -48,12 +48,7 @@ export class PrimarySchoolAssessmentResolver {
 
     return results
       ?.map((r) =>
-        mapResult(
-          r,
-          assessment.studentId,
-          this.downloadServiceConfig.baseUrl,
-          assessment.locale,
-        ),
+        mapResult(r, assessment.studentId, this.downloadServiceConfig.baseUrl),
       )
       .filter(isDefined)
   }

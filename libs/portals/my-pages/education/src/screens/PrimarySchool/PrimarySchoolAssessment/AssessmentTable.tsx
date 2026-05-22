@@ -7,7 +7,6 @@ import {
   createColumnHelper,
   formSubmit,
   m,
-  monthNumberToMessage,
 } from '@island.is/portals/my-pages/core'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 
@@ -38,18 +37,11 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             : ''
         },
       }),
-      columnHelper.accessor(
-        (row) => {
-          const n = row.period?.monthNumber
-          const msg = n != null ? monthNumberToMessage(n) : undefined
-          return msg ? formatMessage(msg) : undefined
-        },
-        {
-          id: 'examSitting',
-          header: formatMessage(psm.examSitting),
-          cell: ({ getValue }) => getValue() ?? '',
-        },
-      ),
+      columnHelper.accessor((row) => row.period?.startDateString, {
+        id: 'examSitting',
+        header: formatMessage(psm.examSitting),
+        cell: ({ getValue }) => getValue() ?? '',
+      }),
       columnHelper.display({
         id: 'viewResults',
         header: () => null,

@@ -1,19 +1,15 @@
-query PrimarySchoolAssessmentData($studentId: String!, $locale: LocaleEnum) {
+query PrimarySchoolAssessmentData($studentId: String!) {
   primarySchoolStudent(studentId: $studentId) {
-    assessmentHistory(locale: $locale) {
+    assessmentHistory {
       id
       name
     }
   }
 }
 
-query PrimarySchoolAssessmentResults(
-  $studentId: String!
-  $assessmentId: String!
-  $locale: LocaleEnum
-) {
+query PrimarySchoolAssessmentResults($studentId: String!, $assessmentId: String!) {
   primarySchoolStudent(studentId: $studentId) {
-    assessmentHistory(assessmentId: $assessmentId, locale: $locale) {
+    assessmentHistory(input: { assessmentId: $assessmentId }) {
       id
       resultHistory {
         id
@@ -23,7 +19,7 @@ query PrimarySchoolAssessmentResults(
           name
         }
         period {
-          monthNumber
+          startDateString
         }
         downloadServiceUrl
       }

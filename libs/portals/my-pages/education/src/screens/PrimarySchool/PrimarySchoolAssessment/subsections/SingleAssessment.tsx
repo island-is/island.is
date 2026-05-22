@@ -1,7 +1,6 @@
 import { CardLoader } from '@island.is/portals/my-pages/core'
 import { Accordion, AccordionItem } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useLocale } from '@island.is/localization'
 import { AssessmentTable } from '../AssessmentTable'
 import { usePrimarySchoolAssessmentResultsQuery } from '../PrimarySchoolAssessment.generated'
 
@@ -12,9 +11,8 @@ interface Props {
 }
 
 export const SingleAssessment = ({ assessmentId, name, studentId }: Props) => {
-  const { locale } = useLocale()
   const { data, loading, error } = usePrimarySchoolAssessmentResultsQuery({
-    variables: { studentId, assessmentId, locale },
+    variables: { studentId, assessmentId },
   })
 
   const results =

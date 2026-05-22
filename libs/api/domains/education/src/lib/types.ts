@@ -1,5 +1,4 @@
 import type { PrimarySchoolAssessment } from './models/primarySchool/primarySchoolAssessment.model'
-import { LocaleEnum } from '@island.is/nest/graphql'
 
 export interface EducationLicense {
   id: string
@@ -58,5 +57,4 @@ export interface Student {
 
 export type PrimarySchoolAssessmentWithContext = PrimarySchoolAssessment & {
   studentId: string
-  locale: LocaleEnum
 }

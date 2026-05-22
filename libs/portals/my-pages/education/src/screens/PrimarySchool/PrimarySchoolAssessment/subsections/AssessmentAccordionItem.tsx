@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AccordionItem } from '@island.is/island-ui/core'
 import { CardLoader } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useLocale } from '@island.is/localization'
 import { AssessmentTable } from '../AssessmentTable'
 import { usePrimarySchoolAssessmentResultsLazyQuery } from '../PrimarySchoolAssessment.generated'
 
@@ -13,17 +12,11 @@ interface Props {
 }
 
 export const AssessmentAccordionItem = ({ id, name, studentId }: Props) => {
-  const { locale } = useLocale()
   const [expanded, setExpanded] = useState(false)
   const [fetchResults, { data, loading, error, called }] =
     usePrimarySchoolAssessmentResultsLazyQuery({
-      variables: { studentId, assessmentId: id, locale },
+      variables: { studentId, assessmentId: id },
     })
-
-  useEffect(() => {
-    if (called) fetchResults({ variables: { studentId, assessmentId: id, locale } })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locale])
 
   const results =
     data?.primarySchoolStudent?.assessmentHistory?.[0]?.resultHistory ?? []

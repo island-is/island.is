@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { AssessmentHistoryInput } from '../dto/assessmentHistory.input'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -15,7 +16,6 @@ import {
 } from '@island.is/nest/feature-flags'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { isDefined } from '@island.is/shared/utils'
-import { LocaleEnum } from '@island.is/nest/graphql'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import {
@@ -55,16 +55,16 @@ export class PrimarySchoolResolver {
   async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
-    @Args('locale', { type: () => LocaleEnum, nullable: true }) locale: LocaleEnum = LocaleEnum.Is,
-    @Args('assessmentId', { nullable: true }) assessmentId?: string,
+    @Args('input', { type: () => AssessmentHistoryInput, nullable: true }) input: AssessmentHistoryInput = new AssessmentHistoryInput(),
   ) {
+    const { assessmentId } = input
     const subjects = await this.primarySchoolService.getAssessmentSubjects(
       user,
       student.id,
     )
     const all = subjects
       ?.flatMap((s) => s.assessmentTypes ?? [])
-      .map((t) => mapAssessment(t, student.id, locale))
+      .map((t) => mapAssessment(t, student.id))
       .filter(isDefined)
 
     return assessmentId ? all?.filter((a) => a.id === assessmentId) : all

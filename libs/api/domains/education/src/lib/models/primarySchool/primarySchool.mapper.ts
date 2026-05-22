@@ -3,7 +3,6 @@ import type {
   IslandIsSimpleAssignmentResultDto,
   IslandIsStudentDto,
 } from '@island.is/clients/mms/primary-school'
-import { LocaleEnum } from '@island.is/nest/graphql'
 import type { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
 import type { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
 
@@ -15,7 +14,6 @@ export const mapPrimarySchoolStudent = (student: IslandIsStudentDto) => ({
 export const mapAssessment = (
   type: IslandIsAssessmentTypeDto,
   studentId: string,
-  locale: LocaleEnum,
 ): PrimarySchoolAssessment | null => {
   if (!type.id) return null
   return {
@@ -24,7 +22,6 @@ export const mapAssessment = (
     name: type.name ?? undefined,
     description: type.description ?? undefined,
     studentId,
-    locale,
   }
 }
 
@@ -32,7 +29,6 @@ export const mapResult = (
   item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
-  locale: LocaleEnum,
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
 
@@ -42,7 +38,7 @@ export const mapResult = (
       : undefined
 
   return {
-    id: `${item.id}-${locale}`,
+    id: item.id,
     schoolYear: item.schoolYear ?? undefined,
     grade: {
       level: item.gradeLevel,

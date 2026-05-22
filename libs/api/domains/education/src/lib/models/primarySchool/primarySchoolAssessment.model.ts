@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LocaleEnum } from '@island.is/nest/graphql'
 import { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
 
 @ObjectType('EducationPrimarySchoolAssessment')
@@ -23,7 +22,6 @@ export class PrimarySchoolAssessment {
   @Field(() => [PrimarySchoolAssessmentResult], { nullable: true })
   resultHistory?: PrimarySchoolAssessmentResult[]
 
-  // Internal — threads studentId and locale through to field resolvers, not exposed in GraphQL
+  // Internal — threads studentId through to field resolvers, not exposed in GraphQL
   studentId?: string
-  locale?: LocaleEnum
 }
