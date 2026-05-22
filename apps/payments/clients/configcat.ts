@@ -1,11 +1,11 @@
-import type { IConfigCatClient } from 'configcat-node'
+import type { IConfigCatClient } from '@configcat/sdk'
 
 let configCatClient: IConfigCatClient | null = null
 
 export function getConfigcatClient(): IConfigCatClient {
   if (!configCatClient) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const configcat = require('configcat-node')
+    const configcat = require('@configcat/sdk/node')
     const sdkKey = process.env.CONFIGCAT_SDK_KEY
     if (!sdkKey) {
       throw new Error('Missing CONFIGCAT_SDK_KEY environment variable')

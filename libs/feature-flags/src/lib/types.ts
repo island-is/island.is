@@ -4,7 +4,7 @@ import type {
   IAutoPollOptions,
   IConfigCatClient,
   PollingMode,
-} from 'configcat-common'
+} from '@configcat/sdk'
 import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {

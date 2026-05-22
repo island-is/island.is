@@ -25,6 +25,11 @@ export class FeatureFlagsService {
   ): Promise<FeatureFlagValues> {
     const featureFlagUser = this.toFeatureFlagUser(user, clientAttributes)
     const flags = await this.client.getAllValues(featureFlagUser)
+    console.log('[FeatureFlags]', {
+      flagCount: Object.keys(flags).length,
+      attributes: featureFlagUser.attributes,
+      sampleFlags: Object.entries(flags).slice(0, 5).map(([k, v]) => `${k}=${v}`),
+    })
     return { flags }
   }
 

@@ -1,14 +1,11 @@
-import * as ConfigCatJs from 'configcat-js'
-import * as ConfigCatNode from 'configcat-node'
+import * as ConfigCatNode from '@configcat/sdk'
 import * as configcatBase from './configcat'
 import { SDK_KEY_ERROR } from './constants'
 import { createClientFactory } from './factory'
 
-const createClientJS = createClientFactory(ConfigCatJs)
 const createClientNode = createClientFactory(ConfigCatNode)
 
 const clientTypes = [
-  { create: createClientJS, name: 'JS' },
   { create: createClientNode, name: 'Node' },
 ]
 

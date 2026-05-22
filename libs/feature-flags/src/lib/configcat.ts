@@ -3,7 +3,7 @@ import {
   DataGovernance,
   IConfigCatClient,
   PollingMode,
-} from 'configcat-common'
+} from '@configcat/sdk'
 import {
   FeatureFlagClient,
   FeatureFlagUser,
