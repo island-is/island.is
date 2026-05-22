@@ -64,9 +64,7 @@ describe('ClientsController', () => {
     const ids = res.body.map((c: { clientId: string }) => c.clientId).sort()
     expect(ids).toEqual([clientA, clientB])
 
-    const a = res.body.find(
-      (c: { clientId: string }) => c.clientId === clientA,
-    )
+    const a = res.body.find((c: { clientId: string }) => c.clientId === clientA)
     expect(a).toMatchObject({
       clientId: clientA,
       tenantId: tenantA,
