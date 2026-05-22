@@ -22,8 +22,8 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
-import { m } from '../../../../lib/messages'
-import type { GetPersonalTaxCreditQuery } from '../PersonalTaxCredit.generated'
+import { m } from '../../../lib/messages'
+import type { GetPersonalTaxCreditQuery } from './PersonalTaxCredit.generated'
 
 type TaxCards = NonNullable<
   NonNullable<

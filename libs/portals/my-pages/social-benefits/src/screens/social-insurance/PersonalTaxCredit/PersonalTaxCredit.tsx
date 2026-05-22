@@ -22,9 +22,9 @@ import {
   useGetPersonalTaxCreditSpouseInfoQuery,
 } from './PersonalTaxCredit.generated'
 import { useTaxCardAllowance } from './useTaxCardAllowance'
-import { MyTaxCreditForm } from './components/MyTaxCreditForm'
-import { SpouseTaxCreditForm } from './components/SpouseTaxCreditForm'
-import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
+import { MyTaxCreditForm } from './MyTaxCreditForm'
+import { SpouseTaxCreditForm } from './SpouseTaxCreditForm'
+import { PersonalTaxCreditTable } from './PersonalTaxCreditTable'
 import { useState } from 'react'
 
 const INITIAL_MY_TAX_CREDIT: MyTaxCreditState = { action: null }
@@ -278,32 +278,24 @@ const PersonalTaxCredit = () => {
             )}
 
             {hasRegistrations && !isEditingSpouse && (
-              <>
-                {spouseHasGrantedCard && (
-                  <SpouseSummaryCard
-                    heading={formatMessage(m.spouseTaxCreditUsingSummaryTitle)}
-                    body={formatMessage(m.spouseTaxCreditUsingSummaryBody)}
-                    onEdit={handleEditSpouse}
-                    editLabel={formatMessage(coreMessages.buttonEdit)}
-                  />
+              <SpouseSummaryCard
+                heading={formatMessage(
+                  spouseHasGrantedCard
+                    ? m.spouseTaxCreditUsingSummaryTitle
+                    : userIsUsingSpouseCard
+                      ? m.youAreUsingSpouseTaxCreditTitle
+                      : m.spousePersonalTaxCredit,
                 )}
-                {userIsUsingSpouseCard && spouseInfo && (
-                  <SpouseSummaryCard
-                    heading={formatMessage(m.youAreUsingSpouseTaxCreditTitle)}
-                    body={spouseInfo.name}
-                    onEdit={handleEditSpouse}
-                    editLabel={formatMessage(coreMessages.buttonEdit)}
-                  />
-                )}
-                {!spouseHasGrantedCard && !userIsUsingSpouseCard && (
-                  <SpouseSummaryCard
-                    heading={formatMessage(m.spousePersonalTaxCredit)}
-                    body={formatMessage(m.spouseNoUsage)}
-                    onEdit={handleEditSpouse}
-                    editLabel={formatMessage(coreMessages.buttonEdit)}
-                  />
-                )}
-              </>
+                body={
+                  spouseHasGrantedCard
+                    ? formatMessage(m.spouseTaxCreditUsingSummaryBody)
+                    : userIsUsingSpouseCard
+                      ? spouseInfo?.name
+                      : formatMessage(m.spouseNoUsage)
+                }
+                onEdit={handleEditSpouse}
+                editLabel={formatMessage(coreMessages.buttonEdit)}
+              />
             )}
 
             {(isEditingSpouse || !hasRegistrations) && (

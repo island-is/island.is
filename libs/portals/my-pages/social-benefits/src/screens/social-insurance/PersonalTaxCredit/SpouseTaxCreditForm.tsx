@@ -1,11 +1,11 @@
 import { Box, Checkbox, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PercentageInput } from './PercentageInput'
+import { PercentageInput } from './components/PercentageInput'
 import { SocialInsuranceYearWithMonths } from '@island.is/api/schema'
 import { Dispatch, FC, SetStateAction, useMemo } from 'react'
-import { m } from '../../../../lib/messages'
-import { SpouseTaxCreditState } from '../PersonalTaxCredit'
-import { YearMonthSelect } from './YearMonthSelect'
+import { m } from '../../../lib/messages'
+import { SpouseTaxCreditState } from './PersonalTaxCredit'
+import { YearMonthSelect } from './components/YearMonthSelect'
 import {
   toYearOptions,
   toMonthOptions,
