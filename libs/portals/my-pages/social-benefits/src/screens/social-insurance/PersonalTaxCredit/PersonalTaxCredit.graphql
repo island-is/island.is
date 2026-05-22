@@ -62,7 +62,7 @@ mutation setSocialInsuranceSpouseTaxCard(
 }
 
 mutation setSocialInsuranceSpouseTaxCardDueToDeath(
-  $input: SocialInsuranceSetSpouseTaxCardDueToDeathInput!
+  $input: SocialInsuranceSetSpouseTaxCardInput!
 ) {
   setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
 }

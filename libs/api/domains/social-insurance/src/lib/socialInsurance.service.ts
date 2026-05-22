@@ -12,7 +12,6 @@ import {
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
-  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -30,6 +29,7 @@ import { IncomePlanEligbility } from './models/income/incomePlanEligibility.mode
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
+import { mapToTaxCardType } from './enums/taxCardType'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
@@ -281,8 +281,8 @@ export class SocialInsuranceService {
         ...tc,
         validFrom: tc.validFrom ?? undefined,
         validTo: tc.validTo ?? undefined,
-        type: tc.taxCardType ?? undefined,
-        percentage: tc.percentage ?? 0,
+        type: mapToTaxCardType(tc.taxCardType),
+        percentage: tc.percentage ?? undefined,
       })),
       canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
       canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
@@ -356,13 +356,6 @@ export class SocialInsuranceService {
     }
   }
 
-  async getTaxBracketAction(user: User): Promise<TaxBracketAction | null> {
-    const data = await this.personalTaxCreditClient
-      .getTaxBracketActions(user)
-      .catch(handle404)
-    return parseTaxBracketAction(data ?? undefined)
-  }
-
   async setSpouseTaxCard(
     user: User,
     input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
@@ -372,7 +365,7 @@ export class SocialInsuranceService {
 
   async setSpouseTaxCardDueToDeath(
     user: User,
-    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }

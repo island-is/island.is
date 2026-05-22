@@ -1,9 +1,19 @@
-import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
+import { Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
+import { createColumnHelper } from '@island.is/portals/my-pages/core'
+import { type MessageDescriptor } from 'react-intl'
+import AnimateHeight from 'react-animate-height'
+import {
+  ExpandedState,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { Fragment, useId, useState, useMemo, type ReactNode } from 'react'
 import { m } from '../../../../lib/messages'
 import type { GetPersonalTaxCreditQuery } from '../PersonalTaxCredit.generated'
-import { Fragment, ReactNode } from 'react'
-import AnimateHeight from 'react-animate-height'
 
 type TaxCards = NonNullable<
   NonNullable<
@@ -11,25 +21,30 @@ type TaxCards = NonNullable<
   >['taxCards']
 >
 
+type TaxCard = TaxCards[number]
+
 type PersonalTaxCreditTableProps = {
   taxCards: TaxCards
-  onEdit?: () => void
-  inlineContent?: ReactNode
+  renderExpandedRow?: (controls: { close: () => void }) => ReactNode
 }
 
-const taxCardTypeMessageMap: Record<string, typeof m[keyof typeof m]> = {
-  PERSONAL_TAX_ALLOWANCE: m.taxCardTypePersonalTaxAllowance,
-  SPOUSE_TAX_ALLOWANCE: m.taxCardTypeSpouseTaxAllowance,
-  REGARDING_THE_ESTATE: m.taxCardTypeRegardingTheEstate,
-  TAX_EXEMPTION: m.taxCardTypeTaxExemption,
-  UNKNOWN_TAX_CARD: m.taxCardTypeUnknown,
+const taxCardTypeMessageMap: Record<SocialInsuranceTaxCardType, MessageDescriptor> = {
+  [SocialInsuranceTaxCardType.PERSONAL_TAX_ALLOWANCE]:
+    m.taxCardTypePersonalTaxAllowance,
+  [SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE]:
+    m.taxCardTypeSpouseTaxAllowance,
+  [SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE_GRANTED]:
+    m.taxCardTypeSpouseUsing,
+  [SocialInsuranceTaxCardType.REGARDING_THE_ESTATE]:
+    m.taxCardTypeRegardingTheEstate,
+  [SocialInsuranceTaxCardType.TAX_EXEMPTION]: m.taxCardTypeTaxExemption,
+  [SocialInsuranceTaxCardType.UNKNOWN_TAX_CARD]: m.taxCardTypeUnknown,
 }
 
-const getActiveOwnCardIndex = (
-  taxCards: PersonalTaxCreditTableProps['taxCards'],
-): number | null =>
+const getActiveOwnCardIndex = (taxCards: TaxCards): number | null =>
   taxCards.reduce<number | null>((activeIdx, card, index) => {
-    if (card.type !== 'PERSONAL_TAX_ALLOWANCE') return activeIdx
+    if (card.type !== SocialInsuranceTaxCardType.PERSONAL_TAX_ALLOWANCE)
+      return activeIdx
     if (activeIdx === null) return index
     const activeCard = taxCards[activeIdx]
     if (!card.validTo) return index
@@ -37,120 +52,185 @@ const getActiveOwnCardIndex = (
     return card.validTo > activeCard.validTo ? index : activeIdx
   }, null)
 
+const getRowId = (card: TaxCard, index: number) =>
+  `${card.type ?? ''}-${card.validFrom ?? ''}-${index}`
+
+const columnHelper = createColumnHelper<TaxCard>()
+
 export const PersonalTaxCreditTable = ({
   taxCards,
-  onEdit,
-  inlineContent,
+  renderExpandedRow: renderExpandedRowProp,
 }: PersonalTaxCreditTableProps) => {
-  const { formatMessage, formatDate } = useLocale()
+  const { formatMessage, formatDate, locale } = useLocale()
+  const tableId = useId()
   const activeOwnCardIndex = getActiveOwnCardIndex(taxCards)
+  const [expanded, setExpanded] = useState<ExpandedState>({})
+  const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('type', {
+        id: 'type',
+        header: formatMessage(m.type),
+        cell: ({ getValue }) => {
+          const type = getValue() as SocialInsuranceTaxCardType | null | undefined
+          return type ? formatMessage(taxCardTypeMessageMap[type]) : '-'
+        },
+      }),
+      columnHelper.accessor('validFrom', {
+        id: 'validFrom',
+        header: formatMessage(m.dateFrom),
+        cell: ({ getValue }) =>
+          getValue()
+            ? formatDate(getValue() as string, {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+            : '-',
+      }),
+      columnHelper.accessor('validTo', {
+        id: 'validTo',
+        header: formatMessage(m.dateTo),
+        cell: ({ getValue }) =>
+          getValue()
+            ? formatDate(getValue() as string, {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+            : '-',
+      }),
+      columnHelper.accessor('percentage', {
+        id: 'percentage',
+        header: formatMessage(m.percentage),
+        cell: ({ getValue }) =>
+          getValue() != null ? `${getValue()}%` : '-',
+      }),
+      ...(renderExpandedRowProp
+        ? [
+            columnHelper.display({
+              id: 'actions',
+              header: () => null,
+              cell: ({ row }) =>
+                row.index === activeOwnCardIndex ? (
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={row.getIsExpanded() ? 'close' : 'pencil'}
+                    iconType="outline"
+                    aria-expanded={row.getIsExpanded()}
+                    aria-controls={`${tableId}-expanded-${row.id}`}
+                    onClick={() => row.toggleExpanded()}
+                  >
+                    {formatMessage(row.getIsExpanded() ? m.cancel : m.edit)}
+                  </Button>
+                ) : null,
+            }),
+          ]
+        : []),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale, renderExpandedRowProp, activeOwnCardIndex],
+  )
+
+  const table = useReactTable({
+    data: taxCards,
+    columns,
+    state: { expanded },
+    onExpandedChange: setExpanded,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowId,
+  })
 
   return (
-    <Box>
-      <T.Table box={inlineContent ? { overflow: 'visible' } : undefined}>
-        <T.Head>
-          <T.Row>
-            <T.HeadData box={{ background: 'blue100' }} scope="col">
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.type)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData box={{ background: 'blue100' }} scope="col">
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateFrom)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData box={{ background: 'blue100' }} scope="col">
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateTo)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData box={{ background: 'blue100' }} scope="col">
-              <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.percentage)}
-              </Text>
-            </T.HeadData>
-            {onEdit && (
-              <T.HeadData box={{ background: 'blue100' }} scope="col" />
-            )}
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {taxCards.map((card, index) => {
-            const showEdit = index === activeOwnCardIndex
-            const showInline = !!inlineContent && showEdit
-            const dataBox = {
-              background: showInline ? ('blue100' as const) : undefined,
-              borderColor: showInline
-                ? ('blue100' as const)
-                : ('blue200' as const),
-            }
-            return (
-              <Fragment
-                key={`${card.type ?? ''}-${card.validFrom ?? ''}-${index}`}
+    <T.Table box={renderExpandedRowProp ? { overflow: 'visible' } : undefined}>
+      <T.Head>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <T.Row key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <T.HeadData
+                key={header.id}
+                scope="col"
+                box={{ background: 'blue100' }}
               >
-                <T.Row>
-                  <T.Data box={dataBox}>
-                    {card.type && taxCardTypeMessageMap[card.type]
-                      ? formatMessage(taxCardTypeMessageMap[card.type])
-                      : '-'}
-                  </T.Data>
-                  <T.Data box={dataBox}>
-                    {card.validFrom
-                      ? formatDate(card.validFrom, {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                        })
-                      : '-'}
-                  </T.Data>
-                  <T.Data box={dataBox}>
-                    {card.validTo
-                      ? formatDate(card.validTo, {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                        })
-                      : '-'}
-                  </T.Data>
-                  <T.Data box={dataBox}>
-                    {card.percentage != null ? `${card.percentage}%` : '-'}
-                  </T.Data>
-                  {onEdit && (
-                    <T.Data box={dataBox}>
-                      {showEdit && (
-                        <Button
-                          variant="text"
-                          size="small"
-                          icon="pencil"
-                          iconType="outline"
-                          onClick={onEdit}
-                        >
-                          {formatMessage(m.edit)}
-                        </Button>
-                      )}
-                    </T.Data>
-                  )}
-                </T.Row>
-                <T.Row>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+              </T.HeadData>
+            ))}
+          </T.Row>
+        ))}
+      </T.Head>
+      <T.Body>
+        {table.getRowModel().rows.map((row) => {
+          const isExpanded = row.getIsExpanded()
+          const isCollapsing = collapsingRows.has(row.id)
+          const rowBackground =
+            isExpanded || isCollapsing ? 'blue100' : undefined
+          const closeRow = () => {
+            setCollapsingRows((prev) => new Set(prev).add(row.id))
+            row.toggleExpanded()
+          }
+
+          return (
+            <Fragment key={row.id}>
+              <T.Row>
+                {row.getVisibleCells().map((cell) => (
                   <T.Data
-                    colSpan={onEdit ? 5 : 4}
-                    style={{ padding: 0, width: '100%' }}
-                    borderColor={showInline ? 'blue200' : 'blue100'}
+                    key={cell.id}
+                    box={{
+                      background: rowBackground,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? undefined : 'standard',
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </T.Data>
+                ))}
+              </T.Row>
+              {renderExpandedRowProp && (
+                <tr aria-hidden={!isExpanded && !isCollapsing}>
+                  <T.Data
+                    colSpan={columns.length}
+                    style={{
+                      padding: 0,
+                      ...(!isExpanded && !isCollapsing
+                        ? { borderBottom: 'none' }
+                        : {}),
+                    }}
+                    box={{
+                      background: rowBackground,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? 'standard' : undefined,
+                    }}
                   >
                     <AnimateHeight
+                      id={`${tableId}-expanded-${row.id}`}
                       duration={300}
-                      height={showInline ? 'auto' : 0}
+                      height={isExpanded ? 'auto' : 0}
+                      onHeightAnimationEnd={(h) => {
+                        if (h === 0) {
+                          setCollapsingRows((prev) => {
+                            const next = new Set(prev)
+                            next.delete(row.id)
+                            return next
+                          })
+                        }
+                      }}
                     >
-                      {inlineContent}
+                      {(isExpanded || isCollapsing) &&
+                        renderExpandedRowProp({ close: closeRow })}
                     </AnimateHeight>
                   </T.Data>
-                </T.Row>
-              </Fragment>
-            )
-          })}
-        </T.Body>
-      </T.Table>
-    </Box>
+                </tr>
+              )}
+            </Fragment>
+          )
+        })}
+      </T.Body>
+    </T.Table>
   )
 }

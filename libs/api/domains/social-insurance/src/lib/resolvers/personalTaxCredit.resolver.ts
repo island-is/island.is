@@ -21,10 +21,9 @@ import { RegisterTaxCardAllowanceInput } from '../dtos/registerTaxCardAllowance.
 import { UpdateTaxCardAllowanceInput } from '../dtos/updateTaxCardAllowance.input'
 import { DiscontinueTaxCardAllowanceInput } from '../dtos/discontinueTaxCardAllowance.input'
 import { SetSpouseTaxCardInput } from '../dtos/setSpouseTaxCard.input'
-import { SetSpouseTaxCardDueToDeathInput } from '../dtos/setSpouseTaxCardDueToDeath.input'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
-@Resolver()
+@Resolver(() => PersonalTaxCredit)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
 @FeatureFlag(Features.isServicePortalTRPersonalTaxCreditPageEnabled)
@@ -50,17 +49,6 @@ export class PersonalTaxCreditResolver {
   @Audit()
   getTaxBracket(@CurrentUser() user: User): Promise<TaxBracketAction | null> {
     return this.service.getTaxBracket(user)
-  }
-
-  @Query(() => TaxBracketAction, {
-    name: 'socialInsurancePersonalTaxCreditTaxBracketAction',
-    nullable: true,
-  })
-  @Audit()
-  getTaxBracketAction(
-    @CurrentUser() user: User,
-  ): Promise<TaxBracketAction | null> {
-    return this.service.getTaxBracketAction(user)
   }
 
   @Query(() => PersonalTaxCreditSpouseInfo, {
@@ -140,7 +128,7 @@ export class PersonalTaxCreditResolver {
   })
   @Audit()
   async setSpouseTaxCardDueToDeath(
-    @Args('input') input: SetSpouseTaxCardDueToDeathInput,
+    @Args('input') input: SetSpouseTaxCardInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
     await this.service.setSpouseTaxCardDueToDeath(user, input)

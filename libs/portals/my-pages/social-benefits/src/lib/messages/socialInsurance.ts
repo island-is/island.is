@@ -173,14 +173,6 @@ export const m = defineMessages({
     defaultMessage:
       'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026. Bankareikningurinn sem greitt er inn á má nálgast undir “Mínar upplýsingar”.',
   },
-  personalTaxCreditNotRegistered: {
-    id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
-    defaultMessage: 'Þú ert ekki með skráðan persónuafslátt hjá TR.',
-  },
-  myPersonalTaxCredit: {
-    id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
-    defaultMessage: 'Persónuafslátturinn minn',
-  },
   registerPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
     defaultMessage: 'Ég óska eftir að nýta persónuafslátt hjá TR.',
@@ -202,19 +194,9 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
     defaultMessage: 'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
   },
-  spouseDeceasedInfo: {
-    id: 'sp.social-insurance-maintenance:spouse-deceased-info',
-    defaultMessage:
-      'Ath. skattkort vegna andláts maka má vera skráð frá og með 1. næsta mánaðar eftir andlát og verður nýtt næstu 8 mánuði á eftir.',
-  },
   grantSpouseTaxCredit: {
     id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
     defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
-  },
-  grantSpouseTaxCreditInfo: {
-    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit-info',
-    defaultMessage:
-      'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
   },
   taxBracketInfoMarkdown: {
     id: 'sp.social-insurance-maintenance:tax-bracket-information#markdown',
@@ -357,10 +339,6 @@ export const m = defineMessages({
   },
   taxCardTypeSpouseUsing: {
     id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using',
-    defaultMessage: 'Skattkort í nýtingu mak',
-  },
-  taxCardTypeSpouseUsingYours: {
-    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using-yours',
-    defaultMessage: 'Maki þinn nýtir',
+    defaultMessage: 'Skattkort í nýtingu maka',
   },
 })

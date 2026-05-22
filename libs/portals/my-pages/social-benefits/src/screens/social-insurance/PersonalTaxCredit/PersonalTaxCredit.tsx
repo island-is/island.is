@@ -14,6 +14,7 @@ import {
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
+import { SocialInsuranceTaxCardType } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
 import {
@@ -124,7 +125,6 @@ const PersonalTaxCredit = () => {
     errorPolicy: 'all',
   })
   const [refetching, setRefetching] = useState(false)
-  const [isEditingMyTaxCredit, setIsEditingMyTaxCredit] = useState(false)
   const [isEditingSpouse, setIsEditingSpouse] = useState(false)
 
   const taxCardAllowance = useTaxCardAllowance()
@@ -134,22 +134,17 @@ const PersonalTaxCredit = () => {
   const isAlreadyRegistered = page?.canEdit ?? false
   const hasRegistrations = !!page?.taxCards?.length
 
-  const handleEditMyTaxCredit = () => {
-    setIsEditingMyTaxCredit(true)
-  }
-
   const handleEditSpouse = () => {
     setIsEditingSpouse(true)
   }
 
   const handleCancel = () => {
-    setIsEditingMyTaxCredit(false)
     setIsEditingSpouse(false)
     setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
     setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
   }
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<boolean> => {
     try {
       await taxCardAllowance.save(myTaxCredit, spouseTaxCredit)
       setRefetching(true)
@@ -157,12 +152,13 @@ const PersonalTaxCredit = () => {
       setRefetching(false)
       setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
       setSpouseTaxCredit(INITIAL_SPOUSE_TAX_CREDIT)
-      setIsEditingMyTaxCredit(false)
       setIsEditingSpouse(false)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
+      return true
     } catch (e) {
       setRefetching(false)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
+      return false
     }
   }
 
@@ -173,10 +169,10 @@ const PersonalTaxCredit = () => {
     isSpouseTaxCreditValid(spouseTaxCredit)
 
   const spouseHasGrantedCard = page?.taxCards?.some(
-    (c) => c.type === 'SPOUSE_TAX_ALLOWANCE',
+    (c) => c.type === SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE_GRANTED,
   )
   const userIsUsingSpouseCard = page?.taxCards?.some(
-    (c) => c.type === 'REGARDING_THE_ESTATE',
+    (c) => c.type === SocialInsuranceTaxCardType.SPOUSE_TAX_ALLOWANCE,
   )
 
   return (
@@ -215,46 +211,47 @@ const PersonalTaxCredit = () => {
             {hasRegistrations && (
               <PersonalTaxCreditTable
                 taxCards={page?.taxCards ?? []}
-                onEdit={
-                  isEditingMyTaxCredit ? handleCancel : handleEditMyTaxCredit
-                }
-                inlineContent={
-                  isEditingMyTaxCredit ? (
-                    <Box paddingY={4} paddingX={4} background="blue100">
-                      <Stack space={3}>
-                        <MyTaxCreditForm
-                          state={myTaxCredit}
-                          setState={setMyTaxCredit}
-                          monthsAndYears={page?.registrationMonthsAndYears}
-                          discontinuingMonthsAndYears={
-                            page?.discontinuingMonthsAndYears
-                          }
-                          isAlreadyRegistered={isAlreadyRegistered}
-                          canDiscontinue={page?.canDiscontinue ?? false}
-                        />
-                        <Inline space={2}>
-                          <Button
-                            variant="primary"
-                            colorScheme="negative"
-                            size="small"
-                            onClick={handleCancel}
-                          >
-                            {formatMessage(m.cancel)}
-                          </Button>
-                          <Button
-                            variant="primary"
-                            size="small"
-                            onClick={handleSave}
-                            disabled={!canSubmit || saving}
-                            loading={saving}
-                          >
-                            {formatMessage(m.confirm)}
-                          </Button>
-                        </Inline>
-                      </Stack>
-                    </Box>
-                  ) : undefined
-                }
+                renderExpandedRow={({ close }) => (
+                  <Box paddingY={4} paddingX={4} background="blue100">
+                    <Stack space={3}>
+                      <MyTaxCreditForm
+                        state={myTaxCredit}
+                        setState={setMyTaxCredit}
+                        monthsAndYears={page?.registrationMonthsAndYears}
+                        discontinuingMonthsAndYears={
+                          page?.discontinuingMonthsAndYears
+                        }
+                        isAlreadyRegistered={isAlreadyRegistered}
+                        canDiscontinue={page?.canDiscontinue ?? false}
+                      />
+                      <Inline space={2}>
+                        <Button
+                          variant="primary"
+                          colorScheme="negative"
+                          size="small"
+                          onClick={() => {
+                            handleCancel()
+                            close()
+                          }}
+                        >
+                          {formatMessage(m.cancel)}
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="small"
+                          onClick={async () => {
+                            const saved = await handleSave()
+                            if (saved) close()
+                          }}
+                          disabled={!canSubmit || saving}
+                          loading={saving}
+                        >
+                          {formatMessage(m.confirm)}
+                        </Button>
+                      </Inline>
+                    </Stack>
+                  </Box>
+                )}
               />
             )}
 
