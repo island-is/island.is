@@ -621,9 +621,49 @@ const collectBlocksFromNodes = (
   return blocks
 }
 
+// Collapse whitespace within a block the way a browser renders inline content
+// (white-space: normal): runs of spaces become one, and leading/trailing
+// whitespace is dropped. Without this, Word's empty `<span> </span>` spacers
+// render as literal spaces in the PDF even though the editor hides them.
+const collapseWhitespace = (runs: Run[]): Run[] => {
+  const collapsed: Run[] = []
+  // Start true so leading whitespace at the block start is trimmed.
+  let prevEndsWithSpace = true
+
+  for (const run of runs) {
+    // A <br>-derived run is a hard break; keep it and reset the space state.
+    if (run.text === '\n') {
+      collapsed.push(run)
+      prevEndsWithSpace = true
+      continue
+    }
+
+    let text = run.text.replace(/[ \t\r\n]+/g, ' ')
+    if (prevEndsWithSpace && text.startsWith(' ')) {
+      text = text.slice(1)
+    }
+    if (text === '') continue
+
+    collapsed.push({ ...run, text })
+    prevEndsWithSpace = text.endsWith(' ')
+  }
+
+  const last = collapsed[collapsed.length - 1]
+  if (last && last.text.endsWith(' ')) {
+    last.text = last.text.replace(/ +$/, '')
+    if (last.text === '') collapsed.pop()
+  }
+
+  return collapsed
+}
+
 export const htmlToBlocks = (html: string): RichTextBlock[] => {
   const dom = parseDocument(html)
-  return collectBlocksFromNodes(dom.children as ChildNode[])
+  const blocks = collectBlocksFromNodes(dom.children as ChildNode[])
+  return blocks.map((block) => ({
+    ...block,
+    runs: collapseWhitespace(block.runs),
+  }))
 }
 
 const getFontName = (run: Run): string => {

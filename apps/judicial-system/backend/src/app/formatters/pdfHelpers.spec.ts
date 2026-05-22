@@ -165,11 +165,43 @@ describe('htmlToBlocks', () => {
       expect(blocks).toHaveLength(0)
     })
 
-    it('preserves whitespace-only text as a run within a paragraph', () => {
+    it('collapses a whitespace-only paragraph to an empty block', () => {
       const blocks = htmlToBlocks('<p>   </p>')
       expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs).toHaveLength(0)
+    })
+  })
+
+  describe('whitespace collapsing', () => {
+    it('drops leading empty spacer spans from a Word paste', () => {
+      // Word injects empty <span> </span> spacers that the editor hides but
+      // previously rendered as literal leading spaces in the PDF.
+      const blocks = htmlToBlocks(
+        '<p><span style="font-weight: 400;"> </span>' +
+          '<span style="font-weight: 400;"> </span>' +
+          '<span style="font-weight: 400;">Texti.</span></p>',
+      )
       expect(blocks[0].runs).toHaveLength(1)
-      expect(blocks[0].runs[0].text.trim()).toBe('')
+      expect(blocks[0].runs[0].text).toBe('Texti.')
+    })
+
+    it('collapses internal runs of whitespace to a single space', () => {
+      const blocks = htmlToBlocks('<p>a    b</p>')
+      expect(blocks[0].runs[0].text).toBe('a b')
+    })
+
+    it('trims trailing whitespace from a paragraph', () => {
+      const blocks = htmlToBlocks('<p>text   </p>')
+      expect(blocks[0].runs[0].text).toBe('text')
+    })
+
+    it('keeps a single space between adjacent formatted runs', () => {
+      const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
+      expect(blocks[0].runs.map((r) => r.text)).toEqual([
+        'normal ',
+        'bold',
+        ' end',
+      ])
     })
   })
 })
