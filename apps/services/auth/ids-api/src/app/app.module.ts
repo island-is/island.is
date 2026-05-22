@@ -33,6 +33,7 @@ import { NotificationsModule } from './notifications/notifications.module'
 import { PasskeysModule } from './passkeys/passkeys.module'
 import { PermissionsModule } from './permissions/permissions.module'
 import { ResourcesModule } from './resources/resources.module'
+import { SessionsModule } from './sessions/sessions.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
@@ -58,6 +59,7 @@ import { ConfirmIdentityModule } from './confirm-identity/confirm-identity.modul
     LoginRestrictionsModule,
     ConfirmIdentityModule,
     PasskeysModule,
+    SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
