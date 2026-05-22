@@ -512,7 +512,6 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                                               @island-is/origo
 /libs/api/domains/energy-funds/                                                                                              @island-is/origo
 /libs/clients/energy-funds/                                                                                                  @island-is/origo
-/libs/api/domains/estates/                                                                                                   @island-is/hugsmidjan
 
 /libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/                   @island-is/origo
 /libs/application/templates/hms/registration-of-new-property-numbers/                                                        @island-is/origo
