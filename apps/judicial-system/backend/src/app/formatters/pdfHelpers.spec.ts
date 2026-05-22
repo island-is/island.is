@@ -63,6 +63,25 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
   })
 
+  it('does not highlight a span with background-color: transparent', () => {
+    // Word paste injects background-color: transparent, which previously
+    // rendered as a solid black rectangle in the PDF.
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: transparent;">not highlighted</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'not highlighted',
+      highlight: false,
+    })
+  })
+
+  it('does not highlight a span with a fully transparent rgba background', () => {
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgba(0, 0, 0, 0);">plain</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: false })
+  })
+
   it('produces multiple runs within one paragraph', () => {
     const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
     expect(blocks[0].runs).toHaveLength(3)

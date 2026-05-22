@@ -489,8 +489,6 @@ export const addNumberedList = (
   doc.x = originalX
 }
 
-const MARK_HIGHLIGHT_COLOR = '#fff066'
-
 interface Run {
   text: string
   bold: boolean
@@ -504,9 +502,30 @@ export interface RichTextBlock {
   softBreak?: boolean
 }
 
+// Values that mean "no highlight" and must not be drawn as a filled rect.
+// PDFKit cannot parse these and would fall back to a solid black fill.
+const NON_HIGHLIGHT_BG = new Set([
+  'transparent',
+  'inherit',
+  'initial',
+  'unset',
+  'none',
+  '',
+])
+
 const extractBgColor = (style: string): string | null => {
   const m = style.match(/background-color:\s*([^;]+)/)
-  return m ? m[1].trim() : null
+  if (!m) return null
+
+  const value = m[1].trim()
+  const normalized = value.toLowerCase()
+
+  if (NON_HIGHLIGHT_BG.has(normalized)) return null
+
+  // rgba(...) with a zero alpha channel is also effectively transparent.
+  if (/rgba?\([^)]*,\s*0*\.?0+\s*\)/.test(normalized)) return null
+
+  return value
 }
 
 const collectRuns = (
@@ -533,7 +552,9 @@ const collectRuns = (
       el.name === 'span' &&
       el.attribs?.style?.includes('background-color')
     ) {
-      const color = extractBgColor(el.attribs.style) ?? MARK_HIGHLIGHT_COLOR
+      // A transparent/invalid background means no highlight, so inherit the
+      // current highlight state rather than forcing a fill.
+      const color = extractBgColor(el.attribs.style) ?? highlight
       collectRuns(children, bold, italic, color, result)
     } else if (el.name === 'br') {
       result.push({ text: '\n', bold: false, italic: false, highlight: false })

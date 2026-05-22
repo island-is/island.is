@@ -209,12 +209,15 @@ const TinyMCE = ({
               })
               editor.on('NodeChange', handleNodeChange(editor))
               editor.on('PastePreProcess', (args) => {
+                // Normalize pasted backgrounds to a known highlight color, and
+                // strip ones we can't parse (e.g. Word's "transparent"), which
+                // would otherwise render as a black rectangle in the PDF.
                 args.content = args.content.replace(
-                  /background(-color)?:\s*(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|[a-zA-Z]+)/g,
+                  /background(-color)?:\s*(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|[a-zA-Z]+)\s*;?/g,
                   (_match: string, _shorthand: string, color: string) =>
                     parseCssColor(color)
-                      ? `background-color: ${findNearestHighlightColor(color)}`
-                      : _match,
+                      ? `background-color: ${findNearestHighlightColor(color)};`
+                      : '',
                 )
               })
               setupHighlightButton(editor)
@@ -230,7 +233,10 @@ const TinyMCE = ({
             placeholder,
           }}
           initialValue={initialValueRef.current}
-          onEditorChange={(content) => onChange?.(content)}
+          onEditorChange={(content) => {
+            console.log('TinyMCE HTML:', content)
+            onChange?.(content)
+          }}
           disabled={disabled}
         />
         <AnimatePresence>
