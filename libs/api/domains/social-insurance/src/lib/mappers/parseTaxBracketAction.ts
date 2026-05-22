@@ -5,11 +5,11 @@ export const parseTaxBracketAction = (
 ): TaxBracketAction | null => {
   switch (value) {
     case 'INCOME_PLAN':
-      return TaxBracketAction.IncomePlan
+      return TaxBracketAction.INCOME_PLAN
     case 'BRACKET_1':
-      return TaxBracketAction.Bracket1
+      return TaxBracketAction.BRACKET_1
     case 'BRACKET_2':
-      return TaxBracketAction.Bracket2
+      return TaxBracketAction.BRACKET_2
     default:
       return null
   }
