@@ -163,6 +163,12 @@ export const createCardPaymentSaga = (
     execute: async (ctx) => {
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_CARD')
 
+      await paymentFlowService.logChargeCodeDistribution(
+        ctx.paymentFlowId,
+        'paid',
+        PaymentMethod.CARD,
+      )
+
       await paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId: ctx.paymentFlowId,
