@@ -3,7 +3,6 @@ import {
   SettingTypeOf,
   SettingValue,
 } from '@island.is/feature-flags'
-import { gql, useQuery } from '@apollo/client'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import React, {
   FC,
@@ -13,16 +12,13 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
+import {
+  FeatureFlagsDocument,
+  FeatureFlagsQuery,
+} from './FeatureFlags.generated'
+import { useQuery } from '@apollo/client'
 
 type FeatureFlagRecord = Record<string, boolean | string | number>
-
-const FEATURE_FLAGS_QUERY = gql`
-  query FeatureFlags {
-    featureFlags {
-      flags
-    }
-  }
-`
 
 const EMPTY_FLAGS: FeatureFlagRecord = {}
 
@@ -39,9 +35,10 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
 }) => {
   const userInfo = useUserInfo()
   const isAuthenticated = !!userInfo?.profile?.nationalId
-  const { data, loading } = useQuery<{
-    featureFlags: { flags: FeatureFlagRecord }
-  }>(FEATURE_FLAGS_QUERY, { skip: !isAuthenticated })
+  const { data, loading } = useQuery<FeatureFlagsQuery>(
+    FeatureFlagsDocument,
+    { skip: !isAuthenticated },
+  )
   const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
   // Use a ref for flags so getValue always reads the latest value
