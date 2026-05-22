@@ -7,7 +7,7 @@ import { MedicineDelegationTab } from '@/components/health-tabs/medicine-delegat
 import { MedicineHistoryTab } from '@/components/health-tabs/medicine-history-tab'
 import { PrescriptionsTab } from '@/components/health-tabs/prescriptions-tab'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
-import { TabButtons } from '@/ui'
+import { TabPills } from '@/ui'
 import { useLocalSearchParams } from 'expo-router'
 
 type Tab = {
@@ -42,8 +42,8 @@ export default function MedicineScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <SafeAreaView style={[{ marginHorizontal: 16 }]}>
-        <TabButtons
+      <SafeAreaView style={[{ paddingHorizontal: 16 }]}>
+        <TabPills
           buttons={tabs.map((tab) => ({
             title: tab.title,
           }))}

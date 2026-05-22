@@ -97,9 +97,7 @@ export const IdpProvidersTable = ({
                 {formatMessage(m.idpProvidersDescription)}
               </T.HeadData>
               <T.HeadData>{formatMessage(m.idpProvidersLevel)}</T.HeadData>
-              <T.HeadData>
-                {formatMessage(m.idpProvidersEnvironments)}
-              </T.HeadData>
+              <T.HeadData>{formatMessage(m.environments)}</T.HeadData>
               <T.HeadData>{/* Actions */}</T.HeadData>
             </T.Row>
           </T.Head>

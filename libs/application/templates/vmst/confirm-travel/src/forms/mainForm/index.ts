@@ -33,6 +33,14 @@ export const MainForm = buildForm({
           placeholder: mainForm.datePlaceholder,
           width: 'half',
           required: true,
+          minDate: (application) => {
+            const minFromDate =
+              getValueViaPath<string>(
+                application.externalData,
+                'eligibilityData.data.minDateFrom',
+              ) || new Date().toISOString()
+            return new Date(minFromDate)
+          },
         }),
         buildDateField({
           id: 'date.to',
@@ -52,10 +60,27 @@ export const MainForm = buildForm({
               application.answers,
               'date.from',
             )
+            const maxDateTo = getValueViaPath<string>(
+              application.externalData,
+              'eligibilityData.data.maxDateTo',
+            )
             if (fromDate) {
+              const maxDays =
+                getValueViaPath<string>(
+                  application.externalData,
+                  'eligibilityData.data.maxDaysPerRequest',
+                ) || '30' // Default to 30 days if not provided
+
               const date = new Date(fromDate)
-              date.setDate(date.getDate() + 30)
+              date.setDate(date.getDate() + parseInt(maxDays, 10) - 1)
+
+              if (maxDateTo && date > new Date(maxDateTo)) {
+                return new Date(maxDateTo)
+              }
               return date
+            }
+            if (maxDateTo) {
+              return new Date(maxDateTo)
             }
             return undefined
           },
