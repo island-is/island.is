@@ -166,7 +166,7 @@ export const createCardPaymentSaga = (
       await paymentFlowService.logChargeCodeDistribution(
         ctx.paymentFlowId,
         'paid',
-        PaymentMethod.CARD,
+        'card',
       )
 
       await paymentFlowService.logPaymentFlowUpdate(

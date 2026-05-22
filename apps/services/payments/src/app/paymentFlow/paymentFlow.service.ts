@@ -205,7 +205,7 @@ export class PaymentFlowService {
   async logChargeCodeDistribution(
     paymentFlowId: string,
     state: 'created' | 'paid',
-    paymentMethod?: PaymentMethod,
+    paymentMethod?: 'card' | 'apple_pay' | 'invoice',
     preFetchedCharges?: { chargeItemCode: string; quantity: number }[],
   ): Promise<void> {
     try {

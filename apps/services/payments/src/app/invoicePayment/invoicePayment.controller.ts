@@ -201,7 +201,7 @@ export class InvoicePaymentController {
       await this.paymentFlowService.logChargeCodeDistribution(
         paymentFlowId,
         'paid',
-        PaymentMethod.INVOICE,
+        'invoice',
       )
 
       await this.paymentFlowService.logPaymentFlowUpdate(
