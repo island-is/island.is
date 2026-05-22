@@ -5,6 +5,7 @@ import {
   SecondarySchoolProgrammeSimple,
   SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeDetail,
+  SecondarySchoolIsReferenceProgramme,
 } from './graphql/models'
 import {
   SecondarySchoolClient,
@@ -32,7 +33,25 @@ export class SecondarySchoolApi {
   }
 
   async getProgrammeFilterOptions(): Promise<SecondarySchoolProgrammeFilterOptions> {
-    return this.secondarySchoolPublicClient.getFilterOptions()
+    const options = await this.secondarySchoolPublicClient.getFilterOptions()
+
+    const mapIsReferenceProgramme = (
+      value: string,
+    ): SecondarySchoolIsReferenceProgramme | null => {
+      if (value === 'Já') return SecondarySchoolIsReferenceProgramme.YES
+      if (value === 'Nei') return SecondarySchoolIsReferenceProgramme.NO
+      return null
+    }
+
+    return {
+      ...options,
+      isReferenceProgrammeFilterOption:
+        options.isReferenceProgrammeFilterOption
+          ?.map(mapIsReferenceProgramme)
+          .filter(
+            (v): v is SecondarySchoolIsReferenceProgramme => v !== null,
+          ) ?? null,
+    }
   }
 
   async getProgrammeById(id: string): Promise<SecondarySchoolProgrammeDetail> {

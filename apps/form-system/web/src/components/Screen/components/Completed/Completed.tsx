@@ -1,4 +1,4 @@
-import { FormSystemCompletedSectionInfo } from '@island.is/api/schema'
+import { FormSystemSectionInfo } from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import {
   Accordion,
@@ -20,8 +20,8 @@ export const Completed = () => {
   const supportEmail = 'island@island.is'
   const { slug } = useParams()
   const { state } = useApplicationContext()
-  const completed = state.application.completedSectionInfo as
-    | Partial<FormSystemCompletedSectionInfo>
+  const completed = state.application.sectionInfo as
+    | Partial<FormSystemSectionInfo>
     | undefined
   const t = completed?.title?.[lang]
   const header =

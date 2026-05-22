@@ -155,6 +155,15 @@ export const m = defineMessages({
     defaultMessage:
       'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
   },
+  descriptionChangeWarningTitle: {
+    id: 'ap.ids-admin:description-change-warning-title',
+    defaultMessage: 'Are you sure you want to change the description?',
+  },
+  descriptionChangeWarningMessage: {
+    id: 'ap.ids-admin:description-change-warning-message',
+    defaultMessage:
+      'Users may have already granted active delegations based on the current description. Changing it now retroactively alters what those delegations appear to authorize, which can mislead the people who granted them. Only proceed if you are sure the new wording still accurately reflects what the permission allows.',
+  },
   clientId: {
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Client ID',
@@ -667,18 +676,13 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-button-label-remove',
     defaultMessage: 'Remove',
   },
-  permissionsModalTitle: {
-    id: 'ap.ids-admin:permissions-modal-title',
-    defaultMessage: 'Add permissions',
-  },
-  permissionsModalDescription: {
-    id: 'ap.ids-admin:permissions-modal-description',
-    defaultMessage:
-      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
-  },
   permissionsModalNoScopes: {
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
+  },
+  permissionsOtherTenantGroup: {
+    id: 'ap.ids-admin:permissions-other-tenant-group',
+    defaultMessage: 'Other',
   },
   permissionApplicationsDescription: {
     id: 'ap.ids-admin:permission-applications-description',
