@@ -226,7 +226,8 @@ const PersonalTaxCredit = () => {
                       />
                       <Inline space={2}>
                         <Button
-                          variant="ghost"
+                          variant="primary"
+                          colorScheme="negative"
                           size="small"
                           onClick={() => {
                             handleCancel()
