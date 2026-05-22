@@ -18,6 +18,48 @@ const hexToRgb = (hex: string) => {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+const parseCssColor = (cssColor: string): [number, number, number] | null => {
+  const rgb = cssColor.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
+  if (rgb) return [+rgb[1], +rgb[2], +rgb[3]]
+  const hex6 = cssColor.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
+  if (hex6)
+    return [parseInt(hex6[1], 16), parseInt(hex6[2], 16), parseInt(hex6[3], 16)]
+  const hex3 = cssColor.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i)
+  if (hex3)
+    return [
+      parseInt(hex3[1] + hex3[1], 16),
+      parseInt(hex3[2] + hex3[2], 16),
+      parseInt(hex3[3] + hex3[3], 16),
+    ]
+  return null
+}
+
+const HIGHLIGHT_DISTANCE_THRESHOLD = 200
+
+const findNearestHighlightColor = (cssColor: string): string => {
+  const fallback = HIGHLIGHT_COLORS[0].color
+  const rgb = parseCssColor(cssColor)
+  if (!rgb) return fallback
+
+  let minDist = Infinity
+  let nearest = fallback
+
+  for (const { color } of HIGHLIGHT_COLORS) {
+    const r = parseInt(color.slice(1, 3), 16)
+    const g = parseInt(color.slice(3, 5), 16)
+    const b = parseInt(color.slice(5, 7), 16)
+    const dist = Math.sqrt(
+      (rgb[0] - r) ** 2 + (rgb[1] - g) ** 2 + (rgb[2] - b) ** 2,
+    )
+    if (dist < minDist) {
+      minDist = dist
+      nearest = color
+    }
+  }
+
+  return minDist <= HIGHLIGHT_DISTANCE_THRESHOLD ? nearest : fallback
+}
+
 interface Props {
   label: string
   placeholder: string
@@ -155,7 +197,7 @@ const TinyMCE = ({
           }}
           init={{
             height: 450,
-            plugins: 'lists fullscreen',
+            plugins: 'lists fullscreen paste',
             toolbar: 'bold italic indent outdent highlightcolor fullscreen',
             toolbar_mode: 'wrap',
             menubar: false,
@@ -166,6 +208,15 @@ const TinyMCE = ({
                 onBlur?.(editor.getContent())
               })
               editor.on('NodeChange', handleNodeChange(editor))
+              editor.on('PastePreProcess', (args) => {
+                args.content = args.content.replace(
+                  /background(-color)?:\s*(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|[a-zA-Z]+)/g,
+                  (_match: string, _shorthand: string, color: string) =>
+                    parseCssColor(color)
+                      ? `background-color: ${findNearestHighlightColor(color)}`
+                      : _match,
+                )
+              })
               setupHighlightButton(editor)
             },
             paste_word_valid_elements: 'p,b,strong,i,em,span,br',
