@@ -79,12 +79,15 @@ export class AuthService {
 
       const data = await response.json()
 
-      if (!data?.accessToken) {
+      const accessToken =
+        data?.accessToken ?? data?.Access_Token ?? data?.access_token
+
+      if (!accessToken) {
         throw new Error('NTI login response missing accessToken')
       }
 
       const loginResponse: LoginResponseDto = {
-        accessToken: data.Access_Token,
+        accessToken: accessToken,
         audkenni: '',
       }
 

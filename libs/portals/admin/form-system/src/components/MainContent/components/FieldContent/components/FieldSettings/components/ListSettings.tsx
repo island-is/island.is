@@ -94,7 +94,17 @@ export const ListSettings = () => {
     })
     const zendeskInstanceInfo =
       data?.data?.formSystemOrganizationZendeskInstance
-    const parsed: ZendeskInstanceConfig = JSON.parse(zendeskInstanceInfo)
+
+    if (!zendeskInstanceInfo) {
+      return
+    }
+
+    let parsed: ZendeskInstanceConfig
+    try {
+      parsed = JSON.parse(zendeskInstanceInfo)
+    } catch {
+      return
+    }
 
     if (
       parsed.serviceSystemInstance !==

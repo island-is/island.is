@@ -1071,22 +1071,51 @@ export class ApplicationsService {
     dataFromUrlRequestDto: DataFromUrlReqDto,
     user: User,
   ): Promise<DataFromUrlResDto> {
-    const field = await this.fieldModel.findByPk(dataFromUrlRequestDto.fieldId)
+    const fieldId = dataFromUrlRequestDto.fieldId?.trim()
+    if (!fieldId) {
+      throw new BadRequestException(`fieldId is required`)
+    }
+    const slug = dataFromUrlRequestDto.slug?.trim()
+    if (!slug) {
+      throw new BadRequestException(`slug is required`)
+    }
+
+    const field = await this.fieldModel.findByPk(fieldId)
 
     if (!field) {
-      throw new NotFoundException(
-        `Field with id '${dataFromUrlRequestDto.fieldId}' not found`,
-      )
+      throw new NotFoundException(`Field with id '${fieldId}' not found`)
     }
 
     const fieldSettings = field.fieldSettings
 
     if (!fieldSettings) {
       throw new NotFoundException(
-        `Field settings for field with id '${dataFromUrlRequestDto.fieldId}' not found`,
+        `Field settings for field with id '${fieldId}' not found`,
       )
     }
     const fieldType = field.fieldType
+
+    // Ownership + access check: field must belong to the requested form,
+    // and the current user's loginTypes must be allowed for that form.
+    const form = await this.getForm(slug)
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for form '${slug}'`,
+      )
+    }
+
+    const fieldBelongsToForm = (form.sections ?? []).some((section) =>
+      (section.screens ?? []).some((screen) =>
+        (screen.fields ?? []).some((f) => f.id === field.id),
+      ),
+    )
+    if (!fieldBelongsToForm) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for field '${field.id}'`,
+      )
+    }
 
     let response = new DataFromUrlResDto()
 
@@ -1096,11 +1125,25 @@ export class ApplicationsService {
       (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
         fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
     ) {
+      const orgNationalId = dataFromUrlRequestDto.orgNationalId?.trim()
+      if (!orgNationalId) {
+        throw new BadRequestException(
+          `orgNationalId is required for Zendesk list lookups`,
+        )
+      }
+      if (orgNationalId !== form.organizationNationalId) {
+        throw new ForbiddenException(
+          `User does not have permission to fetch Zendesk data for organization '${orgNationalId}'`,
+        )
+      }
+
       const organizationInstance = await this.getOrganizationZendeskInfo(
-        dataFromUrlRequestDto.orgNationalId || '',
+        orgNationalId,
       )
+
       dataFromUrlRequestDto.zendeskInstance =
         organizationInstance.zendeskInstance
+
       response = await this.serviceManager.getListFromZendesk(
         fieldSettings,
         dataFromUrlRequestDto,

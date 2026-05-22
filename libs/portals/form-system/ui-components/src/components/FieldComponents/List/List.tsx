@@ -245,8 +245,8 @@ export const List = ({
   useEffect(() => {
     if (!shouldFetch) return
     if (isLoading) return
-    if (dataFromUrlHasError) trigger(item.id) // only show fetch failure
-  }, [shouldFetch, isLoading, dataFromUrlHasError, trigger, item.id])
+    if (dataFromUrlHasError) trigger(fieldName)
+  }, [shouldFetch, isLoading, dataFromUrlHasError, trigger, fieldName])
 
   const externalPlaceholder = state?.externalListPlaceholders?.find(
     (p) => p.fieldId === item.id,

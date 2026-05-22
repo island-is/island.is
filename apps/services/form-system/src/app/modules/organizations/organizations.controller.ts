@@ -1,4 +1,6 @@
 import {
+  HttpCode,
+  HttpStatus,
   Controller,
   Get,
   Param,
@@ -57,16 +59,14 @@ export class OrganizationsController {
   })
   @ApiBody({ type: OrganizationZendeskInstanceDto })
   @Put('zendesk')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateZendeskInstance(
     @CurrentUser()
     user: User,
     @Body() organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
   ): Promise<void> {
-    console.log(
-      'updateZendeskInstance called with',
-      organizationZendeskInstanceDto,
-    )
     return await this.organizationsService.updateZendeskInstance(
+      user,
       organizationZendeskInstanceDto,
     )
   }

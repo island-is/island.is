@@ -15,7 +15,7 @@ export class ZendeskListService {
   enhancedFetch: EnhancedFetchAPI
 
   private readonly DEFAULT_INSTANCE =
-    'process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
+    process.env.FORM_SYSTEM_ZENDESK_TENANT_ID_PROD
   private readonly DEFAULT_API_KEY =
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
   private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
@@ -55,18 +55,23 @@ export class ZendeskListService {
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     if (fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT) {
-      const customObjectKey = fieldSettings.zendeskCustomObjectKey
-      const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
-      url = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}/records?page[size]=100`
-      const placeholderUrl = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}`
-      const placeholder = await this.getCustomObjectPlaceholder(
-        placeholderUrl,
-        credentials,
-      )
+      try {
+        const customObjectKey = fieldSettings.zendeskCustomObjectKey
+        const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
+        url = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}/records?page[size]=100`
+        const placeholderUrl = `${zendeskUrl}/api/v2/custom_objects/${customObjectKey}`
+        const placeholder = await this.getCustomObjectPlaceholder(
+          placeholderUrl,
+          credentials,
+        )
 
-      const listResult = await this.fetchAllPages(url, credentials)
-      listResult.placeholder = placeholder
-      return listResult
+        const listResult = await this.fetchAllPages(url, credentials)
+        listResult.placeholder = placeholder
+        return listResult
+      } catch (error) {
+        this.logger.error(`Error fetching list from Zendesk: ${error}`)
+        return { isError: true }
+      }
     }
 
     const ticketFieldId = fieldSettings.zendeskTicketFieldId

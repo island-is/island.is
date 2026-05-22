@@ -33,7 +33,7 @@ export class OrganizationsService {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     if (user.nationalId !== nationalId && !isAdmin) {
-      throw new UnauthorizedException(`User does not have admin privileges'`)
+      throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
     // the loader is not sending the nationalId
@@ -99,6 +99,7 @@ export class OrganizationsService {
   }
 
   async updateZendeskInstance(
+    user: User,
     organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
   ): Promise<void> {
     const { zendeskInstance, zendeskBrandId, organizationId } =
@@ -109,6 +110,11 @@ export class OrganizationsService {
       throw new NotFoundException(
         `Organization with ID ${organizationId} not found`,
       )
+    }
+
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+    if (!isAdmin && user.nationalId !== organization.nationalId) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
     organization.zendeskInstance = zendeskInstance

@@ -147,11 +147,13 @@ export class ApplicationsService {
     auth: User,
     input: DataFromUrlInput,
   ): Promise<DataFromUrl> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerGetDataFromUrl({
-      dataFromUrlReqDto: input,
-    } as ApplicationsControllerGetDataFromUrlRequest)
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerGetDataFromUrl({
+        dataFromUrlReqDto: input,
+      } as ApplicationsControllerGetDataFromUrlRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get data from url'),
+      )
 
     return response as DataFromUrl
   }

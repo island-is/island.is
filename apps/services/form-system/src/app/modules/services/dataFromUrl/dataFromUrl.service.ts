@@ -53,6 +53,9 @@ export class DataFromUrlService {
       audkenni = loginResponse.audkenni
     } catch (error) {
       this.logger.error(`Error acquiring login tokens: ${error}`)
+      const resultList = new DataFromUrlResDto()
+      resultList.isError = true
+      return resultList
     }
 
     const request: BodyRequestDto = {
