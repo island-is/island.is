@@ -14,6 +14,8 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
 import { PersonalTaxCreditSpouseInfo } from '../models/personalTaxCredit/spouseInfo.model'
 import { TaxBracketAction } from '../enums/taxBracketAction'
@@ -28,6 +30,7 @@ import { SocialInsuranceService } from '../socialInsurance.service'
 @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
 @FeatureFlag(Features.isServicePortalTRPersonalTaxCreditPageEnabled)
 @Audit({ namespace: '@island.is/api/social-insurance' })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class PersonalTaxCreditResolver {
   constructor(private readonly service: SocialInsuranceService) {}
 

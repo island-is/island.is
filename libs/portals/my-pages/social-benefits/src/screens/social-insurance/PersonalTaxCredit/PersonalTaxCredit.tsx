@@ -204,7 +204,7 @@ const PersonalTaxCredit = () => {
       ) : (
         <Stack space={6}>
           <Box>
-            <Text variant="h5" marginBottom={3}>
+            <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myTaxCreditUsage)}
             </Text>
 
@@ -226,8 +226,7 @@ const PersonalTaxCredit = () => {
                       />
                       <Inline space={2}>
                         <Button
-                          variant="primary"
-                          colorScheme="negative"
+                          variant="ghost"
                           size="small"
                           onClick={() => {
                             handleCancel()

@@ -277,13 +277,20 @@ export class SocialInsuranceService {
         : undefined
 
     return {
-      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
-        ...tc,
-        validFrom: tc.validFrom ?? undefined,
-        validTo: tc.validTo ?? undefined,
-        type: mapToTaxCardType(tc.taxCardType),
-        percentage: tc.percentage ?? undefined,
-      })),
+      taxCards: taxCardsResult?.taxCards
+        ?.map((tc) => {
+          const type = mapToTaxCardType(tc.taxCardType)
+          if (!type || tc.percentage == null || !tc.validFrom) {
+            return null
+          }
+          return {
+            percentage: tc.percentage,
+            validFrom: tc.validFrom,
+            validTo: tc.validTo ?? undefined,
+            type,
+          }
+        })
+        .filter(isDefined),
       canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
       canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
       registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),

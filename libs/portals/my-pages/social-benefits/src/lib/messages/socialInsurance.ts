@@ -198,11 +198,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
     defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
   },
-  taxBracketInfoMarkdown: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-information#markdown',
-    defaultMessage:
-      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n* 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n* 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n* 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
-  },
   taxCardTypePersonalTaxAllowance: {
     id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
     defaultMessage: 'Skattkort',
@@ -314,7 +309,7 @@ export const m = defineMessages({
   },
   spouseTaxCreditUsingSummaryBody: {
     id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-body',
-    defaultMessage: 'Maki hefur leyfi til að nýta persónuafláttinn þinn.',
+    defaultMessage: 'Maki hefur leyfi til að nýta persónuafsláttinn þinn.',
   },
   youAreUsingSpouseTaxCreditTitle: {
     id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',

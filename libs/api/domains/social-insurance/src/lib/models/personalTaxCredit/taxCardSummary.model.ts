@@ -3,15 +3,15 @@ import { TaxCardType } from '../../enums/taxCardType'
 
 @ObjectType('SocialInsuranceTaxCardSummary')
 export class TaxCardSummary {
-  @Field(() => Int, { nullable: true })
-  percentage?: number
+  @Field(() => Int)
+  percentage!: number
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  validFrom?: Date
+  @Field(() => GraphQLISODateTime)
+  validFrom!: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   validTo?: Date
 
-  @Field(() => TaxCardType, { nullable: true })
-  type?: TaxCardType
+  @Field(() => TaxCardType)
+  type!: TaxCardType
 }

@@ -152,7 +152,8 @@ export const PersonalTaxCreditTable = ({
             {headerGroup.headers.map((header) => (
               <T.HeadData
                 key={header.id}
-                scope="col"
+                scope={header.id === 'actions' ? undefined : 'col'}
+                aria-hidden={header.id === 'actions' ? true : undefined}
                 box={{ background: 'blue100' }}
               >
                 {flexRender(
