@@ -24,7 +24,8 @@ export const SailorCrewRegistrationsExemptions = () => {
   const [search, setSearch] = useState('')
 
   const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
-  const exemptions = data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
+  const exemptions =
+    data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
 
   const filtered = useMemo(
     () =>

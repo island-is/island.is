@@ -26,7 +26,8 @@ const SailorRightCertificates = () => {
   const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useShipRegistrySailorRightCertificatesQuery()
-  const rightCertificates = data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
+  const rightCertificates =
+    data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(

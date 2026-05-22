@@ -24,8 +24,10 @@ const SailorSchoolCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage, locale } = useLocale()
 
-  const { data, loading, error } = useShipRegistrySailorSchoolCertificatesQuery()
-  const schoolCertificates = data?.shipRegistrySailor?.certificates?.schoolCertificates ?? []
+  const { data, loading, error } =
+    useShipRegistrySailorSchoolCertificatesQuery()
+  const schoolCertificates =
+    data?.shipRegistrySailor?.certificates?.schoolCertificates ?? []
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(

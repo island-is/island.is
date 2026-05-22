@@ -15,7 +15,10 @@ import {
 } from '@island.is/nest/feature-flags'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { ShipRegistrySailorCertificates, type ShipRegistrySailorCertificatesBase } from '../models/sailorCertificates.model'
+import {
+  ShipRegistrySailorCertificates,
+  type ShipRegistrySailorCertificatesBase,
+} from '../models/sailorCertificates.model'
 import { ShipRegistrySailorSchoolCertificate } from '../models/sailorSchoolCertificate.model'
 import { ShipRegistrySailorRightCertificate } from '../models/sailorRightCertificate.model'
 import { ShipRegistrySailorMaritimeBook } from '../models/sailorMaritimeBook.model'
@@ -36,9 +39,13 @@ export class SailorCertificatesResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @ResolveField('schoolCertificates', () => [ShipRegistrySailorSchoolCertificate], {
-    nullable: true,
-  })
+  @ResolveField(
+    'schoolCertificates',
+    () => [ShipRegistrySailorSchoolCertificate],
+    {
+      nullable: true,
+    },
+  )
   async resolveSchoolCertificates(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorCertificatesBase,
@@ -52,9 +59,13 @@ export class SailorCertificatesResolver {
     return this.sailorsService.getSailorSchoolCertificates(user, locale)
   }
 
-  @ResolveField('rightCertificates', () => [ShipRegistrySailorRightCertificate], {
-    nullable: true,
-  })
+  @ResolveField(
+    'rightCertificates',
+    () => [ShipRegistrySailorRightCertificate],
+    {
+      nullable: true,
+    },
+  )
   async resolveRightCertificates(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorCertificatesBase,
@@ -84,9 +95,13 @@ export class SailorCertificatesResolver {
     return this.sailorsService.getSailorMaritimeBooks(user, locale)
   }
 
-  @ResolveField('registrationExemptions', () => [ShipRegistrySailorRegistrationExemption], {
-    nullable: true,
-  })
+  @ResolveField(
+    'registrationExemptions',
+    () => [ShipRegistrySailorRegistrationExemption],
+    {
+      nullable: true,
+    },
+  )
   async resolveRegistrationExemptions(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorCertificatesBase,

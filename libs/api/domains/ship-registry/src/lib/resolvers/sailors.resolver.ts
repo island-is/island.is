@@ -1,4 +1,11 @@
-import { Args, Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Context,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
@@ -17,8 +24,14 @@ import {
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { LocaleEnum } from '@island.is/nest/graphql'
-import { ShipRegistrySailor, type ShipRegistrySailorBase } from '../models/sailor.model'
-import { ShipRegistrySailorCertificates, type ShipRegistrySailorCertificatesBase } from '../models/sailorCertificates.model'
+import {
+  ShipRegistrySailor,
+  type ShipRegistrySailorBase,
+} from '../models/sailor.model'
+import {
+  ShipRegistrySailorCertificates,
+  type ShipRegistrySailorCertificatesBase,
+} from '../models/sailorCertificates.model'
 import { ShipRegistrySailorSeaServiceBookEntry } from '../models/sailorSeaServiceBookEntry.model'
 import { SeaServiceBookFilterInput } from '../dto/sailor-sea-service-book-filter.input'
 import { SailorsService } from '../services/sailors.service'
@@ -44,7 +57,11 @@ export class SailorsResolver {
   @Audit()
   async sailor(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => LocaleEnum, nullable: true, defaultValue: LocaleEnum.Is })
+    @Args('locale', {
+      type: () => LocaleEnum,
+      nullable: true,
+      defaultValue: LocaleEnum.Is,
+    })
     locale: LocaleEnum,
   ): Promise<ShipRegistrySailorBase> {
     return { locale }
@@ -66,9 +83,13 @@ export class SailorsResolver {
     return { locale }
   }
 
-  @ResolveField('seaServiceBook', () => [ShipRegistrySailorSeaServiceBookEntry], {
-    nullable: true,
-  })
+  @ResolveField(
+    'seaServiceBook',
+    () => [ShipRegistrySailorSeaServiceBookEntry],
+    {
+      nullable: true,
+    },
+  )
   async resolveSeaServiceBook(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorBase,
