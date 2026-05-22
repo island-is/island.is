@@ -36,6 +36,22 @@ const parseCssColor = (cssColor: string): [number, number, number] | null => {
 
 const HIGHLIGHT_DISTANCE_THRESHOLD = 200
 
+// Indent step (px) used by TinyMCE's indent/outdent buttons. Word paste uses
+// margin-left in pt, which the buttons can't outdent, so we normalize it to
+// padding-left rounded to this step (which the backend PDF also reads).
+const INDENT_STEP_PX = 40
+
+const normalizePastedIndentation = (html: string): string =>
+  html.replace(
+    /margin-left:\s*([\d.]+)(pt|px)\s*;?/g,
+    (_match: string, value: string, unit: string) => {
+      const numeric = parseFloat(value)
+      const px = unit === 'pt' ? numeric * (96 / 72) : numeric
+      const levels = Math.round(px / INDENT_STEP_PX)
+      return levels > 0 ? `padding-left: ${levels * INDENT_STEP_PX}px;` : ''
+    },
+  )
+
 const findNearestHighlightColor = (cssColor: string): string => {
   const fallback = HIGHLIGHT_COLORS[0].color
   const rgb = parseCssColor(cssColor)
@@ -199,6 +215,7 @@ const TinyMCE = ({
             height: 450,
             plugins: 'lists fullscreen paste',
             toolbar: 'bold italic indent outdent highlightcolor fullscreen',
+            indentation: `${INDENT_STEP_PX}px`,
             toolbar_mode: 'wrap',
             menubar: false,
             setup: (editor) => {
@@ -219,6 +236,7 @@ const TinyMCE = ({
                       ? `background-color: ${findNearestHighlightColor(color)};`
                       : '',
                 )
+                args.content = normalizePastedIndentation(args.content)
               })
               setupHighlightButton(editor)
             },
