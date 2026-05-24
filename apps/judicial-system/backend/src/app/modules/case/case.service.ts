@@ -39,7 +39,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -58,6 +57,7 @@ import {
   isInvestigationCase,
   isRequestCase,
   isRestrictionCase,
+  RequestCaseNotificationType,
   ServiceStatus,
   StringType,
   stringTypes,
@@ -504,7 +504,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.READY_FOR_COURT },
+      body: { type: RequestCaseNotificationType.READY_FOR_COURT },
     })
   }
 
@@ -516,7 +516,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      },
     })
   }
 
@@ -528,7 +530,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+      },
     })
   }
 
@@ -541,7 +545,7 @@ export class CaseService {
       user,
       caseId: theCase.id,
       body: {
-        type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        type: IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
       },
     })
   }
@@ -551,7 +555,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.RECEIVED_BY_COURT },
+      body: { type: RequestCaseNotificationType.RECEIVED_BY_COURT },
     })
 
     if (isIndictmentCase(theCase.type)) {
@@ -770,7 +774,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       },
     )
 
@@ -828,7 +832,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       })
     }
   }
@@ -859,7 +863,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: updatedCase.id,
-      body: { type: CaseNotificationType.RULING },
+      body: { type: RequestCaseNotificationType.RULING },
     })
 
     if (updatedCase.withCourtSessions) {
@@ -884,7 +888,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.MODIFIED },
+      body: { type: RequestCaseNotificationType.MODIFIED },
     })
 
     if (theCase.origin === CaseOrigin.LOKE) {
@@ -904,7 +908,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.REVOKED },
+      body: { type: RequestCaseNotificationType.REVOKED },
     })
   }
 
@@ -955,7 +959,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_DENIED },
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_DENIED },
     })
   }
 

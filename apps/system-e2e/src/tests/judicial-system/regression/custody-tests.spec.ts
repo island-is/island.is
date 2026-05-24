@@ -259,7 +259,7 @@ test.describe.serial('Custody tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'LimitedAccessCase'),
     ])
 
-    await expect(page).toHaveURL(`verjandi/greinargerd/${caseId}`)
+    await expect(page).toHaveURL(`/verjandi/greinargerd/${caseId}`)
     await chooseDocument(
       page,
       async () => {

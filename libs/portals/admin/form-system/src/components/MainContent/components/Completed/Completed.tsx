@@ -24,9 +24,9 @@ export const Completed = () => {
     getTranslation,
   } = useContext(ControlContext)
   const { isReadOnly } = control
-  const { completedSectionInfo } = control.form
+  const { sectionInfo } = control.form
   const { title, confirmationHeader, confirmationText, additionalInfo } =
-    completedSectionInfo || {}
+    sectionInfo || {}
   const { formatMessage } = useLocale()
   const [nextSteps, setNextSteps] = useState<FormSystemLanguageType[]>(() =>
     (additionalInfo ?? []).filter(
