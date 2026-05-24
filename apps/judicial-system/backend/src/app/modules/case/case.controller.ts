@@ -48,6 +48,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   restrictionCases,
@@ -245,6 +246,16 @@ export class CaseController {
         throw new BadRequestException(
           'Cannot merge case that is not in a received state',
         )
+      }
+
+      if (update.reopenReason !== undefined) {
+        if (!isIndictmentCase(theCase.type)) {
+          throw new BadRequestException('Cannot reopen a non-indictment case')
+        }
+
+        if (!update.reopenReason.trim()) {
+          throw new BadRequestException('Reopen reason cannot be empty')
+        }
       }
 
       // This probably belongs inside the case service

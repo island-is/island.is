@@ -727,6 +727,7 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     penalties
+    reopenReason
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

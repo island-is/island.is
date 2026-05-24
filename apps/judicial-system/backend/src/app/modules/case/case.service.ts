@@ -25,7 +25,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
+  capitalize,
   formatDate,
+  lowercase,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -114,7 +116,10 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
 
 type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation' | 'civilDemands' | 'penalties'
+  | 'postponedIndefinitelyExplanation'
+  | 'civilDemands'
+  | 'penalties'
+  | 'reopenReason'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -122,6 +127,7 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
     StringType.POSTPONED_INDEFINITELY_EXPLANATION,
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
+  reopenReason: StringType.REOPEN_REASON,
 }
 
 export const caseListInclude: Includeable[] = [
@@ -963,6 +969,18 @@ export class CaseService {
     })
   }
 
+  private addMessagesForReopenedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
+    })
+  }
+
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1005,6 +1023,13 @@ export class CaseService {
       ) {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         this.addMessagesForReceivedCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.RECEIVED &&
+        isCompletedCase(theCase.state) &&
+        isIndictment
+      ) {
+        // Only the REOPEN transition moves an indictment from a completed state to RECEIVED
+        this.addMessagesForReopenedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         if (!isIndictment) {
           this.addMessagesForDeletedCaseToQueue(updatedCase, user)
@@ -1809,6 +1834,32 @@ export class CaseService {
 
     if (requiresCourtTransition) {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
+    }
+
+    if (update.reopenReason !== undefined) {
+      const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}.`
+      update.reopenReason = `${header}\n${update.reopenReason}`
+      update = transitionCase(CaseTransition.REOPEN, theCase, user, update)
+
+      await Promise.all(
+        (theCase.defendants ?? []).flatMap((defendant) => [
+          this.defendantService.updateDatabaseDefendant(
+            theCase.id,
+            defendant.id,
+            {
+              isSentToPrisonAdmin: false,
+              indictmentReviewDecision: null,
+              publicProsecutorIsRegisteredInPoliceSystem: null,
+            },
+            transaction,
+          ),
+          ...(defendant.verdicts ?? []).map((verdict) =>
+            this.verdictService.resetPublicProsecutorData(verdict, transaction),
+          ),
+        ]),
+      )
     }
 
     // Keep transient defendant event log decisions out of the case persistence
