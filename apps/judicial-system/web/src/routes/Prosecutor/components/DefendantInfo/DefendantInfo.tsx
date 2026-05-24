@@ -19,7 +19,6 @@ import InputName from '@island.is/judicial-system-web/src/components/Inputs/Inpu
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Case,
-  CaseOrigin,
   Defendant,
   Gender,
   UpdateDefendantInput,
