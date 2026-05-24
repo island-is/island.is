@@ -35,6 +35,7 @@ export enum TrackedNotificationType {
   SERVICE_FAILED = 'SERVICE_FAILED',
   SERVICE_SUCCESSFUL = 'SERVICE_SUCCESSFUL',
   SPOKESPERSON_ASSIGNED = 'SPOKESPERSON_ASSIGNED',
+  SPOKESPERSON_COURT_DATE_FOLLOW_UP = 'SPOKESPERSON_COURT_DATE_FOLLOW_UP',
 }
 
 export enum RequestCaseNotificationType {
@@ -86,6 +87,7 @@ export enum DefendantNotificationType {
 
 export enum CivilClaimantNotificationType {
   SPOKESPERSON_ASSIGNED = TrackedNotificationType.SPOKESPERSON_ASSIGNED,
+  SPOKESPERSON_COURT_DATE_FOLLOW_UP = TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
 }
 
 export enum SubpoenaNotificationType {

@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
+import {
+  CivilClaimantNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -21,6 +24,7 @@ type GivenWhenThen = (
 
 describe('CivilClaimantController - Update', () => {
   const caseId = uuid()
+  const user = { id: uuid() }
   const civilClaimantId = uuid()
 
   let mockQueuedMessages: Message[]
@@ -45,6 +49,7 @@ describe('CivilClaimantController - Update', () => {
         .update(
           caseId,
           civilClaimantId,
+          user as User,
           { id: civilClaimantId } as CivilClaimant,
           updateData,
         )
@@ -110,6 +115,15 @@ describe('CivilClaimantController - Update', () => {
           caseId,
           elementId: civilClaimantId,
           body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        },
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          user,
+          elementId: civilClaimantId,
+          body: {
+            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+          },
         },
       ])
     })
