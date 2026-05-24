@@ -37,18 +37,6 @@ import {
   mapStringToGender,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-/**
- * Skip national registry lookup for police system synced defendants.
- */
-const skipNationalRegistryForPoliceSystemDefendant = (
-  origin: CaseOrigin | null | undefined,
-  caseId: string | null | undefined,
-  defendant: Defendant,
-) =>
-  origin === CaseOrigin.LOKE &&
-  Boolean(caseId) &&
-  (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim()))
-
 interface Props {
   defendant: Defendant
   workingCase: Case
@@ -71,14 +59,14 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const skipNationalRegistry = skipNationalRegistryForPoliceSystemDefendant(
-    workingCase.origin,
-    workingCase.id,
-    defendant,
-  )
+
   const { personData, businessData, error, notFound } = useNationalRegistry(
     defendant.nationalId,
-    { skip: skipNationalRegistry },
+    {
+      skip:
+        Boolean(workingCase.id) &&
+        (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim())),
+    },
   )
 
   const genderOptions: ReactSelectOption[] = [
