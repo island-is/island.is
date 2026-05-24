@@ -1729,14 +1729,10 @@ export class CaseService {
 
     await Promise.all(
       eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
-        if (!rulingDate) {
-          return this.defendantEventLogRepositoryService.createWithUser(
-            eventType,
-            theCase.id,
-            defendantId,
-            user,
-            transaction,
-          )
+        let created: Date | undefined
+        if (rulingDate) {
+          created = new Date(rulingDate)
+          created.setUTCHours(23, 59, 59, 999)
         }
 
         return this.defendantEventLogRepositoryService.createWithUser(
@@ -1745,7 +1741,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          rulingDate,
+          created,
         )
       }),
     )

@@ -299,6 +299,7 @@ const generateIndictmentCaseStateTag = (
       case IndictmentDecision.POSTPONING:
       case IndictmentDecision.SCHEDULING:
       case IndictmentDecision.COMPLETING:
+      case IndictmentDecision.COMPLETING_FOR_SOME:
         return generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
       case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
         return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
