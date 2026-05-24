@@ -28,10 +28,7 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  getAppealActorText,
-  getCurrentUserStatementDate,
-} from '../../utils'
+import { getAppealActorText, getCurrentUserStatementDate } from '../../utils'
 import useAppealCase from '../useAppealCase'
 import useAppealCaseModals from '../useAppealCaseModals'
 import * as styles from './useAppealCaseBanner.css'
