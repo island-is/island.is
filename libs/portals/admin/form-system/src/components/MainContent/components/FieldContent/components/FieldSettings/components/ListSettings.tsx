@@ -157,7 +157,15 @@ export const ListSettings = () => {
               id={`${radioName}-predetermined`}
               name={radioName}
               label={formatMessage(m.predeterminedLists)}
-              disabled={isReadOnly}
+              disabled={
+                isReadOnly ||
+                !!(currentItem.list && currentItem.list.length > 0)
+              }
+              tooltip={
+                !isReadOnly && currentItem.list && currentItem.list.length > 0
+                  ? 'Óvirkt þar sem reiturinn er nú þegar með sérsniðinn lista. Tæmdu listann (Listasmiður) til að virkja tilbúna fellilista.'
+                  : undefined
+              }
               checked={!isCustom}
               onChange={selectPredeterminedRadio}
             />

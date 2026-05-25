@@ -4,7 +4,12 @@ import {
   FormSystemListItem,
 } from '@island.is/api/schema'
 import { ListTypesEnum } from '@island.is/form-system/enums'
-import { Box, Text, Select, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Select,
+  SkeletonLoader,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -271,7 +276,6 @@ export const List = ({
             ? { value: true, message: formatMessage(m.required) }
             : false,
         validate: () => {
-          if (shouldFetch && isLoading) return formatMessage(m.listIsLoading)
           if (shouldFetch && dataFromUrlHasError)
             return formatMessage(m.listFetchFailed)
           return true
@@ -281,8 +285,8 @@ export const List = ({
         shouldFetch && isLoading ? (
           <Box>
             <SkeletonLoader height={48} display="block" borderRadius="large" />
-            <Box marginTop={1}>
-              <Text variant="small">{formatMessage(m.listIsLoading)}</Text>
+            <Box marginLeft={1}>
+              <LoadingDots />
             </Box>
           </Box>
         ) : (

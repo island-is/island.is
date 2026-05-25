@@ -65,7 +65,10 @@ export class ZendeskService {
       apiKey = this.HEILSA_API_KEY
     }
 
-    if (!zendeskInstance || !apiKey) {
+    if (!zendeskInstance) {
+      zendeskInstance = 'digitaliceland'
+    }
+    if (!apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
 

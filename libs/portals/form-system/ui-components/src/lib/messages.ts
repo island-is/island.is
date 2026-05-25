@@ -566,11 +566,6 @@ export const m = defineMessages({
     defaultMessage: 'Krafist',
     description: 'Required',
   },
-  listIsLoading: {
-    id: 'form.system:list-is-loading',
-    defaultMessage: 'Listi er að hlaðast...',
-    description: 'List is loading...',
-  },
   listFetchFailed: {
     id: 'form.system:list-fetch-failed',
     defaultMessage: 'Ekki tókst að hlaða lista',
