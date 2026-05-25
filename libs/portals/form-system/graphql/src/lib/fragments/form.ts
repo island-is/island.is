@@ -26,7 +26,6 @@ export const FormFragment = gql`
     modified
     zendeskInternal
     useValidate
-    usePopulate
     submissionServiceUrl
     isTranslated
     hasPayment
@@ -36,6 +35,10 @@ export const FormFragment = gql`
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
+    organizationZendeskInstance {
+      zendeskInstance
+      zendeskBrandId
+    }
     sectionInfo {
       ...SectionInfo
     }
