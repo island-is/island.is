@@ -16,6 +16,7 @@ import {
   DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   IconTitleCard,
+  OrganizationFooter,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
@@ -38,7 +39,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { LandingPage, LandingPageFooter } from './LandingPage'
+import { LandingPage } from './LandingPage'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -248,11 +249,6 @@ const OrganizationHomePage = ({
           )
         })}
       </Stack>
-      {organizationPage?.theme === 'landing_page' && (
-        <LandingPageFooter
-          footerItems={organizationPage.organization?.footerItems}
-        />
-      )}
     </OrganizationWrapper>
   )
 }
@@ -276,12 +272,22 @@ const Home: Screen<HomeProps, HomeScreenContext> = ({
     !organizationPage && !!organization && organization?.hasALandingPage
   if (isLandingPage)
     return (
-      <LandingPage
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        namespace={namespace}
-        organization={organization}
-      />
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+        height="full"
+        rowGap={12}
+      >
+        <div>
+          <LandingPage namespace={namespace} organization={organization} />
+        </div>
+        {organization && (
+          <div>
+            <OrganizationFooter organizations={[organization]} force={true} />
+          </div>
+        )}
+      </Box>
     )
   return (
     <OrganizationHomePage

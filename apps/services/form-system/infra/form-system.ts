@@ -7,8 +7,10 @@ import {
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
+  ChargeFjsV2,
   Client,
   NationalRegistryB2C,
+  Payment,
 } from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
@@ -48,11 +50,6 @@ export const serviceSetup = (services: {
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
-      XROAD_CHARGE_FJS_V2_PATH: {
-        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-        staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
-      },
       CLIENT_LOCATION_ORIGIN: {
         dev: 'https://beta.dev01.devland.is/form',
         staging: 'https://beta.staging01.devland.is/form',
@@ -89,9 +86,12 @@ export const serviceSetup = (services: {
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+      HEILSA_API_KEY: '/k8s/form-system/HEILSA_API_KEY',
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NTI_USERNAME: '/k8s/form-system/NTI_USERNAME',
+      NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
@@ -99,7 +99,7 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, ChargeFjsV2, Payment)
     .ingress({
       primary: {
         host: {
@@ -114,6 +114,7 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces(
+      'services-payments',
       'islandis',
       'nginx-ingress-external',
       'nginx-ingress-internal',

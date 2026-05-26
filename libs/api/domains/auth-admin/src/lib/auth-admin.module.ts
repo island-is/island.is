@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common'
 import { AuthAdminApiClientModule } from '@island.is/clients/auth/admin-api'
 import { CmsModule } from '@island.is/cms'
 
+import { ApiScopeUserResolver } from './api-scope-user/api-scope-user.resolver'
+import { ApiScopeUserService } from './api-scope-user/api-scope-user.service'
 import { TenantResolver } from './tenant/tenant.resolver'
 import { TenantEnvironmentResolver } from './tenant/tenant-environment.resolver'
 import { TenantsService } from './tenant/tenants.service'
@@ -17,11 +19,21 @@ import { DelegationProviderService } from './delegationProvider/delegation-provi
 import { DelegationProviderResolver } from './delegationProvider/delegation-provider.resolver'
 import { DelegationAdminResolver } from './delegationAdmin/delegation-admin.resolver'
 import { DelegationAdminService } from './delegationAdmin/delegation-admin.service'
+import { GrantTypeResolver } from './grant-type/grant-type.resolver'
+import { GrantTypeService } from './grant-type/grant-type.service'
+import { IdpProviderResolver } from './idp-provider/idp-provider.resolver'
+import { IdpProviderService } from './idp-provider/idp-provider.service'
+import { TranslationResolver } from './translation/translation.resolver'
+import { TranslationService } from './translation/translation.service'
+import { LanguageResolver } from './language/language.resolver'
+import { LanguageService } from './language/language.service'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 
 @Module({
   imports: [AuthAdminApiClientModule, AuthDelegationApiClientModule, CmsModule],
   providers: [
+    ApiScopeUserResolver,
+    ApiScopeUserService,
     TenantResolver,
     TenantEnvironmentResolver,
     TenantsService,
@@ -36,6 +48,14 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     DelegationProviderResolver,
     DelegationAdminResolver,
     DelegationAdminService,
+    GrantTypeResolver,
+    GrantTypeService,
+    IdpProviderResolver,
+    IdpProviderService,
+    TranslationResolver,
+    TranslationService,
+    LanguageResolver,
+    LanguageService,
   ],
 })
 export class AuthAdminModule {}

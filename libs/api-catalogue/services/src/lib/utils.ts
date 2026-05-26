@@ -1,4 +1,5 @@
 import { logger } from '@island.is/logging'
+import { FetchError } from '@island.is/clients/middlewares'
 import { ServiceId } from '../../gen/fetch/xrd-rest'
 
 const SEPERATOR = '-'
@@ -99,17 +100,14 @@ export const parseServiceCode = (serviceCode: string) => {
   return serviceCode
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-export const exceptionHandler = async (err: any) => {
-  if (err instanceof Response) {
+export const exceptionHandler = (err: unknown) => {
+  if (err instanceof FetchError) {
     // Error from X-Road calling getOpenApi
-    logger.error(
-      `Error calling X-Road Service.\nReturned HTTP status ${err.status} ${
-        err.statusText
-      }\nMessage: ${await err.text()}`,
+    logger.warn(
+      `Error calling X-Road Service.\nReturned HTTP status ${err.status} ${err.statusText}`,
+      { body: err.body, problem: err.problem },
     )
   } else {
-    logger.error(err)
-    throw err
+    logger.error('Unexpected error calling X-Road Service', err)
   }
 }

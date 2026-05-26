@@ -46,6 +46,7 @@ import {
   Modal,
   MultipleValueList,
   SectionHeading,
+  // TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile, {
   Supplement,
@@ -708,6 +709,18 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   }
 
   const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
+
+  const availableRulingOrders = useMemo(() => {
+    const takenIds = new Set(
+      workingCase.courtSessions
+        ?.filter((s) => s.id !== courtSession.id && s.rulingFileId)
+        .map((s) => s.rulingFileId as string) ?? [],
+    )
+    const files = (workingCase.caseFiles ?? []).filter(
+      (f) => f.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    )
+    return { takenIds, files }
+  }, [courtSession.id, workingCase.caseFiles, workingCase.courtSessions])
 
   const accordionTitle = useMemo(() => {
     const dateLabel = formatDate(
@@ -1456,6 +1469,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   textarea
                   required
                 />
+                {/* <TinyMCE
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onBlur={(html) => {
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      html.replace(/<[^>]*>/g, '').trim(),
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                /> */}
               </Box>
               <Box>
                 <SectionHeading
@@ -1478,6 +1516,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           rulingType: CourtSessionRulingType.NONE,
                           ruling: '',
                           closingEntries: '',
+                          rulingFileId: null,
                         },
                         { persist: true },
                       )
@@ -1497,7 +1536,32 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     onChange={() =>
                       patchSession(
                         courtSession.id,
-                        { rulingType: CourtSessionRulingType.JUDGEMENT },
+                        {
+                          rulingType: CourtSessionRulingType.JUDGEMENT,
+                          rulingFileId: null,
+                        },
+                        { persist: true },
+                      )
+                    }
+                    disabled={courtSession.isConfirmed || false}
+                    large
+                  />
+                  <RadioButton
+                    name="result_verdict"
+                    id={`result_dismissal-ruling-${courtSession.id}`}
+                    label="Úrskurður vegna frávísunar"
+                    backgroundColor="white"
+                    checked={
+                      courtSession.rulingType ===
+                      CourtSessionRulingType.DISMISSAL_ORDER
+                    }
+                    onChange={() =>
+                      patchSession(
+                        courtSession.id,
+                        {
+                          rulingType: CourtSessionRulingType.DISMISSAL_ORDER,
+                          rulingFileId: null,
+                        },
                         { persist: true },
                       )
                     }
@@ -1507,7 +1571,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   <RadioButton
                     name="result_verdict"
                     id={`result_ruling-${courtSession.id}`}
-                    label="Úrskurður kveðinn upp"
+                    label="Úrskurður undir rekstri máls"
                     backgroundColor="white"
                     checked={
                       courtSession.rulingType === CourtSessionRulingType.ORDER
@@ -1522,9 +1586,58 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     disabled={courtSession.isConfirmed || false}
                     large
                   />
+                  {courtSession.rulingType === CourtSessionRulingType.ORDER && (
+                    <Box>
+                      <Box marginBottom={2}>
+                        <Text variant="h5" as="h4">
+                          Veldu úrskurð undir rekstri máls
+                        </Text>
+                      </Box>
+                      {availableRulingOrders.files.length === 0 ? (
+                        <AlertMessage
+                          type="info"
+                          message="Enginn úrskurður fannst"
+                        />
+                      ) : (
+                        <Box className={styles.grid}>
+                          {availableRulingOrders.files.map((file) => {
+                            const takenByOther =
+                              availableRulingOrders.takenIds.has(file.id) &&
+                              courtSession.rulingFileId !== file.id
+                            return (
+                              <RadioButton
+                                key={file.id}
+                                name={`result_ruling_file-${courtSession.id}`}
+                                id={`result_ruling_file-${file.id}-${courtSession.id}`}
+                                label={`${
+                                  file.userGeneratedFilename ?? file.name ?? ''
+                                }`}
+                                backgroundColor="white"
+                                checked={courtSession.rulingFileId === file.id}
+                                onChange={() =>
+                                  patchSession(
+                                    courtSession.id,
+                                    { rulingFileId: file.id },
+                                    { persist: true },
+                                  )
+                                }
+                                disabled={
+                                  Boolean(courtSession.isConfirmed) ||
+                                  takenByOther
+                                }
+                                large
+                              />
+                            )
+                          })}
+                        </Box>
+                      )}
+                    </Box>
+                  )}
                 </BlueBox>
               </Box>
               {(courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+                courtSession.rulingType ===
+                  CourtSessionRulingType.DISMISSAL_ORDER ||
                 courtSession.rulingType === CourtSessionRulingType.ORDER) && (
                 <>
                   <Box>

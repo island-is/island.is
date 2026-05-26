@@ -32,7 +32,6 @@ export enum ApplicationTypes {
 export enum Routes {
   REQUIREMENTS = 'requirements',
   INVOLVED_PARTY = 'involvedParty',
-  ADDITIONAL_PARTIES = 'additionalParties',
   TYPE_SELECTION = 'typeSelection',
   COMMENTS = 'comments',
   ADVERT = 'advert',
@@ -86,5 +85,5 @@ export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
 export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10
-export const MAXIMUM_ADDITIONS_COUNT = 10
+export const MAXIMUM_ADDITIONS_COUNT = 25
 export const DEFAULT_ADDITIONS_COUNT = 1

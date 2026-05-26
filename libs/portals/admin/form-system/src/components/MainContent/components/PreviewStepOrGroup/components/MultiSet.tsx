@@ -38,7 +38,7 @@ export const MultiSet = ({ screen }: Props) => {
       >
         <Box
           width="half"
-          style={{ width: '50%', height: '50px', cursor: 'pointer' }}
+          style={{ height: '50px', cursor: 'pointer' }}
           cursor="pointer"
           border="standard"
           borderRadius="standard"

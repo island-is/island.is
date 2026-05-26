@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSubmit } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
@@ -13,6 +14,7 @@ import { Languages } from '../../../utils/languages'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { PermissionDescriptionChangeConfirmModal } from './PermissionDescriptionChangeConfirmModal'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
@@ -37,6 +39,7 @@ export const PermissionContent = () => {
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
+  const submit = useSubmit()
   const [activeTab, setActiveTab] = useState<Languages>(Languages.IS)
   const [displayNames, setDisplayNames] = useEnvironmentState(
     createLanguagesState(selectedPermission.displayName),
@@ -44,6 +47,28 @@ export const PermissionContent = () => {
   const [descriptions, setDescriptions] = useEnvironmentState(
     createLanguagesState(selectedPermission.description),
   )
+  const [pendingFormData, setPendingFormData] = useState<FormData | null>(null)
+
+  const handleBeforeSubmit = (formData: FormData) => {
+    const original = createLanguagesState(selectedPermission.description)
+    const nextIs = formData.get(`${Languages.IS}_description`)?.toString() ?? ''
+    const nextEn = formData.get(`${Languages.EN}_description`)?.toString() ?? ''
+    if (
+      nextIs === original[Languages.IS] &&
+      nextEn === original[Languages.EN]
+    ) {
+      return true
+    }
+    setPendingFormData(formData)
+    return false
+  }
+
+  const handleConfirmDescriptionChange = () => {
+    if (pendingFormData) {
+      submit(pendingFormData, { method: 'post' })
+    }
+    setPendingFormData(null)
+  }
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -56,7 +81,7 @@ export const PermissionContent = () => {
       id: langKey,
       label: formatMessage(langKey === Languages.IS ? m.icelandic : m.english),
       content: (
-        <Box display="flex" flexDirection="column" rowGap={5}>
+        <Box display="flex" flexDirection="column" rowGap={5} marginTop={2}>
           <Stack space={1}>
             <Input
               backgroundColor="blue"
@@ -105,28 +130,37 @@ export const PermissionContent = () => {
   }
 
   return (
-    <FormCard
-      title={formatMessage(m.content)}
-      intent={PermissionFormTypes.CONTENT}
-      inSync={checkEnvironmentsSync(permission.environments, [
-        'description',
-        'displayName',
-      ])}
-    >
-      <Stack space={5}>
-        <Tabs
-          size="md"
-          contentBackground="white"
-          selected={activeTab}
-          label={formatMessage(m.translations)}
-          onChange={() =>
-            setActiveTab(
-              activeTab === Languages.IS ? Languages.EN : Languages.IS,
-            )
-          }
-          tabs={languages.map(renderTabs)}
+    <>
+      <FormCard
+        title={formatMessage(m.content)}
+        intent={PermissionFormTypes.CONTENT}
+        inSync={checkEnvironmentsSync(permission.environments, [
+          'description',
+          'displayName',
+        ])}
+        onBeforeSubmit={handleBeforeSubmit}
+      >
+        <Stack space={5}>
+          <Tabs
+            size="md"
+            contentBackground="white"
+            selected={activeTab}
+            label={formatMessage(m.translations)}
+            onChange={() =>
+              setActiveTab(
+                activeTab === Languages.IS ? Languages.EN : Languages.IS,
+              )
+            }
+            tabs={languages.map(renderTabs)}
+          />
+        </Stack>
+      </FormCard>
+      {pendingFormData && (
+        <PermissionDescriptionChangeConfirmModal
+          onConfirm={handleConfirmDescriptionChange}
+          onClose={() => setPendingFormData(null)}
         />
-      </Stack>
-    </FormCard>
+      )}
+    </>
   )
 }

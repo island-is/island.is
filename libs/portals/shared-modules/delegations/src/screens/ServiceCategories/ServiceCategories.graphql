@@ -24,6 +24,7 @@ query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
     title
     description
     slug
+    showAsCard
     scopes {
       name
       displayName

@@ -150,8 +150,11 @@ export const AirDiscountOverview = () => {
   return (
     <IntroWrapper
       title={formatMessage(m.introTitle)}
-      serviceProviderSlug={VEGAGERDIN_SLUG}
-      serviceProviderTooltip={formatMessage(coreMessage.airDiscountTooltip)}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: VEGAGERDIN_SLUG,
+        tooltip: formatMessage(coreMessage.airDiscountTooltip),
+      }}
     >
       <Box marginBottom={[3, 4, 5]}>
         <GridRow>
@@ -259,6 +262,7 @@ export const AirDiscountOverview = () => {
                   <ActionCard
                     key={`loftbru-item-connection-code-${codeIndex}`}
                     heading={item.user.name}
+                    headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
                     subText={code.code}
                     tag={{

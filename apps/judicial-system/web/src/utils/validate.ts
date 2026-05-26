@@ -4,9 +4,10 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCase,
+  AppealCaseRulingDecision,
   AppealCaseState,
   Case,
-  CaseAppealRulingDecision,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
@@ -310,6 +311,7 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
+          (civilClaimant.policeCaseNumbers?.length ?? 0) > 0 &&
           validate([
             [
               civilClaimant.nationalId,
@@ -593,8 +595,12 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
         courtSession.closedLegalProvisions.length > 0
       : true) &&
     (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.DISMISSAL_ORDER ||
     courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.ruling
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.rulingFileId
       : true) &&
     (courtSession.isAttestingWitness
       ? courtSession.attestingWitnessId
@@ -691,39 +697,40 @@ export const isAdminUserFormValid = (user: User): boolean => {
   )
 }
 
-export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealCaseStepValid = (
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (workingCase.appealCase?.appealJudge1 &&
-        workingCase.appealCase?.appealJudge2 &&
-        workingCase.appealCase?.appealJudge3 &&
-        workingCase.appealCase?.appealAssistant)) &&
+    (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
+      (appealCase?.appealJudge1 &&
+        appealCase?.appealJudge2 &&
+        appealCase?.appealJudge3 &&
+        appealCase?.appealAssistant)) &&
       validate([
-        [
-          workingCase.appealCase?.appealCaseNumber,
-          ['empty', 'appeal-case-number-format'],
-        ],
+        [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
   )
 }
 
 export const isCourtOfAppealRulingStepFieldsValid = (
-  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return Boolean(
-    workingCase.appealCase?.appealRulingDecision &&
-      (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
-          .isValid),
+    appealCase?.appealRulingDecision &&
+      (appealCase.appealRulingDecision ===
+        AppealCaseRulingDecision.DISCONTINUED ||
+        validate([[appealCase.appealConclusion, ['empty']]]).isValid),
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealRulingStepValid = (
+  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-      (workingCase.appealCase?.appealRulingDecision ===
-        CaseAppealRulingDecision.DISCONTINUED ||
+    isCourtOfAppealRulingStepFieldsValid(appealCase) &&
+      (appealCase?.appealRulingDecision ===
+        AppealCaseRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,
         )),

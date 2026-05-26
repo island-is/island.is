@@ -125,9 +125,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
     if (shouldShowPay) {
       const chargeItems: {
-        code: string
+        performingOrgID: string
+        chargeType: string
+        chargeItemCode: string
+        chargeItemName: string
+        priceAmount: number
         quantity?: number
-        amount?: number
       }[] = []
       const paymentQuantityFields: FormSystemField[] = []
       state.sections?.forEach((section) => {
@@ -165,7 +168,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                     quantity = getValue(quantityField, 'number')
                   }
                 }
-                chargeItems.push({ code, quantity, amount })
+                chargeItems.push({
+                  performingOrgID:
+                    state.application.organizationNationalId ?? '',
+                  chargeType: field.fieldSettings.chargeType || 'default',
+                  chargeItemCode: code,
+                  chargeItemName:
+                    field.fieldSettings.chargeItemName || 'Default Name',
+                  priceAmount: amount || 0,
+                  quantity,
+                })
               }
             })
         })
@@ -175,20 +187,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID: '6509142520',
+              performingOrganizationID:
+                state.application.organizationNationalId ?? '',
               chargeItems,
             },
           },
         },
       })
-      console.log(data)
       if (data?.createFormSystemPayment?.paymentUrl) {
         window.location.href = data.createFormSystemPayment.paymentUrl
       }
-      return
-    }
-
-    if (state.currentScreen?.isPopulateError) {
       return
     }
 
@@ -206,7 +214,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
-              screen: state.currentScreen.data,
+              screenDto: state.currentScreen.data,
             },
           },
         })
@@ -215,84 +223,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           data?.notifyFormSystemExternalSystem?.screen,
         )
 
+        dispatch({
+          type: 'EXTERNAL_SERVICE_NOTIFICATION',
+          payload: {
+            screen: updatedScreen,
+          },
+        })
         if (updatedScreen?.screenError?.hasError) {
-          dispatch({
-            type: 'EXTERNAL_SERVICE_NOTIFICATION',
-            payload: {
-              screen: updatedScreen,
-            },
-          })
           return
         }
       } catch (error) {
         console.error('Error notifying external service:', error)
         return
       }
-    }
-
-    if (shouldShowPay) {
-      const chargeItems: {
-        code: string
-        quantity?: number
-        amount?: number
-      }[] = []
-      const paymentQuantityFields: FormSystemField[] = []
-      state.sections?.forEach((section) => {
-        section?.screens?.forEach((screen) => {
-          screen?.fields?.forEach((field) => {
-            if (
-              field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY &&
-              field?.isHidden === false
-            ) {
-              paymentQuantityFields.push(field)
-            }
-          })
-        })
-      })
-
-      state.sections?.forEach((section) => {
-        section?.screens?.forEach((screen) => {
-          screen?.fields
-            ?.filter(
-              (field) =>
-                field?.fieldType === FieldTypesEnum.PAYMENT &&
-                field?.isHidden === false,
-            )
-            .forEach((field) => {
-              if (field?.fieldSettings?.chargeItemCode) {
-                const code = field.fieldSettings.chargeItemCode
-                let quantity: number | undefined = 1
-                const amount: number | undefined = field.fieldSettings
-                  .priceAmount as number | undefined
-                if (field.fieldSettings.paymentQuantityId) {
-                  const quantityField = paymentQuantityFields.find(
-                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
-                  )
-                  if (quantityField) {
-                    quantity = getValue(quantityField, 'number')
-                  }
-                }
-                chargeItems.push({ code, quantity, amount })
-              }
-            })
-        })
-      })
-      const { data } = await createPayment({
-        variables: {
-          input: {
-            applicationId: state.application.id,
-            createChargeRequestDto: {
-              performingOrganizationID: '6509142520',
-              chargeItems,
-            },
-          },
-        },
-      })
-      console.log(data)
-      if (data?.createFormSystemPayment?.paymentUrl) {
-        window.location.href = data.createFormSystemPayment.paymentUrl
-      }
-      return
     }
 
     if (!onSubmit) {
@@ -376,8 +319,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 !enableContinueButton ||
                 paymentLoading ||
                 submitLoading ||
-                notifyLoading ||
-                state.currentScreen?.isPopulateError
+                notifyLoading
               }
               loading={submitLoading || notifyLoading || paymentLoading}
             >
@@ -390,7 +332,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading || notifyLoading}
+                disabled={submitLoading || notifyLoading || paymentLoading}
               >
                 {formatMessage(m.back)}
               </Button>

@@ -36,6 +36,21 @@ const mockSequelizeModel = () => ({
   count: jest.fn(),
 })
 
+const stubCase = (id: string, policeCaseNumbers: string[]): Case => {
+  let numbers = [...policeCaseNumbers]
+  return {
+    id,
+    get policeCaseNumbers() {
+      return numbers
+    },
+    setDataValue(key: string, val: unknown) {
+      if (key === 'policeCaseNumbers') {
+        numbers = val as string[]
+      }
+    },
+  } as unknown as Case
+}
+
 describe('CaseRepositoryService — police case number junction sync', () => {
   const transaction = { id: 'tx' } as never
 
@@ -43,6 +58,14 @@ describe('CaseRepositoryService — police case number junction sync', () => {
   const moveAssignedRowsToCaseForDefendant = jest
     .fn()
     .mockResolvedValue(undefined)
+  const findDistinctPoliceCaseNumbersByCaseIds = jest
+    .fn()
+    .mockResolvedValue(new Map())
+
+  const resolvePoliceCaseNumbersForCases = jest.fn()
+  const findUnassignedPoliceCaseNumbersForSplit = jest
+    .fn()
+    .mockResolvedValue([])
 
   let caseRepositoryService: CaseRepositoryService
   let caseModel: ReturnType<typeof mockSequelizeModel>
@@ -59,6 +82,25 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
+    findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
+    resolvePoliceCaseNumbersForCases.mockImplementation(
+      async (
+        cases: Case[],
+        opts?: { transaction?: unknown },
+      ): Promise<void> => {
+        if (cases.length === 0) {
+          return
+        }
+        const map = await findDistinctPoliceCaseNumbersByCaseIds(
+          cases.map((c) => c.id),
+          opts,
+        )
+        for (const c of cases) {
+          const fromJunction = map.get(c.id) ?? []
+          c.setDataValue('policeCaseNumbers', fromJunction)
+        }
+      },
+    )
 
     caseModel = mockSequelizeModel()
     defendantModel = mockSequelizeModel()
@@ -114,6 +156,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
           useValue: {
             replaceUnassignedFromPoliceCaseNumbersArray: replaceUnassigned,
             moveAssignedRowsToCaseForDefendant,
+            findDistinctPoliceCaseNumbersByCaseIds,
+            resolvePoliceCaseNumbersForCases,
+            findUnassignedPoliceCaseNumbersForSplit,
           },
         },
         CaseRepositoryService,
@@ -123,12 +168,86 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     caseRepositoryService = moduleRef.get(CaseRepositoryService)
   })
 
+  describe('findById', () => {
+    it('overwrites policeCaseNumbers from junction rows when present', async () => {
+      const built = stubCase('c1', ['legacy'])
+
+      caseModel.findByPk.mockResolvedValue(built)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([['c1', ['007-2024-a', '007-2024-z']]]),
+      )
+
+      const res = await caseRepositoryService.findById('c1')
+
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith([built], {
+        transaction: undefined,
+      })
+      expect(findDistinctPoliceCaseNumbersByCaseIds).toHaveBeenCalledWith(
+        ['c1'],
+        { transaction: undefined },
+      )
+      expect(res?.policeCaseNumbers).toEqual(['007-2024-a', '007-2024-z'])
+    })
+
+    it('sets policeCaseNumbers to [] when junction has no rows', async () => {
+      const built = stubCase('c1', ['should-not-remain'])
+
+      caseModel.findByPk.mockResolvedValue(built)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(new Map())
+
+      const res = await caseRepositoryService.findById('c1')
+
+      expect(res?.policeCaseNumbers).toEqual([])
+    })
+  })
+
+  describe('findOne', () => {
+    it('does not load junction when policeCaseNumbers is not in attributes', async () => {
+      const built = stubCase('c1', ['x'])
+
+      caseModel.findOne.mockResolvedValue(built)
+
+      await caseRepositoryService.findOne({
+        where: { id: 'c1' },
+        attributes: ['id'],
+      })
+
+      expect(resolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
+      expect(built.policeCaseNumbers).toEqual(['x'])
+    })
+
+    it('resolves policeCaseNumbers for included merged cases', async () => {
+      const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
+      const rootCase = stubCase('root-case-id', ['legacy-root'])
+      Object.assign(rootCase, {
+        mergedCases: [mergedCase],
+      })
+
+      caseModel.findOne.mockResolvedValue(rootCase)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([
+          ['root-case-id', ['007-2024-root']],
+          ['merged-case-id', ['007-2024-merged']],
+        ]),
+      )
+
+      await caseRepositoryService.findOne({
+        where: { id: 'root-case-id' },
+      })
+
+      expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        expect.arrayContaining([rootCase, mergedCase]),
+        { transaction: undefined },
+      )
+      expect(rootCase.policeCaseNumbers).toEqual(['007-2024-root'])
+      expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
+    })
+  })
+
   describe('create', () => {
     it('calls replaceUnassigned with created case id and policeCaseNumbers', async () => {
-      const created = {
-        id: 'new-case-id',
-        policeCaseNumbers: ['007-2024-10', '007-2024-11'],
-      } as Case
+      const created = stubCase('new-case-id', [])
 
       caseModel.create.mockResolvedValue(created)
 
@@ -136,7 +255,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         {
           type: CaseType.CUSTODY,
           origin: CaseOrigin.RVG,
-          policeCaseNumbers: created.policeCaseNumbers,
+          policeCaseNumbers: ['007-2024-10', '007-2024-11'],
           state: CaseState.NEW,
         } as Partial<Case>,
         { transaction },
@@ -149,8 +268,8 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       )
     })
 
-    it('calls replaceUnassigned with empty array when result has no policeCaseNumbers', async () => {
-      const created = { id: 'new-case-id' } as Case
+    it('calls replaceUnassigned with empty array when data has no policeCaseNumbers', async () => {
+      const created = stubCase('new-case-id', [])
       caseModel.create.mockResolvedValue(created)
 
       await caseRepositoryService.create(
@@ -170,12 +289,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   describe('update', () => {
     it('calls replaceUnassigned when update payload owns policeCaseNumbers', async () => {
-      const updatedRow = {
-        id: 'case-id',
-        policeCaseNumbers: ['007-2024-99'],
-      } as Case
+      const existing = stubCase('case-id', [])
 
-      caseModel.update.mockResolvedValue([1, [updatedRow]])
+      caseModel.findByPk.mockResolvedValue(existing)
 
       await caseRepositoryService.update(
         'case-id',
@@ -191,7 +307,7 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     })
 
     it('does not call replaceUnassigned when policeCaseNumbers is not on the payload', async () => {
-      const updatedRow = { id: 'case-id' } as Case
+      const updatedRow = stubCase('case-id', [])
       caseModel.update.mockResolvedValue([1, [updatedRow]])
 
       await caseRepositoryService.update(
@@ -206,29 +322,36 @@ describe('CaseRepositoryService — police case number junction sync', () => {
 
   describe('split', () => {
     it('syncs unassigned rows for the new case and moves assigned rows for the split defendant', async () => {
-      const parentCase = {
-        id: 'parent-case-id',
-        policeCaseNumbers: ['007-2024-1', '007-2024-2'],
+      const parentCase = stubCase('parent-case-id', [])
+      Object.assign(parentCase, {
         courtCaseNumber: 'R-100',
         origin: CaseOrigin.LOKE,
         type: CaseType.INDICTMENT,
-      } as Case
+      })
 
-      const splitCase = {
-        id: 'split-case-id',
-        policeCaseNumbers: ['007-2024-1', '007-2024-2'],
-      } as Case
+      const splitCase = stubCase('split-case-id', [])
 
       caseModel.findByPk.mockResolvedValue(parentCase)
       caseModel.create.mockResolvedValue(splitCase)
+
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([['parent-case-id', ['007-2024-1', '007-2024-2']]]),
+      )
+      findUnassignedPoliceCaseNumbersForSplit.mockResolvedValue(['007-2024-1'])
 
       await caseRepositoryService.split('parent-case-id', 'defendant-id', {
         transaction,
       })
 
+      expect(findUnassignedPoliceCaseNumbersForSplit).toHaveBeenCalledWith(
+        'parent-case-id',
+        'defendant-id',
+        { transaction },
+      )
+
       expect(replaceUnassigned).toHaveBeenCalledWith(
         'split-case-id',
-        ['007-2024-1', '007-2024-2'],
+        ['007-2024-1'],
         { transaction },
       )
 

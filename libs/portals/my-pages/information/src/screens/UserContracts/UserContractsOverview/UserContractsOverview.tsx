@@ -40,9 +40,12 @@ const UserContractsOverview = () => {
     <IntroWrapper
       title={cm.contractsOverviewTitle}
       intro={cm.contractsOverviewSubtitle}
-      serviceProviderSlug={HMS_SLUG}
-      serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
+      serviceProvider={{
+        slug: HMS_SLUG,
+        tooltip: formatMessage(m.rentalAgreementsTooltip),
+      }}
       marginBottom={3}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
@@ -122,7 +125,7 @@ const UserContractsOverview = () => {
                   <ActionCard
                     key={id}
                     heading={address}
-                    headingVariant="h3"
+                    headingVariant="h4"
                     cta={{
                       label: formatMessage(cm.seeInfo),
                       onClick: () =>

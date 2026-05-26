@@ -13,6 +13,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import { RouterActionResponse } from '@island.is/portals/core'
+import { AuthAdminEnvironmentFailure } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
 import { DropdownSync } from '../DropdownSync/DropdownSync'
@@ -61,6 +62,18 @@ type FormCardProps<Intent> = {
    * Useful when the form has pending input that must be resolved before submission.
    */
   submitDisabled?: boolean
+  /**
+   * Synchronous gate run on form submission. Return false to block the action;
+   * the parent is then responsible for re-submitting (e.g. via useSubmit) once
+   * any required confirmation has been resolved.
+   */
+  onBeforeSubmit?(formData: FormData): boolean
+  /**
+   * Forwarded to the underlying `<Form onSubmit>`. Runs synchronously before
+   * react-router serializes the form, so it pairs with `flushSync` when the
+   * caller needs to commit transient UI state into form-visible fields.
+   */
+  onSubmit?: React.FormEventHandler<HTMLFormElement>
   headerMarginBottom?: 3 | 5
 }
 
@@ -74,6 +87,8 @@ export const FormCard = <Intent extends string>({
   description,
   customValidation,
   submitDisabled,
+  onBeforeSubmit,
+  onSubmit,
   headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
@@ -88,11 +103,18 @@ export const FormCard = <Intent extends string>({
   const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
   const { loading } = useIntent(intent)
-  const actionData = useActionData() as RouterActionResponse<
-    unknown, // We don't know the type of the data or the error since it can be permission or client.
-    unknown,
-    Intent
-  >
+  const actionData = useActionData() as
+    | (RouterActionResponse<
+        unknown, // We don't know the type of the data or the error since it can be permission or client.
+        unknown,
+        Intent
+      > & {
+        failedEnvironments?: Pick<
+          AuthAdminEnvironmentFailure,
+          'environment' | 'message'
+        >[]
+      })
+    | undefined
 
   /**
    * On form change check if form is dirty and set dirty state accordingly.
@@ -140,7 +162,15 @@ export const FormCard = <Intent extends string>({
         }
 
         onFormChange()
-        toast.success(formatMessage(m.successfullySaved))
+
+        const failedEnvironments = actionData?.failedEnvironments
+
+        if (failedEnvironments && failedEnvironments.length > 0) {
+          const envs = failedEnvironments.map((f) => f.environment).join(', ')
+          toast.warning(formatMessage(m.partiallySaved, { envs }))
+        } else {
+          toast.success(formatMessage(m.successfullySaved))
+        }
       } else if (actionData?.globalError) {
         toast.error(formatMessage(m.globalErrorMessage))
       }
@@ -179,7 +209,23 @@ export const FormCard = <Intent extends string>({
   }, [formData, customValidation])
 
   return (
-    <Form ref={formRef} method="post" onChange={onFormChange}>
+    <Form
+      ref={formRef}
+      method="post"
+      onChange={onFormChange}
+      onSubmit={(e) => {
+        if (onSubmit) {
+          onSubmit(e)
+        }
+        if (onBeforeSubmit && formRef.current) {
+          const submitter = (e.nativeEvent as SubmitEvent).submitter
+          const fd = new FormData(formRef.current, submitter)
+          if (!onBeforeSubmit(fd)) {
+            e.preventDefault()
+          }
+        }
+      }}
+    >
       <Box
         padding={4}
         borderRadius="large"

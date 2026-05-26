@@ -12,7 +12,9 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
+import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -21,6 +23,7 @@ import {
   UpdateFormResponse,
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { randomUUID } from 'crypto'
 import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -33,7 +36,7 @@ import {
   CertificationType,
   CertificationTypes,
 } from '../../dataTypes/certificationTypes/certificationType.model'
-import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../dataTypes/dependency.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
@@ -45,8 +48,10 @@ import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../applications/models/application.model'
+import { Value } from '../applications/models/value.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
+import { FileService } from '../file/file.service'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { ListItem } from '../listItems/models/listItem.model'
@@ -60,11 +65,7 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { Dependency } from '../../dataTypes/dependency.model'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Value } from '../applications/models/value.model'
-import { FileService } from '../file/file.service'
+import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 
 @Injectable()
 export class FormsService {
@@ -134,7 +135,6 @@ export class FormsService {
       'modified',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'isTranslated',
       'hasPayment',
@@ -144,7 +144,8 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
+      'lastModifiedBy',
     ]
 
     const formResponseDto: FormResponseDto = {
@@ -154,14 +155,15 @@ export class FormsService {
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
 
-        if (dto.completedSectionInfo) {
-          const cs = dto.completedSectionInfo
+        if (dto.sectionInfo) {
+          const cs = dto.sectionInfo
 
           cs.title ??= { is: '', en: '' }
           cs.confirmationHeader ??= { is: '', en: '' }
           cs.confirmationText ??= { is: '', en: '' }
 
           cs.additionalInfo ??= []
+          cs.additionalPremises ??= []
         }
 
         return dto
@@ -238,19 +240,20 @@ export class FormsService {
       )
     }
 
-    const completedSectionInfo = {
+    const sectionInfo = {
       title: { is: '', en: '' },
       confirmationHeader: { is: '', en: '' },
       confirmationText: { is: '', en: '' },
       additionalInfo: [],
-    } as CompletedSectionInfo
+      additionalPremises: [],
+    } as SectionInfo
 
     const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
       draftTotalSteps: 3,
-      completedSectionInfo,
+      sectionInfo,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -714,12 +717,13 @@ export class FormsService {
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
     }
 
-    if (form.completedSectionInfo) {
-      const cs = form.completedSectionInfo
+    if (form.sectionInfo) {
+      const cs = form.sectionInfo
       cs.title ??= { is: '', en: '' }
       cs.confirmationHeader ??= { is: '', en: '' }
       cs.confirmationText ??= { is: '', en: '' }
       cs.additionalInfo ??= []
+      cs.additionalPremises ??= []
     }
 
     return response
@@ -844,10 +848,9 @@ export class FormsService {
       'allowProceedOnValidationFail',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'hasSummaryScreen',
-      'completedSectionInfo',
+      'sectionInfo',
       'dependencies',
     ]
     const formDto: FormDto = Object.assign(
@@ -861,6 +864,10 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        organizationZendeskInstance: {
+          zendeskInstance: '',
+          zendeskBrandId: '',
+        } as OrganizationZendeskInstanceDto,
       },
     ) as FormDto
 
@@ -900,7 +907,6 @@ export class FormsService {
       'multiMax',
       'isMulti',
       'shouldValidate',
-      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',
@@ -951,6 +957,14 @@ export class FormsService {
       })
     })
 
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    formDto.organizationZendeskInstance.zendeskInstance =
+      organization?.zendeskInstance ?? ''
+    formDto.organizationZendeskInstance.zendeskBrandId =
+      organization?.zendeskBrandId ?? ''
+
     return formDto
   }
 
@@ -960,13 +974,13 @@ export class FormsService {
         formId: form.id,
         sectionType: SectionTypes.PREMISES,
         displayOrder: 0,
-        name: { is: 'Forsendur', en: 'Premises' },
+        name: { is: 'Gagnaöflun', en: 'Data collection' },
       } as Section,
       {
         formId: form.id,
         sectionType: SectionTypes.PARTIES,
         displayOrder: 1,
-        name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
+        name: { is: 'Aðilar', en: 'Parties' },
       } as Section,
       {
         formId: form.id,
@@ -1061,7 +1075,7 @@ export class FormsService {
     newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
-    newForm.completedSectionInfo = existingForm.completedSectionInfo
+    newForm.sectionInfo = existingForm.sectionInfo
 
     const sections: Section[] = []
     const screens: Screen[] = []

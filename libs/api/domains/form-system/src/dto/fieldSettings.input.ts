@@ -10,6 +10,9 @@ export class FieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxValue?: number
 
+  @Field(() => Boolean, { nullable: true })
+  isDecimal?: boolean
+
   @Field(() => Int, { nullable: true })
   minLength?: number
 
@@ -105,4 +108,13 @@ export class FieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskTicketFieldId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskCustomObjectKey?: string
+
+  @Field(() => String, { nullable: true })
+  dataSourceUrl?: string
 }

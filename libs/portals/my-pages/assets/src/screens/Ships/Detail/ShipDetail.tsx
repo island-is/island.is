@@ -1,12 +1,11 @@
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ShipRegistryLocale } from '@island.is/api/schema'
 import {
   EmptyState,
   InfoLine,
   InfoLineStack,
-  IntroWrapperV2,
+  IntroWrapper,
   SAMGONGUSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
@@ -16,6 +15,7 @@ import { shipsMessages } from '../../../lib/messages'
 import { useShipDetailQuery } from './ShipDetail.generated'
 import { CertificatesTable } from './components/CertificatesTable'
 import { RegistrationTab } from './components/RegistrationTab'
+import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 
 export const ShipDetail = () => {
   useNamespaces('sp.ships')
@@ -26,7 +26,7 @@ export const ShipDetail = () => {
     variables: {
       input: {
         registrationNumber: id ?? '',
-        locale: lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
+        locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is,
       },
     },
   })
@@ -35,7 +35,7 @@ export const ShipDetail = () => {
   const certificates = useMemo(() => ship?.certificates ?? [], [ship])
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={ship?.name ?? formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
       serviceProvider={{
@@ -50,11 +50,12 @@ export const ShipDetail = () => {
 
       {(ship || loading) && (
         <Stack space={2}>
-          <Box>
+          <Box marginBottom={3}>
             <InfoLineStack space={1} marginBottom={0}>
               <InfoLine
                 loading={loading}
                 label={formatMessage(shipsMessages.seaworthinessTitle)}
+                labelColumnSpan={'5/12'}
                 content={
                   <Tag outlined variant={ship?.isSeaworthy ? 'mint' : 'red'}>
                     {!ship?.isSeaworthy
@@ -70,6 +71,7 @@ export const ShipDetail = () => {
               <InfoLine
                 loading={loading}
                 label={formatMessage(shipsMessages.registrationNumber)}
+                labelColumnSpan={'5/12'}
                 content={ship?.registrationNumber?.toString() ?? '-'}
               />
               <InfoLine
@@ -77,6 +79,7 @@ export const ShipDetail = () => {
                 label={
                   ship?.region?.label ?? formatMessage(shipsMessages.region)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.region?.value ?? undefined}
               />
               <InfoLine
@@ -85,6 +88,7 @@ export const ShipDetail = () => {
                   ship?.usageType?.label ??
                   formatMessage(shipsMessages.shipType)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.usageType?.value ?? undefined}
               />
               <InfoLine
@@ -93,6 +97,7 @@ export const ShipDetail = () => {
                   ship?.imoNumber?.label ??
                   formatMessage(shipsMessages.imoNumber)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.imoNumber?.value ?? undefined}
               />
               <InfoLine
@@ -101,6 +106,7 @@ export const ShipDetail = () => {
                   ship?.phoneOnBoard?.label ??
                   formatMessage(shipsMessages.phoneOnBoard)
                 }
+                labelColumnSpan={'5/12'}
                 content={ship?.phoneOnBoard?.value ?? undefined}
               />
             </InfoLineStack>
@@ -131,7 +137,7 @@ export const ShipDetail = () => {
           )}
         </Stack>
       )}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

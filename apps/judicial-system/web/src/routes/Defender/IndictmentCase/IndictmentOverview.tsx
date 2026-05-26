@@ -2,7 +2,7 @@ import { FC, Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -43,7 +43,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -105,9 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
@@ -166,6 +167,20 @@ const IndictmentOverview: FC = () => {
               }
             />
           )}
+          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+            <Box marginBottom={2}>
+              <AlertMessage
+                title="Mál enduropnað"
+                message={
+                  <Text variant="small" whiteSpace="preWrap">
+                    {workingCase.reopenReason}
+                  </Text>
+                }
+                type="info"
+              />
+            </Box>
+          )}
+
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -211,7 +226,8 @@ const IndictmentOverview: FC = () => {
               workingCase.indictmentDecision !==
                 IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
-                IndictmentDecision.REDISTRIBUTING && (
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
                     court={workingCase.court}

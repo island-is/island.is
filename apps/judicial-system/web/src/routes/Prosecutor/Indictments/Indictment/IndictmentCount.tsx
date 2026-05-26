@@ -473,6 +473,7 @@ export const IndictmentCount: FC<Props> = ({
             policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
             subtypes={workingCase.indictmentSubtypes}
             crimeScenes={workingCase.crimeScenes}
+            defendants={workingCase.defendants}
           />
         </Box>
         {subtypes?.length > 1 && (

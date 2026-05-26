@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { OrganizationZendeskInstanceDto } from '../../../organizations/models/dto/organizationZendeskInstance.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -48,9 +49,6 @@ export class FormDto {
   useValidate!: boolean
 
   @ApiProperty()
-  usePopulate!: boolean
-
-  @ApiProperty()
   submissionServiceUrl!: string
 
   @ApiProperty()
@@ -80,8 +78,11 @@ export class FormDto {
   @ApiProperty()
   hasSummaryScreen!: boolean
 
-  @ApiProperty({ type: CompletedSectionInfo })
-  completedSectionInfo!: CompletedSectionInfo
+  @ApiProperty({ type: OrganizationZendeskInstanceDto })
+  organizationZendeskInstance!: OrganizationZendeskInstanceDto
+
+  @ApiProperty({ type: SectionInfo })
+  sectionInfo!: SectionInfo
 
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
@@ -97,4 +98,7 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FieldDto] })
   fields?: FieldDto[]
+
+  @ApiPropertyOptional()
+  lastModifiedBy?: string
 }

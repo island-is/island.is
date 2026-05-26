@@ -1,3 +1,4 @@
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
@@ -21,6 +22,30 @@ export class ApplicationXroadValueDto {
   json!: Record<string, unknown>
 }
 
+export class ApplicationXroadListItemDto {
+  @ApiProperty({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  label!: LanguageType
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  description?: LanguageType
+
+  @ApiProperty()
+  @IsString()
+  value!: string
+
+  @ApiProperty()
+  @IsNumber()
+  displayOrder!: number
+
+  @ApiProperty()
+  @IsBoolean()
+  isSelected!: boolean
+}
 export class ApplicationXroadFieldDto {
   @ApiProperty()
   @IsString()
@@ -33,6 +58,12 @@ export class ApplicationXroadFieldDto {
   @ApiProperty()
   @IsString()
   fieldType!: string
+
+  @ApiPropertyOptional({ type: [ApplicationXroadListItemDto] })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ApplicationXroadListItemDto)
+  list?: ApplicationXroadListItemDto[]
 
   @ApiProperty({ type: [ApplicationXroadValueDto] })
   @IsArray()
@@ -48,7 +79,7 @@ export class ApplicationXroadDto {
 
   @ApiProperty()
   @IsString()
-  formId!: string
+  slug!: string
 
   @ApiProperty()
   @IsBoolean()

@@ -11,50 +11,13 @@ import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
 import * as validations from './validate'
 
-const appealCaseFields: Set<string> = new Set([
-  'appealCaseNumber',
-  'appealConclusion',
-  'appealIsolationToDate',
-  'appealRulingDecision',
-  'appealRulingModifiedHistory',
-  'appealValidToDate',
-  'defendantStatementDate',
-  'isAppealCustodyIsolation',
-  'prosecutorStatementDate',
-  'requestAppealRulingNotToBePublished',
-])
-
-const isAppealCaseField = (field: string): field is keyof AppealCase =>
-  appealCaseFields.has(field)
-
-// Applies update fields to Case, nesting appeal fields under appealCase
 export const applyUpdateToCase = (
   prevWorkingCase: Case,
   updates: Partial<UpdateCase>,
 ): Case => {
-  const caseUpdates: Record<string, unknown> = {}
-  let appealCaseUpdates: Record<string, unknown> | undefined
-
-  for (const [key, value] of Object.entries(updates)) {
-    if (isAppealCaseField(key)) {
-      if (!appealCaseUpdates) {
-        appealCaseUpdates = {}
-      }
-      appealCaseUpdates[key] = value
-    } else {
-      caseUpdates[key] = value
-    }
-  }
-
   return {
     ...prevWorkingCase,
-    ...caseUpdates,
-    ...(appealCaseUpdates && {
-      appealCase: {
-        ...prevWorkingCase.appealCase,
-        ...appealCaseUpdates,
-      } as AppealCase,
-    }),
+    ...updates,
   }
 }
 
@@ -159,9 +122,7 @@ export const setCheckboxAndSendToServer = (
   setWorkingCase: (value: SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  const currentValue = isAppealCaseField(field)
-    ? theCase.appealCase?.[field]
-    : theCase[field as keyof Case]
+  const currentValue = theCase[field as keyof Case]
 
   const checks = currentValue ? [...(currentValue as [])] : ([] as string[])
 
@@ -259,7 +220,15 @@ export type stepValidationsType = {
   [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
-export const stepValidations = (): stepValidationsType => {
+// COA step validations operate on the appeal-case row identified by the
+// `?appealCaseId=…` URL query. Callers (currently `useSections`)
+// resolve the target appeal and pass it in; non-COA callers can pass
+// `theCase.appealCase` or omit the argument — the default is `undefined`,
+// which causes the COA validators to fail-closed (acceptable since non-COA
+// users never traverse those routes).
+export const stepValidations = (
+  appealCase?: AppealCase | null,
+): stepValidationsType => {
   return {
     [constants.CASE_TABLE_GROUPS_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
@@ -341,18 +310,22 @@ export const stepValidations = (): stepValidationsType => {
       validations.isConclusionStepValid(theCase),
     [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
-    [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
-      validations.isCourtOfAppealCaseStepValid(theCase),
+    [constants.COURT_OF_APPEAL_CASE_ROUTE]: () =>
+      validations.isCourtOfAppealCaseStepValid(appealCase),
     [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
-      validations.isCourtOfAppealRulingStepValid(theCase),
-    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase) =>
-      theCase.appealCase?.appealState === 'COMPLETED',
+      validations.isCourtOfAppealRulingStepValid(theCase, appealCase),
+    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: () =>
+      appealCase?.appealState === 'COMPLETED',
     [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
 
-export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
-  const validations = stepValidations()
+export const findFirstInvalidStep = (
+  steps: string[],
+  theCase: Case,
+  appealCase?: AppealCase | null,
+) => {
+  const validations = stepValidations(appealCase ?? theCase.appealCase)
   const validationFunctions = Object.entries(validations)
   const stepsToCheck = validationFunctions.filter(([key]) =>
     steps.includes(key),

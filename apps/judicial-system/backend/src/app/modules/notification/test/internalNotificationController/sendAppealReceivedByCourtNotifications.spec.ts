@@ -5,8 +5,9 @@ import { SmsService } from '@island.is/nova-sms'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   getStatementDeadline,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -79,7 +80,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           } as Case,
           {
             user: { id: userId } as User,
-            type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT,
+            type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))

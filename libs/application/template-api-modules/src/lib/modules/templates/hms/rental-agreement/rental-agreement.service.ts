@@ -33,13 +33,21 @@ export class RentalAgreementService extends BaseTemplateApiService {
     return await fetchFinancialIndexationForMonths(months)
   }
 
-  async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+  async sendDraft({
+    application,
+    currentUserLocale,
+    auth,
+  }: TemplateApiModuleActionProps) {
     const { id, answers } = application
 
+    const draftRequest = draftAnswers(
+      applicationAnswers(answers),
+      id,
+      currentUserLocale,
+    )
+
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
-      draftRequest: {
-        ...draftAnswers(applicationAnswers(answers), id),
-      },
+      draftRequest,
     })
   }
 

@@ -45,4 +45,7 @@ export class ApplicationCard {
 
   @Field(() => Date, { nullable: true })
   pruneAt?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
 }

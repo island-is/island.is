@@ -43,7 +43,7 @@ import useInfoCardItems from '@island.is/judicial-system-web/src/components/Info
 import {
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -99,7 +99,10 @@ export const Overview = () => {
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      ? await sendNotification(
+          workingCase.id,
+          TrackedNotificationType.READY_FOR_COURT,
+        )
       : false
 
     // An SMS should have been sent

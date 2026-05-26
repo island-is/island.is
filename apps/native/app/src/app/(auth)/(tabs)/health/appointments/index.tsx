@@ -1,14 +1,21 @@
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
+import {
+  Image,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from 'react-native'
 import { useRouter } from 'expo-router'
 import styled from 'styled-components/native'
 
+import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
 import { StackScreen } from '@/components/stack-screen'
 
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
-import { GeneralCardSkeleton, Problem, Typography } from '@/ui'
+import { EmptyList, GeneralCardSkeleton, Problem } from '@/ui'
 import { AppointmentCard } from '../../../../../components/appointment-card'
 
 const Host = styled(SafeAreaView)`
@@ -23,12 +30,6 @@ const Appointments = styled.View`
 
 const ErrorWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
-`
-
-const EmptyState = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-  padding: ${({ theme }) => theme.spacing[3]}px;
-  align-items: center;
 `
 
 export default function AppointmentsScreen() {
@@ -110,14 +111,21 @@ export default function AppointmentsScreen() {
           {!appointmentsRes.loading &&
             !appointmentsRes.error &&
             appointments.length === 0 && (
-              <EmptyState>
-                <Typography variant="heading3">
+              <EmptyList
+                title={
                   <FormattedMessage id="health.appointments.noAppointmentsTitle" />
-                </Typography>
-                <Typography>
+                }
+                description={
                   <FormattedMessage id="health.appointments.noAppointmentsText" />
-                </Typography>
-              </EmptyState>
+                }
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 134, height: 204 }}
+                    resizeMode="contain"
+                  />
+                }
+              />
             )}
 
           {!appointmentsRes.loading &&

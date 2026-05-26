@@ -1,4 +1,5 @@
 import { useContext, useRef } from 'react'
+import { useApolloClient } from '@apollo/client'
 
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
@@ -6,6 +7,7 @@ import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapStringToGender } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { PoliceCaseInfoDocument } from '../../../routes/Prosecutor/Indictments/Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
 import {
   PoliceDefendantsQuery,
   usePoliceDefendantsQuery,
@@ -18,7 +20,8 @@ import {
  * - Does nothing for nationalIds that exist in our data but not in the payload (no removal).
  */
 export const useSyncDefendantsFromPolice = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const client = useApolloClient()
+  const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
   const { createDefendant } = useDefendants()
   const syncingRef = useRef(false)
 
@@ -94,6 +97,20 @@ export const useSyncDefendantsFromPolice = () => {
               ...prev,
               defendants: [...(prev.defendants ?? []), ...newDefendants],
             }))
+
+            await client.refetchQueries({
+              include: [PoliceCaseInfoDocument],
+              onQueryUpdated(observableQuery) {
+                const caseId = (
+                  observableQuery.variables as {
+                    input?: { caseId?: string }
+                  }
+                )?.input?.caseId
+                return caseId === workingCase.id
+              },
+            })
+
+            refreshCase()
           }
 
           syncingRef.current = false

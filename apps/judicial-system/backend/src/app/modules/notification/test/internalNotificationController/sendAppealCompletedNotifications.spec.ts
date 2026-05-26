@@ -4,11 +4,12 @@ import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseNotificationType,
+  AppealCaseRulingDecision,
   CaseDecision,
-  CaseNotificationType,
   CaseState,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -28,7 +29,7 @@ interface Then {
 
 type GivenWhenThen = (
   defenderNationalId?: string,
-  appealRulingDecision?: CaseAppealRulingDecision,
+  appealRulingDecision?: AppealCaseRulingDecision,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -59,7 +60,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
 
     givenWhenThen = async (
       defenderNationalId?: string,
-      appealRulingDecision?: CaseAppealRulingDecision,
+      appealRulingDecision?: AppealCaseRulingDecision,
     ) => {
       const then = {} as Then
 
@@ -82,12 +83,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             appealCase: {
               appealCaseNumber,
               appealRulingDecision:
-                appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
+                appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
             },
           } as Case,
           {
             user: { id: userId } as User,
-            type: CaseNotificationType.APPEAL_COMPLETED,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -176,7 +177,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen('', CaseAppealRulingDecision.DISCONTINUED)
+      then = await givenWhenThen('', AppealCaseRulingDecision.DISCONTINUED)
     })
 
     it('should send notification about discontinuance', () => {

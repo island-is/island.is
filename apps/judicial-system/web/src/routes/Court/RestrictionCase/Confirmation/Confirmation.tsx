@@ -267,6 +267,11 @@ const Confirmation: FC = () => {
             setIsRulingSignatureAudkenni(false)
             setModalVisible('none')
           }}
+          onErrorOrCanceledClose={() =>
+            router.replace(
+              `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+            )
+          }
           onRetry={() => {
             setRulingSignatureResponse(undefined)
             setIsRulingSignatureAudkenni(false)

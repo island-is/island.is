@@ -39,6 +39,12 @@ export const idsAdminNav: PortalNavigationItem = {
       ],
     },
     {
+      name: m.settings,
+      path: IDSAdminPaths.IDSAdminTenantEdit,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
       name: m.documentation,
       description: m.documentationDescription,
       path: IDSAdminExternalPaths.Docs,
@@ -54,6 +60,59 @@ export const idsAdminNav: PortalNavigationItem = {
   ],
 }
 
+export const idsAdminControlsNav: PortalNavigationItem = {
+  name: m.idsAdmin,
+  path: IDSAdminPaths.IDSAdmin,
+  description: m.idsAdmin,
+  activeIfExact: true,
+  children: [
+    {
+      name: m.domains,
+      path: IDSAdminPaths.IDSAdmin,
+      description: m.idsAdmin,
+      activeIfExact: true,
+    },
+    {
+      name: m.adminControls,
+      path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+      description: m.idsAdmin,
+      activeIfExact: true,
+      children: [
+        {
+          name: m.apiScopeUsers,
+          path: IDSAdminPaths.IDSAdminControlsApiScopeUsers,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.grantTypes,
+          path: IDSAdminPaths.IDSAdminControlsGrantTypes,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.idpProviders,
+          path: IDSAdminPaths.IDSAdminControlsIdpProviders,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.translationsTitle,
+          path: IDSAdminPaths.IDSAdminControlsTranslations,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.languages,
+          path: IDSAdminPaths.IDSAdminControlsLanguages,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+      ],
+    },
+  ],
+}
+
 export const idsAdminNavigation: PortalNavigationItem = {
   name: m.idsAdmin,
   path: IDSAdminPaths.IDSAdmin,
@@ -61,5 +120,5 @@ export const idsAdminNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.idsAdmin,
-  children: [idsAdminNav],
+  children: [idsAdminNav, idsAdminControlsNav],
 }
