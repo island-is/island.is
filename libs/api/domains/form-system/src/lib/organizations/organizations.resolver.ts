@@ -1,6 +1,6 @@
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Args, Resolver, Query } from '@nestjs/graphql'
+import { Args, Resolver, Query, Mutation } from '@nestjs/graphql'
 import { OrganizationsService } from './organizations.service'
 import {
   CurrentUser,
@@ -10,6 +10,7 @@ import {
 import { GetOrganizationAdminInput } from '../../dto/organization.input'
 import { UseGuards } from '@nestjs/common'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
+import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -26,5 +27,20 @@ export class OrganizationsResolver {
     @CurrentUser() user: User,
   ): Promise<OrganizationAdmin> {
     return this.organizationsService.getOrganizationAdmin(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'formSystemUpdateOrganizationZendeskInstance',
+    nullable: true,
+  })
+  async updateOrganizationZendeskInstance(
+    @Args('input', { type: () => OrganizationZendeskInstanceInput })
+    input: OrganizationZendeskInstanceInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.organizationsService.updateOrganizationZendeskInstance(
+      user,
+      input,
+    )
   }
 }

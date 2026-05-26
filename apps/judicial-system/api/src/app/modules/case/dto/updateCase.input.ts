@@ -465,6 +465,11 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly reopenReason?: string
+
+  @Allow()
+  @IsOptional()
   @IsArray()
   @IsObject({ each: true })
   @Field(() => [UpdateCaseDefendantEventLogDecisionInput], { nullable: true })
