@@ -21,6 +21,8 @@ import {
 } from '../../dto/application.input'
 import { NotificationResponse } from '../../models/screen.model'
 import { NotificationInput } from '../../dto/notification.input'
+import { DataFromUrl } from '../../models/dataFromUrl.model'
+import { DataFromUrlInput } from '../../dto/dataFromUrlReq.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -118,6 +120,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<NotificationResponse> {
     return this.applicationsService.notifyExternalSystem(user, input)
+  }
+
+  @Mutation(() => DataFromUrl, {
+    name: 'formSystemDataFromUrl',
+  })
+  async getDataFromUrl(
+    @Args('input', { type: () => DataFromUrlInput })
+    input: DataFromUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<DataFromUrl> {
+    return this.applicationsService.getDataFromUrl(user, input)
   }
 
   @Mutation(() => Boolean, {

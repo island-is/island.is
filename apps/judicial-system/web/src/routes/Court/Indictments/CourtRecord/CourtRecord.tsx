@@ -86,7 +86,7 @@ const CourtRecord: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.withCourtSessions ? (
           <>
-            <Accordion dividerOnTop={false} singleExpand>
+            <Accordion dividerOnTop={false} singleExpand={false}>
               {workingCase.courtSessions?.map((courtSession, index) => (
                 <CourtSessionAccordionItem
                   key={courtSession.id}
