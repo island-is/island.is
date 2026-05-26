@@ -1,7 +1,7 @@
 import type { MessageDescriptor } from 'react-intl'
 import { m } from '../lib/messages'
 
-const monthKeys = [
+const monthKeys: Array<keyof typeof m> = [
   'january',
   'february',
   'march',
@@ -14,7 +14,7 @@ const monthKeys = [
   'october',
   'november',
   'december',
-] satisfies Array<keyof typeof m>
+]
 
 export const monthNumberToMessage = (n: number): MessageDescriptor | undefined => {
   if (n < 1 || n > 12) return undefined

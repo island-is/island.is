@@ -55,7 +55,8 @@ export class PrimarySchoolResolver {
   async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
-    @Args('input', { type: () => AssessmentHistoryInput, nullable: true }) input: AssessmentHistoryInput = new AssessmentHistoryInput(),
+    @Args('input', { type: () => AssessmentHistoryInput, nullable: true })
+    input: AssessmentHistoryInput = new AssessmentHistoryInput(),
   ) {
     const { assessmentId } = input
     const subjects = await this.primarySchoolService.getAssessmentSubjects(

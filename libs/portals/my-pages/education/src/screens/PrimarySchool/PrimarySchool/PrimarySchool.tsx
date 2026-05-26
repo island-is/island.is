@@ -59,8 +59,7 @@ export const PrimarySchool = () => {
             }
             avatar
             tag={
-              student.contactType ===
-              EducationPrimarySchoolContactType.GUARDIAN
+              student.contactType === EducationPrimarySchoolContactType.GUARDIAN
                 ? {
                     label: formatMessage(psm.contactTypeGuardian),
                     variant: 'purple',
