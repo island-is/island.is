@@ -4,7 +4,7 @@ import {
   DRIVING_LICENSE_API_VERSION_V5,
   DtoV5DeprivationDto,
   DtoV5PenaltyPointDetailDto,
-} from '@/v5'
+} from '../../v5'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
