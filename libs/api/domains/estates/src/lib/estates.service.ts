@@ -6,9 +6,7 @@ import { EstatesCollection } from './models/estatesCollection.model'
 
 @Injectable()
 export class EstatesDomainService {
-  constructor(
-    private readonly estatesClientService: EstatesClientService,
-  ) {}
+  constructor(private readonly estatesClientService: EstatesClientService) {}
 
   async getEstates(user: User): Promise<EstatesCollection> {
     const data = await this.estatesClientService.getEstates(user)

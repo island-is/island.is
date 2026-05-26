@@ -160,7 +160,9 @@ export const EstateFiles = () => {
                   )}
                 </T.Data>
                 <T.Data>
-                  <Text variant="small">{formatFileSize(file.fileSizeBytes)}</Text>
+                  <Text variant="small">
+                    {formatFileSize(file.fileSizeBytes)}
+                  </Text>
                 </T.Data>
                 <T.Data>
                   {file.fileStatus && statusLabel(file.fileStatus) && (

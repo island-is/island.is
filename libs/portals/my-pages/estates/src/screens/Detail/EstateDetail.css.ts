@@ -19,8 +19,6 @@ export const fieldWithDivider = style({
   },
 })
 
-
-
 export const illustrationWrapper = style({
   flexShrink: 0,
 })

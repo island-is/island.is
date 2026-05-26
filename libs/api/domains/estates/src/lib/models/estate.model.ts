@@ -16,7 +16,10 @@ export class Estate {
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateOfDeath?: Date
 
-  @Field({ nullable: true, description: 'Whether the estate case has been closed' })
+  @Field({
+    nullable: true,
+    description: 'Whether the estate case has been closed',
+  })
   isFinished?: boolean
 
   @Field(() => EstatesRepresentative, { nullable: true })

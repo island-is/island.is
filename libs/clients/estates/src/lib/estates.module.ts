@@ -29,15 +29,16 @@ export class EstatesClientModule {
         name: 'clients-estates',
         organizationSlug: 'syslumenn',
         authSource: 'context',
-        autoAuth: idsClientConfig.isConfigured && config.scope.length > 0
-          ? {
-              mode: 'tokenExchange',
-              issuer: idsClientConfig.issuer,
-              clientId: idsClientConfig.clientId,
-              clientSecret: idsClientConfig.clientSecret,
-              scope: config.scope,
-            }
-          : undefined,
+        autoAuth:
+          idsClientConfig.isConfigured && config.scope.length > 0
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.scope,
+              }
+            : undefined,
       }),
     })
   }

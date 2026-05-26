@@ -70,7 +70,6 @@ const FarmerLandDetail = lazy(() =>
   import('./screens/FarmerLands/Detail/FarmerLandDetail'),
 )
 
-
 const VehicleMileage = lazy(() =>
   import('./screens/VehicleMileage/VehicleMileage'),
 )
