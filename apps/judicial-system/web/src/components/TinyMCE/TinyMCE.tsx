@@ -149,7 +149,7 @@ const TinyMCE = ({
         </label>
         <Editor
           id={editorId}
-          apiKey={process.env.TINY_MCE_API_KEY}
+          tinymceScriptSrc="/tinymce/tinymce.min.js"
           onInit={(_, editor) => {
             editorRef.current = editor
           }}

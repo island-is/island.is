@@ -20,7 +20,6 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
-  RequestCaseNotificationType,
   ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
