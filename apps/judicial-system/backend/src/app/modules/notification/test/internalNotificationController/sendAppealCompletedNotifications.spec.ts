@@ -10,7 +10,6 @@ import {
   CaseState,
   CaseType,
   RequestCaseNotificationType,
-  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 

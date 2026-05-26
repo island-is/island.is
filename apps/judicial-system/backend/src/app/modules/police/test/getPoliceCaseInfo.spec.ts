@@ -7,7 +7,6 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
-import { CaseDefendantPoliceCaseNumberRepositoryService } from '../../repository'
 import { Case } from '../../repository'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
 

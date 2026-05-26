@@ -194,13 +194,6 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_SHOULD_POPULATE'
-      payload: {
-        checked: boolean
-        update: (updatedActiveItem?: ActiveItem) => void
-      }
-    }
-  | {
       type: 'CHANGE_CERTIFICATION'
       payload: {
         certificate: FormSystemFormCertificationTypeDto
@@ -211,6 +204,15 @@ type ChangeActions =
       type: 'CHANGE_SUBMISSION_URL'
       payload: {
         value: string
+        useValidate?: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE'
+      payload: {
+        zendeskInstance: string
+        zendeskBrandId: string
+        organizationId?: string
       }
     }
   | {
@@ -221,12 +223,6 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_USE_VALIDATE'
-      payload: {
-        value: boolean
-      }
-    }
-  | {
-      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -899,6 +895,7 @@ export const controlReducer = (
     }
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
+      const useValidate = action.payload.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -933,6 +930,22 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
+          useValidate:
+            useValidate !== undefined ? useValidate : form.useValidate,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE': {
+      const { zendeskInstance, zendeskBrandId } = action.payload
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          organizationZendeskInstance: {
+            zendeskInstance,
+            zendeskBrandId,
+          },
         },
       }
       return updatedState
@@ -953,16 +966,6 @@ export const controlReducer = (
         form: {
           ...form,
           useValidate: action.payload.value,
-        },
-      }
-      return updatedState
-    }
-    case 'CHANGE_USE_POPULATE': {
-      const updatedState = {
-        ...state,
-        form: {
-          ...form,
-          usePopulate: action.payload.value,
         },
       }
       return updatedState
@@ -1122,28 +1125,6 @@ export const controlReducer = (
         data: {
           ...currentData,
           shouldValidate: action.payload.checked ? true : false,
-        },
-      }
-      action.payload.update(newActive)
-      return {
-        ...state,
-        activeItem: newActive,
-        form: {
-          ...form,
-          screens: screens?.map((g) =>
-            g?.id === currentData?.id ? newActive.data : g,
-          ),
-        },
-      }
-    }
-
-    case 'TOGGLE_SHOULD_POPULATE': {
-      const currentData = activeItem.data as FormSystemScreen
-      const newActive = {
-        ...activeItem,
-        data: {
-          ...currentData,
-          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)
