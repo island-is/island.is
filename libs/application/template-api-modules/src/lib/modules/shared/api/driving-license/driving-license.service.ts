@@ -26,6 +26,8 @@ import {
   buildFakeQualityPhotoAndSignature,
   buildFakeAllPhotosFromThjodskra,
   buildFakeDrivingAssessment,
+  buildFakeTeachers,
+  buildFakeJurisdictions,
 } from './drivingLicenseFakeData'
 
 @Injectable()
@@ -122,7 +124,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       })
   }
 
-  async teachers(): Promise<TeacherV4[]> {
+  async teachers({
+    application,
+  }: TemplateApiModuleActionProps): Promise<TeacherV4[]> {
+    if (getFakeData(application.answers)) {
+      return buildFakeTeachers()
+    }
+
     const teachers = await this.drivingLicenseService.getTeachersV4()
     if (teachers) {
       return teachers.sort(sortTeachers)
@@ -306,7 +314,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async jurisdictions(): Promise<Jurisdiction[]> {
+  async jurisdictions({
+    application,
+  }: TemplateApiModuleActionProps): Promise<Jurisdiction[]> {
+    if (getFakeData(application.answers)) {
+      return buildFakeJurisdictions()
+    }
+
     return await this.drivingLicenseService.getListOfJurisdictions()
   }
 

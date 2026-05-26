@@ -1,5 +1,6 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
+import { Jurisdiction, TeacherV4 } from '@island.is/clients/driving-license'
 import {
   DrivingLicenseFakeData,
   HasQualitySignature,
@@ -151,3 +152,21 @@ export const buildFakeDrivingAssessment = (): StudentAssessment => {
     studentNationalId: '123456-7890',
   }
 }
+
+export const buildFakeTeachers = (): TeacherV4[] => [
+  {
+    name: 'Bílar Kennar Ekilsson',
+    nationalId: '1234567890',
+    driverLicenseId: 1873312,
+  },
+  {
+    name: 'Ökukennarinn Æfingakonungur',
+    nationalId: '0987654321',
+    driverLicenseId: 50361046,
+  },
+]
+
+export const buildFakeJurisdictions = (): Jurisdiction[] => [
+  { id: 1, name: 'Sýslumaðurinn á höfuðborgarsvæðinu', zip: 105 },
+  { id: 37, name: 'Sýslumaðurinn á Vesturlandi', zip: 310 },
+]
