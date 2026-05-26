@@ -1023,9 +1023,9 @@ export const ArborgWorkpoint = new XroadConf({
 export const DirectorateOfEquality = new XroadConf({
   env: {
     XROAD_DIRECTORATE_OF_EQUALITY_PATH: {
-      dev: 'IS-DEV/GOV/10014/DMR-Protected/directorate-of-equality',
-      staging: 'IS-TEST/GOV/10014/DMR-Protected/directorate-of-equality',
-      prod: 'IS/GOV/5804170510/DMR-Protected/directorate-of-equality',
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
     },
   },
 })
