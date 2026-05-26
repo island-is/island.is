@@ -35,7 +35,9 @@ describe('transitionAppealCase', () => {
 
     it('can complete an appeal that was withdrawn', () => {
       const theCase = { type: CaseType.INDICTMENT } as Case
-      const appealCase = { appealState: AppealCaseState.WITHDRAWN } as AppealCase
+      const appealCase = {
+        appealState: AppealCaseState.WITHDRAWN,
+      } as AppealCase
 
       const { appealCaseUpdate } = transitionAppealCase(
         AppealCaseTransition.COMPLETE_APPEAL,
