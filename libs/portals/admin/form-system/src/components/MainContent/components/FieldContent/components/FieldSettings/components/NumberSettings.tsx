@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
-import { ToggleConnection } from './ToggleConnection'
 
 export const NumberSettings = () => {
   const { control, controlDispatch, setFocus, focus, updateActiveItem } =

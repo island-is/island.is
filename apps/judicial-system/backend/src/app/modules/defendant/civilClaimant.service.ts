@@ -18,6 +18,7 @@ import {
 import {
   CaseState,
   CivilClaimantNotificationType,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -50,6 +51,7 @@ export class CivilClaimantService {
   private addMessagesForUpdateCivilClaimantToQueue(
     oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
+    user: User,
   ): void {
     if (
       updatedCivilClaimant.isSpokespersonConfirmed &&
@@ -59,6 +61,16 @@ export class CivilClaimantService {
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        elementId: updatedCivilClaimant.id,
+      })
+      // send a notification to follow-up on scheduled court date
+      addMessagesToQueue({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: updatedCivilClaimant.caseId,
+        user,
+        body: {
+          type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+        },
         elementId: updatedCivilClaimant.id,
       })
     }
@@ -94,6 +106,7 @@ export class CivilClaimantService {
     caseId: string,
     civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
+    user: User,
   ): Promise<CivilClaimant> {
     let effectiveUpdate = { ...update }
 
@@ -132,6 +145,7 @@ export class CivilClaimantService {
     this.addMessagesForUpdateCivilClaimantToQueue(
       civilClaimant,
       updatedCivilClaimant,
+      user,
     )
 
     return updatedCivilClaimant

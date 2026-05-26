@@ -29,7 +29,6 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  AppealCaseNotificationType,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseOrigin,

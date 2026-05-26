@@ -21,6 +21,7 @@ import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
 import { InternalCaseService } from '../../../case'
+import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import { Notification, type User } from '../../../repository'
 import { UserService } from '../../../user'
@@ -40,6 +41,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
+    courtService: CourtService,
     private readonly internalCaseService: InternalCaseService,
     private readonly userService: UserService,
   ) {
@@ -47,6 +49,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
