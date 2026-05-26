@@ -273,7 +273,7 @@ export class ZendeskService {
       if (!base64) return undefined
 
       const buffer = Buffer.from(base64, 'base64')
-      const filename = this.displayNameFromS3Key(s3Key)
+      const filename = this.fileNameFromS3Key(s3Key)
 
       return await this.uploadBinaryToZendesk(
         buffer,
@@ -572,6 +572,12 @@ export class ZendeskService {
     const end = fileName.length - Math.floor(keepLength / 2)
 
     return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
+  }
+
+  private fileNameFromS3Key(key: string): string {
+    const lastPart = key.split('/').pop() ?? key
+    const underscoreIndex = lastPart.indexOf('_')
+    return underscoreIndex >= 0 ? lastPart.slice(underscoreIndex + 1) : lastPart
   }
 
   private getCustomFields(
