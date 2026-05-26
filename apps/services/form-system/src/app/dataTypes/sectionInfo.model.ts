@@ -3,7 +3,19 @@ import { Type } from 'class-transformer'
 import { IsArray, ValidateNested } from 'class-validator'
 import { LanguageType } from './languageType.model'
 
-export class CompletedSectionInfo {
+export class AdditionalPremise {
+  @ApiProperty({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  title!: LanguageType
+
+  @ApiProperty({ type: LanguageType })
+  @ValidateNested()
+  @Type(() => LanguageType)
+  description!: LanguageType
+}
+
+export class SectionInfo {
   @ApiProperty({ type: LanguageType })
   @ValidateNested()
   @Type(() => LanguageType)
@@ -24,4 +36,10 @@ export class CompletedSectionInfo {
   @ValidateNested({ each: true })
   @Type(() => LanguageType)
   additionalInfo: LanguageType[] = []
+
+  @ApiProperty({ type: AdditionalPremise, isArray: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AdditionalPremise)
+  additionalPremises: AdditionalPremise[] = []
 }

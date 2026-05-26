@@ -46,6 +46,7 @@ import {
   Modal,
   MultipleValueList,
   SectionHeading,
+  // TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile, {
   Supplement,
@@ -1470,6 +1471,31 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   textarea
                   required
                 />
+                {/* <TinyMCE
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onBlur={(html) => {
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      html.replace(/<[^>]*>/g, '').trim(),
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                /> */}
               </Box>
               <Box>
                 <SectionHeading

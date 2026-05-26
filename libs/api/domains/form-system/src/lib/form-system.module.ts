@@ -57,7 +57,6 @@ import { TranslationsService } from './translations/translations.service'
     OrganizationPermissionsService,
     FormApplicantTypesResolver,
     FormApplicantTypesService,
-    CmsModule,
     NationalRegistryResolver,
     CompanyRegistryResolver,
     FilesService,
