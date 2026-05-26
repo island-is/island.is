@@ -140,6 +140,50 @@ export const IndictmentCountsList: FC<Props> = ({
 
   const canDelete = reorderableCounts.length > 1
 
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set())
+
+  useEffect(() => {
+    const validIds = new Set(reorderableCounts.map((count) => count.id))
+
+    setExpandedIds((previous) => {
+      const next = new Set(
+        [...previous].filter((id) => validIds.has(id)),
+      )
+
+      return next.size === previous.size ? previous : next
+    })
+  }, [reorderableCounts])
+
+  const allExpanded =
+    reorderableCounts.length > 0 &&
+    reorderableCounts.every((count) => expandedIds.has(count.id))
+
+  const handleToggleExpandAll = useCallback(() => {
+    if (allExpanded) {
+      setExpandedIds(new Set())
+      return
+    }
+
+    setExpandedIds(new Set(reorderableCounts.map((count) => count.id)))
+  }, [allExpanded, reorderableCounts])
+
+  const handleAccordionToggle = useCallback(
+    (indictmentCountId: string, expanded: boolean) => {
+      setExpandedIds((previous) => {
+        const next = new Set(previous)
+
+        if (expanded) {
+          next.add(indictmentCountId)
+        } else {
+          next.delete(indictmentCountId)
+        }
+
+        return next
+      })
+    },
+    [],
+  )
+
   return (
     <Box component="section">
       <Box
@@ -152,9 +196,20 @@ export const IndictmentCountsList: FC<Props> = ({
           title={formatMessage(strings.indictmentCountsTitle)}
           marginBottom={0}
         />
-        <Button variant="text" onClick={handleChronologicalSort}>
-          {formatMessage(strings.sortIndictmentCountsChronologically)}
-        </Button>
+        {reorderableCounts.length > 0 && (
+          <Box display="flex" columnGap={2} alignItems="center">
+            <Button variant="text" onClick={handleToggleExpandAll}>
+              {formatMessage(
+                allExpanded
+                  ? strings.collapseAllIndictmentCounts
+                  : strings.expandAllIndictmentCounts,
+              )}
+            </Button>
+            <Button variant="text" onClick={handleChronologicalSort}>
+              {formatMessage(strings.sortIndictmentCountsChronologically)}
+            </Button>
+          </Box>
+        )}
       </Box>
       <Reorder.Group
         axis="y"
@@ -168,6 +223,10 @@ export const IndictmentCountsList: FC<Props> = ({
               index={index}
               indictmentCount={indictmentCount}
               workingCase={workingCase}
+              expanded={expandedIds.has(indictmentCount.id)}
+              onToggle={(expanded) =>
+                handleAccordionToggle(indictmentCount.id, expanded)
+              }
               onReorder={handleDragEnd}
               onDelete={canDelete ? handleDeleteIndictmentCount : undefined}
             >

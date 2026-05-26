@@ -39,6 +39,8 @@ interface Props {
   indictmentCount: TIndictmentCount
   index: number
   workingCase: Case
+  expanded: boolean
+  onToggle: (expanded: boolean) => void
   onReorder: () => void
   children: ReactNode
   onDelete?: (id: string) => Promise<void>
@@ -113,6 +115,8 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
   indictmentCount,
   index,
   workingCase,
+  expanded,
+  onToggle,
   onReorder,
   children,
 }) => {
@@ -178,6 +182,8 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
         <Box className={styles.accordionWrapper}>
           <AccordionItem
             id={`indictmentCountAccordionItem-${indictmentCount.id}`}
+            expanded={expanded}
+            onToggle={onToggle}
             label={
               <IndictmentCountLabel
                 index={index}
