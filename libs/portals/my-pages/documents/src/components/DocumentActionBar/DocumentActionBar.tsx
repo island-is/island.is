@@ -182,7 +182,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             )}
             <Tooltip
               text={formatMessage(
-                isArchived ? messages.moveToInbox : m.addToStorage,
+                isArchived ? m.removeFromStorage : m.addToStorage,
               )}
             >
               <Button
