@@ -40,6 +40,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
@@ -52,6 +53,7 @@ import {
   AppealCaseState,
   Case,
   CaseDecision,
+  CaseOrigin,
   CaseState,
   Institution,
   RequestSignatureResponse,
@@ -61,6 +63,7 @@ import {
   UpdateCase,
   useAppealCaseBanner,
   useCase,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -221,6 +224,8 @@ export const SignedVerdictOverview: FC = () => {
   } = useCase()
 
   const { appealBanner, appealModals } = useAppealCaseBanner()
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   /**
    * If the case is not rejected it must be accepted because
@@ -512,6 +517,13 @@ export const SignedVerdictOverview: FC = () => {
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     user={user}
+                  />
+                )}
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
                   />
                 )}
                 {(workingCase.comments ||
