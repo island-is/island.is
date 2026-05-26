@@ -10,6 +10,7 @@ import {
   m,
   MessageWithLink,
   NationalId,
+  NumberInput,
   PaymentQuantity,
   PhoneNumber,
   PropertyNumber,
@@ -62,6 +63,7 @@ export const Preview = ({ data, screenOrSection }: Props) => {
         {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
         {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
         {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
+        {type === FieldTypesEnum.NUMBERBOX && <NumberInput item={data} />}
         {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
         {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
         {type === FieldTypesEnum.ISK_NUMBERBOX && <CurrencyField item={data} />}

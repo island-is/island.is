@@ -11,6 +11,7 @@ import { ListType } from './listItem.model'
 import { Option } from './option.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
+import { OrganizationZendeskInstance } from './organizationZendeskInstance.model'
 import { SectionInfo } from './sectionInfo.model'
 
 @ObjectType('FormSystemDependency')
@@ -54,9 +55,6 @@ export class Form {
   @Field(() => Boolean, { nullable: true })
   useValidate?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  usePopulate?: boolean
-
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 
@@ -95,6 +93,9 @@ export class Form {
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
+
+  @Field(() => OrganizationZendeskInstance, { nullable: true })
+  organizationZendeskInstance?: OrganizationZendeskInstance
 
   @Field(() => SectionInfo, { nullable: true })
   sectionInfo?: SectionInfo
