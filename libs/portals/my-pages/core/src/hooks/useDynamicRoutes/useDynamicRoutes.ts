@@ -70,7 +70,9 @@ export const useDynamicRoutes = () => {
 
   const { data: vmstOverview, loading: vmstLoading } = useQuery(
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
-    { skip: !vmstEnabled },
+    {
+      skip: !vmstEnabled,
+    },
   )
 
   useEffect(() => {

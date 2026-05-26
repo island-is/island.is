@@ -24,7 +24,13 @@ export class FieldSettingsFactory {
         keys = ['minDate', 'maxDate', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
-        keys = ['listType', ...keys]
+        keys = [
+          'listType',
+          'zendeskTicketFieldId',
+          'zendeskCustomObjectKey',
+          'dataSourceUrl',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount', ...keys]

@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   NotificationCommands,
   SectionTypes,
 } from '@island.is/form-system/shared'
@@ -28,7 +29,6 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Form } from '../forms/models/form.model'
@@ -62,6 +62,9 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { Payment } from '../payment/payment.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -76,6 +79,10 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    @InjectModel(Payment)
+    private readonly paymentModel: typeof Payment,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
@@ -276,13 +283,22 @@ export class ApplicationsService {
     return form.slug
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
+  async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const form = await this.formModel.findByPk(application.formId)
@@ -300,6 +316,40 @@ export class ApplicationsService {
     }
 
     const applicationDto = applicationResponseDto.application
+
+    let paymentIsValid = false
+
+    if (form.hasPayment === true) {
+      const paymentSection = (applicationDto.sections ?? []).find(
+        (s) => s.sectionType === SectionTypes.PAYMENT,
+      )
+
+      const hasVisiblePayment =
+        !!paymentSection &&
+        paymentSection.isHidden === false &&
+        (paymentSection.screens ?? []).some(
+          (screen) => screen.isHidden === false,
+        )
+
+      if (hasVisiblePayment) {
+        const payment = await this.paymentModel.findOne({
+          where: { applicationId: id, fulfilled: true },
+        })
+        if (!payment) {
+          throw new ForbiddenException(
+            `Payment not fulfilled for application '${id}'`,
+          )
+        }
+        paymentIsValid = true
+      }
+    }
+
+    if (!user && !paymentIsValid) {
+      throw new ForbiddenException(
+        `Submitting application '${id}' without user context is only allowed when a visible payment exists and has been fulfilled.`,
+      )
+    }
+
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
     const applicationEvent = await this.applicationEventModel.create({
@@ -315,7 +365,23 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success = await this.serviceManager.send(applicationDto)
+    let zendeskInstance = ''
+    if (applicationDto.submissionServiceUrl === 'zendesk') {
+      const organization = await this.organizationModel.findByPk(
+        application.organizationId,
+      )
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with id '${application.organizationId}' not found.`,
+        )
+      }
+      zendeskInstance = organization.zendeskInstance ?? ''
+    }
+
+    const success = await this.serviceManager.send(
+      applicationDto,
+      zendeskInstance,
+    )
 
     if (success) {
       try {
@@ -1047,6 +1113,109 @@ export class ApplicationsService {
     })
   }
 
+  async getDataFromUrl(
+    dataFromUrlRequestDto: DataFromUrlReqDto,
+    user: User,
+  ): Promise<DataFromUrlResDto> {
+    const fieldId = dataFromUrlRequestDto.fieldId?.trim()
+    if (!fieldId) {
+      throw new BadRequestException(`fieldId is required`)
+    }
+    const slug = dataFromUrlRequestDto.slug?.trim()
+    if (!slug) {
+      throw new BadRequestException(`slug is required`)
+    }
+
+    const field = await this.fieldModel.findByPk(fieldId)
+
+    if (!field) {
+      throw new NotFoundException(`Field with id '${fieldId}' not found`)
+    }
+
+    const fieldSettings = field.fieldSettings
+
+    if (!fieldSettings) {
+      throw new NotFoundException(
+        `Field settings for field with id '${fieldId}' not found`,
+      )
+    }
+    const fieldType = field.fieldType
+
+    // Ownership + access check: field must belong to the requested form,
+    // and the current user's loginTypes must be allowed for that form.
+    const form = await this.getForm(slug)
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for form '${slug}'`,
+      )
+    }
+
+    const fieldBelongsToForm = (form.sections ?? []).some((section) =>
+      (section.screens ?? []).some((screen) =>
+        (screen.fields ?? []).some((f) => f.id === field.id),
+      ),
+    )
+    if (!fieldBelongsToForm) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for field '${field.id}'`,
+      )
+    }
+
+    let response = new DataFromUrlResDto()
+
+    if (
+      fieldType === FieldTypesEnum.DROPDOWN_LIST &&
+      fieldSettings.listType &&
+      (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+        fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
+    ) {
+      const orgNationalId = dataFromUrlRequestDto.orgNationalId?.trim()
+      if (!orgNationalId) {
+        throw new BadRequestException(
+          `orgNationalId is required for Zendesk list lookups`,
+        )
+      }
+      if (orgNationalId !== form.organizationNationalId) {
+        throw new ForbiddenException(
+          `User does not have permission to fetch Zendesk data for organization '${orgNationalId}'`,
+        )
+      }
+
+      const organizationInstance = await this.getOrganizationZendeskInfo(
+        orgNationalId,
+      )
+
+      dataFromUrlRequestDto.zendeskInstance =
+        organizationInstance.zendeskInstance
+
+      response = await this.serviceManager.getListFromZendesk(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    } else {
+      dataFromUrlRequestDto.loggedInUserNationalId =
+        user.actor?.nationalId || user.nationalId
+
+      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
+        ? user.nationalId
+        : undefined
+
+      dataFromUrlRequestDto.fieldType = fieldType
+      dataFromUrlRequestDto.identifier = field.identifier
+      dataFromUrlRequestDto.fieldId = undefined
+      dataFromUrlRequestDto.orgNationalId = undefined
+
+      response = await this.serviceManager.getDataFromUrl(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    }
+
+    return response
+  }
+
   async notifyExternalService(
     notificationDto: NotificationDto,
     user: User,
@@ -1111,7 +1280,6 @@ export class ApplicationsService {
       submissionUrl,
     )
 
-    screen.fields = this.mergeMissing(response.fields, screen.fields)
     response.screen = screen
 
     response.screen.screenError = {
@@ -1123,8 +1291,6 @@ export class ApplicationsService {
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
         response.screen.screenError = this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError = this.getDefaultScreenErrorPopulate()
       }
     } else if (response.screenError?.hasError) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
@@ -1132,11 +1298,6 @@ export class ApplicationsService {
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError =
-          response.screenError.title?.is || response.screenError.message?.is
-            ? response.screenError
-            : this.getDefaultScreenErrorPopulate()
       }
     }
 
@@ -1149,47 +1310,6 @@ export class ApplicationsService {
     return response
   }
 
-  private mergeMissing(
-    responseFields: ApplicationXroadFieldDto[] | undefined,
-    screenFields: FieldDto[] | undefined,
-  ): FieldDto[] | undefined {
-    if (!screenFields?.length) return screenFields
-    if (!responseFields?.length) return screenFields
-
-    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
-
-    return screenFields.map((field) => {
-      const override = byIdentifier.get(field.identifier)
-      if (!override) return field
-
-      const existingValueIdByOrder = new Map(
-        (field.values ?? []).map((v: any) => [v.order, v.id]),
-      )
-
-      const merged: any = { ...field, ...override }
-
-      if (Array.isArray(override.values)) {
-        merged.values = override.values.map((v: any) => ({
-          ...v,
-          id:
-            typeof v.id === 'string' && v.id.length > 0
-              ? v.id
-              : existingValueIdByOrder.get(v.order),
-        }))
-      }
-
-      // id is required for list items but is not used for populated lists
-      if (Array.isArray(override.list)) {
-        merged.list = override.list.map((li: any) => ({
-          ...li,
-          id: '1',
-        }))
-      }
-
-      return merged
-    })
-  }
-
   private getDefaultScreenErrorValidate(): ValidationErrorDto {
     return {
       hasError: true,
@@ -1200,20 +1320,6 @@ export class ApplicationsService {
       message: {
         is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
         en: 'Please try again later or send an email to island@island.is',
-      },
-    }
-  }
-
-  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
-    return {
-      hasError: true,
-      title: {
-        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
-        en: 'Could not fetch data from external service',
-      },
-      message: {
-        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-        en: 'Please try to refresh the page or send an email to island@island.is',
       },
     }
   }
@@ -1234,6 +1340,24 @@ export class ApplicationsService {
       })
       return xroadField
     })
+  }
+
+  private async getOrganizationZendeskInfo(
+    organizationNationalId: string,
+  ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${organizationNationalId}' not found`,
+      )
+    }
+
+    const zendeskInstance = organization.zendeskInstance ?? ''
+    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    return { zendeskInstance, zendeskBrandId }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

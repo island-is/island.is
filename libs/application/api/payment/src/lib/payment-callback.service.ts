@@ -1,8 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { ApiClientCallback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationService,
+  Application,
+} from '@island.is/application/api/core'
 import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 import { addWorkDays } from './utils'
 import {
   NotificationConfig,
@@ -115,7 +119,48 @@ export class PaymentCallbackService {
             pruneAt: oneMonthFromNow,
           },
         )
+
+        if (
+          callback.details?.reason === 'payment_completed' &&
+          callback.details?.message === 'Invoice payment completed'
+        ) {
+          // Clear up any existing payment reminders since we haven't state transitioned yet
+          await this.applicationService.cancelScheduledNotifications(
+            application.id,
+          )
+
+          await this.createDailyCompletionNotifications(
+            application,
+            new Date(),
+            oneMonthFromNow,
+          )
+        }
       }
     }
+  }
+  private async createDailyCompletionNotifications(
+    application: Application,
+    startDate: Date,
+    endDate: Date,
+  ) {
+    const notifications = []
+    const applicationLink = await this.paymentService.getApplicationUrl(
+      application.id,
+    )
+
+    for (let date = startDate; date <= endDate; date = addDays(date, 1)) {
+      notifications.push({
+        template:
+          NotificationConfig[NotificationType.ApplicationCompletionReminder]
+            .templateId,
+        schedule_time: date,
+        args: [{ key: 'applicationLink', value: applicationLink }],
+      })
+    }
+    await this.applicationService.createScheduledNotifications(
+      application.id,
+      application.state,
+      notifications,
+    )
   }
 }

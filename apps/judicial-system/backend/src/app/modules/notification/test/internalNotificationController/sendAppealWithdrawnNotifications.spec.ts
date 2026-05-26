@@ -8,7 +8,6 @@ import {
   AppealCaseNotificationType,
   InstitutionType,
   RequestCaseNotificationType,
-  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
