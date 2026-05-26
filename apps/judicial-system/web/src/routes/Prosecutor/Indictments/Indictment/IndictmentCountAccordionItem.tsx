@@ -83,28 +83,40 @@ const IndictmentCountLabel = forwardRef(
     const { index, policeCaseNumber, formattedDate, warningMessage } = props
     const { formatMessage } = useIntl()
 
-    const labelParts = [
-      policeCaseNumber ?? formatMessage(strings.policeCaseNumberNotSelected),
-      formattedDate,
-    ].filter(Boolean)
+    const policeCaseNumberLabel =
+      policeCaseNumber ?? formatMessage(strings.policeCaseNumberNotSelected)
 
     return (
-      <Box ref={ref} display="flex" alignItems="flexEnd" columnGap={1}>
-        <Text variant="h4" as="span">
-          <motion.span layout>{index + 1}.</motion.span> {labelParts.join(' ')}
-        </Text>
-        {warningMessage && (
-          <Box
-            className={styles.warningIcon}
-            onClick={(event) => event.stopPropagation()}
-            onPointerDown={(event) => event.stopPropagation()}
-          >
-            <Tooltip placement="top" as="span" text={warningMessage}>
-              <span>
-                <Icon icon="warning" type="filled" color="yellow600" />
-              </span>
-            </Tooltip>
-          </Box>
+      <Box
+        ref={ref}
+        className={styles.label}
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+      >
+        <Box className={styles.labelStart}>
+          <Text variant="h4" as="span">
+            <motion.span layout>{index + 1}.</motion.span>{' '}
+            {policeCaseNumberLabel}
+          </Text>
+          {warningMessage && (
+            <Box
+              className={styles.warningIcon}
+              onClick={(event) => event.stopPropagation()}
+              onPointerDown={(event) => event.stopPropagation()}
+            >
+              <Tooltip placement="top" as="span" text={warningMessage}>
+                <span>
+                  <Icon icon="warning" type="filled" color="yellow600" />
+                </span>
+              </Tooltip>
+            </Box>
+          )}
+        </Box>
+        {formattedDate && (
+          <Text variant="h4" as="span" className={styles.labelDate}>
+            {formattedDate}
+          </Text>
         )}
       </Box>
     )
@@ -175,7 +187,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
           className={styles.dragHandle}
           data-testid="indictmentCountDragHandle"
           onPointerDown={handlePointerDown}
-          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          style={isDragging ? { cursor: 'grabbing' } : undefined}
         >
           <Icon icon="menu" color="blue400" />
         </Box>

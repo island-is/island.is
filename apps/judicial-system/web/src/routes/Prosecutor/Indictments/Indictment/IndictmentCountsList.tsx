@@ -146,9 +146,7 @@ export const IndictmentCountsList: FC<Props> = ({
     const validIds = new Set(reorderableCounts.map((count) => count.id))
 
     setExpandedIds((previous) => {
-      const next = new Set(
-        [...previous].filter((id) => validIds.has(id)),
-      )
+      const next = new Set([...previous].filter((id) => validIds.has(id)))
 
       return next.size === previous.size ? previous : next
     })
@@ -216,7 +214,11 @@ export const IndictmentCountsList: FC<Props> = ({
         values={reorderableCounts}
         onReorder={handleReorder}
       >
-        <Accordion singleExpand={false} dividerOnTop={false}>
+        <Accordion
+          singleExpand={false}
+          dividerOnTop={false}
+          dividerOnBottom={true}
+        >
           {reorderableCounts.map((indictmentCount, index) => (
             <IndictmentCountAccordionItem
               key={indictmentCount.id}
