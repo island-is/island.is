@@ -1921,7 +1921,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const courtCaseNumber = theCase.courtCaseNumber ?? ''
     const subject = `Mál ${courtCaseNumber} enduropnað`
     const body = `${theCase.court?.name} hefur enduropnað mál ${courtCaseNumber}.<br /><br />Fyrri lyktum hefur verið eytt og málið verður afgreitt á ný.`
-    const prosecutorHtml = `${body}<br /><br /><a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+    const prosecutorHtml = `${body}<br /><br /><a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
     const defenderLink = formatDefenderRoute(
       this.config.clientUrl,
       theCase.type,
