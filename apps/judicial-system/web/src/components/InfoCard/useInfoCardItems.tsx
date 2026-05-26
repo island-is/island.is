@@ -329,7 +329,7 @@ const useInfoCardItems = () => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent href={`/${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
+                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
                   {splitCase.courtCaseNumber}
                 </LinkComponent>
               </div>

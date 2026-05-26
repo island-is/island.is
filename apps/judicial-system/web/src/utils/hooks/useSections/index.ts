@@ -262,9 +262,7 @@ const useSections = (
               href: `${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
               isActive: isActive(PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE),
               onClick:
-                !isActive(
-                  DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
-                ) &&
+                !isActive(PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
