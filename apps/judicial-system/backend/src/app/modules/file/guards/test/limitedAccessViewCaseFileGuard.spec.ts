@@ -548,6 +548,52 @@ describe('Limited Access View Case File Guard', () => {
         })
       })
     })
+
+    describe.each(indictmentCases)(
+      'for %s cases, DEFENDANT_RULING is always forbidden',
+      (type) => {
+        describe.each(Object.values(CaseState))('in state %s', (state) => {
+          describe('a defender cannot view DEFENDANT_RULING', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: {
+                  currentUser: { role: UserRole.DEFENDER, nationalId },
+                },
+                case: {
+                  type,
+                  state,
+                  defendants: [
+                    {
+                      id: uuid(),
+                      defenderNationalId: nationalId,
+                      isDefenderChoiceConfirmed: true,
+                      caseFilesSharedWithDefender: true,
+                      eventLogs: [],
+                    },
+                  ],
+                },
+                caseFile: {
+                  category: CaseFileCategory.DEFENDANT_RULING,
+                  created: new Date('2024-06-01'),
+                },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+        })
+      },
+    )
   })
 
   describe('prison admin users', () => {

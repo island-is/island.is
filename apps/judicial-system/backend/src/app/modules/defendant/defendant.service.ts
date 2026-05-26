@@ -29,6 +29,7 @@ import {
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  UpdateDefendant,
 } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
@@ -207,7 +208,7 @@ export class DefendantService {
   async updateDatabaseDefendant(
     caseId: string,
     defendantId: string,
-    update: UpdateDefendantDto,
+    update: UpdateDefendant,
     transaction: Transaction,
   ) {
     return this.defendantRepositoryService.update(caseId, defendantId, update, {
