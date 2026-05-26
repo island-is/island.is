@@ -102,6 +102,7 @@ export const PoliceDigitalCaseFilesList = ({
                         icon="close"
                         colorScheme="red"
                         onClick={() => onRemove(item)}
+                        ariaLabel={`Eyða skjali ${item.name}`}
                       />
                     )}
                   </Box>
