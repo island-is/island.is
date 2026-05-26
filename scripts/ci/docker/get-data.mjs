@@ -3,9 +3,12 @@ import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
 import core from '@actions/core'
 import github from '@actions/github'
-import { isMainBranch, isReleaseBranch } from './const.mjs'
+import { MAIN_BRANCHES } from './const.mjs'
 import { glob } from 'glob'
 import { isMainModule } from './utils.mjs'
+
+const RELEASE_BRANCH_REGEX =
+  /^release\/(?:\d+\.\d+\.\d+|\d{4}\.\d{1,2}\.\d{1,2}\.\d+)$/
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
@@ -157,14 +160,14 @@ export function getBranch(context = github.context) {
 }
 
 export function getTypeOfDeployment(branch) {
-  if (isMainBranch(branch)) {
+  if (MAIN_BRANCHES.includes(branch)) {
     return {
       dev: true,
       staging: false,
       prod: false,
     }
   }
-  if (isReleaseBranch(branch)) {
+  if (RELEASE_BRANCH_REGEX.test(branch)) {
     return {
       dev: false,
       staging: true,

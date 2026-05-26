@@ -31,12 +31,7 @@ jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {})
 
 // Mock const.mjs
 jest.mock('./const.mjs', () => ({
-  isMainBranch: jest.fn((branch) => branch === 'main'),
-  isReleaseBranch: jest.fn((branch) =>
-    /^release(?:\/(?:\d+\.\d+\.\d+|\d{4}\.\d{1,2}\.\d{1,2}\.\d+))?$/.test(
-      branch,
-    ),
-  ),
+  MAIN_BRANCHES: ['main'],
 }))
 
 // Mock jsyaml
@@ -158,6 +153,7 @@ describe('get-data.mjs', () => {
         'develop',
         'hotfix',
         'random-branch',
+        'release',
         'release/2026',
         'release/foo.bar',
       ]
