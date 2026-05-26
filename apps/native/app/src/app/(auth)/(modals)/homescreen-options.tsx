@@ -18,6 +18,11 @@ export default function HomeOptionsScreen() {
     false,
     null,
   )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
@@ -55,18 +60,21 @@ export default function HomeOptionsScreen() {
         })
       },
     },
-    // TODO add feature flag
-    {
-      enabled: notificationsWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.notifications',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          notificationsWidgetEnabled: value,
-        })
-      },
-    },
+    ...(isNotificationsWidgetEnabled
+      ? [
+          {
+            enabled: notificationsWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.notifications',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                notificationsWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
     {
       enabled: inboxWidgetEnabled,
       label: intl.formatMessage({

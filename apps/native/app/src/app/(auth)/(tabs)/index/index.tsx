@@ -99,6 +99,12 @@ export default function HomeScreen() {
     false,
     null,
   )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
+
   const [refetching, setRefetching] = useState(false)
 
   const vehiclesWidgetEnabled = usePreferencesStore(
@@ -186,7 +192,7 @@ export default function HomeScreen() {
       input: { limit: 3 },
       locale: useLocale(),
     },
-    skip: !notificationsWidgetEnabled,
+    skip: !notificationsWidgetEnabled || !isNotificationsWidgetEnabled,
   })
 
   useEffect(() => {
@@ -210,21 +216,20 @@ export default function HomeScreen() {
         ...airDiscountRes,
       })
 
-      const shouldShowNotificationsWidget = validateNotificationsInitialData({
-        ...notificationsRes,
-      })
-
       preferencesStore.setState({
         inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
-        // TODO add feature flag
-        notificationsWidgetEnabled: shouldShowNotificationsWidget,
         ...(isAppointmentsEnabled !== null && {
           appointmentsWidgetEnabled: isAppointmentsEnabled
             ? validateAppointmentsInitialData({ ...appointmentsRes })
+            : false,
+        }),
+        ...(isNotificationsWidgetEnabled !== null && {
+          notificationsWidgetEnabled: isNotificationsWidgetEnabled
+            ? validateNotificationsInitialData({ ...notificationsRes })
             : false,
         }),
       })
@@ -239,7 +244,8 @@ export default function HomeScreen() {
         vehiclesRes.loading ||
         appointmentsRes.loading ||
         notificationsRes.loading ||
-        isAppointmentsEnabled === null
+        isAppointmentsEnabled === null ||
+        isNotificationsWidgetEnabled === null
       ) {
         return
       }
@@ -263,6 +269,7 @@ export default function HomeScreen() {
     appointmentsRes,
     notificationsRes,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
   ])
 
   const renderItem = useCallback(
@@ -310,8 +317,9 @@ export default function HomeScreen() {
         appointmentsWidgetEnabled &&
           isAppointmentsEnabled &&
           appointmentsRes.refetch(),
-        // TODO add feature flag
-        notificationsWidgetEnabled && notificationsRes.refetch(),
+        notificationsWidgetEnabled &&
+          isNotificationsWidgetEnabled &&
+          notificationsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -336,6 +344,7 @@ export default function HomeScreen() {
     appointmentsWidgetEnabled,
     notificationsWidgetEnabled,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
   ])
 
   const data = [
@@ -345,9 +354,10 @@ export default function HomeScreen() {
     },
     {
       id: 'notifications',
-      component: notificationsWidgetEnabled ? (
-        <NotificationsModule {...notificationsRes} />
-      ) : null,
+      component:
+        notificationsWidgetEnabled && isNotificationsWidgetEnabled ? (
+          <NotificationsModule {...notificationsRes} />
+        ) : null,
     },
     {
       id: 'inbox',
