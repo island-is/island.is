@@ -333,9 +333,9 @@ export class ApplicationsService {
 
       if (hasVisiblePayment) {
         const payment = await this.paymentModel.findOne({
-          where: { applicationId: id },
+          where: { applicationId: id, fulfilled: true },
         })
-        if (!payment || !payment?.fulfilled) {
+        if (!payment) {
           throw new ForbiddenException(
             `Payment not fulfilled for application '${id}'`,
           )
