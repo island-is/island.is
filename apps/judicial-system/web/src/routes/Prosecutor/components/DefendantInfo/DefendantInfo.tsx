@@ -59,11 +59,20 @@ const DefendantInfo: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
 
+  // Tracks whether the user has actively edited the national id this session.
+  // On load/refresh this is false, so an existing defendant's name/address are
+  // preserved (and manual corrections are never overwritten). When the user
+  // changes the national id we re-run the lookup to fill the new person's data.
+  // Note: typing the original id back also re-triggers a lookup, which is an
+  // acceptable trade-off for avoiding fragile baseline-id tracking across loads.
+  const [hasUserEditedNationalId, setHasUserEditedNationalId] = useState(false)
+
   const { personData, businessData, error, notFound } = useNationalRegistry(
     defendant.nationalId,
     {
       skip:
         Boolean(workingCase.id) &&
+        !hasUserEditedNationalId &&
         (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim())),
     },
   )
@@ -180,7 +189,8 @@ const DefendantInfo: FC<Props> = (props) => {
               nationalId: value || null,
             })
           }
-          onChange={(value) =>
+          onChange={(value) => {
+            setHasUserEditedNationalId(true)
             updateDefendantState(
               {
                 caseId: workingCase.id,
@@ -189,7 +199,7 @@ const DefendantInfo: FC<Props> = (props) => {
               },
               setWorkingCase,
             )
-          }
+          }}
           required={!defendant.noNationalId}
         />
         {defendant.nationalId?.length === 11 && notFound && (
