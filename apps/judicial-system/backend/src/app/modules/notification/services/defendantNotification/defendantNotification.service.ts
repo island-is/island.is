@@ -24,10 +24,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import {
-  formatArraignmentDateEmailNotification,
-  formatCourtCalendarInvitation,
-} from '../../../../formatters'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -54,13 +50,14 @@ export class DefendantNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly courtService: CourtService,
+    courtService: CourtService,
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
@@ -186,55 +183,8 @@ export class DefendantNotificationService extends BaseNotificationService {
       )
       return !hasSentNotificationBefore
     }
+
     return false
-  }
-
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private getCourtDateCalendarInvite = (
-    theCase: Case,
-    targetDateLog: DateLog,
-  ) => {
-    const { date: scheduledDate, location: courtRoom } = targetDateLog
-    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
-      theCase,
-      courtRoom,
-    )
-    const calendarInvite = this.createICalAttachment({
-      eventOrganizer,
-      scheduledDate,
-      title,
-      location,
-    })
-    return calendarInvite
-  }
-
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private async uploadEmailToCourt(
-    theCase: Case,
-    user: User,
-    subject: string,
-    body: string,
-    recipients?: string,
-  ): Promise<void> {
-    try {
-      await this.courtService.createEmail(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        subject,
-        body,
-        recipients ?? '',
-        this.config.email.fromEmail,
-        this.config.email.fromName,
-      )
-    } catch (error) {
-      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
-      this.logger.warn(
-        `Failed to upload email to court for indictment case ${theCase.id}`,
-        { error },
-      )
-    }
   }
 
   private async sendDefenderCourtDateEmailNotification(
@@ -250,51 +200,24 @@ export class DefendantNotificationService extends BaseNotificationService {
     const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
     const hasFutureArraignmentDate =
       arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
+
     if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
 
-    // TODO-FIX: redundant in other services - defendant, indictmentCase notifications
-    const { subject, body } = formatArraignmentDateEmailNotification({
-      formatMessage: this.formatMessage,
-      courtName: theCase.court?.name,
-      courtCaseNumber: theCase.courtCaseNumber,
-      judgeName: theCase.judge?.name,
-      registrarName: theCase.registrar?.name,
-      arraignmentDateLog,
-    })
-
-    const calendarInvite = this.getCourtDateCalendarInvite(
+    const recipient = await this.sendArraignmentDateEmailNotification({
       theCase,
+      user,
       arraignmentDateLog,
-    )
-
-    const promise = this.sendEmail({
-      subject,
-      html: body,
-      recipientName: defendant.defenderName,
-      recipientEmail: defendant.defenderEmail,
-      attachments: calendarInvite ? [calendarInvite] : undefined,
-    }).then((recipient) => {
-      if (recipient.success) {
-        // No need to wait
-        this.uploadEmailToCourt(
-          theCase,
-          user,
-          subject,
-          body,
-          defendant.defenderEmail,
-        )
-      }
-      return recipient
+      recipientName: defendant.defenderName ?? '',
+      recipientEmail: defendant.defenderEmail ?? '',
     })
 
-    const recipients = await Promise.all([promise])
     const result = await this.recordNotification(
       theCase.id,
       TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
-      recipients,
+      [recipient],
     )
 
     return result

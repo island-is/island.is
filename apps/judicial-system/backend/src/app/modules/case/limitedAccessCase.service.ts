@@ -334,6 +334,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,

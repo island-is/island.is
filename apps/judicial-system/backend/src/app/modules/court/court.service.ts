@@ -324,22 +324,18 @@ export class CourtService {
           return ''
         }
 
-        // Temporarily disabled because of a bug in court system communication
-        // this.eventService.postErrorEvent(
-        //   'Failed to create an email at court',
-        //   {
-        //     caseId,
-        //     actor: user.name,
-        //     institution: user.institution?.name,
-        //     courtId,
-        //     courtCaseNumber,
-        //     subject: this.mask(subject),
-        //     recipients,
-        //     fromEmail,
-        //     fromName,
-        //   },
-        //   reason,
-        // )
+        this.eventService.postErrorEvent(
+          'Failed to create an email at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+          },
+          reason,
+        )
 
         throw reason
       })

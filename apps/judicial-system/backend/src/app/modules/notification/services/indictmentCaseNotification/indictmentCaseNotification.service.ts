@@ -26,8 +26,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  formatArraignmentDateEmailNotification,
-  formatCourtCalendarInvitation,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
 } from '../../../../formatters'
@@ -64,13 +62,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly courtService: CourtService,
+    courtService: CourtService,
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
@@ -104,35 +103,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const recipients = await Promise.all(promises)
 
     return this.recordNotification(theCase.id, notificationType, recipients)
-  }
-
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private async uploadEmailToCourt(
-    theCase: Case,
-    user: UserDescriptor,
-    subject: string,
-    body: string,
-    recipients?: string,
-  ): Promise<void> {
-    try {
-      await this.courtService.createEmail(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        subject,
-        body,
-        recipients ?? '',
-        this.config.email.fromEmail,
-        this.config.email.fromName,
-      )
-    } catch (error) {
-      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
-      this.logger.warn(
-        `Failed to upload email to court for indictment case ${theCase.id}`,
-        { error },
-      )
-    }
   }
 
   private async sendVerdictInfoNotification(
@@ -267,69 +237,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         },
       ],
     )
-  }
-
-  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
-  private getCourtDateCalendarInvite = (
-    theCase: Case,
-    targetDateLog: DateLog,
-  ) => {
-    const { date: scheduledDate, location: courtRoom } = targetDateLog
-    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
-      theCase,
-      courtRoom,
-    )
-    const calendarInvite = this.createICalAttachment({
-      eventOrganizer,
-      scheduledDate,
-      title,
-      location,
-    })
-
-    return calendarInvite
-  }
-
-  private async sendArraignmentDateEmailNotification({
-    theCase,
-    user,
-    arraignmentDateLog,
-    recipientName,
-    recipientEmail,
-  }: {
-    theCase: Case
-    user: UserDescriptor
-    arraignmentDateLog: DateLog
-    recipientName: string
-    recipientEmail: string
-  }): Promise<Recipient> {
-    const { subject, body } = formatArraignmentDateEmailNotification({
-      formatMessage: this.formatMessage,
-      courtName: theCase.court?.name,
-      courtCaseNumber: theCase.courtCaseNumber,
-      judgeName: theCase.judge?.name,
-      registrarName: theCase.registrar?.name,
-      arraignmentDateLog,
-    })
-
-    const calendarInvite = this.getCourtDateCalendarInvite(
-      theCase,
-      arraignmentDateLog,
-    )
-
-    return this.sendEmail({
-      subject,
-      html: body,
-      recipientName,
-      recipientEmail,
-      attachments: calendarInvite ? [calendarInvite] : undefined,
-    }).then((recipient) => {
-      if (recipient.success) {
-        // No need to wait
-        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
-      }
-
-      return recipient
-    })
   }
 
   private sendArraignmentDateEmailNotifications(

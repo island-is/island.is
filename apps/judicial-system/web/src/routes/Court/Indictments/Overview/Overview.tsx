@@ -2,13 +2,20 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, Box, Button } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -55,6 +62,7 @@ const OverviewBody = ({
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
+
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -63,6 +71,17 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+            <AlertMessage
+              title="Mál enduropnað"
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
+              type="info"
+            />
+          )}
           {workingCase.court &&
             latestDate?.date &&
             workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
