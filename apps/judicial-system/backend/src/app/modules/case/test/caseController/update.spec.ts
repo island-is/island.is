@@ -1,8 +1,16 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
+
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
@@ -13,6 +21,7 @@ import {
   DateType,
   DefendantEventType,
   EventType,
+  IndictmentCaseNotificationType,
   indictmentCases,
   IndictmentDecision,
   InstitutionType,
@@ -28,9 +37,11 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { DefendantService } from '../../../defendant'
 import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
 import {
+  AppealCase,
   Case,
   CaseRepositoryService,
   CaseString,
@@ -83,6 +94,7 @@ describe('CaseController - Update', () => {
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
+  let mockDefendantService: DefendantService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
@@ -96,6 +108,7 @@ describe('CaseController - Update', () => {
       sequelize,
       caseRepositoryService,
       defendantEventLogRepositoryService,
+      defendantService,
       dateLogModel,
       caseStringModel,
       caseController,
@@ -107,6 +120,7 @@ describe('CaseController - Update', () => {
     mockFileService = fileService
     mockCaseRepositoryService = caseRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
+    mockDefendantService = defendantService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
 
@@ -219,6 +233,7 @@ describe('CaseController - Update', () => {
         defendantId1,
         user,
         transaction,
+        undefined,
       )
 
       expect(
@@ -230,6 +245,63 @@ describe('CaseController - Update', () => {
         defendantId2,
         user,
         transaction,
+        undefined,
+      )
+    })
+  })
+
+  describe('indictment completed for some defendants with ruling dates', () => {
+    const rulingDate = '2026-02-23'
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.COMPLETING_FOR_SOME,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+          rulingDate,
+        },
+        {
+          defendantId: defendantId2,
+          rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+        },
+      ],
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should set created to 23:59:59.999 UTC on the ruling date when provided', () => {
+      const expectedCreated = new Date(rulingDate)
+      expectedCreated.setUTCHours(23, 59, 59, 999)
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        1,
+        DefendantEventType.INDICTMENT_DISMISSED,
+        caseId,
+        defendantId1,
+        user,
+        transaction,
+        expectedCreated,
+      )
+
+      expect(
+        mockDefendantEventLogRepositoryService.createWithUser,
+      ).toHaveBeenNthCalledWith(
+        2,
+        DefendantEventType.INDICTMENT_CANCELLED,
+        caseId,
+        defendantId2,
+        user,
+        transaction,
+        undefined,
       )
     })
   })
@@ -786,6 +858,241 @@ describe('CaseController - Update', () => {
           transaction,
         },
       )
+    })
+  })
+
+  describe('reopenReason on non-indictment case', () => {
+    const nonIndictmentCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, nonIndictmentCase, caseToUpdate)
+    })
+
+    it('should throw BadRequestException', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+    })
+  })
+
+  describe('reopenReason on non-completed indictment case', () => {
+    const receivedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        user,
+        receivedIndictmentCase,
+        caseToUpdate,
+      )
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
+  describe.each(['', '   ', '\n\t '])(
+    'reopen indictment case with empty reopenReason %p',
+    (emptyReason) => {
+      const completedIndictmentCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+      } as Case
+
+      const caseToUpdate = { reopenReason: emptyReason } as UpdateCaseDto
+
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(
+          caseId,
+          user,
+          completedIndictmentCase,
+          caseToUpdate,
+        )
+      })
+
+      it('should throw BadRequestException', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+      })
+    },
+  )
+
+  describe('reopen indictment case with active appeal', () => {
+    const completedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      appealCase: {
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseId,
+        user,
+        completedIndictmentCase,
+        caseToUpdate,
+      )
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
+  describe('reopen indictment case with withdrawn appeal', () => {
+    const completedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      appealCase: {
+        appealState: AppealCaseState.WITHDRAWN,
+      } as AppealCase,
+    } as Case
+
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdateDatabaseDefendant =
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      mockUpdateDatabaseDefendant.mockResolvedValue({})
+
+      then = await givenWhenThen(caseId, user, completedIndictmentCase, {
+        reopenReason: uuid(),
+      } as UpdateCaseDto)
+    })
+
+    it('should not throw', () => {
+      expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('reopen indictment case with completed appeal', () => {
+    const completedIndictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      appealCase: {
+        appealState: AppealCaseState.COMPLETED,
+      } as AppealCase,
+    } as Case
+
+    let caseToUpdate: UpdateCaseDto
+    let originalReopenReason: string
+    let then: Then
+
+    beforeEach(async () => {
+      originalReopenReason = uuid()
+      caseToUpdate = { reopenReason: originalReopenReason } as UpdateCaseDto
+
+      const mockUpdateDatabaseDefendant =
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      mockUpdateDatabaseDefendant.mockResolvedValue({})
+
+      then = await givenWhenThen(
+        caseId,
+        user,
+        completedIndictmentCase,
+        caseToUpdate,
+      )
+    })
+
+    it('should not throw', () => {
+      expect(then.error).toBeUndefined()
+    })
+
+    it('should reset defendant fields', () => {
+      const resetPayload = {
+        isSentToPrisonAdmin: false,
+        indictmentReviewDecision: null,
+        publicProsecutorIsRegisteredInPoliceSystem: null,
+      }
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
+        caseId,
+        defendantId1,
+        resetPayload,
+        transaction,
+      )
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
+        caseId,
+        defendantId2,
+        resetPayload,
+        transaction,
+      )
+    })
+
+    it('should store reopenReason with header prepended', () => {
+      const expectedHeader = `${capitalize(formatDate(date, 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}.`
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
+        {
+          caseId,
+          stringType: StringType.REOPEN_REASON,
+          value: `${expectedHeader}\n${originalReopenReason}`,
+        },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
+      )
+    })
+  })
+
+  describe('reopen indictment case - queues INDICTMENT_REOPENED notification', () => {
+    const reopeningCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    beforeEach(async () => {
+      const mockUpdateDatabaseDefendant =
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      mockUpdateDatabaseDefendant.mockResolvedValue({})
+      ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce({
+        ...reopeningCase,
+        state: CaseState.RECEIVED,
+      })
+      ;(mockCaseRepositoryService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...reopeningCase,
+        state: CaseState.RECEIVED,
+      })
+
+      await givenWhenThen(caseId, user, reopeningCase, caseToUpdate)
+    })
+
+    it('should queue INDICTMENT_REOPENED notification', () => {
+      expect(mockQueuedMessages).toContainEqual({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId,
+        body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
+      })
     })
   })
 })

@@ -31,6 +31,8 @@ import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -85,6 +87,23 @@ export class ApplicationsController {
   ): Promise<NotificationResponseDto> {
     return await this.applicationsService.notifyExternalService(
       notificationDto,
+      user,
+    )
+  }
+
+  @ApiOperation({ summary: 'Get data from external url' })
+  @ApiOkResponse({
+    description: 'Get data from external url',
+    type: DataFromUrlResDto,
+  })
+  @ApiBody({ type: DataFromUrlReqDto })
+  @Post('dataFromUrl')
+  async getDataFromUrl(
+    @Body() dataFromUrlRequestDto: DataFromUrlReqDto,
+    @CurrentUser() user: User,
+  ): Promise<DataFromUrlResDto> {
+    return await this.applicationsService.getDataFromUrl(
+      dataFromUrlRequestDto,
       user,
     )
   }
@@ -161,8 +180,12 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<SubmitApplicationResponseDto> {
-    return await this.applicationsService.submit(id)
+  async submit(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<SubmitApplicationResponseDto> {
+    return await this.applicationsService.submit(id, user)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })

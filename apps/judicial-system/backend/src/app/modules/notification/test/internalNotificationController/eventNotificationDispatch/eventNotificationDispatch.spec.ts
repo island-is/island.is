@@ -6,7 +6,6 @@ import {
   CaseType,
   EventNotificationType,
   IndictmentCaseNotificationType,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
