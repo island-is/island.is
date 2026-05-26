@@ -126,7 +126,9 @@ const ContentExportScreen = () => {
       )
       if (!foundContentType) throw new Error('Content type not found')
 
-      const contentTypeFields = foundContentType.contentType.fields
+      const contentTypeFields = foundContentType.contentType.fields.filter(
+        (field) => field.type !== 'RichText',
+      )
 
       const csvHeader: string[] = [
         'Contentful URL',
