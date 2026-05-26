@@ -64,7 +64,18 @@ export const UnemploymentBenefitsSchema = z.object({
   educationHistory: educationHistorySchema,
   education: educationSchema,
   licenses: licenseSchema,
-  languageSkills: z.array(languageSkillsSchema),
+  languageSkills: z.array(languageSkillsSchema).refine(
+    (items) =>
+      items.every((item, index) => {
+        if (index < 2) return true
+        const hasLanguage = !!item.language
+        const hasSkill = !!item.skill
+        return hasLanguage && hasSkill
+      }),
+    {
+      params: serviceErrors.languageError,
+    },
+  ),
   euresJobSearch: euresSchema,
   workingAbility: workingAbilitySchema,
   resume: resumeSchema,
