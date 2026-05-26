@@ -662,7 +662,7 @@ const collapseWhitespace = (runs: Run[]): Run[] => {
 
 export const htmlToBlocks = (html: string): RichTextBlock[] => {
   const dom = parseDocument(html)
-  const blocks = collectBlocksFromNodes(dom.children as ChildNode[])
+  const blocks = collectBlocksFromNodes(dom.children)
   return blocks.map((block) => ({
     ...block,
     runs: collapseWhitespace(block.runs),
