@@ -104,6 +104,11 @@ export default function HomeScreen() {
     false,
     null,
   )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
 
   const [refetching, setRefetching] = useState(false)
 
@@ -142,7 +147,7 @@ export default function HomeScreen() {
     variables: {
       input: { page: 1, pageSize: 3 },
     },
-    skip: !inboxWidgetEnabled,
+    skip: !inboxWidgetEnabled || isInboxWidgetDisabled !== false,
   })
 
   const licensesRes = useListLicensesQuery({
@@ -217,11 +222,15 @@ export default function HomeScreen() {
       })
 
       preferencesStore.setState({
-        inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+        ...(isInboxWidgetDisabled !== null && {
+          inboxWidgetEnabled: isInboxWidgetDisabled
+            ? false
+            : shouldShowInboxWidget,
+        }),
         ...(isAppointmentsEnabled !== null && {
           appointmentsWidgetEnabled: isAppointmentsEnabled
             ? validateAppointmentsInitialData({ ...appointmentsRes })
@@ -245,7 +254,8 @@ export default function HomeScreen() {
         appointmentsRes.loading ||
         notificationsRes.loading ||
         isAppointmentsEnabled === null ||
-        isNotificationsWidgetEnabled === null
+        isNotificationsWidgetEnabled === null ||
+        isInboxWidgetDisabled === null
       ) {
         return
       }
@@ -270,6 +280,7 @@ export default function HomeScreen() {
     notificationsRes,
     isAppointmentsEnabled,
     isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const renderItem = useCallback(
@@ -310,7 +321,9 @@ export default function HomeScreen() {
     try {
       const promises = [
         applicationsWidgetEnabled && applicationsRes.refetch(),
-        inboxWidgetEnabled && inboxRes.refetch(),
+        inboxWidgetEnabled &&
+          isInboxWidgetDisabled === false &&
+          inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
@@ -345,6 +358,7 @@ export default function HomeScreen() {
     notificationsWidgetEnabled,
     isAppointmentsEnabled,
     isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const data = [
@@ -361,7 +375,10 @@ export default function HomeScreen() {
     },
     {
       id: 'inbox',
-      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+      component:
+        inboxWidgetEnabled && isInboxWidgetDisabled === false ? (
+          <InboxModule {...inboxRes} />
+        ) : null,
     },
     {
       id: 'appointments',

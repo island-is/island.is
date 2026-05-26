@@ -23,6 +23,11 @@ export default function HomeOptionsScreen() {
     false,
     null,
   )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
@@ -75,17 +80,21 @@ export default function HomeOptionsScreen() {
           },
         ]
       : []),
-    {
-      enabled: inboxWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.inbox',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          inboxWidgetEnabled: value,
-        })
-      },
-    },
+    ...(isInboxWidgetDisabled === false
+      ? [
+          {
+            enabled: inboxWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.inbox',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                inboxWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
     ...(isAppointmentsEnabled
       ? [
           {
