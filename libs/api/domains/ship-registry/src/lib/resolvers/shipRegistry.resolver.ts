@@ -10,7 +10,7 @@ import { ShipSearchInput } from '../dto/ship-search.input'
 export class ShipRegistryResolver {
   constructor(private readonly service: ShipRegistryClientService) {}
 
-  @Query(() => ShipSearch, { name: 'shipRegistryShipSearch', nullable: true })
+  @Query(() => ShipSearch, { name: 'shipRegistryShipSearch' })
   async shipSearch(@Args('input') input: ShipSearchInput): Promise<ShipSearch> {
     return this.service.findShipByNameOrNumber(input)
   }
