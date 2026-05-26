@@ -30,7 +30,7 @@ import {
   Case,
   IndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isIndictmentCountComplete } from '@island.is/judicial-system-web/src/utils/validate'
+import { getIndictmentCountWarningMessage } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './Indictment.strings'
 import * as styles from './IndictmentCountAccordionItem.css'
@@ -48,7 +48,7 @@ interface IndictmentCountLabelProps {
   index: number
   policeCaseNumber?: string | null
   formattedDate?: string
-  isComplete: boolean
+  warningMessage?: string
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -78,7 +78,7 @@ const useRaisedShadow = (value: MotionValue<number>) => {
 
 const IndictmentCountLabel = forwardRef(
   (props: IndictmentCountLabelProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const { index, policeCaseNumber, formattedDate, isComplete } = props
+    const { index, policeCaseNumber, formattedDate, warningMessage } = props
     const { formatMessage } = useIntl()
 
     const labelParts = [
@@ -89,19 +89,20 @@ const IndictmentCountLabel = forwardRef(
     return (
       <Box ref={ref} display="flex" alignItems="flexEnd" columnGap={1}>
         <Text variant="h4" as="span">
-          <motion.span layout>{index + 1}.</motion.span>{' '}
-          {labelParts.join(' ')}
+          <motion.span layout>{index + 1}.</motion.span> {labelParts.join(' ')}
         </Text>
-        {!isComplete && (
-          <Tooltip
-            placement="top"
-            as="span"
-            text={formatMessage(strings.incompleteIndictmentCountTooltip)}
+        {warningMessage && (
+          <Box
+            className={styles.warningIcon}
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
           >
-            <span>
-              <Icon icon="warning" type="filled" color="yellow600" />
-            </span>
-          </Tooltip>
+            <Tooltip placement="top" as="span" text={warningMessage}>
+              <span>
+                <Icon icon="warning" type="filled" color="yellow600" />
+              </span>
+            </Tooltip>
+          </Box>
         )}
       </Box>
     )
@@ -133,7 +134,10 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
     )
   }, [indictmentCount.policeCaseNumber, workingCase.crimeScenes])
 
-  const isComplete = isIndictmentCountComplete(indictmentCount, workingCase)
+  const warningMessage = getIndictmentCountWarningMessage(
+    indictmentCount,
+    workingCase,
+  )
 
   const handlePointerDown = (evt: PointerEvent) => {
     evt.preventDefault()
@@ -179,7 +183,7 @@ export const IndictmentCountAccordionItem: FC<Props> = ({
                 index={index}
                 policeCaseNumber={indictmentCount.policeCaseNumber}
                 formattedDate={formattedDate}
-                isComplete={isComplete}
+                warningMessage={warningMessage}
               />
             }
           >

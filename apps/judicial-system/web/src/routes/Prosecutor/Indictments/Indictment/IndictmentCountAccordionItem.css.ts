@@ -2,7 +2,19 @@ import { style } from '@vanilla-extract/css'
 
 export const reorderItem = style({
   position: 'relative',
-  overflow: 'hidden',
+})
+
+export const warningIcon = style({
+  position: 'relative',
+  zIndex: 1,
+  display: 'inline-flex',
+  alignItems: 'center',
+  flexShrink: 0,
+  selectors: {
+    '&:hover': {
+      zIndex: 50,
+    },
+  },
 })
 
 export const itemWrapper = style({

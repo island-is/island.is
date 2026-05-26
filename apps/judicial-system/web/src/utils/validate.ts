@@ -331,25 +331,82 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
+const hasIndictmentCountOffenses = (count: IndictmentCount) =>
+  Boolean(count.offenses && count.offenses.length > 0)
+
+const isSpeedingIndictmentCount = (count: IndictmentCount) =>
+  count.offenses?.some((o) => o.offense === IndictmentCountOffense.SPEEDING) ??
+  false
+
+const isValidSpeedingIndictmentCount = (count: IndictmentCount) =>
+  isSpeedingIndictmentCount(count)
+    ? Boolean(count.recordedSpeed) && Boolean(count.speedLimit)
+    : true
+
+const isIndictmentCountTrafficViolation = (
+  count: IndictmentCount,
+  workingCase: Case,
+) =>
+  isTrafficViolationIndictmentCount(
+    count.indictmentCountSubtypes,
+    count.policeCaseNumber &&
+      workingCase.indictmentSubtypes[count.policeCaseNumber],
+  )
+
+export const getIndictmentCountWarningMessage = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): string | undefined => {
+  if (isIndictmentCountComplete(indictmentCount, workingCase)) {
+    return undefined
+  }
+
+  if (!indictmentCount.policeCaseNumber) {
+    return 'Vantar LÖKE málsnúmer'
+  }
+
+  if (!isIndictmentCountTrafficViolation(indictmentCount, workingCase)) {
+    if (!indictmentCount.incidentDescription) {
+      return 'Vantar atvikalýsingu'
+    }
+    if (!indictmentCount.legalArguments) {
+      return 'Vantar heimfærslu'
+    }
+    return undefined
+  }
+
+  if (!hasIndictmentCountOffenses(indictmentCount)) {
+    return 'Vantar brot'
+  }
+  if (!indictmentCount.vehicleRegistrationNumber) {
+    return 'Vantar skráningarnúmer ökutækis'
+  }
+  if (!indictmentCount.lawsBroken) {
+    return 'Vantar lagaákvæði'
+  }
+  if (!indictmentCount.incidentDescription) {
+    return 'Vantar atvikalýsingu'
+  }
+  if (!indictmentCount.legalArguments) {
+    return 'Vantar heimfærslu'
+  }
+  if (!indictmentCount.recordedSpeed) {
+    return 'Vantar mældan hraða'
+  }
+  if (!indictmentCount.speedLimit) {
+    return 'Vantar hámarkshraða'
+  }
+
+  return undefined
+}
+
 export const isIndictmentCountComplete = (
   indictmentCount: IndictmentCount,
   workingCase: Case,
 ): boolean => {
-  const isValidSpeedingIndictmentCount = (count: IndictmentCount) => {
-    return count.offenses?.some(
-      (o) => o.offense === IndictmentCountOffense.SPEEDING,
-    )
-      ? Boolean(count.recordedSpeed) && Boolean(count.speedLimit)
-      : true
-  }
-
-  const hasOffenses = (count: IndictmentCount) => {
-    return Boolean(count.offenses && count.offenses?.length > 0)
-  }
-
   const isValidTrafficViolation = (count: IndictmentCount) =>
     Boolean(count.policeCaseNumber) &&
-    hasOffenses(count) &&
+    hasIndictmentCountOffenses(count) &&
     Boolean(count.vehicleRegistrationNumber) &&
     Boolean(count.lawsBroken) &&
     Boolean(count.incidentDescription) &&
@@ -359,14 +416,7 @@ export const isIndictmentCountComplete = (
   const isValidNonTrafficViolation = (count: IndictmentCount) =>
     Boolean(count.incidentDescription) && Boolean(count.legalArguments)
 
-  const isTrafficViolation = (count: IndictmentCount) =>
-    isTrafficViolationIndictmentCount(
-      count.indictmentCountSubtypes,
-      count.policeCaseNumber &&
-        workingCase.indictmentSubtypes[count.policeCaseNumber],
-    )
-
-  return isTrafficViolation(indictmentCount)
+  return isIndictmentCountTrafficViolation(indictmentCount, workingCase)
     ? isValidTrafficViolation(indictmentCount)
     : isValidNonTrafficViolation(indictmentCount)
 }

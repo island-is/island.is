@@ -67,12 +67,6 @@ export const strings = {
       description:
         'Notaður sem texti á hnappi til að raða ákæruliðum í tímaröð á ákæra skrefi í ákærum.',
     },
-    incompleteIndictmentCountTooltip: {
-      id: 'judicial.system.core:indictments_indictment.incomplete_indictment_count_tooltip',
-      defaultMessage: 'Óútfylltir reitir',
-      description:
-        'Notaður sem skýringartexti þegar ákæruliður er ekki útfylltur á ákæra skrefi í ákærum.',
-    },
     policeCaseNumberNotSelected: {
       id: 'judicial.system.core:indictments_indictment.police_case_number_not_selected',
       defaultMessage: 'Ekki valið',
