@@ -622,7 +622,16 @@ export class InternalCaseService {
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-        [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+        [
+          { model: IndictmentCount, as: 'indictmentCounts' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: IndictmentCount, as: 'indictmentCounts' },
+          'created',
+          'ASC',
+        ],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
       ],

@@ -40,6 +40,9 @@ describe('IndictmentCountController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockMax = mockIndictmentCountModel.max as jest.Mock
+      mockMax.mockResolvedValueOnce(-1)
+
       const mockCreate = mockIndictmentCountModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdIndictmentCount)
 
@@ -49,6 +52,7 @@ describe('IndictmentCountController - Create', () => {
     it('should create an indictment count', () => {
       expect(mockIndictmentCountModel.create).toHaveBeenCalledWith({
         caseId,
+        displayOrder: 0,
       })
       expect(then.result).toBe(createdIndictmentCount)
     })

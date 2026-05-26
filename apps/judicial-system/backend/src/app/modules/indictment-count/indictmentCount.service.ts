@@ -54,8 +54,77 @@ export class IndictmentCountService {
     return indictmentCount
   }
 
+  async getMaxDisplayOrder(
+    caseId: string,
+    transaction?: Transaction,
+  ): Promise<number> {
+    const maxDisplayOrder = await this.indictmentCountModel.max(
+      'displayOrder',
+      {
+        where: { caseId },
+        transaction,
+      },
+    )
+
+    return typeof maxDisplayOrder === 'number' ? maxDisplayOrder : -1
+  }
+
+  async reorder(
+    caseId: string,
+    counts: { id: string; displayOrder: number }[],
+    transaction: Transaction,
+  ): Promise<IndictmentCount[]> {
+    const updates = counts.map(async ({ id, displayOrder }) => {
+      const [numberOfAffectedRows, updatedIndictmentCounts] =
+        await this.indictmentCountModel.update(
+          { displayOrder },
+          {
+            where: { id, caseId },
+            returning: true,
+            transaction,
+          },
+        )
+
+      if (numberOfAffectedRows !== 1 || !updatedIndictmentCounts[0]) {
+        throw new NotFoundException(
+          `IndictmentCount ${id} not found for case ${caseId}`,
+        )
+      }
+
+      return updatedIndictmentCounts[0]
+    })
+
+    return Promise.all(updates)
+  }
+
+  async renormalizeDisplayOrder(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const counts = await this.indictmentCountModel.findAll({
+      where: { caseId },
+      order: [
+        ['displayOrder', 'ASC'],
+        ['created', 'ASC'],
+      ],
+      transaction,
+    })
+
+    if (counts.length === 0) {
+      return
+    }
+
+    await this.reorder(
+      caseId,
+      counts.map((count, index) => ({ id: count.id, displayOrder: index })),
+      transaction,
+    )
+  }
+
   async create(caseId: string): Promise<IndictmentCount> {
-    return this.indictmentCountModel.create({ caseId })
+    const displayOrder = (await this.getMaxDisplayOrder(caseId)) + 1
+
+    return this.indictmentCountModel.create({ caseId, displayOrder })
   }
 
   async createWithPoliceCaseNumber(
@@ -63,8 +132,11 @@ export class IndictmentCountService {
     policeCaseNumber: string,
     transaction: Transaction,
   ): Promise<IndictmentCount> {
+    const displayOrder =
+      (await this.getMaxDisplayOrder(caseId, transaction)) + 1
+
     return this.indictmentCountModel.create(
-      { caseId, policeCaseNumber },
+      { caseId, policeCaseNumber, displayOrder },
       { transaction },
     )
   }
@@ -162,6 +234,8 @@ export class IndictmentCountService {
         `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
       )
     }
+
+    await this.renormalizeDisplayOrder(caseId, transaction)
 
     return true
   }
