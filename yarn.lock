@@ -25966,7 +25966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:^10.2.4":
+"copy-webpack-plugin@npm:10.2.4, copy-webpack-plugin@npm:^10.2.4":
   version: 10.2.4
   resolution: "copy-webpack-plugin@npm:10.2.4"
   dependencies:
@@ -35379,6 +35379,7 @@ __metadata:
     contentful-ui-extensions-sdk: "npm:3.32.0"
     cookie-parser: "npm:1.4.5"
     copy-to-clipboard: "npm:3.3.1"
+    copy-webpack-plugin: "npm:10.2.4"
     core-js: "npm:3.36.1"
     cross-env: "npm:7.0.2"
     cross-spawn: "npm:7.0.3"
@@ -35563,6 +35564,7 @@ __metadata:
     swagger-ui-express: "npm:4.3.0"
     swr: "npm:1.2.0"
     testcontainers: "npm:7.23.2"
+    tinymce: "npm:5.10.9"
     to-querystring: "npm:1.1.1"
     triple-beam: "npm:1.3.0"
     ts-dedent: "npm:2.0.0"
@@ -50397,7 +50399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
+"tinymce@npm:5.10.9, tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
   version: 5.10.9
   resolution: "tinymce@npm:5.10.9"
   checksum: 10/58e6aaa6ae44da2e6b8387c2d67d5eae79e84c277d15b3411b1fbabcf3577836713c7fe80698891e4a4f6fed545ae1774b76f38898f8eca9c055d992585eacfd

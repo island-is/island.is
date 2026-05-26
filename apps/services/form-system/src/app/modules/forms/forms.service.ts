@@ -65,6 +65,7 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
+import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 
 @Injectable()
 export class FormsService {
@@ -134,7 +135,6 @@ export class FormsService {
       'modified',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'isTranslated',
       'hasPayment',
@@ -848,7 +848,6 @@ export class FormsService {
       'allowProceedOnValidationFail',
       'zendeskInternal',
       'useValidate',
-      'usePopulate',
       'submissionServiceUrl',
       'hasSummaryScreen',
       'sectionInfo',
@@ -865,6 +864,10 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        organizationZendeskInstance: {
+          zendeskInstance: '',
+          zendeskBrandId: '',
+        } as OrganizationZendeskInstanceDto,
       },
     ) as FormDto
 
@@ -904,7 +907,6 @@ export class FormsService {
       'multiMax',
       'isMulti',
       'shouldValidate',
-      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',
@@ -954,6 +956,14 @@ export class FormsService {
         })
       })
     })
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    formDto.organizationZendeskInstance.zendeskInstance =
+      organization?.zendeskInstance ?? ''
+    formDto.organizationZendeskInstance.zendeskBrandId =
+      organization?.zendeskBrandId ?? ''
 
     return formDto
   }
