@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
@@ -39,7 +38,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,

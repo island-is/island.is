@@ -13,7 +13,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
-import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -46,6 +45,7 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   TrackedNotificationType,

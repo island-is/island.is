@@ -7,7 +7,6 @@ import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
-  CaseOrigin,
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonAdminUser,
@@ -51,6 +50,7 @@ import {
   AppealCaseState,
   Case,
   CaseDecision,
+  CaseOrigin,
   CaseState,
   Institution,
   RequestSignatureResponse,

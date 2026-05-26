@@ -6,7 +6,6 @@ import { Accordion } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
-  CaseOrigin,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
@@ -26,6 +25,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCaseBanner,
   usePoliceDigitalCaseFile,
