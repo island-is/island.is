@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10014/DMR-Protected/getOpenAPI?serviceCode=directorate-of-equality > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/DMR-Protected/getOpenAPI?serviceCode=api.ritstjorn-jafnretti > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
