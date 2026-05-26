@@ -47,6 +47,7 @@ export class PaymentCallbackController {
       this.logger.info(
         `Received successful payment callback with data: paymentId=${callback.paymentFlowMetadata.paymentId}, applicationId=${callback.paymentFlowMetadata.applicationId}, receptionId=${callback.details?.eventMetadata?.charge?.receptionId}`,
       )
+
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
       }
@@ -61,18 +62,18 @@ export class PaymentCallbackController {
         )
       }
 
+      await this.paymentService.fulfillPayment(
+        callback.paymentFlowMetadata.paymentId,
+        callback.paymentFlowMetadata.applicationId,
+        callback.paymentFlowId,
+      )
+
       const result = await this.applicationsService.submit(
         callback.paymentFlowMetadata.applicationId,
       )
       if (result.submissionFailed) {
         throw new InternalServerErrorException('Application submission failed')
       }
-
-      await this.paymentService.fulfillPayment(
-        callback.paymentFlowMetadata.paymentId,
-        callback.paymentFlowMetadata.applicationId,
-        callback.paymentFlowId,
-      )
     }
   }
 }
