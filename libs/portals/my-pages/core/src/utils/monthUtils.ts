@@ -16,7 +16,9 @@ const monthKeys: Array<keyof typeof m> = [
   'december',
 ]
 
-export const monthNumberToMessage = (n: number): MessageDescriptor | undefined => {
+export const monthNumberToMessage = (
+  n: number,
+): MessageDescriptor | undefined => {
   if (n < 1 || n > 12) return undefined
   return m[monthKeys[n - 1]]
 }
