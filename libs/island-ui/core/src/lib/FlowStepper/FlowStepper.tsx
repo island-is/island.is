@@ -6,12 +6,16 @@ import React, {
   useState,
 } from 'react'
 import { Box } from '../Box/Box'
-import { Button } from '../Button/Button'
+import { Button, ButtonBaseProps } from '../Button/Button'
 import { Icon } from '../IconRC/Icon'
 import { Text } from '../Text/Text'
 import { IconMapIcon as IconType } from '../IconRC/types'
 import * as styles from './FlowStepper.css'
 import cn from 'classnames'
+
+type PrimaryButtonColorScheme = NonNullable<
+  Extract<ButtonBaseProps, { variant?: 'primary' }>['colorScheme']
+>
 
 export interface FlowStep {
   id: string
@@ -19,6 +23,7 @@ export interface FlowStep {
   content: ReactNode
   continueButtonLabel?: string
   continueButtonIcon?: IconType
+  continueButtonColorScheme?: PrimaryButtonColorScheme
   onContinue?: () => void | Promise<void>
   continueButtonDisabled?: boolean
   onBack?: () => void
@@ -206,6 +211,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
         </Button>
         <Button
           variant="primary"
+          colorScheme={currentStep?.continueButtonColorScheme}
           onClick={handleContinue}
           disabled={currentStep?.continueButtonDisabled || loading}
           loading={loading}

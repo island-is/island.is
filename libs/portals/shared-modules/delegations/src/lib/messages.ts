@@ -439,6 +439,23 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:confirm-access-button-label',
     defaultMessage: 'Staðfesta skráningu umboðs',
   },
+  deleteWarningStepLabel: {
+    id: 'sp.access-control-delegations:delete-warning-step-label',
+    defaultMessage: 'Eyða umboði',
+  },
+  deleteWarningTitle: {
+    id: 'sp.access-control-delegations:delete-warning-title',
+    defaultMessage: 'Engin réttindi valin',
+  },
+  deleteWarningBody: {
+    id: 'sp.access-control-delegations:delete-warning-body',
+    defaultMessage:
+      'Ef öll réttindi eru fjarlægð verður umboðinu eytt. Smelltu á "Eyða umboði" til að halda áfram.',
+  },
+  deleteWarningButton: {
+    id: 'sp.access-control-delegations:delete-warning-button',
+    defaultMessage: 'Eyða umboði',
+  },
   confirmAccessModalTitle: {
     id: 'sp.access-control-delegations:confirm-access-modal-title',
     defaultMessage: 'Staðfesta veitingu á nýju umboði',
