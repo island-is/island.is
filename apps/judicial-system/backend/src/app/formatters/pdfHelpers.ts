@@ -1,3 +1,5 @@
+import type { ChildNode, Element, Text } from 'domhandler'
+import { parseDocument } from 'htmlparser2'
 import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
@@ -485,4 +487,279 @@ export const addNumberedList = (
   }
 
   doc.x = originalX
+}
+
+interface Run {
+  text: string
+  bold: boolean
+  italic: boolean
+  highlight: string | false
+}
+
+export interface RichTextBlock {
+  runs: Run[]
+  indent: number
+  softBreak?: boolean
+}
+
+// Values that mean "no highlight" and must not be drawn as a filled rect.
+// PDFKit cannot parse these and would fall back to a solid black fill.
+const NON_HIGHLIGHT_BG = new Set([
+  'transparent',
+  'inherit',
+  'initial',
+  'unset',
+  'none',
+  '',
+])
+
+const extractBgColor = (style: string): string | null => {
+  const m = style.match(/background-color:\s*([^;]+)/)
+  if (!m) return null
+
+  const value = m[1].trim()
+  const normalized = value.toLowerCase()
+
+  if (NON_HIGHLIGHT_BG.has(normalized)) return null
+
+  // rgba(...) with a zero alpha channel is also effectively transparent. Match
+  // only the four-component rgba() form so an opaque rgb(r, g, 0) (e.g. yellow)
+  // is not mistaken for transparent.
+  if (/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0*\.?0+\s*\)/.test(normalized))
+    return null
+
+  return value
+}
+
+const collectRuns = (
+  nodes: ChildNode[],
+  bold: boolean,
+  italic: boolean,
+  highlight: string | false,
+  result: Run[],
+): void => {
+  for (const node of nodes) {
+    if (node.type === 'text') {
+      const text = (node as Text).data
+      if (text) result.push({ text, bold, italic, highlight })
+      continue
+    }
+    if (node.type !== 'tag') continue
+    const el = node as Element
+    const children = el.children ?? []
+    if (el.name === 'strong' || el.name === 'b') {
+      collectRuns(children, true, italic, highlight, result)
+    } else if (el.name === 'em' || el.name === 'i') {
+      collectRuns(children, bold, true, highlight, result)
+    } else if (
+      el.name === 'span' &&
+      el.attribs?.style?.includes('background-color')
+    ) {
+      // A transparent/invalid background means no highlight, so inherit the
+      // current highlight state rather than forcing a fill.
+      const color = extractBgColor(el.attribs.style) ?? highlight
+      collectRuns(children, bold, italic, color, result)
+    } else if (el.name === 'br') {
+      result.push({ text: '\n', bold: false, italic: false, highlight: false })
+    } else {
+      collectRuns(children, bold, italic, highlight, result)
+    }
+  }
+}
+
+const collectBlocksFromNodes = (
+  nodes: ChildNode[],
+  indent = 0,
+): RichTextBlock[] => {
+  const blocks: RichTextBlock[] = []
+
+  for (const node of nodes) {
+    if (node.type === 'text') {
+      const text = (node as Text).data.trim()
+      if (text) {
+        blocks.push({
+          runs: [{ text, bold: false, italic: false, highlight: false }],
+          indent,
+        })
+      }
+      continue
+    }
+    if (node.type !== 'tag') continue
+    const el = node as Element
+    const children = el.children ?? []
+
+    if (el.name === 'p') {
+      const style = el.attribs?.style ?? ''
+      const paddingMatch = style.match(/padding-left:\s*(\d+(?:\.\d+)?)px/)
+      const pIndent = paddingMatch
+        ? Math.round(parseFloat(paddingMatch[1]) * 0.75)
+        : 0
+
+      const segments: ChildNode[][] = [[]]
+      for (const child of children) {
+        if (child.type === 'tag' && (child as Element).name === 'br') {
+          segments.push([])
+        } else {
+          segments[segments.length - 1].push(child)
+        }
+      }
+      if (segments.length > 1 && segments[segments.length - 1].length === 0) {
+        segments.pop()
+      }
+
+      for (let s = 0; s < segments.length; s++) {
+        const runs: Run[] = []
+        collectRuns(segments[s], false, false, false, runs)
+        blocks.push({
+          runs,
+          indent: indent + pIndent,
+          softBreak: s < segments.length - 1,
+        })
+      }
+    } else {
+      blocks.push(...collectBlocksFromNodes(children, indent))
+    }
+  }
+
+  return blocks
+}
+
+// Collapse whitespace within a block the way a browser renders inline content
+// (white-space: normal): runs of spaces become one, and leading/trailing
+// whitespace is dropped. Without this, Word's empty `<span> </span>` spacers
+// render as literal spaces in the PDF even though the editor hides them.
+const collapseWhitespace = (runs: Run[]): Run[] => {
+  const collapsed: Run[] = []
+  // Start true so leading whitespace at the block start is trimmed.
+  let prevEndsWithSpace = true
+
+  for (const run of runs) {
+    // A <br>-derived run is a hard break; keep it and reset the space state.
+    if (run.text === '\n') {
+      collapsed.push(run)
+      prevEndsWithSpace = true
+      continue
+    }
+
+    let text = run.text.replace(/[ \t\r\n]+/g, ' ')
+    if (prevEndsWithSpace && text.startsWith(' ')) {
+      text = text.slice(1)
+    }
+    if (text === '') continue
+
+    collapsed.push({ ...run, text })
+    prevEndsWithSpace = text.endsWith(' ')
+  }
+
+  const last = collapsed[collapsed.length - 1]
+  if (last && last.text.endsWith(' ')) {
+    last.text = last.text.replace(/ +$/, '')
+    if (last.text === '') collapsed.pop()
+  }
+
+  return collapsed
+}
+
+export const htmlToBlocks = (html: string): RichTextBlock[] => {
+  const dom = parseDocument(html)
+  const blocks = collectBlocksFromNodes(dom.children)
+  return blocks.map((block) => ({
+    ...block,
+    runs: collapseWhitespace(block.runs),
+  }))
+}
+
+const getFontName = (run: Run): string => {
+  if (run.bold && run.italic) return 'Times-BoldItalic'
+  if (run.bold) return 'Times-Bold'
+  if (run.italic) return 'Times-Italic'
+  return 'Times-Roman'
+}
+
+export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
+  const blocks = htmlToBlocks(html)
+
+  for (const block of blocks) {
+    const isEmptyBlock =
+      block.runs.length === 0 || block.runs.every((r) => !r.text.trim())
+
+    if (isEmptyBlock) {
+      addEmptyLines(doc)
+      continue
+    }
+
+    const leftX = doc.page.margins.left + block.indent
+    const width = doc.page.width - doc.page.margins.right - leftX
+    const blockY = doc.y
+    let currentX = leftX
+    const paragraphGap = block.softBreak ? 0 : 1
+
+    for (let i = 0; i < block.runs.length; i++) {
+      const run = block.runs[i]
+      const isLast = i === block.runs.length - 1
+
+      doc.font(getFontName(run)).fontSize(baseFontSize)
+
+      if (run.highlight) {
+        const lineHeight = doc.currentLineHeight(true)
+        const h = doc.currentLineHeight(false)
+        // Shift rect up by half the descender height to centre around visible glyphs
+        const descender =
+          (Math.abs(
+            (doc as PDFKit.PDFDocument & { _font?: { descender?: number } })
+              ._font?.descender ?? 200,
+          ) /
+            1000) *
+          baseFontSize
+        const hPad = 1
+
+        // Simulate word-wrap to draw one highlight rect per laid-out line
+        const words = run.text.split(' ')
+        let lineText = ''
+        let lineIdx = 0
+        let lineAvailable = width - (currentX - leftX)
+
+        const drawHighlightRect = (text: string, idx: number) => {
+          const x = idx === 0 ? currentX : leftX
+          doc
+            .rect(
+              x - hPad,
+              blockY + idx * (lineHeight + 2) - descender / 2 - 1,
+              doc.widthOfString(text) + hPad * 2,
+              h + descender + 1,
+            )
+            .fill(run.highlight as string)
+        }
+
+        for (const word of words) {
+          const candidate = lineText ? `${lineText} ${word}` : word
+          if (doc.widthOfString(candidate) > lineAvailable && lineText) {
+            drawHighlightRect(lineText, lineIdx)
+            lineText = word
+            lineIdx++
+            lineAvailable = width
+          } else {
+            lineText = candidate
+          }
+        }
+        if (lineText) {
+          drawHighlightRect(lineText, lineIdx)
+        }
+
+        doc.fillColor('black')
+      }
+
+      if (i === 0) {
+        doc.text(run.text, leftX, blockY, {
+          continued: !isLast,
+          paragraphGap,
+          width,
+        })
+      } else {
+        doc.text(run.text, { continued: !isLast, paragraphGap })
+      }
+
+      currentX += doc.widthOfString(run.text)
+    }
+  }
 }

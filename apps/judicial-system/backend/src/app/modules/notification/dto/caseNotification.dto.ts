@@ -3,7 +3,7 @@ import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { User, UserDescriptor } from '@island.is/judicial-system/types'
-import { RequestCaseNotificationType } from '@island.is/judicial-system/types'
+import { UmbrellaNotificationType } from '@island.is/judicial-system/types'
 
 export class CaseNotificationDto {
   @IsNotEmpty()
@@ -12,9 +12,9 @@ export class CaseNotificationDto {
   readonly user!: User
 
   @IsNotEmpty()
-  @IsEnum(RequestCaseNotificationType)
-  @ApiProperty({ enum: RequestCaseNotificationType })
-  readonly type!: RequestCaseNotificationType
+  @IsEnum(UmbrellaNotificationType)
+  @ApiProperty({ enum: UmbrellaNotificationType })
+  readonly type!: UmbrellaNotificationType
 
   // notifications triggered from the event service don't always have the user object defined,
   // thus we include an optional sibling subtype of User to handle a minimal user info that
