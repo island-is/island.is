@@ -46,25 +46,11 @@ export default function HomeOptionsScreen() {
   const appointmentsWidgetEnabled = usePreferencesStore(
     ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
   )
-  const graphicWidgetEnabled = usePreferencesStore(
-    ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
-  )
   const notificationsWidgetEnabled = usePreferencesStore(
     ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
   )
 
   const items = [
-    {
-      enabled: graphicWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.graphic',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          graphicWidgetEnabled: value,
-        })
-      },
-    },
     ...(isNotificationsWidgetEnabled
       ? [
           {

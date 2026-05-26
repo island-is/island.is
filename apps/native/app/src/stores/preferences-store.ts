@@ -20,7 +20,6 @@ export interface PreferencesStore {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
-  graphicWidgetEnabled: boolean
   inboxWidgetEnabled: boolean
   applicationsWidgetEnabled: boolean
   licensesWidgetEnabled: boolean
@@ -64,7 +63,6 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
-  graphicWidgetEnabled: true,
   inboxWidgetEnabled: true,
   applicationsWidgetEnabled: true,
   licensesWidgetEnabled: true,
