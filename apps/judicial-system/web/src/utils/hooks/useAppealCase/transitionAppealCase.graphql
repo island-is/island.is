@@ -3,5 +3,6 @@ mutation TransitionAppealCase($input: TransitionAppealCaseInput!) {
     id
     appealState
     appealReceivedByCourtDate
+    appealRulingDate
   }
 }
