@@ -86,9 +86,10 @@ export const IndictmentCountsList: FC<Props> = ({
     reorderableCountsRef.current = sorted
   }, [sorted])
 
-  useEffect(() => {
-    reorderableCountsRef.current = reorderableCounts
-  }, [reorderableCounts])
+  const handleReorder = useCallback((newOrder: TIndictmentCount[]) => {
+    reorderableCountsRef.current = newOrder
+    setReorderableCounts(newOrder)
+  }, [])
 
   const persistOrder = useCallback(
     async (counts: TIndictmentCount[]) => {
@@ -158,7 +159,7 @@ export const IndictmentCountsList: FC<Props> = ({
       <Reorder.Group
         axis="y"
         values={reorderableCounts}
-        onReorder={setReorderableCounts}
+        onReorder={handleReorder}
       >
         <Accordion singleExpand={false} dividerOnTop={false}>
           {reorderableCounts.map((indictmentCount, index) => (
@@ -173,9 +174,7 @@ export const IndictmentCountsList: FC<Props> = ({
               <IndictmentCount
                 indictmentCount={indictmentCount}
                 workingCase={workingCase}
-                onDelete={
-                  canDelete ? handleDeleteIndictmentCount : undefined
-                }
+                onDelete={canDelete ? handleDeleteIndictmentCount : undefined}
                 onChange={handleUpdateIndictmentCount}
                 setWorkingCase={setWorkingCase}
                 updateIndictmentCountState={updateIndictmentCountState}
