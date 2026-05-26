@@ -16,7 +16,7 @@ export const jobWishesSchema = z
     wantedJobPercentage: z
       .string()
       .min(1)
-      .refine((v) => Number(v) > 0),
+      .refine((v) => Number(v) >= 1),
     jobTimelineStartDate: z.string().min(1),
   })
   .refine(
