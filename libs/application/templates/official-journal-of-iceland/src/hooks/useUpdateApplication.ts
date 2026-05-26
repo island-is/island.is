@@ -84,7 +84,13 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     const payloadSize = new Blob([JSON.stringify(mutationInput)]).size
     if (payloadSize > MAX_APPLICATION_PAYLOAD_BYTES) {
       console.error('Error: Attachment too large')
-      setValue(InputFields.misc.mainTextAsFile, true)
+      await updateApplicationV2({
+        path: InputFields.misc.mainTextAsFile,
+        value: true,
+        onError: (err) => {
+          console.error('Failed to persist mainTextAsFile flag:', err)
+        },
+      })
       cb && cb()
       return
     }
