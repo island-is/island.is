@@ -9,23 +9,15 @@ import { LawAndOrderPaths } from './lib/paths'
 import Verdict from './screens/Verdict/Verdict'
 
 const CourtCases = lazy(() => import('./screens/CourtCases/CourtCases'))
-const CourtCaseDetail = lazy(() =>
-  import('./screens/CourtCaseDetail/CourtCaseDetail'),
+const CourtCaseDetail = lazy(
+  () => import('./screens/CourtCaseDetail/CourtCaseDetail'),
 )
 const Subpoena = lazy(() => import('./screens/Subpoena/Subpoena'))
-<<<<<<< HEAD
-const DriversPoints = lazy(() =>
-  import('./screens/DriversPoints/DriversPoints'),
-)
-const DriversDeprivations = lazy(() =>
-  import('./screens/DriversDeprivations/DriversDeprivations'),
-=======
 const DriversPoints = lazy(
   () => import('./screens/DriversPoints/DriversPoints'),
 )
 const DriversDeprivations = lazy(
   () => import('./screens/DriversDeprivations/DriversDeprivations'),
->>>>>>> 3d41db1b10 (feat: wip domain improvements)
 )
 export const lawAndOrderModule: PortalModule = {
   name: m.lawAndOrder,
