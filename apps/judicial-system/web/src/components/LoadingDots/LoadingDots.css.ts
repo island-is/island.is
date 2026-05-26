@@ -40,6 +40,7 @@ const gradient3 = `linear-gradient(90deg,
 export const colors = styleVariants({
   blue: {},
   white: {},
+  black: {},
   gradient: {},
 })
 
@@ -109,6 +110,9 @@ export const dot = style({
     },
     [`${colors.white} &`]: {
       background: theme.color.white,
+    },
+    [`${colors.black} &`]: {
+      background: theme.color.dark400,
     },
     [`${colors.gradient} &:first-child`]: {
       background: gradient1,

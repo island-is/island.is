@@ -1,14 +1,10 @@
 import { FC } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 
-import {
-  AccordionItem,
-  Box,
-  Icon,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { AccordionItem, Box, Icon, Text } from '@island.is/island-ui/core'
 import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import LoadingDots from '../../LoadingDots/LoadingDots'
 
 interface Props {
   digitalCaseFiles: PoliceDigitalCaseFile[] | null | undefined
