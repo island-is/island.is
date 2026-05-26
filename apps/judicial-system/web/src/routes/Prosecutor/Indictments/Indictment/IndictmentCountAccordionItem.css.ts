@@ -42,7 +42,7 @@ export const labelDate = style({
 
 export const itemWrapper = style({
   display: 'flex',
-  alignItems: 'stretch',
+  alignItems: 'flex-start',
 })
 
 export const dragHandle = style({
@@ -51,6 +51,7 @@ export const dragHandle = style({
   justifyContent: 'center',
   flexShrink: 0,
   width: 48,
+  height: 40,
   position: 'relative',
   zIndex: 2,
   cursor: 'grab',
