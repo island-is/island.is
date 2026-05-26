@@ -170,6 +170,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
+    reopenReason
     registrar {
       id
       name
@@ -572,6 +573,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
+      policeCaseNumbers
+      defendantIds
     }
     victims {
       id

@@ -141,18 +141,6 @@ export const unionSickPaySubSection = buildSubSection({
         }),
         buildDateField({
           id: 'unionSickPay.endDate',
-          minDate: (application) => {
-            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
-              application.answers,
-            )
-            return hasNotUtilizedRights(hasUtilizedUnionSickPayRights)
-          },
-          maxDate: (application) => {
-            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
-              application.answers,
-            )
-            return hasUtilizedRights(hasUtilizedUnionSickPayRights)
-          },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,

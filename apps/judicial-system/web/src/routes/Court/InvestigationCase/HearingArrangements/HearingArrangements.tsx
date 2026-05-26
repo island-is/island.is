@@ -30,8 +30,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
-  NotificationType,
   SessionArrangements,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -95,7 +95,7 @@ const HearingArrangements = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],
@@ -358,7 +358,7 @@ const HearingArrangements = () => {
             onClick: async () => {
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
               )
 
               if (notificationSent) {
@@ -374,7 +374,7 @@ const HearingArrangements = () => {
             onClick: () => {
               sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
                 true,
               )
 

@@ -16,13 +16,13 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
 import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 import { ApplicationDto } from './dto/application.dto'
-import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
-import { ValueDto } from './dto/value.dto'
 import {
   ApplicationXroadDto,
   ApplicationXroadFieldDto,
   ApplicationXroadValueDto,
 } from './dto/application.xroad.dto'
+import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
+import { ValueDto } from './dto/value.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -45,7 +45,6 @@ export class ApplicationMapper {
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
       useValidate: form.useValidate,
-      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
@@ -54,7 +53,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      completedSectionInfo: form.completedSectionInfo,
+      sectionInfo: form.sectionInfo,
       organizationNationalId: form.organizationNationalId,
     }
 
@@ -90,7 +89,6 @@ export class ApplicationMapper {
               multiMax: screen.multiMax,
               isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
-              shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
                 hasError: false,
                 title: { is: '', en: '' },

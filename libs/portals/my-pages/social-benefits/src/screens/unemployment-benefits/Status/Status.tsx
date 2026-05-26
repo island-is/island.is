@@ -1,4 +1,8 @@
-import { IntroWrapper, useIsMobile } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  m as coreMessages,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { useGetUnemploymentApplicationOverviewQuery } from './Status.generated'
 
@@ -25,6 +29,41 @@ const Status = () => {
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
   const availableActions = overview?.availableActions
+  const hasData = !!overview?.unemploymentApplicationId
+
+  if (!loading && error) {
+    return (
+      <IntroWrapper
+        title={formatMessage(um.title)}
+        serviceProvider={{
+          slug: 'vinnumalastofnun',
+          tooltip: formatMessage(um.tooltip),
+        }}
+      >
+        <Problem error={error} />
+      </IntroWrapper>
+    )
+  }
+
+  if (!loading && !hasData) {
+    return (
+      <IntroWrapper
+        title={formatMessage(um.title)}
+        serviceProvider={{
+          slug: 'vinnumalastofnun',
+          tooltip: formatMessage(um.tooltip),
+        }}
+      >
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessages.noData)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      </IntroWrapper>
+    )
+  }
 
   return (
     <IntroWrapper
@@ -77,10 +116,6 @@ const Status = () => {
             content: loading ? (
               <Box paddingTop={4}>
                 <SkeletonLoader repeat={5} space={2} />
-              </Box>
-            ) : error ? (
-              <Box marginTop={2}>
-                <Problem error={error} noBorder={false} />
               </Box>
             ) : (
               <OverviewTable

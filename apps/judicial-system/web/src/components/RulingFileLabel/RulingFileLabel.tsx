@@ -6,7 +6,7 @@ import { CaseFile } from '../../graphql/schema'
 
 interface Props {
   caseFiles?: CaseFile[] | null
-  rulingFileId?: string
+  rulingFileId?: string | null
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p'
 }
 

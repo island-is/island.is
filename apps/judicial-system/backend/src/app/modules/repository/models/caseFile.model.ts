@@ -21,8 +21,6 @@ import { Case } from './case.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { Defendant } from './defendant.model'
 
-// TODO Find a way to import from an index file
-
 @Table({
   tableName: 'case_file',
   timestamps: true,

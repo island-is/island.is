@@ -105,9 +105,9 @@ export const otherAddressSchema = z
 export const editUnemploymentInfoDataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   otherAddress: otherAddressSchema,
-  password: z.string().min(4),
+  password: z.string().min(4).max(10),
   bankAccount: bankAccountSchema,
-  jobWishes: z.array(z.string()),
+  jobWishes: z.array(z.string()).min(2).max(10),
   educationHistory: z.array(educationSchema),
   languageSkills: z.array(languageSkillsSchema),
   licenses: licenseSchema,

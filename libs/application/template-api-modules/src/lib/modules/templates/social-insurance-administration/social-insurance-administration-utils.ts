@@ -63,7 +63,7 @@ import { Application } from '@island.is/application/types'
 import {
   ApplicationDTO,
   DisabilityPensionDto,
-  TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument as Attachment,
   IncomeTypes,
   MedicalAndRehabilitationPaymentsDTO,
   OldAgePensionDTO,

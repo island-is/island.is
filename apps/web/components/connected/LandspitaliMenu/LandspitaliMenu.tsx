@@ -11,6 +11,7 @@ import {
   Button,
   Inline,
   LoadingDots,
+  SkeletonLoader,
   Stack,
   Tag,
   Text,
@@ -48,35 +49,43 @@ const CourseDetails = ({ course }: { course: MenuCourse }) => {
   return (
     <Stack space={3}>
       {course.nutrients?.length ? (
-        <Box
-          display="flex"
-          flexDirection={['column', 'row']}
-          alignItems="center"
-          justifyContent="center"
-          flexWrap="wrap"
-          style={{ gap: '16px' }}
-        >
-          {course.nutrients.map((nutrient, index) => (
-            <Box
-              key={`${nutrient.name ?? 'nutrient'}-${index}`}
-              textAlign="center"
-              style={{ minWidth: '70px' }}
-            >
-              <Text variant="small" color="blue400" fontWeight="semiBold">
-                {formatRoundedNumber(nutrient.amount)}
-              </Text>
-              <Text variant="small" fontWeight="semiBold">
-                {`${nutrient.name ?? formatMessage(m.nutritionFallbackName)}${
-                  nutrient.unit ? ` ${nutrient.unit}` : ''
-                }`}
-              </Text>
-            </Box>
-          ))}
-        </Box>
+        <Stack space={2}>
+          <Text fontWeight="semiBold">{formatMessage(m.nutritionTitle)}:</Text>
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            alignItems="center"
+            justifyContent="center"
+            flexWrap="wrap"
+            style={{ gap: '16px' }}
+          >
+            {course.nutrients.map((nutrient, index) => (
+              <Box
+                key={`${nutrient.name ?? 'nutrient'}-${index}`}
+                textAlign="center"
+                style={{ minWidth: '70px' }}
+              >
+                <Text variant="small" color="blue400" fontWeight="semiBold">
+                  {formatRoundedNumber(nutrient.amount)}
+                </Text>
+                <Text variant="small" fontWeight="semiBold">
+                  {`${nutrient.name ?? formatMessage(m.nutritionFallbackName)}${
+                    nutrient.unit ? ` ${nutrient.unit}` : ''
+                  }`}
+                </Text>
+              </Box>
+            ))}
+          </Box>
+        </Stack>
       ) : null}
 
       {course.labelOfContents ? (
-        <Text variant="small">{course.labelOfContents}</Text>
+        <Stack space={1}>
+          <Text fontWeight="semiBold">
+            {formatMessage(m.ingredientsTitle)}:
+          </Text>
+          <Text variant="small">{course.labelOfContents}</Text>
+        </Stack>
       ) : null}
     </Stack>
   )
@@ -167,6 +176,15 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
         }),
       }))
       .filter((meal) => meal.courses.length > 0) ?? []
+
+  const skeletonMeals =
+    filteredMeals.length > 0
+      ? filteredMeals.map((meal) => ({
+          name: meal.name,
+          count: meal.courses.length,
+        }))
+      : [{ name: null, count: 3 }]
+
   return (
     <Stack space={2}>
       <Stack space={5}>
@@ -232,121 +250,149 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
               />
             ) : null}
 
-            {filteredMeals.map((meal, mealIndex) => {
-              return (
-                <Stack space={2} key={`${meal.name ?? 'meal'}-${mealIndex}`}>
-                  <Text variant="h3">{meal.name}</Text>
-                  <Stack space={2}>
-                    {meal.courses.map((course, courseIndex) => {
-                      const courseKey = `${mealIndex}-${
-                        course.id ?? courseIndex
-                      }`
-                      let eyebrow =
-                        course.optionName?.split(',')[0].trim() ?? ''
-                      const [title, ...rest] = (
-                        course.name?.split(',') ?? []
-                      ).map((item) => item.trim())
-                      const description = rest.join(', ')
-                      const hasDetails = hasCourseDetails(course)
-                      const isExpanded = expandedCourses.has(courseKey)
-                      if (eyebrow in m)
-                        eyebrow = formatMessage(m[eyebrow as keyof typeof m])
-
-                      return (
-                        <Box
-                          key={`${
-                            course.id ?? title ?? 'course'
-                          }-${courseIndex}`}
-                          padding={[2, 2, 3]}
-                          borderWidth="standard"
-                          borderColor="blue200"
-                          borderRadius="large"
-                        >
-                          <Stack space={3}>
-                            <Stack space={1}>
-                              <Stack space={0}>
-                                <Text variant="eyebrow" color="purple400">
-                                  {eyebrow}
-                                </Text>
-                                <Text variant="h3">{title}</Text>
-                              </Stack>
-                              <Text>{description}</Text>
-                            </Stack>
-                            <Inline
-                              alignY="center"
-                              space={3}
-                              justifyContent="spaceBetween"
-                              collapseBelow="xl"
-                              flexWrap="nowrap"
-                            >
-                              <Inline alignY="center" space={1}>
-                                {course.knownAllergens?.map(
-                                  (allergen, allergenIndex) =>
-                                    allergen.name ? (
-                                      <div
-                                        key={`${allergen.name}-${allergenIndex}`}
-                                        title={
-                                          allergen.presenceLevel === 'PRESENT'
-                                            ? `${formatMessage(m.present)}: ${
-                                                allergen.name
-                                              }`
-                                            : `${formatMessage(m.absent)}: ${
-                                                allergen.name
-                                              }`
-                                        }
-                                      >
-                                        <Tag
-                                          variant={
-                                            allergen.presenceLevel === 'PRESENT'
-                                              ? 'red'
-                                              : 'yellow'
-                                          }
-                                          disabled
-                                          outlined
-                                        >
-                                          {allergen.name}
-                                        </Tag>
-                                      </div>
-                                    ) : null,
-                                )}
-                              </Inline>
-                              {hasDetails ? (
-                                <Button
-                                  variant="text"
-                                  size="small"
-                                  nowrap
-                                  icon={
-                                    isExpanded ? 'chevronUp' : 'chevronDown'
-                                  }
-                                  onClick={() =>
-                                    setExpandedCourses((prev) => {
-                                      const next = new Set(prev)
-                                      if (next.has(courseKey)) {
-                                        next.delete(courseKey)
-                                      } else {
-                                        next.add(courseKey)
-                                      }
-                                      return next
-                                    })
-                                  }
-                                >
-                                  {isExpanded
-                                    ? formatMessage(m.hideMoreAboutCourse)
-                                    : formatMessage(m.seeMoreAboutCourse)}
-                                </Button>
-                              ) : null}
-                            </Inline>
-                            {isExpanded ? (
-                              <CourseDetails course={course} />
-                            ) : null}
-                          </Stack>
-                        </Box>
-                      )
-                    })}
+            {loading && data !== null && filteredMeals.length > 0
+              ? skeletonMeals.map((skeletonMeal, mealIndex) => (
+                  <Stack space={2} key={`skeleton-meal-${mealIndex}`}>
+                    {skeletonMeal.name ? (
+                      <Text variant="h3">
+                        {skeletonMeal.name in m
+                          ? formatMessage(
+                              m[skeletonMeal.name as keyof typeof m],
+                            )
+                          : skeletonMeal.name}
+                      </Text>
+                    ) : null}
+                    <Stack space={2}>
+                      {Array.from({ length: skeletonMeal.count }).map(
+                        (_, i) => (
+                          <SkeletonLoader
+                            key={i}
+                            height={193}
+                            borderRadius="large"
+                          />
+                        ),
+                      )}
+                    </Stack>
                   </Stack>
-                </Stack>
-              )
-            })}
+                ))
+              : filteredMeals.map((meal, mealIndex) => (
+                  <Stack space={2} key={`${meal.name ?? 'meal'}-${mealIndex}`}>
+                    <Text variant="h3">
+                      {!!meal.name && meal.name in m
+                        ? formatMessage(m[meal.name as keyof typeof m])
+                        : meal.name}
+                    </Text>
+                    <Stack space={2}>
+                      {meal.courses.map((course, courseIndex) => {
+                        const courseKey = `${mealIndex}-${
+                          course.id ?? courseIndex
+                        }`
+                        let eyebrow =
+                          course.optionName?.split(',')[0].trim() ?? ''
+                        const [title, ...rest] = (
+                          course.name?.split(',') ?? []
+                        ).map((item) => item.trim())
+                        const description = rest.join(', ')
+                        const hasDetails = hasCourseDetails(course)
+                        const isExpanded = expandedCourses.has(courseKey)
+                        if (eyebrow in m)
+                          eyebrow = formatMessage(m[eyebrow as keyof typeof m])
+
+                        return (
+                          <Box
+                            key={`${
+                              course.id ?? title ?? 'course'
+                            }-${courseIndex}`}
+                            padding={[2, 2, 3]}
+                            borderWidth="standard"
+                            borderColor="blue200"
+                            borderRadius="large"
+                          >
+                            <Stack space={3}>
+                              <Stack space={1}>
+                                <Stack space={0}>
+                                  <Text variant="eyebrow" color="purple400">
+                                    {eyebrow}
+                                  </Text>
+                                  <Text variant="h3">{title}</Text>
+                                </Stack>
+                                <Text>{description}</Text>
+                              </Stack>
+                              <Inline
+                                alignY="center"
+                                space={3}
+                                justifyContent="spaceBetween"
+                                collapseBelow="xl"
+                                flexWrap="nowrap"
+                              >
+                                <Inline alignY="center" space={1}>
+                                  {course.knownAllergens?.map(
+                                    (allergen, allergenIndex) =>
+                                      allergen.name ? (
+                                        <div
+                                          key={`${allergen.name}-${allergenIndex}`}
+                                          title={
+                                            allergen.presenceLevel === 'PRESENT'
+                                              ? `${formatMessage(m.present)}: ${
+                                                  allergen.name
+                                                }`
+                                              : `${formatMessage(m.absent)}: ${
+                                                  allergen.name
+                                                }`
+                                          }
+                                        >
+                                          <Tag
+                                            variant={
+                                              allergen.presenceLevel ===
+                                              'PRESENT'
+                                                ? 'red'
+                                                : 'yellow'
+                                            }
+                                            disabled
+                                            outlined
+                                          >
+                                            {allergen.name}
+                                          </Tag>
+                                        </div>
+                                      ) : null,
+                                  )}
+                                </Inline>
+                                {hasDetails ? (
+                                  <Button
+                                    variant="text"
+                                    size="small"
+                                    nowrap
+                                    icon={
+                                      isExpanded ? 'chevronUp' : 'chevronDown'
+                                    }
+                                    onClick={() =>
+                                      setExpandedCourses((prev) => {
+                                        const next = new Set(prev)
+                                        if (next.has(courseKey)) {
+                                          next.delete(courseKey)
+                                        } else {
+                                          next.add(courseKey)
+                                        }
+                                        return next
+                                      })
+                                    }
+                                  >
+                                    {isExpanded
+                                      ? formatMessage(m.hideMoreAboutCourse)
+                                      : formatMessage(m.seeMoreAboutCourse)}
+                                  </Button>
+                                ) : null}
+                              </Inline>
+                              {isExpanded ? (
+                                <CourseDetails course={course} />
+                              ) : null}
+                            </Stack>
+                          </Box>
+                        )
+                      })}
+                    </Stack>
+                  </Stack>
+                ))}
 
             {called &&
               !loading &&

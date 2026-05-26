@@ -17,6 +17,7 @@ import {
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 
 @Injectable()
 export class OrganizationsService {
@@ -32,7 +33,7 @@ export class OrganizationsService {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     if (user.nationalId !== nationalId && !isAdmin) {
-      throw new UnauthorizedException(`User does not have admin privileges'`)
+      throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
     // the loader is not sending the nationalId
@@ -95,5 +96,30 @@ export class OrganizationsService {
       })
 
     return organizationAdminDto
+  }
+
+  async updateZendeskInstance(
+    user: User,
+    organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
+  ): Promise<void> {
+    const { zendeskInstance, zendeskBrandId, organizationId } =
+      organizationZendeskInstanceDto
+    const organization = await this.organizationModel.findByPk(organizationId)
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with ID ${organizationId} not found`,
+      )
+    }
+
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+    if (!isAdmin && user.nationalId !== organization.nationalId) {
+      throw new UnauthorizedException(`User does not have admin privileges`)
+    }
+
+    organization.zendeskInstance = zendeskInstance
+    organization.zendeskBrandId = zendeskBrandId
+
+    await organization.save()
   }
 }

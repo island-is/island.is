@@ -1,4 +1,4 @@
-import { TrWebContractsExternalDigitalIcelandDocumentsDocument } from '../..'
+import { TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument } from '../..'
 import {
   ApplicantInfo,
   DomesticBankInfo,
@@ -23,6 +23,6 @@ export interface OldAgePensionDTO {
   isSailorPension: boolean
   employment?: string
   employers?: Array<Employer>
-  uploads?: Array<TrWebContractsExternalDigitalIcelandDocumentsDocument>
+  uploads?: Array<TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument>
   awarenessOfIncomeDeclaration?: boolean
 }

@@ -19,6 +19,8 @@ const BreadCrumbs: FC = () => {
       caseId: caseId || '',
     },
     skip: !caseId,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const caseTableGroups = getCaseTableGroups(user)
