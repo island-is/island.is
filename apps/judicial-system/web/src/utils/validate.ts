@@ -331,6 +331,46 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
+export const isIndictmentCountComplete = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): boolean => {
+  const isValidSpeedingIndictmentCount = (count: IndictmentCount) => {
+    return count.offenses?.some(
+      (o) => o.offense === IndictmentCountOffense.SPEEDING,
+    )
+      ? Boolean(count.recordedSpeed) && Boolean(count.speedLimit)
+      : true
+  }
+
+  const hasOffenses = (count: IndictmentCount) => {
+    return Boolean(count.offenses && count.offenses?.length > 0)
+  }
+
+  const isValidTrafficViolation = (count: IndictmentCount) =>
+    Boolean(count.policeCaseNumber) &&
+    hasOffenses(count) &&
+    Boolean(count.vehicleRegistrationNumber) &&
+    Boolean(count.lawsBroken) &&
+    Boolean(count.incidentDescription) &&
+    Boolean(count.legalArguments) &&
+    isValidSpeedingIndictmentCount(count)
+
+  const isValidNonTrafficViolation = (count: IndictmentCount) =>
+    Boolean(count.incidentDescription) && Boolean(count.legalArguments)
+
+  const isTrafficViolation = (count: IndictmentCount) =>
+    isTrafficViolationIndictmentCount(
+      count.indictmentCountSubtypes,
+      count.policeCaseNumber &&
+        workingCase.indictmentSubtypes[count.policeCaseNumber],
+    )
+
+  return isTrafficViolation(indictmentCount)
+    ? isValidTrafficViolation(indictmentCount)
+    : isValidNonTrafficViolation(indictmentCount)
+}
+
 export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
@@ -341,49 +381,12 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
-    return indictmentCount.offenses?.some(
-      (o) => o.offense === IndictmentCountOffense.SPEEDING,
-    )
-      ? Boolean(indictmentCount.recordedSpeed) &&
-          Boolean(indictmentCount.speedLimit)
-      : true
-  }
-
-  const hasOffenses = (indictmentCount: IndictmentCount) => {
-    return Boolean(
-      indictmentCount.offenses && indictmentCount.offenses?.length > 0,
-    )
-  }
-
-  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.policeCaseNumber) &&
-    hasOffenses(indictmentCount) &&
-    Boolean(indictmentCount.vehicleRegistrationNumber) &&
-    Boolean(indictmentCount.lawsBroken) &&
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments) &&
-    isValidSpeedingIndictmentCount(indictmentCount)
-
-  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
-
-  const isTrafficViolation = (indictmentCount: IndictmentCount) =>
-    isTrafficViolationIndictmentCount(
-      indictmentCount.indictmentCountSubtypes,
-      indictmentCount.policeCaseNumber &&
-        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
-    )
-
   if (!workingCase.indictmentCounts?.length) {
     return false
   }
 
-  return workingCase.indictmentCounts.every((indictmentCount) =>
-    isTrafficViolation(indictmentCount)
-      ? isValidTrafficViolation(indictmentCount)
-      : isValidNonTrafficViolation(indictmentCount),
+  return workingCase.indictmentCounts.every((count) =>
+    isIndictmentCountComplete(count, workingCase),
   )
 }
 

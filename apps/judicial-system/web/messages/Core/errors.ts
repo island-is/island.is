@@ -111,6 +111,12 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að eyða ákærulið',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða ákærulíð',
   },
+  reorderIndictmentCounts: {
+    id: 'judicial.system.core:errors.reorder_indictment_counts',
+    defaultMessage: 'Upp kom villa við að endurraða ákæruliðum',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að endurraða ákæruliðum',
+  },
   createOffense: {
     id: 'judicial.system.core:errors.create_offense',
     defaultMessage: 'Upp kom villa við að stofna nýtt brot',

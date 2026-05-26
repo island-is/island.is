@@ -294,6 +294,7 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created
