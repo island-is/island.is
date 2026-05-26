@@ -5,7 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   enumerate,
@@ -235,7 +235,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                   })
                   if (updated) {
                     router.push(
-                      `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                      `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
                     )
                   }
                 } finally {
