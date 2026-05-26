@@ -17,6 +17,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
+import { ReorderIndictmentCountsInput } from './dto/reorderIndictmentCounts.input'
 import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
 import { DeleteResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
@@ -73,6 +74,26 @@ export class IndictmentCountResolver {
         updateIndictmentCount,
       ),
       indictmentCountId,
+    )
+  }
+
+  @Mutation(() => [IndictmentCount])
+  reorderIndictmentCounts(
+    @Args('input', { type: () => ReorderIndictmentCountsInput })
+    input: ReorderIndictmentCountsInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<IndictmentCount[]> {
+    const { caseId, counts } = input
+
+    this.logger.debug(`Reordering indictment counts for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_INDICTMENT_COUNT,
+      backendService.reorderIndictmentCounts(caseId, { counts }),
+      (theIndictmentCounts) => theIndictmentCounts.map(({ id }) => id),
     )
   }
 
