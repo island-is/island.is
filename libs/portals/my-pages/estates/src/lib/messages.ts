@@ -62,38 +62,38 @@ export const estatesMessages = defineMessages({
   },
   dateOfDeath: {
     id: 'sp.estates:date-of-death',
-    defaultMessage: 'Dánardagur',
+    defaultMessage: 'Dánardagur hins látna',
   },
+  // TODO: expose via API when estate(id) resolver is available
   domicile: {
     id: 'sp.estates:domicile',
     defaultMessage: 'Lögheimili',
   },
+  // TODO: expose via API when estate(id) resolver is available
   assignedOffice: {
     id: 'sp.estates:assigned-office',
     defaultMessage: 'Embætti',
   },
+  // TODO: expose via API when estate(id) resolver is available
   hasMarriageContract: {
     id: 'sp.estates:has-marriage-contract',
     defaultMessage: 'Kaupmáli',
   },
+  // TODO: expose via API when estate(id) resolver is available
   hasWill: {
     id: 'sp.estates:has-will',
     defaultMessage: 'Erfðaskrá',
   },
-  tabBaseInfo: {
-    id: 'sp.estates:tab-base-info',
-    defaultMessage: 'Grunnupplýsingar',
+  basicInfoTitle: {
+    id: 'sp.estates:basic-info-title',
+    defaultMessage: 'Grunnupplýsingar dánarbús',
+  },
+  estateAgent: {
+    id: 'sp.estates:estate-agent',
+    defaultMessage: 'Umboðsmaður dánarbús',
   },
   tabHeirs: {
     id: 'sp.estates:tab-heirs',
-    defaultMessage: 'Erfingjar',
-  },
-  tabAssets: {
-    id: 'sp.estates:tab-assets',
-    defaultMessage: 'Eignir',
-  },
-  heirsTitle: {
-    id: 'sp.estates:heirs-title',
     defaultMessage: 'Erfingjar',
   },
   heirName: {
@@ -108,29 +108,59 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:heir-relation',
     defaultMessage: 'Tengsl',
   },
-  assetType: {
-    id: 'sp.estates:asset-type',
-    defaultMessage: 'Tegund',
+  nextSteps: {
+    id: 'sp.estates:next-steps',
+    defaultMessage: 'Næstu skref',
   },
-  assetDescription: {
-    id: 'sp.estates:asset-description',
-    defaultMessage: 'Lýsing',
+  nextStepsTitle: {
+    id: 'sp.estates:next-steps-title',
+    defaultMessage: 'Ákvörðun um skipti á dánarbúi',
   },
-  assetValue: {
-    id: 'sp.estates:asset-value',
-    defaultMessage: 'Verðmæti',
+  nextStepsDescription: {
+    id: 'sp.estates:next-steps-description',
+    defaultMessage:
+      'Senda þarf inn umsókn um leyfi til einkaskipta eða opinberra skipta til sýslumanns',
   },
-  assetShare: {
-    id: 'sp.estates:asset-share',
-    defaultMessage: 'Eignarhlutfall',
+  applicationNotSubmitted: {
+    id: 'sp.estates:application-not-submitted',
+    defaultMessage: 'Umsókn ekki send inn',
   },
-  yes: {
-    id: 'sp.estates:yes',
-    defaultMessage: 'Já',
+  sendApplication: {
+    id: 'sp.estates:send-application',
+    defaultMessage: 'Senda umsókn',
   },
-  no: {
-    id: 'sp.estates:no',
-    defaultMessage: 'Nei',
+  deadline: {
+    id: 'sp.estates:deadline',
+    defaultMessage: 'Frestur',
+  },
+  deadlineTitle: {
+    id: 'sp.estates:deadline-title',
+    defaultMessage: 'Frestur varðandi skipti',
+  },
+  deadlineDescription: {
+    id: 'sp.estates:deadline-description',
+    defaultMessage:
+      'Innan 4 mánaða frá andláti þarf að taka ákvörðun um skipti búss',
+  },
+  daysLeft: {
+    id: 'sp.estates:days-left',
+    defaultMessage: 'dagar eftir',
+  },
+  progressTimeline: {
+    id: 'sp.estates:progress-timeline',
+    defaultMessage: 'Framvinda skipta',
+  },
+  submitDocuments: {
+    id: 'sp.estates:submit-documents',
+    defaultMessage: 'Skila inn gögnum',
+  },
+  grantAuthorization: {
+    id: 'sp.estates:grant-authorization',
+    defaultMessage: 'Veita umboð',
+  },
+  seeFiles: {
+    id: 'sp.estates:see-files',
+    defaultMessage: 'Opna skjöl',
   },
 
   // Files screen

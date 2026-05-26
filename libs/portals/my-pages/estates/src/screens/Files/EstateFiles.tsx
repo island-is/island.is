@@ -26,7 +26,7 @@ import { Problem } from '@island.is/react-spa/shared'
 export const EstateFiles = () => {
   useNamespaces('sp.estates')
   const { formatMessage } = useLocale()
-  const { id } = useParams<{ id: string }>()
+  const { id: _id } = useParams<{ id: string }>()
   const [search, setSearch] = useState('')
 
   // TODO: Replace with real query once `estateFiles(id)` GraphQL resolver is available.

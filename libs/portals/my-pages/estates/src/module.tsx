@@ -21,14 +21,14 @@ export const estatesModule: PortalModule = {
       element: <EstatesOverview />,
     },
     {
-      name: m.myEstates,
+      name: m.estatesDetail,
       path: EstatesPaths.EstatesDetail,
       // TODO: Switch to ApiScope.estates once the scope is provisioned
       enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <EstateDetail />,
     },
     {
-      name: m.myEstates,
+      name: m.estatesDetail,
       path: EstatesPaths.EstatesFiles,
       // TODO: Switch to ApiScope.estates once the scope is provisioned
       enabled: userInfo.scopes.includes(ApiScope.internal),

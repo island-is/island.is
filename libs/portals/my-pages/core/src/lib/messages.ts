@@ -1770,12 +1770,16 @@ export const m = defineMessages({
   },
   myEstates: {
     id: 'service.portal:my-estates',
-    defaultMessage: 'Mín Dánarbú',
+    defaultMessage: 'Mín dánarbú',
   },
   myEstatesIntro: {
     id: 'service.portal:my-estates-intro',
     defaultMessage:
       'Hér getur þú skoðað upplýsingar um dánarbú sem þú hefur aðgengi að hjá Sýslumanni.',
+  },
+  estatesDetail: {
+    id: 'service.portal:estates-detail',
+    defaultMessage: 'Dánarbú',
   },
   estatesTooltip: {
     id: 'service.portal:estates-tooltip',
