@@ -1,9 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  AlertMessage,
-  Box,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Table as T } from '@island.is/island-ui/core'
 import {
   CardLoader,
   formatDate,
