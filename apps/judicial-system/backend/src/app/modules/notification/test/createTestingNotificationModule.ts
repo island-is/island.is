@@ -109,12 +109,14 @@ export const createTestingNotificationModule = async () => {
         provide: InternalCaseService,
         useValue: {
           countIndictmentsWaitingForConfirmation: jest.fn(),
+          getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate: jest.fn(),
         },
       },
       {
         provide: UserService,
         useValue: {
           getUsersWhoCanConfirmIndictments: jest.fn(),
+          getProsecutorUsers: jest.fn(),
         },
       },
       {

@@ -6,6 +6,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { GrantTypesPayload } from './dto/grant-types.payload'
 import { GrantTypesInput } from './dto/grant-types.input'
 import { CreateGrantTypeInput } from './dto/create-grant-type.input'
@@ -25,6 +27,14 @@ const mapGrantType = (
   archived: gt.archived && gt.archived.getTime() > 0 ? gt.archived : undefined,
 })
 
+const toFailure = (
+  environment: Environment,
+  error: unknown,
+): EnvironmentFailure => ({
+  environment,
+  message: error instanceof Error ? error.message : 'Unknown error',
+})
+
 @Injectable()
 export class GrantTypeService extends MultiEnvironmentService {
   getAvailableEnvironments(): Environment[] {
@@ -35,80 +45,101 @@ export class GrantTypeService extends MultiEnvironmentService {
     user: User,
     input: GrantTypesInput,
   ): Promise<GrantTypesPayload> {
+    // Pull every matching row from each environment so we can merge by name.
+    // Per-env pagination would silently drop rows that only exist in one
+    // environment.
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meGrantTypesControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    // Build maps of grant type name -> environments and archived environments
-    const envMap = new Map<string, Environment[]>()
-    const archivedEnvMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      {
+        row: GeneratedGrantType
+        envs: Environment[]
+        archivedEnvs: Environment[]
+      }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `Grant type count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const existing = envMap.get(row.name) ?? []
-          existing.push(environment)
-          envMap.set(row.name, existing)
-
+          const existing = rowMap.get(row.name)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(row.name, {
+              row,
+              envs: [environment],
+              archivedEnvs: [],
+            })
+          }
           if (row.archived && row.archived.getTime() > 0) {
-            const archivedExisting = archivedEnvMap.get(row.name) ?? []
-            archivedExisting.push(environment)
-            archivedEnvMap.set(row.name, archivedExisting)
+            rowMap.get(row.name)?.archivedEnvs.push(environment)
           }
         }
       }
     }
 
-    // Use the first successful environment as the primary result for pagination
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedGrantType) => {
-            const allEnvs = envMap.get(row.name) ?? []
-            const archivedEnvs = archivedEnvMap.get(row.name) ?? []
-            const isFullyArchived =
-              archivedEnvs.length > 0 && archivedEnvs.length === allEnvs.length
-            const nonArchivedEnvs = allEnvs.filter(
-              (e) => !archivedEnvs.includes(e),
-            )
-            return {
-              name: row.name,
-              availableEnvironments: isFullyArchived
-                ? allEnvs
-                : nonArchivedEnvs,
-              description: row.description,
-              archived: isFullyArchived
-                ? new Date(row.archived ?? '')
-                : undefined,
-            }
-          }),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      a.row.name.localeCompare(b.row.name),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs, archivedEnvs }) => {
+        const isFullyArchived =
+          archivedEnvs.length > 0 && archivedEnvs.length === envs.length
+        const nonArchivedEnvs = envs.filter((e) => !archivedEnvs.includes(e))
+        return {
+          name: row.name,
+          availableEnvironments: isFullyArchived ? envs : nonArchivedEnvs,
+          description: row.description,
+          archived: isFullyArchived ? new Date(row.archived ?? '') : undefined,
+        }
+      }),
+      totalCount: allRows.length,
+    }
   }
 
   async getGrantType(user: User, name: string): Promise<GrantType | null> {
+    const settled = await Promise.allSettled(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerFindOneRaw({ name }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meGrantTypesControllerFindOneRaw({ name }),
-      )
-
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error(
+          'Failed to fetch grant type in one environment',
+          entry.reason as Error,
+        )
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
         environmentsData.push({
@@ -140,6 +171,7 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -163,6 +195,7 @@ export class GrantTypeService extends MultiEnvironmentService {
           `Failed to create grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -172,10 +205,11 @@ export class GrantTypeService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to create grant type')
+    throw new Error('Failed to create grant type in all environments')
   }
 
   async updateGrantType(
@@ -194,6 +228,7 @@ export class GrantTypeService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: GrantTypeEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -217,6 +252,7 @@ export class GrantTypeService extends MultiEnvironmentService {
           `Failed to update grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -226,91 +262,88 @@ export class GrantTypeService extends MultiEnvironmentService {
         name: first.name,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to update grant type')
+    throw new Error('Failed to update grant type in all environments')
   }
 
   async deleteGrantType(
     user: User,
     name: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToDelete =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const deletedEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToDelete) {
-      let requestMade = false
-
       try {
-        await this.makeRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meGrantTypesControllerDeleteRaw({ name })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+        await this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerDeleteRaw({ name }),
+        )
+        deletedEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to delete grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (deletedEnvironments.length === 0) {
+      throw new Error('Failed to delete grant type in all environments')
     }
 
-    throw lastError ?? new Error('Failed to delete grant type')
+    return {
+      success: failedEnvironments.length === 0,
+      affectedEnvironments: deletedEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 
   async restoreGrantType(
     user: User,
     name: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToRestore =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const restoredEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToRestore) {
-      let requestMade = false
-
       try {
-        await this.makeRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meGrantTypesControllerRestoreRaw({ name })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+        await this.makeRequest(user, environment, (api) =>
+          api.meGrantTypesControllerRestoreRaw({ name }),
+        )
+        restoredEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to restore grant type in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (restoredEnvironments.length === 0) {
+      throw new Error('Failed to restore grant type in all environments')
     }
 
-    throw lastError ?? new Error('Failed to restore grant type')
+    return {
+      success: failedEnvironments.length === 0,
+      affectedEnvironments: restoredEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 }

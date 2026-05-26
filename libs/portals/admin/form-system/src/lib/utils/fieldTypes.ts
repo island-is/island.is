@@ -25,7 +25,7 @@ enum FieldTypes {
   NUMBERBOX = 'Tölubox',
   RADIO_BUTTONS = 'Valhnappar',
   // APPLICANT = 'Umsækjandi',
-  PAYMENT_QUANTITY = 'Greiðslu magn',
+  PAYMENT_QUANTITY = 'Magngreiðslur',
 }
 
 export const getFieldTypeValue = (type: string) => {

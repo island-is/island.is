@@ -33,34 +33,41 @@ import {
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../utils'
-
-const validateFormStepper = (
-  isActiveSubSectionValid: boolean,
-  steps: string[],
-  workingCase: Case,
-) => {
-  if (!isActiveSubSectionValid) {
-    return false
-  }
-
-  const validationForStep = stepValidations()
-
-  return steps.some(
-    (step) =>
-      validationForStep[step as keyof typeof validationForStep](workingCase) ===
-      false,
-  )
-    ? false
-    : true
-}
+import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 
 const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
-
   const router = useRouter()
+  // COA stepper + step validators operate on the appeal-case row identified
+  // by `?appealCaseId=…`. The hook resolves it from FormContext +
+  // router query; in production the FormContext working case matches the
+  // working case passed to `getSections`, so closure capture is fine.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+
+  const validateFormStepper = (
+    isActiveSubSectionValid: boolean,
+    steps: string[],
+    workingCase: Case,
+  ) => {
+    if (!isActiveSubSectionValid) {
+      return false
+    }
+
+    const validationForStep = stepValidations(targetAppealCase)
+
+    return steps.some(
+      (step) =>
+        validationForStep[step as keyof typeof validationForStep](
+          workingCase,
+        ) === false,
+    )
+      ? false
+      : true
+  }
+
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
 
@@ -1238,10 +1245,14 @@ const useSections = (
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
     const { id } = workingCase
-    const appealRulingDecision = workingCase.appealCase?.appealRulingDecision
-    const appealState = workingCase.appealCase?.appealState
+    // For COA users on ruling-order rows, the stepper reflects the target
+    // appeal-case row (resolved via `?appealCaseId=…`). Other users / pages
+    // fall back to the case-level appeal because the hook defaults to it
+    // when no query param is present.
+    const appealRulingDecision = targetAppealCase?.appealRulingDecision
+    const appealState = targetAppealCase?.appealState
     const useAppealWithdrawnSections =
-      shouldUseAppealWithdrawnRoutes(workingCase)
+      shouldUseAppealWithdrawnRoutes(targetAppealCase)
 
     return [
       {
@@ -1421,8 +1432,7 @@ const useSections = (
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
           (!workingCase.parentCase &&
             isCompletedCase(workingCase.state) &&
-            !workingCase.prosecutorPostponedAppealDate &&
-            !workingCase.accusedPostponedAppealDate &&
+            !workingCase.hasBeenAppealed &&
             workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
         children: [],
       },
@@ -1442,17 +1452,16 @@ const useSections = (
               ),
               isActive:
                 isCompletedCase(workingCase.state) &&
-                !workingCase.prosecutorPostponedAppealDate &&
-                !workingCase.accusedPostponedAppealDate &&
+                !workingCase.hasBeenAppealed &&
                 workingCase.appealCase?.appealState !==
                   AppealCaseState.COMPLETED,
               children: [],
             },
           ]
         : []),
-      ...(!workingCase.appealCase?.appealState ||
-      (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
-        !workingCase.appealCase?.appealReceivedByCourtDate)
+      ...(!targetAppealCase?.appealState ||
+      (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
+        !targetAppealCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

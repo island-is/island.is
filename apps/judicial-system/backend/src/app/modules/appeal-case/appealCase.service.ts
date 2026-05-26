@@ -1,10 +1,12 @@
 import { Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,6 +19,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
   AppealEventType,
@@ -24,8 +27,8 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -142,7 +145,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
   }
 
@@ -154,7 +157,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
+      body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
     })
   }
 
@@ -183,7 +186,7 @@ export class AppealCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_COMPLETED },
+        body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
       },
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -212,7 +215,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_STATEMENT },
+      body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
     })
   }
 
@@ -224,7 +227,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
+      body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
     })
   }
 
@@ -280,9 +283,19 @@ export class AppealCaseService {
   async create(
     theCase: Case,
     user: User,
+    rulingFileId: string | undefined,
     transaction: Transaction,
   ): Promise<AppealCase> {
     this.logger.debug(`Creating appeal case for case ${theCase.id}`)
+
+    if (rulingFileId) {
+      return this.createRulingOrderAppeal(
+        theCase,
+        user,
+        rulingFileId,
+        transaction,
+      )
+    }
 
     if (
       isIndictmentCase(theCase.type) &&
@@ -337,6 +350,58 @@ export class AppealCaseService {
     this.addMessagesForAppealedCaseToQueue(theCase, user, fileCategories)
 
     return appealCase
+  }
+
+  private async createRulingOrderAppeal(
+    theCase: Case,
+    user: User,
+    rulingFileId: string,
+    transaction: Transaction,
+  ): Promise<AppealCase> {
+    if (!isIndictmentCase(theCase.type)) {
+      throw new ForbiddenException(
+        'Only indictment cases support ruling-order appeals',
+      )
+    }
+
+    if (isCompletedCase(theCase.state)) {
+      throw new ForbiddenException(
+        'Ruling orders cannot be appealed after the case has completed',
+      )
+    }
+
+    const caseFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
+
+    if (!caseFile) {
+      throw new NotFoundException(
+        `Case file ${rulingFileId} of case ${theCase.id} does not exist`,
+      )
+    }
+
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'The selected file is not a court indictment ruling order',
+      )
+    }
+
+    if (!isProsecutionUser(user) && !isDefenceUser(user)) {
+      throw new ForbiddenException(
+        `Current user cannot appeal a ruling order on a ${theCase.type} case`,
+      )
+    }
+
+    const appealCaseData: UpdateAppealCase = {
+      appealState: AppealCaseState.APPEALED,
+      rulingFileId,
+    }
+
+    if (isDefenceUser(user)) {
+      appealCaseData.appealedByNationalId = user.nationalId
+    }
+
+    return this.appealCaseRepositoryService.create(theCase.id, appealCaseData, {
+      transaction,
+    })
   }
 
   async update(
@@ -441,20 +506,20 @@ export class AppealCaseService {
   }
 
   async transition(
-    appealCaseId: string,
     theCase: Case,
+    appealCase: AppealCase,
     transition: AppealCaseTransition,
     user: User,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
     this.logger.debug(
-      `Transitioning appeal case ${appealCaseId} of case ${theCase.id} with ${transition}`,
+      `Transitioning appeal case ${appealCase.id} of case ${theCase.id} with ${transition}`,
     )
 
-    const result = transitionAppealCase(transition, theCase)
+    const result = transitionAppealCase(transition, theCase, appealCase)
 
     const updatedAppealCase = await this.appealCaseRepositoryService.update(
-      appealCaseId,
+      appealCase.id,
       result.appealCaseUpdate,
       { transaction },
     )
@@ -465,19 +530,23 @@ export class AppealCaseService {
       })
     }
 
-    // Queue messages based on new appeal state
-    const newAppealState = result.appealCaseUpdate.appealState
-    const oldAppealState = theCase.appealCase?.appealState
+    // Queue messages based on new appeal state. Ruling-order appeals don't
+    // send the case-level appeal notifications — open question #8 will
+    // determine which (if any) notifications they emit.
+    if (!appealCase.rulingFileId) {
+      const newAppealState = result.appealCaseUpdate.appealState
+      const oldAppealState = appealCase.appealState
 
-    if (newAppealState === AppealCaseState.RECEIVED) {
-      // Only send received messages when transitioning from APPEALED (not when reopening)
-      if (oldAppealState === AppealCaseState.APPEALED) {
-        this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
+      if (newAppealState === AppealCaseState.RECEIVED) {
+        // Only send received messages when transitioning from APPEALED (not when reopening)
+        if (oldAppealState === AppealCaseState.APPEALED) {
+          this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
+        }
+      } else if (newAppealState === AppealCaseState.COMPLETED) {
+        this.addMessagesForCompletedAppealCaseToQueue(theCase, user)
+      } else if (newAppealState === AppealCaseState.WITHDRAWN) {
+        this.addMessagesForAppealWithdrawnToQueue(theCase, user)
       }
-    } else if (newAppealState === AppealCaseState.COMPLETED) {
-      this.addMessagesForCompletedAppealCaseToQueue(theCase, user)
-    } else if (newAppealState === AppealCaseState.WITHDRAWN) {
-      this.addMessagesForAppealWithdrawnToQueue(theCase, user)
     }
 
     return { ...result, appealCase: updatedAppealCase }

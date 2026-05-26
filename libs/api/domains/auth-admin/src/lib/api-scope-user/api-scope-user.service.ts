@@ -9,6 +9,8 @@ import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { environments } from '../shared/constants/environments'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
+import { DeleteEnvironmentResult } from '../shared/models/delete-environment-result.model'
 import { ApiScopeUsersPayload } from './dto/api-scope-users.payload'
 import { ApiScopeUsersInput } from './dto/api-scope-users.input'
 import { CreateApiScopeUserInput } from './dto/create-api-scope-user.input'
@@ -16,6 +18,14 @@ import { UpdateApiScopeUserInput } from './dto/update-api-scope-user.input'
 import { ApiScopeUser } from './models/api-scope-user.model'
 import { ApiScopeUserEnvironmentData } from './models/api-scope-user-environment-data.model'
 import { AccessControlledScope } from './models/access-controlled-scope.model'
+
+const toFailure = (
+  environment: Environment,
+  error: unknown,
+): EnvironmentFailure => ({
+  environment,
+  message: error instanceof Error ? error.message : 'Unknown error',
+})
 
 @Injectable()
 export class ApiScopeUserService extends MultiEnvironmentService {
@@ -50,16 +60,24 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     nationalId: string,
   ): Promise<ApiScopeUser | null> {
+    const settled = await Promise.allSettled(
+      environments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerFindOneRaw({
+            xQueryNationalId: nationalId,
+          }),
+        ).then((result) => ({ environment, result })),
+      ),
+    )
+
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
-
-    for (const environment of environments) {
-      const result = await this.makeRequest(user, environment, (api) =>
-        api.meApiScopeUsersControllerFindOneRaw({
-          xQueryNationalId: nationalId,
-        }),
-      )
-
+    for (const entry of settled) {
+      if (entry.status === 'rejected') {
+        this.logger.error('Failed to fetch API scope user in one environment')
+        continue
+      }
+      const { environment, result } = entry.value
       if (result) {
         availableEnvironments.push(environment)
 
@@ -88,49 +106,63 @@ export class ApiScopeUserService extends MultiEnvironmentService {
     user: User,
     input: ApiScopeUsersInput,
   ): Promise<ApiScopeUsersPayload> {
+    // Pull every matching row from each environment so we can merge by
+    // nationalId. Per-env pagination would silently drop users that only
+    // exist in one environment.
+    const FETCH_LIMIT = 10000
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
         const result = await this.makeRequest(user, environment, (api) =>
           api.meApiScopeUsersControllerFindAndCountAllRaw({
             searchString: input.searchString ?? '',
-            page: input.page,
-            count: input.count,
+            page: 1,
+            count: FETCH_LIMIT,
           }),
         )
         return result ? { environment, data: result } : null
       }),
     )
 
-    // Build a map of nationalId -> environments the user exists in
-    const envMap = new Map<string, Environment[]>()
+    const rowMap = new Map<
+      string,
+      { row: GeneratedApiScopeUser; envs: Environment[] }
+    >()
     for (const result of results) {
       if (result.status === 'fulfilled' && result.value) {
         const { environment, data } = result.value
+        if (data.count > FETCH_LIMIT) {
+          this.logger.warn(
+            `API scope user count in ${environment} (${data.count}) exceeds fetch limit (${FETCH_LIMIT}); some rows will be missing from the merged list`,
+          )
+        }
         for (const row of data.rows) {
-          const existing = envMap.get(row.nationalId) ?? []
-          existing.push(environment)
-          envMap.set(row.nationalId, existing)
+          const existing = rowMap.get(row.nationalId)
+          if (existing) {
+            existing.envs.push(environment)
+          } else {
+            rowMap.set(row.nationalId, { row, envs: [environment] })
+          }
         }
       }
     }
 
-    // Use the first successful environment as the primary result for pagination
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value) {
-        const { data } = result.value
-        return {
-          rows: data.rows.map((row: GeneratedApiScopeUser) => ({
-            nationalId: row.nationalId,
-            name: row.name ?? undefined,
-            email: row.email,
-            availableEnvironments: envMap.get(row.nationalId),
-          })),
-          totalCount: data.count,
-        }
-      }
-    }
+    const allRows = Array.from(rowMap.values()).sort((a, b) =>
+      a.row.nationalId.localeCompare(b.row.nationalId),
+    )
 
-    return { rows: [], totalCount: 0 }
+    const offset = Math.max(0, (input.page - 1) * input.count)
+    const pageRows = allRows.slice(offset, offset + input.count)
+
+    return {
+      rows: pageRows.map(({ row, envs }) => ({
+        nationalId: row.nationalId,
+        name: row.name ?? undefined,
+        email: row.email,
+        availableEnvironments: envs,
+      })),
+      totalCount: allRows.length,
+    }
   }
 
   async createApiScopeUser(
@@ -149,6 +181,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -178,6 +211,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
           `Failed to create API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -186,10 +220,11 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         nationalId: input.nationalId,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to create API scope user')
+    throw new Error('Failed to create API scope user in all environments')
   }
 
   async updateApiScopeUser(
@@ -208,6 +243,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
 
     const availableEnvironments: Environment[] = []
     const environmentsData: ApiScopeUserEnvironmentData[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of targetEnvironments) {
       try {
@@ -237,6 +273,7 @@ export class ApiScopeUserService extends MultiEnvironmentService {
           `Failed to update API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
@@ -245,52 +282,51 @@ export class ApiScopeUserService extends MultiEnvironmentService {
         nationalId: input.nationalId,
         availableEnvironments,
         environments: environmentsData,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     }
 
-    throw new Error('Failed to update API scope user')
+    throw new Error('Failed to update API scope user in all environments')
   }
 
   async deleteApiScopeUser(
     user: User,
     nationalId: string,
     targetEnvironments?: Environment[],
-  ): Promise<boolean> {
+  ): Promise<DeleteEnvironmentResult> {
     const envsToDelete =
       targetEnvironments && targetEnvironments.length > 0
         ? targetEnvironments
         : environments
 
-    let anyRequestMade = false
-    let lastError: unknown = null
+    const deletedEnvironments: Environment[] = []
+    const failedEnvironments: EnvironmentFailure[] = []
 
     for (const environment of envsToDelete) {
-      let requestMade = false
-
       try {
-        await this.makeRequest(user, environment, (api) => {
-          requestMade = true
-          return api.meApiScopeUsersControllerDeleteRaw({
+        await this.makeRequest(user, environment, (api) =>
+          api.meApiScopeUsersControllerDeleteRaw({
             xQueryNationalId: nationalId,
-          })
-        })
-
-        if (requestMade) {
-          anyRequestMade = true
-        }
+          }),
+        )
+        deletedEnvironments.push(environment)
       } catch (error) {
-        lastError = error
         this.logger.error(
           `Failed to delete API scope user in ${environment}`,
           error as Error,
         )
+        failedEnvironments.push(toFailure(environment, error))
       }
     }
 
-    if (anyRequestMade) {
-      return true
+    if (deletedEnvironments.length === 0) {
+      throw new Error('Failed to delete API scope user in all environments')
     }
 
-    throw lastError ?? new Error('Failed to delete API scope user')
+    return {
+      success: failedEnvironments.length === 0,
+      affectedEnvironments: deletedEnvironments,
+      ...(failedEnvironments.length > 0 && { failedEnvironments }),
+    }
   }
 }

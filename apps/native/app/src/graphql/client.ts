@@ -4,6 +4,7 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
+  ServerError,
   ServerParseError,
 } from '@apollo/client'
 import * as WebBrowser from 'expo-web-browser'
@@ -12,6 +13,8 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
+import { environments } from '../constants/environments'
 import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
@@ -61,6 +64,38 @@ const retryLink = new RetryLink({
 
 let cognitoBrowserOpen = false
 
+const triggerCognitoReauth = ({
+  clearStaleToken,
+}: {
+  clearStaleToken: boolean
+}) => {
+  if (clearStaleToken) {
+    environmentStore.setState({ cognito: null })
+  }
+  const redirectUrl = cognitoAuthUrl()
+  getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
+  if (
+    config.isTestingApp &&
+    getAuthStoreRef().getState().authorizeResult &&
+    !cognitoBrowserOpen
+  ) {
+    cognitoBrowserOpen = true
+    // Suppress app-lock: iOS Keychain autofill backgrounds the app and would
+    // otherwise dismiss the FORM_SHEET webview via the AppState listener.
+    getAuthStoreRef().setState({
+      lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+    })
+    WebBrowser.openBrowserAsync(redirectUrl, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+    })
+      .finally(() => {
+        cognitoBrowserOpen = false
+        getAuthStoreRef().setState({ lockScreenSuppressedUntil: undefined })
+      })
+      .catch(() => void 0)
+  }
+}
+
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
@@ -69,29 +104,28 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 
   if (networkError) {
-    // Detect possible OAuth needed
+    // Cognito proxy served the HTML login page
     if (networkError.name === 'ServerParseError') {
       const parseError = networkError as ServerParseError
       const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
       const isCognitoRedirect = parseError?.response?.url?.includes('cognito')
-      const redirectUrl = cognitoAuthUrl()
       if (isCognitoLogin || isCognitoRedirect) {
-        getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
-        if (
-          config.isTestingApp &&
-          getAuthStoreRef().getState().authorizeResult &&
-          !cognitoBrowserOpen
-        ) {
-          cognitoBrowserOpen = true
-          WebBrowser.openBrowserAsync(redirectUrl)
-            .finally(() => {
-              cognitoBrowserOpen = false
-            })
-            .catch(() => void 0)
-        }
+        triggerCognitoReauth({ clearStaleToken: false })
         return
       }
     }
+
+    // 401 from the Cognito proxy (non-prod only).
+    if (
+      networkError.name === 'ServerError' &&
+      (networkError as ServerError).statusCode === 401 &&
+      environmentStore.getState().environment.idsIssuer !==
+        environments.prod.idsIssuer
+    ) {
+      triggerCognitoReauth({ clearStaleToken: true })
+      return
+    }
+
     console.log(`[Network error]: ${networkError}`)
   }
 })

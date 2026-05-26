@@ -8,9 +8,15 @@ import {
   completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
+  DefendantPlea,
+  DefenderChoice,
   eventTypes,
-  notificationTypes,
+  Gender,
+  IndictmentCaseReviewDecision,
+  PunishmentType,
   stringTypes,
+  SubpoenaType,
+  trackedNotificationTypes,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
@@ -44,6 +50,41 @@ export const caseInclude: Includeable[] = [
     model: AppealCase,
     as: 'appealCase',
     required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
     include: [
       {
         model: User,
@@ -270,7 +311,7 @@ export const caseInclude: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: notificationTypes },
+    where: { type: trackedNotificationTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -501,7 +542,6 @@ export interface UpdateCase
     | 'creatingProsecutorId'
     | 'requestSharedWithDefender'
     | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
     | 'indictmentDecision'
     | 'courtSessionType'
     | 'mergeCaseId'
@@ -521,6 +561,7 @@ export interface UpdateCase
   courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
+  indictmentReviewerId?: Case['indictmentReviewerId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
@@ -534,6 +575,7 @@ export interface UpdateCase
   civilDemands?: string
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
+  reopenReason?: string
 }
 
 export interface UpdateAppealCase
@@ -553,6 +595,35 @@ export interface UpdateAppealCase
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
     | 'appealedByNationalId'
+    | 'rulingFileId'
   > {
   appealState?: AppealCase['appealState']
+}
+
+export interface UpdateDefendant {
+  noNationalId?: boolean
+  nationalId?: string
+  dateOfBirth?: string
+  name?: string
+  gender?: Gender
+  address?: string
+  citizenship?: string
+  defenderName?: string
+  defenderNationalId?: string
+  defenderEmail?: string
+  defenderPhoneNumber?: string
+  defenderChoice?: DefenderChoice
+  defendantPlea?: DefendantPlea
+  subpoenaType?: SubpoenaType
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
+  isDefenderChoiceConfirmed?: boolean
+  caseFilesSharedWithDefender?: boolean
+  isSentToPrisonAdmin?: boolean
+  punishmentType?: PunishmentType
+  isAlternativeService?: boolean
+  alternativeServiceDescription?: string
+  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
 }

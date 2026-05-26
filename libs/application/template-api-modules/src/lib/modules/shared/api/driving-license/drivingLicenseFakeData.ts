@@ -76,9 +76,34 @@ export const buildFakeQualitySignature = (
   return null
 }
 
+// Prod-observed shape from legacy RLS records (e.g. 2015-era passport photos):
+// metadata is present, the photo binary (`pohto`) is null. All values here are
+// synthetic — no real captured data, just enough fields to reproduce the
+// regression code path that PR #22548 fixes.
+const legacyMetadataOnlyRlsPhoto = {
+  imageId: 1,
+  imageTypeId: 1,
+  imageTypeName: 'Passamynd',
+  imageDate: null,
+  pohto: null,
+  signatureId: null,
+  signatureTypeId: null,
+  signatureTypeName: null,
+  signatureDate: null,
+  signature: null,
+}
+
 export const buildFakeQualityPhotoAndSignature = (
   fakeData: DrivingLicenseFakeData,
 ) => {
+  // 'real' (or any non-yes/no value) means: don't substitute, let the data
+  // provider call real RLS. Returning undefined is the sentinel for that.
+  if (fakeData.hasRLSPhoto === 'real') {
+    return undefined
+  }
+  if (fakeData.hasRLSPhoto === 'metadata-only') {
+    return legacyMetadataOnlyRlsPhoto
+  }
   if (fakeData.hasRLSPhoto === YES) {
     return {
       imageId: 1,
@@ -100,6 +125,10 @@ export const buildFakeQualityPhotoAndSignature = (
 export const buildFakeAllPhotosFromThjodskra = (
   fakeData: DrivingLicenseFakeData,
 ) => {
+  // 'real' = don't substitute; data provider will call real Þjóðskrá.
+  if (fakeData.hasThjodskraPhoto === 'real') {
+    return undefined
+  }
   if (fakeData.hasThjodskraPhoto === YES) {
     return {
       images: [

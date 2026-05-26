@@ -1,15 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 import { useRouter } from 'next/router'
-import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import {
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
+  Inline,
+  Input,
   LoadingDots,
   Pagination,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
@@ -18,10 +27,11 @@ import {
   CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier,
   type GetSupremeCourtDeterminationsQuery,
   type GetSupremeCourtDeterminationsQueryVariables,
-  OrganizationPage,
-  Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
+  type OrganizationPage,
+  type Query,
+  type QueryGetNamespaceArgs,
+  type QueryGetOrganizationPageArgs,
+  type WebSupremeCourtDeterminationCaseTypesResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -37,7 +47,10 @@ import {
 import { getSubpageNavList } from '../../Organization/SubPage'
 import { GET_NAMESPACE_QUERY } from '../../queries/Namespace'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries/Organization'
-import { GET_SUPREME_COURT_DETERMINATIONS_QUERY } from '../../queries/SupremeCourtDeterminations'
+import {
+  GET_SUPREME_COURT_DETERMINATION_CASE_TYPES_QUERY,
+  GET_SUPREME_COURT_DETERMINATIONS_QUERY,
+} from '../../queries/SupremeCourtDeterminations'
 import { InfoCardGrid } from '../../Verdicts/components/InfoCardGrid'
 import { m } from './translations.strings'
 
@@ -45,6 +58,7 @@ interface DeterminationsProps {
   initialData: GetSupremeCourtDeterminationsQuery['webSupremeCourtDeterminations']
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  caseTypes: WebSupremeCourtDeterminationCaseTypesResponse['caseTypes']
 }
 
 const Determinations: CustomScreen<DeterminationsProps> = ({
@@ -52,6 +66,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
   organizationPage,
   namespace,
   customPageData,
+  caseTypes,
 }) => {
   const { format } = useDateUtils()
   const [_page, setPage] = useQueryState(
@@ -60,10 +75,19 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
       clearOnDefault: true,
     }),
   )
+  const [filterState, setFilterState] = useQueryStates({
+    caseType: parseAsString.withOptions({ clearOnDefault: true }),
+    searchTerm: parseAsString.withOptions({ clearOnDefault: true }),
+  })
+
+  const [searchInput, setSearchInput] = useState(filterState.searchTerm ?? '')
+
   const initialRender = useRef(true)
   const determinationListHeading = useRef<HTMLDivElement>(null)
 
   const page = _page ?? 1
+  const selectedCaseType = filterState.caseType ?? ''
+  const searchTerm = filterState.searchTerm ?? ''
 
   const [determinations, setDeterminations] =
     useState<
@@ -90,10 +114,25 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
     }
     fetchDeterminations({
       variables: {
-        input: { page },
+        input: {
+          page,
+          caseTypes: selectedCaseType ? [selectedCaseType] : undefined,
+          searchTerm: searchTerm || undefined,
+        },
       },
     })
-  }, [page, fetchDeterminations])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, fetchDeterminations, selectedCaseType, searchTerm])
+
+  useDebounce(
+    () => {
+      if (searchInput === searchTerm) return
+      setFilterState({ searchTerm: searchInput || null })
+      setPage(null)
+    },
+    300,
+    [searchInput],
+  )
 
   const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
@@ -138,6 +177,47 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
         )}
 
         <Stack space={3}>
+          <Input
+            name="determinations-search"
+            placeholder={formatMessage(m.listPage.searchPlaceholder)}
+            icon={{ name: 'search', type: 'outline' }}
+            backgroundColor="blue"
+            size="sm"
+            value={searchInput}
+            onChange={(ev) => setSearchInput(ev.target.value)}
+          />
+
+          {caseTypes && caseTypes.length > 0 && (
+            <Inline space={1} flexWrap="wrap">
+              <Tag
+                active={!selectedCaseType}
+                onClick={() => {
+                  setFilterState({ caseType: null })
+                  setPage(null)
+                }}
+              >
+                {formatMessage(m.listPage.all)}
+              </Tag>
+              {caseTypes.map((caseType) => (
+                <Tag
+                  key={caseType.label}
+                  active={selectedCaseType === caseType.label}
+                  onClick={() => {
+                    setFilterState({
+                      caseType:
+                        selectedCaseType === caseType.label
+                          ? null
+                          : caseType.label,
+                    })
+                    setPage(null)
+                  }}
+                >
+                  {caseType.label}
+                </Tag>
+              ))}
+            </Inline>
+          )}
+
           <Box
             display="flex"
             justifyContent="center"
@@ -149,8 +229,8 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
           {error && (
             <AlertMessage
               type="error"
-              title="Ekki tókst að sækja ákvarðanir"
-              message="Villa kom upp við að sækja ákvarðanir"
+              title={formatMessage(m.listPage.errorTitle)}
+              message={formatMessage(m.listPage.error)}
             />
           )}
 
@@ -168,7 +248,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
                         label: '',
                       },
                       title: item.caseNumber,
-                      subDescription: item.keywords.join(', '),
+                      subDescription: item.keywords.join('. '),
                       borderColor: 'blue200',
                       detailLines: [],
                     }
@@ -206,8 +286,12 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
 
 Determinations.getProps = async ({ apolloClient, query, locale }) => {
   const page = parseAsInteger.parseServerSide(query.page) ?? 1
+  const initialCaseType =
+    typeof query.caseType === 'string' ? query.caseType : undefined
+  const initialSearchTerm =
+    typeof query.searchTerm === 'string' ? query.searchTerm : undefined
 
-  const [{ data }, organizationPage, namespace] = await Promise.all([
+  const [{ data }, organizationPage, namespace, caseTypes] = await Promise.all([
     apolloClient.query<
       GetSupremeCourtDeterminationsQuery,
       GetSupremeCourtDeterminationsQueryVariables
@@ -216,6 +300,8 @@ Determinations.getProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           page,
+          caseTypes: initialCaseType ? [initialCaseType] : undefined,
+          searchTerm: initialSearchTerm,
         },
       },
     }),
@@ -240,6 +326,14 @@ Determinations.getProps = async ({ apolloClient, query, locale }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient.query<Query>({
+      query: GET_SUPREME_COURT_DETERMINATION_CASE_TYPES_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+        },
+      },
+    }),
   ])
 
   if (!organizationPage?.data?.getOrganizationPage) {
@@ -250,6 +344,7 @@ Determinations.getProps = async ({ apolloClient, query, locale }) => {
     initialData: data.webSupremeCourtDeterminations,
     organizationPage: organizationPage.data.getOrganizationPage,
     namespace,
+    caseTypes: caseTypes.data.webSupremeCourtDeterminationCaseTypes.caseTypes,
     languageToggleHrefOverride: {
       is: '',
       en: '',

@@ -23,10 +23,16 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { useAppealCaseUI } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealCaseBanner,
+  useTargetAppealCaseByAppealCaseId,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
-import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  shouldUseAppealWithdrawnRoutes,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
@@ -35,7 +41,8 @@ const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { appealBanner } = useAppealCaseUI()
+  const { appealBanner } = useAppealCaseBanner()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -54,13 +61,18 @@ const CourtOfAppealOverview = () => {
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        targetAppealCase?.id,
+      ),
+    )
 
   const isIndictment = isIndictmentCase(workingCase.type)
 
   return (
     <>
-      {appealBanner}
+      {workingCase.hasBeenAppealed && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -72,7 +84,7 @@ const CourtOfAppealOverview = () => {
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             <CaseOverviewHeader
               alerts={
-                workingCase.appealCase?.requestAppealRulingNotToBePublished
+                targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
                         message: formatMessage(
@@ -145,7 +157,7 @@ const CourtOfAppealOverview = () => {
             previousUrl={getStandardUserDashboardRoute(user)}
             onNextButtonClick={() =>
               handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(workingCase)
+                shouldUseAppealWithdrawnRoutes(targetAppealCase)
                   ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
                   : constants.COURT_OF_APPEAL_CASE_ROUTE,
               )

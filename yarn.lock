@@ -17979,6 +17979,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tinymce/tinymce-react@npm:6.3.0":
+  version: 6.3.0
+  resolution: "@tinymce/tinymce-react@npm:6.3.0"
+  dependencies:
+    prop-types: "npm:^15.6.2"
+  peerDependencies:
+    react: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
+    react-dom: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
+    tinymce: ^8.0.0 || ^7.0.0 || ^6.0.0 || ^5.5.1
+  peerDependenciesMeta:
+    tinymce:
+      optional: true
+  checksum: 10/adb67ae2d23a6d16a2a33bc52ec51db4110bcfded47d58b861832442057922157aa0c8938c5706cfa6850fcbfb4965a5683fe067d35f7a9be0d15f7298a319d7
+  languageName: node
+  linkType: hard
+
 "@tinymce/tinymce-react@npm:^3.13.0":
   version: 3.14.0
   resolution: "@tinymce/tinymce-react@npm:3.14.0"
@@ -19033,6 +19049,15 @@ __metadata:
     "@types/node": "npm:*"
     form-data: "npm:^4.0.0"
   checksum: 10/8107c479da83a3114fcbfa882eba95ee5175cccb5e4dd53f737a96f2559ae6262f662176b8457c1656de09ec393cc7b20a266c077e4bfb21e929976e1cf4d0f9
+  languageName: node
+  linkType: hard
+
+"@types/node-forge@npm:1.3.14":
+  version: 1.3.14
+  resolution: "@types/node-forge@npm:1.3.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/500ce72435285fca145837da079b49a09a5bdf8391b0effc3eb2455783dd81ab129e574a36e1a0374a4823d889d5328177ebfd6fe45b432c0c43d48d790fe39c
   languageName: node
   linkType: hard
 
@@ -25941,7 +25966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:^10.2.4":
+"copy-webpack-plugin@npm:10.2.4, copy-webpack-plugin@npm:^10.2.4":
   version: 10.2.4
   resolution: "copy-webpack-plugin@npm:10.2.4"
   dependencies:
@@ -35258,6 +35283,7 @@ __metadata:
     "@testing-library/react": "npm:16.1.0"
     "@testing-library/react-native": "npm:12.9.0"
     "@testing-library/user-event": "npm:14.6.1"
+    "@tinymce/tinymce-react": "npm:6.3.0"
     "@types/applepayjs": "npm:14.0.9"
     "@types/archiver": "npm:6.0.2"
     "@types/aws-sdk": "npm:2.7.0"
@@ -35284,6 +35310,7 @@ __metadata:
     "@types/mailparser": "npm:3.4.0"
     "@types/memoizee": "npm:0.4.5"
     "@types/node": "npm:20.15.0"
+    "@types/node-forge": "npm:1.3.14"
     "@types/nodemailer": "npm:6.4.1"
     "@types/opossum": "npm:8.1.9"
     "@types/passport-jwt": "npm:3.0.8"
@@ -35352,6 +35379,7 @@ __metadata:
     contentful-ui-extensions-sdk: "npm:3.32.0"
     cookie-parser: "npm:1.4.5"
     copy-to-clipboard: "npm:3.3.1"
+    copy-webpack-plugin: "npm:10.2.4"
     core-js: "npm:3.36.1"
     cross-env: "npm:7.0.2"
     cross-spawn: "npm:7.0.3"
@@ -35453,6 +35481,7 @@ __metadata:
     next-secure-headers: "npm:2.1.0"
     next-usequerystate: "npm:1.20.0"
     node-fetch: "npm:2.6.7"
+    node-forge: "npm:1.4.0"
     node-html-markdown: "npm:1.3.0"
     nodemailer: "npm:6.10.0"
     nodemailer-mock: "npm:2.0.6"
@@ -35535,6 +35564,7 @@ __metadata:
     swagger-ui-express: "npm:4.3.0"
     swr: "npm:1.2.0"
     testcontainers: "npm:7.23.2"
+    tinymce: "npm:5.10.9"
     to-querystring: "npm:1.1.1"
     triple-beam: "npm:1.3.0"
     ts-dedent: "npm:2.0.0"
@@ -41325,6 +41355,13 @@ __metadata:
     encoding:
       optional: true
   checksum: 10/4bc9245383db92c35601a798c9a992fdf38d99920ceac11e0e6512ef3014d188b3807ccb060bc6c4bdb57a145030c73f5b5fd6730f665979f9264bc43ca3afea
+  languageName: node
+  linkType: hard
+
+"node-forge@npm:1.4.0":
+  version: 1.4.0
+  resolution: "node-forge@npm:1.4.0"
+  checksum: 10/d70fd769768e646eda73343d4d4105ccb6869315d975905a22117431c04ae5b6df6c488e34ed275b1a66b50195a09b84b5c8aeca3b8605c20605fcb8e9f109d9
   languageName: node
   linkType: hard
 
@@ -50362,7 +50399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
+"tinymce@npm:5.10.9, tinymce@npm:^5.10.2, tinymce@npm:^5.5.1":
   version: 5.10.9
   resolution: "tinymce@npm:5.10.9"
   checksum: 10/58e6aaa6ae44da2e6b8387c2d67d5eae79e84c277d15b3411b1fbabcf3577836713c7fe80698891e4a4f6fed545ae1774b76f38898f8eca9c055d992585eacfd

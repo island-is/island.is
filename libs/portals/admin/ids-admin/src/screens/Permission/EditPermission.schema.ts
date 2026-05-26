@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { Languages } from '../../utils/languages'
 import { booleanCheckbox } from '../../utils/forms'
 import { defaultEnvironmentSchema } from '../../utils/schemas'
-import { zfd } from 'zod-form-data'
 
 const safeParseStringArray = (val: string | undefined): string[] => {
   if (!val) return []
@@ -15,6 +14,38 @@ const safeParseStringArray = (val: string | undefined): string[] => {
     return []
   } catch {
     return []
+  }
+}
+
+const safeParseOptionalStringArray = (
+  val: string | undefined,
+): string[] | undefined => {
+  if (val === undefined || val === null) return undefined
+  if (val === '') return []
+  try {
+    const parsed = JSON.parse(val)
+    if (Array.isArray(parsed) && parsed.every((x) => typeof x === 'string')) {
+      return parsed
+    }
+    return undefined
+  } catch {
+    return undefined
+  }
+}
+
+const SUBJECT_ID_PLACEHOLDER = '{{subjectId}}'
+
+export const buildThirdPartyLoginUrl = (
+  originUrl: string,
+  targetLinkUri: string,
+): string => {
+  try {
+    const url = new URL(originUrl)
+    url.searchParams.set('target_link_uri', targetLinkUri)
+    url.search = `login_hint=${SUBJECT_ID_PLACEHOLDER}&${url.searchParams.toString()}`
+    return url.toString()
+  } catch {
+    return ''
   }
 }
 
@@ -32,10 +63,6 @@ const contentSchema = z
     is_description: z.string().nonempty('errorDescription'),
     en_displayName: z.optional(z.string()),
     en_description: z.optional(z.string()),
-    categoryIds: z.string().optional().transform(safeParseStringArray),
-    tagIds: z.string().optional().transform(safeParseStringArray),
-    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
-    originalTagIds: z.string().optional().transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
@@ -44,25 +71,8 @@ const contentSchema = z
       en_description: enDescription,
       is_displayName: isDisplayName,
       en_displayName: enDisplayName,
-      categoryIds,
-      tagIds,
-      originalCategoryIds,
-      originalTagIds,
       ...rest
     }) => {
-      const addedCategoryIds = categoryIds.filter(
-        (id: string) => !originalCategoryIds.includes(id),
-      )
-      const removedCategoryIds = originalCategoryIds.filter(
-        (id: string) => !categoryIds.includes(id),
-      )
-      const addedTagIds = tagIds.filter(
-        (id: string) => !originalTagIds.includes(id),
-      )
-      const removedTagIds = originalTagIds.filter(
-        (id: string) => !tagIds.includes(id),
-      )
-
       return {
         ...rest,
         displayName: [
@@ -85,12 +95,6 @@ const contentSchema = z
             value: enDescription ?? '',
           },
         ],
-        addedCategoryIds:
-          addedCategoryIds.length > 0 ? addedCategoryIds : undefined,
-        removedCategoryIds:
-          removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
-        addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
-        removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
       }
     },
   )
@@ -120,80 +124,61 @@ const accessControlSchema = z
 
 const delegationsSchema = z
   .object({
-    removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
-    addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
-    categoryIds: z.string().optional().transform(safeParseStringArray),
-    tagIds: z.string().optional().transform(safeParseStringArray),
-    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
-    originalTagIds: z.string().optional().transform(safeParseStringArray),
+    supportedDelegationTypes: z
+      .string()
+      .optional()
+      .transform(safeParseOptionalStringArray),
+    categoryIds: z.string().optional().transform(safeParseOptionalStringArray),
+    tagIds: z.string().optional().transform(safeParseOptionalStringArray),
+    originUrl: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
+    targetLinkUri: z
+      .union([z.literal(''), z.string().url({ message: 'errorInvalidUrl' })])
+      .optional(),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
     ({
-      categoryIds = [],
-      tagIds = [],
-      originalCategoryIds = [],
-      originalTagIds = [],
+      supportedDelegationTypes,
+      categoryIds,
+      tagIds,
+      originUrl,
+      targetLinkUri,
       ...rest
     }) => {
-      const addedCategoryIds = categoryIds.filter(
-        (id: string) => !originalCategoryIds.includes(id),
-      )
-      const removedCategoryIds = originalCategoryIds.filter(
-        (id: string) => !categoryIds.includes(id),
-      )
-      const addedTagIds = tagIds.filter(
-        (id: string) => !originalTagIds.includes(id),
-      )
-      const removedTagIds = originalTagIds.filter(
-        (id: string) => !tagIds.includes(id),
-      )
+      const thirdPartyLoginUrl =
+        originUrl && targetLinkUri
+          ? buildThirdPartyLoginUrl(originUrl, targetLinkUri)
+          : originUrl || targetLinkUri
+          ? undefined
+          : ''
+
       return {
         ...rest,
-        addedCategoryIds:
-          addedCategoryIds.length > 0 ? addedCategoryIds : undefined,
-        removedCategoryIds:
-          removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
-        addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
-        removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
+        ...(supportedDelegationTypes !== undefined && {
+          supportedDelegationTypes,
+        }),
+        ...(categoryIds !== undefined && { categoryIds }),
+        ...(tagIds !== undefined && { tagIds }),
+        ...(thirdPartyLoginUrl !== undefined && { thirdPartyLoginUrl }),
       }
     },
   )
 
 const categoriesAndTagsSchema = z
   .object({
-    categoryIds: z.string().optional().transform(safeParseStringArray),
-    tagIds: z.string().optional().transform(safeParseStringArray),
-    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
-    originalTagIds: z.string().optional().transform(safeParseStringArray),
+    categoryIds: z.string().optional().transform(safeParseOptionalStringArray),
+    tagIds: z.string().optional().transform(safeParseOptionalStringArray),
   })
   .merge(defaultEnvironmentSchema)
-  .transform(
-    ({ categoryIds, tagIds, originalCategoryIds, originalTagIds, ...rest }) => {
-      const addedCategoryIds = categoryIds.filter(
-        (id: string) => !originalCategoryIds.includes(id),
-      )
-      const removedCategoryIds = originalCategoryIds.filter(
-        (id: string) => !categoryIds.includes(id),
-      )
-      const addedTagIds = tagIds.filter(
-        (id: string) => !originalTagIds.includes(id),
-      )
-      const removedTagIds = originalTagIds.filter(
-        (id: string) => !tagIds.includes(id),
-      )
-
-      return {
-        ...rest,
-        addedCategoryIds:
-          addedCategoryIds.length > 0 ? addedCategoryIds : undefined,
-        removedCategoryIds:
-          removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
-        addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
-        removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
-      }
-    },
-  )
+  .transform(({ categoryIds, tagIds, ...rest }) => {
+    return {
+      ...rest,
+      ...(categoryIds !== undefined && { categoryIds }),
+      ...(tagIds !== undefined && { tagIds }),
+    }
+  })
 
 export const schema = {
   [PermissionFormTypes.CONTENT]: contentSchema,
