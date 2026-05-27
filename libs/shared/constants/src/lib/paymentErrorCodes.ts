@@ -70,8 +70,16 @@ export enum InvoiceErrorCode {
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 
+export enum BankTransferErrorCode {
+  FailedToCreateBankTransfer = 'FailedToCreateBankTransfer',
+  FailedToFetchBankTransfer = 'FailedToFetchBankTransfer',
+  BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
+  UnknownBankTransferError = 'UnknownBankTransferError',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
+  | BankTransferErrorCode
   | PaymentServiceCode
