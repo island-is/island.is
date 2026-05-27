@@ -96,18 +96,6 @@ export const idsAdminControlsNav: PortalNavigationItem = {
           description: m.idsAdmin,
           activeIfExact: true,
         },
-        {
-          name: m.translationsTitle,
-          path: IDSAdminPaths.IDSAdminControlsTranslations,
-          description: m.idsAdmin,
-          activeIfExact: true,
-        },
-        {
-          name: m.languages,
-          path: IDSAdminPaths.IDSAdminControlsLanguages,
-          description: m.idsAdmin,
-          activeIfExact: true,
-        },
       ],
     },
   ],

@@ -489,8 +489,6 @@ export const addNumberedList = (
   doc.x = originalX
 }
 
-const MARK_HIGHLIGHT_COLOR = '#fff066'
-
 interface Run {
   text: string
   bold: boolean
@@ -504,9 +502,33 @@ export interface RichTextBlock {
   softBreak?: boolean
 }
 
+// Values that mean "no highlight" and must not be drawn as a filled rect.
+// PDFKit cannot parse these and would fall back to a solid black fill.
+const NON_HIGHLIGHT_BG = new Set([
+  'transparent',
+  'inherit',
+  'initial',
+  'unset',
+  'none',
+  '',
+])
+
 const extractBgColor = (style: string): string | null => {
   const m = style.match(/background-color:\s*([^;]+)/)
-  return m ? m[1].trim() : null
+  if (!m) return null
+
+  const value = m[1].trim()
+  const normalized = value.toLowerCase()
+
+  if (NON_HIGHLIGHT_BG.has(normalized)) return null
+
+  // rgba(...) with a zero alpha channel is also effectively transparent. Match
+  // only the four-component rgba() form so an opaque rgb(r, g, 0) (e.g. yellow)
+  // is not mistaken for transparent.
+  if (/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0*\.?0+\s*\)/.test(normalized))
+    return null
+
+  return value
 }
 
 const collectRuns = (
@@ -533,7 +555,9 @@ const collectRuns = (
       el.name === 'span' &&
       el.attribs?.style?.includes('background-color')
     ) {
-      const color = extractBgColor(el.attribs.style) ?? MARK_HIGHLIGHT_COLOR
+      // A transparent/invalid background means no highlight, so inherit the
+      // current highlight state rather than forcing a fill.
+      const color = extractBgColor(el.attribs.style) ?? highlight
       collectRuns(children, bold, italic, color, result)
     } else if (el.name === 'br') {
       result.push({ text: '\n', bold: false, italic: false, highlight: false })
@@ -600,9 +624,49 @@ const collectBlocksFromNodes = (
   return blocks
 }
 
+// Collapse whitespace within a block the way a browser renders inline content
+// (white-space: normal): runs of spaces become one, and leading/trailing
+// whitespace is dropped. Without this, Word's empty `<span> </span>` spacers
+// render as literal spaces in the PDF even though the editor hides them.
+const collapseWhitespace = (runs: Run[]): Run[] => {
+  const collapsed: Run[] = []
+  // Start true so leading whitespace at the block start is trimmed.
+  let prevEndsWithSpace = true
+
+  for (const run of runs) {
+    // A <br>-derived run is a hard break; keep it and reset the space state.
+    if (run.text === '\n') {
+      collapsed.push(run)
+      prevEndsWithSpace = true
+      continue
+    }
+
+    let text = run.text.replace(/[ \t\r\n]+/g, ' ')
+    if (prevEndsWithSpace && text.startsWith(' ')) {
+      text = text.slice(1)
+    }
+    if (text === '') continue
+
+    collapsed.push({ ...run, text })
+    prevEndsWithSpace = text.endsWith(' ')
+  }
+
+  const last = collapsed[collapsed.length - 1]
+  if (last && last.text.endsWith(' ')) {
+    last.text = last.text.replace(/ +$/, '')
+    if (last.text === '') collapsed.pop()
+  }
+
+  return collapsed
+}
+
 export const htmlToBlocks = (html: string): RichTextBlock[] => {
   const dom = parseDocument(html)
-  return collectBlocksFromNodes(dom.children as ChildNode[])
+  const blocks = collectBlocksFromNodes(dom.children)
+  return blocks.map((block) => ({
+    ...block,
+    runs: collapseWhitespace(block.runs),
+  }))
 }
 
 const getFontName = (run: Run): string => {

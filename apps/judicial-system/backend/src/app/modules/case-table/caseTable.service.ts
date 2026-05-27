@@ -230,9 +230,18 @@ export class CaseTableService {
                 )
               `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
-              {
-                '$appealCase.appeal_case_number$': { [Op.iLike]: `%${query}%` },
-              },
+              // Matches both case-level and ruling-order appeals — no
+              // `ruling_file_id` filter. EXISTS instead of a joined alias so
+              // the search query doesn't need to include the
+              // `rulingOrderAppealCases` HasMany (which would force
+              // `subQuery: true` under LIMIT and break the inner WHERE).
+              literal(`
+                EXISTS (
+                  SELECT 1 FROM "appeal_case" ac
+                  WHERE ac."case_id" = "Case"."id"
+                    AND ac."appeal_case_number" ILIKE ${safeQuery}
+                )
+              `),
               literal(`
                 EXISTS (
                   SELECT 1 FROM "defendant" d
