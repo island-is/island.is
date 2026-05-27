@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -12,6 +12,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
   CourtCaseInfo,
@@ -21,10 +22,10 @@ import {
   IndictmentCaseScheduledCard,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingModifiedAlert,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -143,20 +144,6 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            </Box>
-          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -172,6 +159,8 @@ const IndictmentOverview: FC = () => {
               ),
           )}
           <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
               workingCase.court &&
               latestDate?.date &&

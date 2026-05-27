@@ -6,10 +6,12 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
+  RulingModifiedAlert,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -136,30 +138,8 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           }
         />
       )}
-      {targetAppealCase?.appealRulingModifiedHistory && (
-        <AlertMessage
-          type="info"
-          title="Úrskurður Landsréttar leiðréttur"
-          message={
-            <MarkdownWrapper
-              markdown={targetAppealCase.appealRulingModifiedHistory}
-              textProps={{ variant: 'small' }}
-            />
-          }
-        />
-      )}
-      {workingCase.rulingModifiedHistory && (
-        <AlertMessage
-          type="info"
-          title="Úrskurður leiðréttur"
-          message={
-            <MarkdownWrapper
-              markdown={workingCase.rulingModifiedHistory}
-              textProps={{ variant: 'small' }}
-            />
-          }
-        />
-      )}
+      <AppealRulingModifiedAlert />
+      <RulingModifiedAlert />
     </div>
   )
 }

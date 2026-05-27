@@ -2,12 +2,13 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Option } from '@island.is/island-ui/core'
+import { Box, Option } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -15,11 +16,11 @@ import {
   FormFooter,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingModifiedAlert,
   UserContext,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
@@ -144,22 +145,10 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
-          <div className={grid({ gap: 2 })}>
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
-            {verdictStatusAlerts}
-          </div>
+          <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
+          <AppealRulingModifiedAlert />
+          <RulingModifiedAlert />
           <Box component="section">
             <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
           </Box>

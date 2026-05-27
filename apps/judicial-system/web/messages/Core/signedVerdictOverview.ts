@@ -143,14 +143,6 @@ export const signedVerdictOverview = {
           'Notaður sem beinagrind af texta í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála..',
       },
     }),
-    modifyRulingInfo: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_ruling_info.title',
-        defaultMessage: 'Úrskurður leiðréttur',
-        description:
-          'Notaður sem titill í upplýsingaboxi um að úrskurður hafi verið leiðréttur á yfirlitsskjá afgreiddra mála.',
-      },
-    }),
     shareCase: defineMessages({
       title: {
         id: 'judicial.system.core:signed_verdict_overview.share_case.title',
