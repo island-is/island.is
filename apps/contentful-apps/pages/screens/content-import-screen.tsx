@@ -60,10 +60,6 @@ const ContentExportScreen = () => {
   const cma = useCMA()
   const sdk = useSDK<PageExtensionSDK>()
 
-  const [exportType, setExportType] = useState<'contentType' | 'pages'>(
-    'contentType',
-  )
-
   const [state, setState] = useState<{
     contentTypes: {
       label: string
@@ -74,12 +70,14 @@ const ContentExportScreen = () => {
     isExporting: boolean
     tags: { label: string; value: string }[]
     selectedTagId: string | null
+    exportType: 'contentType' | 'pages'
   }>({
     contentTypes: [],
     selectedContentTypeId: '',
     isExporting: false,
     tags: [],
     selectedTagId: '',
+    exportType: 'contentType',
   })
 
   useEffect(() => {
@@ -257,7 +255,7 @@ const ContentExportScreen = () => {
   const exportContent = useCallback(async () => {
     setState((prev) => ({ ...prev, isExporting: true }))
     try {
-      if (exportType === 'contentType') await exportContentTypeEntries()
+      if (state.exportType === 'contentType') await exportContentTypeEntries()
       else await exportPageEntries()
     } catch (error) {
       console.error(error)
@@ -265,7 +263,12 @@ const ContentExportScreen = () => {
     } finally {
       setState((prev) => ({ ...prev, isExporting: false }))
     }
-  }, [exportContentTypeEntries, exportPageEntries, exportType, sdk.notifier])
+  }, [
+    exportContentTypeEntries,
+    exportPageEntries,
+    state.exportType,
+    sdk.notifier,
+  ])
 
   if (state.contentTypes.length === 0)
     return (
@@ -274,25 +277,38 @@ const ContentExportScreen = () => {
       </GridContainer>
     )
 
+  let canExport = false
+
+  if (!state.isExporting) {
+    if (state.exportType === 'contentType')
+      canExport = Boolean(state.selectedContentTypeId)
+    else if (state.exportType === 'pages')
+      canExport = Boolean(state.selectedTagId)
+  }
+
   return (
     <GridContainer>
       <Flex gap="16px" flexWrap="wrap" marginBottom="spacingM">
         <Radio
           value="contentType"
-          isChecked={exportType === 'contentType'}
-          onChange={() => setExportType('contentType')}
+          isChecked={state.exportType === 'contentType'}
+          onChange={() =>
+            setState((prev) => ({ ...prev, exportType: 'contentType' }))
+          }
         >
           Export all entries of content type
         </Radio>
         <Radio
           value="pages"
-          isChecked={exportType === 'pages'}
-          onChange={() => setExportType('pages')}
+          isChecked={state.exportType === 'pages'}
+          onChange={() =>
+            setState((prev) => ({ ...prev, exportType: 'pages' }))
+          }
         >
           Export published page entries with specific tag
         </Radio>
       </Flex>
-      {exportType === 'contentType' && (
+      {state.exportType === 'contentType' && (
         <Flex gap="16px" flexWrap="wrap">
           <ValueSelect
             disabled={state.isExporting}
@@ -306,7 +322,7 @@ const ContentExportScreen = () => {
           />
         </Flex>
       )}
-      {exportType === 'pages' && (
+      {state.exportType === 'pages' && (
         <Flex gap="16px" flexWrap="wrap">
           <ValueSelect
             disabled={state.isExporting}
@@ -323,13 +339,7 @@ const ContentExportScreen = () => {
       <Button
         variant="primary"
         onClick={exportContent}
-        isDisabled={
-          !state.selectedContentTypeId ||
-          state.contentTypes.length === 0 ||
-          state.isExporting ||
-          (exportType === 'pages' && !state.selectedTagId) ||
-          (exportType === 'contentType' && !state.selectedContentTypeId)
-        }
+        isDisabled={!canExport}
         endIcon={state.isExporting ? <Spinner /> : <DownloadIcon />}
       >
         Export
