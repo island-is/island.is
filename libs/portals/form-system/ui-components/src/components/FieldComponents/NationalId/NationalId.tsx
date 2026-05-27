@@ -88,8 +88,6 @@ export const NationalId = ({
     fetchPolicy: 'cache-first',
     skip: !shouldQueryIndividual,
     onCompleted: (nameData) => {
-      const data = nameData
-      console.log('Identity query completed with data:', data)
       const newName = removeTypename(nameData?.identity?.name)
 
       if (newName) {
@@ -150,6 +148,15 @@ export const NationalId = ({
         dispatch({
           type: 'SET_NAME',
           payload: { id: item.id, value: '', valueIndex },
+        })
+        dispatch({
+          type: 'SET_ADDRESS',
+          payload: {
+            id: item.id,
+            address: '',
+            postalCode: '',
+            municipality: '',
+          },
         })
       }
     }
