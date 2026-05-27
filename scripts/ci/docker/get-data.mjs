@@ -3,7 +3,7 @@ import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
 import core from '@actions/core'
 import github from '@actions/github'
-import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
+import { isMainBranch, isReleaseBranch } from './const.mjs'
 import { glob } from 'glob'
 import { isMainModule } from './utils.mjs'
 
@@ -157,14 +157,14 @@ export function getBranch(context = github.context) {
 }
 
 export function getTypeOfDeployment(branch) {
-  if (MAIN_BRANCHES.includes(branch)) {
+  if (isMainBranch(branch)) {
     return {
       dev: true,
       staging: false,
       prod: false,
     }
   }
-  if (RELEASE_BRANCHES.includes(branch)) {
+  if (isReleaseBranch(branch)) {
     return {
       dev: false,
       staging: true,
