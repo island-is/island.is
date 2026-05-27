@@ -24,7 +24,6 @@ export interface ContextMenuItem {
   onClick?: () => void
   title: string
   icon?: IconMapIcon
-  disabled?: boolean
 }
 
 export type MenuItems = ContextMenuItem[]
@@ -107,6 +106,10 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
     const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
       evt.stopPropagation()
 
+      if (item.href) {
+        return
+      }
+
       setOpen(false)
       setIsLoading(true)
 
@@ -132,6 +135,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
           store={menu}
           gutter={gutter}
           shift={shift}
+          portal
           unmountOnHide
         >
           {items?.map((item, index) => (
@@ -141,19 +145,13 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                 <Box component="li" width="full">
                   <Box
                     component={item.href ? 'a' : 'button'}
-                    onClick={
-                      item.href ? undefined : (evt) => handleClick(evt, item)
-                    }
+                    onClick={(evt) => handleClick(evt, item)}
                     href={item.href ?? undefined}
                     className={cn(
                       menuItemBoxStyle,
                       menuItemTextStyle,
                       styles.menuItem,
-                      {
-                        [styles.menuItemDisabled]: item.disabled,
-                      },
                     )}
-                    disabled={item.disabled}
                   >
                     {item.icon && (
                       <Box display="flex" marginRight={2}>

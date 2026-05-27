@@ -16,7 +16,6 @@ export const ScreenFragment = gql`
     multiMax
     isMulti
     shouldValidate
-    shouldPopulate
     screenError {
       hasError
       title {

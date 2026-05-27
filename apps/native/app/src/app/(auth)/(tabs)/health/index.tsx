@@ -334,7 +334,7 @@ export default function HealthOverviewScreen() {
   const organDonationData =
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -381,8 +381,8 @@ export default function HealthOverviewScreen() {
   const handleAppointmentPress = useCallback(
     (appointmentId: string) => {
       router.navigate({
-        pathname: '/health/appointments',
-        params: { appointmentId },
+        pathname: '/health/appointments/[id]',
+        params: { id: appointmentId },
       })
     },
     [router],

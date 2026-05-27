@@ -324,7 +324,7 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                       <Text variant="h4" as="h3">
                         {formatMessage(m.verdictPage.keywords)}
                       </Text>
-                      <Text>{item.keywords.join(', ')}</Text>
+                      <Text>{item.keywords.join('. ')}</Text>
                     </Box>
                   )}
                   {Boolean(item.presentings) && (
@@ -421,5 +421,6 @@ export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
   {
     footerVersion: 'organization',
+    organizationSearchFilter: 'domstolar',
   },
 )

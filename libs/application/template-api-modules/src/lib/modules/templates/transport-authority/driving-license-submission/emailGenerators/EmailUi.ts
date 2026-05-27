@@ -65,6 +65,18 @@ export const EmailHeader = (opts?: EmailHeaderOptions) => {
   ]
 }
 
+export const EmailNextSteps = (
+  applicationFor: DrivingLicenseApplicationFor = 'B-full',
+) => {
+  const paragraphs = m.nextSteps[applicationFor]
+
+  if (!paragraphs) {
+    return []
+  }
+
+  return paragraphs.map((copy) => Copy(copy, { align: 'left', small: true }))
+}
+
 type EmailCompleteOptions = {
   selectedDistrictCommissioner?: string
   isHomeDelivery?: boolean

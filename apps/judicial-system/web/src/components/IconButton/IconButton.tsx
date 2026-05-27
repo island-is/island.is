@@ -1,4 +1,4 @@
-import { FC, forwardRef, MouseEvent } from 'react'
+import { forwardRef, MouseEvent } from 'react'
 import cn from 'classnames'
 import { Button } from '@ariakit/react/button'
 
@@ -12,6 +12,7 @@ interface Props {
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
   tooltipText?: string
+  ariaLabel?: string
 }
 
 interface RenderButtonProps {
@@ -19,48 +20,44 @@ interface RenderButtonProps {
   colorScheme: 'blue' | 'red' | 'transparent'
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
-  ref: React.Ref<HTMLButtonElement>
+  ariaLabel?: string
 }
 
-const RenderButton: FC<RenderButtonProps> = ({
-  icon,
-  colorScheme,
-  onClick,
-  disabled,
-  ref,
-}) => (
-  <Box
-    component={Button}
-    ref={ref}
-    className={cn(styles.iconButtonContainer, {
-      [styles.buttonDisabled]: disabled,
-      [styles.transparent]: colorScheme === 'transparent',
-    })}
-    background={
-      colorScheme === 'blue'
-        ? 'blue200'
-        : colorScheme === 'red'
-        ? 'red200'
-        : 'transparent'
-    }
-    onClick={(evt) => onClick && onClick(evt)}
-    disabled={disabled}
-    aria-label="Valmynd"
-  >
-    <Icon
-      icon={icon}
-      color={
-        colorScheme === 'blue' || colorScheme === 'transparent'
-          ? 'blue400'
-          : 'red400'
+const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
+  ({ icon, colorScheme, onClick, disabled, ariaLabel }, ref) => (
+    <Box
+      component={Button}
+      ref={ref}
+      className={cn(styles.iconButtonContainer, {
+        [styles.buttonDisabled]: disabled,
+        [styles.transparent]: colorScheme === 'transparent',
+      })}
+      background={
+        colorScheme === 'blue'
+          ? 'blue200'
+          : colorScheme === 'red'
+          ? 'red200'
+          : 'transparent'
       }
-      size="small"
-    />
-  </Box>
+      onClick={(evt) => onClick && onClick(evt)}
+      disabled={disabled}
+      aria-label={ariaLabel ?? 'Valmynd'}
+    >
+      <Icon
+        icon={icon}
+        color={
+          colorScheme === 'blue' || colorScheme === 'transparent'
+            ? 'blue400'
+            : 'red400'
+        }
+        size="small"
+      />
+    </Box>
+  ),
 )
 
 const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
-  const { icon, colorScheme, onClick, disabled, tooltipText } = props
+  const { icon, colorScheme, onClick, disabled, tooltipText, ariaLabel } = props
 
   return tooltipText ? (
     <Tooltip placement="top" text={tooltipText}>
@@ -70,6 +67,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
           colorScheme={colorScheme}
           onClick={onClick}
           disabled={disabled}
+          ariaLabel={ariaLabel}
           ref={ref}
         />
       </span>
@@ -80,6 +78,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
       colorScheme={colorScheme}
       onClick={onClick}
       disabled={disabled}
+      ariaLabel={ariaLabel}
       ref={ref}
     />
   )

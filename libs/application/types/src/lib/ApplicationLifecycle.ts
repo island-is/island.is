@@ -13,12 +13,12 @@ export type PruningApplication = Pick<
   | 'externalData'
   | 'typeId'
   | 'state'
+  | 'status'
   | 'applicant'
   | 'applicantActors'
 >
 
 export type PruningNotification = {
-  externalBody?: string
-  internalBody?: string
+  args?: Array<{ key: string; value: string }>
   notificationTemplateId: string
 }

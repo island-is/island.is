@@ -9,7 +9,6 @@ import { Case, User } from '../../repository'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
 const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
-  'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
 ]
 
@@ -145,13 +144,6 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
 
     return true
   },
-}
-
-// Defender update rules (statement date)
-export const defenderUpdateRule: RolesRule = {
-  role: UserRole.DEFENDER,
-  type: RulesType.FIELD,
-  dtoFields: ['defendantStatementDate'],
 }
 
 export const defenderTransitionRule: RolesRule = {

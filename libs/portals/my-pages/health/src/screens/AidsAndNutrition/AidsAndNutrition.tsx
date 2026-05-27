@@ -59,9 +59,10 @@ const AidsAndNutrition = () => {
       marginBottom={[6, 6, 10]}
       title={formatMessage(messages.aidsAndNutritionTitle)}
       intro={formatMessage(messages.aidsAndNutritionDescription)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      childrenWidthFull
+      serviceProvider={{
+        slug: SJUKRATRYGGINGAR_SLUG,
+        tooltip: formatMessage(messages.healthTooltip),
+      }}
     >
       {error && <Problem error={error} noBorder={false} />}
 

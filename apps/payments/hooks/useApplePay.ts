@@ -6,11 +6,11 @@ import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import getConfig from 'next/config'
 
-import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
 import {
-  GetPaymentFlowQuery,
-  useGetApplePaySessionLazyQuery,
-} from '../graphql/queries.graphql.generated'
+  useChargeApplePayMutation,
+  useValidateApplePayMerchantMutation,
+} from '../graphql/mutations.graphql.generated'
+import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 
 const VALID_CARD_ERROR_CODES = new Set<string>(Object.values(CardErrorCode))
@@ -57,7 +57,8 @@ export const useApplePay = ({
   const [supportsApplePay, setSupportsApplePay] = useState(false)
 
   const [chargeApplePayMutationHook] = useChargeApplePayMutation()
-  const [getApplePaySessionQueryHook] = useGetApplePaySessionLazyQuery()
+  const [validateApplePayMerchantMutation] =
+    useValidateApplePayMerchantMutation()
 
   // check if apple pay is available
   useEffect(() => {
@@ -86,9 +87,6 @@ export const useApplePay = ({
       return
     }
 
-    console.log('initiating apple pay')
-
-    // create apple pay session with payment information
     const paymentRequest: ApplePayJS.ApplePayPaymentRequest = {
       countryCode: 'IS',
       currencyCode: 'ISK',
@@ -108,30 +106,35 @@ export const useApplePay = ({
     sessionRef.current.onvalidatemerchant = async (
       event: ApplePayJS.ApplePayValidateMerchantEvent,
     ) => {
-      console.log('On validate merchant', event)
-
       try {
-        // call valitor get session endpoint
-        const { data, error } = await getApplePaySessionQueryHook()
-        if (error) {
-          const problem = findProblemInApolloError(error)
+        const { data, errors: gqlErrors } =
+          await validateApplePayMerchantMutation({
+            variables: {
+              input: { validationURL: event.validationURL },
+            },
+          })
+        if (gqlErrors && gqlErrors.length > 0) {
+          const problem = findProblemInApolloError({
+            graphQLErrors: gqlErrors,
+          } as ApolloError)
           throw new Error(
             (problem?.detail as string) ??
               CardErrorCode.ErrorGettingApplePaySession,
           )
         }
 
-        const session = data?.paymentsGetApplePaySession?.session
+        const session = data?.paymentsValidateApplePayMerchant?.session
 
         if (!session) {
           throw new Error(CardErrorCode.ErrorGettingApplePaySession)
         }
 
         const parsedSession = JSON.parse(session)
-        console.log('Session data', parsedSession)
 
         sessionRef.current?.completeMerchantValidation(parsedSession)
       } catch (e) {
+        sessionRef.current?.abort()
+
         const problem = findProblemInApolloError(e as ApolloError)
         const raw =
           problem?.detail ??
@@ -143,9 +146,8 @@ export const useApplePay = ({
     }
 
     sessionRef.current.onpaymentmethodselected = (
-      event: ApplePayJS.ApplePayPaymentMethodSelectedEvent,
+      _event: ApplePayJS.ApplePayPaymentMethodSelectedEvent,
     ) => {
-      console.log('On payment method selected', event)
       sessionRef.current?.completePaymentMethodSelection({
         newTotal: {
           label: productInformation.title,
@@ -157,15 +159,12 @@ export const useApplePay = ({
     sessionRef.current.onpaymentauthorized = async (
       event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
     ) => {
-      console.log('On payment authorized', event)
-
       try {
         const { data, errors: gqlErrors } = await chargeApplePayMutationHook({
           variables: {
             input: {
               paymentFlowId: paymentFlow.id,
               paymentData: event.payment.token.paymentData,
-              paymentMethod: event.payment.token.paymentMethod,
               transactionIdentifier: event.payment.token.transactionIdentifier,
             },
           },
@@ -206,8 +205,7 @@ export const useApplePay = ({
       }
     }
 
-    sessionRef.current.oncancel = (event: ApplePayJS.Event) => {
-      console.log('Apple Pay cancelled', event)
+    sessionRef.current.oncancel = () => {
       sessionRef.current = null
     }
 
@@ -219,7 +217,7 @@ export const useApplePay = ({
     onPaymentSuccess,
     onPaymentError,
     chargeApplePayMutationHook,
-    getApplePaySessionQueryHook,
+    validateApplePayMerchantMutation,
   ])
 
   return {

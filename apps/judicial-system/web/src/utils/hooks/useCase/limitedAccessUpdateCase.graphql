@@ -94,37 +94,15 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
     accusedAppealDecision
     prosecutorAppealDecision
     isAppealDeadlineExpired
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
-      appealState
-      appealCaseNumber
-      appealReceivedByCourtDate
-      prosecutorStatementDate
-      defendantStatementDate
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
+      id
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
     }
     prosecutorsOffice {
       id

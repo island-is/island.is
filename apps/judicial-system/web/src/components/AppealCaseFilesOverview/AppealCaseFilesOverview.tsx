@@ -8,7 +8,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
-  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -33,27 +32,32 @@ import {
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isUserCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isAppealFileCategoryVisible,
+  isMatchingAppealCaseFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
 
+const prosecutorDeleteCategories = [
+  CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+]
+const defenceDeleteCategories = [
+  CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+]
 const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   category &&
-  [
-    CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-  ].includes(category)
-
-const isDefenceCategory = (category: CaseFileCategory | undefined | null) =>
-  category &&
-  [
-    CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-  ].includes(category)
+  ([
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  ].includes(category) ||
+    prosecutorDeleteCategories.includes(category))
 
 const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
@@ -102,58 +106,28 @@ const AppealCaseFilesOverview = () => {
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
 
+  const deleteCategories = isProsecutionUser(user)
+    ? prosecutorDeleteCategories
+    : isDefenceUser(user)
+    ? defenceDeleteCategories
+    : []
+  const canDeleteFile = (file: CaseFile) =>
+    isMatchingAppealCaseFile(workingCase, deleteCategories, file, user)
+
   useEffect(() => {
     if (workingCase.caseFiles) {
       setAllFiles(
-        workingCase.caseFiles.filter((caseFile) => {
-          return (
-            caseFile.category &&
-            ((workingCase.prosecutorPostponedAppealDate &&
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-                CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-              ].includes(caseFile.category)) ||
-              (workingCase.appealCase?.prosecutorStatementDate &&
-                [
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-                  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              (workingCase.accusedPostponedAppealDate &&
-                [
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              (workingCase.appealCase?.defendantStatementDate &&
-                [
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-                  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-                ].includes(caseFile.category)) ||
-              [
-                CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-                CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-              ].includes(caseFile.category) ||
-              ((workingCase.appealCase?.appealState ===
-                AppealCaseState.COMPLETED ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealCase?.appealState ===
-                AppealCaseState.COMPLETED &&
-                isDefenceUser(user)) ||
-                isCourtOfAppealsUser(user)) &&
-                caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
-          )
-        }),
+        workingCase.caseFiles.filter((caseFile) =>
+          isAppealFileCategoryVisible(
+            workingCase,
+            workingCase.appealCase,
+            caseFile,
+            user,
+          ),
+        ),
       )
     }
-  }, [
-    user,
-    workingCase.accusedPostponedAppealDate,
-    workingCase.appealCase?.appealState,
-    workingCase.caseFiles,
-    workingCase.appealCase?.defendantStatementDate,
-    workingCase.prosecutorPostponedAppealDate,
-    workingCase.appealCase?.prosecutorStatementDate,
-  ])
+  }, [user, workingCase])
 
   return (
     isCompletedCase(workingCase.state) &&
@@ -172,12 +146,7 @@ const AppealCaseFilesOverview = () => {
           />
           {allFiles.map((file) => {
             const isDisabled = !file.isKeyAccessible
-            const canDeleteFile =
-              (isProsecutionUser(user) &&
-                isProsecutorCategory(file.category)) ||
-              (isDefenceUser(user) &&
-                isDefenceCategory(file.category) &&
-                isUserCaseFile(workingCase, file, user))
+            const canDelete = canDeleteFile(file)
 
             return (
               <PdfButton
@@ -187,11 +156,7 @@ const AppealCaseFilesOverview = () => {
                 disabled={isDisabled}
                 handleClick={() => onOpen(file.id)}
               >
-                <Box
-                  display="flex"
-                  alignItems={['flexEnd', 'flexEnd', 'center']}
-                  justifyContent={['spaceBetween', 'spaceBetween', 'center']}
-                >
+                <Box className={styles.metadataRow}>
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
                       {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
@@ -217,7 +182,7 @@ const AppealCaseFilesOverview = () => {
                           onClick: () => onOpen(file.id),
                           icon: 'open' as IconMapIcon,
                         },
-                        ...(canDeleteFile
+                        ...(canDelete
                           ? [
                               {
                                 title: 'Eyða',

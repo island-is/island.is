@@ -37,6 +37,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -44,11 +45,15 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
+  CaseOrigin,
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  usePoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
@@ -85,6 +90,9 @@ export const Overview = () => {
     parentCaseValidToDate,
   } = useInfoCardItems()
 
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+
   const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
       return
@@ -101,7 +109,10 @@ export const Overview = () => {
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      ? await sendNotification(
+          workingCase.id,
+          TrackedNotificationType.READY_FOR_COURT,
+        )
       : false
 
     // An SMS should have been sent
@@ -292,6 +303,13 @@ export const Overview = () => {
                   <CaseFileList caseId={workingCase.id} files={caseFiles} />
                 </Box>
               </AccordionItem>
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                />
+              )}
               {(workingCase.comments ||
                 workingCase.caseFilesComments ||
                 workingCase.caseResentExplanation) && (

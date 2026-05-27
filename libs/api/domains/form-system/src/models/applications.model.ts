@@ -1,11 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { FormApplicantTypeDto } from './applicant.model'
 import { FormCertificationTypeDto } from './certification.model'
-import { CompletedSectionInfo } from './completedSectionInfo'
 import { Dependency } from './form.model'
 import { LanguageType } from './languageType.model'
 import { Option } from './option.model'
 import { Section } from './section.model'
+import { SectionInfo } from './sectionInfo.model'
 import { ValueDto } from './value.model'
 
 @ObjectType('FormSystemApplicationEventDto')
@@ -88,8 +88,8 @@ export class Application {
   @Field(() => [FormApplicantTypeDto], { nullable: 'itemsAndList' })
   applicantTypes?: FormApplicantTypeDto[]
 
-  @Field(() => CompletedSectionInfo, { nullable: true })
-  completedSectionInfo?: CompletedSectionInfo
+  @Field(() => SectionInfo, { nullable: true })
+  sectionInfo?: SectionInfo
 
   @Field(() => String, { nullable: true })
   organizationNationalId?: string

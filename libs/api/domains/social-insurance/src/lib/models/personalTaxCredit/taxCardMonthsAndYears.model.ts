@@ -5,6 +5,6 @@ export class YearWithMonths {
   @Field(() => Int)
   year!: number
 
-  @Field(() => [Int])
+  @Field(() => [Int], { description: 'Month numbers 1–12 (1 = January)' })
   months!: number[]
 }

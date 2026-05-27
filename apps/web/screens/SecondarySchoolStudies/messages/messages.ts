@@ -120,6 +120,18 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.haefnisþrep',
       defaultMessage: 'Hæfniþrep',
     },
+    isReferenceProgramme: {
+      id: 'web.secondarySchoolStudies:filters.isReferenceProgramme',
+      defaultMessage: 'Viðmiðunarbraut',
+    },
+    yes: {
+      id: 'web.secondarySchoolStudies:filters.yes',
+      defaultMessage: 'Já',
+    },
+    no: {
+      id: 'web.secondarySchoolStudies:filters.no',
+      defaultMessage: 'Nei',
+    },
   }),
   home: defineMessages({
     title: {
@@ -140,10 +152,6 @@ export const m = {
     },
   }),
   footer: defineMessages({
-    logoAlt: {
-      id: 'web.secondarySchoolStudies:footer.logoAlt',
-      defaultMessage: 'Stjórnarráð Íslands',
-    },
     government: {
       id: 'web.secondarySchoolStudies:footer.government',
       defaultMessage: 'Stjórnarráð Íslands',

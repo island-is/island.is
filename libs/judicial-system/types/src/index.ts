@@ -43,16 +43,18 @@ export {
 export type { Institution } from './lib/institution'
 
 export {
-  CaseNotificationType,
+  UmbrellaNotificationType,
+  RequestCaseNotificationType,
+  IndictmentCaseNotificationType,
+  AppealCaseNotificationType,
   SubpoenaNotificationType,
-  NotificationType,
+  TrackedNotificationType,
   InstitutionNotificationType,
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
-  IndictmentCaseNotificationType,
   EventNotificationType,
-  notificationTypes,
+  trackedNotificationTypes,
 } from './lib/notification'
 
 export {
@@ -60,6 +62,8 @@ export {
   eventTypes,
   DefendantEventType,
   defendantEventTypes,
+  AppealEventType,
+  appealEventTypes,
 } from './lib/eventLog'
 
 export { DateType, dateTypes } from './lib/dateLog'

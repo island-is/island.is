@@ -31,10 +31,11 @@ export const is = {
   'applock.attempt': 'tilraun eftir',
 
   // onboarding
-  'onboarding.notifications.title':
-    'Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.',
+  'onboarding.notifications.title': 'Leyfa tilkynningar',
+  'onboarding.notifications.body':
+    'Fáðu tilkynningar um ný skjöl eða annað mikilvægt.',
   'onboarding.notifications.allowNotificationsButtonText': 'Leyfa tilkynningar',
-  'onboarding.notifications.decideLaterButtonText': 'Ákveða seinna',
+  'onboarding.notifications.decideLaterButtonText': 'Sleppa því í bili',
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
   'onboarding.appLock.choosePinButtonText': 'Velja PIN',
@@ -43,7 +44,8 @@ export const is = {
   'onboarding.pinCode.goBackButtonText': 'Til baka',
   'onboarding.pinCode.cancelButtonText': 'Hætta við',
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
-  'onboarding.biometrics.title':
+  'onboarding.biometrics.title': 'Leyfa lífkenni',
+  'onboarding.biometrics.body':
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
@@ -60,6 +62,11 @@ export const is = {
     'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+  'onboarding.privacy.title': 'Persónuvernd',
+  'onboarding.privacy.body':
+    'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',
+  'onboarding.privacy.linkText': 'Persónuverndastefna Ísland.is',
+  'onboarding.privacy.continueButtonText': 'Halda áfram',
   'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
@@ -181,14 +188,6 @@ export const is = {
   'home.allApplications': 'Stafrænar umsóknir',
   'home.welcomeText': 'Hæ',
   'home.goodDay': 'Góðan dag,',
-  'home.onboardingModule.card1':
-    'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
-  'home.onboardingModule.card2':
-    'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
-  'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
-  'home.onboardingModule.card4':
-    'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
@@ -295,7 +294,7 @@ export const is = {
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.family': 'Fjölskylda',
+  'profile.myData': 'Mín gögn',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
@@ -499,7 +498,7 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara til útlanda?',
   'licenseDetail.driversLicense.alert.description':
     'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
@@ -771,7 +770,7 @@ export const is = {
   'health.categories.moreOnMyPages': 'Meira á mínum síðum',
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
-  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires

@@ -4,8 +4,9 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   InstitutionType,
+  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -77,7 +78,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
           } as Case,
           {
             user,
-            type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))

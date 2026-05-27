@@ -15,6 +15,8 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
+  NotificationConfig,
+  NotificationType,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -152,8 +154,24 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           status: 'inprogress',
           lifecycle: {
-            ...pruneAfter(sevenDays),
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: sevenDays,
             shouldDeleteChargeIfPaymentFulfilled: true,
+            pruneMessage: (application) => {
+              const nationalId = getValueViaPath<string>(
+                application.answers,
+                'childsPersonalInfo.nationalId',
+              )
+              return {
+                notificationTemplateId:
+                  NotificationConfig[NotificationType.PassportPruned]
+                    .templateId,
+                ...(nationalId && {
+                  args: [{ key: 'internalBody', value: nationalId }],
+                }),
+              }
+            },
           },
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,

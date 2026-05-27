@@ -8,6 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -27,7 +28,7 @@ import UploadFiles, {
 } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -65,6 +66,9 @@ const AddRulingOrder: FC = () => {
       files,
       {
         status: FileUploadStatus.done,
+        userGeneratedFilename: `${
+          workingCase.courtCaseNumber
+        } Úrskurður ${formatDate(confirmationDate)}`,
         submissionDate: formatDateForServer(confirmationDate),
         category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       },
@@ -97,7 +101,10 @@ const AddRulingOrder: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(workingCase.id, NotificationType.RULING_ORDER_ADDED)
+      await sendNotification(
+        workingCase.id,
+        TrackedNotificationType.RULING_ORDER_ADDED,
+      )
     }
 
     setVisibleModal(undefined)
@@ -128,7 +135,7 @@ const AddRulingOrder: FC = () => {
           <FormContentContainer>
             <PageTitle>Úrskurðir</PageTitle>
             <CourtCaseInfo workingCase={workingCase} />
-            <SectionHeading title="Hlaða upp úrskurði" />
+            <SectionHeading title="Hlaða upp úrskurði" required />
             <UploadFiles
               files={uploadFiles}
               onChange={addFiles}

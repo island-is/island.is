@@ -13,6 +13,7 @@ import { Environment } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { environments } from '../constants/environments'
+import { EnvironmentFailure } from '../models/multi-environment-result.model'
 
 @Injectable()
 export abstract class MultiEnvironmentService {
@@ -56,6 +57,20 @@ export abstract class MultiEnvironmentService {
     }
   }
 
+  /** Returns true if the admin API client for the given environment is configured. */
+  protected isEnvironmentConfigured(environment: Environment): boolean {
+    switch (environment) {
+      case Environment.Development:
+        return Boolean(this.adminDevApi)
+      case Environment.Staging:
+        return Boolean(this.adminStagingApi)
+      case Environment.Production:
+        return Boolean(this.adminProdApi)
+      default:
+        return false
+    }
+  }
+
   /**
    * Request wrapper that handles 204 responses.
    * Needs to be passed the Raw functions from the openapi codegen
@@ -73,6 +88,21 @@ export abstract class MultiEnvironmentService {
     }
 
     return handle204(request(api))
+  }
+
+  protected getConfiguredEnvironments(): Environment[] {
+    return environments.filter((env) => {
+      switch (env) {
+        case Environment.Development:
+          return !!this.adminDevApi
+        case Environment.Staging:
+          return !!this.adminStagingApi
+        case Environment.Production:
+          return !!this.adminProdApi
+        default:
+          return false
+      }
+    })
   }
 
   protected handleError(error: Error, environment: Environment) {
@@ -111,5 +141,52 @@ export abstract class MultiEnvironmentService {
         }
       })
       .filter(isDefined)
+  }
+
+  /**
+   * Like {@link handleSettledPromises} but also collects per-environment
+   * failures and returns them alongside the successful results
+   */
+  public handleSettledPromisesWithFailures<T, K>(
+    settledPromises: PromiseSettledResult<T | undefined | null>[],
+    requestedEnvs: Environment[],
+    {
+      mapper,
+      prefixErrorMessage,
+    }: {
+      mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
+      prefixErrorMessage?: string
+    },
+  ): { values: K[]; failures: EnvironmentFailure[] } {
+    const values: K[] = []
+    const failures: EnvironmentFailure[] = []
+
+    settledPromises.forEach((resp, index) => {
+      const environment = requestedEnvs[index]
+      if (resp.status === 'fulfilled' && resp.value) {
+        values.push(mapper(resp.value, index))
+      } else if (resp.status === 'fulfilled') {
+        // makeRequest resolves to null/undefined when the env's API client
+        // is not configured, or when the upstream returned an empty body.
+        // Surface this as a failure rather than silently dropping it.
+        const message = `${
+          prefixErrorMessage ?? 'Error'
+        } in environment ${environment}: no response (environment not configured or empty response)`
+        this.logger.error(message)
+        failures.push({ environment, message })
+      } else {
+        const message =
+          resp.reason instanceof Error
+            ? resp.reason.message
+            : String(resp.reason ?? 'Unknown error')
+        this.logger.error(
+          `${prefixErrorMessage ?? 'Error'} in environment ${environment}`,
+          resp.reason,
+        )
+        failures.push({ environment, message })
+      }
+    })
+
+    return { values, failures }
   }
 }

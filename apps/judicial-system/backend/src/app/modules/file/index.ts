@@ -4,4 +4,6 @@ export {
   canLimitedAccessUserViewCaseFile,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
 } from './guards/caseFileCategory'
+export { canDefenceUserViewCivilClaimCaseFile } from './guards/civilClaimFileVisibility'

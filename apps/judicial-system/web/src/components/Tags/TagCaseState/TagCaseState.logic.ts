@@ -15,6 +15,7 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { areAllDefenderDefendantsCancelledOrDismissed } from '../../../utils/utils'
 import { strings } from './TagCaseState.strings'
 
 export interface CaseStateTag {
@@ -63,6 +64,18 @@ export const mapCaseStateToTagVariant = (
   theCase: CaseListEntry,
   user?: User,
 ): CaseStateTag => {
+  if (
+    isIndictmentCase(theCase.type) &&
+    user?.nationalId &&
+    theCase.defendants &&
+    areAllDefenderDefendantsCancelledOrDismissed(
+      user.nationalId,
+      theCase.defendants,
+    )
+  ) {
+    return { color: 'darkerBlue', text: formatMessage(strings.inactive) }
+  }
+
   switch (theCase.state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
@@ -91,6 +104,7 @@ export const mapCaseStateToTagVariant = (
         case IndictmentDecision.POSTPONING:
         case IndictmentDecision.SCHEDULING:
         case IndictmentDecision.COMPLETING:
+        case IndictmentDecision.COMPLETING_FOR_SOME:
           return { color: 'mint', text: formatMessage(strings.scheduled) }
         case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
           return {
