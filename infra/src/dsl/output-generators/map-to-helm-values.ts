@@ -659,6 +659,15 @@ export const HelmOutput: OutputFormat<HelmService> = {
         s.initContainers.postgres,
       )
     }
+    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
+    const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
+      if (typeof currentValue === 'object' && 'dev' in currentValue) {
+        s.env.IDENTITY_SERVER_ISSUER_URL = {
+          ...currentValue,
+          dev: `https://identity-server-${env.feature}.dev01.devland.is`,
+        }
+      }
+    }
   },
   serializeService(
     service: ServiceDefinitionForEnv,
