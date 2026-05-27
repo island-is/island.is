@@ -408,7 +408,7 @@ export const DistrictCommissionersLicenses = new XroadConf({
 export const Estates = new XroadConf({
   env: {
     XROAD_ESTATES_PATH: {
-      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/islandisestatepages',
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       staging: 'TODO',
       prod: 'TODO',
     },
