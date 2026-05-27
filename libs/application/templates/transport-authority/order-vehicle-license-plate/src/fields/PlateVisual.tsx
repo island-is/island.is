@@ -10,7 +10,6 @@ const SVG_PROPS = {
   fill: 'none',
   preserveAspectRatio: 'xMidYMid meet' as const,
   xmlns: 'http://www.w3.org/2000/svg',
-  role: 'img' as const,
   'aria-hidden': true,
 }
 

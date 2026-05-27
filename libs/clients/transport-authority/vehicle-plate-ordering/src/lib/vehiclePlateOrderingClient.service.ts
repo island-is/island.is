@@ -14,6 +14,7 @@ import {
   ErrorMessage,
   getCleanErrorMessagesFromTryCatch,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class VehiclePlateOrderingClient {
@@ -70,6 +71,11 @@ export class VehiclePlateOrderingClient {
         plateStatusName: result.plateStatusName,
       }
     } catch (e) {
+      logger.error('Failed to get current plates', {
+        permno,
+        error: e instanceof Error ? e.message : e,
+        stack: e instanceof Error ? e.stack : undefined,
+      })
       return null
     }
   }

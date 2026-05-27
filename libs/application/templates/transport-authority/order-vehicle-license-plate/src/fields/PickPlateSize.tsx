@@ -127,13 +127,19 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const plateTypeFrontError = !currentPlateTypeFront
   const noAvailableSizes = !loading && availableSizes.length === 0
 
-  const rearResetRef = useRef(false)
+  const prevPlateTypeRearRef = useRef<string | null | undefined>(
+    currentPlateTypeRear,
+  )
 
   useEffect(() => {
-    if (!loading && currentPlateTypeRear === null && !rearResetRef.current) {
-      rearResetRef.current = true
+    if (
+      !loading &&
+      prevPlateTypeRearRef.current !== null &&
+      currentPlateTypeRear === null
+    ) {
       setValue(`${props.field.id}.rearPlateSize`, [])
     }
+    prevPlateTypeRearRef.current = currentPlateTypeRear
   }, [loading, currentPlateTypeRear, setValue, props.field.id])
 
   useEffect(() => {
