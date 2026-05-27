@@ -228,8 +228,7 @@ export const Summary = ({ state }: Props) => {
                                   }-${itemIndex}`
 
                                   const content = (
-                                    <>
-                                      <Display
+                                    <Display
                                         field={field}
                                         valueIndex={itemIndex}
                                         requiredMissing={
@@ -237,7 +236,6 @@ export const Summary = ({ state }: Props) => {
                                           hasError(field, itemIndex)
                                         }
                                       />
-                                    </>
                                   )
 
                                   return numberOfItems > 1 ? (
