@@ -363,6 +363,7 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.hasWorkedEes',
           title: employmentMessages.employmentHistory.labels.radioEesLabel,
           width: 'half',
+          defaultValue: NO,
           options: [
             {
               value: YES,
