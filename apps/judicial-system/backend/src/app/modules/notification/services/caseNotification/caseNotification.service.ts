@@ -3615,6 +3615,20 @@ export class CaseNotificationService extends BaseNotificationService {
       )
     }
 
+    if (!isReopened) {
+      const smsText = this.formatMessage(
+        notifications.caseAppealCompleted.text,
+        {
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCase?.appealCaseNumber,
+          appealRulingDecision: getAppealResultTextByValue(
+            theCase.appealCase?.appealRulingDecision,
+          ),
+        },
+      )
+      promises.push(this.sendSms(smsText, theCase.prosecutor?.mobileNumber))
+    }
+
     return Promise.all(promises)
   }
 
