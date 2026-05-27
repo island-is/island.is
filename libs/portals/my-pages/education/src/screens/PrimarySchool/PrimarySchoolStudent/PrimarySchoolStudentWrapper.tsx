@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import type { PrimarySchoolStudentLoaderData } from './PrimarySchoolStudent.loader'
+import { usePrimarySchoolAssessmentDataQuery } from '../PrimarySchoolAssessment/PrimarySchoolAssessment.generated'
 
 export const PrimarySchoolStudentWrapper = ({
   children,
@@ -29,6 +30,13 @@ export const PrimarySchoolStudentWrapper = ({
   const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
   const title = loaderData?.studentName ?? psm.schoolLabel
 
+  const { data: assessmentData } = usePrimarySchoolAssessmentDataQuery({
+    variables: { studentId: studentId ?? '' },
+    skip: !studentId,
+  })
+  const hasAssessment =
+    (assessmentData?.primarySchoolStudent?.assessmentHistory?.length ?? 0) > 0
+
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
@@ -36,18 +44,20 @@ export const PrimarySchoolStudentWrapper = ({
     studentId: studentId ?? '',
   })
 
-  const tabItems = [
-    {
-      name: m.overview,
-      path: overviewPath,
-      active: location.pathname === overviewPath,
-    },
-    {
-      name: psm.assessmentTitle,
-      path: assessmentPath,
-      active: location.pathname === assessmentPath,
-    },
-  ]
+  const tabItems = hasAssessment
+    ? [
+        {
+          name: m.overview,
+          path: overviewPath,
+          active: location.pathname === overviewPath,
+        },
+        {
+          name: psm.assessmentTitle,
+          path: assessmentPath,
+          active: location.pathname === assessmentPath,
+        },
+      ]
+    : []
 
   return (
     <IntroWrapper
@@ -55,13 +65,15 @@ export const PrimarySchoolStudentWrapper = ({
       intro={psm.studentHubIntro}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
-      <Hidden print>
-        <TabNavigation
-          label={formatMessage(psm.studentLabel)}
-          pathname={location.pathname}
-          items={tabItems}
-        />
-      </Hidden>
+      {tabItems.length > 0 && (
+        <Hidden print>
+          <TabNavigation
+            label={formatMessage(psm.studentLabel)}
+            pathname={location.pathname}
+            items={tabItems}
+          />
+        </Hidden>
+      )}
       <Box paddingTop={2}>{children}</Box>
     </IntroWrapper>
   )

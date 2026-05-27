@@ -133,6 +133,10 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:child',
     defaultMessage: 'Barn',
   },
+  assessmentNoData: {
+    id: 'sp.education-primary-school:assessment-no-data',
+    defaultMessage: 'TODO: Assessment no data message',
+  },
 })
 
 export const uniMessages = defineMessages({

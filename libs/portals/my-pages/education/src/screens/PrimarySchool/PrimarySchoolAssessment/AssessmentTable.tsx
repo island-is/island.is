@@ -27,11 +27,13 @@ export const AssessmentTable = ({ results, loading }: Props) => {
     () => [
       columnHelper.accessor('schoolYear', {
         header: formatMessage(psm.schoolYear),
+        enableSorting: false,
         cell: ({ getValue }) => getValue() ?? '',
       }),
       columnHelper.accessor((row) => row.grade?.level, {
         id: 'gradeLevel',
         header: formatMessage(psm.gradeLevel),
+        enableSorting: false,
         cell: ({ getValue }) => {
           const level = getValue()
           return level != null
@@ -44,6 +46,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             columnHelper.accessor((row) => row.period?.startDateString, {
               id: 'examSitting',
               header: formatMessage(psm.examSitting),
+              enableSorting: false,
               cell: ({ getValue }) => getValue() ?? '',
             }),
           ]
