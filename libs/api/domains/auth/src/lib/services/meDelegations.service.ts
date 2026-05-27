@@ -224,8 +224,7 @@ export class MeDelegationsService {
         updateScopes,
       },
     })
-    const delegation =
-      request.raw.status === 204 ? null : await request.value()
+    const delegation = request.raw.status === 204 ? null : await request.value()
     return delegation ? this.includeDomainNameInScopes(delegation) : null
   }
 
