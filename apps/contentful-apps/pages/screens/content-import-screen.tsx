@@ -38,12 +38,7 @@ import {
   extractContentType,
   FileData,
 } from '../../components/content-import/utils'
-import {
-  CONTENTFUL_ENVIRONMENT,
-  CONTENTFUL_SPACE,
-  SLUGIFIED_POSTFIX,
-  TITLE_SEARCH_POSTFIX,
-} from '../../constants'
+import { SLUGIFIED_POSTFIX, TITLE_SEARCH_POSTFIX } from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
 import {
   getContentfulEntries,
@@ -479,8 +474,6 @@ const ContentImportScreen = () => {
           row[uniqueFieldRowIndex]
         ) {
           const matchedEntries = await cma.entry.getMany({
-            environmentId: CONTENTFUL_ENVIRONMENT,
-            spaceId: CONTENTFUL_SPACE,
             query: {
               content_type: selectedContentType,
               [`fields.${uniqueFieldId}`]: row[uniqueFieldRowIndex],
@@ -491,8 +484,6 @@ const ContentImportScreen = () => {
             shouldCreateEntry = false // We don't want to create the entry since we found it already exists
             entry = await cma.entry.update(
               {
-                environmentId: CONTENTFUL_ENVIRONMENT,
-                spaceId: CONTENTFUL_SPACE,
                 entryId: matchedEntries.items[0].sys.id,
               },
               {
@@ -522,8 +513,6 @@ const ContentImportScreen = () => {
           entry = await cma.entry.create(
             {
               contentTypeId: selectedContentType,
-              environmentId: CONTENTFUL_ENVIRONMENT,
-              spaceId: CONTENTFUL_SPACE,
             },
             {
               fields,
@@ -548,8 +537,6 @@ const ContentImportScreen = () => {
           await cma.entry.publish(
             {
               entryId: entry.sys.id,
-              environmentId: CONTENTFUL_ENVIRONMENT,
-              spaceId: CONTENTFUL_SPACE,
             },
             entry,
           )
