@@ -371,7 +371,7 @@ describe('MeDelegationsController filters', () => {
     expect(res.status).toEqual(204)
   })
 
-  it('PATCH /v1/me/delegations/:id should return 204 for incoming delegations', async () => {
+  it('PATCH /v1/me/delegations/:id should return 400 for incoming delegations when updating scopes', async () => {
     // Arrange
     const dto: PatchDelegationDTO = {
       updateScopes: [
@@ -385,7 +385,7 @@ describe('MeDelegationsController filters', () => {
       .send(dto)
 
     // Assert
-    expect(res.status).toEqual(204)
+    expect(res.status).toEqual(400)
   })
 
   it('DELETE /v1/me/delegations/:id should return 204 if delegation belongs to another user', async () => {
