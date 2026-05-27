@@ -664,7 +664,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
       if (typeof currentValue === 'object' && 'dev' in currentValue) {
         s.env.IDENTITY_SERVER_ISSUER_URL = {
           ...currentValue,
-          dev: `https://identity-server-${env.feature}.dev01.devland.is`,
+          dev: `https://identity-server-${env.feature}.${env.domain}`,
         }
       }
     }
