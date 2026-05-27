@@ -77,6 +77,8 @@ describe('CourtCaseInfo - reopen button visibility', () => {
   const completedIndictmentCase = {
     ...mockCase(CaseType.INDICTMENT),
     state: CaseState.COMPLETED,
+    indictmentCompletedDate: '2024-01-01',
+    indictmentSentToPublicProsecutorDate: '2024-01-02',
   }
 
   const renderComponent = (
@@ -166,6 +168,19 @@ describe('CourtCaseInfo - reopen button visibility', () => {
     }
 
     renderComponent(UserRole.DISTRICT_COURT_JUDGE, withdrawnCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the reopen button when the case has not been sent to public prosecutor', () => {
+    const notSentCase = {
+      ...completedIndictmentCase,
+      indictmentSentToPublicProsecutorDate: undefined,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, notSentCase)
 
     expect(
       screen.queryByRole('button', { name: 'Enduropna mál' }),
