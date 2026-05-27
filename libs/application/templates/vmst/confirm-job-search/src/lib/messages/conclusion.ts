@@ -47,9 +47,4 @@ export const conclusion = defineMessages({
     defaultMessage: 'Opna Mínar síður',
     description: 'Bottom button label on completed form',
   },
-  bottomButtonLink: {
-    id: 'vmst.cjs.application:conclusion.bottomButtonLink',
-    defaultMessage: '/minarsidur/umsoknir',
-    description: 'Bottom button link on completed form',
-  },
 })

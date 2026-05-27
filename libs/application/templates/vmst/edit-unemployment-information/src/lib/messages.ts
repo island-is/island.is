@@ -339,11 +339,6 @@ export const application = defineMessages({
     defaultMessage: 'Opna Mínar síður',
     description: 'Bottom button label on completed form',
   },
-  bottomButtonLink: {
-    id: 'vmst.eui.application:bottomButtonLink',
-    defaultMessage: '/minarsidur/umsoknir',
-    description: 'Bottom button link on completed form',
-  },
 })
 
 export const errorMessages = defineMessages({
