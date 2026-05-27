@@ -114,6 +114,11 @@ export const mainForm = {
 }
 
 export const completedForm = defineMessages({
+  multiFieldTitle: {
+    id: 'vmst.dub.application:completedForm.multiFieldTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title for the multi field on completed form',
+  },
   alertTitle: {
     id: 'vmst.dub.application:completedForm.alertTitle',
     defaultMessage: 'Tilkynning um afskráningu hefur verið móttekin',
@@ -141,6 +146,17 @@ export const completedForm = defineMessages({
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnuna',
     description: 'completed form description field description',
   },
+  bottomButtonMessage: {
+    id: 'vmst.dub.application:completedForm.bottomButtonMessage',
+    defaultMessage:
+      'Á mínum síðum og í appi ísland.is getur þú nú nálgast staðfestingu á því að þessi aðgerð hafi verið framkvæmd.',
+    description: 'Bottom info message on completed form',
+  },
+  bottomButtonLabel: {
+    id: 'vmst.dub.application:completedForm.bottomButtonLabel',
+    defaultMessage: 'Opna Mínar síður',
+    description: 'Bottom button label on completed form',
+  },
 })
 
 export const applicationMessages = {
@@ -156,7 +172,7 @@ export const applicationMessages = {
   },
   actionCardSubmitted: {
     id: 'vmst.dub.application:applicationMessages.actionCardSubmitted',
-    defaultMessage: 'Umsókn send inn',
+    defaultMessage: 'Afgreidd',
     description: 'Action card tag for submitted application',
   },
   institutionName: {
@@ -168,6 +184,11 @@ export const applicationMessages = {
     id: 'vmst.dub.application:name',
     defaultMessage: 'Afskráning af atvinnuleysisbótum',
     description: `Application's name`,
+  },
+  applicationSent: {
+    id: 'vmst.dub.application:applicationMessages.applicationSent',
+    defaultMessage: 'Afskráning móttekin',
+    description: 'History log message when application is sent',
   },
 }
 

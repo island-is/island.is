@@ -74,6 +74,18 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: pruneAfterDays(2),
+          actionCard: {
+            tag: {
+              label: am.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: am.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           onExit: defineTemplateApi({
             action: 'completeApplication',
           }),

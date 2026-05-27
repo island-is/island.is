@@ -26,6 +26,11 @@ export const applicationMessages = defineMessages({
     defaultMessage: 'Tilkynna dvöl erlendis',
     description: `Application's name`,
   },
+  applicationSent: {
+    id: 'vmst.ct.application:applicationMessages.applicationSent',
+    defaultMessage: 'Tilkynning móttekin fyrir tímabil: {from} - {to}',
+    description: 'History log message when application is sent',
+  },
 })
 
 export const prerequisitesForm = {
@@ -110,21 +115,15 @@ export const mainForm = defineMessages({
 })
 
 export const completedForm = defineMessages({
+  multiFieldTitle: {
+    id: 'vmst.ct.application:completedForm.multiFieldTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title for the multi field on completed form',
+  },
   alertTitle: {
     id: 'vmst.ct.application:completedForm.alertTitle',
     defaultMessage: 'Tilkynning um dvöl erlendis hefur verið móttekin',
     description: 'completed form alert title',
-  },
-  expandableHeader: {
-    id: 'vmst.ct.application:completedForm.expandableHeader',
-    defaultMessage: 'Hvað gerist næst?',
-    description: 'completed form expandable header',
-  },
-  expandableDescription: {
-    id: 'vmst.ct.application:completedForm.expandableDescription#markdown',
-    defaultMessage:
-      'Þetta er lýsing á því hvað gerist eftir að umsókn hefur verið send inn',
-    description: 'completed form expandable description',
   },
   descriptionFieldTitle: {
     id: 'vmst.ct.application:completedForm.descriptionFieldTitle',
@@ -136,6 +135,22 @@ export const completedForm = defineMessages({
     defaultMessage:
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnuna',
     description: 'completed form description field description',
+  },
+  bottomButtonMessage: {
+    id: 'vmst.ct.application:completedForm.bottomButtonMessage',
+    defaultMessage:
+      'Á mínum síðum og í appi ísland.is getur þú nú nálgast staðfestingu á því að þessi aðgerð hafi verið framkvæmd.',
+    description: 'Bottom info message on completed form',
+  },
+  bottomButtonLabel: {
+    id: 'vmst.ct.application:completedForm.bottomButtonLabel',
+    defaultMessage: 'Opna Mínar síður',
+    description: 'Bottom button label on completed form',
+  },
+  bottomButtonLink: {
+    id: 'vmst.ct.application:completedForm.bottomButtonLink',
+    defaultMessage: '/minarsidur/umsoknir',
+    description: 'Bottom button link on completed form',
   },
 })
 
