@@ -29,6 +29,7 @@ import { DataStatus } from '../types/dataStatusTypes'
 import { NudgeType } from '../../types/nudge-type'
 import { ClientType } from '../../types/ClientType'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
+import { CreateEmailDto } from '../dto/create-emails.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
@@ -1271,6 +1272,88 @@ describe('MeUserProfileController', () => {
         }
       },
     )
+
+    it.each([NudgeType.NUDGE, NudgeType.SKIP_EMAIL, NudgeType.SKIP_PHONE])(
+      'POST /v2/me/nudge with nudgeType=%s should not create any email rows when no user profile exists yet',
+      async (nudgeType) => {
+        // Act
+        const res = await server.post('/v2/me/nudge').send({
+          nudgeType,
+        } as PostNudgeDto)
+
+        // Assert
+        expect(res.status).toEqual(200)
+
+        const emailsModel = app.get(getModelToken(Emails))
+        const emails = await emailsModel.findAll({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(emails).toHaveLength(0)
+      },
+    )
+
+    it('POST /v2/me/nudge should not create an empty primary email when existing user profile has no emails', async () => {
+      // Arrange — profile with no associated emails (mimics onboarding-skip aftermath)
+      const fixtureFactory = new FixtureFactory(app)
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+      })
+
+      // Act
+      const res = await server.post('/v2/me/nudge').send({
+        nudgeType: NudgeType.NUDGE,
+      } as PostNudgeDto)
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      const emailsModel = app.get(getModelToken(Emails))
+      const emails = await emailsModel.findAll({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(emails).toHaveLength(0)
+    })
+
+    it('POST /v2/me/nudge with SKIP_EMAIL followed by POST /v2/actor/emails should create the first primary email without a unique constraint violation', async () => {
+      // Regression: IDS skip used to create an empty primary placeholder row, which
+      // then collided with the partial unique index on (national_id) WHERE primary=true
+      // when the user later added a real email — surfacing as a 500 SequelizeUniqueConstraintError.
+      const fixtureFactory = new FixtureFactory(app)
+      await fixtureFactory.createEmailVerification({
+        nationalId: testUserProfile.nationalId,
+        email: 'first-real@example.com',
+        hash: 'code-123',
+      })
+
+      const nudgeRes = await server.post('/v2/me/nudge').send({
+        nudgeType: NudgeType.SKIP_EMAIL,
+      } as PostNudgeDto)
+      expect(nudgeRes.status).toEqual(200)
+
+      const createRes = await server.post('/v2/actor/emails').send({
+        email: 'first-real@example.com',
+        code: 'code-123',
+      } as CreateEmailDto)
+
+      expect(createRes.status).toEqual(200)
+      expect(createRes.body).toMatchObject({
+        email: 'first-real@example.com',
+        primary: true,
+        emailStatus: DataStatus.VERIFIED,
+      })
+
+      const emailsModel = app.get(getModelToken(Emails))
+      const emails = await emailsModel.findAll({
+        where: { nationalId: testUserProfile.nationalId },
+        useMaster: true,
+      })
+      expect(emails).toHaveLength(1)
+      expect(emails[0].email).toBe('first-real@example.com')
+      expect(emails[0].primary).toBe(true)
+    })
   })
 
   describe('GET v2/me/actor-profiles', () => {

@@ -26,14 +26,9 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   InstitutionType,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  getAppealActorText,
-  getCurrentUserStatementDate,
-  hasSentNotification,
-} from '../../utils'
+import { getAppealActorText, getCurrentUserStatementDate } from '../../utils'
 import useAppealCase from '../useAppealCase'
 import useAppealCaseModals from '../useAppealCaseModals'
 import * as styles from './useAppealCaseBanner.css'
@@ -128,6 +123,7 @@ const useAppealCaseBanner = () => {
   const {
     appealState,
     appealReceivedByCourtDate,
+    appealRulingDate,
     appealRulingDecision,
     statementDeadline,
     isStatementDeadlineExpired,
@@ -145,11 +141,6 @@ const useAppealCaseBanner = () => {
 
   const hasCurrentUserSentStatement = Boolean(currentUserStatementDate)
 
-  const appealCompletedDate = hasSentNotification(
-    TrackedNotificationType.APPEAL_COMPLETED,
-    workingCase.notifications,
-  ).date
-
   // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
   if (appealState === AppealCaseState.WITHDRAWN) {
     title = 'Úrskurður kærður'
@@ -162,7 +153,7 @@ const useAppealCaseBanner = () => {
     isSharedWithProsecutor
   ) {
     if (appealState === AppealCaseState.COMPLETED) {
-      title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
+      title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
       title = 'Úrskurður kærður'
@@ -213,7 +204,7 @@ const useAppealCaseBanner = () => {
       )
     }
   } else if (appealState === AppealCaseState.COMPLETED) {
-    title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
+    title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }
   // When case has been appealed by prosecutor or defender
