@@ -6,9 +6,14 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
+export const NationalIdDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
 
   const value = item.values?.[valueIndex]
@@ -26,6 +31,14 @@ export const NationalIdDisplay = ({ item, valueIndex }: Props) => {
       <Stack space={0}>
         <Text as="p" fontWeight="semiBold" lineHeight="sm">
           {item.name?.[lang]}
+          {requiredMissing && (
+            <>
+              {' '}
+              <Text as="span" fontWeight="semiBold" color="red600">
+                *
+              </Text>
+            </>
+          )}
         </Text>
         <Box marginLeft={2}>
           <>
