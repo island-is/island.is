@@ -51,9 +51,21 @@ const IMPORT_CONTENT_TYPES = [
   { label: 'SupportQNA', value: 'supportQNA' },
 ]
 
+const CSV_DELIMITER = ';'
+
 const convertHtmlToContentfulRichText = (html: string) => {
   const markdown = NodeHtmlMarkdown.translate(html || '')
   return richTextFromMarkdown(markdown)
+}
+
+const downloadCsv = (csvContent: string, filename: string) => {
+  const blob = new Blob([csvContent], { type: 'text/csv' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 const ContentExportScreen = () => {
@@ -168,7 +180,6 @@ const ContentExportScreen = () => {
     csvHeader.push('Contentful ID')
 
     const csvBody: string[] = []
-    const delimiter = ';'
 
     for (const entry of entries) {
       const row: string[] = []
@@ -198,19 +209,13 @@ const ContentExportScreen = () => {
       row.push(entry.sys.updatedAt ?? '')
       row.push(entry.sys.publishedAt ?? '')
       row.push(entry.sys.id)
-      csvBody.push(row.join(delimiter))
+      csvBody.push(row.join(CSV_DELIMITER))
     }
 
-    const csvContent = `${csvHeader.join(delimiter)}\n${csvBody.join('\n')}`
+    const csvContent = `${csvHeader.join(CSV_DELIMITER)}\n${csvBody.join('\n')}`
 
     const filename = `${contentTypeId}-${new Date().toISOString()}.csv`
-    const blob = new Blob([csvContent], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadCsv(csvContent, filename)
   }, [
     cma.entry,
     sdk.ids.environment,
@@ -222,6 +227,7 @@ const ContentExportScreen = () => {
   ])
 
   const exportPageEntries = useCallback(async () => {
+    const csvBody: string[] = []
     const csvHeader: string[] = [
       'Contentful URL',
       'Contentful Status',
@@ -234,7 +240,6 @@ const ContentExportScreen = () => {
     csvHeader.push('Contentful ID')
 
     const tagId = state.selectedTagId
-    const entries: EntryProps[] = []
     let skip = 0
     let total = Infinity
     const chunkSize = 100
@@ -248,9 +253,34 @@ const ContentExportScreen = () => {
       })
       total = response.total
       skip += chunkSize
-      entries.push(...response.items)
+
+      for (const entry of response.items) {
+        const row: string[] = []
+        row.push(
+          `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entry.sys.id}`,
+        )
+        let entryStatus = 'Draft'
+        if (entry.sys.updatedAt > entry.sys.publishedAt) entryStatus = 'Changed'
+        else if (entry.sys.publishedAt) entryStatus = 'Published'
+        row.push(entryStatus)
+
+        row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
+
+        row.push(entry.sys.createdAt ?? '')
+        row.push(entry.sys.updatedAt ?? '')
+        row.push(entry.sys.publishedAt ?? '')
+        row.push(entry.sys.id)
+
+        csvBody.push(row.join(CSV_DELIMITER))
+      }
+
+      const csvContent = `${csvHeader.join(CSV_DELIMITER)}\n${csvBody.join(
+        '\n',
+      )}`
+      const filename = `${tagId}-${new Date().toISOString().split('.')[0]}.csv`
+      downloadCsv(csvContent, filename)
     }
-  }, [cma.entry, state.selectedTagId])
+  }, [cma.entry, sdk.ids.environment, sdk.ids.space, state.selectedTagId])
 
   const exportContent = useCallback(async () => {
     setState((prev) => ({ ...prev, isExporting: true }))
