@@ -234,6 +234,12 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
+            disabled={isReadOnly || !form.hasSummaryScreen}
+            tooltip={
+              !isReadOnly && !form.hasSummaryScreen
+                ? 'Til að virkja þetta þarf að hafa yfirlitssíðu, þar sem hægt er að sjá hvaða gildi eru óútfyllt'
+                : undefined
+            }
             checked={
               form.allowProceedOnValidationFail !== null &&
               form.allowProceedOnValidationFail !== undefined
@@ -256,7 +262,12 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.summaryScreen)}
-            disabled={isReadOnly}
+            disabled={isReadOnly || form.allowProceedOnValidationFail}
+            tooltip={
+              !isReadOnly && form.allowProceedOnValidationFail
+                ? 'Ef leyfa á notanda að halda áfram þrátt fyrir villur í staðfestingu sýnir yfirlitið hvaða gildi eru óútfyllt'
+                : undefined
+            }
             checked={
               form.hasSummaryScreen !== null &&
               form.hasSummaryScreen !== undefined
