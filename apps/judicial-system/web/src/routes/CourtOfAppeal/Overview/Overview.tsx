@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Accordion } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
@@ -20,11 +21,14 @@ import {
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCaseBanner,
+  usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -46,6 +50,8 @@ const CourtOfAppealOverview = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
   const {
     defendants,
     policeCaseNumbers,
@@ -132,16 +138,38 @@ const CourtOfAppealOverview = () => {
               />
             )}
             {isIndictment ? (
-              <AllIndictmentCaseFiles />
+              <>
+                <AllIndictmentCaseFiles />
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
+              </>
             ) : (
               <>
-                {user ? (
-                  <CaseFilesAccordionItem
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    user={user}
-                  />
-                ) : null}
+                <Accordion
+                  dividers={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnTop={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnBottom={workingCase.origin === CaseOrigin.LOKE}
+                >
+                  {user ? (
+                    <CaseFilesAccordionItem
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      user={user}
+                    />
+                  ) : null}
+                  {workingCase.origin === CaseOrigin.LOKE && (
+                    <PoliceDigitalCaseFilesAccordionItem
+                      digitalCaseFiles={digitalCaseFiles}
+                      digitalCaseFilesLoading={digitalCaseFilesLoading}
+                      openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                    />
+                  )}
+                </Accordion>
                 <Conclusion
                   title={formatMessage(conclusion.title)}
                   conclusionText={workingCase.conclusion}
