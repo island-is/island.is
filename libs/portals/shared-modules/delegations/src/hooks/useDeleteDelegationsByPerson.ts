@@ -78,7 +78,8 @@ export const useDeleteDelegationsByPerson = ({ direction }: Options) => {
         )
 
         const allSucceeded = results.every(
-          (result) => !result.errors && result.data?.deleteAuthDelegation === true,
+          (result) =>
+            !result.errors && result.data?.deleteAuthDelegation === true,
         )
 
         if (!allSucceeded) {
