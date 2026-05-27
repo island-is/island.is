@@ -35,9 +35,6 @@ export class Screen {
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  shouldPopulate?: boolean
-
   @Field(() => ValidationError, { nullable: true })
   screenError?: ValidationError
 

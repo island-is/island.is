@@ -53,11 +53,6 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   useValidate?: boolean
 
-  @IsBoolean()
-  @IsOptional()
-  @ApiPropertyOptional()
-  usePopulate?: boolean
-
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()

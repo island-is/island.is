@@ -8,10 +8,12 @@ import {
   Box,
   Button,
   RadioButton,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -187,6 +189,19 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentCancelledTitle)}
               message={formatMessage(strings.indictmentCancelledMessage)}
               type="warning"
+            />
+          </Box>
+        )}
+        {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title="Mál enduropnað"
+              message={
+                <Text variant="small" whiteSpace="preWrap">
+                  {workingCase.reopenReason}
+                </Text>
+              }
+              type="info"
             />
           </Box>
         )}

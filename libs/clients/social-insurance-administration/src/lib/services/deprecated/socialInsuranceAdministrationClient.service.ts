@@ -58,7 +58,7 @@ import {
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanConditionsDto,
-  TrWebContractsExternalDigitalIcelandDocumentsDocument,
+  TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument,
   TrWebApiServicesDomainApplicationsModelsIsEligibleForApplicationReturn,
   TrWebContractsExternalDigitalIcelandIncomePlanExternalIncomeTypeDto,
   TrWebContractsExternalDigitalIcelandIncomePlanWithholdingTaxDto,
@@ -261,13 +261,14 @@ export class SocialInsuranceAdministrationClientService {
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    documents: Array<TrWebContractsExternalDigitalIcelandDocumentsDocument>,
+    documents: Array<TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument>,
   ): Promise<void> {
     return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,
-      trWebContractsExternalDigitalIcelandDocumentsDocument: documents,
+      trWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument:
+        documents,
     })
   }
 

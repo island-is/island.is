@@ -476,7 +476,6 @@ export class LimitedAccessCaseController {
       ...indictmentCases,
     ]),
     CaseReadGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/all')
