@@ -8,6 +8,7 @@ import {
   Button,
   Flex,
   FormControl,
+  Radio,
   Select,
   Spinner,
   Stack,
@@ -23,7 +24,6 @@ import { GridContainer } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 
 import {
-  ContentTypeSelect,
   FileDataTable,
   FileInput,
   getTableData,
@@ -32,6 +32,7 @@ import {
   ReferenceFieldMapping,
   ReferenceFieldMappingProps,
   TagSelect,
+  ValueSelect,
 } from '../..//components/content-import'
 import {
   extractContentType,
@@ -64,6 +65,10 @@ const ContentExportScreen = () => {
   const cma = useCMA()
   const sdk = useSDK<PageExtensionSDK>()
 
+  const [exportType, setExportType] = useState<'contentType' | 'pages'>(
+    'contentType',
+  )
+
   const [state, setState] = useState<{
     contentTypes: {
       label: string
@@ -72,13 +77,34 @@ const ContentExportScreen = () => {
     }[]
     selectedContentTypeId: string
     isExporting: boolean
+    tags: { label: string; value: string }[]
+    selectedTagId: string | null
   }>({
     contentTypes: [],
     selectedContentTypeId: 'article',
     isExporting: false,
+    tags: [],
+    selectedTagId: null,
   })
 
   useEffect(() => {
+    const fetchTags = async () => {
+      const response = await cma.tag.getMany({
+        query: {
+          limit: 1000,
+          'name[match]': 'owner-',
+        },
+      })
+      setState((prev) => ({
+        ...prev,
+        tags: response.items
+          .map((item) => ({
+            label: item.name,
+            value: item.sys.id,
+          }))
+          .sort(sortAlpha('label')),
+      }))
+    }
     const fetchContentTypes = async () => {
       const response = await cma.contentType.getMany({
         query: {
@@ -97,118 +123,154 @@ const ContentExportScreen = () => {
       }))
     }
     fetchContentTypes()
+    fetchTags()
   }, [cma])
 
-  const exportContent = useCallback(async () => {
+  const exportContentTypeEntries = useCallback(async () => {
     const contentTypeId = state.selectedContentTypeId
-    setState((prev) => ({ ...prev, isExporting: true }))
-    try {
-      const entries: EntryProps[] = []
-      let skip = 0
-      let total = Infinity
-      const chunkSize = 100
-      while (skip < total) {
-        const response = await cma.entry.getMany({
-          query: {
-            content_type: contentTypeId,
-            limit: chunkSize,
-            skip,
-            'sys.archivedAt[exists]': false,
-          },
-        })
-        total = response.total
-        skip += chunkSize
-        entries.push(...response.items)
-      }
+    const entries: EntryProps[] = []
+    let skip = 0
+    let total = Infinity
+    const chunkSize = 100
+    while (skip < total) {
+      const response = await cma.entry.getMany({
+        query: {
+          content_type: contentTypeId,
+          limit: chunkSize,
+          skip,
+          'sys.archivedAt[exists]': false,
+        },
+      })
+      total = response.total
+      skip += chunkSize
+      entries.push(...response.items)
+    }
 
-      const foundContentType = state.contentTypes.find(
-        (type) => type.value === contentTypeId,
+    const foundContentType = state.contentTypes.find(
+      (type) => type.value === contentTypeId,
+    )
+    if (!foundContentType) throw new Error('Content type not found')
+
+    const contentTypeFields = foundContentType.contentType.fields.filter(
+      (field) => field.type !== 'RichText',
+    )
+
+    const csvHeader: string[] = [
+      'Contentful URL',
+      'Contentful Status',
+      'Contentful Tags',
+    ]
+
+    for (const field of contentTypeFields) {
+      csvHeader.push(`${field.name} (${sdk.locales.default})`)
+      if (field.localized)
+        for (const locale of sdk.locales.available)
+          if (locale !== sdk.locales.default)
+            csvHeader.push(`${field.name} (${locale})`)
+    }
+
+    csvHeader.push('Contentful Created At')
+    csvHeader.push('Contentful Updated At')
+    csvHeader.push('Contentful Published At')
+    csvHeader.push('Contentful ID')
+
+    const csvBody: string[] = []
+    const delimiter = ';'
+
+    for (const entry of entries) {
+      const row: string[] = []
+      row.push(
+        `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entry.sys.id}`,
       )
-      if (!foundContentType) throw new Error('Content type not found')
+      let entryStatus = 'Draft'
+      if (entry.sys.updatedAt > entry.sys.publishedAt) entryStatus = 'Changed'
+      else if (entry.sys.publishedAt) entryStatus = 'Published'
+      row.push(entryStatus)
 
-      const contentTypeFields = foundContentType.contentType.fields.filter(
-        (field) => field.type !== 'RichText',
-      )
-
-      const csvHeader: string[] = [
-        'Contentful URL',
-        'Contentful Status',
-        'Contentful Tags',
-      ]
+      row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
 
       for (const field of contentTypeFields) {
-        csvHeader.push(`${field.name} (${sdk.locales.default})`)
+        {
+          const value = entry.fields[field.id]?.[sdk.locales.default]
+          row.push(JSON.stringify(value ?? ''))
+        }
         if (field.localized)
           for (const locale of sdk.locales.available)
-            if (locale !== sdk.locales.default)
-              csvHeader.push(`${field.name} (${locale})`)
+            if (locale !== sdk.locales.default) {
+              const value = entry.fields[field.id]?.[locale]
+              row.push(JSON.stringify(value ?? ''))
+            }
       }
-
-      csvHeader.push('Contentful Created At')
-      csvHeader.push('Contentful Updated At')
-      csvHeader.push('Contentful Published At')
-      csvHeader.push('Contentful ID')
-
-      const csvBody: string[] = []
-      const delimiter = ';'
-
-      for (const entry of entries) {
-        const row: string[] = []
-        row.push(
-          `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entry.sys.id}`,
-        )
-        let entryStatus = 'Draft'
-        if (entry.sys.updatedAt > entry.sys.publishedAt) entryStatus = 'Changed'
-        else if (entry.sys.publishedAt) entryStatus = 'Published'
-        row.push(entryStatus)
-
-        row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
-
-        for (const field of contentTypeFields) {
-          {
-            const value = entry.fields[field.id]?.[sdk.locales.default]
-            row.push(JSON.stringify(value ?? ''))
-          }
-          if (field.localized)
-            for (const locale of sdk.locales.available)
-              if (locale !== sdk.locales.default) {
-                const value = entry.fields[field.id]?.[locale]
-                row.push(JSON.stringify(value ?? ''))
-              }
-        }
-        row.push(entry.sys.createdAt ?? '')
-        row.push(entry.sys.updatedAt ?? '')
-        row.push(entry.sys.publishedAt ?? '')
-        row.push(entry.sys.id)
-        csvBody.push(row.join(delimiter))
-      }
-
-      const csvContent = `${csvHeader.join(delimiter)}\n${csvBody.join('\n')}`
-
-      const filename = `${contentTypeId}-${new Date().toISOString()}.csv`
-      const blob = new Blob([csvContent], { type: 'text/csv' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error(error)
-      sdk.notifier.error('Error exporting content')
-    } finally {
-      setState((prev) => ({ ...prev, isExporting: false }))
+      row.push(entry.sys.createdAt ?? '')
+      row.push(entry.sys.updatedAt ?? '')
+      row.push(entry.sys.publishedAt ?? '')
+      row.push(entry.sys.id)
+      csvBody.push(row.join(delimiter))
     }
+
+    const csvContent = `${csvHeader.join(delimiter)}\n${csvBody.join('\n')}`
+
+    const filename = `${contentTypeId}-${new Date().toISOString()}.csv`
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
   }, [
     cma.entry,
     sdk.ids.environment,
     sdk.ids.space,
     sdk.locales.available,
     sdk.locales.default,
-    sdk.notifier,
     state.contentTypes,
     state.selectedContentTypeId,
   ])
+
+  const exportPageEntries = useCallback(async () => {
+    const csvHeader: string[] = [
+      'Contentful URL',
+      'Contentful Status',
+      'Contentful Tags',
+    ]
+
+    csvHeader.push('Contentful Created At')
+    csvHeader.push('Contentful Updated At')
+    csvHeader.push('Contentful Published At')
+    csvHeader.push('Contentful ID')
+
+    const tagId = state.selectedTagId
+    const entries: EntryProps[] = []
+    let skip = 0
+    let total = Infinity
+    const chunkSize = 100
+    while (skip < total) {
+      const response = await cma.entry.getMany({
+        content_type: 'article',
+        'sys.publishedAt[exists]': true,
+        'metadata.tags.sys.id[in]': tagId,
+        limit: chunkSize,
+        skip,
+      })
+      total = response.total
+      skip += chunkSize
+      entries.push(...response.items)
+    }
+  }, [cma.entry, state.selectedTagId])
+
+  const exportContent = useCallback(async () => {
+    setState((prev) => ({ ...prev, isExporting: true }))
+    try {
+      if (exportType === 'contentType') await exportContentTypeEntries()
+      else await exportPageEntries()
+    } catch (error) {
+      console.error(error)
+      sdk.notifier.error('Error exporting content')
+    } finally {
+      setState((prev) => ({ ...prev, isExporting: false }))
+    }
+  }, [exportContentTypeEntries, exportPageEntries, exportType, sdk.notifier])
 
   if (state.contentTypes.length === 0)
     return (
@@ -219,23 +281,57 @@ const ContentExportScreen = () => {
 
   return (
     <GridContainer>
-      <Flex gap="16px" flexWrap="wrap">
-        <ContentTypeSelect
-          disabled={state.isExporting}
-          selectedContentType={state.selectedContentTypeId}
-          setSelectedContentType={(value) =>
-            setState((prev) => ({ ...prev, selectedContentTypeId: value }))
-          }
-          contentTypes={state.contentTypes}
-        />
+      <Flex gap="16px" flexWrap="wrap" marginBottom="spacingM">
+        <Radio
+          value="contentType"
+          isChecked={exportType === 'contentType'}
+          onChange={() => setExportType('contentType')}
+        >
+          Export all entries of content type
+        </Radio>
+        <Radio
+          value="pages"
+          isChecked={exportType === 'pages'}
+          onChange={() => setExportType('pages')}
+        >
+          Export published page entries with specific tag
+        </Radio>
       </Flex>
+      {exportType === 'contentType' && (
+        <Flex gap="16px" flexWrap="wrap">
+          <ValueSelect
+            disabled={state.isExporting}
+            selectedValue={state.selectedContentTypeId}
+            setSelectedValue={(value) =>
+              setState((prev) => ({ ...prev, selectedContentTypeId: value }))
+            }
+            options={state.contentTypes}
+            label="Content type"
+          />
+        </Flex>
+      )}
+      {exportType === 'pages' && (
+        <Flex gap="16px" flexWrap="wrap">
+          <ValueSelect
+            disabled={state.isExporting}
+            selectedValue={state.selectedTagId}
+            setSelectedValue={(value) =>
+              setState((prev) => ({ ...prev, selectedTagId: value }))
+            }
+            options={state.tags}
+            label="Owner tag"
+          />
+        </Flex>
+      )}
       <Button
         variant="primary"
         onClick={exportContent}
         isDisabled={
           !state.selectedContentTypeId ||
           state.contentTypes.length === 0 ||
-          state.isExporting
+          state.isExporting ||
+          (exportType === 'pages' && !state.selectedTagId) ||
+          (exportType === 'contentType' && !state.selectedContentTypeId)
         }
         endIcon={state.isExporting ? <Spinner /> : <DownloadIcon />}
       >
@@ -519,10 +615,11 @@ const ContentImportScreen = () => {
             </Flex>
 
             <Flex gap="16px" flexWrap="wrap">
-              <ContentTypeSelect
-                selectedContentType={selectedContentType}
-                setSelectedContentType={setSelectedContentType}
-                contentTypes={IMPORT_CONTENT_TYPES}
+              <ValueSelect
+                selectedValue={selectedContentType}
+                setSelectedValue={setSelectedContentType}
+                options={IMPORT_CONTENT_TYPES}
+                label="Content type"
               />
               <TagSelect
                 selectedTag={selectedTag}
