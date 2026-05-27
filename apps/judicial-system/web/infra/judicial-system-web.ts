@@ -19,7 +19,6 @@ export const serviceSetup = (services: {
         '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
       SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL',
-      TINY_MCE_API_KEY: '/k8s/judicial-system/TINY_MCE_API_KEY',
     })
     .liveness('/liveness')
     .readiness({ path: '/readiness', timeoutSeconds: 10 })

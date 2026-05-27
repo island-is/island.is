@@ -18,7 +18,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
-  type TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
+  type TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument as Attachment,
   type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,

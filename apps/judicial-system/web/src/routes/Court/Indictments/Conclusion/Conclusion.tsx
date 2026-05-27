@@ -174,6 +174,7 @@ const Conclusion: FC = () => {
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
   const [conclusionDate, setConclusionDate] = useState<string>()
+  const [isSubmittingForSome, setIsSubmittingForSome] = useState(false)
   const [modalVisible, setModalVisible] = useState<
     | 'SPLIT'
     | 'CREATE_COURT_CASE_NUMBER'
@@ -430,8 +431,14 @@ const Conclusion: FC = () => {
       )
 
   const stepIsValid = () => {
-    // Do not leave any uploads unfinished
-    if (!allFilesDoneOrError) {
+    // Do not leave any uploads unfinished (staged DEFENDANT_RULING files are uploaded on confirm)
+    const hasUnfinishedUploads = uploadFiles.some(
+      (file) =>
+        file.status !== FileUploadStatus.done &&
+        file.status !== FileUploadStatus.error &&
+        !(file.category === CaseFileCategory.DEFENDANT_RULING && !file.key),
+    )
+    if (hasUnfinishedUploads) {
       return false
     }
 
@@ -906,7 +913,11 @@ const Conclusion: FC = () => {
               <InputFileUpload
                 name="ruling"
                 files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.RULING,
+                  (file) =>
+                    file.category ===
+                    (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                      ? CaseFileCategory.DEFENDANT_RULING
+                      : CaseFileCategory.RULING),
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -915,14 +926,27 @@ const Conclusion: FC = () => {
                 })}
                 buttonLabel={formatMessage(strings.uploadButtonText)}
                 onChange={(files) => {
-                  handleUpload(
+                  if (
+                    selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                  ) {
                     addUploadFiles(files, {
-                      category: CaseFileCategory.RULING,
-                    }),
-                    updateUploadFile,
-                  )
+                      category: CaseFileCategory.DEFENDANT_RULING,
+                    })
+                  } else {
+                    handleUpload(
+                      addUploadFiles(files, {
+                        category: CaseFileCategory.RULING,
+                      }),
+                      updateUploadFile,
+                    )
+                  }
                 }}
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRemove={(file) =>
+                  selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+                  !file.key
+                    ? removeUploadFile(file)
+                    : handleRemove(file, removeUploadFile)
+                }
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
                 onOpenFile={(file) => onOpenFile(file)}
               />
@@ -1160,10 +1184,30 @@ const Conclusion: FC = () => {
             title="Viltu staðfesta lyktir?"
             primaryButton={{
               text: 'Staðfesta',
-              onClick: () =>
-                handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE),
+              onClick: async () => {
+                setIsSubmittingForSome(true)
+                try {
+                  const pendingFiles = uploadFiles.filter(
+                    (file) =>
+                      file.category === CaseFileCategory.DEFENDANT_RULING &&
+                      !file.key,
+                  )
+                  if (pendingFiles.length > 0) {
+                    const result = await handleUpload(
+                      pendingFiles,
+                      updateUploadFile,
+                    )
+                    if (result === 'NONE_SUCCEEDED') {
+                      return
+                    }
+                  }
+                  handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE)
+                } finally {
+                  setIsSubmittingForSome(false)
+                }
+              },
               icon: 'checkmark',
-              isLoading: isUpdatingCase,
+              isLoading: isSubmittingForSome || isUpdatingCase,
             }}
             secondaryButton={{
               text: 'Hætta við',

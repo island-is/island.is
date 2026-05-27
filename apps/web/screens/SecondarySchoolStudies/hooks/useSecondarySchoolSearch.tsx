@@ -32,8 +32,10 @@ type QueryLeaf =
   | { 'qualification.title': string }
   | { 'specialization.title': string }
   | { 'school.id': string }
+  | { 'school.abbreviation': string }
   | { 'school.countryArea.id': string }
   | { 'qualification.level.id': string }
+  | { isReferenceProgramme: string }
 
 interface QueryOr {
   $or: Array<QueryLeaf>
@@ -73,6 +75,16 @@ export const SearchProgrammes = ({
         orFilters.push({ 'school.countryArea.id': `=${searchParam}` })
       } else if (filter.key === 'levels') {
         orFilters.push({ 'qualification.level.id': `=${searchParam}` })
+      } else if (filter.key === 'isReferenceProgramme') {
+        const boolValue = searchParam === 'YES' ? 'true' : 'false'
+        orFilters.push({ isReferenceProgramme: `=${boolValue}` })
+
+        // When filtering for reference programmes, also require school to be MRN
+        if (searchParam === 'YES') {
+          queryMaker.$and.push({
+            $or: [{ 'school.abbreviation': '=MRN' }],
+          })
+        }
       }
     })
 
