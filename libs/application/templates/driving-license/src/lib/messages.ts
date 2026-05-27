@@ -557,10 +557,15 @@ export const m = defineMessages({
       'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
     description: 'Application received',
   },
+  applicationDoneAlertMessage65RenewalRedesigned: {
+    id: 'dl.application:applicationDoneAlertMessage65RenewalRedesigned',
+    defaultMessage:
+      'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin.',
+    description: 'Application received - 65+ renewal (redesigned flow)',
+  },
   applicationDoneAlertMessageBE: {
     id: 'dl.application:applicationDoneAlertMessageBE',
-    defaultMessage:
-      'Umsókn þín um að hefja ökunám fyrir BE réttindi hefur verið móttekin.',
+    defaultMessage: 'Umsókn þín um BE réttindi hefur verið móttekin.',
     description: 'Application received',
   },
   nextStepsTitle: {
@@ -588,13 +593,19 @@ export const m = defineMessages({
   nextStepsIntroBE: {
     id: 'dl.application:nextStepsIntroBE',
     defaultMessage:
-      'Umsókn þín verður nú yfirfarin, þegar því er lokið er stafræn ökunámsbók virkjuð.',
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
     description: '',
+  },
+  nextStepsIntro65RenewalRedesigned: {
+    id: 'dl.application:nextStepsIntro65RenewalRedesigned',
+    defaultMessage:
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+    description: 'Next steps intro - 65+ renewal (redesigned flow)',
   },
   nextStepsDescriptionBE: {
     id: 'dl.application:nextStepsDescriptionBE#markdown',
     defaultMessage:
-      'Þegar ökunámi og prófi er lokið, pöntum við nýtt ökuskírteini sem við afhendum eftir afhendingamáta sem þú valdir í umsókninni. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
     description: '',
   },
   // Legacy 65+ flow: user submits the application here, then must take a
@@ -611,7 +622,7 @@ export const m = defineMessages({
   nextStepsDescription65RenewalRedesigned: {
     id: 'dl.application:nextStepsDescription65RenewalRedesigned#markdown',
     defaultMessage:
-      'Umsókn þín hefur verið móttekin ásamt læknisvottorðinu. Starfsmaður fer yfir vottorðið og þegar það hefur verið samþykkt pöntum við nýtt ökuskírteini sem afhent verður samkvæmt þeim afhendingarmáta sem þú valdir í umsókninni.',
+      'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
     description: '',
   },
   nextStepsInfoLink: {
