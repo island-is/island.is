@@ -6,9 +6,14 @@ import { useLocale } from '@island.is/localization'
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const PhoneNumberDisplay = ({ item, valueIndex }: Props) => {
+export const PhoneNumberDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
   const { lang } = useLocale()
 
   const formatPhoneNumber = (raw?: string) => {
@@ -35,6 +40,14 @@ export const PhoneNumberDisplay = ({ item, valueIndex }: Props) => {
     >
       <Text as="p" fontWeight="semiBold">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="semiBold" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
 
       <Box marginLeft={2}>
