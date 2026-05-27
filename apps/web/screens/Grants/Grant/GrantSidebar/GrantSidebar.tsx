@@ -4,12 +4,12 @@ import { Box, BoxProps, Button, LinkV2, Stack } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { InstitutionPanel } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 import { m } from '../../messages'
 import DetailPanel from './DetailPanel'
 import ExtraPanel from './ExtraPanel'
 import * as styles from '../Grant.css'
-import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 interface Props {
   grant: Grant
