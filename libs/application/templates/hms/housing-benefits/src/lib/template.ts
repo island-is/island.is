@@ -14,10 +14,12 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+  DRAFT_ENTERED_AT_KEY,
+  housingBenefitsPruneLifecycle,
+} from '../utils/lifecycle'
+import { getDraftPruneReminderScheduledNotifications } from '../utils/notifications'
 import * as m from './messages'
 import {
   AssigneeUserProfileApi,
@@ -154,11 +156,13 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'recordDraftEnteredAt',
         meta: {
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getDraftPruneReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.draft,
           onExit: NotifyAssigneesApi,
           roles: [
@@ -196,7 +200,7 @@ const template: ApplicationTemplate<
           name: 'Samþykki heimilismanna',
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.assigneeApproval,
           onExit: [
             NotifyApplicantOnAssigneeSubmitApi,
@@ -293,7 +297,7 @@ const template: ApplicationTemplate<
           name: 'Staðfesta',
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.applicantSubmit,
           roles: [
             {
@@ -346,7 +350,7 @@ const template: ApplicationTemplate<
           name: 'Bæta við heimilismanni',
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           onExit: NotifyAssigneesApi,
           roles: [
             {
@@ -383,7 +387,7 @@ const template: ApplicationTemplate<
           name: 'Í vinnslu',
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.inReview,
           roles: [
             {
@@ -440,7 +444,7 @@ const template: ApplicationTemplate<
           name: 'Extra data',
           progress: 0.65,
           status: FormModes.IN_PROGRESS,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.extraData,
           onEntry: NotifyApplicantOnExtraDataRequestedApi,
           roles: [
@@ -474,7 +478,7 @@ const template: ApplicationTemplate<
           name: 'Samþykkt',
           progress: 1,
           status: FormModes.APPROVED,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.approved,
           onEntry: NotifyApplicantOnApprovedByInstitutionApi,
           roles: [
@@ -495,7 +499,7 @@ const template: ApplicationTemplate<
           name: 'Hafnað',
           progress: 1,
           status: FormModes.REJECTED,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.rejected,
           onEntry: NotifyApplicantOnRejectedByInstitutionApi,
           roles: [
@@ -527,6 +531,22 @@ const template: ApplicationTemplate<
       },
     },
     actions: {
+      recordDraftEnteredAt: assign((context) => {
+        const { application } = context
+        const existing = getValueViaPath<string>(
+          application.answers,
+          DRAFT_ENTERED_AT_KEY,
+        )
+        if (existing) {
+          return context
+        }
+        set(
+          application,
+          `answers.${DRAFT_ENTERED_AT_KEY}`,
+          new Date().toISOString(),
+        )
+        return context
+      }),
       recordSignedAssignee: assign((context, event) => {
         const nationalId = (event as Events).nationalId
         if (!nationalId) return context
