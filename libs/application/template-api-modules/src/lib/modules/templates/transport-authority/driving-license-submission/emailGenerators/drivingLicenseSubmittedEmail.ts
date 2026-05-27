@@ -3,7 +3,12 @@ import { Message } from '@island.is/email-service'
 import { DrivingLicenseApplicationFor } from '@island.is/application/templates/driving-license'
 import { EmailTemplateGenerator } from '../../../../../types'
 import { m } from './messages'
-import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
+import {
+  EmailComplete,
+  EmailHeader,
+  EmailNextSteps,
+  EmailRequirements,
+} from './EmailUi'
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalDataNationalRegistry } from '@island.is/application/templates/iceland-health/health-insurance'
 
@@ -22,6 +27,23 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
       application.answers,
       'applicationFor',
     ) ?? 'B-full'
+
+  const is65RenewalRedesignEnabled =
+    getValueViaPath<boolean>(
+      application.answers,
+      'is65RenewalRedesignEnabled',
+    ) === true
+
+  // BE and the redesigned 65+ renewal don't have any in-person document
+  // handoff — photos are selected from existing biometric records, and the
+  // health certificate (when required) is uploaded with the application.
+  // The legacy in-person requirements / pickup footer describe a flow that
+  // doesn't apply, so show the digital-flow next-steps prose instead.
+  // Legacy 65+ keeps the old email until the redesign flag has been fully
+  // rolled out.
+  const isDigitalDocumentFlow =
+    applicationFor === 'BE' ||
+    (applicationFor === 'B-full-renewal-65' && is65RenewalRedesignEnabled)
 
   const applicantEmail =
     getValueViaPath<string>(application.answers, 'email') ||
@@ -71,6 +93,26 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     (x) => x.id == selectedJurisdictionId,
   )
 
+  const body = isDigitalDocumentFlow
+    ? [
+        ...EmailHeader({ applicationFor, firstName }),
+        ...EmailNextSteps(applicationFor),
+      ]
+    : [
+        ...EmailHeader({ applicationFor, firstName }),
+        ...EmailRequirements(
+          applicationFor,
+          willBringQualityPhoto,
+          willBringHealthCert,
+        ),
+        ...(willBringQualityPhoto || willBringHealthCert
+          ? []
+          : EmailComplete({
+              selectedDistrictCommissioner: jurisdictionInfo?.name,
+              isHomeDelivery,
+            })),
+      ]
+
   return {
     from: {
       name: email.sender,
@@ -85,20 +127,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     subject: m.drivingLicenseSubject[applicationFor],
     template: {
       title: m.drivingLicenseSubject[applicationFor],
-      body: [
-        ...EmailHeader({ applicationFor, firstName }),
-        ...EmailRequirements(
-          applicationFor,
-          willBringQualityPhoto,
-          willBringHealthCert,
-        ),
-        ...(willBringQualityPhoto || willBringHealthCert
-          ? []
-          : EmailComplete({
-              selectedDistrictCommissioner: jurisdictionInfo?.name,
-              isHomeDelivery,
-            })),
-      ],
+      body,
     },
   }
 }
