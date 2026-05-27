@@ -23,7 +23,6 @@ import {
   InstitutionType,
   isCompletedCase,
   isIndictmentCase,
-  RequestCaseNotificationType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 

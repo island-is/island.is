@@ -1,9 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql'
 
 export enum TaxBracketAction {
-  IncomePlan = 'INCOME_PLAN',
-  Bracket1 = 'BRACKET_1',
-  Bracket2 = 'BRACKET_2',
+  INCOME_PLAN = 'INCOME_PLAN',
+  BRACKET_1 = 'BRACKET_1',
+  BRACKET_2 = 'BRACKET_2',
 }
 
 registerEnumType(TaxBracketAction, {

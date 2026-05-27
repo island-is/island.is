@@ -63,6 +63,34 @@ describe('htmlToBlocks', () => {
     expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
   })
 
+  it('does not highlight a span with background-color: transparent', () => {
+    // Word paste injects background-color: transparent, which previously
+    // rendered as a solid black rectangle in the PDF.
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: transparent;">not highlighted</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({
+      text: 'not highlighted',
+      highlight: false,
+    })
+  })
+
+  it('does not highlight a span with a fully transparent rgba background', () => {
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgba(0, 0, 0, 0);">plain</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: false })
+  })
+
+  it('keeps an opaque rgb highlight whose blue channel is zero', () => {
+    // rgb(255, 255, 0) is yellow, not transparent — it must not be mistaken
+    // for a zero-alpha rgba value.
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgb(255, 255, 0);">yellow</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: 'rgb(255, 255, 0)' })
+  })
+
   it('produces multiple runs within one paragraph', () => {
     const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
     expect(blocks[0].runs).toHaveLength(3)
@@ -146,11 +174,43 @@ describe('htmlToBlocks', () => {
       expect(blocks).toHaveLength(0)
     })
 
-    it('preserves whitespace-only text as a run within a paragraph', () => {
+    it('collapses a whitespace-only paragraph to an empty block', () => {
       const blocks = htmlToBlocks('<p>   </p>')
       expect(blocks).toHaveLength(1)
+      expect(blocks[0].runs).toHaveLength(0)
+    })
+  })
+
+  describe('whitespace collapsing', () => {
+    it('drops leading empty spacer spans from a Word paste', () => {
+      // Word injects empty <span> </span> spacers that the editor hides but
+      // previously rendered as literal leading spaces in the PDF.
+      const blocks = htmlToBlocks(
+        '<p><span style="font-weight: 400;"> </span>' +
+          '<span style="font-weight: 400;"> </span>' +
+          '<span style="font-weight: 400;">Texti.</span></p>',
+      )
       expect(blocks[0].runs).toHaveLength(1)
-      expect(blocks[0].runs[0].text.trim()).toBe('')
+      expect(blocks[0].runs[0].text).toBe('Texti.')
+    })
+
+    it('collapses internal runs of whitespace to a single space', () => {
+      const blocks = htmlToBlocks('<p>a    b</p>')
+      expect(blocks[0].runs[0].text).toBe('a b')
+    })
+
+    it('trims trailing whitespace from a paragraph', () => {
+      const blocks = htmlToBlocks('<p>text   </p>')
+      expect(blocks[0].runs[0].text).toBe('text')
+    })
+
+    it('keeps a single space between adjacent formatted runs', () => {
+      const blocks = htmlToBlocks('<p>normal <strong>bold</strong> end</p>')
+      expect(blocks[0].runs.map((r) => r.text)).toEqual([
+        'normal ',
+        'bold',
+        ' end',
+      ])
     })
   })
 })

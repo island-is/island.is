@@ -1088,7 +1088,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             },
@@ -1096,7 +1096,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             },
@@ -1104,7 +1104,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument"
                 }
               }
             }
@@ -7077,26 +7077,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -7204,26 +7185,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -7331,26 +7293,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -8509,7 +8452,7 @@
         }
       }
     },
-    "/api/protected/v1/ServicePortal/event-notification": {
+    "/api/v1/event-notification": {
       "post": {
         "tags": ["ServicePortal"],
         "summary": "Accepts incoming event notifications from service portal and forwards them to the appropriate handlers",
@@ -8885,7 +8828,7 @@
     "/api/v1/ServicePortal/{nationalId}/documents/medicalandrehabilitationpayments/latest": {
       "get": {
         "tags": ["ServicePortal"],
-        "summary": "Returns the latest document for medical and rehabilitation payments",
+        "summary": "Returns the latest document for medical and rehabilitation payments.",
         "parameters": [
           {
             "name": "nationalId",
@@ -11402,6 +11345,121 @@
               }
             }
           }
+        }
+      }
+    },
+    "/api/v1/ServicePortal/support-entries-batch": {
+      "post": {
+        "tags": ["ServicePortal"],
+        "summary": "Registers a list of support entries (ísl. framfærsla) within the Service Portal (ísl. Þjónustugátt)",
+        "parameters": [
+          {
+            "name": "x-api-version",
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json; x-api-version=1.0": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryBatchInputModel"
+              }
+            },
+            "text/json; x-api-version=1.0": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryBatchInputModel"
+              }
+            },
+            "application/*+json; x-api-version=1.0": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryBatchInputModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": { "description": "OK" }
         }
       }
     },
@@ -14577,6 +14635,328 @@
         }
       }
     },
+    "/api/protected/v1/StraetoDisabilityPension/CanShareInformationToStraeto": {
+      "get": {
+        "tags": ["StraetoDisabilityPension"],
+        "summary": "Can share information to Strætó - only possible if the person has a disability pension",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.CanShareInformationToStraetoReturn"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.CanShareInformationToStraetoReturn"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.CanShareInformationToStraetoReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/StraetoDisabilityPension/StraetoInfoSelection": {
+      "get": {
+        "tags": ["StraetoDisabilityPension"],
+        "summary": "Gets the current information sharing selection for Strætó - only possible if the person has a disability pension",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionReturn"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionReturn"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionReturn"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["StraetoDisabilityPension"],
+        "summary": "Sets the current information sharing selection for Strætó - only possible if the person has a disability pension",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionSuccessReturn"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionSuccessReturn"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionSuccessReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/Syslumenn/estate": {
       "get": {
         "tags": ["Syslumenn"],
@@ -16220,7 +16600,7 @@
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortal.ServicePortalEventNotificationDto": {
-        "required": ["documentId", "nationalId", "subscriptionTypeId"],
+        "required": ["nationalId", "subscriptionTypeId"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -16239,10 +16619,10 @@
             "type": "string",
             "description": "The subscription type id of the event."
           },
-          "documentId": {
-            "minLength": 1,
+          "entityId": {
             "type": "string",
-            "description": "The id of the document associated with the event, if applicable."
+            "description": "The id of the entity associated with the event, if applicable.",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -16354,7 +16734,7 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Contracts.External.DigitalIceland.Documents.Document": {
+      "TrWeb.Contracts.External.DigitalIceland.Documents.DigitalIcelandDocument": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "nullable": true },
@@ -16636,14 +17016,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxAllowanceActionsResult": {
-        "type": "object",
-        "properties": {
-          "canEditPersonalAllowance": { "type": "boolean" },
-          "canDiscontinuePersonalAllowance": { "type": "boolean" }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Contracts.External.DigitalIceland.PersonalTaxAllowance.TaxBracketAction": {
         "enum": ["INCOME_PLAN", "BRACKET_1", "BRACKET_2"],
         "type": "string"
@@ -16674,6 +17046,23 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.CanShareInformationToStraetoReturn": {
+        "type": "object",
+        "properties": {
+          "canShareInformationToStraetoReturn": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionReturn": {
+        "type": "object",
+        "properties": { "straetoInfoSelection": { "type": "boolean" } },
+        "additionalProperties": false
+      },
+      "TrWeb.Contracts.External.DigitalIceland.ShareInformatinoToStraeto.GetStraetoInfoSelectionSuccessReturn": {
+        "type": "object",
+        "properties": { "success": { "type": "boolean" } },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.DigitalMailbox.Document": {
@@ -16821,7 +17210,11 @@
         "type": "object",
         "properties": {
           "applicationStatus": { "type": "string", "nullable": true },
-          "applicationId": { "type": "integer", "format": "int32" }
+          "applicationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -17749,9 +18142,23 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Contracts.External.ServicePortal.SupportEntryBatchInputModel": {
+        "type": "object",
+        "properties": {
+          "supportEntries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryInputModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Contracts.External.ServicePortal.SupportEntryInputModel": {
         "type": "object",
         "properties": {
+          "nationalId": { "type": "string", "nullable": true },
           "type": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryTypeEnum"
           },
@@ -17802,6 +18209,7 @@
     { "name": "ServicePortal" },
     { "name": "ServicePortalManagement" },
     { "name": "SharePoint" },
+    { "name": "StraetoDisabilityPension" },
     { "name": "Syslumenn" },
     { "name": "Test" }
   ]

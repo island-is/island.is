@@ -214,7 +214,6 @@ export class FormApplicantTypesService {
       'displayOrder',
       'isCompleted',
       'shouldValidate',
-      'shouldPopulate',
       'isHidden',
       'multiMax',
       'isMulti',

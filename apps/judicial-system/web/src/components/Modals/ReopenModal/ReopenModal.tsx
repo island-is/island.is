@@ -45,7 +45,9 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           workingCase.appealCase?.id ?? '',
           AppealCaseTransition.REOPEN_APPEAL,
         )
-      : await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : isRequestCase(workingCase.type)
+      ? await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : await transitionCase(workingCase.id, CaseTransition.CORRECT)
 
     if (caseTransitioned) {
       router.push(
