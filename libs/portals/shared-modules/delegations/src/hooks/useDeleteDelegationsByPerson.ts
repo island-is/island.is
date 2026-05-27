@@ -69,13 +69,23 @@ export const useDeleteDelegationsByPerson = ({ direction }: Options) => {
       if (delegationIds.length === 0) return true
 
       try {
-        await Promise.all(
+        const results = await Promise.all(
           delegationIds.map((delegationId) =>
             deleteDelegation({
               variables: { input: { delegationId } },
             }),
           ),
         )
+
+        const allSucceeded = results.every(
+          (result) => !result.errors && result.data?.deleteAuthDelegation === true,
+        )
+
+        if (!allSucceeded) {
+          toast.error(formatMessage(coreMessages.somethingWrong))
+          return false
+        }
+
         evictPerson(person)
         return true
       } catch {
