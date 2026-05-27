@@ -61,7 +61,7 @@ export const PrimarySchool = () => {
             tag={
               student.contactType === EducationPrimarySchoolContactType.GUARDIAN
                 ? {
-                    label: formatMessage(psm.contactTypeGuardian),
+                    label: formatMessage(psm.child),
                     variant: 'purple',
                     outlined: true,
                   }

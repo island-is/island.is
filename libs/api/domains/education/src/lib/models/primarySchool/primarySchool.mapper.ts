@@ -34,7 +34,10 @@ export const mapResult = (
   if (!item.id || item.gradeLevel == null) return null
 
   const monthNumber =
-    item.batchNumber != null && item.batchNumber > 0 && isValidDate(item.scheduleStart)
+    item.batchNumber != null &&
+    item.batchNumber > 0 &&
+    item.scheduleStart &&
+    isValidDate(item.scheduleStart)
       ? item.scheduleStart.getMonth() + 1
       : undefined
 

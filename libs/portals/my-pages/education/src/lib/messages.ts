@@ -129,8 +129,8 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:view-results',
     defaultMessage: 'Sjá niðurstöður',
   },
-  contactTypeGuardian: {
-    id: 'sp.education-primary-school:contact-type-guardian',
+  child: {
+    id: 'sp.education-primary-school:child',
     defaultMessage: 'Barn',
   },
 })
