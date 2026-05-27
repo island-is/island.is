@@ -69,7 +69,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
-import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
