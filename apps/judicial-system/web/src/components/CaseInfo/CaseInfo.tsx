@@ -153,6 +153,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const canReopenCase =
+    isDistrictCourtUser(user) &&
     workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.WITHDRAWAL &&
     Boolean(
@@ -192,7 +193,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 </Text>
               </Box>
             )}
-            {isDistrictCourtUser(user) && canReopenCase && (
+            {canReopenCase && (
               <Button
                 variant="text"
                 colorScheme="destructive"
