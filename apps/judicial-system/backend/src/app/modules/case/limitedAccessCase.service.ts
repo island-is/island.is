@@ -13,16 +13,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  AppealCaseState,
+  AppealCaseNotificationType,
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
-  CaseNotificationType,
   CaseState,
   completedIndictmentCaseStates,
   dateTypes,
@@ -30,7 +26,6 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
-  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -41,10 +36,13 @@ import {
   FileService,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
 } from '../file'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
+  CaseDefendantPoliceCaseNumber,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -119,16 +117,13 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
-    Partial<
-      Pick<
-        AppealCase,
-        | 'appealState'
-        | 'defendantStatementDate'
-        | 'appealRulingDecision'
-        | 'appealedByNationalId'
-      >
-    > {}
+  extends Pick<
+    Case,
+    | 'caseModifiedExplanation'
+    | 'isolationToDate'
+    | 'validToDate'
+    | 'openedByDefender'
+  > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -183,6 +178,48 @@ export const include: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
     ],
   },
   { model: Case, as: 'parentCase', attributes },
@@ -212,6 +249,12 @@ export const include: Includeable[] = [
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
+        separate: true,
+      },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
         separate: true,
       },
     ],
@@ -291,6 +334,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -347,7 +391,7 @@ export const include: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: NotificationType.APPEAL_COMPLETED },
+    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -549,59 +593,8 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    if (update.appealState === AppealCaseState.APPEALED) {
-      for (const caseFile of theCase.caseFiles ?? []) {
-        if (
-          caseFile.state === CaseFileState.STORED_IN_RVG &&
-          caseFile.isKeyAccessible &&
-          caseFile.category &&
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          ].includes(caseFile.category)
-        ) {
-          addMessagesToQueue({
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId: theCase.id,
-            elementId: caseFile.id,
-          })
-        }
-      }
-
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
-      })
-    }
-
-    if (update.appealState === AppealCaseState.WITHDRAWN) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
-      })
-    }
-
     // Return limited access case (read within transaction so we see the updated row)
-    const updatedCase = await this.findById(theCase.id, { transaction })
-
-    if (
-      updatedCase.appealCase?.defendantStatementDate?.getTime() !==
-      theCase.appealCase?.defendantStatementDate?.getTime()
-    ) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_STATEMENT },
-      })
-    }
-
-    return updatedCase
+    return this.findById(theCase.id, { transaction })
   }
 
   private constructDefender(
@@ -853,7 +846,18 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
+
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),

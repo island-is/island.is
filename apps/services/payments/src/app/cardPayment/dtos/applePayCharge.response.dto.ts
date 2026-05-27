@@ -20,7 +20,10 @@ export class ApplePayChargeResponse {
   @IsString()
   transactionLifecycleId!: string
 
-  @ApiProperty({ description: 'Masked card number', type: String })
+  @ApiProperty({
+    description: 'Masked card number returned by the payment gateway',
+    type: String,
+  })
   @IsString()
   maskedCardNumber!: string
 

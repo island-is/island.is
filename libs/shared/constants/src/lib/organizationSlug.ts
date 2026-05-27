@@ -29,6 +29,7 @@ export type OrganizationSlugType =
   | 'samband-islenskra-sveitafelaga'
   | 'skatturinn'
   | 'syslumenn'
+  | 'atvinnuvegaraduneytid'
   | 'syslumadurinn-a-austurlandi'
   | 'syslumadurinn-a-hoefudborgarsvaedinu'
   | 'syslumadurinn-a-vestfjordum'
@@ -51,4 +52,5 @@ export type OrganizationSlugType =
   | 'rannis'
   | 'vinnumalastofnun'
   | 'landspitali'
+  | 'lyfjastofnun'
   | 'vinnumalastofnun'

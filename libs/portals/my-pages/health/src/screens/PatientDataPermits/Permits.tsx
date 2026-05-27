@@ -33,42 +33,45 @@ const PatientDataPermits: FC = () => {
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
       intro={formatMessage(messages.patientDataPermitDescription)}
-      serviceProviderSlug="landlaeknir"
+      serviceProvider={{
+        slug: 'landlaeknir',
+        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+      }}
       loading={loading}
-      serviceProviderTooltip={formatMessage(
-        messages.landlaeknirPatientPermitsTooltip,
-      )}
       buttonGroup={
         !loading && !error
-          ? [
-              <LinkButton
-                key="readAboutPermit"
-                variant="utility"
-                size="small"
-                to={formatMessage(messages.patientDataPermitsLink)}
-                text={formatMessage(messages.patientDataPermitsLinkText)}
-                icon="open"
-              />,
-              ...(!consent
-                ? [
-                    <Button
-                      key="addNewPermit"
-                      variant="utility"
-                      colorScheme="primary"
-                      icon="arrowForward"
-                      iconType="outline"
-                      size="small"
-                      onClick={() =>
-                        navigate(HealthPaths.HealthPatientDataPermitsAdd)
-                      }
-                    >
-                      {formatMessage(messages.addPermit)}
-                    </Button>,
-                  ]
-                : []),
-            ]
+          ? {
+              actions: [
+                <LinkButton
+                  key="readAboutPermit"
+                  variant="utility"
+                  size="small"
+                  to={formatMessage(messages.patientDataPermitsLink)}
+                  text={formatMessage(messages.patientDataPermitsLinkText)}
+                  icon="open"
+                />,
+                ...(!consent
+                  ? [
+                      <Button
+                        key="addNewPermit"
+                        variant="utility"
+                        colorScheme="primary"
+                        icon="arrowForward"
+                        iconType="outline"
+                        size="small"
+                        onClick={() =>
+                          navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                        }
+                      >
+                        {formatMessage(messages.addPermit)}
+                      </Button>,
+                    ]
+                  : []),
+              ],
+            }
           : undefined
       }
+      desktopContentSpan="10/12"
     >
       {loading && !error && (
         <Box marginY={3}>
@@ -96,6 +99,7 @@ const PatientDataPermits: FC = () => {
               eyebrow={formatMessage(messages.healthDirectorate)}
               eyebrowColor="purple400"
               heading={formatMessage(messages.patientDataPermit)}
+              headingVariant="h4"
               text={formatMessage(messages.patientDataSharedDescription)}
               tag={permitTagSelector(permit.status, formatMessage)}
               cta={{

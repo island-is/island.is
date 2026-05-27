@@ -92,6 +92,12 @@ export class UpdateCourtSessionInput {
 
   @Allow()
   @IsOptional()
+  @IsUUID()
+  @Field(() => String, { nullable: true })
+  readonly rulingFileId?: string
+
+  @Allow()
+  @IsOptional()
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   readonly isAttestingWitness?: boolean

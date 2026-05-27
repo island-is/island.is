@@ -1,7 +1,5 @@
 import { Transaction } from 'sequelize'
 
-import { BadRequestException } from '@nestjs/common'
-
 import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -22,13 +20,6 @@ type GivenWhenThen = (
   defendant: Defendant,
   update: UpdateDefendantDto,
 ) => Promise<Then>
-
-type DefenderNullUpdate = {
-  defenderNationalId: null
-  defenderName?: null
-  defenderEmail?: null
-  defenderPhoneNumber?: null
-}
 
 describe('DefendantService - update', () => {
   const theCase = { id: 'case-id', type: CaseType.CUSTODY } as Case
@@ -66,39 +57,39 @@ describe('DefendantService - update', () => {
     }
   })
 
-  describe('when defenderNationalId is set to null without clearing all defender fields', () => {
-    let then: Then
+  describe('when defenderNationalId is null', () => {
+    const defendant = {
+      id: 'defendant-id',
+      caseId: theCase.id,
+      defenderNationalId: '0101302399',
+      defenderName: 'Defender Name',
+    } as Defendant
     const update = {
       defenderNationalId: null,
-      defenderName: null,
-      defenderEmail: null,
     } as unknown as UpdateDefendantDto
+    const updatedDefendant = { ...defendant } as unknown as Defendant
+    let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(
-        {
-          id: 'defendant-id',
-          caseId: theCase.id,
-          defenderNationalId: '0101302399',
-          defenderName: 'Defender Name',
-          defenderEmail: 'defender@example.com',
-          defenderPhoneNumber: '5551234',
-        } as Defendant,
-        update,
-      )
+      ;(
+        mockDefendantRepositoryService.update as jest.Mock
+      ).mockResolvedValueOnce(updatedDefendant)
+
+      then = await givenWhenThen(defendant, update)
     })
 
-    it('should throw a bad request exception', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error).toHaveProperty(
-        'message',
-        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
+    it('should strip defenderNationalId from the update', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        theCase.id,
+        defendant.id,
+        {},
+        { transaction },
       )
-      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+      expect(then.result).toEqual(updatedDefendant)
     })
   })
 
-  describe('when defenderNationalId and all related defender fields are set to null', () => {
+  describe('when defenderNationalId and defenderName are both set to null', () => {
     const defendant = {
       id: 'defendant-id',
       caseId: theCase.id,
@@ -107,13 +98,50 @@ describe('DefendantService - update', () => {
       defenderEmail: 'defender@example.com',
       defenderPhoneNumber: '5551234',
     } as Defendant
-    const update: DefenderNullUpdate = {
+    const update = {
+      defenderNationalId: null,
+      defenderName: null,
+    } as unknown as UpdateDefendantDto
+    const updatedDefendant = {
+      ...defendant,
+      defenderName: null,
+    } as unknown as Defendant
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockDefendantRepositoryService.update as jest.Mock
+      ).mockResolvedValueOnce(updatedDefendant)
+
+      then = await givenWhenThen(defendant, update)
+    })
+
+    it('should strip defenderNationalId but preserve defenderName', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        theCase.id,
+        defendant.id,
+        { defenderName: null },
+        { transaction },
+      )
+      expect(then.result).toEqual(updatedDefendant)
+    })
+  })
+
+  describe('when all defender fields are set to null', () => {
+    const defendant = {
+      id: 'defendant-id',
+      caseId: theCase.id,
+      defenderNationalId: '0101302399',
+      defenderName: 'Defender Name',
+      defenderEmail: 'defender@example.com',
+      defenderPhoneNumber: '5551234',
+    } as Defendant
+    const update = {
       defenderNationalId: null,
       defenderName: null,
       defenderEmail: null,
       defenderPhoneNumber: null,
-    }
-    const defendantUpdate = update as unknown as UpdateDefendantDto
+    } as unknown as UpdateDefendantDto
     const updatedDefendant = { ...defendant, ...update } as unknown as Defendant
     let then: Then
 
@@ -122,14 +150,14 @@ describe('DefendantService - update', () => {
         mockDefendantRepositoryService.update as jest.Mock
       ).mockResolvedValueOnce(updatedDefendant)
 
-      then = await givenWhenThen(defendant, defendantUpdate)
+      then = await givenWhenThen(defendant, update)
     })
 
-    it('should update the defendant', () => {
+    it('should not strip defenderNationalId', () => {
       expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
         theCase.id,
         defendant.id,
-        defendantUpdate,
+        update,
         { transaction },
       )
       expect(then.result).toEqual(updatedDefendant)

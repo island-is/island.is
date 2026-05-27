@@ -3,14 +3,21 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AuthAdminEnvironment,
+  AuthAdminEnvironmentFailure,
+} from '@island.is/api/schema'
 
 import {
   PatchAuthAdminScopeDocument,
   PatchAuthAdminScopeMutation,
   PatchAuthAdminScopeMutationVariables,
 } from './EditPermission.generated'
-import { authAdminEnvironments } from '../../utils/environments'
+import {
+  UpdateScopeUsersDocument,
+  UpdateScopeUsersMutation,
+  UpdateScopeUsersMutationVariables,
+} from './components/PermissionAccessControl.generated'
 import { getIntent } from '../../utils/getIntent'
 import {
   MergedFormDataSchema,
@@ -19,10 +26,15 @@ import {
 } from './EditPermission.schema'
 
 export type EditPermissionResult = RouterActionResponse<
-  PatchAuthAdminScopeMutation['patchAuthAdminScope'],
+  PatchAuthAdminScopeMutation['patchAuthAdminScope']['environments'],
   ValidateFormDataResult<MergedFormDataSchema>['errors'],
   keyof typeof PermissionFormTypes
->
+> & {
+  failedEnvironments?: Pick<
+    AuthAdminEnvironmentFailure,
+    'environment' | 'message'
+  >[]
+}
 
 export const editPermissionAction: WrappedActionFn =
   ({ client }) =>
@@ -52,7 +64,14 @@ export const editPermissionAction: WrappedActionFn =
       }
     }
 
-    const { syncEnvironments, environment, ...data } = result.data
+    const { syncEnvironments, environment, ...rawData } = result.data
+
+    // Extract scope user fields if present (only in ACCESS_CONTROL intent)
+    const { addedScopeUserNationalIds, removedScopeUserNationalIds, ...data } =
+      rawData as typeof rawData & {
+        addedScopeUserNationalIds?: string[]
+        removedScopeUserNationalIds?: string[]
+      }
 
     const environments: AuthAdminEnvironment[] = []
 
@@ -60,9 +79,10 @@ export const editPermissionAction: WrappedActionFn =
     // then update all environments with the same settings as the current environment intent
     if (sync && syncEnvironments && syncEnvironments.length > 0) {
       environments.push(...syncEnvironments)
-      // If the save in all environments was enabled, then update all environments
+      // If the save in all environments was enabled,
+      // then update every environment the scope is configured in.
     } else if (saveInAllEnvironments) {
-      environments.push(...authAdminEnvironments)
+      environments.push(environment, ...(syncEnvironments ?? []))
     } else {
       // Otherwise, just update the current environment
       environments.push(environment)
@@ -95,9 +115,57 @@ export const editPermissionAction: WrappedActionFn =
         return globalErrorResponse
       }
 
+      const failedEnvironments: NonNullable<
+        EditPermissionResult['failedEnvironments']
+      > = [
+        ...(patchScopeResult.data?.patchAuthAdminScope.failedEnvironments ??
+          []),
+      ]
+
+      // Update scope users if there are changes
+      const hasUserChanges =
+        (addedScopeUserNationalIds && addedScopeUserNationalIds.length > 0) ||
+        (removedScopeUserNationalIds && removedScopeUserNationalIds.length > 0)
+
+      if (intent === PermissionFormTypes.ACCESS_CONTROL && hasUserChanges) {
+        const updateUsersResult = await client.mutate<
+          UpdateScopeUsersMutation,
+          UpdateScopeUsersMutationVariables
+        >({
+          mutation: UpdateScopeUsersDocument,
+          variables: {
+            input: {
+              tenantId,
+              scopeName,
+              addedNationalIds: addedScopeUserNationalIds ?? [],
+              removedNationalIds: removedScopeUserNationalIds ?? [],
+              environments,
+            },
+          },
+        })
+
+        if (updateUsersResult.errors?.length) {
+          const transportMessage = updateUsersResult.errors
+            .map((e) => e.message)
+            .join('; ')
+          for (const env of environments) {
+            failedEnvironments.push({
+              environment: env,
+              message: `Updating scope users failed: ${transportMessage}`,
+            })
+          }
+        } else {
+          const userFailures =
+            updateUsersResult.data?.updateAuthAdminScopeUsers
+              .failedEnvironments ?? []
+          failedEnvironments.push(...userFailures)
+        }
+      }
+
       return {
-        data: patchScopeResult.data?.patchAuthAdminScope ?? null,
+        data: patchScopeResult.data?.patchAuthAdminScope.environments ?? null,
         intent,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     } catch (e) {
       return globalErrorResponse

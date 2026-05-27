@@ -31,7 +31,7 @@ import { getDeletionOrAddition } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
-const PREFIX_AMENDING = 'breytingu á reglugerð nr. '
+const PREFIX_AMENDING = 'breytingu á reglugerð '
 const PREFIX_REPEALING = 'brottfellingu reglugerðar nr. '
 
 const formatAffectedAndPlaceAffectedAtEnd = (
@@ -151,12 +151,11 @@ export const formatAmendingRegTitle = (
   const repealArray = impacts.filter((item) => item.type === 'repeal')
 
   const amendingTitles = uniq(
-    amendingArray.map(
-      (item) =>
-        `${removeRegNamePrefix(item.name)} ${removeRegPrefix(
-          item.regTitle || '',
-        )}`,
-    ),
+    amendingArray.map((item) => {
+      const title = removeRegPrefix(item.regTitle || '').trim()
+      const name = removeRegNamePrefix(item.name)
+      return title ? `${title}, nr. ${name}` : `nr. ${name}`
+    }),
   )
 
   const prefixedAmendingTitles = amendingTitles.map(

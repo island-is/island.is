@@ -7,7 +7,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
-import { Employment, RatioType } from '../../../utils/constants'
+import { Employment, RatioType, employeeRatio } from '../../../utils/constants'
 import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
 import { isRatioType } from '../../../utils/conditionUtils'
 
@@ -64,6 +64,7 @@ export const employmentRegistrationSubSection = buildSubSection({
               condition: (answers) => isRatioType(answers, RatioType.YEARLY),
               placeholder: '1-50%',
               variant: 'number',
+              max: employeeRatio,
               width: 'full',
             }),
             buildCustomField({

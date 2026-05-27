@@ -58,36 +58,41 @@ const UserContract = () => {
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
       intro={cm.contractDetailSubtitle}
-      serviceProviderSlug={HMS_SLUG}
-      serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
-      buttonGroup={[
-        <Button
-          key="download-button"
-          title={formatMessage(cm.downloadAsPdf)}
-          icon="download"
-          iconType="outline"
-          disabled={
-            !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
-          }
-          onClick={() =>
-            formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
-          }
-          variant="utility"
-        >
-          {formatMessage(cm.downloadAsPdf)}
-        </Button>,
-        ...(contract?.status === HmsRentalAgreementStatusType.VALID
-          ? [
-              <LinkButton
-                key="terminate-button"
-                to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
-                text={formatMessage(cm.terminateRentalAgreement)}
-                icon="open"
-                variant="utility"
-              />,
-            ]
-          : []),
-      ]}
+      serviceProvider={{
+        slug: HMS_SLUG,
+        tooltip: formatMessage(m.rentalAgreementsTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <Button
+            key="download-button"
+            title={formatMessage(cm.downloadAsPdf)}
+            icon="download"
+            iconType="outline"
+            disabled={
+              !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
+            }
+            onClick={() =>
+              formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
+            }
+            variant="utility"
+          >
+            {formatMessage(cm.downloadAsPdf)}
+          </Button>,
+          ...(contract?.status === HmsRentalAgreementStatusType.VALID
+            ? [
+                <LinkButton
+                  key="terminate-button"
+                  to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
+                  text={formatMessage(cm.terminateRentalAgreement)}
+                  icon="open"
+                  variant="utility"
+                />,
+              ]
+            : []),
+        ],
+      }}
+      desktopContentSpan="10/12"
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !contract && (

@@ -6,6 +6,7 @@ export const FieldSettingsFragment = gql`
   fragment FieldSettings on FormSystemFieldSettings {
     minValue
     maxValue
+    isDecimal
     minLength
     maxLength
     minDate
@@ -42,6 +43,9 @@ export const FieldSettingsFragment = gql`
     priceAmount
     isDropdown
     paymentQuantityId
+    zendeskTicketFieldId
+    zendeskCustomObjectKey
+    dataSourceUrl
   }
   ${ListItemFragment}
   ${LanguageFields}

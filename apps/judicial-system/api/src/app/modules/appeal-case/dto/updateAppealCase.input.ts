@@ -78,14 +78,4 @@ export class UpdateAppealCaseInput {
   @IsEnum(UserRole, { each: true })
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly prosecutorStatementDate?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defendantStatementDate?: string
 }

@@ -10,7 +10,7 @@ import {
 import {
   Case,
   DateLog,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -71,7 +71,7 @@ export const useCourtArrangements = (
         original?.[1]?.date &&
           compareAsc(date, new Date(original[1].date)) !== 0 &&
           hasSentNotification(
-            NotificationType.COURT_DATE,
+            TrackedNotificationType.COURT_DATE,
             workingCase.notifications,
           ).hasSent,
       )

@@ -11,9 +11,9 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 
 export class UpdateFormDto {
   @IsString()
@@ -52,11 +52,6 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional()
   useValidate?: boolean
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiPropertyOptional()
-  usePopulate?: boolean
 
   @IsString()
   @IsOptional()
@@ -103,10 +98,10 @@ export class UpdateFormDto {
   hasSummaryScreen?: boolean
 
   @ValidateNested()
-  @Type(() => CompletedSectionInfo)
+  @Type(() => SectionInfo)
   @IsOptional()
-  @ApiPropertyOptional({ type: CompletedSectionInfo })
-  completedSectionInfo?: CompletedSectionInfo
+  @ApiPropertyOptional({ type: SectionInfo })
+  sectionInfo?: SectionInfo
 
   @ValidateNested()
   @Type(() => Dependency)

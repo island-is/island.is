@@ -109,6 +109,7 @@ const LandingPage: Screen<LandingPageProps> = ({
 
   return (
     <OrganizationWrapper
+      isSubpage={false}
       showExternalLinks={true}
       pageTitle={organizationPage?.title ?? ''}
       pageDescription={organizationPage?.description}

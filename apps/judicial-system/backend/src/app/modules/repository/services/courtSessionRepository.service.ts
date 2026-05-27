@@ -35,7 +35,7 @@ interface DeleteCourtSessionOptions {
   transaction: Transaction
 }
 
-interface UpdateCourtSession {
+export interface UpdateCourtSession {
   location?: string
   judgeId?: string
   startDate?: Date
@@ -46,6 +46,7 @@ interface UpdateCourtSession {
   entries?: string
   rulingType?: CourtSessionRulingType
   ruling?: string
+  rulingFileId?: string | null
   isAttestingWitness?: boolean
   attestingWitnessId?: string
   closingEntries?: string
@@ -362,14 +363,5 @@ export class CourtSessionRepositoryService {
         `Unexpected number of rows (${numberOfDeletedRows}) affected when deleting court session ${courtSessionId} of case ${caseId}`,
       )
     }
-  }
-
-  async findById(
-    caseId: string,
-    courtSessionId: string,
-  ): Promise<CourtSession | null> {
-    return this.courtSessionModel.findOne({
-      where: { id: courtSessionId, caseId },
-    })
   }
 }

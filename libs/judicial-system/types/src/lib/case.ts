@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -241,6 +243,7 @@ export enum CaseTransition {
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   COMPLETE = 'COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   DISMISS = 'DISMISS',
@@ -261,6 +264,7 @@ export enum IndictmentCaseTransition {
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
   COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   MOVE = CaseTransition.MOVE,
@@ -501,10 +505,8 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getStatementDeadline = (appealReceived: Date): string => {
-  return new Date(
-    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
-  ).toISOString()
+export const getStatementDeadline = (appealReceived: Date): Date => {
+  return addDays(appealReceived, 1)
 }
 
 export const isIndictmentCaseState = (

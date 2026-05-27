@@ -23,6 +23,11 @@ export class FieldSettings {
   maxValue?: number
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDecimal?: boolean
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   minLength?: number
@@ -177,4 +182,19 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentQuantityId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskTicketFieldId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskCustomObjectKey?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  dataSourceUrl?: string
 }

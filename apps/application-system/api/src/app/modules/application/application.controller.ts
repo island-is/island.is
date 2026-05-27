@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   ParseUUIDPipe,
+  ParseBoolPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
@@ -181,6 +182,13 @@ export class ApplicationController {
     description:
       'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
   })
+  @ApiQuery({
+    name: 'showPruned',
+    required: false,
+    type: 'boolean',
+    description:
+      'To include pruned applications in the response. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -191,13 +199,17 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
-    @Query('scopeCheck') scopeCheck?: boolean,
+    @Query('scopeCheck', new ParseBoolPipe({ optional: true }))
+    scopeCheck?: boolean,
+    @Query('showPruned', new ParseBoolPipe({ optional: true }))
+    showPruned?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
+      showPruned ?? false,
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -217,12 +229,14 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
+    showPruned?: boolean,
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
+      showPruned,
     )
   }
 
@@ -605,22 +619,20 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    if (!application.skipValidation) {
-      await this.validationService.validateIncomingAnswers(
-        existingApplication as BaseApplication,
-        newAnswers,
-        user.nationalId,
-        true,
-        intl.formatMessage,
-      )
+    await this.validationService.validateIncomingAnswers(
+      existingApplication as BaseApplication,
+      newAnswers,
+      user.nationalId,
+      true,
+      intl.formatMessage,
+    )
 
-      await this.validationService.validateApplicationSchema(
-        existingApplication,
-        newAnswers,
-        intl.formatMessage,
-        user,
-      )
-    }
+    await this.validationService.validateApplicationSchema(
+      existingApplication,
+      newAnswers,
+      intl.formatMessage,
+      user,
+    )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const applicantActors: string[] =

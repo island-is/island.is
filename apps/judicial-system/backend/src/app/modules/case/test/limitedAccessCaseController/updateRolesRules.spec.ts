@@ -1,7 +1,4 @@
-import {
-  defenderUpdateRule,
-  prisonSystemAdminUpdateRule,
-} from '../../guards/rolesRules'
+import { prisonSystemAdminUpdateRule } from '../../guards/rolesRules'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Update rules', () => {
@@ -16,8 +13,7 @@ describe('LimitedAccessCaseController - Update rules', () => {
   })
 
   it('should give permission to one roles', () => {
-    expect(rules).toHaveLength(2)
-    expect(rules).toContain(defenderUpdateRule)
+    expect(rules).toHaveLength(1)
     expect(rules).toContain(prisonSystemAdminUpdateRule)
   })
 })

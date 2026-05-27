@@ -86,9 +86,12 @@ export const serviceSetup = (services: {
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+      HEILSA_API_KEY: '/k8s/form-system/HEILSA_API_KEY',
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NTI_USERNAME: '/k8s/form-system/NTI_USERNAME',
+      NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
@@ -111,6 +114,7 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces(
+      'services-payments',
       'islandis',
       'nginx-ingress-external',
       'nginx-ingress-internal',

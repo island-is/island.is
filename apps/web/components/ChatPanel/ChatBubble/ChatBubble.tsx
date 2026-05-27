@@ -18,6 +18,7 @@ interface ChatBubbleProps {
   loading?: boolean
   embedDisclaimerProps?: Pick<EmbedDisclaimerProps, 'localStorageKey' | 'texts'>
   variant?: 'default' | 'circle'
+  title?: string
 }
 
 interface DefaultVariantProps {
@@ -26,6 +27,7 @@ interface DefaultVariantProps {
   handleClick: () => void
   loading: boolean
   text: string
+  title?: string
 }
 
 const DefaultVariant = ({
@@ -34,9 +36,13 @@ const DefaultVariant = ({
   handleClick,
   loading,
   text,
+  title,
 }: DefaultVariantProps) => {
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
+    <div
+      title={title}
+      className={cn(styles.root, { [styles.hidden]: !isVisible })}
+    >
       <button
         data-testid="chatbot"
         tabIndex={0}
@@ -70,6 +76,7 @@ interface CircleVariantProps {
   handleClick: () => void
   loading: boolean
   text: string
+  title?: string
 }
 
 const CircleVariant = ({
@@ -78,9 +85,11 @@ const CircleVariant = ({
   handleClick,
   loading,
   text,
+  title,
 }: CircleVariantProps) => {
   return (
     <div
+      title={title}
       className={cn(
         styles.circleRoot,
         { [styles.hidden]: !isVisible },
@@ -111,6 +120,7 @@ export const ChatBubble = ({
   loading = false,
   embedDisclaimerProps,
   variant = 'default',
+  title,
 }: ChatBubbleProps) => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const hasButtonBeenClicked = useRef(false)
@@ -158,6 +168,7 @@ export const ChatBubble = ({
           handleClick={handleClick}
           loading={loading}
           text={text}
+          title={title}
         />
       )}
       {variant === 'circle' && (
@@ -167,6 +178,7 @@ export const ChatBubble = ({
           handleClick={handleClick}
           loading={loading}
           text={text}
+          title={title}
         />
       )}
     </>

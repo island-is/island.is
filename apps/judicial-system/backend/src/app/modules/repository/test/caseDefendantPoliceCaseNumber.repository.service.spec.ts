@@ -123,19 +123,65 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       expect(caseA.policeCaseNumbers).toEqual(['007-1', '007-2'])
     })
 
-    it('does not overwrite when junction has no rows for the case', async () => {
+    it('sets policeCaseNumbers to [] when junction has no rows for the case', async () => {
       mockModel.findAll.mockResolvedValue([])
 
+      let numbers = ['stale-in-memory']
       const caseA = {
         id: 'case-a',
-        policeCaseNumbers: ['keep-me'],
-        setDataValue: jest.fn(),
+        get policeCaseNumbers() {
+          return numbers
+        },
+        setDataValue(key: string, val: unknown) {
+          if (key === 'policeCaseNumbers') {
+            numbers = val as string[]
+          }
+        },
       } as unknown as Case
 
       await service.resolvePoliceCaseNumbersForCases([caseA], { transaction })
 
-      expect(caseA.policeCaseNumbers).toEqual(['keep-me'])
-      expect(caseA.setDataValue).not.toHaveBeenCalled()
+      expect(caseA.policeCaseNumbers).toEqual([])
+    })
+  })
+
+  describe('findUnassignedPoliceCaseNumbersForSplit', () => {
+    it('returns unassigned numbers excluding any also linked to the split defendant', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { defendantId: null, policeCaseNumber: '007-2024-a' },
+        { defendantId: 'def-split', policeCaseNumber: '007-2024-b' },
+        { defendantId: null, policeCaseNumber: '007-2024-b' },
+        { defendantId: 'def-other', policeCaseNumber: '007-2024-c' },
+      ])
+
+      const res = await service.findUnassignedPoliceCaseNumbersForSplit(
+        'case-1',
+        'def-split',
+        { transaction },
+      )
+
+      expect(mockModel.findAll).toHaveBeenCalledWith({
+        where: { caseId: 'case-1' },
+        attributes: ['defendantId', 'policeCaseNumber'],
+        transaction,
+      })
+      expect(res).toEqual(['007-2024-a'])
+    })
+
+    it('returns sorted distinct unassigned numbers when there is no overlap', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { defendantId: null, policeCaseNumber: '007-2' },
+        { defendantId: null, policeCaseNumber: '007-1' },
+        { defendantId: null, policeCaseNumber: '007-1' },
+      ])
+
+      const res = await service.findUnassignedPoliceCaseNumbersForSplit(
+        'case-1',
+        'def-split',
+        { transaction },
+      )
+
+      expect(res).toEqual(['007-1', '007-2'])
     })
   })
 
@@ -165,21 +211,31 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
   })
 
   describe('assignDefendantPoliceCaseNumbers', () => {
-    it('bulk-creates links and removes matching unassigned rows', async () => {
-      await service.assignDefendantPoliceCaseNumbers('case-1', [
-        { defendantId: 'def-a', policeCaseNumber: '007-1' },
-        { defendantId: 'def-b', policeCaseNumber: '007-2' },
-      ])
+    it('returns only genuinely new police case numbers not previously on the case', async () => {
+      mockModel.findAll.mockResolvedValue([{ policeCaseNumber: '007-1' }])
 
-      expect(mockModel.sequelize.transaction).toHaveBeenCalledTimes(1)
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [
+          { defendantId: 'def-a', policeCaseNumber: '007-1' },
+          { defendantId: 'def-a', policeCaseNumber: '007-2' },
+        ],
+        { transaction },
+      )
+
+      expect(result).toEqual(['007-2'])
+      expect(mockModel.findAll).toHaveBeenCalledWith({
+        where: { caseId: 'case-1' },
+        attributes: ['policeCaseNumber'],
+        transaction,
+      })
       expect(mockModel.bulkCreate).toHaveBeenCalledWith(
         [
           { caseId: 'case-1', defendantId: 'def-a', policeCaseNumber: '007-1' },
-          { caseId: 'case-1', defendantId: 'def-b', policeCaseNumber: '007-2' },
+          { caseId: 'case-1', defendantId: 'def-a', policeCaseNumber: '007-2' },
         ],
         { transaction, ignoreDuplicates: true },
       )
-
       expect(mockModel.destroy).toHaveBeenCalledWith({
         where: {
           caseId: 'case-1',
@@ -190,10 +246,47 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
       })
     })
 
-    it('does nothing when links array is empty', async () => {
-      await service.assignDefendantPoliceCaseNumbers('case-1', [])
+    it('returns all police case numbers when none previously exist', async () => {
+      mockModel.findAll.mockResolvedValue([])
 
-      expect(mockModel.sequelize.transaction).not.toHaveBeenCalled()
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [
+          { defendantId: 'def-a', policeCaseNumber: '007-1' },
+          { defendantId: 'def-b', policeCaseNumber: '007-2' },
+        ],
+        { transaction },
+      )
+
+      expect(result).toEqual(['007-1', '007-2'])
+    })
+
+    it('returns empty when all police case numbers already exist', async () => {
+      mockModel.findAll.mockResolvedValue([
+        { policeCaseNumber: '007-1' },
+        { policeCaseNumber: '007-2' },
+      ])
+
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [
+          { defendantId: 'def-a', policeCaseNumber: '007-1' },
+          { defendantId: 'def-b', policeCaseNumber: '007-2' },
+        ],
+        { transaction },
+      )
+
+      expect(result).toEqual([])
+    })
+
+    it('does nothing when links array is empty', async () => {
+      const result = await service.assignDefendantPoliceCaseNumbers(
+        'case-1',
+        [],
+        { transaction },
+      )
+
+      expect(result).toEqual([])
       expect(mockModel.bulkCreate).not.toHaveBeenCalled()
       expect(mockModel.destroy).not.toHaveBeenCalled()
     })

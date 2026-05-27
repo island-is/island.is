@@ -20,6 +20,7 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
+  CaseDefendantPoliceCaseNumber,
   CivilClaimant,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -76,6 +77,12 @@ export const createTestingDefendantModule = async () => {
           update: jest.fn(),
           destroy: jest.fn(),
           findByPk: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(CaseDefendantPoliceCaseNumber),
+        useValue: {
+          findAll: jest.fn(),
         },
       },
       DefendantService,

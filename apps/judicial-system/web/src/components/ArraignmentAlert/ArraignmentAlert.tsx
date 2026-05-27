@@ -3,7 +3,7 @@ import { useContext, useMemo } from 'react'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TrackedNotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 
 const ArraignmentAlert = () => {
@@ -12,7 +12,7 @@ const ArraignmentAlert = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],

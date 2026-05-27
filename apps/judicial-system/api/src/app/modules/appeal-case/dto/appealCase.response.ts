@@ -6,10 +6,29 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file'
 import { User } from '../../user'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
+
+@ObjectType()
+export class AppealDefendantStatementDate {
+  @Field(() => ID)
+  readonly defendantId!: string
+
+  @Field(() => String)
+  readonly statementDate!: string
+}
+
+@ObjectType()
+export class AppealCivilClaimantStatementDate {
+  @Field(() => ID)
+  readonly civilClaimantId!: string
+
+  @Field(() => String)
+  readonly statementDate!: string
+}
 
 @ObjectType()
 export class AppealCase {
@@ -32,10 +51,19 @@ export class AppealCase {
   readonly appealReceivedByCourtDate?: string
 
   @Field(() => String, { nullable: true })
+  readonly appealRulingDate?: string
+
+  @Field(() => String, { nullable: true })
   readonly prosecutorStatementDate?: string
 
   @Field(() => String, { nullable: true })
   readonly defendantStatementDate?: string
+
+  @Field(() => [AppealDefendantStatementDate], { nullable: true })
+  readonly defendantStatementDates?: AppealDefendantStatementDate[]
+
+  @Field(() => [AppealCivilClaimantStatementDate], { nullable: true })
+  readonly civilClaimantStatementDates?: AppealCivilClaimantStatementDate[]
 
   @Field(() => User, { nullable: true })
   readonly appealAssistant?: User
@@ -72,4 +100,22 @@ export class AppealCase {
 
   @Field(() => String, { nullable: true })
   readonly appealedByNationalId?: string
+
+  @Field(() => UserRole, { nullable: true })
+  readonly appealedByRole?: UserRole
+
+  @Field(() => String, { nullable: true })
+  readonly appealedDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly statementDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isStatementDeadlineExpired?: boolean
+
+  @Field(() => ID, { nullable: true })
+  readonly rulingFileId?: string
+
+  @Field(() => CaseFile, { nullable: true })
+  readonly rulingFile?: CaseFile
 }

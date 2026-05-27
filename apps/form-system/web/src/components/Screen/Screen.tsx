@@ -1,13 +1,5 @@
-import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  FieldTypesEnum,
-  NotificationCommands,
-} from '@island.is/form-system/enums'
-import {
-  NOTIFY_EXTERNAL_SERVICE,
-  removeTypename,
-} from '@island.is/form-system/graphql'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -17,8 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LoadingScreen } from '@island.is/react/components'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
@@ -34,8 +25,6 @@ export const Screen = () => {
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
   const { formatMessage } = useIntl()
-  const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
-  const [loading, setLoading] = useState(false)
   const multiMax = currentScreen?.data?.multiMax ?? 1
   const isMulti = currentScreen?.data?.isMulti ?? false
 
@@ -76,6 +65,12 @@ export const Screen = () => {
         f.isPartOfMultiset !== false,
     )
 
+  const displayMultiButtons =
+    numberOfItems > 1 ||
+    (isMulti &&
+      multiMax > 1 &&
+      visibleFields.some((f) => f.isPartOfMultiset !== false))
+
   const currencySumField = shouldMoveCurrencySumBox
     ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
     : undefined
@@ -101,59 +96,6 @@ export const Screen = () => {
     [fieldsForMultisetLoop],
   )
 
-  const shouldPopulateScreen = async () => {
-    if (
-      currentScreen?.data?.shouldPopulate &&
-      state.application.submissionServiceUrl !== 'zendesk'
-    ) {
-      try {
-        setLoading(true)
-        const { data } = await notifyExternal({
-          variables: {
-            input: {
-              applicationId: state.application.id,
-              nationalId: '',
-              slug: state.application.slug,
-              isTest: state.application.isTest,
-              command: NotificationCommands.POPULATE,
-              screen: state.currentScreen?.data,
-            },
-          },
-        })
-
-        const updatedScreen = removeTypename(
-          data?.notifyFormSystemExternalSystem?.screen,
-        )
-
-        dispatch({
-          type: 'EXTERNAL_SERVICE_NOTIFICATION',
-          payload: {
-            screen: updatedScreen,
-            ...(updatedScreen?.screenError?.hasError && {
-              isPopulateError: true,
-            }),
-          },
-        })
-      } catch (error) {
-        console.error('Error populating fields:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-  }
-
-  const screenId = currentScreen?.data?.id
-
-  const shouldPopulateScreenRef = useRef(shouldPopulateScreen)
-  shouldPopulateScreenRef.current = shouldPopulateScreen
-
-  useEffect(() => {
-    const populateScreen = async () => {
-      await shouldPopulateScreenRef.current()
-    }
-    void populateScreen()
-  }, [screenId])
-
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
     dispatch({
@@ -171,8 +113,6 @@ export const Screen = () => {
       })
     }
   }
-
-  if (loading) return <LoadingScreen ariaLabel="loading" />
 
   const multiSetContent = currentScreen ? (
     <Box>
@@ -279,10 +219,15 @@ export const Screen = () => {
 
         {currentSectionType === SectionTypes.SUMMARY &&
           !!state.application.hasSummaryScreen &&
+          !state.submitted &&
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
-        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
+        {(currentSectionType === SectionTypes.COMPLETED || state.submitted) && (
+          <Completed />
+        )}
+        {currentSectionType === SectionTypes.PAYMENT && !state.submitted && (
+          <Payment />
+        )}
         {multiSetContent}
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
@@ -294,7 +239,7 @@ export const Screen = () => {
           </Box>
         )}
 
-        {isMulti && multiMax > 1 && (
+        {isMulti && multiMax > 1 && displayMultiButtons && (
           <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>
               {numberOfItems > 1 && (
