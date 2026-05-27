@@ -4,6 +4,7 @@ import { Box, BoxProps, Button, LinkV2, Stack } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { InstitutionPanel } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 import { m } from '../../messages'
 import DetailPanel from './DetailPanel'
@@ -52,6 +53,19 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       </Box>
     )
   }
+
+  const { hasALandingPage, slug, link } = grant.fund?.parentOrganization ?? {}
+  const orgUrl = slug
+    ? getOrganizationLink(
+        {
+          hasALandingPage: hasALandingPage ?? undefined,
+          slug,
+          link: link ?? undefined,
+        },
+        locale,
+      )
+    : undefined
+
   return (
     <>
       {goBackToDashboard()}
@@ -59,6 +73,13 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       <DetailPanel grant={grant} locale={locale} />
       <ExtraPanel grant={grant} />
       <InstitutionPanel
+        linkProps={
+          orgUrl
+            ? {
+                href: orgUrl,
+              }
+            : undefined
+        }
         institutionTitle={formatMessage(m.single.provider)}
         institution={
           grant.fund?.parentOrganization.title ??
