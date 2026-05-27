@@ -51,11 +51,11 @@ export const m = defineMessages({
   },
   clients: {
     id: 'ap.ids-admin:clients',
-    defaultMessage: 'Applications',
+    defaultMessage: 'Clients',
   },
   applicationCreate: {
     id: 'ap.ids-admin:client-create',
-    defaultMessage: 'Create application',
+    defaultMessage: 'Create client',
   },
   apis: {
     id: 'ap.ids-admin:apis',
@@ -64,10 +64,6 @@ export const m = defineMessages({
   settings: {
     id: 'ap.ids-admin:settings',
     defaultMessage: 'Settings',
-  },
-  authentication: {
-    id: 'ap.ids-admin:authentication',
-    defaultMessage: 'Permissions',
   },
   advancedSettings: {
     id: 'ap.ids-admin:advanced-settings',
@@ -83,7 +79,7 @@ export const m = defineMessages({
   },
   clientsDescription: {
     id: 'ap.ids-admin:clients-description',
-    defaultMessage: 'Here you can view and create applications.',
+    defaultMessage: 'Here you can view and create clients.',
   },
   needHelpTitle: {
     id: 'ap.ids-admin:need-help-title',
@@ -99,16 +95,15 @@ export const m = defineMessages({
   },
   noMatchingClients: {
     id: 'ap.ids-admin:no-matching-clients',
-    defaultMessage: 'No applications match the current filter.',
+    defaultMessage: 'No clients match the current filter.',
   },
   noClients: {
     id: 'ap.ids-admin:no-clients',
-    defaultMessage: 'No applications',
+    defaultMessage: 'No clients',
   },
   noClientsDescription: {
     id: 'ap.ids-admin:no-clients-description',
-    defaultMessage:
-      'You can create an application by clicking on Create application',
+    defaultMessage: 'You can create a client by clicking on Create client',
   },
   cancel: {
     id: 'ap.ids-admin:cancel',
@@ -126,9 +121,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:create',
     defaultMessage: 'Create',
   },
+  save: {
+    id: 'ap.ids-admin:save',
+    defaultMessage: 'Save',
+  },
   edit: {
     id: 'ap.ids-admin:edit',
     defaultMessage: 'Edit',
+  },
+  environments: {
+    id: 'ap.ids-admin:environments',
+    defaultMessage: 'Environments',
   },
   displayName: {
     id: 'ap.ids-admin:display-name',
@@ -145,7 +148,16 @@ export const m = defineMessages({
   descriptionInfo: {
     id: 'ap.ids-admin:description-info',
     defaultMessage:
-      'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
+      'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this API scope gives access to.',
+  },
+  descriptionChangeWarningTitle: {
+    id: 'ap.ids-admin:description-change-warning-title',
+    defaultMessage: 'Are you sure you want to change the description?',
+  },
+  descriptionChangeWarningMessage: {
+    id: 'ap.ids-admin:description-change-warning-message',
+    defaultMessage:
+      'Users may have already granted active delegations based on the current description. Changing it now retroactively alters what those delegations appear to authorize, which can mislead the people who granted them. Only proceed if you are sure the new wording still accurately reflects what the permission allows.',
   },
   clientId: {
     id: 'ap.ids-admin:clientId',
@@ -157,7 +169,7 @@ export const m = defineMessages({
   },
   chooseClientType: {
     id: 'ap.ids-admin:choose-client-type',
-    defaultMessage: 'Choose application type',
+    defaultMessage: 'Choose client type',
   },
   errorDisplayName: {
     id: 'ap.ids-admin:error-display-name',
@@ -169,7 +181,7 @@ export const m = defineMessages({
   },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
-    defaultMessage: 'Application ID is required.',
+    defaultMessage: 'Client ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
@@ -189,7 +201,7 @@ export const m = defineMessages({
   },
   errorClientType: {
     id: 'ap.ids-admin:error-client-type',
-    defaultMessage: 'Application type is required.',
+    defaultMessage: 'Client type is required.',
   },
   errorDefault: {
     id: 'ap.ids-admin:error-default',
@@ -197,7 +209,7 @@ export const m = defineMessages({
   },
   webClientsTitle: {
     id: 'ap.ids-admin:web-clients-title',
-    defaultMessage: 'Web application',
+    defaultMessage: 'Web client',
   },
   webClientsDescription: {
     id: 'ap.ids-admin:web-clients-description',
@@ -206,7 +218,7 @@ export const m = defineMessages({
   },
   nativeClientsTitle: {
     id: 'ap.ids-admin:native-clients-title',
-    defaultMessage: 'Native application',
+    defaultMessage: 'Native client',
   },
   nativeClientsDescription: {
     id: 'ap.ids-admin:native-clients-description',
@@ -215,7 +227,7 @@ export const m = defineMessages({
   },
   machineClientsTitle: {
     id: 'ap.ids-admin:machine-clients-title',
-    defaultMessage: 'Machine to machine application',
+    defaultMessage: 'Machine to machine client',
   },
   machineClientsDescription: {
     id: 'ap.ids-admin:machine-clients-description',
@@ -224,11 +236,11 @@ export const m = defineMessages({
   },
   spaClientsTitle: {
     id: 'ap.ids-admin:spa-clients-title',
-    defaultMessage: 'Single page application',
+    defaultMessage: 'Single page application client',
   },
   createClient: {
     id: 'ap.ids-admin:create-client',
-    defaultMessage: 'Create application',
+    defaultMessage: 'Create client',
   },
   change: {
     id: 'ap.ids-admin:change',
@@ -240,21 +252,20 @@ export const m = defineMessages({
   },
   restoreClient: {
     id: 'ap.ids-admin:restore-client',
-    defaultMessage: 'Restore application',
+    defaultMessage: 'Restore client',
   },
   restoreClientDescription: {
     id: 'ap.ids-admin:restore-client-description',
-    defaultMessage:
-      'Restore this archived application across all environments.',
+    defaultMessage: 'Restore this archived client across all environments.',
   },
   restoreClientAlertMessage: {
     id: 'ap.ids-admin:restore-client-alert-message',
     defaultMessage:
-      'Restoring this application may re-enable access to systems. Please verify the application settings after restoring.',
+      'Restoring this client may re-enable access to systems. Please verify the client settings after restoring.',
   },
   successRestoringClient: {
     id: 'ap.ids-admin:success-restoring-client',
-    defaultMessage: 'Successfully restored application',
+    defaultMessage: 'Successfully restored client',
   },
   archived: {
     id: 'ap.ids-admin:archived',
@@ -363,7 +374,7 @@ export const m = defineMessages({
   customClaimsDescription: {
     id: 'ap.ids-admin:custom-claims-description',
     defaultMessage:
-      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
+      'Configure custom claims (hard-coded) in access tokens created for this client. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
   ssoDescription: {
     id: 'ap.ids-admin:sso-description',
@@ -412,7 +423,7 @@ export const m = defineMessages({
   },
   clientUris: {
     id: 'ap.ids-admin:clients-urls',
-    defaultMessage: 'Application URLs',
+    defaultMessage: 'Client URLs',
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
@@ -479,7 +490,7 @@ export const m = defineMessages({
   delegationsDescription: {
     id: 'ap.ids-admin:delegations-description',
     defaultMessage:
-      'Configure which delegations the user can choose when authenticating to the application.',
+      'Configure which delegations the user can choose when authenticating to the client.',
   },
   supportCustomDelegation: {
     id: 'ap.ids-admin:support-custom-delegation',
@@ -488,8 +499,8 @@ export const m = defineMessages({
   supportCustomDelegationDescription: {
     id: 'ap.ids-admin:support-custom-delegation-description',
     defaultMessage:
-      'Allow users to sign into this application with custom delegations which were manually granted to them on Mínar síður Ísland.is.\n' +
-      'The application must request permissions which support custom delegations. The user must have a valid custom delegation with one of these permissions.\n',
+      'Allow users to sign into this client with custom delegations which were manually granted to them on Mínar síður Ísland.is.\n' +
+      'The client must request API scopes which support custom delegations. The user must have a valid custom delegation with one of these API scopes.\n',
   },
   supportLegalGuardianDelegation: {
     id: 'ap.ids-admin:support-legal-guardian-delegation',
@@ -498,7 +509,7 @@ export const m = defineMessages({
   supportLegalGuardianDelegationDescription: {
     id: 'ap.ids-admin:support-legal-guardian-delegation-description',
     defaultMessage:
-      'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+      'Allow users to sign into this client as children which they are legal guardians of according to the Registers Iceland.',
   },
   supportPersonalRepresentativeDelegation: {
     id: 'ap.ids-admin:support-personal-representative-delegation',
@@ -507,7 +518,7 @@ export const m = defineMessages({
   supportPersonalRepresentativeDelegationDescription: {
     id: 'ap.ids-admin:support-personal-representative-delegation-description',
     defaultMessage:
-      'Allow users to sign into this application on behalf of disabled individuals with an active personal representation contract at the Ministry of Social Affairs and Labour.',
+      'Allow users to sign into this client on behalf of disabled individuals with an active personal representation contract at the Ministry of Social Affairs and Labour.',
   },
   supportProcuringHolderDelegation: {
     id: 'ap.ids-admin:support-procuring-holder-delegation',
@@ -516,7 +527,7 @@ export const m = defineMessages({
   supportProcuringHolderDelegationDescription: {
     id: 'ap.ids-admin:support-procuring-holder-delegation-description',
     defaultMessage:
-      'Allow users to sign into this application as legal entities which they are procuring holders of according to the company registry of Iceland.',
+      'Allow users to sign into this client as legal entities which they are procuring holders of according to the company registry of Iceland.',
   },
   alwaysPromptDelegations: {
     id: 'ap.ids-admin:always-prompt-delegations',
@@ -525,16 +536,16 @@ export const m = defineMessages({
   alwaysPromptDelegationsDescription: {
     id: 'ap.ids-admin:always-prompt-delegations-description',
     defaultMessage:
-      'With this setting, the user always sees the delegation screen when authenticating with your application. For most applications we recommend keeping this off and to provide an explicit action to authenticate with delegation using the prompt=select_account argument.',
+      'With this setting, the user always sees the delegation screen when authenticating with your client. For most clients we recommend keeping this off and to provide an explicit action to authenticate with delegation using the prompt=select_account argument.',
   },
   requirePermissions: {
     id: 'ap.ids-admin:require-permissions',
-    defaultMessage: 'Require permissions',
+    defaultMessage: 'Require API scopes',
   },
   requirePermissionsDescription: {
     id: 'ap.ids-admin:require-permissions-description',
     defaultMessage:
-      'Only allow delegations which have access to one or more requested permissions. Can be combined with permission settings to block access to the application for certain individuals or delegations.',
+      'Only allow delegations which have access to one or more requested API scopes. Can be combined with API scope settings to block access to the client for certain individuals or delegations.',
   },
   requirePkce: {
     id: 'ap.ids-admin:require-pkce',
@@ -552,7 +563,7 @@ export const m = defineMessages({
   allowOfflineAccessDescription: {
     id: 'ap.ids-admin:allow-offline-access-description',
     defaultMessage:
-      'Allows the application to request the offline_access scope. This results in refresh tokens which can used to get access tokens according to the refresh token lifecycle settings',
+      'Allows the client to request the offline_access scope. This results in refresh tokens which can be used to get access tokens according to the refresh token lifecycle settings',
   },
   supportsTokenExchange: {
     id: 'ap.ids-admin:supports-token-exchange',
@@ -565,7 +576,7 @@ export const m = defineMessages({
   allowSSODescription: {
     id: 'ap.ids-admin:allow-sso-description',
     defaultMessage:
-      'Allow users to sign in with the same session on other applications using the island.is authentication service.',
+      'Allow users to sign in with the same session on other clients using the island.is authentication service.',
   },
   singleSession: {
     id: 'ap.ids-admin:single-session',
@@ -579,7 +590,7 @@ export const m = defineMessages({
   supportsTokenExchangeDescription: {
     id: 'ap.ids-admin:supports-token-exchange-description',
     defaultMessage:
-      'Allows the application to exchange an existing access token with a new access token with specified scope.',
+      'Allows the client to exchange an existing access token with a new access token with specified scope.',
   },
   accessTokenExpiration: {
     id: 'ap.ids-admin:access-token-expiration',
@@ -600,7 +611,7 @@ export const m = defineMessages({
   requireConsentDescription: {
     id: 'ap.ids-admin:require-consent-description',
     defaultMessage:
-      'When true, the application requires user consent for third party permissions as well as standard scopes like email and phone.',
+      'When true, the client requires user consent for third party API scopes as well as standard scopes like email and phone.',
   },
   errorInvalidClaims: {
     id: 'ap.ids-admin:error-invalid-claims',
@@ -624,12 +635,12 @@ export const m = defineMessages({
   },
   permissions: {
     id: 'ap.ids-admin:permissions',
-    defaultMessage: 'Permissions',
+    defaultMessage: 'API scopes',
   },
   permissionsDescription: {
     id: 'ap.ids-admin:permissions-description',
     defaultMessage:
-      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+      'List of API scopes the client can request during authentication. Clients can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add API scopes from the current tenant. For third party API scopes, the owner must grant access to your client.',
   },
   documentation: {
     id: 'ap.ids-admin:documentation',
@@ -641,7 +652,7 @@ export const m = defineMessages({
   },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',
-    defaultMessage: 'Add permissions',
+    defaultMessage: 'Add API scopes',
   },
   permissionsTableLabelName: {
     id: 'ap.ids-admin:permissions-table-label-name',
@@ -659,30 +670,25 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-button-label-remove',
     defaultMessage: 'Remove',
   },
-  permissionsModalTitle: {
-    id: 'ap.ids-admin:permissions-modal-title',
-    defaultMessage: 'Add permissions',
-  },
-  permissionsModalDescription: {
-    id: 'ap.ids-admin:permissions-modal-description',
-    defaultMessage:
-      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
-  },
   permissionsModalNoScopes: {
     id: 'ap.ids-admin:permission-modal-no-scopes',
     defaultMessage: 'No scopes available',
   },
+  permissionsOtherTenantGroup: {
+    id: 'ap.ids-admin:permissions-other-tenant-group',
+    defaultMessage: 'Other',
+  },
   permissionApplicationsDescription: {
     id: 'ap.ids-admin:permission-applications-description',
-    defaultMessage: 'Applications that are currently using this permission.',
+    defaultMessage: 'Clients that are currently using this API scope.',
   },
   permissionApplicationsEmpty: {
     id: 'ap.ids-admin:permission-applications-empty',
-    defaultMessage: 'No applications are using this permission.',
+    defaultMessage: 'No clients are using this API scope.',
   },
   permissionApplicationsName: {
     id: 'ap.ids-admin:permission-applications-name',
-    defaultMessage: 'Application',
+    defaultMessage: 'Client',
   },
   permissionApplicationsType: {
     id: 'ap.ids-admin:permission-applications-type',
@@ -731,12 +737,12 @@ export const m = defineMessages({
   publishClientEnvDesc: {
     id: 'ap.ids-admin:publish-client-env-description',
     defaultMessage:
-      'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+      'The client will inherit settings from the selected environment excluding URLs and client secrets.',
   },
   publishPermissionEnvDesc: {
     id: 'ap.ids-admin:publish-permission-env-description',
     defaultMessage:
-      'The permission will inherit settings from the selected environment.',
+      'The API scope will inherit settings from the selected environment.',
   },
   chooseEnvironmentToCopyFrom: {
     id: 'ap.ids-admin:choose-environment-to-copy-from',
@@ -756,7 +762,7 @@ export const m = defineMessages({
   },
   listOfPermissions: {
     id: 'ap.ids-admin:list-of-permissions',
-    defaultMessage: 'List of permissions',
+    defaultMessage: 'List of API scopes',
   },
   permissionsManagement: {
     id: 'ap.ids-admin:permissions-management',
@@ -764,11 +770,11 @@ export const m = defineMessages({
   },
   createPermission: {
     id: 'ap.ids-admin:create-permission',
-    defaultMessage: 'Create permission',
+    defaultMessage: 'Create API scope',
   },
   permissionId: {
     id: 'ap.ids-admin:permission-id',
-    defaultMessage: 'Permission ID',
+    defaultMessage: 'API scope ID',
   },
   permissionDescription: {
     id: 'ap.ids-admin:permission-description',
@@ -776,7 +782,7 @@ export const m = defineMessages({
   },
   permissionAlreadyExists: {
     id: 'ap.ids-admin:permission-already-exists',
-    defaultMessage: 'Permission ID already exists',
+    defaultMessage: 'API scope ID already exists',
   },
   permissionDescriptionInfo: {
     id: 'ap.ids-admin:permission-description-info',
@@ -788,16 +794,16 @@ export const m = defineMessages({
   },
   permissionEmptyHeading: {
     id: 'ap.ids-admin:permission-empty-heading',
-    defaultMessage: 'No permission created',
+    defaultMessage: 'No API scope created',
   },
   permissionEmptyDescription: {
     id: 'ap.ids-admin:permission-empty-description',
     defaultMessage:
-      'You can create an permission by clicking on Create permission.',
+      'You can create an API scope by clicking on Create API scope.',
   },
   permissionListDescription: {
     id: 'ap.ids-admin:permission-list-description',
-    defaultMessage: 'Here you can view and create permissions.',
+    defaultMessage: 'Here you can view and create API scopes.',
   },
   permissionsSearchPlaceholder: {
     id: 'ap.ids-admin:permissions-search-placeholder',
@@ -818,12 +824,12 @@ export const m = defineMessages({
   },
   rotateSecretDescription: {
     id: 'ap.ids-admin:rotate-secret-description',
-    defaultMessage: `This will generate a new secret for your application. You should revoke existing secret(s) after you have deployed your application with the new secret.{br}{br}If your existing secret(s) have been compromised it is recommended to revoke them immediately.`,
+    defaultMessage: `This will generate a new secret for your client. You should revoke existing secret(s) after you have deployed your client with the new secret.{br}{br}If your existing secret(s) have been compromised it is recommended to revoke them immediately.`,
   },
   rotateSecretInfoAlert: {
     id: 'ap.ids-admin:rotate-secret-alert',
     defaultMessage:
-      'Authentications will stop working for your application until you have deployed the new secret.',
+      'Authentications will stop working for your client until you have deployed the new secret.',
   },
   rotate: {
     id: 'ap.ids-admin:rotate',
@@ -848,7 +854,7 @@ export const m = defineMessages({
   rotatedSecretDescription: {
     id: 'ap.ids-admin:rotated-secret-description',
     defaultMessage:
-      'Please update the application configuration with the following secret.',
+      'Please update the client configuration with the following secret.',
   },
   revokeSecrets: {
     id: 'ap.ids-admin:revoke-secrets',
@@ -886,7 +892,7 @@ export const m = defineMessages({
   allowsWriteDescription: {
     id: 'ap.ids-admin:allows-write-description',
     defaultMessage:
-      'When enabled, this permission grants both read and write access. When disabled, only read access is granted.',
+      'When enabled, this API scope grants both read and write access. When disabled, only read access is granted.',
   },
   requiresConfirmation: {
     id: 'ap.ids-admin:requires-confirmation',
@@ -895,7 +901,7 @@ export const m = defineMessages({
   requiresConfirmationDescription: {
     id: 'ap.ids-admin:requires-confirmation-description',
     defaultMessage:
-      'When enabled, users must provide additional authentication (tvöfalt samþykki) to access sensitive information with this permission.',
+      'When enabled, users must provide additional authentication (tvöfalt samþykki) to access sensitive information with this API scope.',
   },
   accessControl: {
     id: 'ap.ids-admin:access-control',
@@ -912,7 +918,7 @@ export const m = defineMessages({
   categoriesDescription: {
     id: 'ap.ids-admin:categories-description',
     defaultMessage:
-      'Select which service categories this permission belongs to. These help users find relevant permissions when creating delegations.',
+      'Select which service categories this API scope belongs to. These help users find relevant API scopes when creating delegations.',
   },
   tags: {
     id: 'ap.ids-admin:tags',
@@ -921,7 +927,7 @@ export const m = defineMessages({
   tagsDescription: {
     id: 'ap.ids-admin:tags-description',
     defaultMessage:
-      'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
+      'Select which tags this API scope is relevant for. This helps users understand when they might need this API scope.',
   },
   categoryRequired: {
     id: 'ap.ids-admin:category-required',
@@ -942,7 +948,7 @@ export const m = defineMessages({
   thirdPartyLoginUrlDescription: {
     id: 'ap.ids-admin:third-party-login-url-description',
     defaultMessage:
-      'URL that can be used to login to the application using third party delegation.',
+      'URL that can be used to login to the client using third party delegation.',
   },
   originUrl: {
     id: 'ap.ids-admin:origin-url',
@@ -995,7 +1001,7 @@ export const m = defineMessages({
   isAccessControlledDescription: {
     id: 'ap.ids-admin:is-access-controlled-description',
     defaultMessage:
-      'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
+      'Authorize a list of national ids for this API scope. Request support from island.is to manage the list.',
   },
   scopeUsersLabel: {
     id: 'ap.ids-admin:scope-users-label',
@@ -1041,7 +1047,7 @@ export const m = defineMessages({
   automaticDelegationGrantDescription: {
     id: 'ap.ids-admin:automatic-delegation-grant-description',
     defaultMessage:
-      'Should users automatically get this permission when they authenticate with this application',
+      'Should users automatically get this API scope when they authenticate with this client',
   },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
@@ -1059,7 +1065,7 @@ export const m = defineMessages({
   grantToLegalGuardiansDescription: {
     id: 'ap.ids-admin:grant-to-legal-guardians-description',
     defaultMessage:
-      'Should legal guardians automatically get this permission for their wards',
+      'Should legal guardians automatically get this API scope for their wards',
   },
   allowExplicitDelegationGrant: {
     id: 'ap.ids-admin:allow-explicit-delegation-grant',
@@ -1068,7 +1074,7 @@ export const m = defineMessages({
   allowExplicitDelegationGrantDescription: {
     id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
     defaultMessage:
-      'Should users be able to grant other users custom delegation for this permission.',
+      'Should users be able to grant other users custom delegation for this API scope.',
   },
   grantToPersonalRepresentatives: {
     id: 'ap.ids-admin:grant-to-personal-representatives',
@@ -1135,18 +1141,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users-delete-confirm-message',
     defaultMessage: 'Are you sure you want to delete this API scope user?',
   },
-  apiScopeUsersDeleteButton: {
-    id: 'ap.ids-admin:api-scope-users-delete-button',
-    defaultMessage: 'Delete',
-  },
   /** @deprecated Use m.edit instead */
   apiScopeUserEditButton: {
     id: 'ap.ids-admin:api-scope-user-edit',
     defaultMessage: 'Edit',
-  },
-  apiScopeUsersSaveButton: {
-    id: 'ap.ids-admin:api-scope-users-save-button',
-    defaultMessage: 'Save',
   },
   /** @deprecated Use m.create instead */
   apiScopeUsersCreateButton: {
@@ -1219,10 +1217,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-environment',
     defaultMessage: 'Choose at least one environment.',
   },
-  apiScopeUsersEnvironments: {
-    id: 'ap.ids-admin:api-scope-users-environments',
-    defaultMessage: 'Environments',
-  },
   apiScopeUsersDeleteSelectEnvironments: {
     id: 'ap.ids-admin:api-scope-users-delete-select-environments',
     defaultMessage: 'Select environments to delete from',
@@ -1266,22 +1260,6 @@ export const m = defineMessages({
   grantTypesDescription: {
     id: 'ap.ids-admin:grant-types-description',
     defaultMessage: 'Description',
-  },
-  grantTypesSaveButton: {
-    id: 'ap.ids-admin:grant-types-save-button',
-    defaultMessage: 'Save',
-  },
-  grantTypesCreateButton: {
-    id: 'ap.ids-admin:grant-types-create-button',
-    defaultMessage: 'Create',
-  },
-  grantTypesCancelButton: {
-    id: 'ap.ids-admin:grant-types-cancel-button',
-    defaultMessage: 'Cancel',
-  },
-  grantTypesDeleteButton: {
-    id: 'ap.ids-admin:grant-types-delete-button',
-    defaultMessage: 'Archive',
   },
   grantTypesDeleteConfirmTitle: {
     id: 'ap.ids-admin:grant-types-delete-confirm-title',
@@ -1356,14 +1334,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-delete-environment-required',
     defaultMessage: 'Select at least one environment to archive from',
   },
-  grantTypesEnvironments: {
-    id: 'ap.ids-admin:grant-types-environments',
-    defaultMessage: 'Environments',
-  },
-  grantTypesRestoreButton: {
-    id: 'ap.ids-admin:grant-types-restore-button',
-    defaultMessage: 'Restore',
-  },
   grantTypesRestoreConfirmTitle: {
     id: 'ap.ids-admin:grant-types-restore-confirm-title',
     defaultMessage: 'Restore Grant Type',
@@ -1428,18 +1398,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-level',
     defaultMessage: 'Level',
   },
-  idpProvidersEnvironments: {
-    id: 'ap.ids-admin:idp-providers-environments',
-    defaultMessage: 'Environments',
-  },
-  idpProvidersSaveButton: {
-    id: 'ap.ids-admin:idp-providers-save-button',
-    defaultMessage: 'Save',
-  },
-  idpProvidersDeleteButton: {
-    id: 'ap.ids-admin:idp-providers-delete-button',
-    defaultMessage: 'Delete',
-  },
   idpProvidersDeleteConfirmTitle: {
     id: 'ap.ids-admin:idp-providers-delete-confirm-title',
     defaultMessage: 'Delete IDP Provider',
@@ -1501,6 +1459,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:idp-providers-error-helptext-required',
     defaultMessage: 'Help text is required',
   },
+  idpProvidersErrorLevelRequired: {
+    id: 'ap.ids-admin:idp-providers-error-level-required',
+    defaultMessage: 'Level is required',
+  },
   idpProvidersErrorLevelRange: {
     id: 'ap.ids-admin:idp-providers-error-level-range',
     defaultMessage: 'Level must be between 1 and 4',
@@ -1527,10 +1489,14 @@ export const m = defineMessages({
   },
   successDeletingClient: {
     id: 'ap.ids-admin:success-deleting-client',
-    defaultMessage: 'Successfully archived application',
+    defaultMessage: 'Successfully archived client',
   },
   delete: {
     id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  archive: {
+    id: 'ap.ids-admin:archive',
     defaultMessage: 'Archive',
   },
   closeDeleteModal: {
@@ -1539,16 +1505,16 @@ export const m = defineMessages({
   },
   deleteClientDescription: {
     id: 'ap.ids-admin:delete-client-action-card-label',
-    defaultMessage: 'Authentications will stop working for your application.',
+    defaultMessage: 'Authentications will stop working for your client.',
   },
   deleteClient: {
     id: 'ap.ids-admin:delete-client-all-env',
-    defaultMessage: 'Archive application',
+    defaultMessage: 'Archive client',
   },
   deleteClientAlertMessage: {
     id: 'ap.ids-admin:delete-client-alert-message',
     defaultMessage:
-      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
+      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your client.',
   },
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',
@@ -1573,7 +1539,7 @@ export const m = defineMessages({
   clientDelegationProviderDelegationdbDescription: {
     id: 'ap.ids-admin:client-delegation-provider-custom-description',
     defaultMessage:
-      'Allow users to sign into this application with custom delegations managed on Mínar síður Ísland.is.',
+      'Allow users to sign into this client with custom delegations managed on Mínar síður Ísland.is.',
   },
   clientDelegationTypeCustomName: {
     id: 'ap.ids-admin:client-delegation-type-custom-name',
@@ -1582,7 +1548,7 @@ export const m = defineMessages({
   clientDelegationTypeCustomDescription: {
     id: 'ap.ids-admin:client-delegation-type-custom-description',
     defaultMessage:
-      'The application must request permissions which support custom delegations. The user must have a valid custom delegation with one of these permissions.',
+      'The client must request API scopes which support custom delegations. The user must have a valid custom delegation with one of these API scopes.',
   },
   clientDelegationProviderFyrirtaekjaskraName: {
     id: 'ap.ids-admin:client-delegation-provider-procuration-holder-name',
@@ -1591,7 +1557,7 @@ export const m = defineMessages({
   clientDelegationProviderFyrirtaekjaskraDescription: {
     id: 'ap.ids-admin:client-delegation-provider-procuration-holder-description',
     defaultMessage:
-      'Allow users to sign into this application as legal entities according to roles managed by the company registry of Iceland.',
+      'Allow users to sign into this client as legal entities according to roles managed by the company registry of Iceland.',
   },
   clientDelegationTypeProcurationHolderName: {
     id: 'ap.ids-admin:client-delegation-type-procuration-holder-name',
@@ -1604,7 +1570,7 @@ export const m = defineMessages({
   clientDelegationProviderThjodskraDescription: {
     id: 'ap.ids-admin:client-delegation-provider-tjodskra-description',
     defaultMessage:
-      'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+      'Allow users to sign into this client as children which they are legal guardians of according to the Registers Iceland.',
   },
   clientDelegationTypeLegalGuardianMinorName: {
     id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-name',
@@ -1629,7 +1595,7 @@ export const m = defineMessages({
   clientDelegationProviderTalsmannagrunnurDescription: {
     id: 'ap.ids-admin:client-delegation-provider-talsmannagrunnur-description',
     defaultMessage:
-      'Allow users to sign into this application on behalf of disabled individuals according to permissions on an active personal representation contract at the Ministry of Social Affairs and Labour.',
+      'Allow users to sign into this client on behalf of disabled individuals according to API scopes on an active personal representation contract at the Ministry of Social Affairs and Labour.',
   },
   clientDelegationTypePersonalRepresentativepostholfName: {
     id: 'ap.ids-admin:client-delegation-type-personal-representative-postholf-name',
@@ -1642,7 +1608,7 @@ export const m = defineMessages({
   clientDelegationProviderSyslumennDescription: {
     id: 'ap.ids-admin:client-delegation-provider-syslumenn-description',
     defaultMessage:
-      'Allow users to sign into this application using delegation types managed by the District Commissioner.',
+      'Allow users to sign into this client using delegation types managed by the District Commissioner.',
   },
   clientDelegationTypeLegalRepresentativeName: {
     id: 'ap.ids-admin:client-delegation-type-legal-representative-name',
@@ -1659,7 +1625,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeCustomDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-custom-description',
     defaultMessage:
-      'Should users be able to grant other users custom delegation for this permission.',
+      'Should users be able to grant other users custom delegation for this API scope.',
   },
   apiScopeDelegationProviderFyrirtaekjaskraName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-procuration-holder-name',
@@ -1672,7 +1638,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeProcurationHolderDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-procuration-holder-description',
     defaultMessage:
-      'Should procuring holders automatically get this permission for their organisations',
+      'Should procuring holders automatically get this API scope for their organisations',
   },
   apiScopeDelegationProviderThjodskraName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-tjodskra-name',
@@ -1685,7 +1651,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeLegalGuardianMinorDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-description',
     defaultMessage:
-      'Should legal guardians automatically get this permission for their wards, 16 and younger.',
+      'Should legal guardians automatically get this API scope for their wards, 16 and younger.',
   },
   apiScopeDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-name',
@@ -1694,7 +1660,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeLegalGuardianDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-description',
     defaultMessage:
-      'Should legal guardians automatically get this permission for their wards, 18 and younger.',
+      'Should legal guardians automatically get this API scope for their wards, 18 and younger.',
   },
   apiScopeDelegationProviderTalsmannagrunnurName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-talsmannagrunnur-name',
@@ -1707,7 +1673,7 @@ export const m = defineMessages({
   apiScopeDelegationTypePersonalRepresentativepostholfDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-postholf-description',
     defaultMessage:
-      'Should personal representatives automatically get this permission for their clients.',
+      'Should personal representatives automatically get this API scope for their clients.',
   },
   apiScopeDelegationProviderSyslumennName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-syslumenn-name',
@@ -1720,7 +1686,7 @@ export const m = defineMessages({
   apiScopeDelegationTypeLegalRepresentativeDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
     defaultMessage:
-      'Should legal representative automatically get this permission for their clients.',
+      'Should legal representatives automatically get this API scope for their clients.',
   },
   createTenant: {
     id: 'ap.ids-admin:create-tenant',
@@ -1845,7 +1811,7 @@ export const m = defineMessages({
   tenantHasReferences: {
     id: 'ap.ids-admin:tenant-has-references',
     defaultMessage:
-      'This domain cannot be deleted because it still has applications, permissions, or permission groups. Please delete them first and try again.',
+      'This domain cannot be deleted because it still has clients, API scopes, or API scope groups. Please delete them first and try again.',
   },
   publishTenantEnvDesc: {
     id: 'ap.ids-admin:publish-tenant-env-desc',

@@ -28,8 +28,6 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   PlateOrderValidation,
-  PlateOrderMatrix,
-  VehicleCurrentPlates,
   BasicVehicleInformation,
   ExemptionValidation,
 } from './graphql/models'
@@ -361,7 +359,6 @@ export class TransportAuthorityApi {
       await this.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
         auth,
         permno,
-        vehicleInfo?.plates?.[0]?.reggroup || '',
         vehicleInfo?.platetypefront || '',
         vehicleInfo?.platetyperear || '',
       )
@@ -374,26 +371,8 @@ export class TransportAuthorityApi {
         color: vehicleInfo.color,
         make: `${vehicleInfo.make} ${this.getVehicleSubModel(vehicleInfo)}`,
         permno: vehicleInfo.permno,
-        regGroup: vehicleInfo?.plates?.[0]?.reggroup,
       },
     }
-  }
-
-  async getPlateOrderOptions(
-    auth: User,
-    permno: string,
-  ): Promise<PlateOrderMatrix> {
-    return await this.vehiclePlateOrderingClient.getPlateOrderOptions(
-      auth,
-      permno,
-    )
-  }
-
-  async getCurrentPlates(
-    auth: User,
-    permno: string,
-  ): Promise<VehicleCurrentPlates | null> {
-    return await this.vehiclePlateOrderingClient.getCurrentPlates(auth, permno)
   }
 
   private getVehicleSubModel(vehicle: BasicVehicleInformationDto) {
@@ -431,7 +410,6 @@ export class TransportAuthorityApi {
       await this.vehiclePlateOrderingClient.validateAllForPlateOrder(
         user,
         answers?.pickVehicle?.plate,
-        answers?.plateType?.regGroup || '',
         answers?.plateSize?.frontPlateSize?.[0] || '',
         answers?.plateSize?.rearPlateSize?.[0] || '',
         deliveryStationType,

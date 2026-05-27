@@ -1,6 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
+import { Sequelize, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
@@ -13,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,11 +25,6 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type {
-  SubpoenaPoliceDocumentInfo,
-  User,
-  VerdictPoliceDocumentInfo,
-} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
@@ -37,15 +33,20 @@ import {
   mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  type SubpoenaPoliceDocumentInfo,
+  type User,
+  type VerdictPoliceDocumentInfo,
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
+import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseRepositoryService,
   DateLog,
   Defendant,
   IndictmentSubtype,
@@ -168,7 +169,6 @@ export class PoliceService {
   private policeDigitalCaseFileStructure = z.object({
     id: z.string(),
     rvMalID: z.number(),
-    evidenceType: z.string().nullish(),
     fullName: z.string().nullish(),
     externalVendorFileName: z.string(),
     externalVendorID: z.string(),
@@ -213,7 +213,6 @@ export class PoliceService {
   ): string {
     return [
       policeCaseNumber.trim(),
-      file.evidenceType?.trim(),
       file.fullName?.trim(),
       file.externalVendorFileName.trim(),
     ]
@@ -266,6 +265,7 @@ export class PoliceService {
   private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentSubtype)
     private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
@@ -276,6 +276,10 @@ export class PoliceService {
     private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CaseDefendantPoliceCaseNumberRepositoryService))
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -1093,10 +1097,28 @@ export class PoliceService {
         )
 
       if (defendantPoliceCaseNumberLinks.length > 0) {
-        await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
-          caseId,
-          defendantPoliceCaseNumberLinks,
-        )
+        await this.sequelize.transaction(async (transaction: Transaction) => {
+          const existingPcnMap =
+            await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
+              [caseId],
+              { transaction },
+            )
+          const existingPoliceCaseNumbers = new Set(
+            existingPcnMap.get(caseId) ?? [],
+          )
+
+          const linksForExistingNumbers = defendantPoliceCaseNumberLinks.filter(
+            (link) => existingPoliceCaseNumbers.has(link.policeCaseNumber),
+          )
+
+          if (linksForExistingNumbers.length > 0) {
+            await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+              caseId,
+              linksForExistingNumbers,
+              { transaction },
+            )
+          }
+        })
       }
 
       return cases
@@ -1152,30 +1174,36 @@ export class PoliceService {
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(
-      `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
-      {
-        method: 'PUT',
-        headers: {
-          accept: '*/*',
-          'Content-Type': 'application/json',
-          'X-Road-Client': this.config.clientId,
-          'X-API-KEY': this.config.policeApiKey,
-        },
-        agent: this.agent,
-        body: JSON.stringify({
-          rvMal_ID: caseId,
-          caseNumber: policeCaseNumber,
-          courtCaseNumber,
-          ssn: defendantNationalId,
-          type: caseType,
-          courtVerdict: caseState,
-          expiringDate: validToDate?.toISOString(),
-          courtVerdictString: caseConclusion,
-          courtDocuments,
-        }),
-      } as RequestInit,
-    )
+    const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
+    const url = usesLegacyPoliceCaseUpdate
+      ? `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`
+      : `${this.xRoadPath}/V4/case/${caseId}`
+
+    const body = {
+      rvMal_ID: caseId,
+      caseNumber: policeCaseNumber,
+      courtCaseNumber,
+      ...(usesLegacyPoliceCaseUpdate
+        ? { ssn: defendantNationalId }
+        : undefined),
+      type: caseType,
+      courtVerdict: caseState,
+      expiringDate: validToDate?.toISOString(),
+      courtVerdictString: caseConclusion,
+      courtDocuments,
+    }
+
+    return this.fetchPoliceCaseApi(url, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify(body),
+    } as RequestInit)
       .then(async (res) => {
         if (res.ok) {
           return true

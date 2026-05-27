@@ -66,56 +66,6 @@ export const information = {
         description: 'vehicle not found message',
       },
     }),
-    plateType: defineMessages({
-      sectionTitle: {
-        id: 'ta.ovlp.application:information.labels.plateType.sectionTitle',
-        defaultMessage: 'Tegund',
-        description: 'Plate type section title',
-      },
-      title: {
-        id: 'ta.ovlp.application:information.labels.plateType.title',
-        defaultMessage: 'Tegund númeraplötu',
-        description: 'Plate type title',
-      },
-      currentPlateLabel: {
-        id: 'ta.ovlp.application:information.labels.plateType.currentPlateLabel',
-        defaultMessage: 'Núverandi plata',
-        description: 'Current plate label',
-      },
-      currentPlateSubLabel: {
-        id: 'ta.ovlp.application:information.labels.plateType.currentPlateSubLabel',
-        defaultMessage: 'Tegund númeraplötu',
-        description: 'Current plate sub label',
-      },
-      availablePlateTypesLabel: {
-        id: 'ta.ovlp.application:information.labels.plateType.availablePlateTypesLabel',
-        defaultMessage: 'Veldu þá tegund sem þú vilt panta',
-        description: 'Available plate types label',
-      },
-      error: {
-        id: 'ta.ovlp.application:information.labels.plateType.error',
-        defaultMessage:
-          'Það kom upp villa við að sækja upplýsingar um tegund plötu',
-        description: 'Plate type error message',
-      },
-      noPlateTypeFound: {
-        id: 'ta.ovlp.application:information.labels.plateType.noPlateTypeFound',
-        defaultMessage: 'Engin plötutegund fannst fyrir þetta ökutæki',
-        description: 'No plate type found message',
-      },
-      vskAlertMessage: {
-        id: 'ta.ovlp.application:information.labels.plateType.vskAlertMessage',
-        defaultMessage:
-          'Fara þarf með ökutækið í breytingarskoðun á skoðunarstöð til þess að hægt sé að breyta í notkunarflokkinn VSK. Skoðunarstofan sér um að afhenda plöturnar.',
-        description: 'VSK plate type alert message',
-      },
-      aukamerkiAlertMessage: {
-        id: 'ta.ovlp.application:information.labels.plateType.aukamerkiAlertMessage',
-        defaultMessage:
-          'Athugaðu að aukamerki eru til þess að nota ef eitthvað hindrar sýnina á númeraplötuna að aftan.',
-        description: 'Aukamerki plate type alert message',
-      },
-    }),
     plateSize: defineMessages({
       sectionTitle: {
         id: 'ta.ovlp.application:information.labels.plateSize.sectionTitle',
@@ -124,29 +74,8 @@ export const information = {
       },
       title: {
         id: 'ta.ovlp.application:information.labels.plateSize.title',
-        defaultMessage: 'Stærð númeraplötu',
+        defaultMessage: 'Stærð skráningarmerkis',
         description: 'Plate size title',
-      },
-      description: {
-        id: 'ta.ovlp.application:information.labels.plateSize.description',
-        defaultMessage:
-          'Hægt er að panta bæði framan á og aftan á eða bara annað hvort.',
-        description: 'Plate size description',
-      },
-      currentPlateTitle: {
-        id: 'ta.ovlp.application:information.labels.plateSize.currentPlateTitle',
-        defaultMessage: 'Núverandi plata',
-        description: 'Current plate title',
-      },
-      frontPlateLabel: {
-        id: 'ta.ovlp.application:information.labels.plateSize.frontPlateLabel',
-        defaultMessage: 'Númeraplata að framan',
-        description: 'Front plate label',
-      },
-      rearPlateLabel: {
-        id: 'ta.ovlp.application:information.labels.plateSize.rearPlateLabel',
-        defaultMessage: 'Númeraplata að aftan',
-        description: 'Rear plate label',
       },
       vehicleSubTitle: {
         id: 'ta.ovlp.application:information.labels.plateSize.vehicleSubTitle',
@@ -165,12 +94,12 @@ export const information = {
       },
       frontPlateSubtitle: {
         id: 'ta.ovlp.application:information.labels.plateSize.frontPlateSubtitle',
-        defaultMessage: 'Veldu stærð númeraplötu að framan',
+        defaultMessage: 'Veldu stærð merkis að framan',
         description: 'Plate size front plate sub title',
       },
       rearPlateSubtitle: {
         id: 'ta.ovlp.application:information.labels.plateSize.rearPlateSubtitle',
-        defaultMessage: 'Veldu stærð númeraplötu að aftan',
+        defaultMessage: 'Veldu stærð merkis að aftan',
         description: 'Plate size rear plate sub title',
       },
       plateSizeOptionTitle: {

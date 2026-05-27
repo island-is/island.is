@@ -32,6 +32,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
   AppealEventLog,
@@ -593,6 +594,16 @@ const transformCase = (
                 theCase.civilClaimants,
               ))),
       )
+      .filter(
+        (file) =>
+          !isDefence ||
+          canDefenceUserViewCivilClaimCaseFile(user?.nationalId, {
+            category: file.category,
+            civilClaimantId: file.civilClaimantId,
+            defendants: theCase.defendants,
+            civilClaimants: theCase.civilClaimants,
+          }),
+      )
       .map((file) => ({
         ...file.toJSON(),
         ...getRulingOrderAppealInfo(file, theCase),
@@ -605,6 +616,7 @@ const transformCase = (
       user && isProsecutionUser(user)
         ? CaseString.penalties(theCase.caseStrings)
         : null,
+    reopenReason: CaseString.reopenReason(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,

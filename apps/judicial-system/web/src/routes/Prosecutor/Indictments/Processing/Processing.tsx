@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
+  AccordionItem,
   Box,
   Button,
-  InputFileUpload,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -25,7 +25,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseFileCategory,
   CaseState,
   CaseTransition,
   CivilClaimant,
@@ -49,7 +48,6 @@ import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
 interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
-const addCivilClaimantFileSectionId = 'addCivilClaimantFileSection'
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -151,12 +149,6 @@ const Processing: FC = () => {
 
   const handleCreateCivilClaimantClick = () => {
     addCivilClaimant()
-
-    const element = document.getElementById(addCivilClaimantFileSectionId)
-    element?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'end',
-    })
   }
 
   const removeCivilClaimantById = async (civilClaimantId: string) => {
@@ -340,62 +332,49 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <>
-            <Box component="section" marginBottom={5}>
-              <SectionHeading
-                title={formatMessage(strings.civilClaimant)}
-                heading="h2"
-              />
+          <Box component="section" marginBottom={10}>
+            <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
-                <Box marginBottom={3} key={civilClaimant.id}>
-                  <BlueBox>
-                    <CivilClaimantFields
-                      caseId={workingCase.id}
-                      civilClaimant={civilClaimant}
-                      civilClaimantIndex={index}
-                      removeCivilClaimantById={removeCivilClaimantById}
-                    />
-                  </BlueBox>
-                </Box>
-              ))}
-              <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
-                <Button
-                  variant="ghost"
-                  icon="add"
-                  onClick={handleCreateCivilClaimantClick}
+                <AccordionItem
+                  key={civilClaimant.id}
+                  id={`civilClaimant-${civilClaimant.id}`}
+                  label={`${formatMessage(strings.civilClaimant)} ${index + 1}`}
+                  startExpanded
                 >
-                  {formatMessage(strings.addCivilClaimant)}
-                </Button>
-              </Box>
-            </Box>
+                  <CivilClaimantFields
+                    caseId={workingCase.id}
+                    civilClaimant={civilClaimant}
+                    civilClaimantIndex={index}
+                    removeCivilClaimantById={removeCivilClaimantById}
+                    policeCaseNumbers={workingCase.policeCaseNumbers ?? []}
+                    defendants={workingCase.defendants ?? []}
+                    uploadFiles={uploadFiles}
+                    addUploadFiles={addUploadFiles}
+                    updateUploadFile={updateUploadFile}
+                    removeUploadFile={removeUploadFile}
+                    handleUpload={handleUpload}
+                    handleRetry={handleRetry}
+                    handleRemove={handleRemove}
+                    onOpenFile={onOpenFile}
+                  />
+                </AccordionItem>
+              ))}
+            </Accordion>
             <Box
-              id={addCivilClaimantFileSectionId}
-              component="section"
-              marginBottom={10}
+              display="flex"
+              justifyContent="flexEnd"
+              marginTop={3}
+              marginBottom={5}
             >
-              <SectionHeading title="Bótakrafa" heading="h2" />
-              <InputFileUpload
-                name="civilClaim"
-                files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
-                )}
-                accept={Object.values(fileExtensionWhitelist)}
-                title="Dragðu gögn hingað til að hlaða upp"
-                buttonLabel="Velja gögn til að hlaða upp"
-                onChange={(files) =>
-                  handleUpload(
-                    addUploadFiles(files, {
-                      category: CaseFileCategory.CIVIL_CLAIM,
-                    }),
-                    updateUploadFile,
-                  )
-                }
-                onOpenFile={(file) => onOpenFile(file)}
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
-                onRetry={(file) => handleRetry(file, updateUploadFile)}
-              />
+              <Button
+                variant="ghost"
+                icon="add"
+                onClick={handleCreateCivilClaimantClick}
+              >
+                {formatMessage(strings.addCivilClaimant)}
+              </Button>
             </Box>
-          </>
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>

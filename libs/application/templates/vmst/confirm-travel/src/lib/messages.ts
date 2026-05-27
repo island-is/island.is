@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const applicationMessages = {
+export const applicationMessages = defineMessages({
   actionCardPrerequisites: {
     id: 'vmst.ct.application:applicationMessages.actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',
@@ -26,7 +26,7 @@ export const applicationMessages = {
     defaultMessage: 'Tilkynna dvöl erlendis',
     description: `Application's name`,
   },
-}
+})
 
 export const prerequisitesForm = {
   general: defineMessages({
@@ -60,7 +60,7 @@ export const prerequisitesForm = {
   }),
 }
 
-export const mainForm = {
+export const mainForm = defineMessages({
   title: {
     id: 'vmst.ct.application:mainForm.general.title',
     defaultMessage: 'Tilkynna dvöl erlendis',
@@ -107,9 +107,9 @@ export const mainForm = {
     defaultMessage: 'Fjarlægja dagsetningu',
     description: 'main form remove date button label',
   },
-}
+})
 
-export const completedForm = {
+export const completedForm = defineMessages({
   alertTitle: {
     id: 'vmst.ct.application:completedForm.alertTitle',
     defaultMessage: 'Tilkynning um dvöl erlendis hefur verið móttekin',
@@ -137,9 +137,9 @@ export const completedForm = {
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnuna',
     description: 'completed form description field description',
   },
-}
+})
 
-export const errorMessages = {
+export const errorMessages = defineMessages({
   cannotApplyErrorTitle: {
     id: 'vmst.ct.application:errorMessages.cannotApplyErrorTitle',
     defaultMessage: 'Vinsamlegast athugið',
@@ -148,7 +148,7 @@ export const errorMessages = {
   cannotApplyErrorSummary: {
     id: 'vmst.ct.application:errorMessages.cannotApplyErrorSummary',
     defaultMessage:
-      'Samkvæmt sóttum gögnum getur viðkomandi tilkynnt um dvöl erlendis, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki tilkynnt um dvöl erlendis, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
     description: `Error summary when user can not apply`,
   },
   submitError: {
@@ -163,4 +163,4 @@ export const errorMessages = {
       'Dagsetning "Til" verður að vera seinna en dagsetning "Frá"',
     description: 'Error message when date range is wrong',
   },
-}
+})

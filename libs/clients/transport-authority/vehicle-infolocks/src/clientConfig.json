@@ -2,14 +2,18 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Vehicle infolocks API, developed in .Net8.0 - Release-5 : 20240920.1",
+    "description": "Vehicle infolocks API, developed in .Net6.0",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [{ "url": "/vehicle/infolocks" }],
+  "servers": [
+    {
+      "url": "/vehicle/infolocks"
+    }
+  ],
   "paths": {
     "/authenticate": {
       "post": {
@@ -19,76 +23,118 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateModel"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
               },
-              "text/xml": { "schema": { "$ref": "#/components/schemas/User" } }
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
             }
           },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -103,53 +149,71 @@
             "name": "persidno",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/InfoLockDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/InfoLockDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/InfoLockDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/InfoLockDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/InfoLockDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/InfoLockDto"
+                  }
                 }
               }
             }
@@ -166,45 +230,65 @@
             "name": "persidno",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "infolocktype",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/InfoLockDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/InfoLockDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/InfoLockDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/InfoLockDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/InfoLockDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/InfoLockDto"
+                }
               }
             }
           },
@@ -212,19 +296,29 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -239,59 +333,91 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/PostInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostInfoLockModel"
+              }
             }
           }
         },
         "responses": {
-          "201": { "description": "Created" },
+          "201": {
+            "description": "Created"
+          },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -304,59 +430,91 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/PutInfoLockModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PutInfoLockModel"
+              }
             }
           }
         },
         "responses": {
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -370,8 +528,14 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": { "minLength": 1, "type": "string" },
-          "password": { "minLength": 1, "type": "string" }
+          "username": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          }
         },
         "additionalProperties": false
       },
@@ -452,11 +616,27 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -495,29 +675,79 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "nullable": true },
-          "userName": { "type": "string", "nullable": true },
-          "normalizedUserName": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "normalizedEmail": { "type": "string", "nullable": true },
-          "emailConfirmed": { "type": "boolean" },
-          "passwordHash": { "type": "string", "nullable": true },
-          "securityStamp": { "type": "string", "nullable": true },
-          "concurrencyStamp": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "phoneNumberConfirmed": { "type": "boolean" },
-          "twoFactorEnabled": { "type": "boolean" },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
           "lockoutEnd": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lockoutEnabled": { "type": "boolean" },
-          "accessFailedCount": { "type": "integer", "format": "int32" },
-          "username": { "type": "string", "nullable": true },
-          "password": { "type": "string", "nullable": true },
-          "jwtToken": { "type": "string", "nullable": true },
-          "role": { "type": "string", "nullable": true }
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "jwtToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }
@@ -531,5 +761,9 @@
       }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

@@ -8,9 +8,15 @@ import {
   completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
+  DefendantPlea,
+  DefenderChoice,
   eventTypes,
-  notificationTypes,
+  Gender,
+  IndictmentCaseReviewDecision,
+  PunishmentType,
   stringTypes,
+  SubpoenaType,
+  trackedNotificationTypes,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
@@ -305,7 +311,7 @@ export const caseInclude: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: notificationTypes },
+    where: { type: trackedNotificationTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -536,7 +542,6 @@ export interface UpdateCase
     | 'creatingProsecutorId'
     | 'requestSharedWithDefender'
     | 'indictmentRulingDecision'
-    | 'indictmentReviewerId'
     | 'indictmentDecision'
     | 'courtSessionType'
     | 'mergeCaseId'
@@ -556,6 +561,7 @@ export interface UpdateCase
   courtRecordSignatoryId?: Case['courtRecordSignatoryId'] | null
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
+  indictmentReviewerId?: Case['indictmentReviewerId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
@@ -569,6 +575,7 @@ export interface UpdateCase
   civilDemands?: string
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
+  reopenReason?: string
 }
 
 export interface UpdateAppealCase
@@ -576,6 +583,7 @@ export interface UpdateAppealCase
     AppealCase,
     | 'appealCaseNumber'
     | 'appealReceivedByCourtDate'
+    | 'appealRulingDate'
     | 'appealAssistantId'
     | 'appealJudge1Id'
     | 'appealJudge2Id'
@@ -591,4 +599,32 @@ export interface UpdateAppealCase
     | 'rulingFileId'
   > {
   appealState?: AppealCase['appealState']
+}
+
+export interface UpdateDefendant {
+  noNationalId?: boolean
+  nationalId?: string
+  dateOfBirth?: string
+  name?: string
+  gender?: Gender
+  address?: string
+  citizenship?: string
+  defenderName?: string
+  defenderNationalId?: string
+  defenderEmail?: string
+  defenderPhoneNumber?: string
+  defenderChoice?: DefenderChoice
+  defendantPlea?: DefendantPlea
+  subpoenaType?: SubpoenaType
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
+  isDefenderChoiceConfirmed?: boolean
+  caseFilesSharedWithDefender?: boolean
+  isSentToPrisonAdmin?: boolean
+  punishmentType?: PunishmentType
+  isAlternativeService?: boolean
+  alternativeServiceDescription?: string
+  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
 }

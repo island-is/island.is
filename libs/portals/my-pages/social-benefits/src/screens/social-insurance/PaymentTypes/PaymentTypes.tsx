@@ -150,7 +150,7 @@ const PaymentTypes = () => {
                         </T.HeadData>
                         <T.HeadData box={{ background: 'blue100' }} scope="col">
                           <Text variant="medium" fontWeight="medium">
-                            {formatMessage(m.nationalId)}
+                            {formatMessage(coreMessages.natreg)}
                           </Text>
                         </T.HeadData>
                       </T.Row>

@@ -1,8 +1,9 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 
+import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
@@ -10,6 +11,18 @@ const usePoliceDigitalCaseFile = (
   caseId: string,
   caseOrigin: CaseOrigin | null | undefined,
 ) => {
+  const { refreshCase } = useContext(FormContext)
+  const handleCompleted = useCallback(
+    (completedData: {
+      policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
+    }) => {
+      if (completedData.policeDigitalCaseFiles?.some((file) => file.isNew)) {
+        refreshCase()
+      }
+    },
+    [refreshCase],
+  )
+
   const {
     data,
     loading: digitalCaseFilesLoading,
@@ -20,6 +33,7 @@ const usePoliceDigitalCaseFile = (
     skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
+    onCompleted: handleCompleted,
   })
 
   const [deleteMutation, { loading: isDeleting }] =

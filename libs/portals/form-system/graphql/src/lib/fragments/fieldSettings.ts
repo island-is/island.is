@@ -43,6 +43,9 @@ export const FieldSettingsFragment = gql`
     priceAmount
     isDropdown
     paymentQuantityId
+    zendeskTicketFieldId
+    zendeskCustomObjectKey
+    dataSourceUrl
   }
   ${ListItemFragment}
   ${LanguageFields}
