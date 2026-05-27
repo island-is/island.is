@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseFilesOverview,
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
@@ -41,6 +42,7 @@ import {
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
+  RulingModifiedAlert,
   SignatureConfirmationModal,
   SignatureType,
   UserContext,
@@ -422,32 +424,8 @@ export const SignedVerdictOverview: FC = () => {
                 }
               />
             )}
-            {workingCase.appealCase?.appealRulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title="Úrskurður Landsréttar leiðréttur"
-                message={
-                  <MarkdownWrapper
-                    markdown={
-                      workingCase.appealCase?.appealRulingModifiedHistory
-                    }
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.sections.modifyRulingInfo.title)}
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <InfoCard
               sections={[
                 {
