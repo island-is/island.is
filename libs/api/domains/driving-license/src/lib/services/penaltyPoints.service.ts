@@ -16,26 +16,36 @@ export class PenaltyPointsService {
 
   async getPenaltyPointDetails(
     user: User,
-  ): Promise<DrivingLicensePenaltyPointDetail[]> {
+  ): Promise<{ details: DrivingLicensePenaltyPointDetail[] }> {
     const details = await this.penaltyPointsClientService.penaltyPointDetails(
       user,
     )
 
-    return details
-      .map((d) => {
-        if (!d.caseNr) return undefined
-        return {
-          id: d.caseNr,
-          caseNumber: d.caseNr,
-          offenseDate: d.offenseDate ?? undefined,
-          penalty: d.penalty ?? undefined,
-          penaltyStatus: d.penaltyStatus ?? undefined,
-          points: d.points ?? undefined,
-          districtName: d.districtName ?? undefined,
-          statusCode: d.statusCode ?? undefined,
-        }
-      })
-      .filter(isDefined)
+    return {
+      details: details
+        .map((d) => {
+          if (!d.caseNr) return undefined
+          return {
+            id: d.caseNr,
+            caseNumber: d.caseNr,
+            offenseDate: d.offenseDate ?? undefined,
+            penalty: d.penalty ?? undefined,
+            penaltyStatus: d.penaltyStatus ?? undefined,
+            points: d.points ?? undefined,
+            districtName: d.districtName ?? undefined,
+            statusCode: d.statusCode ?? undefined,
+          }
+        })
+        .filter(isDefined),
+    }
+  }
+
+  async getIsDeprived(user: User): Promise<boolean> {
+    const isBelowThreshold =
+      await this.penaltyPointsClientService.penaltyPointsDrivingLicenseApplicationIsBelowThreshold(
+        user,
+      )
+    return !isBelowThreshold
   }
 
   async getDeprivations(user: User): Promise<DrivingLicenseDeprivation[]> {
