@@ -349,8 +349,9 @@ const isIndictmentCountTrafficViolation = (
 ) =>
   isTrafficViolationIndictmentCount(
     count.indictmentCountSubtypes,
-    count.policeCaseNumber &&
-      workingCase.indictmentSubtypes[count.policeCaseNumber],
+    count.policeCaseNumber
+      ? workingCase.indictmentSubtypes?.[count.policeCaseNumber]
+      : undefined,
   )
 
 export const getIndictmentCountWarningMessage = (
@@ -414,7 +415,9 @@ export const isIndictmentCountComplete = (
     isValidSpeedingIndictmentCount(count)
 
   const isValidNonTrafficViolation = (count: IndictmentCount) =>
-    Boolean(count.incidentDescription) && Boolean(count.legalArguments)
+    Boolean(count.policeCaseNumber) &&
+    Boolean(count.incidentDescription) &&
+    Boolean(count.legalArguments)
 
   return isIndictmentCountTrafficViolation(indictmentCount, workingCase)
     ? isValidTrafficViolation(indictmentCount)

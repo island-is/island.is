@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 import {
   Case,
@@ -66,7 +65,7 @@ const createWorkingCase = (indictmentCounts: IndictmentCount[]): Case => ({
 })
 
 describe('IndictmentCountsList', () => {
-  let user: UserEvent
+  let user: ReturnType<typeof userEvent.setup>
   const reorderIndictmentCounts = jest.fn()
   const setWorkingCase = jest.fn()
   const handleUpdateIndictmentCount = jest.fn()
@@ -224,6 +223,8 @@ describe('IndictmentCountsList', () => {
       expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'false')
     })
 
-    expect(screen.getByRole('button', { name: 'Opna alla' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Opna alla' }),
+    ).toBeInTheDocument()
   })
 })

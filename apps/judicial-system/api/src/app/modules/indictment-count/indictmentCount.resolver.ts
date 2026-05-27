@@ -87,8 +87,6 @@ export class IndictmentCountResolver {
   ): Promise<IndictmentCount[]> {
     const { caseId, counts } = input
 
-    this.logger.debug(`Reordering indictment counts for case ${caseId}`)
-
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,

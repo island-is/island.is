@@ -27,8 +27,7 @@ const useIndictmentCounts = () => {
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
   const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
-  const [reorderIndictmentCountsMutation] =
-    useReorderIndictmentCountsMutation()
+  const [reorderIndictmentCountsMutation] = useReorderIndictmentCountsMutation()
 
   const createIndictmentCount = useCallback(
     async (caseId: string) => {
@@ -93,6 +92,11 @@ const useIndictmentCounts = () => {
         const { data } = await reorderIndictmentCountsMutation({
           variables: { input: { caseId, counts } },
         })
+
+        if (!data) {
+          toast.error(formatMessage(errors.reorderIndictmentCounts))
+          return
+        }
 
         return data?.reorderIndictmentCounts
       } catch {

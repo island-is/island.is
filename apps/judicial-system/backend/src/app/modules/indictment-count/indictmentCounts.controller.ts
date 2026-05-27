@@ -58,8 +58,6 @@ export class IndictmentCountsController {
     @Param('caseId') caseId: string,
     @Body() body: ReorderIndictmentCountsDto,
   ): Promise<IndictmentCount[]> {
-    this.logger.debug(`Reordering indictment counts for case ${caseId}`)
-
     return this.sequelize.transaction((transaction) =>
       this.indictmentCountService.reorder(caseId, body.counts, transaction),
     )

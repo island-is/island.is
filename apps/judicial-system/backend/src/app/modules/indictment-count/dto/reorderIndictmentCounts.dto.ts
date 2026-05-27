@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import {
   IsArray,
-  IsNumber,
+  IsInt,
   IsString,
   IsUUID,
   Min,
@@ -16,7 +16,7 @@ class ReorderIndictmentCountItemDto {
   @ApiProperty({ type: String })
   readonly id!: string
 
-  @IsNumber()
+  @IsInt()
   @Min(0)
   @ApiProperty({ type: Number })
   readonly displayOrder!: number
