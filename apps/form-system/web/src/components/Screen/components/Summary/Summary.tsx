@@ -22,6 +22,7 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { Display } from '../Display/Display'
 import { Payment } from '../Payment/Payment'
 import { useEffect, useMemo } from 'react'
+import { hasError } from '../../../../utils/validation'
 
 interface Props {
   state?: ApplicationState
@@ -31,61 +32,6 @@ export const Summary = ({ state }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
-
-  const isBlank = (value: unknown) =>
-    value == null || (typeof value === 'string' && value.trim() === '')
-
-  const getJson = (field: FormSystemField, valueIndex: number) =>
-    (field?.values?.[valueIndex]?.json ?? {}) as Record<string, unknown>
-
-  // Required-only validation for Summary display: checks presence, not format.
-  const isMissingRequired = (field: FormSystemField, valueIndex: number) => {
-    if (!field?.isRequired) return false
-
-    const json = getJson(field, valueIndex)
-
-    switch (field.fieldType) {
-      case FieldTypesEnum.TEXTBOX:
-        return isBlank((json as any).text)
-      case FieldTypesEnum.EMAIL:
-        return isBlank((json as any).email)
-      case FieldTypesEnum.PHONE_NUMBER:
-        return isBlank((json as any).phoneNumber)
-      case FieldTypesEnum.NUMBERBOX:
-      case FieldTypesEnum.PAYMENT_QUANTITY:
-        return (json as any).number == null || (json as any).number === ''
-      case FieldTypesEnum.ISK_NUMBERBOX:
-        return isBlank((json as any).iskNumber)
-      case FieldTypesEnum.DATE_PICKER:
-        return isBlank((json as any).date)
-      case FieldTypesEnum.TIME_INPUT:
-        return isBlank((json as any).time)
-      case FieldTypesEnum.CHECKBOX:
-        return (json as any).checkboxValue !== true
-      case FieldTypesEnum.DROPDOWN_LIST:
-      case FieldTypesEnum.RADIO_BUTTONS: {
-        const label = (json as any).label
-        return isBlank(label?.is) && isBlank(label?.en)
-      }
-      case FieldTypesEnum.FILE: {
-        const s3Key = (json as any).s3Key
-        if (Array.isArray(s3Key)) return s3Key.length === 0
-        return isBlank(s3Key)
-      }
-      case FieldTypesEnum.BANK_ACCOUNT: {
-        const bankAccount = String((json as any).bankAccount ?? '')
-        if (isBlank(bankAccount)) return true
-        const [bank, ledger, account] = bankAccount.split('-')
-        return isBlank(bank) || isBlank(ledger) || isBlank(account)
-      }
-      case FieldTypesEnum.NATIONAL_ID:
-        return isBlank((json as any).nationalId) || isBlank((json as any).name)
-      case FieldTypesEnum.PROPERTY_NUMBER:
-        return isBlank((json as any).propertyNumber)
-      default:
-        return false
-    }
-  }
 
   const hasAnyMissingRequired = useMemo(() => {
     if (!state?.sections) return false
@@ -108,7 +54,7 @@ export const Summary = ({ state }: Props) => {
               : Math.max(1, field.values?.length ?? 0)
 
           for (let valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-            if (isMissingRequired(field, valueIndex)) return true
+            if (field.isRequired && hasError(field, valueIndex)) return true
           }
         }
       }
@@ -250,14 +196,12 @@ export const Summary = ({ state }: Props) => {
                             key={field.id ?? `non-multi-${index}`}
                             marginBottom={1}
                           >
-                            <Display field={field} />
-                            {isMissingRequired(field, 0) && (
-                              <Box marginLeft={2} marginTop={1}>
-                                <Text variant="small">
-                                  {formatMessage(m.required)}
-                                </Text>
-                              </Box>
-                            )}
+                            <Display
+                              field={field}
+                              requiredMissing={
+                                Boolean(field.isRequired) && hasError(field, 0)
+                              }
+                            />
                           </Box>
                         ))}
 
@@ -288,14 +232,11 @@ export const Summary = ({ state }: Props) => {
                                       <Display
                                         field={field}
                                         valueIndex={itemIndex}
+                                        requiredMissing={
+                                          Boolean(field.isRequired) &&
+                                          hasError(field, itemIndex)
+                                        }
                                       />
-                                      {isMissingRequired(field, itemIndex) && (
-                                        <Box marginLeft={2} marginTop={1}>
-                                          <Text variant="small">
-                                            {formatMessage(m.required)}
-                                          </Text>
-                                        </Box>
-                                      )}
                                     </>
                                   )
 
