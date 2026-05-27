@@ -254,6 +254,14 @@ const Completed: FC = () => {
                 judgeName={workingCase.judge?.name}
               />
             )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
             <AllIndictmentCaseFiles />
             {isRulingOrFine && (
               <Box component="section">

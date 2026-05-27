@@ -136,10 +136,22 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           }
         />
       )}
+      {targetAppealCase?.appealRulingModifiedHistory && (
+        <AlertMessage
+          type="info"
+          title="Úrskurður Landsréttar leiðréttur"
+          message={
+            <MarkdownWrapper
+              markdown={targetAppealCase.appealRulingModifiedHistory}
+              textProps={{ variant: 'small' }}
+            />
+          }
+        />
+      )}
       {workingCase.rulingModifiedHistory && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.sections.modifyRulingInfo.title)}
+          title="Úrskurður leiðréttur"
           message={
             <MarkdownWrapper
               markdown={workingCase.rulingModifiedHistory}

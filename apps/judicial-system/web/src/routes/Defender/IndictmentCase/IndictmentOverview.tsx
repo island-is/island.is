@@ -156,16 +156,18 @@ const IndictmentOverview: FC = () => {
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.rulingModifiedHistory && (
-            <AlertMessage
-              type="info"
-              title="Mál leiðrétt"
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.rulingModifiedHistory}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
           )}
           {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <Box marginBottom={2}>
@@ -180,7 +182,6 @@ const IndictmentOverview: FC = () => {
               />
             </Box>
           )}
-
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -267,6 +268,14 @@ const IndictmentOverview: FC = () => {
                   }orð héraðsdóms`}
                   conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
                   judgeName={workingCase.judge?.name}
+                />
+              )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
             <AllIndictmentCaseFiles

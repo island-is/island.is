@@ -406,22 +406,6 @@ export const SignedVerdictOverview: FC = () => {
                   }
                 />
               )}
-            {workingCase.appealCase?.appealRulingModifiedHistory && (
-              <Box marginBottom={5} marginTop={5}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(strings.rulingModifiedTitle)}
-                  message={
-                    <MarkdownWrapper
-                      markdown={
-                        workingCase.appealCase?.appealRulingModifiedHistory
-                      }
-                      textProps={{ variant: 'small' }}
-                    />
-                  }
-                />
-              </Box>
-            )}
           </Box>
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             {workingCase.caseModifiedExplanation && (
@@ -433,6 +417,20 @@ export const SignedVerdictOverview: FC = () => {
                 message={
                   <MarkdownWrapper
                     markdown={workingCase.caseModifiedExplanation}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            )}
+            {workingCase.appealCase?.appealRulingModifiedHistory && (
+              <AlertMessage
+                type="info"
+                title="Úrskurður Landsréttar leiðréttur"
+                message={
+                  <MarkdownWrapper
+                    markdown={
+                      workingCase.appealCase?.appealRulingModifiedHistory
+                    }
                     textProps={{ variant: 'small' }}
                   />
                 }

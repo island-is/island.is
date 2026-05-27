@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -176,6 +177,13 @@ export const Overview = () => {
                   judgeName={workingCase.judge?.name}
                 />
               </Box>
+            )}
+          {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
+            workingCase.appealCase?.appealConclusion && (
+              <Conclusion
+                title="Úrskurðarorð Landsréttar"
+                conclusionText={workingCase.appealCase?.appealConclusion}
+              />
             )}
           <AllIndictmentCaseFiles />
           <Box component="section">
