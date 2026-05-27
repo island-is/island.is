@@ -447,10 +447,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:continue-step-label',
     defaultMessage: 'Halda áfram',
   },
-  removedScopesLabel: {
-    id: 'sp.access-control-delegations:removed-scopes-label',
-    defaultMessage: 'Réttindi sem verða fjarlægð',
-  },
   deleteWarningTitle: {
     id: 'sp.access-control-delegations:title-delete-warning',
     defaultMessage: 'Viltu eyða umboðinu?',
