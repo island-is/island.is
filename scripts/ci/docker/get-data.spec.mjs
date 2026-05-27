@@ -31,8 +31,12 @@ jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {})
 
 // Mock const.mjs
 jest.mock('./const.mjs', () => ({
-  MAIN_BRANCHES: ['main'],
-  RELEASE_BRANCHES: ['release'],
+  isMainBranch: jest.fn((branch) => branch === 'main'),
+  isReleaseBranch: jest.fn((branch) =>
+    /^release(?:\/(?:\d+\.\d+\.\d+|\d{4}\.\d{1,2}\.\d{1,2}\.\d+))?$/.test(
+      branch,
+    ),
+  ),
 }))
 
 // Mock jsyaml
@@ -128,8 +132,18 @@ describe('get-data.mjs', () => {
       })
     })
 
-    test('returns staging and prod configuration for release branch', () => {
-      const result = getTypeOfDeployment('release')
+    test('returns staging and prod configuration for semver release branch', () => {
+      const result = getTypeOfDeployment('release/41.1.0')
+
+      expect(result).toEqual({
+        dev: false,
+        staging: true,
+        prod: true,
+      })
+    })
+
+    test('returns staging and prod configuration for calver release branch', () => {
+      const result = getTypeOfDeployment('release/2026.5.26.0')
 
       expect(result).toEqual({
         dev: false,
@@ -144,6 +158,8 @@ describe('get-data.mjs', () => {
         'develop',
         'hotfix',
         'random-branch',
+        'release/2026',
+        'release/foo.bar',
       ]
 
       unsupportedBranches.forEach((branch) => {
@@ -260,7 +276,7 @@ describe('get-data.mjs', () => {
     })
 
     test('release branches are configured correctly', () => {
-      const deployment = getTypeOfDeployment('release')
+      const deployment = getTypeOfDeployment('release/2026.5.26.0')
       expect(deployment.dev).toBe(false)
       expect(deployment.staging).toBe(true)
       expect(deployment.prod).toBe(true)
@@ -311,7 +327,10 @@ describe('get-data.mjs', () => {
     test('branch name extraction strips refs/heads/ prefix correctly', () => {
       const testCases = [
         { input: 'refs/heads/main', expected: 'main' },
-        { input: 'refs/heads/release', expected: 'release' },
+        {
+          input: 'refs/heads/release/2026.5.26.0',
+          expected: 'release/2026.5.26.0',
+        },
         { input: 'refs/heads/feature/test', expected: 'feature/test' },
         { input: 'refs/heads/', expected: '' },
       ]
