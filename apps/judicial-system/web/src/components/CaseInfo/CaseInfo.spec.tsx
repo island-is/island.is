@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 
 import {
   AppealCaseState,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   Defendant,
@@ -156,5 +157,18 @@ describe('CourtCaseInfo - reopen button visibility', () => {
     expect(
       screen.getByRole('button', { name: 'Enduropna mál' }),
     ).toBeInTheDocument()
+  })
+
+  it('hides the reopen button when the indictment ruling decision is withdrawal', () => {
+    const withdrawnCase = {
+      ...completedIndictmentCase,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, withdrawnCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
   })
 })

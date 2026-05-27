@@ -20,6 +20,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseState,
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -179,6 +180,8 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
               </Box>
             )}
             {isDistrictCourtUser(user) &&
+              workingCase.indictmentRulingDecision !==
+                CaseIndictmentRulingDecision.WITHDRAWAL &&
               (!workingCase.appealCase ||
                 workingCase.appealCase.appealState ===
                   AppealCaseState.COMPLETED ||
