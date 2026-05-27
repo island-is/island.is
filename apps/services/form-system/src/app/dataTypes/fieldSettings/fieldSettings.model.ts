@@ -187,4 +187,17 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   showAddress?: boolean
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskTicketFieldId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskCustomObjectKey?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  dataSourceUrl?: string
 }

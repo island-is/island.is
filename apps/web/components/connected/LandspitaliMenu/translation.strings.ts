@@ -117,4 +117,19 @@ export const m = defineMessages({
       'Villa kom upp við að sækja matseðilinn. Reyndu aftur síðar.',
     description: 'Error message shown when fetching the menu fails',
   },
+  Morgunmatur: {
+    id: 'web.landspitaliMenu:morgunmatur',
+    defaultMessage: 'Morgunverður',
+    description: 'Morgunverður',
+  },
+  Hádegismatur: {
+    id: 'web.landspitaliMenu:haadegismatur',
+    defaultMessage: 'Hádegisverður',
+    description: 'Hádegisverður',
+  },
+  Kvöldmatur: {
+    id: 'web.landspitaliMenu:kvoldmatur',
+    defaultMessage: 'Kvöldverður',
+    description: 'Kvöldverður',
+  },
 })
