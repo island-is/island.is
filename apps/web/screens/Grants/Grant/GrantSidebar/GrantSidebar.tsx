@@ -9,6 +9,7 @@ import { m } from '../../messages'
 import DetailPanel from './DetailPanel'
 import ExtraPanel from './ExtraPanel'
 import * as styles from '../Grant.css'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 interface Props {
   grant: Grant
@@ -52,6 +53,19 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       </Box>
     )
   }
+
+  const { hasALandingPage, slug, link } = grant.fund?.parentOrganization ?? {}
+  const orgUrl = slug
+    ? getOrganizationLink(
+        {
+          hasALandingPage: hasALandingPage ?? undefined,
+          slug,
+          link: link ?? undefined,
+        },
+        locale,
+      )
+    : undefined
+
   return (
     <>
       {goBackToDashboard()}
@@ -59,6 +73,13 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       <DetailPanel grant={grant} locale={locale} />
       <ExtraPanel grant={grant} />
       <InstitutionPanel
+        linkProps={
+          orgUrl
+            ? {
+                href: orgUrl,
+              }
+            : undefined
+        }
         institutionTitle={formatMessage(m.single.provider)}
         institution={
           grant.fund?.parentOrganization.title ??
