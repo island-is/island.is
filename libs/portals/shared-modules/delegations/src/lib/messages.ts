@@ -443,6 +443,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delete-warning-step-label',
     defaultMessage: 'Eyða umboði',
   },
+  continueStepLabel: {
+    id: 'sp.access-control-delegations:continue-step-label',
+    defaultMessage: 'Halda áfram',
+  },
+  removedScopesLabel: {
+    id: 'sp.access-control-delegations:removed-scopes-label',
+    defaultMessage: 'Réttindi sem verða fjarlægð',
+  },
   deleteWarningTitle: {
     id: 'sp.access-control-delegations:delete-warning-title',
     defaultMessage: 'Engin réttindi valin',
@@ -459,6 +467,10 @@ export const m = defineMessages({
   confirmAccessModalTitle: {
     id: 'sp.access-control-delegations:confirm-access-modal-title',
     defaultMessage: 'Staðfesta veitingu á nýju umboði',
+  },
+  confirmEditAccessModalTitle: {
+    id: 'sp.access-control-delegations:confirm-edit-access-modal-title',
+    defaultMessage: 'Staðfesta breytingar á umboði',
   },
   searchScopesPlaceholder: {
     id: 'sp.access-control-delegations:search-scopes-placeholder',

@@ -146,6 +146,14 @@ const EditAccess = () => {
     )
   }, [selectedScopes])
 
+  const removedScopes = useMemo(
+    () =>
+      initialScopes.filter(
+        (s) => !selectedScopes.some((sel) => sel.name === s.name),
+      ),
+    [initialScopes, selectedScopes],
+  )
+
   const { data: contentfulQueryData } = useGetServicePortalPageQuery({
     variables: { input: { slug: 'umbod/breyta', lang } },
   })
@@ -181,7 +189,7 @@ const EditAccess = () => {
       name: formatMessage(m.choosePermissionsLabel),
       content: <AccessScopes />,
       continueButtonLabel: isAllUnchecked
-        ? formatMessage(m.deleteWarningStepLabel)
+        ? formatMessage(m.continueStepLabel)
         : formatMessage(m.choosePeriodButtonLabel),
       continueButtonIcon: 'arrowForward',
     },
@@ -243,8 +251,10 @@ const EditAccess = () => {
         />
 
         <ConfirmAccessModal
+          isEdit={true}
           onClose={() => setIsConfirmModalVisible(false)}
           isVisible={isConfirmModalVisible}
+          removedScopes={removedScopes}
         />
 
         {recipient && (
