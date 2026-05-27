@@ -114,6 +114,10 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
                     ],
+                  allowBTempRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
+                    ],
                   allowAdvanced:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
