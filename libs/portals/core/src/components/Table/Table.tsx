@@ -448,12 +448,7 @@ export const Table = <TData extends object>({
                 <tr aria-hidden={!isExpanded && !isCollapsing}>
                   <T.Data
                     colSpan={columns.length}
-                    style={{
-                      padding: 0,
-                      ...(!isExpanded && !isCollapsing
-                        ? { borderBottom: 'none' }
-                        : {}),
-                    }}
+                    style={{ padding: 0 }}
                     box={{
                       position: 'relative',
                       background:
