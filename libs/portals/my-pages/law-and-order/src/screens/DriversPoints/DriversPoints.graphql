@@ -1,11 +1,14 @@
-query GetDriversPenaltyPointDetails {
-  driversPenaltyPointDetails {
-    caseNumber
-    offenseDate
-    penalty
-    penaltyStatus
-    points
-    districtName
-    statusCode
+query GetDriversPenaltyPoints {
+  driversPenaltyPoints {
+    isDeprived
+    details {
+      caseNumber
+      offenseDate
+      penalty
+      penaltyStatus
+      points
+      districtName
+      statusCode
+    }
   }
 }

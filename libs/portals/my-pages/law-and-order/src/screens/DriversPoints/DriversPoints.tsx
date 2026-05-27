@@ -10,33 +10,16 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
-import {
-  useGetDriversPenaltyPointStatusQuery,
-  useGetDriversPenaltyPointDetailsQuery,
-} from './DriversPoints.generated'
+import { useGetDriversPenaltyPointsQuery } from './DriversPoints.generated'
 
 const DriversPoints = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
 
-  const {
-    data: statusData,
-    loading: statusLoading,
-    error: statusError,
-  } = useGetDriversPenaltyPointStatusQuery()
+  const { data, loading, error } = useGetDriversPenaltyPointsQuery()
 
-  const {
-    data: detailsData,
-    loading: detailsLoading,
-    error: detailsError,
-  } = useGetDriversPenaltyPointDetailsQuery()
-
-  const loading = statusLoading || detailsLoading
-  const error = statusError ?? detailsError
-
-  const isPenaltyPointsOk =
-    statusData?.driversPenaltyPointStatus?.isPenaltyPointsOk ?? true
-  const details = detailsData?.driversPenaltyPointDetails ?? []
+  const isPenaltyPointsOk = !(data?.driversPenaltyPoints?.isDeprived ?? false)
+  const details = data?.driversPenaltyPoints?.details ?? []
 
   const totalPoints = details.reduce((sum, d) => sum + (d.points ?? 0), 0)
 

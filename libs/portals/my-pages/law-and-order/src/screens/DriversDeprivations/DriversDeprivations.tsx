@@ -1,5 +1,6 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AlertMessage, Box, Table as T } from '@island.is/island-ui/core'
+import { DrivingLicenseDeprivationStatus } from '@island.is/api/schema'
 import {
   CardLoader,
   formatDate,
@@ -22,8 +23,12 @@ const DriversDeprivations = () => {
 
   const isEmpty = !loading && !error && deprivations.length === 0
 
-  // Find the most recent active deprivation (licenseLost = true) to show in alert
-  const activeDeprivation = deprivations.find((d) => d.licenseLost)
+  // Find the most recent active deprivation (license lost) to show in alert
+  const activeDeprivation = deprivations.find(
+    (d) =>
+      d.status === DrivingLicenseDeprivationStatus.LOST ||
+      d.status === DrivingLicenseDeprivationStatus.LOSTANDEXPIRED,
+  )
 
   return (
     <IntroWrapper
@@ -113,7 +118,7 @@ const DriversDeprivations = () => {
             <T.Body>
               {deprivations.map((deprivation, index) => (
                 <T.Row key={index}>
-                  <T.Data>{deprivation.deprivationName ?? undefined}</T.Data>
+                  <T.Data>{deprivation.name ?? undefined}</T.Data>
                   <T.Data>
                     {/* TODO: implement when API exposes a human-readable reason string on Deprivation */}
                     —
