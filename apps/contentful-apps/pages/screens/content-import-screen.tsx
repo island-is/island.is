@@ -76,10 +76,10 @@ const ContentExportScreen = () => {
     selectedTagId: string | null
   }>({
     contentTypes: [],
-    selectedContentTypeId: 'article',
+    selectedContentTypeId: '',
     isExporting: false,
     tags: [],
-    selectedTagId: null,
+    selectedTagId: '',
   })
 
   useEffect(() => {
@@ -302,6 +302,7 @@ const ContentExportScreen = () => {
             }
             options={state.contentTypes}
             label="Content type"
+            placeholder="Select a content type"
           />
         </Flex>
       )}
@@ -315,6 +316,7 @@ const ContentExportScreen = () => {
             }
             options={state.tags}
             label="Owner tag"
+            placeholder="Select a tag"
           />
         </Flex>
       )}

@@ -6,6 +6,7 @@ interface ValueSelectProps {
   options: { label: string; value: string }[]
   disabled?: boolean
   label: string
+  placeholder?: string
 }
 
 export const ValueSelect = ({
@@ -14,6 +15,7 @@ export const ValueSelect = ({
   options,
   disabled = false,
   label,
+  placeholder,
 }: ValueSelectProps) => {
   return (
     <FormControl>
@@ -27,6 +29,9 @@ export const ValueSelect = ({
         }}
         isDisabled={disabled}
       >
+        {Boolean(placeholder) && (
+          <Select.Option value="">{placeholder}</Select.Option>
+        )}
         {options.map((option) => (
           <Select.Option key={option.value} value={option.value}>
             {option.label}
