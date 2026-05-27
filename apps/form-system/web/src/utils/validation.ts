@@ -28,6 +28,8 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
       return !validateBanknumber(value?.bankAccount ?? '')
     case FieldTypesEnum.TEXTBOX:
       return value.text === '' || !value.text
+    case FieldTypesEnum.NUMBERBOX:
+      return !value?.number || isNaN(value.number)
     case FieldTypesEnum.EMAIL:
       return !validateEmail(value?.email ?? '')
     case FieldTypesEnum.PHONE_NUMBER:
