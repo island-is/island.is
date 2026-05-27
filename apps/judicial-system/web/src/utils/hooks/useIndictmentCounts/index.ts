@@ -27,8 +27,7 @@ const useIndictmentCounts = () => {
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
   const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
-  const [reorderIndictmentCountsMutation] =
-    useReorderIndictmentCountsMutation()
+  const [reorderIndictmentCountsMutation] = useReorderIndictmentCountsMutation()
 
   const createIndictmentCount = useCallback(
     async (caseId: string) => {

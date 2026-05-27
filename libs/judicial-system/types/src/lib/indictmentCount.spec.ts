@@ -4,7 +4,11 @@ import {
   sortIndictmentCounts,
 } from './indictmentCount'
 
-const count = (id: string, displayOrder: number, policeCaseNumber?: string) => ({
+const count = (
+  id: string,
+  displayOrder: number,
+  policeCaseNumber?: string,
+) => ({
   id,
   displayOrder,
   policeCaseNumber,
@@ -14,7 +18,11 @@ const count = (id: string, displayOrder: number, policeCaseNumber?: string) => (
 describe('sortIndictmentCounts', () => {
   it('sorts by displayOrder ascending', () => {
     const counts = [count('b', 2), count('a', 0), count('c', 1)]
-    expect(sortIndictmentCounts(counts).map((c) => c.id)).toEqual(['a', 'c', 'b'])
+    expect(sortIndictmentCounts(counts).map((c) => c.id)).toEqual([
+      'a',
+      'c',
+      'b',
+    ])
   })
 
   it('tie-breaks equal displayOrder by created', () => {

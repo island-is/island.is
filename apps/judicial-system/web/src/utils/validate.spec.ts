@@ -18,7 +18,7 @@ const createWorkingCase = (
 ): Case =>
   ({
     indictmentSubtypes,
-  }) as Case
+  } as Case)
 
 describe('isIndictmentCountComplete', () => {
   test('returns true for a complete non-traffic count', () => {
@@ -88,9 +88,9 @@ describe('getIndictmentCountWarningMessage', () => {
       legalArguments: 'Legal arguments',
     } as IndictmentCount
 
-    expect(
-      getIndictmentCountWarningMessage(indictmentCount, workingCase),
-    ).toBe('Vantar atvikalýsingu')
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar atvikalýsingu',
+    )
   })
 
   test('returns legal arguments when incident description is filled', () => {
@@ -102,9 +102,9 @@ describe('getIndictmentCountWarningMessage', () => {
       incidentDescription: 'Incident description',
     } as IndictmentCount
 
-    expect(
-      getIndictmentCountWarningMessage(indictmentCount, workingCase),
-    ).toBe('Vantar heimfærslu')
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar heimfærslu',
+    )
   })
 
   test('returns first missing field for traffic count', () => {
@@ -119,9 +119,9 @@ describe('getIndictmentCountWarningMessage', () => {
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
-    expect(
-      getIndictmentCountWarningMessage(indictmentCount, workingCase),
-    ).toBe('Vantar skráningarnúmer ökutækis')
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar skráningarnúmer ökutækis',
+    )
   })
 
   test('returns undefined for a complete count', () => {

@@ -224,6 +224,8 @@ describe('IndictmentCountsList', () => {
       expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'false')
     })
 
-    expect(screen.getByRole('button', { name: 'Opna alla' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Opna alla' }),
+    ).toBeInTheDocument()
   })
 })

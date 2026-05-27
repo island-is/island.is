@@ -8,30 +8,28 @@ const getDateMs = (date) => {
   return new Date(date).getTime()
 }
 
-const getIndictmentCountCompare =
-  (crimeScenes) =>
-  (a, b) => {
-    const aDate = getDateMs(
-      a.police_case_number
-        ? crimeScenes?.[a.police_case_number]?.date
-        : undefined,
-    )
-    const bDate = getDateMs(
-      b.police_case_number
-        ? crimeScenes?.[b.police_case_number]?.date
-        : undefined,
-    )
+const getIndictmentCountCompare = (crimeScenes) => (a, b) => {
+  const aDate = getDateMs(
+    a.police_case_number
+      ? crimeScenes?.[a.police_case_number]?.date
+      : undefined,
+  )
+  const bDate = getDateMs(
+    b.police_case_number
+      ? crimeScenes?.[b.police_case_number]?.date
+      : undefined,
+  )
 
-    if (aDate === undefined || aDate === null) {
-      return bDate === undefined || bDate === null ? 0 : 1
-    }
-
-    if (bDate === undefined || bDate === null) {
-      return -1
-    }
-
-    return aDate !== bDate ? (aDate < bDate ? -1 : 1) : 0
+  if (aDate === undefined || aDate === null) {
+    return bDate === undefined || bDate === null ? 0 : 1
   }
+
+  if (bDate === undefined || bDate === null) {
+    return -1
+  }
+
+  return aDate !== bDate ? (aDate < bDate ? -1 : 1) : 0
+}
 
 const sortCountsForBackfill = (counts, crimeScenes) =>
   [...counts].sort((a, b) => {
