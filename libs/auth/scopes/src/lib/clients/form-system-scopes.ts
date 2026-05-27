@@ -1,4 +1,4 @@
-import { ApiScope } from '@/index'
+import { ApiScope } from '../api.scope'
 import { ApplicationScope } from '../application.scope'
 
 export const formSystemScopes = [
