@@ -26,7 +26,7 @@ const DriversDeprivations = () => {
   // Find the most recent active deprivation (license lost) to show in alert
   const activeDeprivation = deprivations.find(
     (d) =>
-      d.status === DrivingLicenseDeprivationStatus.LOST ||
+      d.status === DrivingLicenseDeprivationStatus.EXPIRED ||
       d.status === DrivingLicenseDeprivationStatus.LOSTANDEXPIRED,
   )
 

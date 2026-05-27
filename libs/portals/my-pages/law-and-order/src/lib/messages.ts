@@ -318,10 +318,6 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:drivers-points-warning-description',
     defaultMessage: 'Punktar þínir eru að nálgast svipting',
   },
-  driversPointsDeprivationActiveTitle: {
-    id: 'sp.law-and-order:drivers-points-deprivation-active-title',
-    defaultMessage: 'Svipting í gildi',
-  },
   driversPointsColumnOffenseDate: {
     id: 'sp.law-and-order:drivers-points-column-offense-date',
     defaultMessage: 'Dagsetning brots',

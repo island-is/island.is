@@ -40,7 +40,6 @@ export class PenaltyPointsResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
   @ResolveField('isDeprived', () => Boolean)
   async resolveIsDeprived(@CurrentUser() user: User): Promise<boolean> {
     return this.penaltyPointsService.getIsDeprived(user)
