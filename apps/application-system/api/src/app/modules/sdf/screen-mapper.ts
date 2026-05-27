@@ -10,16 +10,8 @@ import { ComponentDto } from './dto/screen.dto'
 import { FormTextResolver } from './i18n-resolver.service'
 import { asResolvableFormText, mapFieldToComponent } from './field-mappers'
 
-/**
- * The SDF client must receive fields with `clientShowWhen` so it can hide and
- * reveal them as answers change without a server navigation round-trip.
- */
 const shouldIncludeMultiFieldChildForSdf = (child: FieldDef): boolean => {
-  if (child.isNavigable !== false) {
-    return true
-  }
-
-  return (child as unknown as Record<string, unknown>)['clientShowWhen'] !== undefined
+  return child.isNavigable !== false
 }
 
 const mapMultiFieldToComponents = (

@@ -95,6 +95,11 @@ const Harness = () => {
 describe('FormRenderer client display fields', () => {
   beforeEach(() => {
     numberFormatProps.length = 0
+    jest.spyOn(console, 'warn').mockImplementation()
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
   })
 
   it('updates a display field immediately from typed currency answers', () => {
@@ -121,5 +126,38 @@ describe('FormRenderer client display fields', () => {
     })
 
     expect(renderer.root.findAllByType('input')[3].props.value).toBe('80 kr.')
+  })
+
+  it('warns in development when a display field client expression reads another display field', () => {
+    act(() => {
+      TestRenderer.create(
+        <FormRenderer
+          components={[
+            ...components,
+            {
+              __typename: 'SdfDisplayField',
+              id: 'displayField2',
+              label: 'Display Field 2',
+              clientValueExpression: {
+                operator: 'MULTIPLY',
+                args: [
+                  { operator: 'GET', args: ['input1'] },
+                  { operator: 'GET', args: ['displayField'] },
+                ],
+              },
+            },
+          ]}
+          errors={[]}
+          answers={{}}
+          onAnswerChange={jest.fn()}
+        />,
+      )
+    })
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'displayField2 clientValueExpression depends on display field displayField',
+      ),
+    )
   })
 })

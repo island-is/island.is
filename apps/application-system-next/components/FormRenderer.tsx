@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { getFormExpressionDependencies } from '@island.is/application/core'
 import { ComponentSwitch } from './form-renderer/ComponentSwitch'
 import { groupComponentsIntoRows } from './form-renderer/layout'
 import type {
@@ -29,6 +30,40 @@ export const FormRenderer = ({
   }, [errors])
 
   const rows = groupComponentsIntoRows(components)
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return
+    }
+
+    const displayFieldIds = new Set(
+      components
+        .filter((component) => component.__typename === 'SdfDisplayField')
+        .map((component) => component.id)
+        .filter((id): id is string => typeof id === 'string'),
+    )
+
+    for (const component of components) {
+      if (
+        component.__typename !== 'SdfDisplayField' ||
+        !component.id ||
+        !component.clientValueExpression
+      ) {
+        continue
+      }
+
+      const dependencies = getFormExpressionDependencies(
+        component.clientValueExpression,
+      )
+      for (const dependency of dependencies) {
+        if (dependency !== component.id && displayFieldIds.has(dependency)) {
+          console.warn(
+            `SDF display field ${component.id} clientValueExpression depends on display field ${dependency}. Client expressions can only read answers; inline the source expression instead.`,
+          )
+        }
+      }
+    }
+  }, [components])
 
   return (
     <Box>

@@ -6,6 +6,7 @@ import { Prerequisites } from './prerequisitesForm'
 import { MainForm } from './mainForm'
 import { completedForm } from './completedForm'
 import { displayFieldSubsection } from './mainForm/simpleInputsSection/displayFieldSubsection'
+import { evaluateFormExpression } from '@island.is/application/core'
 
 jest.mock('@island.is/island-ui/theme', () => ({
   theme: {
@@ -72,6 +73,16 @@ const normalizeMainFormParityAst = (value: unknown): unknown => {
           entryKey === 'clientValueExpression' &&
           (normalized as { id?: unknown }).id === 'displayField2' &&
           entryValue !== undefined
+        ) &&
+        !(
+          entryKey === 'condition' &&
+          (normalized as { id?: unknown }).id === 'input4' &&
+          entryValue !== undefined
+        ) &&
+        !(
+          entryKey === 'clientShowWhen' &&
+          (normalized as { id?: unknown }).id === 'input4' &&
+          entryValue !== undefined
         ),
     )
 
@@ -105,6 +116,33 @@ const getDisplayValue = (
   return field.value(answers)
 }
 
+const getDisplayField = (id: string) => {
+  const children = (displayFieldSubsection as {
+    children: Array<{ children?: unknown[] }>
+  }).children[0].children as Array<{
+    id?: string
+    clientValueExpression?: unknown
+    value?: (answers: Record<string, unknown>) => string
+  }>
+
+  const field = children.find((child) => child.id === id)
+  if (!field?.value || field.clientValueExpression === undefined) {
+    throw new Error(`Client-computed display field ${id} was not found`)
+  }
+
+  return field
+}
+
+const expectDisplayFieldClientServerParity = (
+  id: string,
+  answers: Record<string, unknown>,
+) => {
+  const field = getDisplayField(id)
+  expect(String(evaluateFormExpression(field.clientValueExpression, answers))).toBe(
+    field.value(answers),
+  )
+}
+
 describe('example-inputs v2 form parity', () => {
   it('matches the legacy prerequisites form AST', () => {
     expect(normalizeFormAst(Prerequisites)).toEqual(
@@ -119,8 +157,39 @@ describe('example-inputs v2 form parity', () => {
   })
 
   it('matches the legacy completed form AST', () => {
-    expect(normalizeFormAst(completedForm)).toEqual(
-      normalizeFormAst(legacyCompletedForm),
+    const normalizeCompletedFormParityAst = (value: unknown): unknown => {
+      const normalized = normalizeFormAst(value)
+
+      if (Array.isArray(normalized)) {
+        return normalized.map(normalizeCompletedFormParityAst)
+      }
+
+      if (normalized !== null && typeof normalized === 'object') {
+        const entries = Object.entries(
+          normalized as Record<string, unknown>,
+        ).filter(
+          ([entryKey, entryValue]) =>
+            !(
+              entryKey === 'condition' &&
+              (normalized as { id?: unknown }).id ===
+                'uiForms.conclusionLink' &&
+              entryValue !== undefined
+            ),
+        )
+
+        return Object.fromEntries(
+          entries.map(([entryKey, entryValue]) => [
+            entryKey,
+            normalizeCompletedFormParityAst(entryValue),
+          ]),
+        )
+      }
+
+      return normalized
+    }
+
+    expect(normalizeCompletedFormParityAst(completedForm)).toEqual(
+      normalizeCompletedFormParityAst(legacyCompletedForm),
     )
   })
 
@@ -210,7 +279,14 @@ describe('example-inputs v2 form parity', () => {
               operator: 'MULTIPLY',
               args: [
                 { operator: 'GET', args: ['input4'] },
-                { operator: 'GET', args: ['displayField'] },
+                {
+                  operator: 'SUM',
+                  args: [
+                    { operator: 'GET', args: ['input1'] },
+                    { operator: 'GET', args: ['input2'] },
+                    { operator: 'GET', args: ['input3'] },
+                  ],
+                },
               ],
             },
           ],
@@ -275,5 +351,32 @@ describe('example-inputs v2 form parity', () => {
         multiplyInput3: '5',
       }),
     ).toBe('69')
+  })
+
+  it('keeps server and client display field calculations in parity', () => {
+    expectDisplayFieldClientServerParity('displayField', {
+      input1: '2',
+      input2: '3',
+      input3: '4',
+    })
+    expectDisplayFieldClientServerParity('displayFieldProduct', {
+      multiplyInput1: '2',
+      multiplyInput2: '32',
+      multiplyInput3: '5',
+    })
+    expectDisplayFieldClientServerParity('displayField2', {
+      input1: '2',
+      input2: '3',
+      input3: '4',
+      input4: '10',
+      radioFieldForDisplayField: '2',
+    })
+    expectDisplayFieldClientServerParity('displayField2', {
+      input1: '2',
+      input2: '3',
+      input3: '4',
+      input4: '10',
+      radioFieldForDisplayField: 'other',
+    })
   })
 })

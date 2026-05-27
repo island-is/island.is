@@ -15,6 +15,23 @@ const hasServerComputedDisplayFields = (
     (c) => c.__typename === 'SdfDisplayField' && !c.clientValueExpression,
   )
 
+const getCurrentPageAnswerSnapshot = (
+  components: SdfComponentData[],
+  answers: Record<string, unknown>,
+): Record<string, unknown> => {
+  const snapshot: Record<string, unknown> = {}
+  for (const component of components) {
+    if (
+      component.__typename !== 'SdfDisplayField' &&
+      typeof component.id === 'string' &&
+      component.id in answers
+    ) {
+      snapshot[component.id] = answers[component.id]
+    }
+  }
+  return snapshot
+}
+
 /**
  * Reactively recomputes `SdfDisplayField` values by calling the dedicated
  * `applicationSdfValidate` mutation with the current page's answers. The
@@ -42,9 +59,9 @@ export const useDisplayRecompute = (
     [components],
   )
 
-  const serializedAnswers = useMemo(
-    () => JSON.stringify(answers),
-    [answers],
+  const serializedCurrentPageAnswers = useMemo(
+    () => JSON.stringify(getCurrentPageAnswerSnapshot(components, answers)),
+    [answers, components],
   )
 
   useEffect(() => {
@@ -66,7 +83,10 @@ export const useDisplayRecompute = (
         )
         if (requestId !== requestCounterRef.current) return
         setOverlay(result.displayValues ?? {})
-      } catch {
+      } catch (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('SDF display recompute failed', error)
+        }
         // Best-effort reactive update; errors here must not break the form.
       }
     }, DEBOUNCE_MS)
@@ -74,7 +94,7 @@ export const useDisplayRecompute = (
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [serializedAnswers, applicationId, locale, pageIndex, shouldRecompute])
+  }, [serializedCurrentPageAnswers, applicationId, locale, pageIndex, shouldRecompute])
 
   return overlay
 }

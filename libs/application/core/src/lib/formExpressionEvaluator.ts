@@ -32,6 +32,33 @@ const isExpressionObject = (
 const isEmptyValue = (value: unknown): boolean =>
   value == null || (typeof value === 'string' && value.trim() === '')
 
+export const getFormExpressionDependencies = (
+  expression: FormExpression | undefined,
+): string[] => {
+  const dependencies = new Set<string>()
+
+  const visit = (value: FormExpression | undefined) => {
+    if (value === undefined || !isExpressionObject(value)) {
+      return
+    }
+
+    if (value.operator === 'GET') {
+      const [fieldId] = value.args
+      if (typeof fieldId === 'string') {
+        dependencies.add(fieldId)
+      }
+    }
+
+    for (const arg of value.args) {
+      visit(arg)
+    }
+  }
+
+  visit(expression)
+
+  return Array.from(dependencies)
+}
+
 export const evaluateFormExpression = (
   expression: FormExpression | undefined,
   values: Record<string, unknown>,
@@ -61,6 +88,22 @@ export const evaluateFormExpression = (
     case 'EQUALS': {
       const [left, right] = expression.args
       return evaluateArg(left) === evaluateArg(right)
+    }
+    case 'GT': {
+      const [left, right] = expression.args
+      return parseNumericValue(evaluateArg(left)) > parseNumericValue(evaluateArg(right))
+    }
+    case 'GTE': {
+      const [left, right] = expression.args
+      return parseNumericValue(evaluateArg(left)) >= parseNumericValue(evaluateArg(right))
+    }
+    case 'LT': {
+      const [left, right] = expression.args
+      return parseNumericValue(evaluateArg(left)) < parseNumericValue(evaluateArg(right))
+    }
+    case 'LTE': {
+      const [left, right] = expression.args
+      return parseNumericValue(evaluateArg(left)) <= parseNumericValue(evaluateArg(right))
     }
     case 'IS_EMPTY': {
       const [arg] = expression.args

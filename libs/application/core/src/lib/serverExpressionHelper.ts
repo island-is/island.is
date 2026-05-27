@@ -15,15 +15,30 @@ export type SchemaAnswers<TSchema> = TSchema extends z.ZodTypeAny
   ? z.infer<TSchema>
   : TSchema
 export type AnswerKey<TSchema> = Extract<keyof SchemaAnswers<TSchema>, string>
+type SchemaAnswerValue<
+  TSchema,
+  TKey extends AnswerKey<TSchema>,
+> = NonNullable<SchemaAnswers<TSchema>[TKey]>
 export type AnswerValue<
   TSchema,
   TKey extends AnswerKey<TSchema>,
-> = Extract<NonNullable<SchemaAnswers<TSchema>[TKey]>, ServerExpressionValue>
+> = Extract<SchemaAnswerValue<TSchema, TKey>, ServerExpressionValue>
 export type NumericAnswerKey<TSchema> = {
   [TKey in AnswerKey<TSchema>]: Extract<
-    NonNullable<SchemaAnswers<TSchema>[TKey]>,
+    SchemaAnswerValue<TSchema, TKey>,
     number
   > extends never
+    ? never
+    : TKey
+}[AnswerKey<TSchema>]
+type ArrayAnswerItem<
+  TSchema,
+  TKey extends AnswerKey<TSchema>,
+> = SchemaAnswerValue<TSchema, TKey> extends ReadonlyArray<infer TItem>
+  ? Extract<NonNullable<TItem>, ServerExpressionValue>
+  : never
+type ArrayAnswerKey<TSchema> = {
+  [TKey in AnswerKey<TSchema>]: ArrayAnswerItem<TSchema, TKey> extends never
     ? never
     : TKey
 }[AnswerKey<TSchema>]
@@ -31,18 +46,18 @@ export type NumericAnswerKey<TSchema> = {
 type TypedServerExpressionHelper<TSchema> = {
   answer: <TKey extends AnswerKey<TSchema>>(
     field: TKey,
-  ) => ServerExpressionAnswer<TKey, AnswerValue<TSchema, TKey>>
+  ) => ServerExpressionAnswer<TKey, SchemaAnswerValue<TSchema, TKey>>
   equals: <TKey extends AnswerKey<TSchema>>(
-    answer: ServerExpressionAnswer<TKey, AnswerValue<TSchema, TKey>>,
+    answer: ServerExpressionAnswer<TKey, SchemaAnswerValue<TSchema, TKey>>,
     value: AnswerValue<TSchema, TKey>,
   ) => SimpleCondition
   notEquals: <TKey extends AnswerKey<TSchema>>(
-    answer: ServerExpressionAnswer<TKey, AnswerValue<TSchema, TKey>>,
+    answer: ServerExpressionAnswer<TKey, SchemaAnswerValue<TSchema, TKey>>,
     value: AnswerValue<TSchema, TKey>,
   ) => SimpleCondition
-  contains: <TKey extends AnswerKey<TSchema>>(
-    answer: ServerExpressionAnswer<TKey, AnswerValue<TSchema, TKey>>,
-    value: AnswerValue<TSchema, TKey>,
+  contains: <TKey extends ArrayAnswerKey<TSchema>>(
+    answer: ServerExpressionAnswer<TKey, SchemaAnswerValue<TSchema, TKey>>,
+    value: ArrayAnswerItem<TSchema, TKey>,
   ) => SimpleCondition
   gt: <TKey extends NumericAnswerKey<TSchema>>(
     answer: ServerExpressionAnswer<TKey, number>,
@@ -111,9 +126,12 @@ export const serverExpr = {
   }),
   forSchema: <TSchema,>(): TypedServerExpressionHelper<TSchema> => ({
     answer: (field) => ({ field }),
-    equals: (answer, value) => serverExpr.equals(answer, value),
-    notEquals: (answer, value) => serverExpr.notEquals(answer, value),
-    contains: (answer, value) => serverExpr.contains(answer, value),
+    equals: (answer, value) => ({ field: answer.field, equals: value }),
+    notEquals: (answer, value) => ({
+      field: answer.field,
+      notEquals: value,
+    }),
+    contains: (answer, value) => ({ field: answer.field, contains: value }),
     gt: (answer, value) => serverExpr.gt(answer, value),
     gte: (answer, value) => serverExpr.gte(answer, value),
     lt: (answer, value) => serverExpr.lt(answer, value),

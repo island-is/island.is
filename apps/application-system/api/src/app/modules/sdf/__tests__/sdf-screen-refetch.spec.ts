@@ -1,8 +1,11 @@
 import {
   buildDescriptionField,
+  buildDisplayField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildTextField,
+  expr,
 } from '@island.is/application/core'
 import {
   ApplicationStatus,
@@ -41,6 +44,120 @@ const createScreenForm = () =>
               buildDescriptionField({
                 id: 'description',
                 title: 'Description',
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  })
+
+const createTwoPageScreenForm = () =>
+  buildForm({
+    id: 'refetchForm',
+    title: 'Refetch form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [
+              buildTextField({
+                id: 'selectedPlot',
+                title: 'Plot',
+              }),
+            ],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            children: [
+              buildDescriptionField({
+                id: 'plotDetails',
+                title: 'Plot details',
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  })
+
+const createDependencyScreenForm = () =>
+  buildForm({
+    id: 'dependencyForm',
+    title: 'Dependency form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [
+              buildTextField({
+                id: 'previousPageAnswer',
+                title: 'Previous page answer',
+              }),
+            ],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            children: [
+              buildTextField({
+                id: 'currentPageAnswer',
+                title: 'Current page answer',
+              }),
+              buildTextField({
+                id: 'dependentField',
+                title: 'Dependent field',
+                clientShowWhen: expr.equals(
+                  expr.get('previousPageAnswer'),
+                  'yes',
+                ),
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  })
+
+const createDisplayRecomputeForm = () =>
+  buildForm({
+    id: 'displayRecomputeForm',
+    title: 'Display recompute form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page',
+            title: 'Page',
+            children: [
+              buildTextField({
+                id: 'input1',
+                title: 'Input 1',
+              }),
+              buildDisplayField({
+                id: 'clientDisplay',
+                title: 'Client display',
+                clientValueExpression: {
+                  operator: 'GET',
+                  args: ['input1'],
+                },
+                value: () => 'client-server-value',
+              }),
+              buildDisplayField({
+                id: 'serverDisplay',
+                title: 'Server display',
+                value: (answers) => String(answers.input1 ?? ''),
               }),
             ],
           }),
@@ -263,5 +380,197 @@ describe('SdfScreenService handleRefetch', () => {
     expect(getApplicationTemplateByTypeIdMock).toHaveBeenLastCalledWith(
       application.typeId,
     )
+  })
+
+  it('keeps persisted page index during ephemeral refetch even when answers would infer a later page', async () => {
+    const application = {
+      ...createApplication(),
+      pageIndex: 0,
+      answers: {},
+    }
+    const template = createApplicationTemplate({
+      stateMachineConfig: {
+        initial: 'draft',
+        states: {
+          draft: {
+            meta: {
+              name: 'draft',
+              status: 'draft',
+              roles: [
+                {
+                  id: 'applicant',
+                  formLoader: () => Promise.resolve(createTwoPageScreenForm()),
+                  read: 'all',
+                  write: 'all',
+                  api: [lookupApi],
+                },
+              ],
+            },
+          },
+        },
+      },
+    })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
+
+    const applicationService = {
+      update: jest.fn(),
+      updateExternalData: jest.fn(),
+    }
+    const applicationActionService = {
+      performActionOnApplication: jest.fn(),
+      performEphemeralActionOnApplication: jest.fn().mockResolvedValue({
+        updatedApplication: application,
+        hasError: false,
+      }),
+    }
+
+    const service = new SdfScreenService(
+      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      applicationService,
+      {
+        findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
+      },
+      {
+        createResolver: jest.fn().mockResolvedValue(createResolver()),
+      },
+      {},
+      applicationActionService,
+    )
+
+    const screen = await service.handleRefetch(
+      application.id,
+      { selectedPlot: 'plot-a' },
+      [lookupApi.action],
+      'is',
+      { nationalId: application.applicant },
+    )
+
+    expect(screen.page.index).toBe(0)
+    expect(applicationService.update).not.toHaveBeenCalled()
+  })
+
+  it('includes answers referenced by current page client expressions', async () => {
+    const application = {
+      ...createApplication(),
+      pageIndex: 1,
+      answers: {
+        previousPageAnswer: 'yes',
+        currentPageAnswer: 'visible',
+      },
+    }
+    const template = createApplicationTemplate({
+      stateMachineConfig: {
+        initial: 'draft',
+        states: {
+          draft: {
+            meta: {
+              name: 'draft',
+              status: 'draft',
+              roles: [
+                {
+                  id: 'applicant',
+                  formLoader: () => Promise.resolve(createDependencyScreenForm()),
+                  read: 'all',
+                  write: 'all',
+                  api: [lookupApi],
+                },
+              ],
+            },
+          },
+        },
+      },
+    })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
+
+    const service = new SdfScreenService(
+      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      {
+        update: jest.fn(),
+        updateExternalData: jest.fn(),
+      },
+      {
+        findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
+      },
+      {
+        createResolver: jest.fn().mockResolvedValue(createResolver()),
+      },
+      {},
+      {
+        performActionOnApplication: jest.fn(),
+        performEphemeralActionOnApplication: jest.fn(),
+      },
+    )
+
+    const screen = await service.getScreen(
+      application.id,
+      undefined,
+      'is',
+      { nationalId: application.applicant },
+    )
+
+    expect(screen.page.index).toBe(1)
+    expect(screen.answers).toMatchObject({
+      previousPageAnswer: 'yes',
+      currentPageAnswer: 'visible',
+    })
+  })
+
+  it('does not recompute display values for client-computed display fields', async () => {
+    const application = {
+      ...createApplication(),
+      answers: {},
+    }
+    const template = createApplicationTemplate({
+      stateMachineConfig: {
+        initial: 'draft',
+        states: {
+          draft: {
+            meta: {
+              name: 'draft',
+              status: 'draft',
+              roles: [
+                {
+                  id: 'applicant',
+                  formLoader: () => Promise.resolve(createDisplayRecomputeForm()),
+                  read: 'all',
+                  write: 'all',
+                  api: [lookupApi],
+                },
+              ],
+            },
+          },
+        },
+      },
+    })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
+
+    const service = new SdfScreenService(
+      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      {
+        update: jest.fn(),
+        updateExternalData: jest.fn(),
+      },
+      {
+        findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
+      },
+      {
+        createResolver: jest.fn().mockResolvedValue(createResolver()),
+      },
+      {},
+      {
+        performActionOnApplication: jest.fn(),
+        performEphemeralActionOnApplication: jest.fn(),
+      },
+    )
+
+    const result = await service.validateFields(
+      application.id,
+      { input1: '42' },
+      [],
+      'is',
+      { nationalId: application.applicant },
+    )
+
+    expect(result.displayValues).toEqual({ serverDisplay: '42' })
   })
 })

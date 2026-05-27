@@ -107,12 +107,14 @@ describe('serverExpressionHelper', () => {
     const schema = z.object({
       age: z.number().optional(),
       status: z.enum(['draft', 'submitted']).optional(),
+      selectedItems: z.array(z.enum(['child', 'adult'])).optional(),
       accepted: z.boolean().optional(),
     })
     const typedServerExpr = serverExpr.forSchema<typeof schema>()
 
     typedServerExpr.equals(typedServerExpr.answer('status'), 'draft')
     typedServerExpr.gt(typedServerExpr.answer('age'), 17)
+    typedServerExpr.contains(typedServerExpr.answer('selectedItems'), 'child')
 
     // @ts-expect-error Invalid answer id.
     typedServerExpr.answer('missing')
@@ -122,6 +124,12 @@ describe('serverExpressionHelper', () => {
 
     // @ts-expect-error Numeric comparators only accept numeric answer fields.
     typedServerExpr.gt(typedServerExpr.answer('status'), 1)
+
+    // @ts-expect-error Contains only accepts array answer fields.
+    typedServerExpr.contains(typedServerExpr.answer('status'), 'draft')
+
+    // @ts-expect-error Contains only accepts values present in the array item type.
+    typedServerExpr.contains(typedServerExpr.answer('selectedItems'), 'senior')
 
     // @ts-expect-error Server condition values only support string and number.
     typedServerExpr.equals(typedServerExpr.answer('accepted'), true)

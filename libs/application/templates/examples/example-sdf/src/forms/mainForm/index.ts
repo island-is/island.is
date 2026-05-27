@@ -1,7 +1,13 @@
-import { FormBuilder, serverExpr } from '@island.is/application/core'
+import {
+  expr,
+  FormBuilder,
+  getSuccessfulExternalData,
+  hasSuccessfulExternalData,
+  serverExpr,
+} from '@island.is/application/core'
 import type { Application, DynamicCheck } from '@island.is/application/types'
 import { dataSchema, type ExampleSdfAnswers } from '../../lib/dataSchema'
-import { PlotDetailsApi } from '../../dataProviders'
+import { MyPlotsApi, PlotDetailsApi } from '../../dataProviders'
 
 interface Plot {
   id: string
@@ -22,8 +28,13 @@ const isPlotsPayload = (data: unknown): data is { plots: Plot[] } => {
 }
 
 const getPlots = (app: ExampleSdfApplication): Plot[] => {
-  const data = app.externalData?.getMyPlots?.data
-  return isPlotsPayload(data) ? data.plots : []
+  return (
+    getSuccessfulExternalData(
+      app.externalData,
+      MyPlotsApi.action,
+      isPlotsPayload,
+    )?.plots ?? []
+  )
 }
 
 const getSelectedPlot = (app: ExampleSdfApplication): Plot | undefined => {
@@ -54,8 +65,13 @@ const isPlotDetailsData = (data: unknown): data is PlotDetailsData => {
 const getPlotDetailsData = (
   app: ExampleSdfApplication,
 ): PlotDetailsData | null => {
-  const data = app.externalData?.getPlotDetails?.data
-  return isPlotDetailsData(data) ? data : null
+  return (
+    getSuccessfulExternalData(
+      app.externalData,
+      PlotDetailsApi.action,
+      isPlotDetailsData,
+    ) ?? null
+  )
 }
 
 /**
@@ -63,16 +79,10 @@ const getPlotDetailsData = (
  * Note: failed template API runs persist `data: {}` — a plain truthy check on `data` would wrongly show this block.
  */
 const showWhenPlotDetailsLoaded: DynamicCheck = (_answers, externalData) => {
-  const entry = externalData?.getPlotDetails as
-    | { status?: string; data?: unknown }
-    | undefined
-  if (entry?.status !== 'success') return false
-  const data = entry.data
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'soilType' in data &&
-    typeof (data as { soilType?: unknown }).soilType === 'string'
+  return hasSuccessfulExternalData(
+    externalData,
+    PlotDetailsApi.action,
+    isPlotDetailsData,
   )
 }
 
@@ -205,10 +215,7 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
               { label: 'Rain barrel collection', value: 'rainBarrel' },
             ],
             placeholder: 'Select irrigation type',
-            showWhen: serverExpr.equals(
-              serverExpr.answer('needsWaterAccess'),
-              'yes',
-            ),
+            clientShowWhen: expr.equals(expr.get('needsWaterAccess'), 'yes'),
           },
         )
     })

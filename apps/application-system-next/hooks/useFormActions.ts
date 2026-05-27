@@ -36,11 +36,6 @@ export const useFormActions = (
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
-    console.log('[SDF display debug] useFormActions setAnswer', {
-      fieldId,
-      value,
-      answers: answersRef.current,
-    })
     setAnswerSnapshot(answersRef.current)
     forceRender((n) => n + 1)
   }, [])

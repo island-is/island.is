@@ -1,4 +1,4 @@
-import { dataSchema, ExampleFieldsAnswers } from '@/lib/dataSchema'
+import { ExampleFieldsAnswers } from '../../../lib/dataSchema'
 import {
   expr,
   getValueViaPath,
@@ -120,12 +120,9 @@ export const displayFieldSubsection = new SubSectionBuilder(
         variant: 'currency',
         width: 'half',
         rightAlign: true,
-        showWhen: serverExprHelper.any(
-          serverExprHelper.contains(serverExprHelper.answer('input4'), ''),
-          serverExprHelper.contains(
-            serverExprHelper.answer('radioFieldForDisplayField'),
-            'other',
-          ),
+        clientShowWhen: expr.equals(
+          expr.get('radioFieldForDisplayField'),
+          'other',
         ),
       })
       .addRadioField('radioFieldForDisplayField', 'Trygging fyrir íbúð', {
@@ -142,7 +139,12 @@ export const displayFieldSubsection = new SubSectionBuilder(
         'Upphæð leigu',
         (answers) => {
           const value4 = Number(getValueViaPath<string>(answers, 'input4'))
-          const sum = Number(getValueViaPath<string>(answers, 'displayField'))
+          const sum = summedInputIds.reduce(
+            (total, inputId) =>
+              total +
+              toCurrencyNumber(getValueViaPath<string>(answers, inputId)),
+            0,
+          )
 
           const value5 = getValueViaPath<string>(
             answers,
@@ -176,7 +178,7 @@ export const displayFieldSubsection = new SubSectionBuilder(
               then: 'Önnur upphæð',
               otherwise: expr.multiply(
                 expr.get('input4'),
-                expr.get('displayField'),
+                expr.sum(...summedInputIds.map(expr.get)),
               ),
             }),
           }),

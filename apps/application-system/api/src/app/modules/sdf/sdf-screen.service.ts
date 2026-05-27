@@ -7,7 +7,10 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationService } from '@island.is/application/api/core'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  getFormExpressionDependencies,
+} from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
   Application,
@@ -15,6 +18,7 @@ import {
   ExternalData,
   FieldTypes,
   Form,
+  FormExpression,
   FormItemTypes,
   FormValue,
   RoleInState,
@@ -334,6 +338,8 @@ export class SdfScreenService {
     ephemeral: boolean,
   ): Promise<number> {
     // Priority: explicit override > persisted DB value > answer-based inference.
+    // Ephemeral renders (REFETCH) must keep the persisted page index so the client
+    // does not advance ahead of what NEXT_PAGE has committed.
     if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
       const resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
       if (!ephemeral && application.pageIndex !== pageIndexOverride) {
@@ -347,15 +353,13 @@ export class SdfScreenService {
 
     const persistedPageIndex = application.pageIndex ?? 0
     const hasAnswers = Object.keys(application.answers ?? {}).length > 0
-    if (persistedPageIndex === 0 && hasAnswers) {
+    if (!ephemeral && persistedPageIndex === 0 && hasAnswers) {
       // Migration fallback: existing app with no persisted page index.
       // Infer from answers and persist so this only runs once.
       const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
-      if (!ephemeral) {
-        await this.applicationService.update(applicationId, {
-          pageIndex: resolvedIndex,
-        })
-      }
+      await this.applicationService.update(applicationId, {
+        pageIndex: resolvedIndex,
+      })
 
       return resolvedIndex
     }
@@ -420,7 +424,10 @@ export class SdfScreenService {
     currentScreen: FormScreen,
     application: ApplicationWithAttachments,
   ): Record<string, unknown> {
-    const pageFieldIds = getFormNodeFieldIds(currentScreen)
+    const pageFieldIds = new Set([
+      ...getFormNodeFieldIds(currentScreen),
+      ...this.extractClientExpressionAnswerIds(currentScreen),
+    ])
     const pageAnswers: Record<string, unknown> = {}
 
     for (const fieldId of pageFieldIds) {
@@ -430,6 +437,33 @@ export class SdfScreenService {
     }
 
     return pageAnswers
+  }
+
+  private extractClientExpressionAnswerIds(node: unknown): string[] {
+    const ids = new Set<string>()
+
+    const visit = (value: unknown) => {
+      if (typeof value !== 'object' || value === null) {
+        return
+      }
+
+      const record = value as Record<string, unknown>
+      for (const expressionKey of ['clientShowWhen', 'clientValueExpression']) {
+        idsForExpression(record[expressionKey]).forEach((id) => ids.add(id))
+      }
+
+      const children = record.children
+      if (Array.isArray(children)) {
+        children.forEach(visit)
+      }
+    }
+
+    const idsForExpression = (expression: unknown): string[] =>
+      getFormExpressionDependencies(expression as FormExpression | undefined)
+
+    visit(node)
+
+    return Array.from(ids)
   }
 
   /**
@@ -688,6 +722,7 @@ export class SdfScreenService {
     for (const field of displayFields) {
       const id = field.id as string | undefined
       if (!id) continue
+      if (field.clientValueExpression !== undefined) continue
       const valueFn = field.value
       if (typeof valueFn !== 'function') continue
       try {
