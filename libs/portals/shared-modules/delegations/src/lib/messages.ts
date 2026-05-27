@@ -452,13 +452,12 @@ export const m = defineMessages({
     defaultMessage: 'Réttindi sem verða fjarlægð',
   },
   deleteWarningTitle: {
-    id: 'sp.access-control-delegations:delete-warning-title',
-    defaultMessage: 'Engin réttindi valin',
+    id: 'sp.access-control-delegations:title-delete-warning',
+    defaultMessage: 'Viltu eyða umboðinu?',
   },
   deleteWarningBody: {
     id: 'sp.access-control-delegations:delete-warning-body',
-    defaultMessage:
-      'Ef öll réttindi eru fjarlægð verður umboðinu eytt. Smelltu á "Eyða umboði" til að halda áfram.',
+    defaultMessage: 'Ef öll réttindi eru fjarlægð verður umboðinu eytt.',
   },
   deleteWarningButton: {
     id: 'sp.access-control-delegations:delete-warning-button',

@@ -216,6 +216,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
           disabled={currentStep?.continueButtonDisabled || loading}
           loading={loading}
           icon={currentStep?.continueButtonIcon}
+          iconType="outline"
           size="small"
         >
           {currentStep?.continueButtonLabel || 'Continue'}

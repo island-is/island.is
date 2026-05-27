@@ -197,7 +197,7 @@ const EditAccess = () => {
       ? {
           id: 'delete-warning',
           name: formatMessage(m.deleteWarningStepLabel),
-          content: <DeleteWarningStep initialScopes={initialScopes} />,
+          content: <DeleteWarningStep />,
           onContinue: () => {
             setIsDeleteModalVisible(true)
           },
