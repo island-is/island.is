@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react'
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
 
+interface PdfBlobState {
+  data: string | null
+  loading: boolean
+  error: Error | null
+}
+
+const idle: PdfBlobState = { data: null, loading: false, error: null }
+
 export const usePdfBlob = (url: string | null | undefined) => {
-  const [data, setData] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const [state, setState] = useState<PdfBlobState>(idle)
 
   useEffect(() => {
     if (!url) {
-      setData(null)
-      setError(null)
+      setState(idle)
       return
     }
 
     const controller = new AbortController()
     let objectUrl: string | null = null
 
-    setLoading(true)
-    setError(null)
-    setData(null)
+    setState({ data: null, loading: true, error: null })
 
     const bffUrl = createBffUrlGenerator()('/api', { url })
 
@@ -33,13 +36,16 @@ export const usePdfBlob = (url: string | null | undefined) => {
       })
       .then((blob) => {
         objectUrl = URL.createObjectURL(blob)
-        setData(objectUrl)
+        setState({ data: objectUrl, loading: false, error: null })
       })
       .catch((err) => {
         if (err.name === 'AbortError') return
-        setError(err instanceof Error ? err : new Error(String(err)))
+        setState({
+          data: null,
+          loading: false,
+          error: err instanceof Error ? err : new Error(String(err)),
+        })
       })
-      .finally(() => setLoading(false))
 
     return () => {
       controller.abort()
@@ -47,5 +53,5 @@ export const usePdfBlob = (url: string | null | undefined) => {
     }
   }, [url])
 
-  return { data, loading, error }
+  return state
 }

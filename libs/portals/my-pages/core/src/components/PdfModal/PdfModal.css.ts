@@ -21,6 +21,15 @@ export const dialog = style({
   backgroundColor: theme.color.white,
   borderRadius: theme.border.radius.large,
   overflow: 'hidden',
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md}px)`]: {
+      width: '100vw',
+      maxWidth: 'none',
+      height: '100vh',
+      margin: 0,
+      borderRadius: 0,
+    },
+  },
 })
 
 export const toolbar = style({
@@ -28,6 +37,15 @@ export const toolbar = style({
   display: 'grid',
   gridTemplateColumns: '1fr auto 1fr',
   alignItems: 'center',
+})
+
+export const zoomLabel = style({
+  minWidth: '3ch',
+  textAlign: 'center',
+})
+
+export const toolbarLeft = style({
+  gap: 4,
 })
 
 export const zoomButton = style({

@@ -4,6 +4,7 @@ import {
   Button,
   FocusableBox,
   Icon,
+  LoadingDots,
   PdfViewer,
   Text,
 } from '@island.is/island-ui/core'
@@ -11,10 +12,10 @@ import { useLocale } from '@island.is/localization'
 import { useIsMobile } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
-import { CardLoader } from '../CardLoader/CardLoader'
 import { m } from '../../lib/messages'
-import { formSubmit } from '../../utils/documentFormSubmission'
 import { usePdfBlob } from '../../hooks/usePdfBlob'
+import { downloadBlobUrl } from '../../utils/downloadBlobUrl'
+import { printBlobUrl } from '../../utils/printBlobUrl'
 import * as styles from './PdfModal.css'
 
 interface PdfModalProps {
@@ -36,6 +37,7 @@ export const PdfModal = ({
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const [scale, setScale] = useState(1.0)
+  const [docReady, setDocReady] = useState(false)
 
   const store = useDialogStore({
     open: !!url,
@@ -46,8 +48,12 @@ export const PdfModal = ({
 
   const handlePrint = () => {
     if (!data) return
-    const w = window.open(data)
-    if (w) w.addEventListener('load', () => w.print())
+    printBlobUrl(data)
+  }
+
+  const handleDownload = () => {
+    if (!data) return
+    downloadBlobUrl(data, title ?? 'document.pdf')
   }
 
   return (
@@ -62,13 +68,18 @@ export const PdfModal = ({
       {/* Toolbar */}
       <Box
         className={styles.toolbar}
-        paddingX={2}
+        paddingX={[1, 2]}
         paddingY={1}
         borderBottomWidth="standard"
         borderColor="blue200"
       >
         {/* Left: icon + title */}
-        <Box display="flex" alignItems="center" minWidth={0}>
+        <Box
+          display="flex"
+          alignItems="center"
+          minWidth={0}
+          className={styles.toolbarLeft}
+        >
           <Icon icon="document" type="outline" size="small" color="blue400" />
           {title && (
             <Text variant="small" fontWeight="semiBold" truncate>
@@ -90,7 +101,7 @@ export const PdfModal = ({
             component="button"
             type="button"
             className={styles.zoomButton}
-            disabled={scale <= 0.6}
+            disabled={!docReady || scale <= 0.6}
             aria-label={formatMessage(m.zoomOut)}
             onClick={() =>
               setScale((s) => Math.max(0.6, +(s - 0.1).toFixed(1)))
@@ -98,14 +109,18 @@ export const PdfModal = ({
           >
             <Icon icon="remove" type="outline" size="small" color="blue400" />
           </FocusableBox>
-          <Text fontWeight="semiBold" variant="small">
+          <Text
+            fontWeight="semiBold"
+            variant="small"
+            className={styles.zoomLabel}
+          >
             {Math.round(scale * 100)}%
           </Text>
           <FocusableBox
             component="button"
             type="button"
             className={styles.zoomButton}
-            disabled={scale >= 3.5}
+            disabled={!docReady || scale >= 3.5}
             aria-label={formatMessage(m.zoomIn)}
             onClick={() =>
               setScale((s) => Math.min(3.5, +(s + 0.1).toFixed(1)))
@@ -117,14 +132,14 @@ export const PdfModal = ({
 
         {/* Right: print, download, close */}
         <Box
-          columnGap={2}
+          columnGap={[1, 2]}
           display="flex"
           alignItems="center"
           justifyContent="flexEnd"
         >
           <Button
             icon="print"
-            iconType="filled"
+            iconType="outline"
             variant="utility"
             size="small"
             disabled={!data}
@@ -133,12 +148,12 @@ export const PdfModal = ({
             {isMobile ? undefined : formatMessage(m.print)}
           </Button>
           <Button
-            disabled={!url}
-            icon="share"
+            disabled={!data}
+            icon="download"
             iconType="outline"
             variant="utility"
             size="small"
-            onClick={() => url && formSubmit(url)}
+            onClick={handleDownload}
           >
             {isMobile ? undefined : formatMessage(m.download)}
           </Button>
@@ -164,9 +179,9 @@ export const PdfModal = ({
 
       {/* Content */}
       <Box className={styles.pdfContent} background="blue100">
-        {loading && (
-          <Box padding={4}>
-            <CardLoader />
+        {(loading || (!!data && !docReady)) && (
+          <Box padding={4} marginTop={4}>
+            <LoadingDots size="large" />
           </Box>
         )}
         {error && (
@@ -175,7 +190,16 @@ export const PdfModal = ({
           </Box>
         )}
         {data && (
-          <PdfViewer file={data} showAllPages scale={scale} autoWidth={false} />
+          <Box display={docReady ? 'block' : 'none'}>
+            <PdfViewer
+              file={data}
+              showAllPages
+              scale={scale}
+              autoWidth={false}
+              disableLoading
+              onLoadingSuccess={() => setDocReady(true)}
+            />
+          </Box>
         )}
       </Box>
     </Dialog>
