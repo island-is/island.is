@@ -52,6 +52,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         id: 'viewResults',
         header: () => null,
         enableSorting: false,
+        meta: { align: 'right' },
         cell: ({ row }) => {
           const url = row.original.downloadServiceUrl
           if (!url) return null
