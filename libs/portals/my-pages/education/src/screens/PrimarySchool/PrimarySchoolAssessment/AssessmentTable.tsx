@@ -21,6 +21,8 @@ const columnHelper =
 export const AssessmentTable = ({ results, loading }: Props) => {
   const { formatMessage, locale } = useLocale()
 
+  const hasExamSitting = results.some((r) => r.period?.startDateString)
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('schoolYear', {
@@ -37,11 +39,15 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             : ''
         },
       }),
-      columnHelper.accessor((row) => row.period?.startDateString, {
-        id: 'examSitting',
-        header: formatMessage(psm.examSitting),
-        cell: ({ getValue }) => getValue() ?? '',
-      }),
+      ...(hasExamSitting
+        ? [
+            columnHelper.accessor((row) => row.period?.startDateString, {
+              id: 'examSitting',
+              header: formatMessage(psm.examSitting),
+              cell: ({ getValue }) => getValue() ?? '',
+            }),
+          ]
+        : []),
       columnHelper.display({
         id: 'viewResults',
         header: () => null,
@@ -68,7 +74,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [locale, hasExamSitting],
   )
 
   return (
