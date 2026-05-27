@@ -15,7 +15,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
-import { PaymentFlow } from './paymentFlow.model'
+import { PaymentFlow } from '../../paymentFlow/models/paymentFlow.model'
 
 @Table({
   tableName: 'bank_transfer_payment',

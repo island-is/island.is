@@ -15,7 +15,6 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
-import { BankTransferPayment } from './models/bankTransferPayment.model'
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
-      BankTransferPayment,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig],
