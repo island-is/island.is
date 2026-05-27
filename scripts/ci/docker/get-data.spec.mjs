@@ -32,6 +32,11 @@ jest.spyOn(fs, 'mkdirSync').mockImplementation(() => {})
 // Mock const.mjs
 jest.mock('./const.mjs', () => ({
   MAIN_BRANCHES: ['main'],
+  isMainBranch: (branch) => branch === 'main',
+  isReleaseBranch: (branch) =>
+    /^release\/(?:\d+\.\d+\.\d+|\d{4}\.\d{1,2}\.\d{1,2}\.\d+)$/.test(
+      branch,
+    ),
 }))
 
 // Mock jsyaml
