@@ -230,7 +230,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
-      {/* <Row>
+      <Row>
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
@@ -251,7 +251,7 @@ export const BaseSettings = () => {
             }}
           />
         </Column>
-      </Row> */}
+      </Row>
       <Row>
         <Column>
           <Checkbox

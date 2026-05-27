@@ -101,7 +101,10 @@ export const incrementWithScreens = (
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
-  if (errors.length > 0 || !isValid) {
+  if (
+    errors.length > 0 ||
+    (!isValid && !state.application.allowProceedOnValidationFail)
+  ) {
     return { ...state, errors }
   }
 

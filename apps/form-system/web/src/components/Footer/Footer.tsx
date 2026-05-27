@@ -116,7 +116,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     if (paymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
-    if (!isValid) return
+    if (!isValid && !state.application.allowProceedOnValidationFail) return
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
@@ -319,7 +319,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 !enableContinueButton ||
                 paymentLoading ||
                 submitLoading ||
-                notifyLoading
+                notifyLoading ||
+                (onSubmit && state.isValid === false)
               }
               loading={submitLoading || notifyLoading || paymentLoading}
             >
