@@ -2,13 +2,9 @@ query GetDriversPenaltyPoints {
   driversPenaltyPoints {
     isDeprived
     details {
-      caseNumber
       offenseDate
       penalty
-      penaltyStatus
       points
-      districtName
-      statusCode
     }
   }
 }

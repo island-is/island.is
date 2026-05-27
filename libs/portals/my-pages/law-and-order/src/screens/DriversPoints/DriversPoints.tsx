@@ -73,6 +73,7 @@ const DriversPoints = () => {
         <Box>
           {!isPenaltyPointsOk && (
             <Box marginBottom={3}>
+              {/* TODO: confirm alert type and message copy with business — isDeprived means threshold crossed, not approaching */}
               <AlertMessage
                 type="warning"
                 title={formatMessage(messages.driversPointsWarningTitle)}
