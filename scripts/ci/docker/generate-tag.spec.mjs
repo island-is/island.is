@@ -84,7 +84,10 @@ describe('generate-tag.mjs', () => {
   })
 
   test('keeps semver release branch behavior', () => {
-    const output = getOutput(workflowDispatchContext('release/41.1.0'), randomTag)
+    const output = getOutput(
+      workflowDispatchContext('release/41.1.0'),
+      randomTag,
+    )
 
     expect(output.tagName).toBe(`release_41.1.0_db609e6_${randomTag}`)
     expect(output.artifactName).toBe(`release-${sha}`)
@@ -109,10 +112,7 @@ describe('generate-tag.mjs', () => {
   })
 
   test('generates prerelease tag for calver pre-release push', () => {
-    const output = getOutput(
-      pushContext('pre-release/2026.5.26.0'),
-      randomTag,
-    )
+    const output = getOutput(pushContext('pre-release/2026.5.26.0'), randomTag)
 
     expect(output.tagName).toBe(`prerelease_db609e6_${randomTag}`)
     expect(output.artifactName).toBe(`prerelease-${sha}`)
