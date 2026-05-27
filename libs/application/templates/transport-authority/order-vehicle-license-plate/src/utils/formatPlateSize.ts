@@ -13,8 +13,18 @@ export const formatPlateSize = (
       : 'plateSizeType' in plate
       ? plate.plateSizeType ?? ''
       : ''
-  const height = plate.plateHeight ?? ''
-  const width = plate.plateWidth ?? ''
+  const height = plate.plateHeight
+  const width = plate.plateWidth
+  if (
+    height === null ||
+    height === undefined ||
+    width === null ||
+    width === undefined ||
+    !Number.isFinite(height) ||
+    !Number.isFinite(width)
+  ) {
+    return ''
+  }
   return formatMessage(information.labels.plateSize.plateSizeOptionTitle, {
     name: code,
     height,
