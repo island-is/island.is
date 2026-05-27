@@ -182,4 +182,9 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentQuantityId?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  showAddress?: boolean
 }

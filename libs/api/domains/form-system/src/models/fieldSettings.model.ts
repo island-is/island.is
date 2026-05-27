@@ -114,4 +114,7 @@ export class FieldSettings {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => Boolean, { nullable: true })
+  showAddress?: boolean
 }
