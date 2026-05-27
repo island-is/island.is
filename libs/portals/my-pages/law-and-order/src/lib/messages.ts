@@ -282,4 +282,120 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:close',
     defaultMessage: 'Loka',
   },
+
+  // DriversPoints
+  driversPointsTitle: {
+    id: 'sp.law-and-order:drivers-points-title',
+    defaultMessage: 'Punktastaða',
+  },
+  driversPointsDescription: {
+    id: 'sp.law-and-order:drivers-points-description',
+    defaultMessage:
+      'Hér getur þú séð núverandi punktastöðuna þína hjá lögreglu. Punktar eru veittir fyrir umferðarlagabrot og eru færðir í skrá um ökuferil ökumanna.',
+  },
+  driversPointsLearnMoreText: {
+    id: 'sp.law-and-order:drivers-points-learn-more-text',
+    defaultMessage: 'Lesa nánar um punkta',
+  },
+  driversPointsLearnMoreUrl: {
+    id: 'sp.law-and-order:drivers-points-learn-more-url',
+    defaultMessage: 'https://island.is/punktar-fyrir-brot-a-umferdarlogum',
+  },
+  driversPointsEmptyTitle: {
+    id: 'sp.law-and-order:drivers-points-empty-title',
+    defaultMessage: 'Þú ert ekki með neina punkta',
+  },
+  driversPointsEmptyDescription: {
+    id: 'sp.law-and-order:drivers-points-empty-description',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila',
+  },
+  driversPointsWarningTitle: {
+    id: 'sp.law-and-order:drivers-points-warning-title',
+    defaultMessage: 'Athugið',
+  },
+  driversPointsWarningDescription: {
+    id: 'sp.law-and-order:drivers-points-warning-description',
+    defaultMessage: 'Punktar þínir eru að nálgast svipting',
+  },
+  driversPointsColumnOffenseDate: {
+    id: 'sp.law-and-order:drivers-points-column-offense-date',
+    defaultMessage: 'Dagsetning brots',
+  },
+  driversPointsColumnPenalty: {
+    id: 'sp.law-and-order:drivers-points-column-penalty',
+    defaultMessage: 'Brot',
+  },
+  driversPointsColumnPoints: {
+    id: 'sp.law-and-order:drivers-points-column-points',
+    defaultMessage: 'Punktar',
+  },
+  driversPointsColumnExpiresDate: {
+    id: 'sp.law-and-order:drivers-points-column-expires-date',
+    defaultMessage: 'Fyrnist dags.',
+  },
+  driversPointsTotalPoints: {
+    id: 'sp.law-and-order:drivers-points-total-points',
+    defaultMessage: 'Samtals punktar:',
+  },
+
+  // DriversDeprivations
+  driversDeprivationsTitle: {
+    id: 'sp.law-and-order:drivers-deprivations-title',
+    defaultMessage: 'Svipting',
+  },
+  driversDeprivationsDescription: {
+    id: 'sp.law-and-order:drivers-deprivations-description',
+    defaultMessage:
+      'Hér sérðu upplýsingar um stöðu sviptingar ökuréttinda, gildistíma og hvaða skilyrði kunna að gilda til að öðlast ökurétt aftur.',
+  },
+  driversDeprivationsLearnMoreText: {
+    id: 'sp.law-and-order:drivers-deprivations-learn-more-text',
+    defaultMessage: 'Nánar um sviptingu',
+  },
+  driversDeprivationsLearnMoreUrl: {
+    id: 'sp.law-and-order:drivers-deprivations-learn-more-url',
+    defaultMessage: 'https://island.is/svipting-okuretts',
+  },
+  driversDeprivationsRestoreLicenseText: {
+    id: 'sp.law-and-order:drivers-deprivations-restore-license-text',
+    defaultMessage: 'Endurveiting ökuréttar',
+  },
+  driversDeprivationsRestoreLicenseUrl: {
+    id: 'sp.law-and-order:drivers-deprivations-restore-license-url',
+    defaultMessage: 'https://island.is/endurveiting-okuretts',
+  },
+  driversDeprivationsEmptyTitle: {
+    id: 'sp.law-and-order:drivers-deprivations-empty-title',
+    defaultMessage: 'Engin virk svipting',
+  },
+  driversDeprivationsEmptyDescription: {
+    id: 'sp.law-and-order:drivers-deprivations-empty-description',
+    defaultMessage:
+      'Þú ert ekki með virka sviptingu og ökuréttindi þín eru í gildi.',
+  },
+  driversDeprivationsActiveTitle: {
+    id: 'sp.law-and-order:drivers-deprivations-active-title',
+    defaultMessage: 'Svipting í gildi',
+  },
+  driversDeprivationsActiveDescription: {
+    id: 'sp.law-and-order:drivers-deprivations-active-description',
+    defaultMessage: 'Svipting gildir til {dateTo}',
+  },
+  driversDeprivationsColumnType: {
+    id: 'sp.law-and-order:drivers-deprivations-column-type',
+    defaultMessage: 'Tegund sviptingar',
+  },
+  driversDeprivationsColumnReason: {
+    id: 'sp.law-and-order:drivers-deprivations-column-reason',
+    defaultMessage: 'Ástæða',
+  },
+  driversDeprivationsColumnDateFrom: {
+    id: 'sp.law-and-order:drivers-deprivations-column-date-from',
+    defaultMessage: 'Gildir frá',
+  },
+  driversDeprivationsColumnDateTo: {
+    id: 'sp.law-and-order:drivers-deprivations-column-date-to',
+    defaultMessage: 'Gildir til',
+  },
 })
