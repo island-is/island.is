@@ -1,81 +1,37 @@
 // @ts-check
 import github from '@actions/github'
 import core from '@actions/core'
-import { getReleaseVersion, isMainBranch, isReleaseBranch } from './const.mjs'
-import { isFeatureDeployment, isMainModule } from './utils.mjs'
+import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
+import { isFeatureDeployment } from './utils.mjs'
 
-if (isMainModule(import.meta.url)) {
-  main().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+const randomTag = createRandomString(16)
+const context = github.context
+const eventName = context.eventName
+const sha = context.payload.pull_request?.head.sha || context.sha
+const shortSha = sha.slice(0, 7)
+const targetBranch = getTargetBranch()
+
+core.setOutput('SHOULD_RUN_BUILD', JSON.stringify(shouldRun()))
+if (!shouldRun()) {
+  process.exit(0)
 }
+const typeOfDeployment = getTypeOfDeployment()
+const artifactName = getArtifactname()
+const tagName = getTagname()
 
-export async function main(
-  testContext = github.context,
-  randomTag = createRandomString(16),
-) {
-  const outputs = getOutputs(testContext, randomTag)
-  core.setOutput('SHOULD_RUN_BUILD', JSON.stringify(outputs.shouldRun))
+core.setOutput('ARTIFACT_NAME', artifactName)
+core.setOutput('DOCKER_TAG', tagName)
+core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release')
+core.setOutput('DEPLOY_JUDICIAL', targetBranch === 'main')
+core.setOutput('GIT_BRANCH', targetBranch)
+core.setOutput('GIT_SHA', sha)
+console.info(`Artifact name: ${artifactName}`)
+console.info(`Docker tag: ${tagName}`)
+console.info(`Git branch: ${targetBranch}`)
+console.info(`Git SHA: ${sha}`)
+console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
-  if (!outputs.shouldRun) {
-    process.exit(0)
-  }
-
-  core.setOutput('ARTIFACT_NAME', outputs.artifactName)
-  core.setOutput('DOCKER_TAG', outputs.tagName)
-  core.setOutput('HELM_VALUES_BRANCH', outputs.helmValuesBranch)
-  core.setOutput('DEPLOY_JUDICIAL', outputs.deployJudicial)
-  core.setOutput('GIT_BRANCH', outputs.targetBranch)
-  core.setOutput('GIT_SHA', outputs.sha)
-  console.info(`Artifact name: ${outputs.artifactName}`)
-  console.info(`Docker tag: ${outputs.tagName}`)
-  console.info(`Git branch: ${outputs.targetBranch}`)
-  console.info(`Git SHA: ${outputs.sha}`)
-  console.info(`Helm values branch: ${outputs.helmValuesBranch}`)
-}
-
-export function getOutputs(
-  context = github.context,
-  randomTag = createRandomString(16),
-) {
-  const sha = getSha(context)
-  const shortSha = sha.slice(0, 7)
-  const targetBranch = getTargetBranch(context)
-  const run = shouldRun(context, targetBranch)
-
-  if (!run) {
-    return {
-      shouldRun: false,
-      targetBranch,
-      sha,
-    }
-  }
-
-  const typeOfDeployment = getTypeOfDeployment(targetBranch)
-  const artifactName = getArtifactname(context, typeOfDeployment)
-  const tagName = getTagname(
-    context,
-    typeOfDeployment,
-    targetBranch,
-    shortSha,
-    randomTag,
-  )
-
-  return {
-    shouldRun: true,
-    artifactName,
-    tagName,
-    helmValuesBranch: typeOfDeployment.dev ? 'main' : 'release',
-    deployJudicial: targetBranch === 'main',
-    targetBranch,
-    sha,
-  }
-}
-
-export function shouldRun(context, targetBranch = getTargetBranch(context)) {
-  const eventName = context.eventName
-
+function shouldRun() {
   if (eventName === 'workflow_dispatch') {
     return true
   }
@@ -88,19 +44,14 @@ export function shouldRun(context, targetBranch = getTargetBranch(context)) {
   return false
 }
 
-export function isTargetBranchCompatible(targetBranch) {
-  return isMainBranch(targetBranch) || isReleaseBranch(targetBranch)
+function isTargetBranchCompatible(targetBranch) {
+  return (
+    MAIN_BRANCHES.includes(targetBranch) ||
+    RELEASE_BRANCHES.includes(targetBranch)
+  )
 }
 
-export function getTagname(
-  context,
-  typeOfDeployment,
-  targetBranch,
-  shortSha,
-  randomTag,
-) {
-  const eventName = context.eventName
-
+function getTagname() {
   if (eventName === 'pull_request' && context.payload.pull_request?.number) {
     return `pr-${shortSha}-${randomTag}`
   }
@@ -110,7 +61,7 @@ export function getTagname(
       return `dev_${shortSha}_${randomTag}`
     }
     if (typeOfDeployment.prod) {
-      const version = getReleaseVersion(targetBranch)
+      const version = targetBranch.replace('release/', '')
       return `release_${version}_${shortSha}_${randomTag}`
     }
     throw new Error(`Unable to determine artifact name for merge_group event`)
@@ -126,9 +77,7 @@ export function getTagname(
   )
 }
 
-export function getArtifactname(context, typeOfDeployment) {
-  const eventName = context.eventName
-
+function getArtifactname() {
   if (eventName === 'pull_request' && context.payload.pull_request?.number) {
     return `pr-${context.payload.pull_request.number}`
   }
@@ -164,14 +113,14 @@ export function getArtifactname(context, typeOfDeployment) {
   )
 }
 
-export function getTypeOfDeployment(targetBranch) {
-  if (isMainBranch(targetBranch)) {
+function getTypeOfDeployment() {
+  if (MAIN_BRANCHES.includes(targetBranch)) {
     return {
       dev: true,
       prod: false,
     }
   }
-  if (isReleaseBranch(targetBranch)) {
+  if (RELEASE_BRANCHES.includes(targetBranch)) {
     return {
       dev: false,
       prod: true,
@@ -181,11 +130,10 @@ export function getTypeOfDeployment(targetBranch) {
     dev: true,
     prod: false,
   }
+  throw new Error(`Unsupported branch: ${targetBranch}`)
 }
 
-export function getTargetBranch(context = github.context) {
-  const eventName = context.eventName
-
+function getTargetBranch() {
   if (eventName === 'pull_request' && context.payload?.pull_request?.base.ref) {
     return context.payload.pull_request.base.ref.replace('refs/heads/', '')
   }
@@ -203,10 +151,6 @@ export function getTargetBranch(context = github.context) {
   throw new Error(
     `Unable to determine target branch for event type: ${eventName}`,
   )
-}
-
-function getSha(context) {
-  return context.payload?.pull_request?.head.sha || context.sha
 }
 
 function createRandomString(length) {
