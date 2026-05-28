@@ -9,16 +9,19 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { environment } from '../../environments'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   BankTransferPaymentResult,
+  BankTransferStatus,
   CreateBankTransferPaymentInput,
   blikkCreatePaymentResponseSchema,
   blikkGetPaymentResponseSchema,
 } from './bankTransfer.types'
 import { BankTransferModuleConfig } from './bankTransfer.config'
+import { VerifyBankTransferInput } from './dtos/verifyBankTransfer.input'
+import { VerifyBankTransferResponse } from './dtos/verifyBankTransfer.response'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
   generateBankTransferChargeFJSPayload,
@@ -106,6 +109,133 @@ export class BankTransferService {
     )
 
     return this.toResult(data)
+  }
+
+  /**
+   * Verifies the current state of a bank transfer attempt — the polling target for the frontend AND
+   * the path the provider callback delegates to. Idempotent end-to-end:
+   *
+   * - **Already-PAID flow** → return SUCCESS immediately, no provider call.
+   * - Otherwise fetch the latest status from the provider, then branch:
+   *   - **SUCCESS** → trigger {@link confirmBankTransferPayment} (itself fully idempotent; the
+   *     fulfillment claim is gated so only the first concurrent caller creates the FJS charge).
+   *   - **ERROR / REJECTED / CANCELLED** → soft-delete the row, gated by `isDeleted:false` so only the
+   *     first of concurrent verifies fires the `payment_failed` event.
+   *   - **PENDING** → persist a `lastKnownStatus` change if the provider's raw status moved.
+   *
+   * The active row is intentionally resolved with `isDeleted:false` — a late poll arriving after a
+   * terminal failure was already processed gets `BankTransferNotFound`, and the caller re-resolves via
+   * the flow's overall status.
+   */
+  async verify(
+    input: VerifyBankTransferInput,
+  ): Promise<VerifyBankTransferResponse> {
+    const row = await this.findActiveBankTransferPayment(input)
+
+    if (!row) {
+      throw new BadRequestException(BankTransferErrorCode.BankTransferNotFound)
+    }
+
+    // Already-PAID short-circuit.
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      row.paymentFlowId,
+    )
+    const { paymentStatus } =
+      await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
+    if (paymentStatus === PaymentStatus.PAID) {
+      return { status: BankTransferStatus.SUCCESS }
+    }
+
+    const logPrefix = createLogPrefix(
+      row.paymentFlowId,
+      row.sourceReferenceId,
+      row.providerPaymentId,
+    )
+
+    const result = await this.getPayment(row.providerPaymentId)
+
+    switch (result.status) {
+      case BankTransferStatus.SUCCESS:
+        await this.confirmBankTransferPayment({
+          correlationId: row.id,
+          paymentFlowId: row.paymentFlowId,
+          providerPaymentId: row.providerPaymentId,
+          rawStatus: result.rawStatus,
+        })
+        break
+
+      case BankTransferStatus.ERROR:
+      case BankTransferStatus.REJECTED:
+      case BankTransferStatus.CANCELLED: {
+        // delete the row if error occurs, so new brank transfer payment can be created
+        const [affectedRows] = await this.bankTransferPaymentModel.update(
+          { isDeleted: true, lastKnownStatus: result.rawStatus },
+          { where: { id: row.id, isDeleted: false } },
+        )
+
+        if (affectedRows > 0) {
+          this.logger.info(`${logPrefix}Bank transfer payment failed`, {
+            paymentFlowId: row.paymentFlowId,
+            status: result.status,
+            message: result.message,
+          })
+          await this.paymentFlowService.logPaymentFlowUpdate(
+            {
+              paymentFlowId: row.paymentFlowId,
+              type: 'error',
+              occurredAt: new Date(),
+              paymentMethod: PaymentMethod.BANK_TRANSFER,
+              reason: 'payment_failed',
+              message: `Bank transfer ${result.status}`,
+              metadata: {
+                providerPaymentId: row.providerPaymentId,
+                rawStatus: result.rawStatus,
+                providerMessage: result.message,
+              },
+            },
+            { useRetry: true, throwOnError: false },
+          )
+        }
+        break
+      }
+
+      case BankTransferStatus.PENDING:
+        if (result.rawStatus !== row.lastKnownStatus) {
+          await this.bankTransferPaymentModel.update(
+            { lastKnownStatus: result.rawStatus },
+            { where: { id: row.id, isDeleted: false } },
+          )
+        }
+        break
+    }
+
+    return { status: result.status, message: result.message }
+  }
+
+  /**
+   * Resolves the active bank-transfer attempt by either `providerPaymentId` (callback path)
+   * or `paymentFlowId` (frontend polling path).`
+   */
+  private async findActiveBankTransferPayment(
+    input: VerifyBankTransferInput,
+  ): Promise<BankTransferPayment | null> {
+    if (input.providerPaymentId) {
+      return this.bankTransferPaymentModel.findOne({
+        where: {
+          provider: 'blikk',
+          providerPaymentId: input.providerPaymentId,
+          isDeleted: false,
+        },
+      })
+    }
+
+    if (input.paymentFlowId) {
+      return this.bankTransferPaymentModel.findOne({
+        where: { paymentFlowId: input.paymentFlowId, isDeleted: false },
+      })
+    }
+
+    return null
   }
 
   /**

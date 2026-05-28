@@ -4,7 +4,7 @@ import { BadRequestException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { BankTransferStatus } from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
@@ -41,18 +41,22 @@ describe('BankTransferService', () => {
   let logger: jest.Mocked<Logger>
   let service: BankTransferService
   let fetchMock: jest.Mock
-  let bankTransferPaymentModel: { update: jest.Mock }
+  let bankTransferPaymentModel: { update: jest.Mock; findOne: jest.Mock }
   let paymentFlowService: {
     createBankTransferFulfillment: jest.Mock
     createFjsCharge: jest.Mock
     getPaymentFlowDetails: jest.Mock
     getPaymentFlowChargeDetails: jest.Mock
+    getPaymentFlowStatus: jest.Mock
     logPaymentFlowUpdate: jest.Mock
   }
 
   beforeEach(() => {
     logger = createMockLogger()
-    bankTransferPaymentModel = { update: jest.fn().mockResolvedValue([1]) }
+    bankTransferPaymentModel = {
+      update: jest.fn().mockResolvedValue([1]),
+      findOne: jest.fn(),
+    }
     paymentFlowService = {
       createBankTransferFulfillment: jest.fn().mockResolvedValue(undefined),
       createFjsCharge: jest.fn().mockResolvedValue({ receptionId: 'r-1' }),
@@ -75,6 +79,10 @@ describe('BankTransferService', () => {
           },
         ],
         totalPrice: 14000,
+      }),
+      getPaymentFlowStatus: jest.fn().mockResolvedValue({
+        paymentStatus: PaymentStatus.UNPAID,
+        updatedAt: new Date(),
       }),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
     }
@@ -308,6 +316,180 @@ describe('BankTransferService', () => {
         paymentMethod: PaymentMethod.BANK_TRANSFER,
         metadata: { providerPaymentId: 'prov-1' },
       })
+    })
+  })
+
+  describe('verify', () => {
+    const activeRow = {
+      id: 'corr-1',
+      paymentFlowId: 'flow-1',
+      providerPaymentId: 'prov-1',
+      lastKnownStatus: 'PENDING',
+      provider: 'blikk',
+      isDeleted: false,
+    }
+
+    const mockGetPayment = (
+      status: BankTransferStatus,
+      rawStatus: string,
+      message?: string,
+    ) =>
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus,
+        status,
+        message,
+      })
+
+    it('looks up the active row by providerPaymentId', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
+
+      await service.verify({ providerPaymentId: 'prov-1' })
+
+      expect(bankTransferPaymentModel.findOne).toHaveBeenCalledWith({
+        where: {
+          provider: 'blikk',
+          providerPaymentId: 'prov-1',
+          isDeleted: false,
+        },
+      })
+    })
+
+    it('looks up the active row by paymentFlowId when providerPaymentId is absent', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
+
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.findOne).toHaveBeenCalledWith({
+        where: { paymentFlowId: 'flow-1', isDeleted: false },
+      })
+    })
+
+    it('throws BankTransferNotFound when no row is found', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(null)
+
+      await expect(
+        service.verify({ paymentFlowId: 'flow-1' }),
+      ).rejects.toThrow(BankTransferErrorCode.BankTransferNotFound)
+    })
+
+    it('throws BankTransferNotFound when no lookup key is provided', async () => {
+      // No findOne call — findActiveBankTransferPayment returns null without keys.
+      await expect(service.verify({})).rejects.toThrow(
+        BankTransferErrorCode.BankTransferNotFound,
+      )
+      expect(bankTransferPaymentModel.findOne).not.toHaveBeenCalled()
+    })
+
+    it('short-circuits to SUCCESS without calling the provider when the flow is already PAID', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      paymentFlowService.getPaymentFlowStatus.mockResolvedValue({
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: new Date(),
+      })
+      const getPaymentSpy = jest.spyOn(service, 'getPayment')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(result).toEqual({ status: BankTransferStatus.SUCCESS })
+      expect(getPaymentSpy).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('calls confirmBankTransferPayment when the provider reports SUCCESS', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+      const confirmSpy = jest
+        .spyOn(service, 'confirmBankTransferPayment')
+        .mockResolvedValue()
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(confirmSpy).toHaveBeenCalledWith({
+        correlationId: 'corr-1',
+        paymentFlowId: 'flow-1',
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SUCCESS',
+      })
+      expect(result.status).toBe(BankTransferStatus.SUCCESS)
+    })
+
+    it.each<[BankTransferStatus, string]>([
+      [BankTransferStatus.ERROR, 'ERROR'],
+      [BankTransferStatus.REJECTED, 'REJECTED'],
+      [BankTransferStatus.CANCELLED, 'CANCELLED'],
+    ])(
+      'soft-deletes the row and emits payment_failed when the provider reports %s',
+      async (status, rawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+        mockGetPayment(status, rawStatus, 'provider detail')
+
+        const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+        expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+          { isDeleted: true, lastKnownStatus: rawStatus },
+          { where: { id: 'corr-1', isDeleted: false } },
+        )
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+        const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+        expect(update).toMatchObject({
+          paymentFlowId: 'flow-1',
+          type: 'error',
+          reason: 'payment_failed',
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          metadata: {
+            providerPaymentId: 'prov-1',
+            rawStatus,
+            providerMessage: 'provider detail',
+          },
+        })
+        expect(result.status).toBe(status)
+      },
+    )
+
+    it('does not emit payment_failed when the soft-delete affects zero rows (race loser)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(activeRow)
+      bankTransferPaymentModel.update.mockResolvedValue([0])
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledTimes(1)
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(result.status).toBe(BankTransferStatus.ERROR)
+    })
+
+    it('updates lastKnownStatus when the provider returns a different non-terminal status', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'DRAFT',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'SCA_REQUIRED')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { lastKnownStatus: 'SCA_REQUIRED' },
+        { where: { id: 'corr-1', isDeleted: false } },
+      )
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(result.status).toBe(BankTransferStatus.PENDING)
+    })
+
+    it('does not write or notify when the provider returns the same non-terminal status', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...activeRow,
+        lastKnownStatus: 'PENDING',
+      })
+      mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
+
+      const result = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(result.status).toBe(BankTransferStatus.PENDING)
     })
   })
 })
