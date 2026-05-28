@@ -20,9 +20,7 @@ export const useUserIdentityActions = () => {
     useState<UserIdentityRow | null>(null)
   const [reactivateTarget, setReactivateTarget] =
     useState<UserIdentityRow | null>(null)
-  const [claimsTarget, setClaimsTarget] = useState<UserIdentityRow | null>(
-    null,
-  )
+  const [claimsTarget, setClaimsTarget] = useState<UserIdentityRow | null>(null)
 
   const lastHandled = useRef<UserIdentitiesActionResult | null>(null)
 

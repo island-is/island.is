@@ -18,12 +18,11 @@ export const userIdentitiesLoader: WrappedLoaderFn = ({ client }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get('search')?.trim() ?? ''
 
-    const envsPromise = client.query<GetUserIdentityConfiguredEnvironmentsQuery>(
-      {
+    const envsPromise =
+      client.query<GetUserIdentityConfiguredEnvironmentsQuery>({
         query: GetUserIdentityConfiguredEnvironmentsDocument,
         fetchPolicy: 'network-only',
-      },
-    )
+      })
 
     // Empty search ⇒ skip the user query entirely, the screen renders an empty
     // state until the user enters something.
@@ -63,8 +62,7 @@ export const userIdentitiesLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     return {
-      userIdentities:
-        userIdentitiesResult.data?.authAdminUserIdentities ?? [],
+      userIdentities: userIdentitiesResult.data?.authAdminUserIdentities ?? [],
       configuredEnvironments:
         envsResult.data?.authAdminUserIdentityConfiguredEnvironments ?? [],
       search,

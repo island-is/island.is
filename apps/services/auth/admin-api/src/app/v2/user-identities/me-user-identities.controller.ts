@@ -15,11 +15,7 @@ import {
   UserIdentitiesService,
   UserIdentity,
 } from '@island.is/auth-api-lib'
-import {
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
