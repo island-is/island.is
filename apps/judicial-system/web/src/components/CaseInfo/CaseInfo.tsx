@@ -154,6 +154,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
 
   const canReopenCase =
     isDistrictCourtUser(user) &&
+    !workingCase.mergeCase &&
     workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.WITHDRAWAL &&
     Boolean(

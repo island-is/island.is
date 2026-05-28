@@ -855,6 +855,24 @@ describe('Transition Case', () => {
         },
       )
 
+      it('should not reopen if case has been merged', () => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              mergeCaseId: uuid(),
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+
       it('should not reopen if appeal is active (APPEALED)', () => {
         // Arrange
         const act = () =>
