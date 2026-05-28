@@ -1,0 +1,14 @@
+# TODO: implement when API exposes estate files query
+# query EstateFiles($id: String!, $searchQuery: String) {
+#   estateFiles(id: $id, searchQuery: $searchQuery) {
+#     data {
+#       id
+#       name
+#       submittedAt
+#       fileSizeBytes
+#       fileStatus
+#       documentUrl
+#     }
+#     totalCount
+#   }
+# }

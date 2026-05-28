@@ -1,0 +1,23 @@
+# TODO: implement when API exposes estate detail query
+# query EstateDetail($id: String!) {
+#   estate(id: $id) {
+#     id
+#     caseNumber
+#     deceasedName
+#     deceasedNationalId
+#     deceasedDateOfDeath
+#     status
+#     isFinished
+#     assignedDistrictCommissioner
+#     heirs {
+#       name
+#       nationalId
+#       relation
+#     }
+#     assets {
+#       assetType
+#       description
+#       value
+#     }
+#   }
+# }
