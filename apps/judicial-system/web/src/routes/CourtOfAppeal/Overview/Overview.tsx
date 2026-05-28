@@ -78,7 +78,7 @@ const CourtOfAppealOverview = () => {
 
   return (
     <>
-      {workingCase.hasBeenAppealed && appealBanner}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
