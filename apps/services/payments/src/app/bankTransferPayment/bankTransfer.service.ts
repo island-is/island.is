@@ -148,7 +148,9 @@ export class BankTransferService {
 
     const [{ paymentStatus }, existing] = await Promise.all([
       this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-      this.findActiveBankTransferPayment({ paymentFlowId: input.paymentFlowId }),
+      this.findActiveBankTransferPayment({
+        paymentFlowId: input.paymentFlowId,
+      }),
     ])
 
     if (paymentStatus === PaymentStatus.PAID) {
@@ -168,8 +170,6 @@ export class BankTransferService {
       )
 
     const correlationId = uuid()
-    // Blikk POSTs callbacks to the FE Next.js handler, which proxies through the GraphQL gateway to
-    // our `verify` endpoint. The backend never receives Blikk's webhook directly.
     const callbackUrl = `${this.paymentFlowConfig.webOrigin}/api/bank-transfer/callback`
     const partnerRedirectUrl = `${this.paymentFlowConfig.webOrigin}/${input.locale}/${input.paymentFlowId}`
     // Blikk's `expiresAt` is Unix seconds. We pin to now + 5 min so an abandoned attempt self-cleans
@@ -189,9 +189,6 @@ export class BankTransferService {
         items: catalogItems,
       })
     } catch (error) {
-      // No row persisted yet — emit a controller-level failure event mirroring card's pre-charge
-      // failure events (`cardPayment.controller.ts:109,178`) and rethrow so the caller gets the
-      // mapped error code.
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
           paymentFlowId: input.paymentFlowId,
@@ -227,7 +224,7 @@ export class BankTransferService {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.BANK_TRANSFER,
         reason: 'payment_started',
-        message: 'Bank transfer started',
+        message: 'Bank transfer created',
         metadata: {
           providerPaymentId: providerResult.providerPaymentId,
           correlationId,
@@ -406,7 +403,7 @@ export class BankTransferService {
       providerPaymentId,
     )
 
-    // 3. Create the fulfillment and, only on the first payment, the FJS charge.
+    // 3. Create the fulfillment and the FJS charge.
     await this.paymentFlowService.createBankTransferFulfillment(
       paymentFlowId,
       correlationId,
