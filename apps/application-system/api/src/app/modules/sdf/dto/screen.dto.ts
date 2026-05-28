@@ -288,6 +288,33 @@ export class ComponentDto {
   accept?: string
 
   @ApiPropertyOptional()
+  uploadHeader?: string
+
+  @ApiPropertyOptional()
+  uploadDescription?: string
+
+  @ApiPropertyOptional()
+  uploadButtonLabel?: string
+
+  @ApiPropertyOptional()
+  uploadMultiple?: boolean
+
+  @ApiPropertyOptional()
+  totalMaxSize?: number
+
+  @ApiPropertyOptional()
+  maxFileCount?: number
+
+  @ApiPropertyOptional()
+  forImageUpload?: boolean
+
+  @ApiPropertyOptional()
+  maxSizeErrorText?: string
+
+  @ApiPropertyOptional()
+  introduction?: string
+
+  @ApiPropertyOptional()
   imageUrl?: string
 
   @ApiPropertyOptional({ type: [String] })

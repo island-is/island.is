@@ -1,4 +1,5 @@
 import type { SectionBuilder } from '@island.is/application/core'
+import type { FormText } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const addApplicantInfoSubsection = (
@@ -13,7 +14,7 @@ export const addApplicantInfoSubsection = (
       // Common form, fills automatically with applicant information.
       subSection.addPage(
         applicantInformationPage.id ?? 'applicant',
-        applicantInformationPage.title ?? '',
+        (applicantInformationPage.title ?? '') as FormText,
         (page) => {
           page
             .setDescription(applicantInformationPage.description)

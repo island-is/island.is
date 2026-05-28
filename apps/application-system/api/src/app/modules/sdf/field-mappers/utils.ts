@@ -2,11 +2,7 @@ import { FieldTypes } from '@island.is/application/types'
 import { FieldDef } from '@island.is/application/screen-compiler'
 
 import { ComponentDto } from '../dto/screen.dto'
-import {
-  FieldMapperContext,
-  FieldMapperRaw,
-  ResolvableFormText,
-} from './types'
+import { FieldMapperContext, FieldMapperRaw, ResolvableFormText } from './types'
 
 /** Values passed to `FormTextResolver.resolve` from compiled field props (template-driven). */
 export const asResolvableFormText = (value: unknown): ResolvableFormText =>
@@ -21,7 +17,7 @@ export const isRecord = (value: unknown): value is Record<string, unknown> =>
  * Field props may be values or template callbacks with application-specific
  * signatures; `unknown[]` keeps that flexible without leaking unsafe types.
  */
-export const resolveFieldProp = <T,>(
+export const resolveFieldProp = <T>(
   prop: T | ((...args: unknown[]) => T) | undefined,
   ...args: unknown[]
 ): T | undefined => {
@@ -84,9 +80,11 @@ export const applySharedFieldProps = (
   } else if (
     raw.description &&
     raw.type !== FieldTypes.CHECKBOX &&
-    raw.type !== FieldTypes.DESCRIPTION
+    raw.type !== FieldTypes.DESCRIPTION &&
+    raw.type !== FieldTypes.FILEUPLOAD
   ) {
-    // CHECKBOX and DESCRIPTION use description as rendered copy, not placeholder text.
+    // CHECKBOX, DESCRIPTION, and FILEUPLOAD render `description` as their own
+    // copy block, not as input placeholder text.
     component.placeholder = resolver.resolve(raw.description)
   }
 

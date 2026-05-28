@@ -197,6 +197,15 @@ export interface SdfComponentData {
   maxDate?: string
   maxSize?: number
   accept?: string
+  uploadHeader?: string
+  uploadDescription?: string
+  uploadButtonLabel?: string
+  uploadMultiple?: boolean
+  totalMaxSize?: number
+  maxFileCount?: number
+  forImageUpload?: boolean
+  maxSizeErrorText?: string
+  introduction?: string
   header?: string[]
   rows?: string[][] | SdfDataTableRow[]
   staticTableRows?: string[][]
@@ -392,6 +401,15 @@ export const GET_SCREEN_QUERY = `
             disabled
             maxSize
             accept
+            uploadHeader
+            uploadDescription
+            uploadButtonLabel
+            uploadMultiple
+            totalMaxSize
+            maxFileCount
+            forImageUpload
+            maxSizeErrorText
+            introduction
             clientShowWhen
           }
           ... on SdfPhoneField {
@@ -621,7 +639,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfRadioField { id label required disabled options { label value } width clientShowWhen }
           ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientShowWhen }
           ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientShowWhen }
-          ... on SdfFileUploadField { id label required disabled maxSize accept clientShowWhen }
+          ... on SdfFileUploadField { id label required disabled maxSize accept uploadHeader uploadDescription uploadButtonLabel uploadMultiple totalMaxSize maxFileCount forImageUpload maxSizeErrorText introduction clientShowWhen }
           ... on SdfPhoneField { id label placeholder required disabled width clientShowWhen }
           ... on SdfNationalIdField { id label required disabled clientShowWhen }
           ... on SdfDescriptionField { id label description marginTop marginBottom clientShowWhen }
