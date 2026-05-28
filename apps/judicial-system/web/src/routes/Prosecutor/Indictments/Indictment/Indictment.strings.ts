@@ -55,36 +55,6 @@ export const strings = {
       defaultMessage: 'Bæta við ákærulið',
       description: 'Notaður sem texti á "Bæta við ákærulið" hnappi.',
     },
-    indictmentCountsTitle: {
-      id: 'judicial.system.core:indictments_indictment.indictment_counts_title',
-      defaultMessage: 'Ákæruliðir',
-      description:
-        'Notaður sem titill á Ákæruliðir svæði á ákæra skrefi í ákærum.',
-    },
-    sortIndictmentCountsChronologically: {
-      id: 'judicial.system.core:indictments_indictment.sort_indictment_counts_chronologically',
-      defaultMessage: 'Raða ákæruliðum í tímaröð',
-      description:
-        'Notaður sem texti á hnappi til að raða ákæruliðum í tímaröð á ákæra skrefi í ákærum.',
-    },
-    expandAllIndictmentCounts: {
-      id: 'judicial.system.core:indictments_indictment.expand_all_indictment_counts',
-      defaultMessage: 'Opna alla',
-      description:
-        'Notaður sem texti á hnappi til að opna alla ákæruliði á ákæra skrefi í ákærum.',
-    },
-    collapseAllIndictmentCounts: {
-      id: 'judicial.system.core:indictments_indictment.collapse_all_indictment_counts',
-      defaultMessage: 'Loka öllum',
-      description:
-        'Notaður sem texti á hnappi til að loka öllum ákæruliðum á ákæra skrefi í ákærum.',
-    },
-    policeCaseNumberNotSelected: {
-      id: 'judicial.system.core:indictments_indictment.police_case_number_not_selected',
-      defaultMessage: 'Ekki valið',
-      description:
-        'Notaður sem texti þegar málaloki hefur ekki verið valið fyrir ákærulið á ákæra skrefi í ákærum.',
-    },
     demandsTitle: {
       id: 'judicial.system.core:indictments_indictment.demands_title',
       defaultMessage: 'Refsikrafa',

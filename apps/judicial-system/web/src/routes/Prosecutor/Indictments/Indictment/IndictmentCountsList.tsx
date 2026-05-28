@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useIntl } from 'react-intl'
 import { Reorder } from 'motion/react'
 
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
@@ -30,7 +29,6 @@ import {
 
 import { IndictmentCount } from './IndictmentCount'
 import { IndictmentCountAccordionItem } from './IndictmentCountAccordionItem'
-import { strings } from './Indictment.strings'
 
 interface Props {
   workingCase: Case
@@ -66,7 +64,6 @@ export const IndictmentCountsList: FC<Props> = ({
   handleDeleteIndictmentCount,
   updateIndictmentCountState,
 }) => {
-  const { formatMessage } = useIntl()
   const { reorderIndictmentCounts } = useIndictmentCounts()
 
   const sorted = useMemo(
@@ -190,25 +187,18 @@ export const IndictmentCountsList: FC<Props> = ({
         alignItems="center"
         marginBottom={3}
       >
-        <SectionHeading
-          title={formatMessage(strings.indictmentCountsTitle)}
-          marginBottom={0}
-        />
+        <SectionHeading title="Ákæruliðir" marginBottom={0} />
         {reorderableCounts.length > 0 && (
           <Box display="flex" columnGap={2} alignItems="center">
             <Button variant="text" size="small" onClick={handleToggleExpandAll}>
-              {formatMessage(
-                allExpanded
-                  ? strings.collapseAllIndictmentCounts
-                  : strings.expandAllIndictmentCounts,
-              )}
+              {allExpanded ? 'Loka öllum' : 'Opna alla'}
             </Button>
             <Button
               variant="text"
               size="small"
               onClick={handleChronologicalSort}
             >
-              {formatMessage(strings.sortIndictmentCountsChronologically)}
+              Raða ákæruliðum í tímaröð
             </Button>
           </Box>
         )}

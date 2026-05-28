@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useIntl } from 'react-intl'
 import {
   animate,
   motion,
@@ -32,7 +31,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { getIndictmentCountWarningMessage } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { strings } from './Indictment.strings'
 import * as styles from './IndictmentCountAccordionItem.css'
 
 interface Props {
@@ -81,10 +79,8 @@ const useRaisedShadow = (value: MotionValue<number>) => {
 const IndictmentCountLabel = forwardRef(
   (props: IndictmentCountLabelProps, ref: ForwardedRef<HTMLDivElement>) => {
     const { index, policeCaseNumber, formattedDate, warningMessage } = props
-    const { formatMessage } = useIntl()
 
-    const policeCaseNumberLabel =
-      policeCaseNumber ?? formatMessage(strings.policeCaseNumberNotSelected)
+    const policeCaseNumberLabel = policeCaseNumber ?? 'Ekki valið'
 
     return (
       <Box

@@ -94,16 +94,16 @@ const useIndictmentCounts = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.reorderIndictmentCounts))
+          toast.error('Upp kom villa við að endurraða ákæruliðum')
           return
         }
 
         return data?.reorderIndictmentCounts
       } catch {
-        toast.error(formatMessage(errors.reorderIndictmentCounts))
+        toast.error('Upp kom villa við að endurraða ákæruliðum')
       }
     },
-    [reorderIndictmentCountsMutation, formatMessage],
+    [reorderIndictmentCountsMutation],
   )
 
   const updateIndictmentCountState = useCallback(
