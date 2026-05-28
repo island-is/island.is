@@ -63,7 +63,7 @@ env:
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
   NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlunUmsoknir/.default'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: '138478ef-b078-4cfa-b322-fecdaced96e8'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlun/.default'

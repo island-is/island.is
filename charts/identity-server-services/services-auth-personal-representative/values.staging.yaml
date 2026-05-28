@@ -28,7 +28,7 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: '19e7d60e-920e-4a6f-a125-25ea283ee1a4'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: 'c090fd41-9893-46f5-8962-86bd48788570'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlun/.default'
