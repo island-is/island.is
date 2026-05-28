@@ -196,14 +196,18 @@ export const IndictmentCountsList: FC<Props> = ({
         />
         {reorderableCounts.length > 0 && (
           <Box display="flex" columnGap={2} alignItems="center">
-            <Button variant="text" onClick={handleToggleExpandAll}>
+            <Button variant="text" size="small" onClick={handleToggleExpandAll}>
               {formatMessage(
                 allExpanded
                   ? strings.collapseAllIndictmentCounts
                   : strings.expandAllIndictmentCounts,
               )}
             </Button>
-            <Button variant="text" onClick={handleChronologicalSort}>
+            <Button
+              variant="text"
+              size="small"
+              onClick={handleChronologicalSort}
+            >
               {formatMessage(strings.sortIndictmentCountsChronologically)}
             </Button>
           </Box>
