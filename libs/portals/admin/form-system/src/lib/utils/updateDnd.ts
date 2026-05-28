@@ -41,9 +41,31 @@ export const updateDnd = async (
   ) => Promise<any>,
 ) => {
   const { type } = control.activeItem
+
+  let didRedirectToLogin = false
+
+  const redirectToBffLogin = () => {
+    if (didRedirectToLogin) return
+    // avoid loops if we somehow are already on a BFF route
+    if (window.location.pathname.startsWith('/stjornbord/bff/')) return
+
+    didRedirectToLogin = true
+    const target = encodeURIComponent(window.location.href)
+    window.location.href = `/stjornbord/bff/login?target_link_uri=${target}`
+  }
+
+  const getHttpStatusFromApolloError = (err: any): number | undefined => {
+    return (
+      err?.networkError?.statusCode ??
+      err?.networkError?.response?.status ??
+      err?.networkError?.status ??
+      err?.statusCode
+    )
+  }
+
   if (type === 'Section') {
     try {
-      updateSectionDisplayOrder({
+      await updateSectionDisplayOrder({
         variables: {
           input: {
             updateSectionsDisplayOrderDto: {
@@ -57,11 +79,16 @@ export const updateDnd = async (
         },
       })
     } catch (err) {
+      const status = getHttpStatusFromApolloError(err)
+      if (status === 401 || status === 403) {
+        redirectToBffLogin()
+        return
+      }
       console.error('Error updating section display order:', err.message)
     }
   } else if (type === 'Screen') {
     try {
-      updateScreenDisplayOrder({
+      await updateScreenDisplayOrder({
         variables: {
           input: {
             updateScreensDisplayOrderDto: {
@@ -76,20 +103,34 @@ export const updateDnd = async (
         },
       })
     } catch (err) {
+      const status = getHttpStatusFromApolloError(err)
+      if (status === 401 || status === 403) {
+        redirectToBffLogin()
+        return
+      }
       console.error('Error updating screen display order:', err.message)
     }
   } else if (type === 'Field') {
-    updateFieldDisplayOrder({
-      variables: {
-        input: {
-          updateFieldsDisplayOrderDto: control.form.fields?.map((field) => {
-            return {
-              id: field?.id,
-              screenId: field?.screenId,
-            }
-          }),
+    try {
+      await updateFieldDisplayOrder({
+        variables: {
+          input: {
+            updateFieldsDisplayOrderDto: control.form.fields?.map((field) => {
+              return {
+                id: field?.id,
+                screenId: field?.screenId,
+              }
+            }),
+          },
         },
-      },
-    })
+      })
+    } catch (err) {
+      const status = getHttpStatusFromApolloError(err)
+      if (status === 401 || status === 403) {
+        redirectToBffLogin()
+        return
+      }
+      console.error('Error updating field display order:', err.message)
+    }
   }
 }

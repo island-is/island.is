@@ -25,6 +25,7 @@ export const updateFormFn = async (
   userName?: string,
 ): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
+
   try {
     const response = await updateForm({
       variables: {
@@ -89,6 +90,23 @@ export const updateFormFn = async (
     })
     return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
+    const status =
+      err?.networkError?.statusCode ??
+      err?.networkError?.response?.status ??
+      err?.networkError?.status ??
+      err?.statusCode
+
+    if (status === 401 || status === 403) {
+      const target = encodeURIComponent(window.location.href)
+      window.location.href = `/stjornbord/bff/login?target_link_uri=${target}`
+
+      // Don’t throw; returning prevents unhandled rejections from fire-and-forget callers
+      return {
+        updateSuccess: false,
+        errors: [{ message: 'Session expired' }],
+      } as UpdateFormResponse
+    }
+
     console.error('Error updating form:', err.message)
     throw err
   }
