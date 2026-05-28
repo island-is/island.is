@@ -105,7 +105,7 @@ export const currentSituationSubSection = buildSubSection({
               required: true,
               label:
                 employmentMessages.employmentHistory.labels.employerSelectLabel,
-              options: (application, _, locale, formatMessage) =>
+              options: (application, _, _locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
             employer: {
@@ -143,6 +143,7 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               type: 'number',
               suffix: '%',
+              placeholder: '1-100%',
               required: true,
               allowNegative: false,
               max: 100,
