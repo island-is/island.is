@@ -62,10 +62,8 @@ export default function RootLayout() {
   })
 
   const [appReady, setAppReady] = useState(false)
-  const [
-    apolloClient,
-    setApolloClient,
-  ] = useState<ApolloClient<NormalizedCacheObject> | null>(null)
+  const [apolloClient, setApolloClient] =
+    useState<ApolloClient<NormalizedCacheObject> | null>(null)
 
   // Initialize auth and Apollo on startup
   useEffect(() => {
