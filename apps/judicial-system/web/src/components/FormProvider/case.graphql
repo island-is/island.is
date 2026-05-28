@@ -407,6 +407,7 @@ query Case($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -451,6 +452,7 @@ query Case($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -658,6 +660,7 @@ query Case($input: CaseQueryInput!) {
         isStatementDeadlineExpired
         appealCaseNumber
         appealReceivedByCourtDate
+        appealRulingDate
         prosecutorStatementDate
         defendantStatementDate
         defendantStatementDates {
