@@ -307,6 +307,11 @@ export const application = defineMessages({
     defaultMessage: 'Vista breytingar og staðfesta',
     description: 'Submit button label',
   },
+  multiFieldTitle: {
+    id: 'vmst.eui.application:multiFieldTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title for the multi field on completed form',
+  },
   completedFormAlertTitle: {
     id: 'vmst.eui.application:completedFormAlertTitle',
     defaultMessage: 'Breytingar þínar hafa verið vistaðar',

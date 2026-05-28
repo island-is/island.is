@@ -11,12 +11,14 @@ export const completedForm = buildForm({
   logo: DirectorateOfLabourLogo,
   children: [
     buildFormConclusionSection({
+      multiFieldTitle: completedFormMessages.multiFieldTitle,
       alertTitle: completedFormMessages.alertTitle,
-      expandableHeader: completedFormMessages.expandableHeader,
-      expandableDescription: completedFormMessages.expandableDescription,
       descriptionFieldTitle: completedFormMessages.descriptionFieldTitle,
       descriptionFieldDescription:
         completedFormMessages.descriptionFieldDescription,
+      accordion: false,
+      bottomButtonLabel: completedFormMessages.bottomButtonLabel,
+      bottomButtonMessage: completedFormMessages.bottomButtonMessage,
     }),
   ],
 })
