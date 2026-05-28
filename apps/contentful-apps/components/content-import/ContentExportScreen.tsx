@@ -470,12 +470,16 @@ export const ContentExportScreen = () => {
             options={state.contentTypes}
             label="Content type"
             placeholder="Select a content type"
+            id="contentTypeExportSelect"
+            name="contentTypeExportSelect"
           />
         </Flex>
       )}
       {state.exportType === 'pages' && (
         <Flex gap="16px" flexDirection="column" marginBottom="spacingM">
           <ValueSelect
+            id="tagExportSelect"
+            name="tagExportSelect"
             disabled={state.isExporting}
             selectedValue={state.selectedTagId}
             setSelectedValue={(value) =>

@@ -7,6 +7,8 @@ interface ValueSelectProps {
   disabled?: boolean
   label: string
   placeholder?: string
+  id: string
+  name: string
 }
 
 export const ValueSelect = ({
@@ -16,13 +18,15 @@ export const ValueSelect = ({
   disabled = false,
   label,
   placeholder,
+  id,
+  name,
 }: ValueSelectProps) => {
   return (
     <FormControl>
-      <FormControl.Label>{label}</FormControl.Label>
+      <FormControl.Label htmlFor={id}>{label}</FormControl.Label>
       <Select
-        id="value-select"
-        name="value-select"
+        id={id}
+        name={name}
         value={selectedValue}
         onChange={(ev) => {
           setSelectedValue(ev.target.value)

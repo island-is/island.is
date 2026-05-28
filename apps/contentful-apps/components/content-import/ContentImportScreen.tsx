@@ -311,6 +311,8 @@ export const ContentImportScreen = () => {
 
             <Flex gap="16px" flexWrap="wrap">
               <ValueSelect
+                id="contentTypeImportSelect"
+                name="contentTypeImportSelect"
                 selectedValue={selectedContentType}
                 setSelectedValue={setSelectedContentType}
                 options={IMPORT_CONTENT_TYPES}
