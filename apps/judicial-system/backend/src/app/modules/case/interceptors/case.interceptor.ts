@@ -631,7 +631,9 @@ const transformCase = (
         EventType.INDICTMENT_REOPENED,
         theCase.eventLogs,
       )
-      return reopenedDate && reopenedDate > reviewedDate ? undefined : reviewedDate
+      return reopenedDate && reopenedDate > reviewedDate
+        ? undefined
+        : reviewedDate
     })(),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
