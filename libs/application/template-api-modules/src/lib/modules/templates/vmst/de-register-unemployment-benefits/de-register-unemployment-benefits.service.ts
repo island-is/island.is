@@ -21,7 +21,10 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
     super(ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS)
   }
 
-  async getSupportData({ auth, currentUserLocale }: TemplateApiModuleActionProps) {
+  async getSupportData({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     const resolvedApplicantId =
       await this.vmstUnemploymentClientService.resolveApplicant(auth)
 
