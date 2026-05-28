@@ -87,6 +87,7 @@ export const employmentHistorySchema = z
     }
     // For non-unemployed: all fields are optional, but guard against
     // half-filled job entries — if a job has any data, validate it fully.
+    // (Non-unemployed meaning when uses chooses something other than unemployed in current situation screen for example partially employed)
     data.lastJobs?.forEach((job, index) => {
       if (isJobPartiallyFilled(job)) {
         validateJob(job, index, 'lastJobs', ctx)

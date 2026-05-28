@@ -67,6 +67,7 @@ export const UnemploymentBenefitsSchema = z.object({
   languageSkills: z.array(languageSkillsSchema).refine(
     (items) =>
       items.every((item, index) => {
+        // Skipping index 0 and 1, they are pre-filled and the language is null, languageSchema validates it via skill
         if (index < 2) return true
         const hasLanguage = !!item.language
         const hasSkill = !!item.skill
