@@ -54,7 +54,10 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
     }
   }
 
-  async checkEligibility({ auth }: TemplateApiModuleActionProps) {
+  async checkEligibility({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     let result
     try {
       result =
@@ -92,7 +95,10 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: prereq.eligibilityErrorTitle,
-          summary: result.reason ?? '',
+          summary:
+            currentUserLocale === 'is'
+              ? result.reason ?? ''
+              : result.reasonEN ?? '',
         },
         400,
       )
