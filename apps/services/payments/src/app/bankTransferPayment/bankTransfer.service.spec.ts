@@ -2,19 +2,29 @@ import { ConfigType } from '@nestjs/config'
 import { BadRequestException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
-import { BankTransferErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
 import { PaymentMethod, PaymentStatus } from '../../types'
+import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { BankTransferStatus } from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferModuleConfig } from './bankTransfer.config'
+import { BankTransferLocale } from './dtos/createBankTransfer.input'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   apiKey: 'test-key',
   baseUrl: 'https://stage.blikk.tech',
+  callbackBaseUrl: 'https://api.island.is',
   isConfigured: true,
+}
+
+const paymentFlowConfig: ConfigType<typeof PaymentFlowModuleConfig> = {
+  webOrigin: 'https://island.is/greida',
 }
 
 const createMockLogger = (): jest.Mocked<Logger> =>
@@ -41,7 +51,11 @@ describe('BankTransferService', () => {
   let logger: jest.Mocked<Logger>
   let service: BankTransferService
   let fetchMock: jest.Mock
-  let bankTransferPaymentModel: { update: jest.Mock; findOne: jest.Mock }
+  let bankTransferPaymentModel: {
+    update: jest.Mock
+    findOne: jest.Mock
+    create: jest.Mock
+  }
   let paymentFlowService: {
     createBankTransferFulfillment: jest.Mock
     createFjsCharge: jest.Mock
@@ -56,6 +70,7 @@ describe('BankTransferService', () => {
     bankTransferPaymentModel = {
       update: jest.fn().mockResolvedValue([1]),
       findOne: jest.fn(),
+      create: jest.fn().mockResolvedValue({}),
     }
     paymentFlowService = {
       createBankTransferFulfillment: jest.fn().mockResolvedValue(undefined),
@@ -91,6 +106,7 @@ describe('BankTransferService', () => {
       config,
       bankTransferPaymentModel as unknown as typeof BankTransferPayment,
       paymentFlowService as unknown as PaymentFlowService,
+      paymentFlowConfig,
     )
     fetchMock = jest.fn()
     global.fetch = fetchMock as unknown as typeof fetch
@@ -268,6 +284,129 @@ describe('BankTransferService', () => {
       expect(result.rawStatus).toBe('WAT')
       expect(result.status).toBe(BankTransferStatus.PENDING)
       expect(logger.warn).toHaveBeenCalled()
+    })
+  })
+
+  describe('create', () => {
+    const createInput = {
+      paymentFlowId: 'flow-1',
+      locale: BankTransferLocale.IS,
+    }
+
+    const mockBlikkCreate = () =>
+      jest.spyOn(service, 'createPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'PENDING',
+        status: BankTransferStatus.PENDING,
+        scaRedirectUrl: 'https://blikk/sca',
+        message: undefined,
+      })
+
+    beforeEach(() => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(null)
+    })
+
+    it('throws PaymentFlowAlreadyPaid when the flow is already PAID', async () => {
+      paymentFlowService.getPaymentFlowStatus.mockResolvedValue({
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: new Date(),
+      })
+      const blikkSpy = jest.spyOn(service, 'createPayment')
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        PaymentServiceCode.PaymentFlowAlreadyPaid,
+      )
+      expect(blikkSpy).not.toHaveBeenCalled()
+      expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+    })
+
+    it('throws BankTransferAlreadyInProgress when an active row exists', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        id: 'corr-existing',
+        paymentFlowId: 'flow-1',
+      })
+      const blikkSpy = jest.spyOn(service, 'createPayment')
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
+      )
+      expect(blikkSpy).not.toHaveBeenCalled()
+    })
+
+    it('calls Blikk, persists the row, emits payment_started, and returns scaRedirectUrl', async () => {
+      const blikkSpy = mockBlikkCreate()
+
+      const result = await service.create(createInput)
+
+      // Provider call gets the correct URLs/amount and a per-attempt correlationId (NOT paymentFlowId).
+      expect(blikkSpy).toHaveBeenCalledTimes(1)
+      const blikkArg = blikkSpy.mock.calls[0][0]
+      expect(blikkArg).toMatchObject({
+        paymentFlowId: 'flow-1',
+        amount: 14000,
+        currency: 'ISK',
+        callbackUrl: 'https://api.island.is/v1/payments/bank-transfer/callback',
+        partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
+      })
+      expect(blikkArg.correlationId).not.toBe('flow-1')
+      expect(blikkArg.expiresAt).toBeGreaterThan(Math.floor(Date.now() / 1000))
+
+      // Row is persisted with id == correlationId == sourceReferenceId.
+      expect(bankTransferPaymentModel.create).toHaveBeenCalledTimes(1)
+      const rowArg = bankTransferPaymentModel.create.mock.calls[0][0]
+      expect(rowArg).toMatchObject({
+        paymentFlowId: 'flow-1',
+        provider: 'blikk',
+        providerPaymentId: 'prov-1',
+        scaRedirectUrl: 'https://blikk/sca',
+        amount: 14000,
+        lastKnownStatus: 'PENDING',
+      })
+      expect(rowArg.id).toBe(blikkArg.correlationId)
+      expect(rowArg.sourceReferenceId).toBe(blikkArg.correlationId)
+
+      // payment_started event fires once.
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        paymentFlowId: 'flow-1',
+        type: 'update',
+        reason: 'payment_started',
+        paymentMethod: PaymentMethod.BANK_TRANSFER,
+        metadata: { providerPaymentId: 'prov-1' },
+      })
+
+      expect(result).toEqual({
+        providerPaymentId: 'prov-1',
+        scaRedirectUrl: 'https://blikk/sca',
+      })
+    })
+
+    it('emits payment_failed and rethrows when Blikk createPayment fails', async () => {
+      jest
+        .spyOn(service, 'createPayment')
+        .mockRejectedValue(
+          new BadRequestException(
+            BankTransferErrorCode.FailedToCreateBankTransfer,
+          ),
+        )
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        BankTransferErrorCode.FailedToCreateBankTransfer,
+      )
+
+      // No row persisted (Blikk failed before step 6).
+      expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+      // The pre-persist failure event mirrors card's controller-level failure events.
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      expect(
+        paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+      ).toMatchObject({
+        paymentFlowId: 'flow-1',
+        type: 'update',
+        reason: 'payment_failed',
+      })
     })
   })
 
