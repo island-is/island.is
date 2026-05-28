@@ -54,6 +54,8 @@ interface AuthStore {
   lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
   lockScreenSuppressedUntil: number | undefined
+  // Auto-prompt biometrics at most once per lock session (loop guard).
+  biometricAutoPromptedForCurrentLock: boolean
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -144,6 +146,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
   lockScreenSuppressedUntil: undefined,
+  biometricAutoPromptedForCurrentLock: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -331,6 +334,11 @@ export function isLockScreenSuppressed() {
 
 export function clearLockScreenSuppression() {
   authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
+
+// True if the lock screen is in an auth-required state (not just a mask).
+export function isLockScreenActive() {
+  return authStore.getState().lockScreenActivatedAt !== undefined
 }
 
 export async function readAuthorizeResult(): Promise<void> {

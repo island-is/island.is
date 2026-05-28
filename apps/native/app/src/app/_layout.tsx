@@ -10,8 +10,13 @@ import { OfflineProvider } from '../components/providers/offline-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { FeatureFlagProvider } from '../components/providers/feature-flag-provider'
 import { ApolloProvider } from '@apollo/client'
-import { checkIsAuthenticated, readAuthorizeResult } from '../stores/auth-store'
-import { getNextOnboardingStep } from '../utils/onboarding'
+import {
+  authStore,
+  checkIsAuthenticated,
+  readAuthorizeResult,
+} from '../stores/auth-store'
+import { getNextOnboardingStep, isOnboarded } from '../utils/onboarding'
+import { config } from '../config'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -100,8 +105,39 @@ export default function RootLayout() {
   }, [fontsError])
 
   useEffect(() => {
-    if (fontsLoaded && appReady) {
-      SplashScreen.hideAsync()
+    if (!fontsLoaded || !appReady) return
+
+    // Defer splash hide until the lock screen mounts (avoids tab flash).
+    // 2s timeout fallback so the splash never hangs.
+    const { authorizeResult } = authStore.getState()
+    const willPushLockScreen =
+      !!authorizeResult && isOnboarded() && !config.isTestingApp
+
+    if (!willPushLockScreen) {
+      SplashScreen.hideAsync().catch(() => {})
+      return
+    }
+
+    let cancelled = false
+    const hide = () => {
+      if (cancelled) return
+      cancelled = true
+      SplashScreen.hideAsync().catch(() => {})
+    }
+
+    if (authStore.getState().lockScreenComponentId) {
+      hide()
+      return
+    }
+
+    const unsub = authStore.subscribe((state) => {
+      if (state.lockScreenComponentId) hide()
+    })
+    const timeoutId = setTimeout(hide, 2000)
+
+    return () => {
+      clearTimeout(timeoutId)
+      unsub()
     }
   }, [fontsLoaded, appReady])
 

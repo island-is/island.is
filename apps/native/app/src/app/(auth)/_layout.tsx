@@ -19,57 +19,99 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 }
 
+// Past timestamp so grace-check fails on cold-start (auth required).
+const COLD_START_ACTIVATED_AT = () => Date.now() - 24 * 60 * 60 * 1000
+
 export default function AuthLayout() {
   const intl = useIntl()
   const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const appStateRef = useRef(AppState.currentState)
-  const lockScreenShownRef = useRef(false)
 
-  const showLockScreen = useCallback(() => {
-    if (lockScreenShownRef.current) return
-    lockScreenShownRef.current = true
+  const pushLockScreen = useCallback(() => {
+    if (authStore.getState().lockScreenComponentId) return
     router.push('/app-lock')
   }, [router])
 
-  // Reset ref when the lock screen clears its own state (PIN/biometric unlock)
+  // Cold-start: lock immediately, require auth (not grace).
   useEffect(() => {
-    return authStore.subscribe((state) => {
-      if (!state.lockScreenActivatedAt && !state.lockScreenComponentId) {
-        lockScreenShownRef.current = false
-      }
+    if (!isOnboarded() || config.isTestingApp) return
+    authStore.setState({
+      lockScreenActivatedAt: COLD_START_ACTIVATED_AT(),
+      biometricAutoPromptedForCurrentLock: false,
     })
-  }, [])
-
-  // On mount: always show the lock screen if the user is onboarded.
-  // The lock screen itself decides whether to auto-dismiss (within timeout) or require unlock.
-  useEffect(() => {
-    if (isOnboarded() && !config.isTestingApp) {
-      showLockScreen()
-    }
+    pushLockScreen()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Listen for app state changes to show/dismiss the lock screen
+  // Re-push if the modal gets popped while still locked (deep-link races).
+  useEffect(() => {
+    return authStore.subscribe((state, prev) => {
+      if (
+        prev.lockScreenComponentId &&
+        !state.lockScreenComponentId &&
+        state.lockScreenActivatedAt !== undefined &&
+        isOnboarded() &&
+        !config.isTestingApp
+      ) {
+        router.push('/app-lock')
+      }
+    })
+  }, [router])
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
-      // Going to background: stamp the time and show lock immediately (covers app switcher)
+      const previousAppState = appStateRef.current
+      appStateRef.current = nextAppState
+
+      if (!isOnboarded() || config.isTestingApp) return
+      if (isLockScreenSuppressed()) return
+
+      // → background: stamp grace clock (once per lock session).
       if (
-        appStateRef.current === 'active' &&
-        (nextAppState === 'inactive' || nextAppState === 'background')
+        nextAppState === 'background' &&
+        previousAppState !== 'background'
       ) {
-        if (isOnboarded() && !isLockScreenSuppressed()) {
-          Keyboard.dismiss()
-          authStore.setState({ lockScreenActivatedAt: Date.now() })
-          showLockScreen()
+        Keyboard.dismiss()
+        if (authStore.getState().lockScreenActivatedAt === undefined) {
+          authStore.setState({
+            lockScreenActivatedAt: Date.now(),
+            biometricAutoPromptedForCurrentLock: false,
+          })
         }
+        pushLockScreen()
+        return
       }
 
-      appStateRef.current = nextAppState
+      // active → inactive: mount mask + stamp clock. iOS Simulator and some
+      // device flows skip 'background'; activatedAt guard means Face ID
+      // overlay during a locked session won't restart the timer.
+      if (
+        previousAppState === 'active' &&
+        nextAppState === 'inactive'
+      ) {
+        if (authStore.getState().lockScreenActivatedAt === undefined) {
+          authStore.setState({
+            lockScreenActivatedAt: Date.now(),
+            biometricAutoPromptedForCurrentLock: false,
+          })
+        }
+        pushLockScreen()
+        return
+      }
+
+      // → active while still locked: re-push if modal was popped.
+      if (
+        nextAppState === 'active' &&
+        previousAppState !== 'active' &&
+        authStore.getState().lockScreenActivatedAt !== undefined
+      ) {
+        pushLockScreen()
+      }
     })
 
     return () => subscription.remove()
-  }, [showLockScreen])
+  }, [pushLockScreen])
 
   if (!authorizeResult) {
     return <Redirect href="/login" />
