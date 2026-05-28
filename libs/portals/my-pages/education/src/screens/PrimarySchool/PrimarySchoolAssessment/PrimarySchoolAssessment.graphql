@@ -12,7 +12,7 @@ query PrimarySchoolAssessmentResults(
   $assessmentId: String!
 ) {
   primarySchoolStudent(studentId: $studentId) {
-    assessmentHistory(assessmentId: $assessmentId) {
+    assessmentHistory(input: { assessmentId: $assessmentId }) {
       id
       resultHistory {
         id

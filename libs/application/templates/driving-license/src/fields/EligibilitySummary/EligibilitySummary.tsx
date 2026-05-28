@@ -12,21 +12,22 @@ export const EligibilitySummary: FC<
 > = ({ application }) => {
   const { setValue, watch } = useFormContext()
 
-  // The redesign flag is written by a hidden input on this same screen
+  // The redesign flags are written by hidden inputs on this same screen
   // (sectionRequirements.ts), so `application.answers` is still stale on
   // first render. Read live form state first, fall back to answers for
   // returning visits after the value has been persisted.
-  const flagFromForm = watch('is65RenewalRedesignEnabled')
-  const flagFromAnswers = getValueViaPath(
-    application.answers,
-    'is65RenewalRedesignEnabled',
-  )
   const is65RenewalRedesignEnabled =
-    flagFromForm === true || flagFromAnswers === true
+    watch('is65RenewalRedesignEnabled') === true ||
+    getValueViaPath(application.answers, 'is65RenewalRedesignEnabled') === true
+
+  const isBTempRedesignEnabled =
+    watch('isBTempRedesignEnabled') === true ||
+    getValueViaPath(application.answers, 'isBTempRedesignEnabled') === true
 
   const { eligibility, loading, error } = useEligibility(
     application,
     is65RenewalRedesignEnabled,
+    isBTempRedesignEnabled,
   )
 
   useEffect(() => {
