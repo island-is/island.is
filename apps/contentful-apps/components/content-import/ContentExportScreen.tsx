@@ -31,6 +31,7 @@ export const ContentExportScreen = () => {
     exportType: 'contentType' | 'pages'
     orgSlug: string | null
     orgSlugEn: string | null
+    orgSlugLoading: boolean
   }>({
     contentTypes: [],
     selectedContentTypeId: '',
@@ -40,6 +41,7 @@ export const ContentExportScreen = () => {
     exportType: 'contentType',
     orgSlug: null,
     orgSlugEn: null,
+    orgSlugLoading: false,
   })
 
   useEffect(() => {
@@ -84,19 +86,30 @@ export const ContentExportScreen = () => {
   useEffect(() => {
     if (!state.selectedTagId || state.exportType !== 'pages') return
     const fetchOrgSlugs = async () => {
-      const response = await cma.entry.getMany({
-        query: {
-          content_type: 'organizationPage',
-          'metadata.tags.sys.id[in]': state.selectedTagId,
-          limit: 1,
-        },
-      })
-      const org = response?.items?.[0]
       setState((prev) => ({
         ...prev,
-        orgSlug: org?.fields?.slug?.[DEFAULT_LOCALE] ?? null,
-        orgSlugEn: org?.fields?.slug?.['en'] ?? null,
+        orgSlug: null,
+        orgSlugEn: null,
+        orgSlugLoading: true,
       }))
+      try {
+        const response = await cma.entry.getMany({
+          query: {
+            content_type: 'organizationPage',
+            'metadata.tags.sys.id[in]': state.selectedTagId,
+            limit: 1,
+          },
+        })
+        const org = response?.items?.[0]
+        setState((prev) => ({
+          ...prev,
+          orgSlug: org?.fields?.slug?.[DEFAULT_LOCALE] ?? null,
+          orgSlugEn: org?.fields?.slug?.['en'] ?? null,
+          orgSlugLoading: false,
+        }))
+      } catch {
+        setState((prev) => ({ ...prev, orgSlugLoading: false }))
+      }
     }
     fetchOrgSlugs()
   }, [cma.entry, state.selectedTagId, state.exportType])
@@ -435,7 +448,7 @@ export const ContentExportScreen = () => {
     !state.isExporting &&
     (state.exportType === 'contentType'
       ? Boolean(state.selectedContentTypeId)
-      : Boolean(state.selectedTagId))
+      : Boolean(state.selectedTagId) && !state.orgSlugLoading)
 
   return (
     <GridContainer>
