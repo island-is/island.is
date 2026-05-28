@@ -31,7 +31,7 @@ export const Applicants = ({ applicantField }: Props) => {
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
   const nationalId = applicantField.values?.[0]?.json?.nationalId ?? ''
   const fetchEmailFromMyPages =
-    applicantField.fieldSettings?.fetchEmailFromMyPages !== false
+    applicantField.fieldSettings?.fetchEmailFromMyPages === true
 
   const hasEmail =
     getValue(applicantField, 'email') &&
