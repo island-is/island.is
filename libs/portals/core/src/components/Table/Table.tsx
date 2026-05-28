@@ -460,6 +460,8 @@ export const Table = <TData extends object>({
                       position: 'relative',
                       background:
                         isExpanded || isCollapsing ? 'blue100' : undefined,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? 'standard' : undefined,
                     }}
                   >
                     <AnimateHeight

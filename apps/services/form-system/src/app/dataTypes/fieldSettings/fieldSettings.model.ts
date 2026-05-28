@@ -184,6 +184,11 @@ export class FieldSettings {
   paymentQuantityId?: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  showAddress?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   zendeskTicketFieldId?: string
