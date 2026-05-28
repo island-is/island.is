@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ContentTypeProps, EntryProps } from 'contentful-management'
+import { ContentTypeProps } from 'contentful-management'
 import { PageExtensionSDK } from '@contentful/app-sdk'
 import { Button, Flex, Radio, Spinner } from '@contentful/f36-components'
 import { DownloadIcon } from '@contentful/f36-icons'
@@ -29,6 +29,8 @@ export const ContentExportScreen = () => {
     tags: { label: string; value: string }[]
     selectedTagId: string | null
     exportType: 'contentType' | 'pages'
+    orgSlug: string | null
+    orgSlugEn: string | null
   }>({
     contentTypes: [],
     selectedContentTypeId: '',
@@ -36,6 +38,8 @@ export const ContentExportScreen = () => {
     tags: [],
     selectedTagId: '',
     exportType: 'contentType',
+    orgSlug: null,
+    orgSlugEn: null,
   })
 
   useEffect(() => {
@@ -77,9 +81,29 @@ export const ContentExportScreen = () => {
     fetchTags()
   }, [cma])
 
+  useEffect(() => {
+    if (!state.selectedTagId || state.exportType !== 'pages') return
+    const fetchOrgSlugs = async () => {
+      const response = await cma.entry.getMany({
+        query: {
+          content_type: 'organizationPage',
+          'metadata.tags.sys.id[in]': state.selectedTagId,
+          limit: 1,
+        },
+      })
+      const org = response?.items?.[0]
+      setState((prev) => ({
+        ...prev,
+        orgSlug: org?.fields?.slug?.[DEFAULT_LOCALE] ?? null,
+        orgSlugEn: org?.fields?.slug?.['en'] ?? null,
+      }))
+    }
+    fetchOrgSlugs()
+  }, [cma.entry, state.selectedTagId, state.exportType])
+
   const exportContentTypeEntries = useCallback(async () => {
     const contentTypeId = state.selectedContentTypeId
-    const entries: EntryProps[] = []
+    const entries = []
     let skip = 0
     let total = Infinity
     const chunkSize = 100
@@ -173,25 +197,53 @@ export const ContentExportScreen = () => {
   ])
 
   const exportPageEntries = useCallback(async () => {
-    const csvBody: string[] = []
-    const csvHeader: string[] = [
+    const csvHeader = [
+      'Type',
+      'Title',
       'Contentful URL',
-      'Contentful Status',
-      'Contentful Tags',
-      'Content Type',
       'Web URL (is-IS)',
       'Web URL (en)',
+      'Contentful Updated At',
+      'Contentful Published At',
+      'Contentful Created At',
     ]
-
-    csvHeader.push('Contentful Created At')
-    csvHeader.push('Contentful Updated At')
-    csvHeader.push('Contentful Published At')
-    csvHeader.push('Contentful ID')
+    const csvBody: string[] = []
 
     const tagId = state.selectedTagId
+    const orgSlug = state.orgSlug
+    const orgSlugEn = state.orgSlugEn
+    const chunkSize = 100
+
+    const contentfulUrl = (entryId: string) =>
+      `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entryId}`
+
+    const addRow = (
+      type: string,
+      title: string,
+      entryId: string,
+      webUrl: string,
+      webUrlEn: string,
+      updatedAt: string,
+      publishedAt: string,
+      createdAt: string,
+    ) => {
+      csvBody.push(
+        [
+          type,
+          title,
+          contentfulUrl(entryId),
+          webUrl,
+          webUrlEn,
+          updatedAt,
+          publishedAt,
+          createdAt,
+        ].join(CSV_DELIMITER),
+      )
+    }
+
+    // Articles
     let skip = 0
     let total = Infinity
-    const chunkSize = 100
     while (skip < total) {
       const response = await cma.entry.getMany({
         query: {
@@ -202,66 +254,159 @@ export const ContentExportScreen = () => {
           skip,
         },
       })
-
       total = response.total
       skip += chunkSize
 
       for (const entry of response.items) {
-        const row: string[] = []
-        row.push(
-          `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/entries/${entry.sys.id}`,
-        )
-        let entryStatus = 'Draft'
-        if (entry.sys.updatedAt > entry.sys.publishedAt) entryStatus = 'Changed'
-        else if (entry.sys.publishedAt) entryStatus = 'Published'
-        row.push(entryStatus)
+        const slug = entry.fields.slug?.[DEFAULT_LOCALE]
+        const slugEn = entry.fields.slug?.['en']
 
-        row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
-        row.push(entry.sys.contentType.sys.id)
-        row.push(
-          entry.fields.slug?.[DEFAULT_LOCALE]
-            ? `https://island.is/${entry.fields.slug?.[DEFAULT_LOCALE]}`
-            : '',
-        )
-        row.push(
-          entry.fields.slug?.['en']
-            ? `https://island.is/en/${entry.fields.slug?.['en']}`
-            : '',
+        addRow(
+          'article',
+          entry.fields.title?.[DEFAULT_LOCALE] ?? '',
+          entry.sys.id,
+          slug ? `https://island.is/${slug}` : '',
+          slugEn ? `https://island.is/en/${slugEn}` : '',
+          entry.sys.updatedAt,
+          entry.sys.publishedAt,
+          entry.sys.createdAt,
         )
 
-        row.push(entry.sys.createdAt ?? '')
-        row.push(entry.sys.updatedAt ?? '')
-        row.push(entry.sys.publishedAt ?? '')
-        row.push(entry.sys.id)
+        const subArticleRefs: { sys: { id: string } }[] =
+          entry.fields.subArticles?.[DEFAULT_LOCALE] ?? []
+        if (!subArticleRefs.length) continue
 
-        csvBody.push(row.join(CSV_DELIMITER))
+        for (const subArticleRef of subArticleRefs) {
+          const subArticle = await cma.entry.get({
+            entryId: subArticleRef.sys.id,
+          })
+          if (
+            !subArticle?.fields?.title?.[DEFAULT_LOCALE] ||
+            !subArticle.sys.publishedAt
+          )
+            continue
 
-        const subArticleIds: string[] =
-          entry.fields.subArticles?.[DEFAULT_LOCALE]?.map(
-            (subArticle) => subArticle.sys.id,
-          ) ?? []
+          const subArticleSlug =
+            subArticle.fields.url?.[DEFAULT_LOCALE]?.split('/').pop()
+          const subArticleSlugEn = subArticle.fields.url?.['en']
+            ?.split('/')
+            .pop()
 
-        if (!subArticleIds?.length) continue
-
-        const subArticleRow: string[] = []
-        const subResponse = await cma.entry.getMany({
-          query: {
-            content_type: 'subArticle',
-            'sys.id[in]': subArticleIds.join(','),
-            'sys.publishedAt[exists]': true,
-          },
-        })
-        if (subResponse.items.length === 0) continue
-        for (const subArticle of subResponse.items) {
-          subArticleRow.push(subArticle.sys.id)
+          addRow(
+            'subArticle',
+            subArticle.fields.title[DEFAULT_LOCALE] ?? '',
+            subArticle.sys.id,
+            slug && subArticleSlug
+              ? `https://island.is/${slug}/${subArticleSlug}`
+              : '',
+            slugEn && subArticleSlugEn
+              ? `https://island.is/en/${slugEn}/${subArticleSlugEn}`
+              : '',
+            subArticle.sys.updatedAt,
+            subArticle.sys.publishedAt,
+            subArticle.sys.createdAt,
+          )
         }
-        csvBody.push(subArticleRow.join(CSV_DELIMITER))
       }
     }
+
+    if (orgSlug) {
+      // Organization subpages (top-level, no parent)
+      skip = 0
+      total = Infinity
+      while (skip < total) {
+        const response = await cma.entry.getMany({
+          query: {
+            content_type: 'organizationSubpage',
+            'sys.publishedAt[exists]': true,
+            'metadata.tags.sys.id[in]': tagId,
+            limit: chunkSize,
+            skip,
+            'fields.organizationParentSubpage[exists]': false,
+          },
+        })
+        total = response.total
+        skip += chunkSize
+
+        for (const entry of response.items) {
+          const subpageSlug = entry.fields.slug?.[DEFAULT_LOCALE]
+          const subpageSlugEn = entry.fields.slug?.['en']
+
+          addRow(
+            'organizationSubpage',
+            entry.fields.title?.[DEFAULT_LOCALE] ?? '',
+            entry.sys.id,
+            subpageSlug ? `https://island.is/s/${orgSlug}/${subpageSlug}` : '',
+            orgSlugEn && subpageSlugEn
+              ? `https://island.is/en/o/${orgSlugEn}/${subpageSlugEn}`
+              : '',
+            entry.sys.updatedAt,
+            entry.sys.publishedAt,
+            entry.sys.createdAt,
+          )
+        }
+      }
+
+      // Organization parent subpages with their children
+      skip = 0
+      total = Infinity
+      while (skip < total) {
+        const response = await cma.entry.getMany({
+          query: {
+            content_type: 'organizationParentSubpage',
+            'sys.publishedAt[exists]': true,
+            'metadata.tags.sys.id[in]': tagId,
+            limit: chunkSize,
+            skip,
+          },
+        })
+        total = response.total
+        skip += chunkSize
+
+        for (const parent of response.items) {
+          const parentSlug = parent.fields.slug?.[DEFAULT_LOCALE]
+          const parentSlugEn = parent.fields.slug?.['en']
+          if (!parentSlug && !parentSlugEn) continue
+
+          const subpageRefs: { sys: { id: string } }[] =
+            parent.fields.pages?.[DEFAULT_LOCALE] ?? []
+          for (const subpageRef of subpageRefs) {
+            const subpage = await cma.entry.get({ entryId: subpageRef.sys.id })
+            if (!subpage) continue
+
+            const subpageSlug = subpage.fields.slug?.[DEFAULT_LOCALE]
+            const subpageSlugEn = subpage.fields.slug?.['en']
+
+            addRow(
+              'organizationSubpage',
+              subpage.fields.title?.[DEFAULT_LOCALE] ?? '',
+              subpage.sys.id,
+              parentSlug && subpageSlug
+                ? `https://island.is/s/${orgSlug}/${parentSlug}/${subpageSlug}`
+                : '',
+              orgSlugEn && parentSlugEn && subpageSlugEn
+                ? `https://island.is/en/o/${orgSlugEn}/${parentSlugEn}/${subpageSlugEn}`
+                : '',
+              subpage.sys.updatedAt,
+              subpage.sys.publishedAt,
+              subpage.sys.createdAt,
+            )
+          }
+        }
+      }
+    }
+
     const csvContent = `${csvHeader.join(CSV_DELIMITER)}\n${csvBody.join('\n')}`
     const filename = `${tagId}-${new Date().toISOString().split('.')[0]}.csv`
     downloadCsv(csvContent, filename)
-  }, [cma.entry, sdk.ids.environment, sdk.ids.space, state.selectedTagId])
+  }, [
+    cma.entry,
+    sdk.ids.environment,
+    sdk.ids.space,
+    state.selectedTagId,
+    state.orgSlug,
+    state.orgSlugEn,
+  ])
 
   const exportContent = useCallback(async () => {
     setState((prev) => ({ ...prev, isExporting: true }))
@@ -334,17 +479,34 @@ export const ContentExportScreen = () => {
         </Flex>
       )}
       {state.exportType === 'pages' && (
-        <Flex gap="16px" flexWrap="wrap">
+        <Flex gap="16px" flexDirection="column" marginBottom="spacingM">
           <ValueSelect
             disabled={state.isExporting}
             selectedValue={state.selectedTagId}
             setSelectedValue={(value) =>
-              setState((prev) => ({ ...prev, selectedTagId: value }))
+              setState((prev) => ({
+                ...prev,
+                selectedTagId: value,
+                orgSlug: null,
+                orgSlugEn: null,
+              }))
             }
             options={state.tags}
             label="Owner tag"
             placeholder="Select a tag"
           />
+          {state.selectedTagId && (
+            <Flex gap="8px" flexDirection="column">
+              <span>
+                Organization page slug ({}):{' '}
+                <strong>{state.orgSlug ?? 'not found'}</strong>
+              </span>
+              <span>
+                Organization page slug (en):{' '}
+                <strong>{state.orgSlugEn ?? 'not found'}</strong>
+              </span>
+            </Flex>
+          )}
         </Flex>
       )}
       <Button
