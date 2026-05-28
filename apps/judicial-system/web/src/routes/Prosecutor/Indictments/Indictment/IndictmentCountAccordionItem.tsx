@@ -1,13 +1,4 @@
-import {
-  FC,
-  ForwardedRef,
-  forwardRef,
-  PointerEvent,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { FC, PointerEvent, ReactNode, useEffect, useMemo, useState } from 'react'
 import {
   animate,
   motion,
@@ -76,20 +67,21 @@ const useRaisedShadow = (value: MotionValue<number>) => {
   return boxShadow
 }
 
-const IndictmentCountLabel = forwardRef(
-  (props: IndictmentCountLabelProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const { index, policeCaseNumber, formattedDate, warningMessage } = props
+const IndictmentCountLabel = ({
+  index,
+  policeCaseNumber,
+  formattedDate,
+  warningMessage,
+}: IndictmentCountLabelProps) => {
+  const policeCaseNumberLabel = policeCaseNumber ?? 'Ekki valið'
 
-    const policeCaseNumberLabel = policeCaseNumber ?? 'Ekki valið'
-
-    return (
-      <Box
-        ref={ref}
-        className={styles.label}
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-      >
+  return (
+    <Box
+      className={styles.label}
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+    >
         <Box className={styles.labelStart}>
           <Text variant="h4" as="span">
             <motion.span layout>{index + 1}.</motion.span>{' '}
@@ -115,9 +107,8 @@ const IndictmentCountLabel = forwardRef(
           </Text>
         )}
       </Box>
-    )
-  },
-)
+  )
+}
 
 export const IndictmentCountAccordionItem: FC<Props> = ({
   indictmentCount,

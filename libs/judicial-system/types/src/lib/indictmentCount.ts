@@ -61,14 +61,6 @@ export const sortIndictmentCounts = <T extends IndictmentCount>(
     return aCreated - bCreated
   })
 
-export const getIndictmentCountDisplayOrderUpdates = (
-  counts: { id: string }[],
-  crimeScenes?: CrimeSceneMap | null,
-): { id: string; displayOrder: number }[] =>
-  [...counts]
-    .sort(getIndictmentCountCompare(crimeScenes))
-    .map((count, index) => ({ id: count.id, displayOrder: index }))
-
 export const getIndictmentCountCompare =
   (crimeScenes: CrimeSceneMap | undefined | null) =>
   (a: IndictmentCount, b: IndictmentCount): number => {

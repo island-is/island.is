@@ -1,8 +1,4 @@
-import { CrimeSceneMap } from './case'
-import {
-  getIndictmentCountDisplayOrderUpdates,
-  sortIndictmentCounts,
-} from './indictmentCount'
+import { sortIndictmentCounts } from './indictmentCount'
 
 const count = (
   id: string,
@@ -31,20 +27,5 @@ describe('sortIndictmentCounts', () => {
       { id: 'a', displayOrder: 0, created: '2024-01-01T00:00:00Z' },
     ]
     expect(sortIndictmentCounts(counts).map((c) => c.id)).toEqual(['a', 'b'])
-  })
-})
-
-describe('getIndictmentCountDisplayOrderUpdates', () => {
-  it('assigns indices from chronological compare', () => {
-    const crimeScenes: CrimeSceneMap = {
-      p1: { date: new Date('2024-03-01') },
-      p2: { date: new Date('2024-01-01') },
-    }
-    const counts = [count('a', 0, 'p1'), count('b', 0, 'p2')]
-    const updates = getIndictmentCountDisplayOrderUpdates(counts, crimeScenes)
-    expect(updates).toEqual([
-      { id: 'b', displayOrder: 0 },
-      { id: 'a', displayOrder: 1 },
-    ])
   })
 })

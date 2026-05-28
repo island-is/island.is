@@ -181,7 +181,6 @@ export {
   isTrafficViolationIndictmentCount,
   getIndictmentCountCompare,
   sortIndictmentCounts,
-  getIndictmentCountDisplayOrderUpdates,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
