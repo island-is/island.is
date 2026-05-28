@@ -84,14 +84,17 @@ export default function AppLockScreen() {
   const intl = useIntl()
 
   // Clear state before router.back so the layout's defensive subscriber
-  // doesn't re-push during unmount. Then replay any deferred deep-link.
+  // doesn't re-push during unmount. Defer the deep-link replay until after
+  // the back has settled — otherwise the navigate runs against the stack
+  // with app-lock still on top, pushing wallet/<id> above it, and the queued
+  // back pops the wallet instead, leaving the user re-stuck on the lock.
   const unlockApp = () => {
     authStore.setState({
       lockScreenActivatedAt: undefined,
       biometricAutoPromptedForCurrentLock: false,
     })
     router.back()
-    consumePendingDeepLink()
+    setTimeout(consumePendingDeepLink, 0)
   }
 
   const authenticateWithBiometrics = async () => {

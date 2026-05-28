@@ -1,6 +1,6 @@
 import { Redirect, Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef } from 'react'
-import { AppState, Keyboard } from 'react-native'
+import { AppState, Keyboard, Platform } from 'react-native'
 
 import {
   authStore,
@@ -83,10 +83,12 @@ export default function AuthLayout() {
         return
       }
 
-      // active → inactive: mount mask + stamp clock. iOS Simulator and some
-      // device flows skip 'background'; activatedAt guard means Face ID
-      // overlay during a locked session won't restart the timer.
+      // iOS-only: stamp + mount on active→inactive (Face ID overlay, Simulator
+      // skipping 'background', app-switcher peek). Skipping on Android because
+      // 'inactive' there fires for non-backgrounding events (screen
+      // transitions, system dialogs) and would re-lock right after unlock.
       if (
+        Platform.OS === 'ios' &&
         previousAppState === 'active' &&
         nextAppState === 'inactive'
       ) {
