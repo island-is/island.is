@@ -250,7 +250,13 @@ function PaymentPage({
       methods.push('invoice')
     }
 
-    return Array.from(new Set(methods)) as ('card' | 'invoice')[]
+    // TEST OVERRIDE: always offer bank_transfer in the selector so we can exercise the new flow end
+    // to end while it's behind no feature flag. Remove this once the backend's
+    // `determinePaymentMethods` (paymentFlow.utils.ts) starts emitting `bank_transfer` based on FJS's
+    // catalog `paymentOptions` (see the handoff's note about flipping `FjsPaymentMethod.TRANSFER`).
+    methods.push('bank_transfer')
+
+    return Array.from(new Set(methods)) as PaymentMethod[]
   }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
 
   // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
