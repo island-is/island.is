@@ -1126,9 +1126,9 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
 
     beforeEach(async () => {
-      ;(mockDefendantService.updateDatabaseDefendant as jest.Mock).mockResolvedValue(
-        {},
-      )
+      ;(
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      ).mockResolvedValue({})
 
       await givenWhenThen(caseId, user, reopeningCase, caseToUpdate)
     })
