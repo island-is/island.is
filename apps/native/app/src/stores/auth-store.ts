@@ -51,8 +51,8 @@ type KeychainAuthorizeCredentials = Awaited<
 interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
+  // undefined = unlocked; number = locked-at timestamp; `0` = cold-start sentinel.
   lockScreenActivatedAt?: number
-  lockScreenComponentId: string | undefined
   lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
   cognitoDismissCount: number
@@ -142,7 +142,6 @@ export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
-  lockScreenComponentId: undefined,
   lockScreenSuppressedUntil: undefined,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
@@ -297,6 +296,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        lockScreenActivatedAt: undefined,
       }),
       true,
     )
