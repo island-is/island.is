@@ -84,13 +84,30 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     const payloadSize = new Blob([JSON.stringify(mutationInput)]).size
     if (payloadSize > MAX_APPLICATION_PAYLOAD_BYTES) {
       console.error('Error: Attachment too large')
-      await updateApplicationV2({
-        path: InputFields.misc.mainTextAsFile,
-        value: true,
+
+      // Clear the oversized html field and switch to file-upload mode in a
+      // single atomic delta. Without clearing html, the next save (e.g. on
+      // "Next" click) re-sends the oversized content and trips the guard
+      // again, blocking navigation.
+      setValue(InputFields.advert.html, '')
+      setValue(InputFields.misc.mainTextAsFile, true)
+
+      const fallbackAnswers = set({}, InputFields.advert.html, '')
+      set(fallbackAnswers, InputFields.misc.mainTextAsFile, true)
+
+      await updateApplicationMutation({
+        variables: {
+          locale,
+          input: {
+            id: applicationId,
+            answers: fallbackAnswers,
+          },
+        },
         onError: (err) => {
-          console.error('Failed to persist mainTextAsFile flag:', err)
+          console.error('Failed to persist file-upload fallback:', err)
         },
       })
+
       cb && cb()
       return
     }
