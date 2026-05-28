@@ -66,3 +66,21 @@ export const ChargeApplePayMutation = gql`
     }
   }
 `
+
+export const CreateBankTransferMutation = gql`
+  mutation createBankTransfer($input: PaymentsCreateBankTransferInput!) {
+    paymentsCreateBankTransfer(input: $input) {
+      providerPaymentId
+      scaRedirectUrl
+    }
+  }
+`
+
+export const VerifyBankTransferMutation = gql`
+  mutation verifyBankTransfer($input: PaymentsVerifyBankTransferInput!) {
+    paymentsVerifyBankTransfer(input: $input) {
+      status
+      message
+    }
+  }
+`

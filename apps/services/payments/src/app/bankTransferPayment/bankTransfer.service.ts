@@ -168,7 +168,9 @@ export class BankTransferService {
       )
 
     const correlationId = uuid()
-    const callbackUrl = `${this.config.callbackBaseUrl}/v1/payments/bank-transfer/callback`
+    // Blikk POSTs callbacks to the FE Next.js handler, which proxies through the GraphQL gateway to
+    // our `verify` endpoint. The backend never receives Blikk's webhook directly.
+    const callbackUrl = `${this.paymentFlowConfig.webOrigin}/api/bank-transfer/callback`
     const partnerRedirectUrl = `${this.paymentFlowConfig.webOrigin}/${input.locale}/${input.paymentFlowId}`
     // Blikk's `expiresAt` is Unix seconds. We pin to now + 5 min so an abandoned attempt self-cleans
     // on Blikk's side and the user can retry on the same flow (a fresh attempt = fresh correlationId).

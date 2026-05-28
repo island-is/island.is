@@ -94,14 +94,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         // TODO: confirm Blikk's production API host with Blikk before flipping bank-transfer on.
         prod: 'https://api.blikk.tech',
       },
-      // Public origin Blikk POSTs callbacks to (their servers reach us from the internet, not via xroad).
-      // TODO: a public ingress for `/v1/payments/bank-transfer/callback` is still required — the current
-      // primary/internal ingresses are both `public: false`. Add it before E2E (TODO 15).
-      BLIKK_CALLBACK_BASE_URL: {
-        dev: 'https://api.dev01.devland.is',
-        staging: 'https://api.staging01.devland.is',
-        prod: 'https://api.island.is',
-      },
     })
     .secrets({
       ...secrets,

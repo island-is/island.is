@@ -19,12 +19,12 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   apiKey: 'test-key',
   baseUrl: 'https://stage.blikk.tech',
-  callbackBaseUrl: 'https://api.island.is',
   isConfigured: true,
 }
 
 const paymentFlowConfig: ConfigType<typeof PaymentFlowModuleConfig> = {
   webOrigin: 'https://island.is/greida',
+  isConfigured: true,
 }
 
 const createMockLogger = (): jest.Mocked<Logger> =>
@@ -345,7 +345,7 @@ describe('BankTransferService', () => {
         paymentFlowId: 'flow-1',
         amount: 14000,
         currency: 'ISK',
-        callbackUrl: 'https://api.island.is/v1/payments/bank-transfer/callback',
+        callbackUrl: 'https://island.is/greida/api/bank-transfer/callback',
         partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
       })
       expect(blikkArg.correlationId).not.toBe('flow-1')
