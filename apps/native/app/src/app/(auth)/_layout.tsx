@@ -4,11 +4,7 @@ import { AppState, Keyboard, Platform } from 'react-native'
 import { useIntl } from 'react-intl'
 
 import { AppLock } from '@/components/app-lock/app-lock'
-import {
-  authStore,
-  isLockScreenSuppressed,
-  useAuthStore,
-} from '@/stores/auth-store'
+import { authStore, useAuthStore } from '@/stores/auth-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { config } from '../../config'
 import { modalScreenOptions } from '../../constants/screen-options'
@@ -30,7 +26,6 @@ export default function AuthLayout() {
       const prev = appStateRef.current
       appStateRef.current = next
 
-      if (isLockScreenSuppressed()) return
       if (!isOnboarded() || config.isTestingApp) return
 
       const wentToBackground =

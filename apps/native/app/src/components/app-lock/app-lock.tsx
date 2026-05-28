@@ -79,6 +79,9 @@ function useBiometricType() {
 
 function useShouldShowLock() {
   const lockScreenActivatedAt = useAuthStore((s) => s.lockScreenActivatedAt)
+  const lockScreenSuppressedUntil = useAuthStore(
+    (s) => s.lockScreenSuppressedUntil,
+  )
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const dev__useLockScreen = usePreferencesStore((s) => s.dev__useLockScreen)
 
@@ -87,6 +90,14 @@ function useShouldShowLock() {
   if (!isOnboarded()) return false
   if (config.isTestingApp) return false
   if (dev__useLockScreen === false) return false
+  // Suppression hides the overlay but doesn't stop background-stamping —
+  // when it clears, the lock shows if the user backgrounded in the meantime.
+  if (
+    lockScreenSuppressedUntil != null &&
+    Date.now() < lockScreenSuppressedUntil
+  ) {
+    return false
+  }
   return true
 }
 
@@ -128,6 +139,9 @@ function AppLockContent({
   const intl = useIntl()
   const isPromptingRef = useRef(false)
   const hasAutoPromptedRef = useRef(false)
+  // Only a real background→active cycle resets the auto-prompt flag.
+  // iOS Face ID cancel goes active→inactive→active (never 'background').
+  const wentBackgroundRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
 
@@ -176,8 +190,13 @@ function AppLockContent({
   useEffect(() => {
     if (AppState.currentState === 'active') decide()
     const sub = AppState.addEventListener('change', (next) => {
-      if (next === 'active') {
-        hasAutoPromptedRef.current = false
+      if (next === 'background') {
+        wentBackgroundRef.current = true
+      } else if (next === 'active') {
+        if (wentBackgroundRef.current) {
+          hasAutoPromptedRef.current = false
+          wentBackgroundRef.current = false
+        }
         decide()
       }
     })
