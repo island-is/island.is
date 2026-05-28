@@ -1933,23 +1933,26 @@ export class CaseNotificationService extends BaseNotificationService {
 
     const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
     // The current reopen's INDICTMENT_REOPENED event has just been written, so
-    // the "previous" reopen is the second-most-recent. A SENT_TO_PRISON_ADMIN
-    // older than that previous reopen has been invalidated by an intervening
-    // reset of isSentToPrisonAdmin and should not trigger an FMS email.
+    // the "previous" reopen is the second-most-recent. A "sent" event older
+    // than that previous reopen belongs to an earlier run of the case and
+    // should not trigger an email on this reopen.
     const previousReopenedDate = (theCase.eventLogs ?? [])
       .filter((log) => log.eventType === EventType.INDICTMENT_REOPENED)
       .map((log) => log.created)
       .sort((a, b) => b.getTime() - a.getTime())[1]
 
-    const hasSentToPrisonAdmin = theCase.defendants?.some((d) => {
-      const sentDate = DefendantEventLog.getEventLogDateByEventType(
-        DefendantEventType.SENT_TO_PRISON_ADMIN,
-        d.eventLogs,
-      )
-      if (!sentDate) return false
-      return !previousReopenedDate || sentDate > previousReopenedDate
-    })
-    const hasSentToPublicProsecutor = Boolean(
+    const isCurrentInThisRun = (sentDate: Date | undefined) =>
+      Boolean(sentDate && (!previousReopenedDate || sentDate > previousReopenedDate))
+
+    const hasSentToPrisonAdmin = theCase.defendants?.some((d) =>
+      isCurrentInThisRun(
+        DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          d.eventLogs,
+        ),
+      ),
+    )
+    const hasSentToPublicProsecutor = isCurrentInThisRun(
       EventLog.getEventLogDateByEventType(
         EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
         theCase.eventLogs,
