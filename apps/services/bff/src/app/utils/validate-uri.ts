@@ -35,7 +35,14 @@ export const validateUri = (uri: string, allowedUris: string[]): boolean => {
       const parsedAllowedUri = new URL(allowedUri.trim().toLowerCase())
 
       const isSameProtocol = parsedUri.protocol === parsedAllowedUri.protocol
-      const isSameHostname = parsedUri.hostname === parsedAllowedUri.hostname
+      const isSameHostname =
+        parsedUri.hostname === parsedAllowedUri.hostname ||
+        // Allow feature deployment hostnames, e.g. "feat-foo-beta.dev01.devland.is"
+        // when "beta.dev01.devland.is" is an allowed hostname.
+        (parsedAllowedUri.hostname.startsWith('beta.') &&
+          parsedUri.hostname.endsWith(
+            `-${parsedAllowedUri.hostname}`,
+          ))
       const isSamePathname =
         parsedUri.pathname === parsedAllowedUri.pathname ||
         parsedUri.pathname.startsWith(parsedAllowedUri.pathname)
