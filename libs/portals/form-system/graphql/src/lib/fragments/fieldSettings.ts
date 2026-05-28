@@ -36,6 +36,7 @@ export const FieldSettingsFragment = gql`
     hasDescription
     isPhoneRequired
     isEmailRequired
+    fetchEmailFromMyPages
     chargeItemCode
     chargeItemName
     chargeType
