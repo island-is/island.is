@@ -92,6 +92,7 @@ export const PdfModal = ({
         {/* Center: zoom controls */}
         <Box
           padding={1}
+          marginLeft={[1, 2]}
           background="backgroundBrandMinimal"
           borderRadius="large"
           display="flex"
