@@ -18,6 +18,7 @@ import {
 import Animated, {
   Easing,
   runOnJS,
+  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -133,7 +134,7 @@ function AppLockContent({
   opacity,
 }: {
   fading: boolean
-  opacity: ReturnType<typeof useSharedValue<number>>
+  opacity: SharedValue<number>
 }) {
   const router = useRouter()
   const intl = useIntl()

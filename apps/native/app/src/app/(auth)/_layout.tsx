@@ -28,8 +28,7 @@ export default function AuthLayout() {
 
       if (!isOnboarded() || config.isTestingApp) return
 
-      const wentToBackground =
-        next === 'background' && prev !== 'background'
+      const wentToBackground = next === 'background' && prev !== 'background'
       const wentInactiveIOS =
         Platform.OS === 'ios' && prev === 'active' && next === 'inactive'
 
