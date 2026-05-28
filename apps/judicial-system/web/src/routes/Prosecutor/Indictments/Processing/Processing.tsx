@@ -464,9 +464,7 @@ const Processing: FC = () => {
                   civilClaimant={civilClaimant}
                   civilClaimantIndex={index}
                   label={`${formatMessage(strings.civilClaimant)} ${index + 1}`}
-                  defendantSelectionWarningText={formatMessage(
-                    strings.civilClaimantDefendantSelectionRequired,
-                  )}
+                  defendantSelectionWarningText="Veldu að minnsta kosti einn ákærða"
                   caseId={workingCase.id}
                   defendants={workingCase.defendants ?? []}
                   removeCivilClaimantById={removeCivilClaimantById}

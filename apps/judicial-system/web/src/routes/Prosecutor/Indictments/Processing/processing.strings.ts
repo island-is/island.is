@@ -79,12 +79,6 @@ export const strings = {
     description:
       'Notaður sem texti í "Réttargæslumaður" valmöguleikanum við einkaréttarkröfu á Málsmeðferðarskjánum.',
   }),
-  civilClaimantDefendantSelectionRequired: defineMessage({
-    id: 'judicial.system.indictments:processing.civil_claimant_defendant_selection_required',
-    defaultMessage: 'Veldu að minnsta kosti einn ákærða',
-    description:
-      'Villuboð þegar enginn ákærður er valinn fyrir kröfuhafa á Málsmeðferðarskjánum.',
-  }),
   civilClaimantShareFilesWithDefenderTooltip: defineMessage({
     id: 'judicial.system.indictments:processing.civil_claimant_share_files_with_defender_tooltip_v2',
     defaultMessage:

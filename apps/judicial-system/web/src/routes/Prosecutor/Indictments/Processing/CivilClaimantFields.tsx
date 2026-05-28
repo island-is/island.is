@@ -532,9 +532,7 @@ export const CivilClaimantFields = ({
               ))}
               {isDefendantSelectionInvalid && (
                 <Text color="red600" variant="eyebrow" marginTop={2}>
-                  {formatMessage(
-                    strings.civilClaimantDefendantSelectionRequired,
-                  )}
+                  Veldu að minnsta kosti einn ákærða
                 </Text>
               )}
             </Box>
