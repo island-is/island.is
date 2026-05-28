@@ -51,7 +51,6 @@ type KeychainAuthorizeCredentials = Awaited<
 interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
-  // undefined = unlocked; number = locked-at timestamp; `0` = cold-start sentinel.
   lockScreenActivatedAt?: number
   lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
