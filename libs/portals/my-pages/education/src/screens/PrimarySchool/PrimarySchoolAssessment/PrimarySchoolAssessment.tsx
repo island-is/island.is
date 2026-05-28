@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { usePrimarySchoolAssessmentDataQuery } from './PrimarySchoolAssessment.generated'
 import { SingleAssessment } from './subsections/SingleAssessment'
 import { AssessmentAccordionList } from './subsections/AssessmentAccordionList'
+import { primarySchoolMessages as psm } from '../../../lib/messages'
 
 export const PrimarySchoolAssessment = () => {
   useNamespaces('sp.education-primary-school')
@@ -27,7 +28,7 @@ export const PrimarySchoolAssessment = () => {
         type="no_data"
         noBorder={false}
         title={formatMessage(m.noData)}
-        message={formatMessage(m.noDataFoundDetail)}
+        message={formatMessage(psm.assessmentNoData)}
         imgSrc="./assets/images/sofa.svg"
       />
     )
