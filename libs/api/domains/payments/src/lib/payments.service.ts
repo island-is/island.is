@@ -26,6 +26,10 @@ import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
+import { CreateBankTransferInput } from './dto/createBankTransfer.input'
+import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
+import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
+import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
 
 @Injectable()
 export class PaymentsService {
@@ -116,6 +120,22 @@ export class PaymentsService {
   ): Promise<CreateInvoiceResponse> {
     return this.paymentsApi.invoicePaymentControllerCreate({
       createInvoiceInput,
+    })
+  }
+
+  async createBankTransfer(
+    createBankTransferInput: CreateBankTransferInput,
+  ): Promise<CreateBankTransferResponse> {
+    return this.paymentsApi.bankTransferControllerCreate({
+      createBankTransferInput,
+    })
+  }
+
+  async verifyBankTransfer(
+    verifyBankTransferInput: VerifyBankTransferInput,
+  ): Promise<VerifyBankTransferResponse> {
+    return this.paymentsApi.bankTransferControllerVerify({
+      verifyBankTransferInput,
     })
   }
 
