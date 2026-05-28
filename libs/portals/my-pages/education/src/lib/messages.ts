@@ -135,7 +135,8 @@ export const primarySchoolMessages = defineMessages({
   },
   assessmentNoData: {
     id: 'sp.education-primary-school:assessment-no-data',
-    defaultMessage: 'TODO: Assessment no data message',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })
 

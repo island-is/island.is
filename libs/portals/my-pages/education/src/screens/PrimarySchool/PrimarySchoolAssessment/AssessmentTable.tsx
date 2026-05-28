@@ -21,7 +21,11 @@ const columnHelper =
 export const AssessmentTable = ({ results, loading }: Props) => {
   const { formatMessage, locale } = useLocale()
 
-  const hasExamSitting = results.some((r) => r.period?.startDateString)
+  const hasExamSitting = results.some(
+    (r) =>
+      typeof r.period?.startDateString === 'string' &&
+      r.period.startDateString.trim().length > 0,
+  )
 
   const columns = useMemo(
     () => [
