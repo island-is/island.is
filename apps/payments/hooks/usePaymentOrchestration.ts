@@ -8,6 +8,7 @@ import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
+import { useBankTransferPayment } from './useBankTransferPayment'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -83,6 +84,11 @@ export const usePaymentOrchestration = ({
     onPaymentError: commonOnPaymentError,
   })
 
+  const bankTransferPayment = useBankTransferPayment({
+    paymentFlowId: paymentFlow?.id,
+    onPaymentError: commonOnPaymentError,
+  })
+
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
     async (data) => {
       setIsInitiatingSubmit(true)
@@ -110,6 +116,8 @@ export const usePaymentOrchestration = ({
           })
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
+        } else if (selectedPaymentMethod === 'bank_transfer') {
+          await bankTransferPayment.processBankTransferPayment()
         }
       } catch (e: unknown) {
         if (
@@ -124,13 +132,17 @@ export const usePaymentOrchestration = ({
         setIsInitiatingSubmit(false)
       }
     },
-    [selectedPaymentMethod, cardPayment, invoicePayment],
+    [selectedPaymentMethod, cardPayment, invoicePayment, bankTransferPayment],
   )
 
   const combinedIsProcessing =
     selectedPaymentMethod === 'card'
       ? cardPayment.isCardPaymentProcessing
-      : invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'invoice'
+      ? invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'bank_transfer'
+      ? bankTransferPayment.isBankTransferPaymentProcessing
+      : false
 
   // Overall submitting state combines the local initiation with the hook's processing state.
   const overallIsSubmitting = isInitiatingSubmit || combinedIsProcessing
