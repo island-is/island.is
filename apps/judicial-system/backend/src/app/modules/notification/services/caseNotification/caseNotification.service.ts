@@ -1942,7 +1942,9 @@ export class CaseNotificationService extends BaseNotificationService {
       .sort((a, b) => b.getTime() - a.getTime())[1]
 
     const isCurrentInThisRun = (sentDate: Date | undefined) =>
-      Boolean(sentDate && (!previousReopenedDate || sentDate > previousReopenedDate))
+      Boolean(
+        sentDate && (!previousReopenedDate || sentDate > previousReopenedDate),
+      )
 
     const hasSentToPrisonAdmin = theCase.defendants?.some((d) =>
       isCurrentInThisRun(
