@@ -54,7 +54,7 @@ import {
 import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling = () => {
+const Ruling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -410,4 +410,4 @@ const CourtOfAppealRuling = () => {
   )
 }
 
-export default CourtOfAppealRuling
+export default Ruling
