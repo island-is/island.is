@@ -17,9 +17,11 @@ import {
 } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
+import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
+  bankTransfer,
   card,
   cardSuccess,
   generic,
@@ -369,6 +371,9 @@ function PaymentPage({
                       reference={paymentFlow?.payerName}
                     />
                   )}
+                  {selectedPaymentMethod === 'bank_transfer' && (
+                    <BankTransferPayment />
+                  )}
                   <Button
                     type="submit"
                     loading={overallIsSubmitting}
@@ -377,6 +382,8 @@ function PaymentPage({
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)
+                      : selectedPaymentMethod === 'bank_transfer'
+                      ? formatMessage(bankTransfer.confirm)
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
