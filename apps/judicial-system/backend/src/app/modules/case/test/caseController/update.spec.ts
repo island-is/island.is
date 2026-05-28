@@ -1094,5 +1094,14 @@ describe('CaseController - Update', () => {
         body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
       })
     })
+
+    it('should create INDICTMENT_REOPENED event log', () => {
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.INDICTMENT_REOPENED,
+        caseId,
+        user,
+        transaction,
+      )
+    })
   })
 })

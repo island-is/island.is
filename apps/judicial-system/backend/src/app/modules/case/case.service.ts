@@ -1448,6 +1448,18 @@ export class CaseService {
         transaction,
       )
     }
+
+    if (
+      theCase.state === CaseState.COMPLETED &&
+      updatedCase.state === CaseState.RECEIVED
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REOPENED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
   }
 
   private handleStateChangeEventLogUpdatesForRequest(
