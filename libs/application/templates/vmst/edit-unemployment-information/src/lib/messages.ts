@@ -323,6 +323,27 @@ export const application = defineMessages({
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
     description: 'Description for description field when form is completed',
   },
+  bottomButtonMessage: {
+    id: 'vmst.eui.application:bottomButtonMessage',
+    defaultMessage:
+      'Á mínum síðum og í appi ísland.is getur þú nú nálgast staðfestingu á því að þessi aðgerð hafi verið framkvæmd.',
+    description: 'Bottom info message on completed form',
+  },
+  bottomButtonLabel: {
+    id: 'vmst.eui.application:bottomButtonLabel',
+    defaultMessage: 'Opna Mínar síður',
+    description: 'Bottom button label on completed form',
+  },
+  actionCardDraft: {
+    id: 'vmst.eui.application:actionCardDraft',
+    defaultMessage: 'Í vinnslu',
+    description: 'Action card tag for draft application',
+  },
+  applicationSent: {
+    id: 'vmst.eui.application:applicationSent',
+    defaultMessage: 'Breyting persónuupplýsinga móttekin',
+    description: 'History log message when application is sent',
+  },
 })
 
 export const errorMessages = defineMessages({
