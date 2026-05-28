@@ -4,6 +4,7 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   CaseType,
+  DefendantEventType,
   EventType,
   IndictmentCaseNotificationType,
   RequestCaseNotificationType,
@@ -155,7 +156,16 @@ describe('InternalNotificationController - Send indictment reopened notification
   describe('sends to prison admin when case was sent to prison admin', () => {
     const caseWithPrisonAdmin = {
       ...baseCase,
-      defendants: [{ isSentToPrisonAdmin: true }],
+      defendants: [
+        {
+          eventLogs: [
+            {
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+              created: new Date(),
+            },
+          ],
+        },
+      ],
     } as unknown as Case
 
     beforeEach(async () => {
@@ -181,7 +191,7 @@ describe('InternalNotificationController - Send indictment reopened notification
   describe('does not send to prison admin when case was not sent to prison admin', () => {
     const caseWithoutPrisonAdmin = {
       ...baseCase,
-      defendants: [{ isSentToPrisonAdmin: false }],
+      defendants: [{ eventLogs: [] }],
     } as unknown as Case
 
     beforeEach(async () => {

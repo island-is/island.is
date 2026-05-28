@@ -39,6 +39,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefenderSubRole,
   EventType,
   getIndictmentAppealDeadline,
@@ -89,6 +90,7 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
+  DefendantEventLog,
   EventLog,
   InstitutionContactRepositoryService,
   Notification,
@@ -1930,8 +1932,13 @@ export class CaseNotificationService extends BaseNotificationService {
     const defenderHtml = `${body}<br /><br /><a href="${defenderLink}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
     const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
-    const hasSentToPrisonAdmin = theCase.defendants?.some(
-      (d) => d.isSentToPrisonAdmin,
+    const hasSentToPrisonAdmin = theCase.defendants?.some((d) =>
+      Boolean(
+        DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          d.eventLogs,
+        ),
+      ),
     )
     const hasSentToPublicProsecutor = Boolean(
       EventLog.getEventLogDateByEventType(
