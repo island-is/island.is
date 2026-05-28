@@ -32,6 +32,13 @@ export const ContentExportScreen = () => {
     orgSlug: string | null
     orgSlugEn: string | null
     orgSlugLoading: boolean
+    orgEntry: {
+      id: string
+      title: string
+      updatedAt: string
+      publishedAt: string
+      createdAt: string
+    } | null
   }>({
     contentTypes: [],
     selectedContentTypeId: '',
@@ -42,6 +49,7 @@ export const ContentExportScreen = () => {
     orgSlug: null,
     orgSlugEn: null,
     orgSlugLoading: false,
+    orgEntry: null,
   })
 
   useEffect(() => {
@@ -106,6 +114,15 @@ export const ContentExportScreen = () => {
           orgSlug: org?.fields?.slug?.[DEFAULT_LOCALE] ?? null,
           orgSlugEn: org?.fields?.slug?.['en'] ?? null,
           orgSlugLoading: false,
+          orgEntry: org
+            ? {
+                id: org.sys.id,
+                title: org.fields.title?.[DEFAULT_LOCALE] ?? '',
+                updatedAt: org.sys.updatedAt,
+                publishedAt: org.sys.publishedAt ?? '',
+                createdAt: org.sys.createdAt,
+              }
+            : null,
         }))
       } catch {
         setState((prev) => ({ ...prev, orgSlugLoading: false }))
@@ -223,6 +240,7 @@ export const ContentExportScreen = () => {
     const tagId = state.selectedTagId
     const orgSlug = state.orgSlug
     const orgSlugEn = state.orgSlugEn
+    const orgEntry = state.orgEntry
     const chunkSize = 100
 
     const contentfulUrl = (entryId: string) =>
@@ -249,6 +267,20 @@ export const ContentExportScreen = () => {
           publishedAt,
           createdAt,
         ].join(CSV_DELIMITER),
+      )
+    }
+
+    // Organization page
+    if (orgEntry) {
+      addRow(
+        'Organization Page',
+        orgEntry.title,
+        orgEntry.id,
+        orgSlug ? `https://island.is/s/${orgSlug}` : '',
+        orgSlugEn ? `https://island.is/en/o/${orgSlugEn}` : '',
+        orgEntry.updatedAt,
+        orgEntry.publishedAt,
+        orgEntry.createdAt,
       )
     }
 
@@ -417,6 +449,7 @@ export const ContentExportScreen = () => {
     state.selectedTagId,
     state.orgSlug,
     state.orgSlugEn,
+    state.orgEntry,
   ])
 
   const exportContent = useCallback(async () => {
@@ -501,6 +534,7 @@ export const ContentExportScreen = () => {
                 selectedTagId: value,
                 orgSlug: null,
                 orgSlugEn: null,
+                orgEntry: null,
               }))
             }
             options={state.tags}
