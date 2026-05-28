@@ -8,7 +8,7 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { GridContainer } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 
-import { ValueSelect } from '../..//components/content-import'
+import { ValueSelect } from '../../components/content-import'
 import { downloadCsv } from '../../components/content-import/utils'
 import { DEFAULT_LOCALE } from '../../constants'
 
@@ -164,10 +164,8 @@ export const ContentExportScreen = () => {
       row.push(entry.metadata.tags.map((tag) => tag.sys.id).join(','))
 
       for (const field of contentTypeFields) {
-        {
-          const value = entry.fields[field.id]?.[sdk.locales.default]
-          row.push(JSON.stringify(value ?? ''))
-        }
+        const value = entry.fields[field.id]?.[sdk.locales.default]
+        row.push(JSON.stringify(value ?? ''))
         if (field.localized)
           for (const locale of sdk.locales.available)
             if (locale !== sdk.locales.default) {
@@ -433,14 +431,11 @@ export const ContentExportScreen = () => {
       </GridContainer>
     )
 
-  let canExport = false
-
-  if (!state.isExporting) {
-    if (state.exportType === 'contentType')
-      canExport = Boolean(state.selectedContentTypeId)
-    else if (state.exportType === 'pages')
-      canExport = Boolean(state.selectedTagId)
-  }
+  const canExport =
+    !state.isExporting &&
+    (state.exportType === 'contentType'
+      ? Boolean(state.selectedContentTypeId)
+      : Boolean(state.selectedTagId))
 
   return (
     <GridContainer>
@@ -498,7 +493,7 @@ export const ContentExportScreen = () => {
           {state.selectedTagId && (
             <Flex gap="8px" flexDirection="column">
               <span>
-                Organization page slug ({}):{' '}
+                Organization page slug ({DEFAULT_LOCALE}):{' '}
                 <strong>{state.orgSlug ?? 'not found'}</strong>
               </span>
               <span>
