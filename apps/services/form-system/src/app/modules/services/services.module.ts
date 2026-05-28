@@ -11,6 +11,7 @@ import { ZendeskListService } from './dataFromUrl/zendeskList.service'
 import { DataFromUrlService } from './dataFromUrl/dataFromUrl.service'
 import { AuthService } from './auth.service'
 import { ApplicationMapper } from '../applications/models/application.mapper'
+import { FileModule } from '../file/file.module'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ApplicationMapper } from '../applications/models/application.mapper'
       isGlobal: true,
       load: [XRoadConfig],
     }),
+    FileModule,
   ],
   providers: [
     ServiceManager,

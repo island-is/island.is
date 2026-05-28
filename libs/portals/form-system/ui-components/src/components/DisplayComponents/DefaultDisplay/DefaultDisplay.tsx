@@ -22,9 +22,14 @@ const TEXTBOX_COMPONENT_MAP = {
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const DefaultDisplay = ({ item, valueIndex }: Props) => {
+export const DefaultDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
   const { lang } = useLocale()
 
   const valueKey = TEXTBOX_COMPONENT_MAP[
@@ -61,6 +66,14 @@ export const DefaultDisplay = ({ item, valueIndex }: Props) => {
     >
       <Text as="p" fontWeight="semiBold" lineHeight="sm">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="semiBold" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
 
       <Box marginLeft={2}>

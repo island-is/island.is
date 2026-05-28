@@ -142,13 +142,8 @@ const Conclusion: FC = () => {
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
   const { updateDefendantState, updateDefendant } = useDefendants()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
