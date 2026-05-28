@@ -9,12 +9,12 @@ export const bankTransfer = defineMessages({
   disclaimer: {
     id: 'payments:bankTransfer.disclaimer',
     defaultMessage:
-      'Þú færð beiðni um staðfestingu í banka-app eða netbanka og getur millifært þaðan.',
+      'Borgaðu á öruggan og einfaldan hátt með tafarlausri millifærslu beint úr bankaappinu þínu',
     description: 'Disclaimer banner shown on the bank-transfer payment view',
   },
   confirm: {
     id: 'payments:bankTransfer.confirm',
-    defaultMessage: 'Staðfesta millifærslu',
+    defaultMessage: 'Hefja millifærslu',
     description: 'Primary button label that initiates the bank-transfer flow',
   },
   cancel: {
@@ -24,7 +24,7 @@ export const bankTransfer = defineMessages({
   },
   waiting: {
     id: 'payments:bankTransfer.waiting',
-    defaultMessage: 'Beðið eftir staðfestingu í bankanum…',
+    defaultMessage: 'Beðið eftir staðfestingu frá bankanum',
     description:
       'Single status string shown while the user completes SCA and we poll for terminal status',
   },
