@@ -32,7 +32,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { shouldUseAppealWithdrawnRoutes } from '../../utils'
+import {
+  appendAppealCaseIdQuery,
+  shouldUseAppealWithdrawnRoutes,
+} from '../../utils'
 import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 
 const useSections = (
@@ -1272,7 +1275,10 @@ const useSections = (
               {
                 name: formatMessage(sections.courtOfAppealSection.overview),
                 isActive: isActive(constants.COURT_OF_APPEAL_OVERVIEW_ROUTE),
-                href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+                href: appendAppealCaseIdQuery(
+                  `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+                  targetAppealCase?.id,
+                ),
               },
               ...(!useAppealWithdrawnSections
                 ? [
@@ -1281,7 +1287,10 @@ const useSections = (
                         sections.courtOfAppealSection.reception,
                       ),
                       isActive: isActive(constants.COURT_OF_APPEAL_CASE_ROUTE),
-                      href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(constants.COURT_OF_APPEAL_CASE_ROUTE) &&
                         validateFormStepper(
@@ -1301,7 +1310,10 @@ const useSections = (
                       isActive: isActive(
                         constants.COURT_OF_APPEAL_RULING_ROUTE,
                       ),
-                      href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(constants.COURT_OF_APPEAL_RULING_ROUTE) &&
                         validateFormStepper(
@@ -1330,7 +1342,10 @@ const useSections = (
                       isActive: isActive(
                         constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
                       ),
-                      href: `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                      href: appendAppealCaseIdQuery(
+                        `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
+                        targetAppealCase?.id,
+                      ),
                       onClick:
                         !isActive(
                           constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
@@ -1352,7 +1367,10 @@ const useSections = (
               {
                 name: formatMessage(sections.courtOfAppealSection.summary),
                 isActive: isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE),
-                href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                href: appendAppealCaseIdQuery(
+                  `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
+                  targetAppealCase?.id,
+                ),
                 onClick:
                   !isActive(constants.COURT_OF_APPEAL_SUMMARY_ROUTE) &&
                   validateFormStepper(
