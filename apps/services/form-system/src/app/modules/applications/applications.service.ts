@@ -366,6 +366,7 @@ export class ApplicationsService {
     applicationDto.events.push(applicationEvent)
 
     let zendeskInstance = ''
+    let zendeskBrandId = ''
     if (applicationDto.submissionServiceUrl === 'zendesk') {
       const organization = await this.organizationModel.findByPk(
         application.organizationId,
@@ -376,11 +377,13 @@ export class ApplicationsService {
         )
       }
       zendeskInstance = organization.zendeskInstance ?? ''
+      zendeskBrandId = organization.zendeskBrandId ?? ''
     }
 
     const success = await this.serviceManager.send(
       applicationDto,
       zendeskInstance,
+      zendeskBrandId,
     )
 
     if (success) {
