@@ -23,15 +23,17 @@ import { FormBuilder, expr, serverExpr } from '@island.is/application/core'
 
 Server rules never cross the wire as `condition`. The browser only receives `clientShowWhen` and `clientValueExpression` as JSON expression trees.
 
+`showWhen` and `clientShowWhen` are positive predicates: when the condition is present it answers "should this be shown?" If the condition is `null` or omitted, the field is treated as visible at that layer.
+
 ---
 
 ## Conditional visibility
 
 ### Server: `showWhen`
 
-Use `showWhen` when visibility depends on **external data**, the **current user**, navigation structure, or logic that should not run in the browser.
+Use `showWhen` when visibility depends on **external data**, the **current user**, navigation structure, sensitive business rules, or logic that should not run in the browser.
 
-At build time, `PageBuilder` resolves `showWhen` into an internal `condition` on the field. During screen compilation, `shouldShowFormItem` evaluates that condition and sets `isNavigable` on each screen node. Fields with `isNavigable: false` are **omitted from the API payload**, unless they also define `clientShowWhen` (so the client can still toggle them after a refetch).
+At build time, `PageBuilder` resolves `showWhen` into an internal `condition` on the field. During screen compilation, `shouldShowFormItem` evaluates that condition and sets `isNavigable` on each screen node. Fields with `isNavigable: false` are **omitted from the API payload**. `clientShowWhen` only runs for components that passed server visibility and were sent to the browser.
 
 Server conditions are re-evaluated on every screen build, page navigation, and **REFETCH** (for example after a select field triggers a template API).
 
@@ -110,6 +112,7 @@ const getPlotDetailsData = (
 - Visibility depends on the authenticated user or role.
 - The field should be excluded from the screen payload entirely when hidden.
 - Business rules that must not be bypassed client-side.
+- Pricing, eligibility, entitlement, permission, or other sensitive decisions are involved.
 
 Do not use server `showWhen` for same-page reveal/hide interactions that should update immediately after another field changes. A server-hidden component is not sent to the client, so the browser cannot reveal it without a new screen payload. Use `clientShowWhen` for those cases.
 
@@ -205,7 +208,7 @@ flowchart TD
   template["Template: showWhen + clientShowWhen"]
   build["PageBuilder resolves showWhen to condition"]
   compile["Screen compiler: shouldShowFormItem"]
-  mapper["Screen mapper: include if isNavigable OR clientShowWhen"]
+  mapper["Screen mapper: include if isNavigable"]
   gql["GraphQL: clientShowWhen JSON only"]
   client["ComponentSwitch evaluates clientShowWhen"]
 
@@ -254,6 +257,7 @@ The server evaluates `value` when building the screen:
 Use server `value` when the computation needs:
 
 - `externalData` (registry lookups, payment info, template API results).
+- Sensitive values such as pricing, fees, eligibility, entitlement, or permission decisions.
 - i18n message resolution through the server resolver.
 - Logic that cannot be expressed in the client `expr` DSL.
 
