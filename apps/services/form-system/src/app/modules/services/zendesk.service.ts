@@ -52,6 +52,7 @@ export class ZendeskService {
   async sendToZendesk(
     applicationDto: ApplicationDto,
     storedInstance?: string,
+    zendeskBrandId?: string,
   ): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
@@ -137,6 +138,7 @@ export class ZendeskService {
       name,
       email,
       isInternal,
+      zendeskBrandId,
     )
   }
 
@@ -151,8 +153,14 @@ export class ZendeskService {
     name: string,
     email: string,
     isInternal: boolean,
+    zendeskBrandId?: string,
   ): Promise<boolean> {
     const serviceUrl = new URL(`${url}/api/v2/tickets.json`)
+
+    const brandId =
+      typeof zendeskBrandId === 'string' && /^\d+$/.test(zendeskBrandId.trim())
+        ? Number(zendeskBrandId.trim())
+        : undefined
 
     try {
       const response = await this.enhancedFetch(serviceUrl.toString(), {
@@ -174,6 +182,7 @@ export class ZendeskService {
               name,
               email,
             },
+            ...(brandId ? { brand_id: brandId } : {}),
           },
         }),
       })
