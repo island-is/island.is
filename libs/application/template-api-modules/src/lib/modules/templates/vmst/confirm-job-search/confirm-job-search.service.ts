@@ -96,9 +96,8 @@ export class ConfirmJobSearchService extends BaseTemplateApiService {
         {
           title: prereq.eligibilityErrorTitle,
           summary:
-            currentUserLocale === 'is'
-              ? result.reason ?? ''
-              : result.reasonEN ?? '',
+            (currentUserLocale === 'is' ? result.reason : result.reasonEN) ||
+            '',
         },
         400,
       )
