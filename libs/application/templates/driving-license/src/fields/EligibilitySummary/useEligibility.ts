@@ -9,6 +9,7 @@ import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
   B_FULL_RENEWAL_65,
+  B_TEMP,
   BE,
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
@@ -40,6 +41,7 @@ export interface UseEligibilityResult {
 export const useEligibility = (
   application: Application,
   is65RenewalRedesignEnabled: boolean,
+  isBTempRedesignEnabled: boolean,
 ): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(
     application.answers,
@@ -89,7 +91,8 @@ export const useEligibility = (
 
   const usesNewPhotoSelector =
     applicationFor === BE ||
-    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled)
+    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    (applicationFor === B_TEMP && isBTempRedesignEnabled)
 
   if (usingFakeData) {
     let hasPhoto: boolean
@@ -123,6 +126,7 @@ export const useEligibility = (
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
         hasPhoto,
         is65RenewalRedesignEnabled,
+        isBTempRedesignEnabled,
       ),
     }
   }
@@ -222,6 +226,27 @@ export const useEligibility = (
             !hasAnyInvalidRemarks &&
             hasUsablePhoto,
         requirements,
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_TEMP && isBTempRedesignEnabled) {
+    const hasUsablePhoto = computeUsablePhoto()
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasUsablePhoto,
+        requirements: [
+          ...eligibility,
+          {
+            key: RequirementKey.hasNoPhoto,
+            requirementMet: hasUsablePhoto,
+          },
+        ],
       },
     }
   }

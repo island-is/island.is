@@ -25,15 +25,23 @@ export const AssessmentTable = ({ results, loading }: Props) => {
     title: string
   } | null>(null)
 
+  const hasExamSitting = results.some(
+    (r) =>
+      typeof r.period?.startDateString === 'string' &&
+      r.period.startDateString.trim().length > 0,
+  )
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('schoolYear', {
         header: formatMessage(psm.schoolYear),
+        enableSorting: false,
         cell: ({ getValue }) => getValue() ?? '',
       }),
       columnHelper.accessor((row) => row.grade?.level, {
         id: 'gradeLevel',
         header: formatMessage(psm.gradeLevel),
+        enableSorting: false,
         cell: ({ getValue }) => {
           const level = getValue()
           return level != null
@@ -41,15 +49,21 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             : ''
         },
       }),
-      columnHelper.accessor((row) => row.period?.startDateString, {
-        id: 'examSitting',
-        header: formatMessage(psm.examSitting),
-        cell: ({ getValue }) => getValue() ?? '',
-      }),
+      ...(hasExamSitting
+        ? [
+            columnHelper.accessor((row) => row.period?.startDateString, {
+              id: 'examSitting',
+              header: formatMessage(psm.examSitting),
+              enableSorting: false,
+              cell: ({ getValue }) => getValue() ?? '',
+            }),
+          ]
+        : []),
       columnHelper.display({
         id: 'viewPdf',
         header: () => null,
         enableSorting: false,
+        meta: { align: 'right' },
         cell: ({ row }) => {
           const url = row.original.downloadServiceUrl
           if (!url) return null
@@ -68,19 +82,21 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             <Button
               variant="text"
               size="small"
-              icon="eye"
+              icon="copy"
               iconType="outline"
-              aria-label={`${formatMessage(psm.downloadResults)}: ${title}`}
+              aria-label={`${formatMessage(psm.viewResults)}${
+                row.original.schoolYear ? `: ${row.original.schoolYear}` : ''
+              }`}
               onClick={() => setActivePdf({ url, title })}
             >
-              {formatMessage(psm.downloadResults)}
+              {formatMessage(psm.viewResults)}
             </Button>
           )
         },
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [locale, hasExamSitting],
   )
 
   return (

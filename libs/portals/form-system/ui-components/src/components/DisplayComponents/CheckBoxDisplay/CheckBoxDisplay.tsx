@@ -5,6 +5,7 @@ import { useLocale } from '@island.is/localization'
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
 const ANSWER_MAP = {
@@ -25,7 +26,11 @@ const normalizeCheckboxValue = (rawValue: unknown): 'true' | 'false' => {
   return 'false'
 }
 
-export const CheckBoxDisplay = ({ item, valueIndex }: Props) => {
+export const CheckBoxDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
   const { lang } = useLocale()
 
   const raw = item.values?.[valueIndex]
@@ -41,6 +46,14 @@ export const CheckBoxDisplay = ({ item, valueIndex }: Props) => {
     >
       <Text as="p" fontWeight="semiBold">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="semiBold" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
 
       <Box marginLeft={2}>
