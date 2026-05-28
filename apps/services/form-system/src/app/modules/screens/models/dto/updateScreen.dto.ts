@@ -29,9 +29,4 @@ export class UpdateScreenDto {
   @IsBoolean()
   @ApiPropertyOptional()
   shouldValidate?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  shouldPopulate?: boolean
 }

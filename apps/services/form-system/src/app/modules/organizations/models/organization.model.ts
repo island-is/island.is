@@ -35,6 +35,20 @@ export class Organization extends Model<Organization> {
   })
   nationalId!: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  zendeskInstance?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  zendeskBrandId?: string
+
   @HasMany(() => Form)
   forms?: Form[]
 

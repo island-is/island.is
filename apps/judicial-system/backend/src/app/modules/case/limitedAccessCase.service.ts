@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  AppealCaseNotificationType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -25,7 +26,6 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
-  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -334,6 +334,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -390,7 +391,7 @@ export const include: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: NotificationType.APPEAL_COMPLETED },
+    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
     order: [['created', 'DESC']],
     separate: true,
   },

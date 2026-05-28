@@ -356,6 +356,7 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:

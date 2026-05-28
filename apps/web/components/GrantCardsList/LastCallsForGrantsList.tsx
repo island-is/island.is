@@ -31,7 +31,7 @@ const LastCallsForGrants = ({ slice }: SliceProps) => {
       </Text>
       <InfoCardGrid
         variant="detailed"
-        columns={1}
+        maxColumnCount={1}
         cardsBorder="blue200"
         cards={grantItems.map((grant) => {
           const status = parseGrantStatus(grant, activeLocale, getTranslation)

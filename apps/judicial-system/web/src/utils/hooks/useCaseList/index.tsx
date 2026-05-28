@@ -16,6 +16,7 @@ import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
@@ -151,6 +152,13 @@ const useCaseList = () => {
             routeTo = isPrisonSystemUser(user)
               ? constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
               : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+          } else if (
+            caseToOpen.state === CaseState.RECEIVED &&
+            isProsecutionUser(user)
+          ) {
+            // Prosecutor cannot edit earlier steps once the court has received
+            // the case — same rule as in useSections.
+            routeTo = constants.INDICTMENTS_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
               constants.prosecutorIndictmentRoutes,

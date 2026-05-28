@@ -51,6 +51,9 @@ export class AppealCase {
   readonly appealReceivedByCourtDate?: string
 
   @Field(() => String, { nullable: true })
+  readonly appealRulingDate?: string
+
+  @Field(() => String, { nullable: true })
   readonly prosecutorStatementDate?: string
 
   @Field(() => String, { nullable: true })

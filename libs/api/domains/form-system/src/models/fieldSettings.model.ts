@@ -88,6 +88,9 @@ export class FieldSettings {
   @Field(() => Boolean, { nullable: true })
   isEmailRequired?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  fetchEmailFromMyPages?: boolean
+
   @Field(() => String, { nullable: true })
   chargeItemCode?: string
 
@@ -114,4 +117,15 @@ export class FieldSettings {
 
   @Field(() => String, { nullable: true })
   paymentQuantityId?: string
+
+  @Field(() => Boolean, { nullable: true })
+  showAddress?: boolean
+  @Field(() => String, { nullable: true })
+  zendeskTicketFieldId?: string
+
+  @Field(() => String, { nullable: true })
+  zendeskCustomObjectKey?: string
+
+  @Field(() => String, { nullable: true })
+  dataSourceUrl?: string
 }
