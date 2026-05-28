@@ -37,6 +37,7 @@ import { ApiScopeUsersV2Module } from './v2/api-scope-users/api-scope-users.modu
 import { GrantTypesV2Module } from './v2/grant-types/grant-types.module'
 import { IdpProvidersV2Module } from './v2/idp-providers/idp-providers.module'
 import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identity-confirmation.module'
+import { UserIdentitiesV2Module } from './v2/user-identities/user-identities.module'
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identi
     ApiScopeUsersV2Module,
     GrantTypesV2Module,
     IdpProvidersV2Module,
+    UserIdentitiesV2Module,
     DelegationAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
