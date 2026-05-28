@@ -7,6 +7,9 @@ class SearchCasesRow {
   @Field(() => String, { description: 'The case id' })
   readonly caseId!: string
 
+  @Field(() => String, { description: 'The appeal case id', nullable: true })
+  readonly appealCaseId!: string | null
+
   @Field(() => CaseType, { description: 'The case type' })
   readonly caseType!: CaseType
 

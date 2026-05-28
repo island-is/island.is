@@ -562,7 +562,7 @@ export const NationalRegistryB2C = new XroadConf({
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
-      dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
+      dev: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default',
       staging:
         'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',

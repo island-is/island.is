@@ -152,9 +152,7 @@ export const IndividualApplicant = ({
                     setShowError(true)
                     trigger(field.name)
                   }}
-                  errorMessage={
-                    showError ? fieldState.error?.message : undefined
-                  }
+                  errorMessage={fieldState.error?.message}
                   required={true}
                   backgroundColor="blue"
                 />
