@@ -13,6 +13,7 @@ query PrimarySchoolAssessmentResults(
   $assessmentId: String!
 ) {
   primarySchoolStudent(studentId: $studentId) {
+    id
     assessmentHistory(input: { assessmentId: $assessmentId }) {
       id
       resultHistory {

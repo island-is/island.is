@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useIsMobile } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
 import { usePdfBlob } from '../../hooks/usePdfBlob'
 import { downloadBlobUrl } from '../../utils/downloadBlobUrl'
@@ -39,6 +39,12 @@ export const PdfModal = ({
   const [scale, setScale] = useState(1.0)
   const [docReady, setDocReady] = useState(false)
   const [pdfError, setPdfError] = useState(false)
+
+  useEffect(() => {
+    setScale(1.0)
+    setDocReady(false)
+    setPdfError(false)
+  }, [url])
 
   const store = useDialogStore({
     open: !!url,
