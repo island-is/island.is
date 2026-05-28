@@ -235,7 +235,9 @@ function AppLockContent({
         unlock()
         return
       }
-      if (pinTries + 1 >= MAX_ATTEMPTS) {
+      // Read fresh — keeping pinTries in deps would cascade to logout on one wrong entry.
+      const currentTries = preferencesStore.getState().pinTries
+      if (currentTries + 1 >= MAX_ATTEMPTS) {
         preferencesStore.setState({ pinTries: 0 })
         void handleLogout()
         return
@@ -245,7 +247,7 @@ function AppLockContent({
       setTimeout(() => setCode(''), 660)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pinTries, unlock],
+    [unlock],
   )
 
   useEffect(() => {
