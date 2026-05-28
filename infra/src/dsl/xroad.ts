@@ -544,18 +544,17 @@ export const NationalRegistryB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
-        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default',
-      staging:
-        'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlunUmsoknir/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
@@ -581,12 +580,12 @@ export const NationalRegistryAuthB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
-        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
