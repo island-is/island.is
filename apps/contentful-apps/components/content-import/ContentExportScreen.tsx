@@ -273,7 +273,7 @@ export const ContentExportScreen = () => {
         const slugEn = entry.fields.slug?.['en']
 
         addRow(
-          'article',
+          'Article',
           entry.fields.title?.[DEFAULT_LOCALE] ?? '',
           entry.sys.id,
           slug ? `https://island.is/${slug}` : '',
@@ -304,7 +304,7 @@ export const ContentExportScreen = () => {
             .pop()
 
           addRow(
-            'subArticle',
+            'Baby Article',
             subArticle.fields.title[DEFAULT_LOCALE] ?? '',
             subArticle.sys.id,
             slug && subArticleSlug
@@ -344,7 +344,7 @@ export const ContentExportScreen = () => {
           const subpageSlugEn = entry.fields.slug?.['en']
 
           addRow(
-            'organizationSubpage',
+            'Organization Subpage',
             entry.fields.title?.[DEFAULT_LOCALE] ?? '',
             entry.sys.id,
             subpageSlug ? `https://island.is/s/${orgSlug}/${subpageSlug}` : '',
@@ -383,13 +383,13 @@ export const ContentExportScreen = () => {
             parent.fields.pages?.[DEFAULT_LOCALE] ?? []
           for (const subpageRef of subpageRefs) {
             const subpage = await cma.entry.get({ entryId: subpageRef.sys.id })
-            if (!subpage) continue
+            if (!subpage || !subpage.sys.publishedAt) continue
 
             const subpageSlug = subpage.fields.slug?.[DEFAULT_LOCALE]
             const subpageSlugEn = subpage.fields.slug?.['en']
 
             addRow(
-              'organizationSubpage',
+              'Organization Subpage',
               subpage.fields.title?.[DEFAULT_LOCALE] ?? '',
               subpage.sys.id,
               parentSlug && subpageSlug
