@@ -71,133 +71,162 @@ export const ContentImportScreen = () => {
   const [uniqueFieldId, setUniqueFieldId] = useState('')
 
   // Import progress state
+  const [isImporting, setIsImporting] = useState(false)
   const [successfulImports, setSuccessfulImports] = useState([])
   const [publishFailedImports, setPublishFailedImports] = useState([])
   const [failedImports, setFailedImports] = useState([])
 
   const importContent = async () => {
-    // Reset progress state
-    setSuccessfulImports([])
-    setFailedImports([])
-    setPublishFailedImports([])
+    if (isImporting) return
+    setIsImporting(true)
+    try {
+      // Reset progress state
+      setSuccessfulImports([])
+      setFailedImports([])
+      setPublishFailedImports([])
 
-    // Go through each row in the file
-    for (let rowIndex = 0; rowIndex < bodyRows.length; rowIndex += 1) {
-      const { row } = bodyRows[rowIndex]
-      const fields = {}
+      // Go through each row in the file
+      for (let rowIndex = 0; rowIndex < bodyRows.length; rowIndex += 1) {
+        const { row } = bodyRows[rowIndex]
+        const fields = {}
 
-      // Handle primitive fields
-      for (let i = 0; i < row.length; i += 1) {
-        const field = primitiveFieldMappingState.find((field) => {
-          return field.importFieldName === headCells[i]
-        })
-        if (!field?.contentfulField?.data?.id) continue
+        // Handle primitive fields
+        for (let i = 0; i < row.length; i += 1) {
+          const field = primitiveFieldMappingState.find((field) => {
+            return field.importFieldName === headCells[i]
+          })
+          if (!field?.contentfulField?.data?.id) continue
 
-        fields[field.contentfulField.data.id] = {
-          ...fields[field.contentfulField.data.id],
-          [field.contentfulField.locale]:
-            field.contentfulField.data.type === 'RichText'
-              ? await convertHtmlToContentfulRichText(row[i])
-              : row[i],
-        }
-      }
-
-      // There's an option to use a slugified version of a value so we handle that here
-      for (let i = 0; i < row.length; i += 1) {
-        const field = primitiveFieldMappingState.find((field) => {
-          return field.importFieldName === headCells[i] + SLUGIFIED_POSTFIX
-        })
-        if (!field?.contentfulField?.data?.id || !row[i]) continue
-
-        fields[field.contentfulField.data.id] = {
-          ...fields[field.contentfulField.data.id],
-          [field.contentfulField.locale]: slugify(row[i]),
-        }
-      }
-
-      // Handle reference fields
-      for (const referenceField of referenceFieldMapping) {
-        if (
-          !referenceField?.contentfulField?.data?.id ||
-          !referenceField?.selectedId
-        ) {
-          continue
+          fields[field.contentfulField.data.id] = {
+            ...fields[field.contentfulField.data.id],
+            [field.contentfulField.locale]:
+              field.contentfulField.data.type === 'RichText'
+                ? await convertHtmlToContentfulRichText(row[i])
+                : row[i],
+          }
         }
 
-        // The file can contain a title of the entry we want to reference
-        if (referenceField.selectedId.includes(TITLE_SEARCH_POSTFIX)) {
-          const headCellName =
-            referenceField.selectedId.split(TITLE_SEARCH_POSTFIX)[0]
-          const index = headCells.findIndex((name) => name === headCellName)
+        // There's an option to use a slugified version of a value so we handle that here
+        for (let i = 0; i < row.length; i += 1) {
+          const field = primitiveFieldMappingState.find((field) => {
+            return field.importFieldName === headCells[i] + SLUGIFIED_POSTFIX
+          })
+          if (!field?.contentfulField?.data?.id || !row[i]) continue
 
-          if (index >= 0) {
-            const entries = await getContentfulEntries(
-              cma,
-              extractContentType(referenceField),
-              {
-                'fields.title': row[index],
-              },
-            )
-            if (entries.length > 0) {
-              fields[referenceField.contentfulField.data.id] = {
-                ...fields[referenceField.contentfulField.data.id],
-                [referenceField.contentfulField.locale]: {
-                  sys: {
-                    id: entries[0].sys.id,
-                    linkType: 'Entry',
-                  },
+          fields[field.contentfulField.data.id] = {
+            ...fields[field.contentfulField.data.id],
+            [field.contentfulField.locale]: slugify(row[i]),
+          }
+        }
+
+        // Handle reference fields
+        for (const referenceField of referenceFieldMapping) {
+          if (
+            !referenceField?.contentfulField?.data?.id ||
+            !referenceField?.selectedId
+          ) {
+            continue
+          }
+
+          // The file can contain a title of the entry we want to reference
+          if (referenceField.selectedId.includes(TITLE_SEARCH_POSTFIX)) {
+            const headCellName =
+              referenceField.selectedId.split(TITLE_SEARCH_POSTFIX)[0]
+            const index = headCells.findIndex((name) => name === headCellName)
+
+            if (index >= 0) {
+              const entries = await getContentfulEntries(
+                cma,
+                extractContentType(referenceField),
+                {
+                  'fields.title': row[index],
                 },
+              )
+              if (entries.length > 0) {
+                fields[referenceField.contentfulField.data.id] = {
+                  ...fields[referenceField.contentfulField.data.id],
+                  [referenceField.contentfulField.locale]: {
+                    sys: {
+                      id: entries[0].sys.id,
+                      linkType: 'Entry',
+                    },
+                  },
+                }
               }
             }
-          }
-        } else {
-          fields[referenceField.contentfulField.data.id] = {
-            ...fields[referenceField.contentfulField.data.id],
-            [referenceField.contentfulField.locale]: {
-              sys: {
-                id: referenceField.selectedId,
-                linkType: 'Entry',
+          } else {
+            fields[referenceField.contentfulField.data.id] = {
+              ...fields[referenceField.contentfulField.data.id],
+              [referenceField.contentfulField.locale]: {
+                sys: {
+                  id: referenceField.selectedId,
+                  linkType: 'Entry',
+                },
               },
-            },
+            }
           }
         }
-      }
 
-      try {
-        let entry: EntryProps
-        let shouldCreateEntry = true
+        try {
+          let entry: EntryProps
+          let shouldCreateEntry = true
 
-        const uniqueFieldImportFieldName = primitiveFieldMappingState.find(
-          (f) => uniqueFieldId && f.contentfulField.data.id === uniqueFieldId,
-        )?.importFieldName
-        const uniqueFieldRowIndex = headCells.findIndex(
-          (cellName) => cellName === uniqueFieldImportFieldName,
-        )
+          const uniqueFieldImportFieldName = primitiveFieldMappingState.find(
+            (f) => uniqueFieldId && f.contentfulField.data.id === uniqueFieldId,
+          )?.importFieldName
+          const uniqueFieldRowIndex = headCells.findIndex(
+            (cellName) => cellName === uniqueFieldImportFieldName,
+          )
 
-        // In case there's a unique field we can match on we'll look to see if an entry already exists
-        // and if so we'll edit that instead of creating a new one
-        if (
-          uniqueFieldId &&
-          uniqueFieldRowIndex >= 0 &&
-          row[uniqueFieldRowIndex]
-        ) {
-          const matchedEntries = await cma.entry.getMany({
-            query: {
-              content_type: selectedContentType,
-              [`fields.${uniqueFieldId}`]: row[uniqueFieldRowIndex],
-            },
-          })
+          // In case there's a unique field we can match on we'll look to see if an entry already exists
+          // and if so we'll edit that instead of creating a new one
+          if (
+            uniqueFieldId &&
+            uniqueFieldRowIndex >= 0 &&
+            row[uniqueFieldRowIndex]
+          ) {
+            const matchedEntries = await cma.entry.getMany({
+              query: {
+                content_type: selectedContentType,
+                [`fields.${uniqueFieldId}`]: row[uniqueFieldRowIndex],
+              },
+            })
 
-          if (matchedEntries.items.length > 0) {
-            shouldCreateEntry = false // We don't want to create the entry since we found it already exists
-            entry = await cma.entry.update(
+            if (matchedEntries.items.length > 0) {
+              shouldCreateEntry = false // We don't want to create the entry since we found it already exists
+              entry = await cma.entry.update(
+                {
+                  entryId: matchedEntries.items[0].sys.id,
+                },
+                {
+                  sys: {
+                    ...matchedEntries.items[0].sys,
+                  },
+                  fields,
+                  metadata: {
+                    tags: selectedTag
+                      ? [
+                          {
+                            sys: {
+                              type: 'Link',
+                              linkType: 'Tag',
+                              id: selectedTag,
+                            },
+                          },
+                        ]
+                      : [],
+                  },
+                },
+              )
+            }
+          }
+
+          if (shouldCreateEntry) {
+            entry = await cma.entry.create(
               {
-                entryId: matchedEntries.items[0].sys.id,
+                contentTypeId: selectedContentType,
               },
               {
-                sys: {
-                  ...matchedEntries.items[0].sys,
-                },
                 fields,
                 metadata: {
                   tags: selectedTag
@@ -215,63 +244,42 @@ export const ContentImportScreen = () => {
               },
             )
           }
-        }
 
-        if (shouldCreateEntry) {
-          entry = await cma.entry.create(
-            {
-              contentTypeId: selectedContentType,
-            },
-            {
-              fields,
-              metadata: {
-                tags: selectedTag
-                  ? [
-                      {
-                        sys: {
-                          type: 'Link',
-                          linkType: 'Tag',
-                          id: selectedTag,
-                        },
-                      },
-                    ]
-                  : [],
+          try {
+            await cma.entry.publish(
+              {
+                entryId: entry.sys.id,
               },
-            },
-          )
-        }
-
-        try {
-          await cma.entry.publish(
-            {
-              entryId: entry.sys.id,
-            },
-            entry,
-          )
+              entry,
+            )
+          } catch (error) {
+            const errorMessage = parseContentfulErrorMessage(error)
+            setPublishFailedImports((prev) => [
+              ...prev,
+              {
+                row,
+                id: entry.sys.id,
+                errorMessage,
+              },
+            ])
+            continue
+          }
+          setSuccessfulImports((prev) => [...prev, { row, id: entry.sys.id }])
         } catch (error) {
           const errorMessage = parseContentfulErrorMessage(error)
-          setPublishFailedImports((prev) => [
-            ...prev,
-            {
-              row,
-              id: entry.sys.id,
-              errorMessage,
-            },
-          ])
+          setFailedImports((prev) => [...prev, { row, errorMessage }])
           continue
         }
-        setSuccessfulImports((prev) => [...prev, { row, id: entry.sys.id }])
-      } catch (error) {
-        const errorMessage = parseContentfulErrorMessage(error)
-        setFailedImports((prev) => [...prev, { row, errorMessage }])
-        continue
       }
-    }
 
-    sdk.notifier.success('Import completed')
+      sdk.notifier.success('Import completed')
+    } finally {
+      setIsImporting(false)
+    }
   }
 
   const canImport =
+    !isImporting &&
     Boolean(bodyRows?.length) &&
     primitiveFieldMappingState.every(
       (field) =>
