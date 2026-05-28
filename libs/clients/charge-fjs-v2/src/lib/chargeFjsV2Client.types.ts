@@ -34,11 +34,18 @@ interface ChargeItem {
 }
 
 interface PayInfo {
-  RRN: string
-  cardType: string
+  /**
+   * Reference for the payment. For card payments this is the acquirer reference (RRN); for a bank
+   * transfer it carries the provider payment id so FJS can reconcile against the provider.
+   */
+  RRN?: string
+  /** Card-only — present only when `paymentMeans` is a card type. */
+  cardType?: string
   paymentMeans: PayInfoPaymentMeansEnum
-  authCode: string
-  PAN: string
+  /** Card-only — present only when `paymentMeans` is a card type. */
+  authCode?: string
+  /** Card-only — present only when `paymentMeans` is a card type. */
+  PAN?: string
   payableAmount: number
   /** Internal per-attempt id, threaded through for FJS↔our-system reconciliation. */
   correlationId?: string
@@ -71,6 +78,13 @@ export interface CatalogItem {
 export enum PayInfoPaymentMeansEnum {
   Kreditkort = 'Kreditkort',
   Debetkort = 'Debetkort',
+  /**
+   * Bank transfer. Requires the FJS backend to (1) accept this `paymentMeans` value on a paid charge and
+   * (2) treat the card-only `payInfo` fields (`cardType`/`authCode`/`PAN`/`RRN`) as optional for it.
+   * The generated client (`gen/fetch/models/PayInfo.ts`) must be regenerated once FJS ships the matching
+   * OpenAPI change. Exact string is pending FJS confirmation.
+   */
+  Millifaersla = 'Millifærsla',
 }
 export interface PayeeInfo {
   nationalId: string

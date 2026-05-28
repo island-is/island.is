@@ -4,9 +4,12 @@ import { BadRequestException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 
+import { PaymentMethod } from '../../types'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { BankTransferStatus } from './bankTransfer.types'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferModuleConfig } from './bankTransfer.config'
+import { BankTransferPayment } from './models/bankTransferPayment.model'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
   apiKey: 'test-key',
@@ -38,10 +41,49 @@ describe('BankTransferService', () => {
   let logger: jest.Mocked<Logger>
   let service: BankTransferService
   let fetchMock: jest.Mock
+  let bankTransferPaymentModel: { update: jest.Mock }
+  let paymentFlowService: {
+    createBankTransferFulfillment: jest.Mock
+    createFjsCharge: jest.Mock
+    getPaymentFlowDetails: jest.Mock
+    getPaymentFlowChargeDetails: jest.Mock
+    logPaymentFlowUpdate: jest.Mock
+  }
 
   beforeEach(() => {
     logger = createMockLogger()
-    service = new BankTransferService(logger, config)
+    bankTransferPaymentModel = { update: jest.fn().mockResolvedValue([1]) }
+    paymentFlowService = {
+      createBankTransferFulfillment: jest.fn().mockResolvedValue(undefined),
+      createFjsCharge: jest.fn().mockResolvedValue({ receptionId: 'r-1' }),
+      getPaymentFlowDetails: jest.fn().mockResolvedValue({
+        id: 'flow-1',
+        organisationId: 'org-1',
+        payerNationalId: '1234567890',
+        charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
+        extraData: [],
+      }),
+      getPaymentFlowChargeDetails: jest.fn().mockResolvedValue({
+        catalogItems: [
+          {
+            performingOrgID: 'org-1',
+            chargeType: 'AB',
+            chargeItemCode: 'AB123',
+            chargeItemName: 'Vegabréf',
+            priceAmount: 14000,
+            quantity: 1,
+          },
+        ],
+        totalPrice: 14000,
+      }),
+      logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
+    }
+    service = new BankTransferService(
+      logger,
+      config,
+      bankTransferPaymentModel as unknown as typeof BankTransferPayment,
+      paymentFlowService as unknown as PaymentFlowService,
+    )
     fetchMock = jest.fn()
     global.fetch = fetchMock as unknown as typeof fetch
   })
@@ -69,6 +111,8 @@ describe('BankTransferService', () => {
         amount: 14000,
         currency: 'ISK',
         paymentFlowId: 'flow-1',
+        // Per-attempt key (distinct from paymentFlowId on purpose).
+        correlationId: 'btp-9b1c',
         callbackUrl: 'https://island.is/api/bank-transfer/callback',
         partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
         expiresAt: 1234567890,
@@ -93,7 +137,8 @@ describe('BankTransferService', () => {
 
       const body = JSON.parse(options.body)
       expect(body.currency).toBe('ISK')
-      expect(body.sourceReferenceId).toBe('flow-1')
+      // The provider idempotency key is the per-attempt sourceReferenceId, not the paymentFlowId.
+      expect(body.sourceReferenceId).toBe('btp-9b1c')
       expect(body.expiresAt).toBe(1234567890)
       // Provider items: chargeItemName→name, priceAmount→string unitPrice, chargeItemCode→sku.
       expect(body.items).toEqual([
@@ -123,6 +168,7 @@ describe('BankTransferService', () => {
           amount: 100,
           currency: 'ISK',
           paymentFlowId: 'flow-1',
+          correlationId: 'btp-err',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
       expect(logger.error).toHaveBeenCalled()
@@ -138,6 +184,7 @@ describe('BankTransferService', () => {
           amount: 100,
           currency: 'ISK',
           paymentFlowId: 'flow-1',
+          correlationId: 'btp-err',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
       expect(logger.error).toHaveBeenCalled()
@@ -213,6 +260,54 @@ describe('BankTransferService', () => {
       expect(result.rawStatus).toBe('WAT')
       expect(result.status).toBe(BankTransferStatus.PENDING)
       expect(logger.warn).toHaveBeenCalled()
+    })
+  })
+
+  describe('confirmBankTransferPayment', () => {
+    const confirmInput = {
+      correlationId: 'btp-1',
+      paymentFlowId: 'flow-1',
+      providerPaymentId: 'prov-1',
+      rawStatus: 'SUCCESS',
+    }
+
+    it('records the provider status on its own row', async () => {
+      await service.confirmBankTransferPayment(confirmInput)
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { lastKnownStatus: 'SUCCESS' },
+        { where: { id: 'btp-1', paymentFlowId: 'flow-1', isDeleted: false } },
+      )
+    })
+
+    it('passes a transfer charge payload to the fulfillment and notifies upstream', async () => {
+      await service.confirmBankTransferPayment(confirmInput)
+
+      expect(paymentFlowService.getPaymentFlowDetails).toHaveBeenCalledWith(
+        'flow-1',
+      )
+      expect(
+        paymentFlowService.createBankTransferFulfillment,
+      ).toHaveBeenCalledWith(
+        'flow-1',
+        'btp-1',
+        expect.objectContaining({
+          payInfo: expect.objectContaining({
+            payableAmount: 14000,
+            paymentMeans: 'Millifærsla',
+            RRN: 'prov-1',
+          }),
+        }),
+      )
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+      const [update] = paymentFlowService.logPaymentFlowUpdate.mock.calls[0]
+      expect(update).toMatchObject({
+        paymentFlowId: 'flow-1',
+        type: 'success',
+        reason: 'payment_completed',
+        paymentMethod: PaymentMethod.BANK_TRANSFER,
+        metadata: { providerPaymentId: 'prov-1' },
+      })
     })
   })
 })

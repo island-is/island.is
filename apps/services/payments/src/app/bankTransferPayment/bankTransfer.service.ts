@@ -2,11 +2,16 @@ import { z } from 'zod'
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 
+import { PaymentMethod } from '../../types'
+import { environment } from '../../environments'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   BankTransferPaymentResult,
   CreateBankTransferPaymentInput,
@@ -14,13 +19,22 @@ import {
   blikkGetPaymentResponseSchema,
 } from './bankTransfer.types'
 import { BankTransferModuleConfig } from './bankTransfer.config'
+import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
+  generateBankTransferChargeFJSPayload,
   isBlikkStatus,
   mapBlikkStatusToBankTransferStatus,
   toBlikkItem,
 } from './bankTransfer.utils'
 
 const REQUEST_TIMEOUT_MS = 10000
+
+const createLogPrefix = (
+  paymentFlowId: string,
+  correlationId: string,
+  providerPaymentId: string,
+) =>
+  `[${paymentFlowId}][correlationId: ${correlationId}][rrn: ${providerPaymentId}]`
 
 /**
  * Service for the bank-transfer payment method (Blikk is the v1 provider).
@@ -36,17 +50,18 @@ export class BankTransferService {
     private readonly logger: Logger,
     @Inject(BankTransferModuleConfig.KEY)
     private readonly config: ConfigType<typeof BankTransferModuleConfig>,
+    @InjectModel(BankTransferPayment)
+    private readonly bankTransferPaymentModel: typeof BankTransferPayment,
+    private readonly paymentFlowService: PaymentFlowService,
   ) {}
 
   async createPayment(
     input: CreateBankTransferPaymentInput,
   ): Promise<BankTransferPaymentResult> {
-    const logPrefix = `[${input.paymentFlowId}] `
-
     const body = {
       amount: input.amount,
       currency: input.currency,
-      sourceReferenceId: input.paymentFlowId,
+      sourceReferenceId: input.correlationId,
       callbackUrl: input.callbackUrl,
       partnerRedirectUrl: input.partnerRedirectUrl,
       source: input.source,
@@ -64,6 +79,12 @@ export class BankTransferService {
     )
 
     const result = this.toResult(data)
+
+    const logPrefix = createLogPrefix(
+      input.paymentFlowId,
+      input.correlationId,
+      data.id,
+    )
 
     this.logger.info(`${logPrefix}Bank transfer payment created`, {
       paymentFlowId: input.paymentFlowId,
@@ -85,6 +106,90 @@ export class BankTransferService {
     )
 
     return this.toResult(data)
+  }
+
+  /**
+   * Confirms a settled bank transfer. Called once the provider reports terminal SUCCESS.
+   *
+   * Idempotent: (1) record the provider's status on our own row; (2) build the FJS charge payload;
+   * (3) delegate to {@link PaymentFlowService.createBankTransferFulfillment}, which no-ops if the flow is
+   * already fulfilled and creates the FJS charge only on the first payment; (4) notify upstream.
+   * Concurrency is handled inside `createBankTransferFulfillment` (the partial unique index gates the
+   * single FJS charge); the success notification is idempotent on the consumer side.
+   */
+  async confirmBankTransferPayment({
+    correlationId,
+    paymentFlowId,
+    providerPaymentId,
+    rawStatus,
+  }: {
+    /**
+     * The per-attempt UUID we generated when creating this bank transfer — equal to
+     * `bank_transfer_payment.id` and to the value we sent to Blikk as `sourceReferenceId`. NOT the
+     * provider's own `providerPaymentId`.
+     */
+    correlationId: string
+    paymentFlowId: string
+    providerPaymentId: string
+    rawStatus: string
+  }): Promise<void> {
+    // 1. Record the provider's terminal status on our own row (idempotent).
+    await this.bankTransferPaymentModel.update(
+      { lastKnownStatus: rawStatus },
+      { where: { id: correlationId, paymentFlowId, isDeleted: false } },
+    )
+
+    // 2. Build the FJS charge payload.
+    const chargePayload = await this.buildFjsChargePayload(
+      paymentFlowId,
+      providerPaymentId,
+    )
+
+    // 3. Create the fulfillment and, only on the first payment, the FJS charge.
+    await this.paymentFlowService.createBankTransferFulfillment(
+      paymentFlowId,
+      correlationId,
+      chargePayload,
+    )
+
+    // 4. Notify upstream of the completed payment.
+    await this.paymentFlowService.logPaymentFlowUpdate(
+      {
+        paymentFlowId,
+        type: 'success',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.BANK_TRANSFER,
+        reason: 'payment_completed',
+        message: 'Bank transfer payment completed',
+        metadata: { providerPaymentId },
+      },
+      { useRetry: true, throwOnError: false },
+    )
+  }
+
+  /**
+   * Builds the FJS charge payload for a settled bank transfer.
+   */
+  private async buildFjsChargePayload(
+    paymentFlowId: string,
+    providerPaymentId: string,
+  ): Promise<Charge> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+    const { catalogItems, totalPrice } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges,
+      )
+
+    return generateBankTransferChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      providerPaymentId,
+    })
   }
 
   private toResult(data: {
