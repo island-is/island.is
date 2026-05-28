@@ -81,4 +81,24 @@ describe('validateUri', () => {
       validateUri('https://beta.dev01.devland.is/different-path', allowedUris),
     ).toBe(false)
   })
+
+  it('should return true for feature deployment hostnames when beta host is allowed', () => {
+    const betaAllowedUris = ['https://beta.dev01.devland.is/minarsidur']
+    expect(
+      validateUri(
+        'https://featcreate-pdf-viewer-beta.dev01.devland.is/minarsidur/menntun/grunnskoli/nemendur',
+        betaAllowedUris,
+      ),
+    ).toBe(true)
+  })
+
+  it('should return false for non-feature subdomain when only beta host is allowed', () => {
+    const betaAllowedUris = ['https://beta.dev01.devland.is/minarsidur']
+    expect(
+      validateUri(
+        'https://evil-beta.staging01.devland.is/minarsidur',
+        betaAllowedUris,
+      ),
+    ).toBe(false)
+  })
 })

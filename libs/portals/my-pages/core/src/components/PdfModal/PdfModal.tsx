@@ -38,6 +38,7 @@ export const PdfModal = ({
   const { isMobile } = useIsMobile()
   const [scale, setScale] = useState(1.0)
   const [docReady, setDocReady] = useState(false)
+  const [pdfError, setPdfError] = useState(false)
 
   const store = useDialogStore({
     open: !!url,
@@ -179,17 +180,17 @@ export const PdfModal = ({
 
       {/* Content */}
       <Box className={styles.pdfContent} background="blue100">
-        {(loading || (!!data && !docReady)) && (
+        {(loading || (!!data && !docReady && !pdfError)) && (
           <Box padding={4} marginTop={4}>
             <LoadingDots size="large" />
           </Box>
         )}
-        {error && (
+        {(error || pdfError) && (
           <Box padding={4}>
             <Problem type="no_data" noBorder={false} />
           </Box>
         )}
-        {data && (
+        {data && !pdfError && (
           <Box display={docReady ? 'block' : 'none'}>
             <PdfViewer
               file={data}
@@ -198,6 +199,7 @@ export const PdfModal = ({
               autoWidth={false}
               disableLoading
               onLoadingSuccess={() => setDocReady(true)}
+              onLoadingError={() => setPdfError(true)}
             />
           </Box>
         )}
