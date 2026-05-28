@@ -4,6 +4,7 @@ import {
   ChargeStatusByRequestIDrequestIDGETResponse,
   ChargeStatusResultStatusEnum,
   DefaultApi,
+  PayInfoPaymentMeansEnum as GenPayInfoPaymentMeansEnum,
 } from '../../gen/fetch'
 import {
   Catalog,
@@ -93,11 +94,17 @@ export class ChargeFjsV2ClientService {
         charges: upcomingPayment.charges,
         payInfo: upcomingPayment.payInfo
           ? {
-              rRN: upcomingPayment.payInfo.RRN,
-              cardType: upcomingPayment.payInfo.cardType,
-              paymentMeans: upcomingPayment.payInfo.paymentMeans,
-              authCode: upcomingPayment.payInfo.authCode,
-              pAN: upcomingPayment.payInfo.PAN,
+              // The card-only fields are optional on our type (omitted for bank transfers) but the
+              // generated model still requires them; default to '' until the client is regenerated
+              // against the updated FJS spec. The card path always sets them, so this is a no-op there.
+              rRN: upcomingPayment.payInfo.RRN ?? '',
+              cardType: upcomingPayment.payInfo.cardType ?? '',
+              // The generated enum lacks the bank-transfer value until the client is regenerated against
+              // the updated FJS spec; the value is a valid string at runtime.
+              paymentMeans: upcomingPayment.payInfo
+                .paymentMeans as unknown as GenPayInfoPaymentMeansEnum,
+              authCode: upcomingPayment.payInfo.authCode ?? '',
+              pAN: upcomingPayment.payInfo.PAN ?? '',
               payableAmount: upcomingPayment.payInfo.payableAmount,
             }
           : undefined,

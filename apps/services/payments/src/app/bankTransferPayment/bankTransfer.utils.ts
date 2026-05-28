@@ -1,5 +1,12 @@
+import {
+  Charge,
+  PayInfoPaymentMeansEnum,
+} from '@island.is/clients/charge-fjs-v2'
+
 import { BankTransferStatus } from './bankTransfer.types'
 import { CatalogItemWithQuantity } from '../../types/charges'
+import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 
 /** Blikk's payment status lifecycle. */
 export const BLIKK_STATUSES = [
@@ -38,7 +45,7 @@ export const mapBlikkStatusToBankTransferStatus = (
   }
 }
 
-/** Blikk line item shape (note: unitPrice is a string, quantity an integer). */
+/** Blikk line item shape. */
 export interface BlikkItem {
   name: string
   quantity: number
@@ -53,3 +60,36 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   unitPrice: String(item.priceAmount),
   sku: item.chargeItemCode,
 })
+
+/**
+ * Builds the FJS charge payload for a settled bank transfer. Mirrors `generateCardChargeFJSPayload`:
+ * a PAID charge (`payInfo` present). The card-only `payInfo` fields are omitted; the provider payment id
+ * is carried in `RRN` so FJS can reconcile the transfer.
+ *
+ * Depends on the FJS `payInfo` contract change (transfer `paymentMeans` + optional card fields). FJS will
+ * deploy the matching backend change and the generated client (`gen/`) will be regenerated before this
+ * feature goes live.
+ */
+export const generateBankTransferChargeFJSPayload = ({
+  paymentFlow,
+  charges,
+  totalPrice,
+  systemId,
+  providerPaymentId,
+}: {
+  paymentFlow: PaymentFlowAttributes
+  charges: CatalogItemWithQuantity[]
+  totalPrice: number
+  systemId: string
+  providerPaymentId: string
+}): Charge =>
+  generateChargeFJSPayload({
+    paymentFlow,
+    charges,
+    systemId,
+    payInfo: {
+      RRN: providerPaymentId,
+      payableAmount: totalPrice,
+      paymentMeans: PayInfoPaymentMeansEnum.Millifaersla,
+    },
+  })
