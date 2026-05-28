@@ -538,7 +538,7 @@ export const NationalRegistryB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '8f4c5411-9caf-40a1-8764-bbe05fd6de50',
-      staging: 'ca128c23-b43c-443d-bade-ec5a146a933f',
+      staging: '138478ef-b078-4cfa-b322-fecdaced96e8',
       prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
@@ -574,7 +574,7 @@ export const NationalRegistryAuthB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '5a452d0d-395d-4e52-bef0-7ae07ecb2388',
-      staging: '19e7d60e-920e-4a6f-a125-25ea283ee1a4',
+      staging: 'c090fd41-9893-46f5-8962-86bd48788570',
       prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
