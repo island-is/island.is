@@ -361,7 +361,7 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.educationHistory',
           formTitle: educationMessages.labels.educationHistoryTitle,
           formTitleNumbering: 'none',
-          minRows: 0,
+          minRows: 1,
           addItemButtonText: educationMessages.labels.addItemButtonText,
           fields: {
             levelOfStudy: {
