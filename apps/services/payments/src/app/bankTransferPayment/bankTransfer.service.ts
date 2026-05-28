@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -7,10 +8,14 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Charge } from '@island.is/clients/charge-fjs-v2'
-import { BankTransferErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
 import { PaymentMethod, PaymentStatus } from '../../types'
 import { environment } from '../../environments'
+import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   BankTransferPaymentResult,
@@ -20,6 +25,8 @@ import {
   blikkGetPaymentResponseSchema,
 } from './bankTransfer.types'
 import { BankTransferModuleConfig } from './bankTransfer.config'
+import { CreateBankTransferInput } from './dtos/createBankTransfer.input'
+import { CreateBankTransferResponse } from './dtos/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dtos/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dtos/verifyBankTransfer.response'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
@@ -56,6 +63,10 @@ export class BankTransferService {
     @InjectModel(BankTransferPayment)
     private readonly bankTransferPaymentModel: typeof BankTransferPayment,
     private readonly paymentFlowService: PaymentFlowService,
+    @Inject(PaymentFlowModuleConfig.KEY)
+    private readonly paymentFlowConfig: ConfigType<
+      typeof PaymentFlowModuleConfig
+    >,
   ) {}
 
   async createPayment(
@@ -109,6 +120,124 @@ export class BankTransferService {
     )
 
     return this.toResult(data)
+  }
+
+  /**
+   * Initiates a new bank-transfer attempt against the provider and persists our row.
+   *
+   * Ordering (Blikk first, then persist — mirrors invoice/card; an orphan Blikk payment from a crash
+   * between steps 5 and 6 self-heals via Blikk's 300 s `expiresAt`):
+   *
+   * 1. Reject if the flow is already PAID.
+   * 2. Reject if an active `bank_transfer_payment` row already exists for the flow (one attempt at a
+   *    time per flow, enforced by the partial unique index).
+   * 3. Compute amount + items from the flow's charges.
+   * 4. Generate a per-attempt `correlationId` (UUID). Used as BOTH the row's `id` AND the value sent
+   *    to Blikk as `sourceReferenceId`. **Never `paymentFlowId`** — Blikk's idempotency cache would
+   *    block retries after a terminal failure.
+   * 5. Call Blikk's create. On failure, emit `payment_failed` and re-throw.
+   * 6. Persist `bank_transfer_payment` with the provider's response.
+   * 7. Emit `payment_started`.
+   */
+  async create(
+    input: CreateBankTransferInput,
+  ): Promise<CreateBankTransferResponse> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      input.paymentFlowId,
+    )
+
+    const [{ paymentStatus }, existing] = await Promise.all([
+      this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+      this.findActiveBankTransferPayment({ paymentFlowId: input.paymentFlowId }),
+    ])
+
+    if (paymentStatus === PaymentStatus.PAID) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    if (existing) {
+      throw new BadRequestException(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
+      )
+    }
+
+    const { catalogItems, totalPrice } =
+      await this.paymentFlowService.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges,
+      )
+
+    const correlationId = uuid()
+    const callbackUrl = `${this.config.callbackBaseUrl}/v1/payments/bank-transfer/callback`
+    const partnerRedirectUrl = `${this.paymentFlowConfig.webOrigin}/${input.locale}/${input.paymentFlowId}`
+    // Blikk's `expiresAt` is Unix seconds. We pin to now + 5 min so an abandoned attempt self-cleans
+    // on Blikk's side and the user can retry on the same flow (a fresh attempt = fresh correlationId).
+    const expiresAt = Math.floor(Date.now() / 1000) + 300
+
+    let providerResult: BankTransferPaymentResult
+    try {
+      providerResult = await this.createPayment({
+        correlationId,
+        paymentFlowId: input.paymentFlowId,
+        amount: totalPrice,
+        currency: 'ISK',
+        callbackUrl,
+        partnerRedirectUrl,
+        expiresAt,
+        items: catalogItems,
+      })
+    } catch (error) {
+      // No row persisted yet — emit a controller-level failure event mirroring card's pre-charge
+      // failure events (`cardPayment.controller.ts:109,178`) and rethrow so the caller gets the
+      // mapped error code.
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId: input.paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          reason: 'payment_failed',
+          message: `Failed to create bank transfer: ${
+            (error as Error)?.message ?? 'unknown'
+          }`,
+          metadata: { error: (error as Error)?.message },
+        },
+        { useRetry: true, throwOnError: false },
+      )
+      throw error
+    }
+
+    await this.bankTransferPaymentModel.create({
+      id: correlationId,
+      paymentFlowId: input.paymentFlowId,
+      sourceReferenceId: correlationId,
+      provider: 'blikk',
+      providerPaymentId: providerResult.providerPaymentId,
+      scaRedirectUrl: providerResult.scaRedirectUrl,
+      amount: totalPrice,
+      lastKnownStatus: providerResult.rawStatus,
+    })
+
+    await this.paymentFlowService.logPaymentFlowUpdate(
+      {
+        paymentFlowId: input.paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.BANK_TRANSFER,
+        reason: 'payment_started',
+        message: 'Bank transfer started',
+        metadata: {
+          providerPaymentId: providerResult.providerPaymentId,
+          correlationId,
+        },
+      },
+      { useRetry: true, throwOnError: false },
+    )
+
+    return {
+      providerPaymentId: providerResult.providerPaymentId,
+      scaRedirectUrl: providerResult.scaRedirectUrl,
+    }
   }
 
   /**
