@@ -1,5 +1,10 @@
 import EstateTemplate from './EstateTemplate'
-import { Application, ApplicationStatus, ApplicationTypes, DefaultEvents } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  DefaultEvents,
+} from '@island.is/application/types'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { EstateMember } from '../types'
 import { EstateTypes, Roles, States } from './constants'
@@ -231,14 +236,91 @@ describe('EstateTemplate', () => {
     })
   })
 
-  describe('inReview state transitions', () => {
-    const createInReviewApplication = (
-      estateMembers: EstateMember[],
-      selectedEstate = EstateTypes.officialDivision,
+  describe('draft state transitions', () => {
+    const createDraftApplication = (
+      selectedEstate: string,
+      reviewEnabled: boolean,
     ): Application =>
       ({
         id: '123',
         assignees: [],
+        applicantActors: [],
+        state: States.draft,
+        applicant: '1111111111',
+        typeId: ApplicationTypes.ESTATE,
+        modified: new Date(),
+        created: new Date(),
+        answers: {
+          selectedEstate,
+          estate: {
+            estateMembers: [
+              {
+                name: 'Applicant',
+                nationalId: '1111111111',
+                enabled: true,
+              },
+              {
+                name: 'Heir',
+                nationalId: '2222222222',
+                enabled: true,
+              },
+            ],
+          },
+        },
+        externalData: {
+          checkReviewFlag: {
+            data: { reviewEnabled },
+            date: new Date().toISOString(),
+          },
+        },
+        status: ApplicationStatus.IN_PROGRESS,
+      } as unknown as Application)
+
+    it('should route paid estate submissions to review before payment when review is enabled', () => {
+      const application = createDraftApplication(
+        EstateTypes.divisionOfEstateByHeirs,
+        true,
+      )
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.inReview)
+    })
+
+    it('should still route free estate submissions to review when review is enabled', () => {
+      const application = createDraftApplication(
+        EstateTypes.officialDivision,
+        true,
+      )
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState, updatedApplication] = helper.changeState(
+        DefaultEvents.SUBMIT,
+      )
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.inReview)
+      expect(
+        (
+          updatedApplication.answers.estate as {
+            estateMembers: EstateMember[]
+          }
+        ).estateMembers[0].approved,
+      ).toBe(true)
+    })
+  })
+
+  describe('inReview state transitions', () => {
+    const createInReviewApplication = (
+      estateMembers: EstateMember[],
+      selectedEstate = EstateTypes.officialDivision,
+      assignees: string[] = [],
+    ): Application =>
+      ({
+        id: '123',
+        assignees,
         applicantActors: [],
         state: States.inReview,
         applicant: '1111111111',
@@ -256,7 +338,7 @@ describe('EstateTemplate', () => {
           },
         },
         status: ApplicationStatus.IN_PROGRESS,
-      }) as unknown as Application
+      } as unknown as Application)
 
     const estateMembersWithPendingApproval: EstateMember[] = [
       {
@@ -334,6 +416,23 @@ describe('EstateTemplate', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.payment)
+    })
+
+    it('should keep assignees visible when an estate member rejects the application', () => {
+      const application = createInReviewApplication(
+        estateMembersWithPendingApproval,
+        EstateTypes.divisionOfEstateByHeirs,
+        ['2222222222'],
+      )
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState, updatedApplication] = helper.changeState(
+        DefaultEvents.REJECT,
+      )
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.draft)
+      expect(updatedApplication.assignees).toEqual(['2222222222'])
     })
   })
 

@@ -475,11 +475,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
         return context
       }),
       clearAssignees: assign((context, event) => {
-        // Only clear assignees when going back to draft (EDIT or REJECT events)
+        // Only clear assignees when the applicant chooses to edit.
+        // A rejection also returns to draft, but assignees must keep visibility
+        // so they can see the application status after acting on it.
         // Keep assignees when progressing forward (SUBMIT) or staying in review (APPROVE)
-        const shouldClearAssignees =
-          event.type === DefaultEvents.EDIT ||
-          event.type === DefaultEvents.REJECT
+        const shouldClearAssignees = event.type === DefaultEvents.EDIT
 
         if (!shouldClearAssignees) {
           return context

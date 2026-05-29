@@ -24,7 +24,10 @@ import {
   transformUploadDataToPDFStream,
 } from './utils/'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import set from 'lodash/set'
@@ -40,6 +43,7 @@ import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Features } from '@island.is/feature-flags'
+import { SharedTemplateApiService } from '../../shared'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -50,6 +54,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly s3Service: S3Service,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.ESTATE)
   }
@@ -67,6 +72,73 @@ export class EstateTemplateService extends BaseTemplateApiService {
       reviewEnabled,
     })
     return { reviewEnabled }
+  }
+
+  async notifyAssignees({
+    application,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as EstateSchema
+    const assigneeNationalIds = new Set(application.assignees ?? [])
+    const estateMembers = answers?.estate?.estateMembers ?? []
+    const pendingAssignees = estateMembers.filter(
+      (member) =>
+        member.enabled !== false &&
+        !member.approved &&
+        !!member.email &&
+        assigneeNationalIds.has(member.nationalId),
+    )
+
+    await Promise.all(
+      pendingAssignees.map((member) =>
+        this.sharedTemplateAPIService.sendEmail(
+          ({ application, options }) => {
+            const subject = 'Yfirferð á umsókn um dánarbússkipti'
+            const link = `${options.clientLocationOrigin}/${
+              ApplicationConfigurations[ApplicationTypes.ESTATE].slug
+            }/${application.id}`
+
+            return {
+              from: {
+                name: options.email.sender,
+                address: options.email.address,
+              },
+              to: [
+                {
+                  name: member.name ?? '',
+                  address: member.email ?? '',
+                },
+              ],
+              subject,
+              template: {
+                title: subject,
+                body: [
+                  { component: 'Heading', context: { copy: subject } },
+                  { component: 'Copy', context: { copy: 'Góðan dag.' } },
+                  {
+                    component: 'Copy',
+                    context: {
+                      copy: 'Óskað er eftir að þú farir yfir umsókn um dánarbússkipti.',
+                    },
+                  },
+                  {
+                    component: 'Button',
+                    context: {
+                      copy: 'Skoða umsókn',
+                      href: link,
+                    },
+                  },
+                ],
+              },
+            }
+          },
+          application,
+          currentUserLocale,
+        ),
+      ),
+    )
+
+    return { success: true, notified: pendingAssignees.length }
   }
 
   async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
