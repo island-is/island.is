@@ -74,7 +74,14 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
       }
 
       await limitedAccessAppealCaseController
-        .createEventLog(caseId, appealCaseId, defender, theCase, appealCase, dto)
+        .createEventLog(
+          caseId,
+          appealCaseId,
+          defender,
+          theCase,
+          appealCase,
+          dto,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
