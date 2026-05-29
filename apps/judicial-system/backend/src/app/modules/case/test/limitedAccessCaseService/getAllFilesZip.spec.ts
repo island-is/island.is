@@ -11,7 +11,6 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { PdfService } from '../../pdf.service'
 import {
   Case,
   Defendant,
@@ -19,6 +18,7 @@ import {
   Subpoena,
 } from '../../../repository'
 import { LimitedAccessCaseService } from '../../limitedAccessCase.service'
+import { PdfService } from '../../pdf.service'
 
 const defenderNationalId = '0101010101'
 const pdfBuffer = Buffer.from('pdf')
