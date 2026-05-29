@@ -39,6 +39,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefenderSubRole,
   EventType,
   getIndictmentAppealDeadline,
@@ -89,6 +90,7 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
+  DefendantEventLog,
   EventLog,
   InstitutionContactRepositoryService,
   Notification,
@@ -1930,10 +1932,29 @@ export class CaseNotificationService extends BaseNotificationService {
     const defenderHtml = `${body}<br /><br /><a href="${defenderLink}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
     const defenceRecipients = this.getIndictmentDefenceRecipients(theCase)
-    const hasSentToPrisonAdmin = theCase.defendants?.some(
-      (d) => d.isSentToPrisonAdmin,
+    // The current reopen's INDICTMENT_REOPENED event has just been written, so
+    // the "previous" reopen is the second-most-recent. A "sent" event older
+    // than that previous reopen belongs to an earlier run of the case and
+    // should not trigger an email on this reopen.
+    const previousReopenedDate = (theCase.eventLogs ?? [])
+      .filter((log) => log.eventType === EventType.INDICTMENT_REOPENED)
+      .map((log) => log.created)
+      .sort((a, b) => b.getTime() - a.getTime())[1]
+
+    const isCurrentInThisRun = (sentDate: Date | undefined) =>
+      Boolean(
+        sentDate && (!previousReopenedDate || sentDate > previousReopenedDate),
+      )
+
+    const hasSentToPrisonAdmin = theCase.defendants?.some((d) =>
+      isCurrentInThisRun(
+        DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          d.eventLogs,
+        ),
+      ),
     )
-    const hasSentToPublicProsecutor = Boolean(
+    const hasSentToPublicProsecutor = isCurrentInThisRun(
       EventLog.getEventLogDateByEventType(
         EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
         theCase.eventLogs,

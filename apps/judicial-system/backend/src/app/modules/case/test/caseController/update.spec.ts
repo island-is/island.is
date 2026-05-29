@@ -47,8 +47,10 @@ import {
   CaseString,
   DateLog,
   DefendantEventLogRepositoryService,
+  Verdict,
 } from '../../../repository'
 import { UserService } from '../../../user'
+import { VerdictService } from '../../../verdict'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 
 jest.mock('../../../../factories')
@@ -95,6 +97,7 @@ describe('CaseController - Update', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
+  let mockVerdictService: VerdictService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
@@ -109,6 +112,7 @@ describe('CaseController - Update', () => {
       caseRepositoryService,
       defendantEventLogRepositoryService,
       defendantService,
+      verdictService,
       dateLogModel,
       caseStringModel,
       caseController,
@@ -121,6 +125,7 @@ describe('CaseController - Update', () => {
     mockCaseRepositoryService = caseRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
+    mockVerdictService = verdictService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
 
@@ -1100,6 +1105,41 @@ describe('CaseController - Update', () => {
         EventType.INDICTMENT_REOPENED,
         caseId,
         user,
+        transaction,
+      )
+    })
+  })
+
+  describe('reopen indictment case - resets verdict data on each verdict', () => {
+    const verdict1 = { id: uuid() } as Verdict
+    const verdict2 = { id: uuid() } as Verdict
+    const reopeningCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      defendants: [
+        { id: defendantId1, verdicts: [verdict1] },
+        { id: defendantId2, verdicts: [verdict2] },
+      ],
+    } as Case
+
+    const caseToUpdate = { reopenReason: uuid() } as UpdateCaseDto
+
+    beforeEach(async () => {
+      ;(
+        mockDefendantService.updateDatabaseDefendant as jest.Mock
+      ).mockResolvedValue({})
+
+      await givenWhenThen(caseId, user, reopeningCase, caseToUpdate)
+    })
+
+    it('should reset verdict data for each verdict', () => {
+      expect(mockVerdictService.resetVerdictDataForReopen).toHaveBeenCalledWith(
+        verdict1,
+        transaction,
+      )
+      expect(mockVerdictService.resetVerdictDataForReopen).toHaveBeenCalledWith(
+        verdict2,
         transaction,
       )
     })
