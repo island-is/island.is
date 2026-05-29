@@ -171,7 +171,9 @@ export class BankTransferService {
 
     const correlationId = uuid()
     const callbackUrl = `${this.paymentFlowConfig.webOrigin}/api/bank-transfer/callback`
-    const partnerRedirectUrl = `${this.paymentFlowConfig.webOrigin}/${input.locale}/${input.paymentFlowId}`
+    // The `?bank_transfer=pending` query marker lets the FE distinguish "user returned from SCA"
+    // from a fresh page visit and start its polling loop only when appropriate.
+    const partnerRedirectUrl = `${this.paymentFlowConfig.webOrigin}/${input.locale}/${input.paymentFlowId}?bank_transfer=pending`
     // Blikk's `expiresAt` is Unix seconds. We pin to now + 5 min so an abandoned attempt self-cleans
     // on Blikk's side and the user can retry on the same flow (a fresh attempt = fresh correlationId).
     const expiresAt = Math.floor(Date.now() / 1000) + 300

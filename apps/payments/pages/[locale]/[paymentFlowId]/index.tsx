@@ -250,17 +250,25 @@ function PaymentPage({
 
   const router = useRouter()
 
-  // Drives bank-transfer settlement: polls verify on mount (covers return-from-SCA) and restarts when
-  // `lastAttemptAt` bumps (covers back-channel SCA where the user stays on the page after submit).
-  // On SUCCESS we reload — `paymentStatus` flips to `'paid'` and the existing `PaymentReceipt`
-  // renders. On terminal failure we surface the standard `paymentError` UI.
+  // Drives bank-transfer settlement. We only poll when there's a real reason:
+  //   - The Blikk redirect appended `?bank_transfer=pending` to the partnerRedirectUrl, so the
+  //     user is returning from SCA, OR
+  //   - The user just submitted on this page (`lastAttemptAt` bumped — covers back-channel SCA).
+  // Without either signal a fresh visit to an unpaid flow doesn't poll, so the submit button never
+  // flashes loading for card/invoice users.
+  const isReturningFromBankTransfer =
+    router.query.bank_transfer === 'pending'
   const { isPolling: isBankTransferPolling } = useBankTransferStatusPolling({
     paymentFlowId: paymentFlow?.id,
-    enabled: paymentFlow?.paymentStatus === 'unpaid',
+    enabled:
+      paymentFlow?.paymentStatus === 'unpaid' &&
+      (isReturningFromBankTransfer || bankTransferLastAttemptAt > 0),
     trigger: bankTransferLastAttemptAt,
     onSuccess: () => router.reload(),
     onFailure: setPaymentError,
   })
+
+  console.log('isBankTransferPolling', isBankTransferPolling)
 
   const availablePaymentMethods = useMemo(() => {
     const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
@@ -393,12 +401,17 @@ function PaymentPage({
                   )}
                   <Button
                     type="submit"
-                    loading={overallIsSubmitting || isBankTransferPolling}
+                    loading={
+                      overallIsSubmitting ||
+                      (selectedPaymentMethod === 'bank_transfer' &&
+                        isBankTransferPolling)
+                    }
                     fluid
                     disabled={
                       overallIsSubmitting ||
                       isCardPaymentInvalid ||
-                      isBankTransferPolling
+                      (selectedPaymentMethod === 'bank_transfer' &&
+                        isBankTransferPolling)
                     }
                   >
                     {selectedPaymentMethod === 'card'

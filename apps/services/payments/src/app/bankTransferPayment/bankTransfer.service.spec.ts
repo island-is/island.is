@@ -346,7 +346,8 @@ describe('BankTransferService', () => {
         amount: 14000,
         currency: 'ISK',
         callbackUrl: 'https://island.is/greida/api/bank-transfer/callback',
-        partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
+        partnerRedirectUrl:
+          'https://island.is/greida/is/flow-1?bank_transfer=pending',
       })
       expect(blikkArg.correlationId).not.toBe('flow-1')
       expect(blikkArg.expiresAt).toBeGreaterThan(Math.floor(Date.now() / 1000))
