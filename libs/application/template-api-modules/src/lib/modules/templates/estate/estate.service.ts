@@ -86,6 +86,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
         member.enabled !== false &&
         !member.approved &&
         !!member.email &&
+        !!member.nationalId &&
         assigneeNationalIds.has(member.nationalId),
     )
 

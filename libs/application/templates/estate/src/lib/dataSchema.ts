@@ -139,6 +139,8 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
+        approved: z.boolean().optional(),
+        approvedDate: z.string().optional(),
         phone: z.string().optional().default(''),
         email: z.string().optional().default(''),
         // Málsvari
