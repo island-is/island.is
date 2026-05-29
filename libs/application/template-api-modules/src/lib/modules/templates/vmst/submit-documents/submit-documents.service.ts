@@ -9,8 +9,10 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import type { Logger } from '@island.is/logging'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { S3Service } from '@island.is/nest/aws'
 import { ConfigType } from '@nestjs/config'
+import { errorMessages } from '@island.is/application/templates/vmst/submit-documents'
 
 interface DocumentEntry {
   type: string
@@ -60,6 +62,61 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.VMST_SUBMIT_DOCUMENTS)
+  }
+
+  async checkEligibility({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    let result
+    try {
+      result =
+        await this.vmstUnemploymentClientService.checkCreateAttachmentEligibility(
+          auth,
+        )
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        this.logger.warn(
+          '[VMST-Submit-Documents] - No active application found (404)',
+        )
+        throw new TemplateApiError(
+          {
+            title: errorMessages.eligibilityErrorTitle,
+            summary: errorMessages.cannotApplyErrorSummary,
+          },
+          404,
+        )
+      }
+
+      this.logger.error(
+        '[VMST-Submit-Documents] - Error checking eligibility',
+        e,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary: coreErrorMessages.failedDataProvider,
+        },
+        500,
+      )
+    }
+
+    if (!result.isEligible) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.eligibilityErrorTitle,
+          summary:
+            (currentUserLocale === 'is' ? result.reason : result.reasonEN) ||
+            errorMessages.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
+
+    return {
+      ...result,
+      applicantId: result.applicantId,
+    }
   }
 
   async getAttachmentTypes(_props: TemplateApiModuleActionProps) {
@@ -160,59 +217,59 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       }),
     )
 
-    // Phase 2: Create attachments sequentially in the 3rd party system
-    const createdAttachments: CreatedAttachment[] = []
+    // Phase 2: Create attachments in parallel in Galdur
+    let createdAttachments: CreatedAttachment[]
 
     try {
-      for (let i = 0; i < fileEntries.length; i++) {
-        const { attachmentTypeId } = fileEntries[i]
-        const { content, fileName } = fileContents[i]
-        const mimeType = getMimeType(fileName)
+      createdAttachments = await Promise.all(
+        fileEntries.map(async ({ attachmentTypeId }, i) => {
+          const { content, fileName } = fileContents[i]
+          const mimeType = getMimeType(fileName)
 
-        const response =
-          await this.vmstUnemploymentClientService.createAttachmentForApplication(
-            {
-              galdurDomainModelsAttachmentsCreateAttachmentRequest: {
-                attachmentTypeId,
-                fileName,
-                fileType: mimeType,
-                data: content,
-                ownerId: application.id,
+          const response =
+            await this.vmstUnemploymentClientService.createAttachmentForApplication(
+              {
+                galdurDomainModelsAttachmentsCreateAttachmentRequest: {
+                  attachmentTypeId,
+                  fileName,
+                  fileType: mimeType,
+                  data: content,
+                },
               },
-            },
-          )
+            )
 
-        if (!response.success) {
-          this.logger.error(
-            `[VMST-Submit-Documents] - Failed to create attachment: ${response.errorMessage}`,
-          )
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.defaultTemplateApiError,
-              summary: response.errorMessage ?? '',
-            },
-            400,
-          )
-        }
+          if (!response.success) {
+            this.logger.error(
+              `[VMST-Submit-Documents] - Failed to create attachment: ${response.errorMessage}`,
+            )
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: response.errorMessage ?? '',
+              },
+              400,
+            )
+          }
 
-        if (!response.attachment?.id) {
-          this.logger.error(
-            '[VMST-Submit-Documents] - Attachment created but no ID returned',
-          )
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.defaultTemplateApiError,
-              summary: coreErrorMessages.errorDataProvider,
-            },
-            500,
-          )
-        }
+          if (!response.attachment?.id) {
+            this.logger.error(
+              '[VMST-Submit-Documents] - Attachment created but no ID returned',
+            )
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: coreErrorMessages.errorDataProvider,
+              },
+              500,
+            )
+          }
 
-        createdAttachments.push({
-          attachmentId: response.attachment.id,
-          attachmentTypeId,
-        })
-      }
+          return {
+            attachmentId: response.attachment.id,
+            attachmentTypeId,
+          }
+        }),
+      )
     } catch (e) {
       if (e instanceof TemplateApiError) {
         throw e
@@ -232,9 +289,11 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     }
 
     // Phase 3: Link created attachments to the applicant
-    // TODO: Replace with getValueViaPath from application.externalData once
-    // the 3rd party confirms business logic around applicantId resolution
-    const applicantId = 'PLACEHOLDER'
+    const applicantId =
+      getValueViaPath<string>(
+        application.externalData,
+        'submitDocumentsEligibility.data.applicantId',
+      ) || ''
 
     const linkResponse =
       await this.vmstUnemploymentClientService.createApplicantRequestedAttachments(

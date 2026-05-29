@@ -20,6 +20,7 @@ export const uploadDocumentsSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'documents',
+          maxRows: 10,
           initActiveFieldIfEmpty: true,
           fields: {
             type: {

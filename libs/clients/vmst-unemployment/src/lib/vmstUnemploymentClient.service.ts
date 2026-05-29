@@ -37,6 +37,7 @@ import {
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -467,6 +468,29 @@ export class VmstUnemploymentClientService {
     return await api.applicantGetForeignTravelEligibility({
       id: applicantId,
     })
+  }
+
+  async checkCreateAttachmentEligibility(auth: User): Promise<
+    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+      applicantId: string
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const result = await api.applicantGetCreateAttachmentEligibility({
+      id: applicantId,
+    })
+
+    return { ...result, applicantId }
   }
 
   async submitTravelConfirmation(

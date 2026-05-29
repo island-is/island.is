@@ -13,10 +13,7 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import {
-  EphemeralStateLifeCycle,
-  pruneAfterDays,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { application as am } from './messages'
 import {
   GetAttachmentTypesApi,
@@ -56,7 +53,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [GetAttachmentTypesApi],
+              api: [SubmitDocumentsEligibilityApi, GetAttachmentTypesApi],
               delete: true,
             },
           ],
@@ -80,6 +77,18 @@ const template: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: 'completeApplication',
           }),
+          actionCard: {
+            tag: {
+              label: am.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: am.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,

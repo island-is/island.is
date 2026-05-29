@@ -36,9 +36,9 @@ export const Prerequisites = buildForm({
               title: pm.title,
               subTitle: pm.subtitle,
             }),
-            // buildDataProviderItem({
-            //   provider: SubmitDocumentsEligibilityApi,
-            // }),
+            buildDataProviderItem({
+              provider: SubmitDocumentsEligibilityApi,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

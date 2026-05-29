@@ -54,12 +54,6 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in prerequisites',
   },
-  actionCardDraft: {
-    id: 'vmst.vsd.application:actionCardDraft',
-    defaultMessage: 'Í vinnslu',
-    description:
-      'Description of application state/status when the application is in draft',
-  },
   actionCardSubmitted: {
     id: 'vmst.vsd.application:actionCardSubmitted',
     defaultMessage: 'Innsend',
@@ -76,5 +70,61 @@ export const application = defineMessages({
     defaultMessage:
       'Vinnumálastofnun hefur móttekið umsókn þína og er hún komin til afgreiðslu.',
     description: 'Successful submission title',
+  },
+  multiFieldTitle: {
+    id: 'vmst.vsd.application:multiFieldTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title for the multi field on completed form',
+  },
+  completedFormAlertTitle: {
+    id: 'vmst.vsd.application:completedFormAlertTitle',
+    defaultMessage: 'Breytingar þínar hafa verið vistaðar',
+    description: 'Title for alert when form is completed',
+  },
+  completedFormDescriptionFieldTitle: {
+    id: 'vmst.vsd.application:completedFormDescriptionFieldTitle',
+    defaultMessage: 'Er eitthvað óljóst?',
+    description: 'Title for description field when form is completed',
+  },
+  completedFormDescriptionFieldDescription: {
+    id: 'vmst.vsd.application:completedFormDescriptionFieldDescription#markdown',
+    defaultMessage:
+      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
+    description: 'Description for description field when form is completed',
+  },
+  bottomButtonMessage: {
+    id: 'vmst.vsd.application:bottomButtonMessage',
+    defaultMessage:
+      'Á mínum síðum og í appi ísland.is getur þú nú nálgast staðfestingu á því að þessi aðgerð hafi verið framkvæmd.',
+    description: 'Bottom info message on completed form',
+  },
+  bottomButtonLabel: {
+    id: 'vmst.vsd.application:bottomButtonLabel',
+    defaultMessage: 'Opna Mínar síður',
+    description: 'Bottom button label on completed form',
+  },
+  actionCardDraft: {
+    id: 'vmst.vsd.application:actionCardDraft',
+    defaultMessage: 'Í vinnslu',
+    description: 'Action card tag for draft application',
+  },
+  applicationSent: {
+    id: 'vmst.vsd.application:applicationSent',
+    defaultMessage: 'Breyting persónuupplýsinga móttekin',
+    description: 'History log message when application is sent',
+  },
+})
+
+export const errorMessages = defineMessages({
+  eligibilityErrorTitle: {
+    id: 'vmst.vsd.error:eligibilityErrorTitle',
+    defaultMessage: 'Ekki er hægt að skila gögnum',
+    description: 'Error title when user is not eligible to submit documents',
+  },
+  cannotApplyErrorSummary: {
+    id: 'vmst.vsd.error:cannotApplyErrorSummary',
+    defaultMessage:
+      'Samkvæmt sóttum gögnum er ekki hægt að skila inn gögnum á þessari stundu.',
+    description: 'Error summary when user is not eligible to submit documents',
   },
 })
