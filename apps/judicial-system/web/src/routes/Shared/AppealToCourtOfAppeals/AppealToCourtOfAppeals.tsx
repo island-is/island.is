@@ -45,7 +45,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -104,16 +104,19 @@ const AppealToCourtOfAppeals = () => {
 
     const appealCase = await createAppealCase(workingCase.id, rulingFileId)
 
+    refreshCase()
+
     if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
   }, [
     handleUpload,
-    createAppealCase,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
+    createAppealCase,
     workingCase.id,
     rulingFileId,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {

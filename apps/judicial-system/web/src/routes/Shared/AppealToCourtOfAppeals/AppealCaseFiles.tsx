@@ -48,7 +48,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -108,13 +108,16 @@ const AppealFiles = () => {
       TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
     )
 
+    refreshCase()
+
     setVisibleModal(true)
   }, [
     handleUpload,
     uploadFiles,
-    sendNotification,
     updateUploadFile,
+    sendNotification,
     workingCase.id,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {

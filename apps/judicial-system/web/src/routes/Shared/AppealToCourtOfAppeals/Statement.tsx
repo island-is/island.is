@@ -50,7 +50,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const Statement = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
@@ -124,16 +124,19 @@ const Statement = () => {
       AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
+    refreshCase()
+
     if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
   }, [
     handleUpload,
-    createAppealEventLog,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
     targetAppealCaseId,
+    createAppealEventLog,
     workingCase.id,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
