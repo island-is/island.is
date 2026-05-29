@@ -388,9 +388,11 @@ const EstateTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.draft,
           },
+          // SUBMIT sends the application to signing. The applicant can do this
+          // directly without waiting for all estate members to approve; the
+          // irreversibility is acknowledged on the pre-signature screen.
           [DefaultEvents.SUBMIT]: {
             target: States.signing,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,

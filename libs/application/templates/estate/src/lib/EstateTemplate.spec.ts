@@ -1,7 +1,8 @@
 import EstateTemplate from './EstateTemplate'
-import { Application, ApplicationContext } from '@island.is/application/types'
+import { Application, ApplicationStatus, ApplicationTypes, DefaultEvents } from '@island.is/application/types'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { EstateMember } from '../types'
-import { EstateTypes, Roles } from './constants'
+import { EstateTypes, Roles, States } from './constants'
 
 describe('EstateTemplate', () => {
   describe('mapUserToRole', () => {
@@ -227,6 +228,79 @@ describe('EstateTemplate', () => {
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBeUndefined()
       })
+    })
+  })
+
+  describe('inReview state transitions', () => {
+    const createInReviewApplication = (
+      estateMembers: EstateMember[],
+    ): Application =>
+      ({
+        id: '123',
+        assignees: [],
+        applicantActors: [],
+        state: States.inReview,
+        applicant: '1111111111',
+        typeId: ApplicationTypes.ESTATE,
+        modified: new Date(),
+        created: new Date(),
+        answers: {
+          selectedEstate: EstateTypes.officialDivision,
+          estate: { estateMembers },
+        },
+        externalData: {
+          checkReviewFlag: {
+            data: { reviewEnabled: true },
+            date: new Date().toISOString(),
+          },
+        },
+        status: ApplicationStatus.IN_PROGRESS,
+      }) as unknown as Application
+
+    it('should allow SUBMIT to signing when not all estate members have approved', () => {
+      const application = createInReviewApplication([
+        {
+          name: 'Applicant',
+          nationalId: '1111111111',
+          enabled: true,
+          approved: true,
+        },
+        {
+          name: 'Heir',
+          nationalId: '2222222222',
+          enabled: true,
+          approved: false,
+        },
+      ])
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.signing)
+    })
+
+    it('should allow SUBMIT to signing when all estate members have approved', () => {
+      const application = createInReviewApplication([
+        {
+          name: 'Applicant',
+          nationalId: '1111111111',
+          enabled: true,
+          approved: true,
+        },
+        {
+          name: 'Heir',
+          nationalId: '2222222222',
+          enabled: true,
+          approved: true,
+        },
+      ])
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.signing)
     })
   })
 

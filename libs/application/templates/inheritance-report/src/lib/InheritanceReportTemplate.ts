@@ -50,10 +50,6 @@ const isReviewEnabled = (context: ApplicationContext) => {
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
-const areAllPartiesApproved = (context: ApplicationContext) => {
-  return allPartiesHaveApproved(context.application.answers)
-}
-
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   const externalData = context.application
     .externalData as InheritanceReportExternalData
@@ -307,9 +303,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
           EDIT: {
             target: States.draft,
           },
+          // SUBMIT sends the application to signing. The applicant can do this
+          // directly without waiting for all heirs to approve; the
+          // irreversibility is acknowledged on the pre-signature screen.
           SUBMIT: {
             target: States.signing,
-            cond: areAllPartiesApproved,
           },
           APPROVE: {
             target: States.inReview,
