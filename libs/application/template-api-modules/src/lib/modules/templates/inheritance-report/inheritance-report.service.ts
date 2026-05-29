@@ -125,7 +125,8 @@ export class InheritanceReportService extends BaseTemplateApiService {
               : 'You are requested to review an inheritance report.'
             const buttonCopy = isIcelandic ? 'Skoða umsókn' : 'View application'
             const link = `${options.clientLocationOrigin}/${
-              ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT].slug
+              ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
+                .slug
             }/${application.id}`
 
             return {
