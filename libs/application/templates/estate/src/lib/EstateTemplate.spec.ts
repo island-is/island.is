@@ -234,6 +234,7 @@ describe('EstateTemplate', () => {
   describe('inReview state transitions', () => {
     const createInReviewApplication = (
       estateMembers: EstateMember[],
+      selectedEstate = EstateTypes.officialDivision,
     ): Application =>
       ({
         id: '123',
@@ -245,7 +246,7 @@ describe('EstateTemplate', () => {
         modified: new Date(),
         created: new Date(),
         answers: {
-          selectedEstate: EstateTypes.officialDivision,
+          selectedEstate,
           estate: { estateMembers },
         },
         externalData: {
@@ -257,21 +258,40 @@ describe('EstateTemplate', () => {
         status: ApplicationStatus.IN_PROGRESS,
       }) as unknown as Application
 
-    it('should allow SUBMIT to signing when not all estate members have approved', () => {
-      const application = createInReviewApplication([
-        {
-          name: 'Applicant',
-          nationalId: '1111111111',
-          enabled: true,
-          approved: true,
-        },
-        {
-          name: 'Heir',
-          nationalId: '2222222222',
-          enabled: true,
-          approved: false,
-        },
-      ])
+    const estateMembersWithPendingApproval: EstateMember[] = [
+      {
+        name: 'Applicant',
+        nationalId: '1111111111',
+        enabled: true,
+        approved: true,
+      },
+      {
+        name: 'Heir',
+        nationalId: '2222222222',
+        enabled: true,
+        approved: false,
+      },
+    ]
+
+    const estateMembersAllApproved: EstateMember[] = [
+      {
+        name: 'Applicant',
+        nationalId: '1111111111',
+        enabled: true,
+        approved: true,
+      },
+      {
+        name: 'Heir',
+        nationalId: '2222222222',
+        enabled: true,
+        approved: true,
+      },
+    ]
+
+    it('should allow SUBMIT to signing for free estate types when not all estate members have approved', () => {
+      const application = createInReviewApplication(
+        estateMembersWithPendingApproval,
+      )
 
       const helper = new ApplicationTemplateHelper(application, EstateTemplate)
       const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
@@ -280,27 +300,40 @@ describe('EstateTemplate', () => {
       expect(newState).toBe(States.signing)
     })
 
-    it('should allow SUBMIT to signing when all estate members have approved', () => {
-      const application = createInReviewApplication([
-        {
-          name: 'Applicant',
-          nationalId: '1111111111',
-          enabled: true,
-          approved: true,
-        },
-        {
-          name: 'Heir',
-          nationalId: '2222222222',
-          enabled: true,
-          approved: true,
-        },
-      ])
+    it('should allow SUBMIT to signing for free estate types when all estate members have approved', () => {
+      const application = createInReviewApplication(estateMembersAllApproved)
 
       const helper = new ApplicationTemplateHelper(application, EstateTemplate)
       const [hasChanged, newState] = helper.changeState(DefaultEvents.SUBMIT)
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.signing)
+    })
+
+    it('should allow PAYMENT to payment for paid estate types when not all estate members have approved', () => {
+      const application = createInReviewApplication(
+        estateMembersWithPendingApproval,
+        EstateTypes.divisionOfEstateByHeirs,
+      )
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.PAYMENT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.payment)
+    })
+
+    it('should allow PAYMENT to payment for paid estate types when all estate members have approved', () => {
+      const application = createInReviewApplication(
+        estateMembersAllApproved,
+        EstateTypes.permitForUndividedEstate,
+      )
+
+      const helper = new ApplicationTemplateHelper(application, EstateTemplate)
+      const [hasChanged, newState] = helper.changeState(DefaultEvents.PAYMENT)
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.payment)
     })
   })
 

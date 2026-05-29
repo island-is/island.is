@@ -14,11 +14,20 @@ import {
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
+import { EstateTypes } from '../../lib/constants'
 import { EstateMember } from '../../types'
 import { allPartiesHaveApproved } from '../../lib/utils/allPartiesHaveApproved'
 
 const NEXT_STEP_TO_SIGNING = 'goToSigning'
 const NEXT_STEP_TO_EDIT = 'editApplication'
+
+const requiresEstatePayment = (answers: Record<string, unknown>) => {
+  const selectedEstate = getValueViaPath<string>(answers, 'selectedEstate')
+  return (
+    selectedEstate === EstateTypes.divisionOfEstateByHeirs ||
+    selectedEstate === EstateTypes.permitForUndividedEstate
+  )
+}
 
 export const applicantInReviewForm: Form = buildForm({
   id: 'applicantInReviewForm',
@@ -147,6 +156,7 @@ export const applicantInReviewForm: Form = buildForm({
                   name: m.applicantInReviewSubmitDirect.defaultMessage,
                   type: 'sign',
                   condition: (answers) =>
+                    !requiresEstatePayment(answers) &&
                     !allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
                 {
@@ -154,6 +164,23 @@ export const applicantInReviewForm: Form = buildForm({
                   name: m.applicantInReviewSubmit.defaultMessage,
                   type: 'sign',
                   condition: (answers) =>
+                    !requiresEstatePayment(answers) &&
+                    allPartiesHaveApproved(answers, 'estate.estateMembers'),
+                },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.applicantInReviewSubmitDirect.defaultMessage,
+                  type: 'primary',
+                  condition: (answers) =>
+                    requiresEstatePayment(answers) &&
+                    !allPartiesHaveApproved(answers, 'estate.estateMembers'),
+                },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.applicantInReviewSubmit.defaultMessage,
+                  type: 'primary',
+                  condition: (answers) =>
+                    requiresEstatePayment(answers) &&
                     allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
               ],

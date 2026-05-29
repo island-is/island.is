@@ -56,10 +56,6 @@ const isReviewEnabled = (context: ApplicationContext) => {
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
-const areAllPartiesApproved = (context: ApplicationContext) => {
-  return allPartiesHaveApproved(context.application.answers)
-}
-
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EstateEvent>,
@@ -396,7 +392,6 @@ const EstateTemplate: ApplicationTemplate<
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.APPROVE]: {
             target: States.inReview,
