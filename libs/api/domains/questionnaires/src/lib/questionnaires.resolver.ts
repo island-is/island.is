@@ -43,6 +43,7 @@ export class QuestionnairesResolver {
     name: 'questionnairesList',
     nullable: true,
   })
+  @Audit()
   async getQuestionnaires(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
@@ -51,6 +52,7 @@ export class QuestionnairesResolver {
   }
 
   @Query(() => Questionnaire, { name: 'questionnairesDetail', nullable: true })
+  @Audit()
   async getQuestionnaire(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
@@ -63,6 +65,7 @@ export class QuestionnairesResolver {
     name: 'getAnsweredQuestionnaire',
     nullable: true,
   })
+  @Audit()
   async getAnsweredQuestionnaire(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
@@ -76,6 +79,7 @@ export class QuestionnairesResolver {
   }
 
   @Mutation(() => QuestionnairesResponse, { name: 'submitQuestionnaire' })
+  @Audit()
   async submitQuestionnaire(
     @CurrentUser() user: User,
     @Args('input') input: QuestionnaireInput,
