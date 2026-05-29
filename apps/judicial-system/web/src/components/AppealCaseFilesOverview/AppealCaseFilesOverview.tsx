@@ -134,7 +134,6 @@ const AppealCaseFilesOverview = () => {
   }, [user, workingCase, targetAppealCase])
 
   return (
-    // isCompletedCase(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 && (
       <div className={grid({ gap: 3 })}>
