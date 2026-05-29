@@ -437,9 +437,11 @@ export class HealthDirectorateService {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      input.status.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status
+        .filter((status) => status !== PermitStatusEnum.unknown)
+        .map((status) =>
+          status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
+        ),
     )
 
     if (!medicineDelegations) {

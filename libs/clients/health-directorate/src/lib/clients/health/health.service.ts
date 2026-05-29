@@ -156,9 +156,8 @@ export class HealthDirectorateHealthService {
     return await withAuthContext(auth, () =>
       data(
         mePrescriptionControllerRenewPrescriptionV1({
-          path: {
-            id,
-          },
+          path: { id },
+          body: {},
         }),
       ),
     )

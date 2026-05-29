@@ -110,3 +110,21 @@ export enum ReferralStatusEnum {
 registerEnumType(ReferralStatusEnum, {
   name: 'HealthDirectorateReferralStatusEnum',
 })
+
+export enum HealthMessageDirectionEnum {
+  PATIENT = 'PATIENT',
+  STAFF = 'STAFF',
+  SYSTEM = 'SYSTEM',
+}
+registerEnumType(HealthMessageDirectionEnum, {
+  name: 'HealthDirectorateHealthMessageDirection',
+})
+
+export enum HealthMessageStatusFilterEnum {
+  active = 'active',
+  archived = 'archived',
+  all = 'all',
+}
+registerEnumType(HealthMessageStatusFilterEnum, {
+  name: 'HealthDirectorateHealthMessageStatusFilter',
+})
