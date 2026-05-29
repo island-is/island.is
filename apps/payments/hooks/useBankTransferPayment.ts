@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import { PaymentsCreateBankTransferLocale } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
@@ -26,6 +26,10 @@ export const useBankTransferPayment = ({
     createBankTransferMutation,
     { loading: createBankTransferLoading },
   ] = useCreateBankTransferMutation()
+  // Timestamp of the most-recent successful `paymentsCreateBankTransfer`. The page reads this and
+  // feeds it as the polling hook's `trigger` so the back-channel-SCA case (empty `scaRedirectUrl`,
+  // user stays on the page) restarts polling after the row is persisted.
+  const [lastAttemptAt, setLastAttemptAt] = useState<number>(0)
 
   const processBankTransferPayment = useCallback(async () => {
     if (!paymentFlowId) {
@@ -42,19 +46,22 @@ export const useBankTransferPayment = ({
           },
         },
       })
+      // Mark the attempt as started regardless of redirect; the page's polling hook restarts on
+      // this signal so back-channel SCA works without a separate "kick polling" call.
+      setLastAttemptAt(Date.now())
 
       const scaRedirectUrl =
         response.data?.paymentsCreateBankTransfer.scaRedirectUrl
 
       if (scaRedirectUrl) {
-        // The bank requires an interactive SCA — send the user there. Once they finish, the bank
-        // returns them to the partnerRedirectUrl (the existing flow page) and TODO 14's polling
+        // The bank requires an interactive SCA — send the user there. After they finish, Blikk
+        // returns them to the partnerRedirectUrl (the existing flow page) and the polling loop
         // resolves the terminal status.
         window.location.assign(scaRedirectUrl)
         return
       }
       // Empty scaRedirectUrl ⇒ back-channel SCA (push notification in the bank app). Stay on the
-      // page; the polling loop picks up the eventual terminal status.
+      // page; polling picks up the eventual terminal status.
     } catch (e: unknown) {
       onPaymentError({
         code: (e instanceof Error
@@ -67,5 +74,6 @@ export const useBankTransferPayment = ({
   return {
     processBankTransferPayment,
     isBankTransferPaymentProcessing: createBankTransferLoading,
+    lastAttemptAt,
   }
 }

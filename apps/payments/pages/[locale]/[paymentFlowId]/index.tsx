@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useMemo } from 'react'
 
@@ -45,6 +46,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { useBankTransferStatusPolling } from '../../../hooks/useBankTransferStatusPolling'
 import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
@@ -239,10 +241,25 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
+    bankTransferLastAttemptAt,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabledForUser,
+  })
+
+  const router = useRouter()
+
+  // Drives bank-transfer settlement: polls verify on mount (covers return-from-SCA) and restarts when
+  // `lastAttemptAt` bumps (covers back-channel SCA where the user stays on the page after submit).
+  // On SUCCESS we reload — `paymentStatus` flips to `'paid'` and the existing `PaymentReceipt`
+  // renders. On terminal failure we surface the standard `paymentError` UI.
+  const { isPolling: isBankTransferPolling } = useBankTransferStatusPolling({
+    paymentFlowId: paymentFlow?.id,
+    enabled: paymentFlow?.paymentStatus === 'unpaid',
+    trigger: bankTransferLastAttemptAt,
+    onSuccess: () => router.reload(),
+    onFailure: setPaymentError,
   })
 
   const availablePaymentMethods = useMemo(() => {
@@ -372,13 +389,17 @@ function PaymentPage({
                     />
                   )}
                   {selectedPaymentMethod === 'bank_transfer' && (
-                    <BankTransferPayment />
+                    <BankTransferPayment isWaiting={isBankTransferPolling} />
                   )}
                   <Button
                     type="submit"
-                    loading={overallIsSubmitting}
+                    loading={overallIsSubmitting || isBankTransferPolling}
                     fluid
-                    disabled={overallIsSubmitting || isCardPaymentInvalid}
+                    disabled={
+                      overallIsSubmitting ||
+                      isCardPaymentInvalid ||
+                      isBankTransferPolling
+                    }
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)
