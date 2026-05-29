@@ -1,8 +1,20 @@
-import { getOutputs, getTypeOfDeployment } from './generate-tag.mjs'
+import { describe, expect, test } from '@jest/globals'
+import { getOutput, getTypeOfDeployment } from './generate-tag.mjs'
+
+const sha = 'db609e6641abcdef1234567890abcdef12345678'
+const randomTag = 'wXu9m2hGVp8gyEpU'
+
+const workflowDispatchContext = (branch) => ({
+  eventName: 'workflow_dispatch',
+  ref: `refs/heads/${branch}`,
+  sha,
+  payload: {},
+})
 
 const mergeGroupContext = (branch) => ({
   eventName: 'merge_group',
-  sha: '1234567890abcdef',
+  ref: 'refs/heads/gh-readonly-queue/main/pr-123-test',
+  sha,
   payload: {
     merge_group: {
       base_ref: `refs/heads/${branch}`,
@@ -11,55 +23,109 @@ const mergeGroupContext = (branch) => ({
   },
 })
 
+const pullRequestContext = (branch) => ({
+  eventName: 'pull_request',
+  ref: 'refs/pull/123/merge',
+  sha: 'merge-sha',
+  payload: {
+    pull_request: {
+      number: 123,
+      head: {
+        sha,
+      },
+      base: {
+        ref: branch,
+      },
+      labels: [{ name: 'deploy-feature' }],
+    },
+  },
+})
+
+const pushContext = (branch) => ({
+  eventName: 'push',
+  ref: `refs/heads/${branch}`,
+  sha,
+  payload: {},
+})
+
 describe('generate-tag.mjs', () => {
-  test('generates release docker tag outputs for calver release branch', () => {
-    const outputs = getOutputs(
-      mergeGroupContext('release/2026.5.26.0'),
-      'randomtag',
+  test('generates release tag for workflow_dispatch on calver release branch', () => {
+    const output = getOutput(
+      workflowDispatchContext('release/2026.5.26.0'),
+      randomTag,
     )
 
-    expect(outputs).toEqual({
+    expect(output).toEqual({
+      shouldRun: true,
+      artifactName: `release-${sha}`,
+      deployJudicial: false,
+      helmValuesBranch: 'release',
+      sha,
+      tagName: `release_2026.5.26.0_db609e6_${randomTag}`,
+      targetBranch: 'release/2026.5.26.0',
+    })
+  })
+
+  test('generates release tag for merge_group on calver release branch', () => {
+    const output = getOutput(
+      mergeGroupContext('release/2026.5.26.0'),
+      randomTag,
+    )
+
+    expect(output).toEqual({
       shouldRun: true,
       artifactName: 'release-merge-group-head-sha',
-      tagName: 'release_2026.5.26.0_1234567_randomtag',
-      helmValuesBranch: 'release',
       deployJudicial: false,
+      helmValuesBranch: 'release',
+      sha,
+      tagName: `release_2026.5.26.0_db609e6_${randomTag}`,
       targetBranch: 'release/2026.5.26.0',
-      sha: '1234567890abcdef',
     })
   })
 
-  test('generates release docker tag outputs for semver release branch', () => {
-    const outputs = getOutputs(mergeGroupContext('release/41.1.0'), 'randomtag')
+  test('keeps semver release branch behavior', () => {
+    const output = getOutput(
+      workflowDispatchContext('release/41.1.0'),
+      randomTag,
+    )
 
-    expect(outputs.shouldRun).toBe(true)
-    expect(outputs.tagName).toBe('release_41.1.0_1234567_randomtag')
-    expect(outputs.helmValuesBranch).toBe('release')
+    expect(output.tagName).toBe(`release_41.1.0_db609e6_${randomTag}`)
+    expect(output.artifactName).toBe(`release-${sha}`)
+    expect(output.helmValuesBranch).toBe('release')
   })
 
-  test('generates dev outputs for main branch', () => {
-    const outputs = getOutputs(mergeGroupContext('main'), 'randomtag')
+  test('keeps main branch behavior', () => {
+    const output = getOutput(workflowDispatchContext('main'), randomTag)
 
-    expect(outputs.shouldRun).toBe(true)
-    expect(outputs.tagName).toBe('dev_1234567_randomtag')
-    expect(outputs.helmValuesBranch).toBe('main')
-    expect(outputs.deployJudicial).toBe(true)
+    expect(output.tagName).toBe(`dev_db609e6_${randomTag}`)
+    expect(output.artifactName).toBe(`main-${sha}`)
+    expect(output.helmValuesBranch).toBe('main')
+    expect(output.deployJudicial).toBe(true)
   })
 
-  test('skips unsupported merge queue target branches', () => {
-    const outputs = getOutputs(mergeGroupContext('feature/test'), 'randomtag')
+  test('keeps pull request feature deployment tag behavior', () => {
+    const output = getOutput(pullRequestContext('main'), randomTag)
 
-    expect(outputs).toEqual({
-      shouldRun: false,
-      targetBranch: 'feature/test',
-      sha: '1234567890abcdef',
-    })
+    expect(output.tagName).toBe(`pr-db609e6-${randomTag}`)
+    expect(output.artifactName).toBe('pr-123')
+    expect(output.helmValuesBranch).toBe('main')
   })
 
-  test('classifies calver release branch as prod deployment', () => {
-    expect(getTypeOfDeployment('release/2026.5.26.0')).toEqual({
-      dev: false,
-      prod: true,
-    })
+  test('generates prerelease tag for calver pre-release push', () => {
+    const output = getOutput(pushContext('pre-release/2026.5.26.0'), randomTag)
+
+    expect(output.tagName).toBe(`prerelease_db609e6_${randomTag}`)
+    expect(output.artifactName).toBe(`prerelease-${sha}`)
+    expect(output.helmValuesBranch).toBe('main')
+  })
+
+  test('does not classify invalid release-like branches as dev', () => {
+    expect(() =>
+      getOutput(workflowDispatchContext('release/2026'), randomTag),
+    ).toThrow('Unsupported branch: release/2026')
+
+    expect(() => getTypeOfDeployment('pre-release/foo.bar')).toThrow(
+      'Unsupported branch: pre-release/foo.bar',
+    )
   })
 })
