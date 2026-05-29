@@ -112,9 +112,7 @@ export const SdfTextField = ({
               }
               return true
             }}
-            onValueChange={({ value }) => {
-              handleChange(value)
-            }}
+            onValueChange={({ value }) => handleChange(value)}
           />
         </Box>
       </Box>
@@ -143,9 +141,7 @@ export const SdfTextField = ({
             }
             value={valueStr}
             format={fmt}
-            onValueChange={({ value }) => {
-              handleChange(value)
-            }}
+            onValueChange={({ value }) => handleChange(value)}
           />
         </Box>
       </Box>

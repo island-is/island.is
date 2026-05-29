@@ -137,6 +137,7 @@ export class SdfResolver {
       input.fieldIds ?? undefined,
       locale,
       user,
+      input.lastKnownPageIndex ?? undefined,
     )
 
     return {

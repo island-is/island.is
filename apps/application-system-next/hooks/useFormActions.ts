@@ -14,6 +14,9 @@ export const useFormActions = (
   const answersRef = useRef<Record<string, unknown>>(
     initialScreen.answers ?? {},
   )
+  const [answerSnapshot, setAnswerSnapshot] = useState<Record<string, unknown>>(
+    initialScreen.answers ?? {},
+  )
   const pageIndexRef = useRef(initialScreen.page.index)
   const pendingTargetCountsRef = useRef<Record<string, number>>({})
   const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>([])
@@ -21,16 +24,19 @@ export const useFormActions = (
 
   // When the page index changes, merge the server snapshot for that screen.
   // Server values must win over answersRef — ref can still hold stale choices from
-  // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break Tier 1/2 showWhen.
+  // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break
+  // server-evaluated showWhen.
   useEffect(() => {
     if (screen.answers) {
       answersRef.current = { ...answersRef.current, ...screen.answers }
+      setAnswerSnapshot(answersRef.current)
       forceRender((n) => n + 1)
     }
   }, [screen.page.index])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
+    setAnswerSnapshot(answersRef.current)
     forceRender((n) => n + 1)
   }, [])
 
@@ -99,11 +105,12 @@ export const useFormActions = (
           setScreen(result)
           // Always merge; never replace with result.answers alone — it only contains
           // fields present on the current page in the DB snapshot, and would drop keys
-          // needed for client-side showWhen on the page we navigate to.
+          // needed for client-side clientShowWhen on the page we navigate to.
           answersRef.current = {
             ...answersRef.current,
             ...(result.answers ?? {}),
           }
+          setAnswerSnapshot(answersRef.current)
           forceRender((n) => n + 1)
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Action failed')
@@ -155,6 +162,7 @@ export const useFormActions = (
     error,
     pendingRefetchTargets,
     answers: answersRef,
+    answerSnapshot,
     setAnswer,
     onAnswerChange,
     nextPage,

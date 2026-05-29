@@ -1,5 +1,10 @@
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import NumberFormat from 'react-number-format'
+import {
+  SDF_FIELD_BLOCK_MARGIN_BOTTOM,
+  SDF_FIELD_CONTROL_PADDING_TOP,
+} from '../../sdfLayoutTokens'
+import { useFormExpressionEvaluator } from '../../../hooks/useFormExpressionEvaluator'
 import type { FieldRendererProps } from '../types'
 
 const allowedTitleVariants = new Set([
@@ -31,14 +36,24 @@ export const SdfDisplayField = ({
   component,
   currentValue,
   displayValues,
+  answers,
 }: FieldRendererProps) => {
   const titleVariant = allowedTitleVariants.has(component.titleVariant ?? '')
     ? (component.titleVariant as TitleVariant)
     : 'h4'
   const overlayValue =
     component.id && displayValues ? displayValues[component.id] : undefined
+  const clientValueExpressionValue = useFormExpressionEvaluator(
+    component.clientValueExpression,
+    answers,
+  )
   const rawValue =
-    overlayValue ?? (currentValue as string | undefined) ?? component.value ?? ''
+    clientValueExpressionValue ??
+    overlayValue ??
+    (currentValue as string | undefined) ??
+    component.displayValue ??
+    component.value ??
+    ''
   const isCurrency = component.inputVariant === 'currency'
   const isNumber = component.inputVariant === 'number'
   const useNumericFormat = isCurrency || isNumber
@@ -59,9 +74,11 @@ export const SdfDisplayField = ({
   }
   const input = useNumericFormat ? (
     <NumberFormat
+      key={String(rawValue)}
       customInput={Input}
       {...commonInputProps}
       value={String(rawValue)}
+      isNumericString
       suffix={suffix}
       thousandSeparator={isCurrency ? '.' : undefined}
       decimalSeparator={isCurrency ? ',' : undefined}
@@ -72,7 +89,7 @@ export const SdfDisplayField = ({
   )
   return (
     <Box
-      paddingY={3}
+      marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}
       display="flex"
       flexDirection="column"
       alignItems={component.halfWidthOwnline ? 'flexEnd' : undefined}
@@ -86,7 +103,7 @@ export const SdfDisplayField = ({
             {component.label}
           </Text>
         )}
-        {input}
+        <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>{input}</Box>
       </Box>
     </Box>
   )

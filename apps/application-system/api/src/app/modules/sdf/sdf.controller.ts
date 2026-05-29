@@ -127,6 +127,7 @@ export class SdfController {
           dto.fieldIds ?? [],
           locale,
           user!,
+          dto.lastKnownPageIndex,
         )
 
       case SdfActionType.NEXT_PAGE:

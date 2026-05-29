@@ -12,10 +12,12 @@ import {
   SectionChildren,
   SubSection,
   FormText,
+  FormTextWithLocale,
   StaticText,
   SubmitField,
 } from '@island.is/application/types'
 import { PageBuilder } from './PageBuilder'
+import type { PageBuilderOptions } from './PageBuilder'
 import { buildBankAccountField } from '../lib/fieldBuilders'
 
 type SectionBuilderOptions = Omit<Section, 'children' | 'id' | 'title' | 'type'>
@@ -75,10 +77,14 @@ const toSubmitField = (data: SubmitFieldOptions): SubmitField => ({
 export class SubSectionBuilder<TSchema = unknown> {
   private children: FormLeaf[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts?: SubSectionBuilderOptions
 
-  constructor(id: string, title: FormText, opts?: SubSectionBuilderOptions) {
+  constructor(
+    id: string,
+    title: FormTextWithLocale,
+    opts?: SubSectionBuilderOptions,
+  ) {
     this._id = id
     this._title = title
     this.opts = opts
@@ -86,10 +92,11 @@ export class SubSectionBuilder<TSchema = unknown> {
 
   addPage(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
+    opts?: PageBuilderOptions,
   ): this {
-    const pageBuilder = new PageBuilder<TSchema>(id, title)
+    const pageBuilder = new PageBuilder<TSchema>(id, title, opts)
     builderFn(pageBuilder)
     this.children.push(pageBuilder.build())
     return this
@@ -118,10 +125,10 @@ export class SubSectionBuilder<TSchema = unknown> {
 export class SectionBuilder<TSchema = unknown> {
   private children: SectionChildren[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts?: SectionBuilderOptions
 
-  constructor(id: string, title: FormText, opts?: SectionBuilderOptions) {
+  constructor(id: string, title: FormTextWithLocale, opts?: SectionBuilderOptions) {
     this._id = id
     this._title = title
     this.opts = opts
@@ -129,10 +136,11 @@ export class SectionBuilder<TSchema = unknown> {
 
   addPage(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (p: PageBuilder<TSchema>) => void,
+    opts?: PageBuilderOptions,
   ): this {
-    const pageBuilder = new PageBuilder<TSchema>(id, title)
+    const pageBuilder = new PageBuilder<TSchema>(id, title, opts)
     builderFn(pageBuilder)
     this.children.push(pageBuilder.build())
     return this
@@ -140,7 +148,7 @@ export class SectionBuilder<TSchema = unknown> {
 
   addSubSection(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (s: SubSectionBuilder<TSchema>) => void,
     opts?: SubSectionBuilderOptions,
   ): this {

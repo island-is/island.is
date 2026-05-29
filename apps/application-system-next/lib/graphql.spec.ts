@@ -8,7 +8,9 @@ import {
   buildGraphqlHeaders,
   extractOperationResult,
   fetchScreen,
+  validateAction,
 } from './graphql'
+import type { ForwardAuthHeaders } from './graphql'
 
 describe('graphql SDF queries', () => {
   const schema = buildSchema(
@@ -22,6 +24,16 @@ describe('graphql SDF queries', () => {
   it('aliases display field value to avoid GraphQL value conflicts', () => {
     expect(GET_SCREEN_QUERY).toContain('displayValue: value')
     expect(EXECUTE_ACTION_MUTATION).toContain('displayValue: value')
+  })
+
+  it('requests value expressions for display fields', () => {
+    expect(GET_SCREEN_QUERY).toContain('clientValueExpression')
+    expect(EXECUTE_ACTION_MUTATION).toContain('clientValueExpression')
+  })
+
+  it('requests clientShowWhen expressions for fields', () => {
+    expect(GET_SCREEN_QUERY).toContain('clientShowWhen')
+    expect(EXECUTE_ACTION_MUTATION).toContain('clientShowWhen')
   })
 
   it('requests inline refetch targets for select and search fields', () => {
@@ -153,7 +165,7 @@ describe('graphql SDF queries', () => {
         authorization: undefined,
         host: 'localhost:4250',
         protocol: 'http',
-      } as any)
+      } satisfies ForwardAuthHeaders)
     } finally {
       if (windowDescriptor) {
         Object.defineProperty(globalThis, 'window', windowDescriptor)
@@ -186,5 +198,41 @@ describe('graphql SDF queries', () => {
       status: 401,
       detail: 'Missing sid cookie',
     })
+  })
+
+  it('sends lastKnownPageIndex with validate actions', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: {
+          applicationSdfValidate: {
+            errors: [],
+            displayValues: { displayField: '77' },
+          },
+        },
+      }),
+    } as Response)
+    ;(globalThis as typeof globalThis & { fetch: typeof fetch }).fetch =
+      fetchMock as typeof fetch
+
+    await validateAction(
+      'app-1',
+      { input1: '23', input2: '23', input3: '31' },
+      [],
+      'is',
+      7,
+    )
+
+    const [, init] = fetchMock.mock.calls[0]
+    const body = JSON.parse(String(init.body)) as {
+      variables: {
+        input: {
+          lastKnownPageIndex?: number
+        }
+      }
+    }
+
+    expect(body.variables.input.lastKnownPageIndex).toBe(7)
   })
 })

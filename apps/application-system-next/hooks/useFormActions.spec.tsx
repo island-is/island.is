@@ -69,4 +69,15 @@ describe('useFormActions', () => {
 
     expect(result.current.pendingRefetchTargets).toEqual([])
   })
+
+  it('publishes a fresh answer snapshot when local answers change', () => {
+    const { result } = renderHook(() => useFormActions('app-1', screen))
+
+    act(() => {
+      result.current.onAnswerChange('input1', '23')
+    })
+
+    expect(result.current.answers.current).toEqual({ input1: '23' })
+    expect(result.current.answerSnapshot).toEqual({ input1: '23' })
+  })
 })

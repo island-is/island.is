@@ -2,7 +2,7 @@ import {
   Form,
   FormChildren,
   FormItemTypes,
-  FormText,
+  FormTextWithLocale,
   Section,
   StaticText,
 } from '@island.is/application/types'
@@ -25,7 +25,7 @@ export class FormBuilder<TSchema = unknown> {
 
   addSection(
     id: string,
-    title: FormText,
+    title: FormTextWithLocale,
     builderFn: (s: SectionBuilder<TSchema>) => void,
     opts?: Omit<Section, 'children' | 'id' | 'title' | 'type'>,
   ): this {

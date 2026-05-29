@@ -8,8 +8,29 @@ import {
 
 const DEBOUNCE_MS = 300
 
-const hasDisplayFields = (components: SdfComponentData[]): boolean =>
-  components.some((c) => c.__typename === 'SdfDisplayField')
+const hasServerComputedDisplayFields = (
+  components: SdfComponentData[],
+): boolean =>
+  components.some(
+    (c) => c.__typename === 'SdfDisplayField' && !c.clientValueExpression,
+  )
+
+const getCurrentPageAnswerSnapshot = (
+  components: SdfComponentData[],
+  answers: Record<string, unknown>,
+): Record<string, unknown> => {
+  const snapshot: Record<string, unknown> = {}
+  for (const component of components) {
+    if (
+      component.__typename !== 'SdfDisplayField' &&
+      typeof component.id === 'string' &&
+      component.id in answers
+    ) {
+      snapshot[component.id] = answers[component.id]
+    }
+  }
+  return snapshot
+}
 
 /**
  * Reactively recomputes `SdfDisplayField` values by calling the dedicated
@@ -27,37 +48,45 @@ export const useDisplayRecompute = (
   components: SdfComponentData[],
   answers: Record<string, unknown>,
   locale: string,
+  pageIndex?: number,
 ): Record<string, string> => {
   const [overlay, setOverlay] = useState<Record<string, string>>({})
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const requestCounterRef = useRef(0)
 
   const shouldRecompute = useMemo(
-    () => hasDisplayFields(components),
+    () => hasServerComputedDisplayFields(components),
     [components],
   )
 
-  const serializedAnswers = useMemo(
-    () => JSON.stringify(answers),
-    [answers],
+  const serializedCurrentPageAnswers = useMemo(
+    () => JSON.stringify(getCurrentPageAnswerSnapshot(components, answers)),
+    [answers, components],
   )
 
   useEffect(() => {
-    if (!shouldRecompute) return
+    if (!shouldRecompute) {
+      setOverlay({})
+      return
+    }
 
     if (timerRef.current) clearTimeout(timerRef.current)
+    const requestId = ++requestCounterRef.current
     timerRef.current = setTimeout(async () => {
-      const requestId = ++requestCounterRef.current
       try {
         const result = await validateAction(
           applicationId,
           answers,
           [],
           locale,
+          pageIndex,
         )
         if (requestId !== requestCounterRef.current) return
         setOverlay(result.displayValues ?? {})
-      } catch {
+      } catch (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('SDF display recompute failed', error)
+        }
         // Best-effort reactive update; errors here must not break the form.
       }
     }, DEBOUNCE_MS)
@@ -65,7 +94,7 @@ export const useDisplayRecompute = (
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [serializedAnswers, applicationId, locale, shouldRecompute])
+  }, [serializedCurrentPageAnswers, applicationId, locale, pageIndex, shouldRecompute])
 
   return overlay
 }

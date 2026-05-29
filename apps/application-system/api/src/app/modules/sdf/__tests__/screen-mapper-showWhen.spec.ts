@@ -9,8 +9,8 @@ import {
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
 
-describe('mapScreenToComponents — showWhen / non-navigable children', () => {
-  it('includes a non-navigable select when Tier-1 showWhen targets another field', () => {
+describe('mapScreenToComponents — clientShowWhen children', () => {
+  it('emits clientShowWhen for a select when it targets another field', () => {
     const form = new FormBuilder('f', 'Form')
       .addSection('sec', 'Section', (section) => {
         section.addPage('page1', 'Page', (page) => {
@@ -22,7 +22,10 @@ describe('mapScreenToComponents — showWhen / non-navigable children', () => {
                 { label: 'Sprinkler', value: 'sprinkler' },
               ],
               placeholder: 'Pick one',
-              showWhen: { field: 'gate', equals: 'open' },
+              clientShowWhen: {
+                operator: 'EQUALS',
+                args: [{ operator: 'GET', args: ['gate'] }, 'open'],
+              },
             })
         })
       })
@@ -36,16 +39,15 @@ describe('mapScreenToComponents — showWhen / non-navigable children', () => {
         (s as MultiFieldScreen).id === 'page1',
     )
 
-    expect(multi).toBeDefined()
-    const hiddenSelect = multi!.children.find((c) => c.id === 'irrigationType')
-    expect(hiddenSelect?.isNavigable).toBe(false)
-
+    if (!multi) {
+      throw new Error('Expected page1 multi-field screen')
+    }
     const resolver = {
       resolve: () => '',
     } as unknown as FormTextResolver
 
     const components = mapScreenToComponents(
-      multi!,
+      multi,
       resolver,
       {} as Application,
     )
@@ -53,5 +55,57 @@ describe('mapScreenToComponents — showWhen / non-navigable children', () => {
     expect(components.some((c) => c.id === 'irrigationType' && c.type === 'SELECT')).toBe(
       true,
     )
+    expect(
+      components.find((c) => c.id === 'irrigationType')?.clientShowWhen,
+    ).toEqual({
+      operator: 'EQUALS',
+      args: [{ operator: 'GET', args: ['gate'] }, 'open'],
+    })
+  })
+
+  it('does not emit server-hidden children even when they have clientShowWhen', () => {
+    const form = new FormBuilder('f', 'Form')
+      .addSection('sec', 'Section', (section) => {
+        section.addPage('page1', 'Page', (page) => {
+          page
+            .addTextField('gate', 'Gate')
+            .addSelectField('irrigationType', 'Irrigation', {
+              options: [
+                { label: 'Drip', value: 'drip' },
+                { label: 'Sprinkler', value: 'sprinkler' },
+              ],
+              placeholder: 'Pick one',
+              showWhen: { field: 'serverGate', equals: 'open' },
+              clientShowWhen: {
+                operator: 'EQUALS',
+                args: [{ operator: 'GET', args: ['gate'] }, 'open'],
+              },
+            })
+        })
+      })
+      .build()
+
+    const screens = convertFormToScreens(form, {}, {}, null)
+    const multi = screens.find(
+      (s): s is MultiFieldScreen =>
+        'type' in s &&
+        (s as { type: string }).type === FormItemTypes.MULTI_FIELD &&
+        (s as MultiFieldScreen).id === 'page1',
+    )
+
+    if (!multi) {
+      throw new Error('Expected page1 multi-field screen')
+    }
+    const resolver = {
+      resolve: () => '',
+    } as unknown as FormTextResolver
+
+    const components = mapScreenToComponents(
+      multi,
+      resolver,
+      {} as Application,
+    )
+
+    expect(components.some((c) => c.id === 'irrigationType')).toBe(false)
   })
 })

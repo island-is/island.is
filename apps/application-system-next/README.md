@@ -2,6 +2,8 @@
 
 This guide explains how to add a component to the new server-driven forms (SDF) rendering application from the template field definition to a working rendered component.
 
+For conditional visibility (`showWhen`, `clientShowWhen`) and computed display values (`value`, `clientValueExpression`), see [SDF_EXPRESSIONS.md](./SDF_EXPRESSIONS.md).
+
 ## Quick Path
 
 For a native SDF field, the frontend rendering step is always:

@@ -1,4 +1,4 @@
-import { FormBuilder } from '@island.is/application/core'
+import { FormBuilder, serverExpr } from '@island.is/application/core'
 import type {
   Application,
   DataTableRow,
@@ -149,6 +149,8 @@ const yesNoOptions = [
   { label: misc.no, value: EmergencyExitOptions.NO },
 ]
 
+const server = serverExpr.forSchema<typeof dataSchema>()
+
 export const MainForm = new FormBuilder<typeof dataSchema>(
   'rentalAgreementSdfDraft',
   application.name,
@@ -271,10 +273,10 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
                   },
                 ],
                 placeholder: propertyInfo.categoryClassGroupPlaceholder,
-                showWhen: {
-                  field: 'propertyInfo.categoryClass',
-                  equals: RentalHousingCategoryClass.SPECIAL_GROUPS,
-                },
+                showWhen: server.equals(
+                  server.answer('propertyInfo.categoryClass'),
+                  RentalHousingCategoryClass.SPECIAL_GROUPS,
+                ),
               },
             )
         })
@@ -374,10 +376,10 @@ export const MainForm = new FormBuilder<typeof dataSchema>(
             .addTextField('condition.inspectorName', misc.fullName, {
               placeholder: housingCondition.independentInspectorNamePlaceholder,
               required: true,
-              showWhen: {
-                field: 'condition.inspector',
-                equals: RentalHousingConditionInspector.INDEPENDENT_PARTY,
-              },
+              showWhen: server.equals(
+                server.answer('condition.inspector'),
+                RentalHousingConditionInspector.INDEPENDENT_PARTY,
+              ),
             })
             .addDescriptionField(
               'condition.resultsTitle',

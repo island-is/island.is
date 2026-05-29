@@ -68,6 +68,7 @@ export class SdfService {
     fieldIds: string[] | undefined,
     locale: Locale,
     auth: Auth,
+    lastKnownPageIndex?: number,
   ): Promise<SdfValidateResponseShape> {
     const result = await this.sdfApiWithAuth(auth).sdfControllerExecuteAction({
       applicationId,
@@ -76,6 +77,7 @@ export class SdfService {
         answers,
         locale,
         fieldIds,
+        lastKnownPageIndex,
       },
     })
     return result as unknown as SdfValidateResponseShape

@@ -1,4 +1,6 @@
 import { FormBuilder } from '../FormBuilder'
+import { expr } from '../../lib/formExpressionHelper'
+import { serverExpr } from '../../lib/serverExpressionHelper'
 import {
   Comparators,
   DefaultEvents,
@@ -48,20 +50,20 @@ describe('FormBuilder', () => {
     const radioField = multiField.children[1]
     expect(radioField.id).toBe('status')
     expect(radioField.type).toBe(FieldTypes.RADIO)
-    expect((radioField as any).options).toEqual([
+    expect((radioField as { options?: unknown }).options).toEqual([
       { label: 'single', value: 'single' },
       { label: 'married', value: 'married' },
     ])
   })
 
-  it('supports showWhen Tier 1 — simple declarative condition', () => {
+  it('stores server showWhen as an internal condition on fields', () => {
     const form = new FormBuilder('f', 'F')
       .addSection('s', 'S', (section) => {
         section.addPage('p', 'P', (page) => {
           page
             .addTextField('hasSpouse', 'Has spouse?')
             .addTextField('spouseName', 'Spouse name', {
-              showWhen: { field: 'hasSpouse', equals: 'yes' },
+              showWhen: serverExpr.equals(serverExpr.answer('hasSpouse'), 'yes'),
             })
         })
       })
@@ -71,69 +73,80 @@ describe('FormBuilder', () => {
     const multiField = section.children[0] as MultiField
     const spouseField = multiField.children[1]
 
-    expect((spouseField as any).condition).toEqual({
+    expect((spouseField as { condition?: unknown }).condition).toEqual({
       questionId: 'hasSpouse',
       comparator: Comparators.EQUALS,
       value: 'yes',
     })
   })
 
-  it('supports showWhen Tier 2 — multi-condition (all)', () => {
+  it('stores clientShowWhen AST on radio and checkbox fields', () => {
     const form = new FormBuilder('f', 'F')
       .addSection('s', 'S', (section) => {
         section.addPage('p', 'P', (page) => {
-          page.addTextField('dependent', 'Dependent name', {
-            showWhen: {
-              all: [
-                { field: 'hasDependents', equals: 'yes' },
-                { field: 'maritalStatus', notEquals: 'single' },
-              ],
-            },
-          })
+          page
+            .addRadioField('dependentRadio', 'Dependent radio', {
+              options: ['yes', 'no'],
+              clientShowWhen: expr.equals(expr.get('hasDependents'), 'yes'),
+            })
+            .addCheckboxField('dependentCheckbox', 'Dependent checkbox', {
+              options: ['child'],
+              clientShowWhen: expr.or(
+                expr.equals(expr.get('maritalStatus'), 'married'),
+                expr.equals(expr.get('maritalStatus'), 'cohabiting'),
+              ),
+            })
         })
       })
       .build()
 
     const section = form.children[0] as Section
     const multiField = section.children[0] as MultiField
-    const field = multiField.children[0]
-    const condition = (field as any).condition
+    const radio = multiField.children[0]
+    const checkbox = multiField.children[1]
 
-    expect(condition.isMultiCheck).toBe(true)
-    expect(condition.show).toBe(true)
-    expect(condition.on).toBe('all')
-    expect(condition.check).toHaveLength(2)
-    expect(condition.check[0]).toEqual({
-      questionId: 'hasDependents',
-      comparator: Comparators.EQUALS,
-      value: 'yes',
+    expect((radio as { clientShowWhen?: unknown }).clientShowWhen).toEqual({
+      operator: 'EQUALS',
+      args: [{ operator: 'GET', args: ['hasDependents'] }, 'yes'],
     })
-    expect(condition.check[1]).toEqual({
-      questionId: 'maritalStatus',
-      comparator: Comparators.NOT_EQUAL,
-      value: 'single',
+
+    expect((checkbox as { clientShowWhen?: unknown }).clientShowWhen).toEqual({
+      operator: 'OR',
+      args: [
+        {
+          operator: 'EQUALS',
+          args: [{ operator: 'GET', args: ['maritalStatus'] }, 'married'],
+        },
+        {
+          operator: 'EQUALS',
+          args: [{ operator: 'GET', args: ['maritalStatus'] }, 'cohabiting'],
+        },
+      ],
     })
   })
 
-  it('supports showWhen Tier 3 — closure condition', () => {
-    const closureFn = (answers: any) => answers.complex === true
-
+  it('stores server showWhen as an internal condition on pages', () => {
     const form = new FormBuilder('f', 'F')
       .addSection('s', 'S', (section) => {
-        section.addPage('p', 'P', (page) => {
-          page.addTextField('field', 'Field', {
-            showWhen: closureFn,
-          })
-        })
+        section.addPage(
+          'p',
+          'P',
+          (page) => {
+            page.addTextField('field', 'Field')
+          },
+          { showWhen: serverExpr.equals(serverExpr.answer('gate'), 'open') },
+        )
       })
       .build()
 
     const section = form.children[0] as Section
     const multiField = section.children[0] as MultiField
-    const field = multiField.children[0]
 
-    expect(typeof (field as any).condition).toBe('function')
-    expect((field as any).condition).toBe(closureFn)
+    expect((multiField as { condition?: unknown }).condition).toEqual({
+      questionId: 'gate',
+      comparator: Comparators.EQUALS,
+      value: 'open',
+    })
   })
 
   it('supports subsections', () => {

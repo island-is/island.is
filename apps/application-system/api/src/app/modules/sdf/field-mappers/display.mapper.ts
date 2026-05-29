@@ -34,4 +34,11 @@ export const mapDisplayField: FieldMapper = (
       asResolvableFormText(raw.label),
     )
   }
+  if (raw.clientValueExpression !== undefined) {
+    component.clientValueExpression = raw.clientValueExpression as
+      | Record<string, unknown>
+      | string
+      | number
+      | boolean
+  }
 }

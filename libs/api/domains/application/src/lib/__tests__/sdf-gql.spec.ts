@@ -7,7 +7,7 @@ import {
   SdfExecuteActionInput,
 } from '../sdf.model'
 import type { User } from '@island.is/auth-nest-tools'
-import type { ScreenDto, ComponentDto } from '../../../gen/fetch'
+import type { SdfApi, ScreenDto, ComponentDto } from '../../../gen/fetch'
 
 const MOCK_APP_ID = '00000000-0000-0000-0000-000000000001'
 
@@ -88,6 +88,7 @@ describe('SDF GraphQL Layer', () => {
     const mockSdfService = {
       getScreen: jest.fn(),
       executeAction: jest.fn(),
+      validate: jest.fn(),
     }
 
     const module: TestingModule = await Test.createTestingModule({
@@ -166,10 +167,12 @@ describe('SDF GraphQL Layer', () => {
               label: 'Conditional',
               required: false,
               disabled: false,
-              clientCondition: {
-                questionId: 'hasSpouse',
-                comparator: 'eq',
-                value: 'yes',
+              clientShowWhen: {
+                operator: 'EQUALS',
+                args: [
+                  { operator: 'GET', args: ['hasSpouse'] },
+                  'yes',
+                ],
               },
             } as ComponentDto,
           ],
@@ -191,7 +194,7 @@ describe('SDF GraphQL Layer', () => {
       expect(result.page.errors[0].message).toBe('Required field')
 
       const comp = result.page.components[0] as unknown as Record<string, unknown>
-      expect(comp.clientCondition).toBeDefined()
+      expect(comp.clientShowWhen).toBeDefined()
     })
   })
 
@@ -398,6 +401,35 @@ describe('SDF GraphQL Layer', () => {
     })
   })
 
+  describe('validate mutation', () => {
+    it('passes the current page index override to the REST validate action', async () => {
+      sdfService.validate.mockResolvedValue({
+        errors: [],
+        displayValues: { displayField: '77' },
+      })
+
+      const input: SdfExecuteActionInput = {
+        applicationId: MOCK_APP_ID,
+        actionType: SdfActionType.VALIDATE,
+        answers: JSON.stringify({ input1: '23', input2: '23', input3: '31' }),
+        fieldIds: [],
+        lastKnownPageIndex: 7,
+      }
+
+      const result = await resolver.validate(input, 'is', mockUser)
+
+      expect(sdfService.validate).toHaveBeenCalledWith(
+        MOCK_APP_ID,
+        { input1: '23', input2: '23', input3: '31' },
+        [],
+        'is',
+        mockUser,
+        7,
+      )
+      expect(result.displayValues).toEqual({ displayField: '77' })
+    })
+  })
+
   describe('REST-to-GQL mapping integrity', () => {
     it('should map stepper with multiple sections and subsections', async () => {
       const dto = createMockScreenDto({
@@ -512,7 +544,7 @@ describe('SdfService', () => {
       withMiddleware: mockWithMiddleware,
     }
 
-    const service = new SdfService(mockSdfApi as any)
+    const service = new SdfService(mockSdfApi as unknown as SdfApi)
 
     await service.getScreen(MOCK_APP_ID, 0, 'is', mockUser)
 
@@ -537,7 +569,7 @@ describe('SdfService', () => {
       withMiddleware: mockWithMiddleware,
     }
 
-    const service = new SdfService(mockSdfApi as any)
+    const service = new SdfService(mockSdfApi as unknown as SdfApi)
 
     await service.executeAction(
       MOCK_APP_ID,
@@ -559,6 +591,43 @@ describe('SdfService', () => {
         fieldIds: undefined,
         event: undefined,
         refetchTemplateApiActions: undefined,
+      },
+    })
+  })
+
+  it('should pass validate page index overrides to sdfControllerExecuteAction', async () => {
+    const mockExecuteAction = jest.fn().mockResolvedValue({
+      errors: [],
+      displayValues: { displayField: '77' },
+    })
+    const mockWithMiddleware = jest.fn().mockReturnValue({
+      sdfControllerGetScreen: jest.fn(),
+      sdfControllerExecuteAction: mockExecuteAction,
+    })
+
+    const mockSdfApi = {
+      withMiddleware: mockWithMiddleware,
+    }
+
+    const service = new SdfService(mockSdfApi as unknown as SdfApi)
+
+    await service.validate(
+      MOCK_APP_ID,
+      { input1: '23', input2: '23', input3: '31' },
+      [],
+      'is',
+      mockUser,
+      7,
+    )
+
+    expect(mockExecuteAction).toHaveBeenCalledWith({
+      applicationId: MOCK_APP_ID,
+      executeActionDto: {
+        actionType: SdfActionType.VALIDATE,
+        answers: { input1: '23', input2: '23', input3: '31' },
+        locale: 'is',
+        fieldIds: [],
+        lastKnownPageIndex: 7,
       },
     })
   })

@@ -36,6 +36,7 @@ export const ApplicationShell = ({
     error,
     pendingRefetchTargets,
     answers,
+    answerSnapshot,
     onAnswerChange,
     nextPage,
     prevPage,
@@ -48,8 +49,9 @@ export const ApplicationShell = ({
   const displayValues = useDisplayRecompute(
     applicationId,
     screen.page.components,
-    answers.current,
+    answerSnapshot,
     screen.locale ?? 'is',
+    screen.page.index,
   )
 
   React.useEffect(() => {

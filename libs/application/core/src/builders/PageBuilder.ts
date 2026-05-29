@@ -17,6 +17,7 @@ import {
   Field,
   FieldTypes,
   FileUploadField,
+  FormExpression,
   FormItemTypes,
   MultiField,
   NationalIdWithNameField,
@@ -38,8 +39,12 @@ import {
   StaticTableField,
   TableRepeaterField,
   VehiclePermnoWithInfoField,
+  FormTextArray,
+  FormTextWithLocale,
+  FormValue,
 } from '@island.is/application/types'
 import { BoxProps } from '@island.is/island-ui/core/types'
+import type { z } from 'zod'
 import {
   buildAccordionField,
   buildAsyncSelectField,
@@ -71,8 +76,23 @@ import { Locale } from '@island.is/shared/types'
 
 /** Builder-time field: satisfies `Field` while allowing extra props not on every union member. */
 type MutableField = Field & Record<string, unknown>
+type ApplicationForSchema<TSchema> = TSchema extends z.ZodTypeAny
+  ? z.infer<TSchema> extends FormValue
+    ? Application<z.infer<TSchema>>
+    : Application<FormValue>
+  : Application<FormValue>
+type TypedFormText<TSchema> =
+  | StaticText
+  | ((
+      application: ApplicationForSchema<TSchema>,
+    ) => StaticText | null | undefined)
+type TypedFormTextArray<TSchema> =
+  | StaticText[]
+  | ((
+      application: ApplicationForSchema<TSchema>,
+    ) => (StaticText | null | undefined)[])
 
-type SimpleCondition = {
+export type SimpleCondition = {
   field: string
   equals?: string | number
   notEquals?: string | number
@@ -83,14 +103,15 @@ type SimpleCondition = {
   lte?: number
 }
 
-type ShowWhen =
+export type ServerShowWhen =
   | SimpleCondition
   | { all: SimpleCondition[] }
   | { any: SimpleCondition[] }
   | DynamicCheck
 
 interface FieldOptions {
-  showWhen?: ShowWhen
+  showWhen?: ServerShowWhen
+  clientShowWhen?: FormExpression
   disabled?: boolean
   width?: 'full' | 'half'
   defaultValue?: unknown
@@ -127,38 +148,55 @@ interface FieldOptions {
 
 type FieldBuilderOptions<TField extends Field> = Omit<
   TField,
-  'children' | 'component' | 'id' | 'title' | 'type'
+  | 'children'
+  | 'component'
+  | 'condition'
+  | 'clientShowWhen'
+  | 'id'
+  | 'title'
+  | 'type'
 >
 type FieldBuilderOptionsWithTitle<TField extends Field> = Omit<
   TField,
-  'children' | 'component' | 'id' | 'type'
+  'children' | 'component' | 'condition' | 'clientShowWhen' | 'id' | 'type'
 >
 type OptionList = Array<string | { label: FormText; value: string }>
-type DynamicOptions = (application: Application) => OptionList
+type DynamicOptions<TSchema = unknown> = (
+  application: ApplicationForSchema<TSchema>,
+) => OptionList
 type AccordionFieldOptions = FieldBuilderOptions<AccordionField>
 type AsyncSelectFieldOptions = FieldBuilderOptions<AsyncSelectField>
 type BankAccountFieldOptions = FieldBuilderOptions<BankAccountField>
-type WithShowWhen = {
-  showWhen?: ShowWhen
+type WithVisibilityOptions = {
+  showWhen?: ServerShowWhen
+  clientShowWhen?: FormExpression
 }
-type CheckboxFieldOptions = Omit<
+type CheckboxFieldOptions<TSchema = unknown> = Omit<
   FieldBuilderOptions<CheckboxField>,
   'options'
 > &
-  WithShowWhen & {
-    options: OptionList | DynamicOptions | CheckboxField['options']
+  WithVisibilityOptions & {
+    options: OptionList | DynamicOptions<TSchema> | CheckboxField['options']
   }
 type CompanySearchFieldOptions = FieldBuilderOptions<CompanySearchField>
 type DateFieldOptions = FieldBuilderOptions<DateField>
 type DescriptionFieldOptions = FieldBuilderOptions<DescriptionField> &
-  WithShowWhen
+  WithVisibilityOptions
 type DisplayFieldOptions = Omit<
   DisplayField,
-  'children' | 'component' | 'id' | 'title' | 'type' | 'value'
->
+  | 'children'
+  | 'component'
+  | 'condition'
+  | 'id'
+  | 'clientShowWhen'
+  | 'title'
+  | 'type'
+  | 'value'
+> &
+  WithVisibilityOptions
 type DividerFieldOptions = Omit<
   DividerField,
-  'children' | 'component' | 'id' | 'title' | 'type'
+  'children' | 'component' | 'condition' | 'id' | 'title' | 'type'
 >
 type FileUploadFieldOptions = FieldBuilderOptions<FileUploadField>
 type FieldsRepeaterFieldOptions = FieldBuilderOptions<FieldsRepeaterField>
@@ -168,14 +206,20 @@ type OverviewFieldOptions = FieldBuilderOptions<OverviewField>
 type PaginatedSearchableTableFieldOptions =
   FieldBuilderOptionsWithTitle<PaginatedSearchableTableField>
 type PhoneFieldOptions = FieldBuilderOptions<PhoneField>
-type RadioFieldOptions = Omit<FieldBuilderOptions<RadioField>, 'options'> &
-  WithShowWhen & {
-    options: OptionList | DynamicOptions | RadioField['options']
+type RadioFieldOptions<TSchema = unknown> = Omit<
+  FieldBuilderOptions<RadioField>,
+  'options'
+> &
+  WithVisibilityOptions & {
+    options: OptionList | DynamicOptions<TSchema> | RadioField['options']
   }
-type SelectFieldOptions = Omit<FieldBuilderOptions<SelectField>, 'options'> &
-  WithShowWhen & {
+type SelectFieldOptions<TSchema = unknown> = Omit<
+  FieldBuilderOptions<SelectField>,
+  'options'
+> &
+  WithVisibilityOptions & {
     onSelectRefetch?: string[]
-    options: OptionList | DynamicOptions | SelectField['options']
+    options: OptionList | DynamicOptions<TSchema> | SelectField['options']
     refetchTargets?: string[]
   }
 type SliderFieldOptions = FieldBuilderOptions<SliderField>
@@ -194,7 +238,7 @@ type SubmitFieldOptions = Omit<
   renderLongErrors?: SubmitField['renderLongErrors']
 }
 type TableRepeaterFieldOptions = FieldBuilderOptions<TableRepeaterField>
-type TextFieldOptions = FieldBuilderOptions<TextField> & WithShowWhen
+type TextFieldOptions = FieldBuilderOptions<TextField> & WithVisibilityOptions
 type TitleFieldOptions = Omit<
   TitleField,
   'children' | 'component' | 'id' | 'title' | 'type'
@@ -207,14 +251,15 @@ type CustomFieldOptions = Omit<
   CustomField,
   'children' | 'component' | 'id' | 'props' | 'title' | 'type'
 >
-type PageBuilderOptions = {
+export type PageBuilderOptions = {
   description?: MultiField['description']
+  showWhen?: ServerShowWhen
   space?: MultiField['space']
 }
 
-interface SearchFieldOptions extends FieldOptions {
+interface SearchFieldOptions<TSchema = unknown> extends FieldOptions {
   searchAction: string
-  options: OptionList | DynamicOptions
+  options: OptionList | DynamicOptions<TSchema>
   onSelectRefetch?: string[]
   refetchTargets?: string[]
   minQueryLength?: number
@@ -242,7 +287,6 @@ interface HiddenInputWithWatchedValueFieldOptions extends FieldOptions {
 }
 
 interface LinkFieldOptions extends Omit<FieldOptions, 'variant'> {
-  condition?: Condition
   iconProps?: unknown
   justifyContent?: 'flexStart' | 'center' | 'flexEnd'
   link?: string
@@ -263,38 +307,68 @@ interface MessageWithLinkButtonFieldOptions extends FieldOptions {
   url: string
 }
 
-const toStaticCheck = (c: SimpleCondition): StaticCheck => {
+const normalizeOptionList = (options: OptionList) =>
+  options.map((o) => (typeof o === 'string' ? { label: o, value: o } : o))
+
+const normalizeOptions = <TSchema,>(
+  options: OptionList | DynamicOptions<TSchema> | RadioField['options'],
+): RadioField['options'] => {
+  if (typeof options === 'function') {
+    const resolveOptions = options as (
+      application: ApplicationForSchema<TSchema>,
+      field: Field,
+      locale: Locale,
+    ) => OptionList
+
+    return (application, field, locale) =>
+      normalizeOptionList(
+        resolveOptions(application as ApplicationForSchema<TSchema>, field, locale),
+      )
+  }
+
+  return normalizeOptionList(options as OptionList) as RadioField['options']
+}
+
+const resolveWidth = (width?: 'full' | 'half'): 'full' | 'half' | undefined => {
+  return width
+}
+
+const toStaticCheck = (condition: SimpleCondition): StaticCheck => {
   const comparator =
-    c.equals !== undefined
+    condition.equals !== undefined
       ? Comparators.EQUALS
-      : c.notEquals !== undefined
+      : condition.notEquals !== undefined
       ? Comparators.NOT_EQUAL
-      : c.contains !== undefined
+      : condition.contains !== undefined
       ? Comparators.CONTAINS
-      : c.gt !== undefined
+      : condition.gt !== undefined
       ? Comparators.GT
-      : c.gte !== undefined
+      : condition.gte !== undefined
       ? Comparators.GTE
-      : c.lt !== undefined
+      : condition.lt !== undefined
       ? Comparators.LT
-      : c.lte !== undefined
+      : condition.lte !== undefined
       ? Comparators.LTE
       : Comparators.EQUALS
 
   const value =
-    c.equals ??
-    c.notEquals ??
-    c.contains ??
-    c.gt ??
-    c.gte ??
-    c.lt ??
-    c.lte ??
+    condition.equals ??
+    condition.notEquals ??
+    condition.contains ??
+    condition.gt ??
+    condition.gte ??
+    condition.lt ??
+    condition.lte ??
     ''
 
-  return { questionId: c.field, comparator, value }
+  return { questionId: condition.field, comparator, value }
 }
 
-const resolveShowWhen = (showWhen: ShowWhen): Condition => {
+const resolveServerShowWhen = (showWhen?: ServerShowWhen): Condition | undefined => {
+  if (showWhen === undefined) {
+    return undefined
+  }
+
   if (typeof showWhen === 'function') {
     return showWhen
   }
@@ -304,6 +378,7 @@ const resolveShowWhen = (showWhen: ShowWhen): Condition => {
       'all' in showWhen
         ? showWhen.all
         : (showWhen as { any: SimpleCondition[] }).any
+
     return {
       isMultiCheck: true,
       show: true,
@@ -312,31 +387,20 @@ const resolveShowWhen = (showWhen: ShowWhen): Condition => {
     }
   }
 
-  return toStaticCheck(showWhen as SimpleCondition)
+  return toStaticCheck(showWhen)
 }
 
-const normalizeOptionList = (options: OptionList) =>
-  options.map((o) => (typeof o === 'string' ? { label: o, value: o } : o))
+const resolveVisibilityOptions = (
+  opts?: Pick<FieldOptions, 'clientShowWhen' | 'showWhen'>,
+): Pick<MutableField, 'clientShowWhen' | 'condition'> => {
+  const condition = resolveServerShowWhen(opts?.showWhen)
 
-const normalizeOptions = (
-  options: OptionList | DynamicOptions | RadioField['options'],
-): RadioField['options'] => {
-  if (typeof options === 'function') {
-    const resolveOptions = options as (
-      application: Application,
-      field: Field,
-      locale: Locale,
-    ) => OptionList
-
-    return (application, field, locale) =>
-      normalizeOptionList(resolveOptions(application, field, locale))
+  return {
+    ...(condition !== undefined && { condition }),
+    ...(opts?.clientShowWhen !== undefined && {
+      clientShowWhen: opts.clientShowWhen,
+    }),
   }
-
-  return normalizeOptionList(options as OptionList) as RadioField['options']
-}
-
-const resolveWidth = (width?: 'full' | 'half'): 'full' | 'half' | undefined => {
-  return width
 }
 
 const makeBaseField = (
@@ -355,9 +419,7 @@ const makeBaseField = (
     ...(opts?.description !== undefined && { description: opts.description }),
   } as unknown as MutableField
 
-  if (opts?.showWhen) {
-    field.condition = resolveShowWhen(opts.showWhen)
-  }
+  Object.assign(field, resolveVisibilityOptions(opts))
 
   if (opts?.disabled !== undefined) {
     field.disabled = opts.disabled
@@ -464,11 +526,11 @@ const makeBaseField = (
 export class PageBuilder<TSchema = unknown> {
   private fields: Field[] = []
   private _id: string
-  private _title: FormText
+  private _title: FormTextWithLocale
   private opts: PageBuilderOptions
   private readonly _schema?: TSchema
 
-  constructor(id: string, title: FormText, opts?: PageBuilderOptions) {
+  constructor(id: string, title: FormTextWithLocale, opts?: PageBuilderOptions) {
     this._id = id
     this._title = title
     this.opts = opts ?? {}
@@ -484,45 +546,74 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
+  setShowWhen(showWhen: ServerShowWhen): this {
+    this.opts.showWhen = showWhen
+    return this
+  }
+
   addFields(fields: Field[]): this {
     fields.forEach((field) => this.fields.push(field))
     return this
   }
 
   addTextField(id: string, title: FormText, opts?: TextFieldOptions): this {
-    const { showWhen, ...fieldOpts } = opts ?? {}
+    const {
+      clientShowWhen: _clientShowWhen,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts ?? {}
     this.fields.push(
       buildTextField({
         id,
         title,
         ...fieldOpts,
-        ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+        ...resolveVisibilityOptions(opts),
       }),
     )
     return this
   }
 
   /** When `opts.width` is `'half'`, SDF renders options side-by-side (e.g. Já/Nei); `'full'` stacks one per row. */
-  addRadioField(id: string, title: FormText, opts: RadioFieldOptions): this {
+  addRadioField(
+    id: string,
+    title: FormText,
+    opts: RadioFieldOptions<TSchema>,
+  ): this {
+    const {
+      clientShowWhen: _clientShowWhen,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts
     this.fields.push(
       buildRadioField({
         id,
         title,
-        ...opts,
-        options: normalizeOptions(opts.options),
+        ...fieldOpts,
+        ...resolveVisibilityOptions(opts),
+        options: normalizeOptions(fieldOpts.options),
       }),
     )
     return this
   }
 
-  addSelectField(id: string, title: FormText, opts: SelectFieldOptions): this {
-    const { onSelectRefetch, refetchTargets, showWhen, ...fieldOpts } = opts
+  addSelectField(
+    id: string,
+    title: FormText,
+    opts: SelectFieldOptions<TSchema>,
+  ): this {
+    const {
+      clientShowWhen: _clientShowWhen,
+      onSelectRefetch,
+      refetchTargets,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts
     const field = buildSelectField({
       id,
       title,
       ...fieldOpts,
+      ...resolveVisibilityOptions(opts),
       options: normalizeOptions(fieldOpts.options),
-      ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
     }) as MutableField
 
     if (onSelectRefetch?.length) {
@@ -536,7 +627,11 @@ export class PageBuilder<TSchema = unknown> {
     return this
   }
 
-  addSearchField(id: string, title: FormText, opts: SearchFieldOptions): this {
+  addSearchField(
+    id: string,
+    title: FormText,
+    opts: SearchFieldOptions<TSchema>,
+  ): this {
     const field = makeBaseField(
       id,
       title,
@@ -581,14 +676,20 @@ export class PageBuilder<TSchema = unknown> {
   addCheckboxField(
     id: string,
     title: FormText,
-    opts: CheckboxFieldOptions,
+    opts: CheckboxFieldOptions<TSchema>,
   ): this {
+    const {
+      clientShowWhen: _clientShowWhen,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts
     this.fields.push(
       buildCheckboxField({
         id,
         title,
-        ...opts,
-        options: normalizeOptions(opts.options),
+        ...fieldOpts,
+        ...resolveVisibilityOptions(opts),
+        options: normalizeOptions(fieldOpts.options),
       }),
     )
     return this
@@ -618,13 +719,17 @@ export class PageBuilder<TSchema = unknown> {
     title: FormText,
     opts?: DescriptionFieldOptions,
   ): this {
-    const { showWhen, ...fieldOpts } = opts ?? {}
+    const {
+      clientShowWhen: _clientShowWhen,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts ?? {}
     this.fields.push(
       buildDescriptionField({
         id,
         title,
         ...fieldOpts,
-        ...(showWhen ? { condition: resolveShowWhen(showWhen) } : {}),
+        ...resolveVisibilityOptions(opts),
       }),
     )
     return this
@@ -695,9 +800,6 @@ export class PageBuilder<TSchema = unknown> {
     field.iconProps = opts?.iconProps
     field.variant = variant ?? 'ghost'
     field.justifyContent = opts?.justifyContent ?? 'flexStart'
-    if (opts?.condition) {
-      field.condition = opts.condition
-    }
     field.disabled = field.disabled ?? false
     field.width = field.width ?? 'full'
     this.fields.push(field)
@@ -758,12 +860,19 @@ export class PageBuilder<TSchema = unknown> {
     title: FormText,
     opts: StaticTableFieldOptions,
   ): this {
-    const { header, rows, ...fieldOpts } = opts
+    const {
+      clientShowWhen: _clientShowWhen,
+      header,
+      rows,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts
     const field = buildStaticTableField({
       title,
       header,
       rows,
       ...fieldOpts,
+      ...resolveVisibilityOptions(opts),
     })
     ;(field as unknown as Record<string, unknown>).id = id
     this.fields.push(field)
@@ -846,7 +955,7 @@ export class PageBuilder<TSchema = unknown> {
   addKeyValueField(
     id: string,
     title: FormText,
-    value: FormText | ((app: Application) => string),
+    value: TypedFormText<TSchema> | TypedFormTextArray<TSchema>,
     opts?: FieldOptions,
   ): this {
     const field = makeBaseField(
@@ -859,7 +968,7 @@ export class PageBuilder<TSchema = unknown> {
         doesNotRequireAnswer: true,
       },
     )
-    field.value = value
+    field.value = value as FormText | FormTextArray
     this.fields.push(field)
     return this
   }
@@ -870,7 +979,20 @@ export class PageBuilder<TSchema = unknown> {
     value: DisplayField['value'],
     opts?: DisplayFieldOptions,
   ): this {
-    this.fields.push(buildDisplayField({ id, title, value, ...opts }))
+    const {
+      clientShowWhen: _clientShowWhen,
+      showWhen: _showWhen,
+      ...fieldOpts
+    } = opts ?? {}
+    this.fields.push(
+      buildDisplayField({
+        id,
+        title,
+        value,
+        ...fieldOpts,
+        ...resolveVisibilityOptions(opts),
+      }),
+    )
     return this
   }
 
@@ -930,12 +1052,17 @@ export class PageBuilder<TSchema = unknown> {
   }
 
   build(): MultiField {
+    const { showWhen, ...opts } = this.opts
+
     return {
       id: this._id,
       title: this._title,
       type: FormItemTypes.MULTI_FIELD,
       children: this.fields,
-      ...this.opts,
+      ...opts,
+      ...(showWhen !== undefined && {
+        condition: resolveServerShowWhen(showWhen),
+      }),
     }
   }
 }

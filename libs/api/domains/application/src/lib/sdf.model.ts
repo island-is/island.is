@@ -158,8 +158,8 @@ export class SdfTextField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfSelectField')
@@ -188,8 +188,8 @@ export class SdfSelectField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 
   @Field(() => [String], { nullable: true })
   onSelectRefetchTemplateApis?: string[]
@@ -227,8 +227,8 @@ export class SdfSearchField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 
   @Field(() => [String], { nullable: true })
   onSelectRefetchTemplateApis?: string[]
@@ -320,8 +320,8 @@ export class SdfDataTableField {
   @Field(() => [SdfDataTableRow])
   rows!: SdfDataTableRow[]
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfRadioField')
@@ -344,8 +344,8 @@ export class SdfRadioField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfCheckboxField')
@@ -387,8 +387,8 @@ export class SdfCheckboxField {
   @Field({ nullable: true })
   checkboxBackgroundColor?: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfDateField')
@@ -417,8 +417,8 @@ export class SdfDateField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfFileUploadField')
@@ -468,8 +468,8 @@ export class SdfFileUploadField {
   @Field({ nullable: true })
   introduction?: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfPhoneField')
@@ -492,8 +492,8 @@ export class SdfPhoneField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfNationalIdField')
@@ -510,8 +510,8 @@ export class SdfNationalIdField {
   @Field()
   disabled!: boolean
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfCompanySearchField')
@@ -531,8 +531,8 @@ export class SdfCompanySearchField {
   @Field()
   disabled!: boolean
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfAsyncSelectField')
@@ -552,8 +552,8 @@ export class SdfAsyncSelectField {
   @Field()
   disabled!: boolean
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfSubmitAction')
@@ -582,8 +582,8 @@ export class SdfSubmitField {
   @Field(() => [SdfSubmitAction])
   actions!: SdfSubmitAction[]
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfDividerField')
@@ -591,8 +591,8 @@ export class SdfDividerField {
   @Field()
   id!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfDescriptionField')
@@ -612,8 +612,8 @@ export class SdfDescriptionField {
   @Field(() => Int, { nullable: true })
   marginBottom?: number
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfKeyValueField')
@@ -627,8 +627,8 @@ export class SdfKeyValueField {
   @Field()
   value!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfAlertMessageField')
@@ -645,8 +645,8 @@ export class SdfAlertMessageField {
   @Field({ nullable: true })
   message?: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfLinkField')
@@ -660,8 +660,8 @@ export class SdfLinkField {
   @Field()
   url!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfRedirectToServicePortalField')
@@ -669,8 +669,8 @@ export class SdfRedirectToServicePortalField {
   @Field()
   id!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfPaymentPendingField')
@@ -678,8 +678,8 @@ export class SdfPaymentPendingField {
   @Field()
   id!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfMessageWithLinkButtonField')
@@ -696,8 +696,8 @@ export class SdfMessageWithLinkButtonField {
   @Field()
   buttonTitle!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfExpandableDescriptionField')
@@ -714,8 +714,8 @@ export class SdfExpandableDescriptionField {
   @Field()
   description!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfAccordionItem')
@@ -738,8 +738,8 @@ export class SdfAccordionField {
   @Field(() => [SdfAccordionItem])
   items!: SdfAccordionItem[]
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfActionCardListField')
@@ -750,8 +750,8 @@ export class SdfActionCardListField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfTableRepeaterField')
@@ -762,8 +762,8 @@ export class SdfTableRepeaterField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfStaticTableField')
@@ -780,8 +780,8 @@ export class SdfStaticTableField {
   @Field(() => [[String]])
   rows!: string[][]
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfHiddenInputField')
@@ -789,8 +789,8 @@ export class SdfHiddenInputField {
   @Field()
   id!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfHiddenInputWithWatchedValueField')
@@ -801,8 +801,8 @@ export class SdfHiddenInputWithWatchedValueField {
   @Field()
   watchValue!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfFindVehicleField')
@@ -813,8 +813,8 @@ export class SdfFindVehicleField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfDisplayField')
@@ -833,6 +833,9 @@ export class SdfDisplayField {
   /** Inline label rendered inside the read-only Input. */
   @Field({ nullable: true })
   displayInputLabel?: string
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientValueExpression?: Record<string, unknown> | string | number | boolean
 
   /** Same semantics as `SdfTextField.inputVariant` (e.g. `currency`, `number`). */
   @Field({ nullable: true })
@@ -857,8 +860,8 @@ export class SdfDisplayField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfImageField')
@@ -872,8 +875,8 @@ export class SdfImageField {
   @Field({ nullable: true })
   imageUrl?: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfBankAccountField')
@@ -884,8 +887,8 @@ export class SdfBankAccountField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfSliderField')
@@ -905,8 +908,8 @@ export class SdfSliderField {
   @Field(() => Int, { nullable: true })
   step?: number
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfExternalDataProviderItem')
@@ -950,8 +953,8 @@ export class SdfTitleField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfPaginatedSearchableTableField')
@@ -962,8 +965,8 @@ export class SdfPaginatedSearchableTableField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfNationalIdWithNameField')
@@ -974,8 +977,8 @@ export class SdfNationalIdWithNameField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfFieldsRepeaterField')
@@ -986,8 +989,8 @@ export class SdfFieldsRepeaterField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfOverviewField')
@@ -998,8 +1001,8 @@ export class SdfOverviewField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfVehiclePermnoWithInfoField')
@@ -1010,8 +1013,8 @@ export class SdfVehiclePermnoWithInfoField {
   @Field()
   label!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfInformationCardItem')
@@ -1034,8 +1037,8 @@ export class SdfInformationCardField {
   @Field(() => [SdfInformationCardItem])
   informationCardItems!: SdfInformationCardItem[]
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfPaymentChargeLine')
@@ -1067,8 +1070,8 @@ export class SdfPaymentChargeOverviewField {
   @Field()
   paymentChargeTotalAmount!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfPdfLinkButtonField')
@@ -1085,8 +1088,8 @@ export class SdfPdfLinkButtonField {
   @Field()
   pdfLinkUrl!: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfCopyLinkField')
@@ -1103,8 +1106,8 @@ export class SdfCopyLinkField {
   @Field({ nullable: true })
   copyButtonTitle?: string
 
-  @Field(() => SdfClientCondition, { nullable: true })
-  clientCondition?: typeof SdfClientCondition
+  @Field(() => graphqlTypeJson, { nullable: true })
+  clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
 
 @ObjectType('SdfCustomComponent')

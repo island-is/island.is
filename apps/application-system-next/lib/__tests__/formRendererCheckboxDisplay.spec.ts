@@ -73,10 +73,19 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
     it('overlays displayValues[component.id] before falling back to stored or static value', () => {
       expect(block).toMatch(/displayValues\s*\[\s*component\.id\s*\]/)
       expect(block).toMatch(/overlayValue\s*\?\?/)
+      expect(block).toMatch(/component\.displayValue\s*\?\?/)
+    })
+
+    it('evaluates clientValueExpression before backend overlay or static value', () => {
+      expect(block).toContain('useFormExpressionEvaluator')
+      expect(block).toMatch(/clientValueExpressionValue\s*\?\?/)
+      expect(block).toMatch(/clientValueExpressionValue\s*\?\?[^]*overlayValue\s*\?\?/)
     })
 
     it('wraps currency/number variants in NumberFormat with Input as the custom input', () => {
       expect(block).toContain('<NumberFormat')
+      expect(block).toContain('key={String(rawValue)}')
+      expect(block).toContain('isNumericString')
       expect(block).toContain('customInput={Input}')
       expect(block).toContain("inputVariant === 'currency'")
       expect(block).toContain("inputVariant === 'number'")
@@ -86,6 +95,13 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
       expect(block).toContain('readOnly: true')
       expect(block).toContain("backgroundColor: 'blue'")
       expect(block).toContain('displayInputLabel')
+    })
+
+    it('uses shared SDF input spacing tokens instead of standalone display spacing', () => {
+      expect(block).toContain('SDF_FIELD_BLOCK_MARGIN_BOTTOM')
+      expect(block).toContain('SDF_FIELD_CONTROL_PADDING_TOP')
+      expect(block).toContain('marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}')
+      expect(block).toContain('paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}')
     })
 
     it('aligns halfWidthOwnline to the right half via flexEnd + width=half + paddingLeft', () => {
