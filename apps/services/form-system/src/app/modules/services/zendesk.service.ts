@@ -32,6 +32,7 @@ export class ZendeskService {
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
   private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
+  private readonly HASKOLI_ISLANDS_API_KEY = process.env.HASKOLI_ISLANDS_API_KEY
 
   private readonly CHECKBOX_TRUE = 'Valið'
   private readonly CHECKBOX_FALSE = 'Ekki valið'
@@ -67,6 +68,8 @@ export class ZendeskService {
 
     if (zendeskInstance === 'heilsa') {
       apiKey = this.HEILSA_API_KEY
+    } else if (zendeskInstance === 'haskoliislands') {
+      apiKey = this.HASKOLI_ISLANDS_API_KEY
     }
 
     if (!zendeskInstance || !apiKey) {
