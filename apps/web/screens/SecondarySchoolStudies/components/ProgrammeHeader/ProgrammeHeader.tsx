@@ -11,6 +11,7 @@ interface ProgrammeHeaderProps {
   credits?: number | null
   qualificationLevel?: string | null
   specializationTitle?: string | null
+  isReferenceProgramme?: boolean | null
 }
 
 export const ProgrammeHeader = ({
@@ -20,6 +21,7 @@ export const ProgrammeHeader = ({
   credits,
   qualificationLevel,
   specializationTitle,
+  isReferenceProgramme,
 }: ProgrammeHeaderProps) => {
   const { formatMessage } = useIntl()
 
@@ -29,11 +31,18 @@ export const ProgrammeHeader = ({
         <Text variant="h1" as="h2">
           {title || formatMessage(m.details.unknownProgramme)}
         </Text>
-        {ministrySerial && (
-          <Text variant="small" color="dark300">
-            {formatMessage(m.details.identifierCode)}: {ministrySerial}
-          </Text>
-        )}
+        <Box display="flex" alignItems="center" columnGap={1}>
+          {isReferenceProgramme && (
+            <Tag outlined variant="yellow" disabled>
+              {formatMessage(m.details.referenceProgramme)}
+            </Tag>
+          )}
+          {ministrySerial && (
+            <Text variant="small" color="dark300">
+              {formatMessage(m.details.identifierCode)}: {ministrySerial}
+            </Text>
+          )}
+        </Box>
       </Box>
 
       <Box display="flex" flexWrap="wrap" style={{ gap: '0.5rem' }}>
