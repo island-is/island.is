@@ -1864,7 +1864,7 @@ export class CaseService {
             transaction,
           ),
           ...(defendant.verdicts ?? []).map((verdict) =>
-            this.verdictService.resetPublicProsecutorData(verdict, transaction),
+            this.verdictService.resetVerdictDataForReopen(verdict, transaction),
           ),
         ]),
       )
