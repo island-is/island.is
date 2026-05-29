@@ -19,7 +19,7 @@ const columnHelper =
   createColumnHelper<EducationPrimarySchoolAssessmentResult>()
 
 export const AssessmentTable = ({ results, loading }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const hasExamSitting = results.some(
     (r) =>
@@ -81,8 +81,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale, hasExamSitting],
+    [formatMessage, hasExamSitting],
   )
 
   return (
