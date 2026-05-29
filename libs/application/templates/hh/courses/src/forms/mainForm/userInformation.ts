@@ -64,22 +64,17 @@ export const userInformation = buildSection({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
           readOnly: true,
-          condition: (answers, externalData) => {
-            return (
-              !isCourseForProfessionals(answers) &&
-              !!getValueViaPath(
-                externalData,
-                'currentHealthcenter.data.healthCenter',
-              )
-            )
-          },
+          condition: (answers, externalData) =>
+            !isCourseForProfessionals(answers) &&
+            !!getValueViaPath(
+              externalData,
+              'currentHealthcenter.data.healthCenter',
+            ),
           defaultValue: (application: Application) =>
-            !isCourseForProfessionals(application.answers)
-              ? getValueViaPath(
-                  application.externalData,
-                  'currentHealthcenter.data.healthCenter',
-                )
-              : '',
+            getValueViaPath(
+              application.externalData,
+              'currentHealthcenter.data.healthCenter',
+            ),
         }),
         buildAlertMessageField({
           id: 'userInformation.noHealthcenterAlert',
