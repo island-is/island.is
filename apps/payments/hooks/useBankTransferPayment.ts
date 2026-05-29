@@ -22,10 +22,8 @@ export const useBankTransferPayment = ({
   onPaymentError,
 }: UseBankTransferPaymentProps) => {
   const { lang } = useLocale()
-  const [
-    createBankTransferMutation,
-    { loading: createBankTransferLoading },
-  ] = useCreateBankTransferMutation()
+  const [createBankTransferMutation, { loading: createBankTransferLoading }] =
+    useCreateBankTransferMutation()
   // Timestamp of the most-recent successful `paymentsCreateBankTransfer`. The page reads this and
   // feeds it as the polling hook's `trigger` so the back-channel-SCA case (empty `scaRedirectUrl`,
   // user stays on the page) restarts polling after the row is persisted.
