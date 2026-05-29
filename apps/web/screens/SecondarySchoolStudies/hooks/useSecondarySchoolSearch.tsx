@@ -35,7 +35,6 @@ type QueryLeaf =
   | { 'school.abbreviation': string }
   | { 'school.countryArea.id': string }
   | { 'qualification.level.id': string }
-  | { isReferenceProgramme: string }
 
 interface QueryOr {
   $or: Array<QueryLeaf>
@@ -75,9 +74,6 @@ export const SearchProgrammes = ({
         orFilters.push({ 'school.countryArea.id': `=${searchParam}` })
       } else if (filter.key === 'levels') {
         orFilters.push({ 'qualification.level.id': `=${searchParam}` })
-      } else if (filter.key === 'isReferenceProgramme') {
-        const boolValue = searchParam === 'YES' ? 'true' : 'false'
-        orFilters.push({ isReferenceProgramme: `=${boolValue}` })
       }
     })
 

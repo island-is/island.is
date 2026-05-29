@@ -151,7 +151,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
       'school.id',
       'school.abbreviation',
       'school.countryArea.id',
-      'isReferenceProgramme',
     ],
   }
 
