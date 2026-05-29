@@ -1459,8 +1459,7 @@ export const m = defineMessages({
   },
   applicantInReviewStatementError: {
     id: 'es.application:applicantInReview.statementError',
-    defaultMessage:
-      'Þú þarft að samþykkja skilyrði til að halda áfram.',
+    defaultMessage: 'Þú þarft að samþykkja skilyrði til að halda áfram.',
     description: 'Error shown when the acknowledgement is not checked',
   },
   applicantInReviewSubmit: {
