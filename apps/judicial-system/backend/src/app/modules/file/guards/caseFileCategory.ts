@@ -379,3 +379,26 @@ export const getDefenderVisiblePoliceCaseNumbers = (
     (pcn) => assignedToMe.has(pcn) || !allAssigned.has(pcn),
   )
 }
+
+export const getConfirmedDefendantClientsForDefender = (
+  userNationalId: string,
+  defendants?: Defendant[],
+): Defendant[] => {
+  return (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(userNationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+}
+
+export const isConfirmedDefenderOfSpecificDefendant = (
+  userNationalId: string,
+  defendantId: string,
+  defendants?: Defendant[],
+): boolean =>
+  getConfirmedDefendantClientsForDefender(userNationalId, defendants).some(
+    (defendant) => defendant.id === defendantId,
+  )
