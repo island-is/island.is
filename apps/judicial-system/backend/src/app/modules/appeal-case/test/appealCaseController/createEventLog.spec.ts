@@ -60,11 +60,8 @@ describe('AppealCaseController - Create event log', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    const {
-      appealCaseController,
-      appealEventLogRepositoryService,
-      sequelize,
-    } = await createTestingAppealCaseModule()
+    const { appealCaseController, appealEventLogRepositoryService, sequelize } =
+      await createTestingAppealCaseModule()
 
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
 
