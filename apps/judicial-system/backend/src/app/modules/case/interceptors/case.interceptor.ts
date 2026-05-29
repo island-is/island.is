@@ -635,10 +635,18 @@ const transformCase = (
         ? undefined
         : reviewedDate
     })(),
-    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      theCase.eventLogs,
-    ),
+    indictmentSentToPublicProsecutorDate: (() => {
+      const sentDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      )
+      if (!sentDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > sentDate ? undefined : sentDate
+    })(),
     defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
       EventType.APPEAL_RESULT_ACCESSED,
       theCase.eventLogs,
