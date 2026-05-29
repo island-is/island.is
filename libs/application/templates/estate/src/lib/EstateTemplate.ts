@@ -256,7 +256,8 @@ const EstateTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.notifyAssignees,
-            shouldPersistToExternalData: false,
+            shouldPersistToExternalData: true,
+            externalDataId: 'notifyAssignees',
             throwOnError: false,
           }),
           onExit: defineTemplateApi({

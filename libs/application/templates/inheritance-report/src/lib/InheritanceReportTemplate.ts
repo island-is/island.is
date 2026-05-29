@@ -201,6 +201,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.6,
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.notifyAssignees,
+            shouldPersistToExternalData: true,
+            externalDataId: 'notifyAssignees',
+            throwOnError: false,
+          }),
           onExit: defineTemplateApi({
             action: ApiActions.approveByAssignee,
             shouldPersistToExternalData: false,

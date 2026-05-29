@@ -2007,7 +2007,7 @@ export const m = defineMessages({
   applicantInReviewDescription: {
     id: 'ir.application:applicantInReview.description',
     defaultMessage:
-      'Umsóknin hefur verið send til erfingja til yfirferðar. Allir erfingjar þurfa að samþykkja gögnin áður en hægt er að halda áfram.',
+      'Umsóknin hefur verið send til erfingja til yfirferðar. Yfirferð erfingja er valkvæð og hægt er að halda áfram í undirritun án samþykkis allra.',
     description: 'Applicant in review description',
   },
   applicantInReviewTitleAllApproved: {

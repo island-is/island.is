@@ -81,20 +81,38 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const answers = application.answers as unknown as EstateSchema
     const assigneeNationalIds = new Set(application.assignees ?? [])
     const estateMembers = answers?.estate?.estateMembers ?? []
+    // Track who has already been emailed so re-entering inReview (e.g. on every
+    // APPROVE self-transition) does not re-notify the same assignees.
+    const alreadyNotified = new Set(
+      getValueViaPath<string[]>(
+        application.externalData,
+        'notifyAssignees.data.notifiedNationalIds',
+        [],
+      ) ?? [],
+    )
     const pendingAssignees = estateMembers.filter(
       (member) =>
         member.enabled !== false &&
         !member.approved &&
         !!member.email &&
         !!member.nationalId &&
-        assigneeNationalIds.has(member.nationalId),
+        assigneeNationalIds.has(member.nationalId) &&
+        !alreadyNotified.has(member.nationalId),
     )
 
     await Promise.all(
       pendingAssignees.map((member) =>
         this.sharedTemplateAPIService.sendEmail(
           ({ application, options }) => {
-            const subject = 'Yfirferð á umsókn um dánarbússkipti'
+            const isIcelandic = options.locale !== 'en'
+            const subject = isIcelandic
+              ? 'Yfirferð á umsókn um dánarbússkipti'
+              : 'Review of estate division application'
+            const greeting = isIcelandic ? 'Góðan dag.' : 'Hello.'
+            const intro = isIcelandic
+              ? 'Óskað er eftir að þú farir yfir umsókn um dánarbússkipti.'
+              : 'You are requested to review an estate division application.'
+            const buttonCopy = isIcelandic ? 'Skoða umsókn' : 'View application'
             const link = `${options.clientLocationOrigin}/${
               ApplicationConfigurations[ApplicationTypes.ESTATE].slug
             }/${application.id}`
@@ -115,17 +133,17 @@ export class EstateTemplateService extends BaseTemplateApiService {
                 title: subject,
                 body: [
                   { component: 'Heading', context: { copy: subject } },
-                  { component: 'Copy', context: { copy: 'Góðan dag.' } },
+                  { component: 'Copy', context: { copy: greeting } },
                   {
                     component: 'Copy',
                     context: {
-                      copy: 'Óskað er eftir að þú farir yfir umsókn um dánarbússkipti.',
+                      copy: intro,
                     },
                   },
                   {
                     component: 'Button',
                     context: {
-                      copy: 'Skoða umsókn',
+                      copy: buttonCopy,
                       href: link,
                     },
                   },
@@ -139,7 +157,18 @@ export class EstateTemplateService extends BaseTemplateApiService {
       ),
     )
 
-    return { success: true, notified: pendingAssignees.length }
+    const notifiedNationalIds = [
+      ...alreadyNotified,
+      ...pendingAssignees
+        .map((member) => member.nationalId)
+        .filter((nationalId): nationalId is string => !!nationalId),
+    ]
+
+    return {
+      success: true,
+      notified: pendingAssignees.length,
+      notifiedNationalIds,
+    }
   }
 
   async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {

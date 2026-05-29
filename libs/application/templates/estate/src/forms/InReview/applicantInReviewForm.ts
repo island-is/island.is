@@ -21,12 +21,23 @@ import { allPartiesHaveApproved } from '../../lib/utils/allPartiesHaveApproved'
 const NEXT_STEP_TO_SIGNING = 'goToSigning'
 const NEXT_STEP_TO_EDIT = 'editApplication'
 
-const requiresEstatePayment = (answers: Record<string, unknown>) => {
+const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
+  const paymentData = getValueViaPath(externalData, 'payment.data')
+  return Array.isArray(paymentData) && paymentData.length > 0
+}
+
+const requiresEstatePayment = (
+  answers: Record<string, unknown>,
+  externalData: Record<string, unknown>,
+) => {
   const selectedEstate = getValueViaPath<string>(answers, 'selectedEstate')
-  return (
+  const supportsPayment =
     selectedEstate === EstateTypes.divisionOfEstateByHeirs ||
     selectedEstate === EstateTypes.permitForUndividedEstate
-  )
+  // Only route to payment when the payment feature is actually enabled
+  // (the payment data provider is only added when ALLOW_ESTATE_PAYMENT is on).
+  // Otherwise paid estate types fall back to the direct submit/signing path.
+  return supportsPayment && isPaymentEnabled(externalData)
 }
 
 export const applicantInReviewForm: Form = buildForm({
@@ -155,32 +166,32 @@ export const applicantInReviewForm: Form = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: m.applicantInReviewSubmitDirect.defaultMessage,
                   type: 'sign',
-                  condition: (answers) =>
-                    !requiresEstatePayment(answers) &&
+                  condition: (answers, externalData) =>
+                    !requiresEstatePayment(answers, externalData) &&
                     !allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
                 {
                   event: DefaultEvents.SUBMIT,
                   name: m.applicantInReviewSubmit.defaultMessage,
                   type: 'sign',
-                  condition: (answers) =>
-                    !requiresEstatePayment(answers) &&
+                  condition: (answers, externalData) =>
+                    !requiresEstatePayment(answers, externalData) &&
                     allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
                 {
                   event: DefaultEvents.PAYMENT,
                   name: m.applicantInReviewSubmitDirect.defaultMessage,
                   type: 'primary',
-                  condition: (answers) =>
-                    requiresEstatePayment(answers) &&
+                  condition: (answers, externalData) =>
+                    requiresEstatePayment(answers, externalData) &&
                     !allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
                 {
                   event: DefaultEvents.PAYMENT,
                   name: m.applicantInReviewSubmit.defaultMessage,
                   type: 'primary',
-                  condition: (answers) =>
-                    requiresEstatePayment(answers) &&
+                  condition: (answers, externalData) =>
+                    requiresEstatePayment(answers, externalData) &&
                     allPartiesHaveApproved(answers, 'estate.estateMembers'),
                 },
               ],

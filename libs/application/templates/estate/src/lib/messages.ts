@@ -1384,18 +1384,18 @@ export const m = defineMessages({
   // InReview state messages
   inReviewGeneralTitle: {
     id: 'es.application:inReview.general.title',
-    defaultMessage: 'Yfirlit samþykkja',
+    defaultMessage: 'Staða yfirferðar',
     description: 'InReview state title',
   },
   applicantInReviewTitle: {
     id: 'es.application:applicantInReview.title',
-    defaultMessage: 'Yfirlit samþykkja erfingja',
+    defaultMessage: 'Staða yfirferðar',
     description: 'Applicant in review title',
   },
   applicantInReviewDescription: {
     id: 'es.application:applicantInReview.description',
     defaultMessage:
-      'Allir erfingjar þurfa að samþykkja gögnin áður en hægt er að senda umsóknina til sýslumanns.',
+      'Umsóknin hefur verið send til erfingja til yfirferðar. Yfirferð erfingja er valkvæð og hægt er að senda umsóknina til sýslumanns án samþykkis allra.',
     description: 'Applicant in review description',
   },
   applicantInReviewTableTitle: {
@@ -1459,8 +1459,7 @@ export const m = defineMessages({
   },
   applicantInReviewStatementError: {
     id: 'es.application:applicantInReview.statementError',
-    defaultMessage:
-      'Þú þarft að samþykkja skilyrði til að halda áfram.',
+    defaultMessage: 'Þú þarft að samþykkja skilyrði til að halda áfram.',
     description: 'Error shown when the acknowledgement is not checked',
   },
   applicantInReviewSubmit: {
