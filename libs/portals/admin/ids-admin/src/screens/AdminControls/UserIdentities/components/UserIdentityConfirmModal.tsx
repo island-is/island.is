@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   InputError,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -23,7 +24,10 @@ const variantConfig = {
     environmentError: m.userIdentitiesDeactivateEnvironmentRequired,
     confirmLabel: m.userIdentitiesDeactivate,
     confirmColorScheme: 'destructive' as const,
-    initialEnvironmentsKey: 'activeEnvironments' as const,
+    eligibleEnvironmentsKey: 'activeEnvironments' as const,
+    ineligibleEnvironmentsKey: 'deactivatedEnvironments' as const,
+    disabledTagMessage: m.userIdentitiesAlreadyDeactivatedTag,
+    disabledTagVariant: 'red' as const,
   },
   reactivate: {
     title: m.userIdentitiesReactivateConfirmTitle,
@@ -32,7 +36,10 @@ const variantConfig = {
     environmentError: m.userIdentitiesReactivateEnvironmentRequired,
     confirmLabel: m.userIdentitiesReactivate,
     confirmColorScheme: 'default' as const,
-    initialEnvironmentsKey: 'deactivatedEnvironments' as const,
+    eligibleEnvironmentsKey: 'deactivatedEnvironments' as const,
+    ineligibleEnvironmentsKey: 'activeEnvironments' as const,
+    disabledTagMessage: m.userIdentitiesAlreadyActiveTag,
+    disabledTagVariant: 'blue' as const,
   },
 }
 
@@ -57,7 +64,8 @@ export const UserIdentityConfirmModal = ({
   const { formatMessage } = useLocale()
   const config = variantConfig[variant]
 
-  const eligibleEnvironments = target[config.initialEnvironmentsKey]
+  const eligibleEnvironments = target[config.eligibleEnvironmentsKey]
+  const ineligibleEnvironments = target[config.ineligibleEnvironmentsKey]
 
   const [selectedEnvironments, setSelectedEnvironments] = useState<
     AuthAdminEnvironment[]
@@ -108,10 +116,29 @@ export const UserIdentityConfirmModal = ({
           >
             {authAdminEnvironments.map((env) => {
               const isEligible = eligibleEnvironments.includes(env)
+              const isInOtherState = ineligibleEnvironments.includes(env)
               return (
                 <Box width="full" key={env}>
                   <Checkbox
-                    label={env}
+                    label={
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        columnGap={1}
+                        component="span"
+                      >
+                        <span>{env}</span>
+                        {isInOtherState && (
+                          <Tag
+                            variant={config.disabledTagVariant}
+                            outlined
+                            disabled
+                          >
+                            {formatMessage(config.disabledTagMessage)}
+                          </Tag>
+                        )}
+                      </Box>
+                    }
                     name={`${variant}Environments`}
                     id={`${variant}Environments.${env}`}
                     value={env}

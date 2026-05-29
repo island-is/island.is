@@ -64,11 +64,12 @@ export class UserIdentityService extends MultiEnvironmentService {
     }
     const rowMap = new Map<string, RowAggregate>()
 
-    for (const result of results) {
+    for (let index = 0; index < results.length; index++) {
+      const result = results[index]
+      const environment = environments[index]
       if (result.status === 'rejected') {
-        // A 404 in one env is normal — the user simply doesn't exist there.
-        this.logger.debug(
-          `User identity search failed in one environment: ${
+        this.logger.warn(
+          `User identity search failed in ${environment}: ${
             result.reason instanceof Error
               ? result.reason.message
               : String(result.reason)
@@ -76,8 +77,13 @@ export class UserIdentityService extends MultiEnvironmentService {
         )
         continue
       }
-      if (!result.value) continue
-      const { environment, data } = result.value
+      if (!result.value) {
+        this.logger.warn(
+          `User identity search returned empty response from ${environment} (env not configured or empty body)`,
+        )
+        continue
+      }
+      const { data } = result.value
       for (const row of data) {
         const existing = rowMap.get(row.subjectId)
         if (existing) {

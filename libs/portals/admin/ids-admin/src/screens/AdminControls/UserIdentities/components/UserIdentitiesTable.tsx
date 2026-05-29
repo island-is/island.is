@@ -12,6 +12,8 @@ import { useLocale } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 
 import { m } from '../../../../lib/messages'
+import { authAdminEnvironments } from '../../../../utils/environments'
+import { TableActionMenu } from '../../components/TableActionMenu'
 import type { UserIdentityRow } from '../UserIdentities.types'
 import * as styles from '../UserIdentities.css'
 
@@ -172,21 +174,22 @@ export const UserIdentitiesTable = ({
                 </T.Data>
                 <T.Data>
                   <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
-                    {row.activeEnvironments.map((env) => (
-                      <Tag
-                        key={`active-${env}`}
-                        variant="blue"
-                        outlined
-                        disabled
-                      >
-                        {env}
-                      </Tag>
-                    ))}
-                    {row.deactivatedEnvironments.map((env) => (
-                      <Tag key={`deact-${env}`} variant="red" outlined disabled>
-                        {env}
-                      </Tag>
-                    ))}
+                    {authAdminEnvironments
+                      .filter((env) => row.availableEnvironments.includes(env))
+                      .map((env) => {
+                        const isDeactivated =
+                          row.deactivatedEnvironments.includes(env)
+                        return (
+                          <Tag
+                            key={env}
+                            variant={isDeactivated ? 'red' : 'blue'}
+                            outlined
+                            disabled
+                          >
+                            {env}
+                          </Tag>
+                        )
+                      })}
                   </Box>
                 </T.Data>
                 <T.Data>
@@ -199,25 +202,23 @@ export const UserIdentitiesTable = ({
                   </Button>
                 </T.Data>
                 <T.Data>
-                  <Box display="flex" columnGap={2} justifyContent="flexEnd">
-                    {row.activeEnvironments.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="trash"
-                        colorScheme="destructive"
-                        onClick={() => onDeactivate(row)}
-                      />
-                    )}
-                    {row.deactivatedEnvironments.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        icon="reload"
-                        onClick={() => onReactivate(row)}
-                      />
-                    )}
-                  </Box>
+                  <TableActionMenu
+                    actions={[
+                      {
+                        show: row.activeEnvironments.length > 0,
+                        title: m.userIdentitiesDeactivate,
+                        icon: 'trash',
+                        color: 'red600',
+                        onClick: () => onDeactivate(row),
+                      },
+                      {
+                        show: row.deactivatedEnvironments.length > 0,
+                        title: m.userIdentitiesReactivate,
+                        icon: 'reload',
+                        onClick: () => onReactivate(row),
+                      },
+                    ]}
+                  />
                 </T.Data>
               </T.Row>
             )

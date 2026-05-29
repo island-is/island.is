@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useFetcher } from 'react-router-dom'
+import { useFetcher, useRevalidator } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -39,6 +39,7 @@ export const useGrantTypeModal = ({
 }: UseGrantTypeModalParams) => {
   const { formatMessage } = useLocale()
   const fetcher = useFetcher<GrantTypesActionResult>()
+  const revalidator = useRevalidator()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -47,6 +48,9 @@ export const useGrantTypeModal = ({
     AuthAdminEnvironment[]
   >([])
   const [userAvailableEnvironments, setUserAvailableEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >([])
+  const [archivedEnvironments, setArchivedEnvironments] = useState<
     AuthAdminEnvironment[]
   >([])
   const [loadingGrantType, setLoadingGrantType] = useState(false)
@@ -75,6 +79,7 @@ export const useGrantTypeModal = ({
     setFormData(emptyForm)
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
+    setArchivedEnvironments([])
     setFormErrors({})
     setSaveOnAllEnvs(false)
   }, [])
@@ -120,17 +125,24 @@ export const useGrantTypeModal = ({
         )
       }
 
-      resetModalState()
+      // Restoring from the edit modal's archived banner should leave the
+      // modal open so the user can continue editing.
+      const isBannerRestore =
+        isEditing && fetcher.data.intent === GrantTypeIntent.restore
+      if (!isBannerRestore) {
+        resetModalState()
+      }
     } else {
       toast.error(formatMessage(m.grantTypesError))
     }
-  }, [fetcher.data, formatMessage, resetModalState])
+  }, [fetcher.data, formatMessage, isEditing, resetModalState])
 
   const openCreateModal = () => {
     setIsEditing(false)
     setFormData(emptyForm)
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
+    setArchivedEnvironments([])
     setFormErrors({})
     setModalVisible(true)
   }
@@ -142,6 +154,7 @@ export const useGrantTypeModal = ({
       description: grantType.description,
     })
     setUserAvailableEnvironments([])
+    setArchivedEnvironments([])
     setFormErrors({})
     setLoadingGrantType(true)
     setModalVisible(true)
@@ -154,9 +167,19 @@ export const useGrantTypeModal = ({
       const availableEnvironments = gtData?.availableEnvironments
       if (availableEnvironments) {
         setUserAvailableEnvironments(availableEnvironments)
+        const archivedEnvs =
+          gtData?.environments
+            ?.filter((e) => !!e.archived)
+            .map((e) => e.environment) ?? []
+        setArchivedEnvironments(archivedEnvs)
+
+        // Prefer a non-archived env when picking the initial selection
+        const nonArchivedEnvs = availableEnvironments.filter(
+          (e) => !archivedEnvs.includes(e),
+        )
         const bestEnv = pickBestEnvironment(
           selectedEnvResult.environment,
-          availableEnvironments,
+          nonArchivedEnvs.length > 0 ? nonArchivedEnvs : availableEnvironments,
         )
 
         if (bestEnv) {
@@ -244,6 +267,7 @@ export const useGrantTypeModal = ({
 
       setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
       updateEnvironment(targetEnvironment)
+      revalidator.revalidate()
       toast.success(
         formatMessage(m.grantTypesPublishSuccess, {
           environment: targetEnvironment,
@@ -292,6 +316,14 @@ export const useGrantTypeModal = ({
     fetcher.submit(submitData, { method: 'post' })
   }
 
+  const restoreCurrentEnvironment = () => {
+    const env = selectedEnvResult.environment
+    // Optimistically clear the archived banner; the loader will revalidate
+    // the table in the background.
+    setArchivedEnvironments((prev) => prev.filter((e) => e !== env))
+    handleRestore(formData.name, [env])
+  }
+
   const environmentOptions = useMemo(
     () =>
       authAdminEnvironments
@@ -315,6 +347,10 @@ export const useGrantTypeModal = ({
     }
   }
 
+  const selectedEnvIsArchived = archivedEnvironments.includes(
+    selectedEnvResult.environment,
+  )
+
   return {
     modalVisible,
     isEditing,
@@ -326,6 +362,7 @@ export const useGrantTypeModal = ({
     isPublishing,
     environmentOptions,
     selectedEnvResult,
+    selectedEnvIsArchived,
     configuredEnvironments,
     userAvailableEnvironments,
     saveOnAllEnvs,
@@ -335,6 +372,7 @@ export const useGrantTypeModal = ({
     handleSubmit,
     handleDelete,
     handleRestore,
+    restoreCurrentEnvironment,
     handleEnvironmentCheckboxChange,
     handleEnvironmentSwitch,
     setFormField,

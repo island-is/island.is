@@ -1293,10 +1293,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-no-results',
     defaultMessage: 'No grant types found',
   },
-  grantTypesArchived: {
-    id: 'ap.ids-admin:grant-types-archived',
-    defaultMessage: 'Archived',
-  },
   grantTypesErrorNameRequired: {
     id: 'ap.ids-admin:grant-types-error-name-required',
     defaultMessage: 'Name is required',
@@ -1357,6 +1353,23 @@ export const m = defineMessages({
   grantTypesPartialFailure: {
     id: 'ap.ids-admin:grant-types-partial-failure',
     defaultMessage: 'Operation failed on: {environments}',
+  },
+  grantTypesAlreadyArchivedTag: {
+    id: 'ap.ids-admin:grant-types-already-archived-tag',
+    defaultMessage: 'Archived',
+  },
+  grantTypesAlreadyActiveTag: {
+    id: 'ap.ids-admin:grant-types-already-active-tag',
+    defaultMessage: 'Active',
+  },
+  grantTypesEditArchivedEnvBannerTitle: {
+    id: 'ap.ids-admin:grant-types-edit-archived-env-banner-title',
+    defaultMessage: 'Archived environment',
+  },
+  grantTypesEditArchivedEnvBannerMessage: {
+    id: 'ap.ids-admin:grant-types-edit-archived-env-banner-message',
+    defaultMessage:
+      'You are viewing an archived environment. Edits will apply to the archived record.',
   },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
@@ -1966,5 +1979,13 @@ export const m = defineMessages({
   userIdentitiesPartialFailure: {
     id: 'ap.ids-admin:user-identities-partial-failure',
     defaultMessage: 'Operation failed on: {environments}',
+  },
+  userIdentitiesAlreadyDeactivatedTag: {
+    id: 'ap.ids-admin:user-identities-already-deactivated-tag',
+    defaultMessage: 'Deactivated',
+  },
+  userIdentitiesAlreadyActiveTag: {
+    id: 'ap.ids-admin:user-identities-already-active-tag',
+    defaultMessage: 'Active',
   },
 })

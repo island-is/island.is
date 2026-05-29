@@ -2,6 +2,7 @@ import React from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
@@ -79,6 +80,26 @@ export const GrantTypeModal = ({ modal }: GrantTypeModalProps) => {
               />
             ))}
         </Box>
+
+        {modal.isEditing && modal.selectedEnvIsArchived && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.grantTypesEditArchivedEnvBannerTitle)}
+              message={formatMessage(m.grantTypesEditArchivedEnvBannerMessage)}
+              action={
+                <Button
+                  variant="text"
+                  size="small"
+                  loading={modal.isSubmitting}
+                  onClick={modal.restoreCurrentEnvironment}
+                >
+                  {formatMessage(m.restore)}
+                </Button>
+              }
+            />
+          </Box>
+        )}
 
         <Box marginBottom={3}>
           <Stack space={3}>
