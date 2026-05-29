@@ -101,4 +101,16 @@ describe('validateUri', () => {
       ),
     ).toBe(false)
   })
+
+  it('should return false for arbitrary-prefix hostname when beta host is allowed', () => {
+    // "evil.sub" contains a dot — not a valid DNS slug — so it must be rejected
+    // even though the full hostname ends with "-beta.dev01.devland.is".
+    const betaAllowedUris = ['https://beta.dev01.devland.is/stjornbord']
+    expect(
+      validateUri(
+        'https://evil.sub-beta.dev01.devland.is/stjornbord',
+        betaAllowedUris,
+      ),
+    ).toBe(false)
+  })
 })
