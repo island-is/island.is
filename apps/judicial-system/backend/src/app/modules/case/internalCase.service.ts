@@ -37,6 +37,7 @@ import {
   completedIndictmentCaseStates,
   CourtSessionRulingType,
   courtSubtypes,
+  DateType,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
@@ -44,9 +45,9 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
-  NotificationType,
   restrictionCases,
   ServiceRequirement,
+  TrackedNotificationType,
   type User as TUser,
   UserRole,
   VERDICT_APPEAL_WINDOW_DAYS,
@@ -821,7 +822,7 @@ export class InternalCaseService {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            dateType: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            dateType: [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE],
             date: {
               [Op.gte]: startOfDay,
               [Op.lte]: endOfDay,
@@ -1236,7 +1237,8 @@ export class InternalCaseService {
     // There is no timestamp for appeal ruling, so we use notifications to approximate the time.
     // We know notifications occur in a decending order by time.
     const appealCompletedNotifications = theCase.notifications?.filter(
-      (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
+      (notification) =>
+        notification.type === TrackedNotificationType.APPEAL_COMPLETED,
     )
     const appealRulingDate =
       appealCompletedNotifications && appealCompletedNotifications.length > 0

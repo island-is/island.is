@@ -4,7 +4,7 @@ import { CaseTable, pickColumns } from '../caseTableTypes'
 const courtOfAppealsCasesInProgressColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
-  'caseType',
+  'appealCaseType',
   'appealState',
   'courtOfAppealsHead',
 ]
@@ -19,7 +19,7 @@ export const courtOfAppealsCasesInProgress: CaseTable = {
 const courtOfAppealsCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
-  'caseType',
+  'appealCaseType',
   'appealState',
   'validFromTo',
 ]

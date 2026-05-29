@@ -435,6 +435,8 @@ export class DrivingLicenseApi {
     email: string
     phone: string
     auth: string
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }) {
     try {
       const response =
@@ -450,6 +452,8 @@ export class DrivingLicenseApi {
             email: params.email,
             gsm: params.phone,
             authority: params.jurisdictionId,
+            photoBiometricsId: params.photoBiometricsId,
+            signatureBiometricsId: params.signatureBiometricsId,
           },
         })
       if (!response.result) {

@@ -54,10 +54,6 @@ export class ScreenDto {
   @IsBoolean()
   shouldValidate!: boolean
 
-  @ApiProperty()
-  @IsBoolean()
-  shouldPopulate!: boolean
-
   @ApiPropertyOptional({ type: ValidationErrorDto })
   @Type(() => ValidationErrorDto)
   @IsOptional()

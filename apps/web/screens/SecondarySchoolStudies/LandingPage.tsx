@@ -149,7 +149,9 @@ const SecondarySchoolStudiesLandingPage: Screen<
       { name: 'specialization.title', weight: 1 },
       'qualification.level.id',
       'school.id',
+      'school.abbreviation',
       'school.countryArea.id',
+      'isReferenceProgramme',
     ],
   }
 

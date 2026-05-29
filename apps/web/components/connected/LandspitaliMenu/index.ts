@@ -1,0 +1,1 @@
+export { LandspitaliMenu } from './LandspitaliMenu'

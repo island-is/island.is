@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
   CaseType,
   InstitutionType,
+  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -83,7 +83,7 @@ describe('InternalNotificationController - Send case files updated notifications
           } as Case,
           {
             user,
-            type: CaseNotificationType.CASE_FILES_UPDATED,
+            type: RequestCaseNotificationType.CASE_FILES_UPDATED,
           },
         )
         .then((result) => (then.result = result))

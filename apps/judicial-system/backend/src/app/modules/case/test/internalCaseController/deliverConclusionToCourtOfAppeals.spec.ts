@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import {
   CaseType,
-  NotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -30,13 +30,10 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCase: {
-      appealCaseNumber,
-      appealRulingDecision,
-    },
+    appealCase: { appealCaseNumber, appealRulingDecision },
     notifications: [
       {
-        type: NotificationType.APPEAL_COMPLETED,
+        type: TrackedNotificationType.APPEAL_COMPLETED,
         created: appealRulingDate,
       },
     ],

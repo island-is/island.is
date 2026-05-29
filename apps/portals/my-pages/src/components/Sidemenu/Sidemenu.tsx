@@ -40,6 +40,11 @@ const Sidemenu = ({
     setSideMenuOpen(false)
   }
 
+  const navChildren = navigation?.children ?? []
+  const anyShortcutActive = navChildren.some(
+    (item) => item.customShortcut && item.active,
+  )
+
   const content = (
     <Box display="flex" justifyContent="flexEnd">
       <Box
@@ -79,12 +84,16 @@ const Sidemenu = ({
             <Text variant="h4">{formatMessage(m.overview)}</Text>
           </Box>
           <Box className={styles.navWrapper}>
-            {navigation?.children?.map(
+            {navChildren.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPaths.Root &&
                 (!navRoot.navHide || navRoot.customShortcut) && (
                   <SidemenuItem
-                    item={navRoot}
+                    item={
+                      !navRoot.customShortcut && anyShortcutActive
+                        ? { ...navRoot, active: false }
+                        : navRoot
+                    }
                     setSidemenuOpen={setSideMenuOpen}
                     key={`sidemenu-item-${index}`}
                   />

@@ -77,6 +77,18 @@ const EditUnemploymentInformationTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: applicationMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,

@@ -558,57 +558,27 @@ export class UserProfileService {
 
     await this.sequelize.transaction(async (t) => {
       if (!currentProfile) {
-        // Creating a new user profile and linking the default email
-        await this.userProfileModel.create(
-          {
-            ...upsertPayload,
-            emails: [
-              {
-                id: uuid(),
-                nationalId,
-                email: '',
-                primary: true,
-                emailStatus: DataStatus.EMPTY,
-              },
-            ],
-          },
-          {
-            transaction: t,
-            useMaster: true,
-            include: [{ model: Emails, as: 'emails' }],
-          },
-        )
+        await this.userProfileModel.create(upsertPayload, {
+          transaction: t,
+          useMaster: true,
+        })
       } else {
-        // Updating existing user profile
         await this.userProfileModel.update(upsertPayload, {
           where: { nationalId },
           transaction: t,
         })
 
-        // Check for existing primary email
         const primaryEmail = await this.emailModel.findOne({
           where: { nationalId, primary: true },
           transaction: t,
           useMaster: true,
         })
 
-        if (!primaryEmail) {
-          // Create a default email if one doesn't exist
-          await this.emailModel.create(
-            {
-              id: uuid(),
-              nationalId,
-              email: '',
-              primary: true,
-              emailStatus: DataStatus.EMPTY,
-            },
-            { transaction: t, useMaster: true },
-          )
-        } else if (
+        if (
+          primaryEmail &&
           primaryEmail.emailStatus === DataStatus.NOT_DEFINED &&
           nudgeType === NudgeType.NUDGE
         ) {
-          // Update email status if applicable
           await primaryEmail.update(
             { emailStatus: DataStatus.EMPTY },
             { transaction: t },
@@ -636,14 +606,7 @@ export class UserProfileService {
     }
 
     return await this.userProfileModel
-      .create(
-        {
-          nationalId,
-          email: '',
-          emailStatus: DataStatus.EMPTY,
-        },
-        { transaction, useMaster: true },
-      )
+      .create({ nationalId }, { transaction, useMaster: true })
       .catch((error) => {
         console.log('Error creating user profile', error)
         throw error

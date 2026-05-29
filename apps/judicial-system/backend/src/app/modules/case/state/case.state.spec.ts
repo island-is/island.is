@@ -3,10 +3,12 @@ import { v4 as uuid } from 'uuid'
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   indictmentCases,
+  IndictmentDecision,
   investigationCases,
   restrictionCases,
   User,
@@ -786,7 +788,13 @@ describe('Transition Case', () => {
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.CORRECTING })
+        expect(res).toMatchObject({
+          state: CaseState.RECEIVED,
+          indictmentDecision: IndictmentDecision.POSTPONING,
+          postponedIndefinitelyExplanation: 'Mál enduropnað',
+          indictmentReviewerId: null,
+          courtRecordHash: null,
+        })
       })
 
       // Test indictment ruling decision dimension
@@ -815,7 +823,7 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.CORRECTING })
+          expect(res).toMatchObject({ state: CaseState.RECEIVED })
         },
       )
 
@@ -846,6 +854,60 @@ describe('Transition Case', () => {
           expect(act).toThrow(ForbiddenException)
         },
       )
+
+      it('should not reopen if case has been merged', () => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              mergeCaseId: uuid(),
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+
+      it('should not reopen if appeal is active (APPEALED)', () => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              appealCase: { appealState: AppealCaseState.APPEALED },
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+
+      it('should not reopen if appeal is active (RECEIVED)', () => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              appealCase: { appealState: AppealCaseState.RECEIVED },
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
     })
 
     describe.each(
@@ -857,6 +919,104 @@ describe('Transition Case', () => {
       const act = () =>
         transitionCase(
           CaseTransition.REOPEN,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
+
+  // --- CORRECT ---
+
+  describe.each(indictmentCases)('correct %s', (type) => {
+    const allowedFromStates = [CaseState.COMPLETED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it('should correct', () => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.CORRECT,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({
+          state: CaseState.CORRECTING,
+          courtRecordHash: null,
+        })
+      })
+
+      // Test indictment ruling decision dimension
+      const allowedIndictmentRulingDecisions = [
+        undefined,
+        CaseIndictmentRulingDecision.RULING,
+        CaseIndictmentRulingDecision.FINE,
+        CaseIndictmentRulingDecision.DISMISSAL,
+        CaseIndictmentRulingDecision.CANCELLATION,
+        CaseIndictmentRulingDecision.MERGE,
+      ]
+
+      describe.each(allowedIndictmentRulingDecisions)(
+        'indictment ruling decision %s - should correct',
+        (indictmentRulingDecision) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.CORRECT,
+            {
+              id: uuid(),
+              state: fromState,
+              type,
+              indictmentRulingDecision,
+            } as Case,
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ state: CaseState.CORRECTING })
+        },
+      )
+
+      describe.each(
+        Object.values(CaseIndictmentRulingDecision).filter(
+          (indictmentRulingDecision) =>
+            !allowedIndictmentRulingDecisions.includes(
+              indictmentRulingDecision,
+            ),
+        ),
+      )(
+        'indictment ruling decision %s - should not correct',
+        (indictmentRulingDecision) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.CORRECT,
+              {
+                id: uuid(),
+                state: fromState,
+                type,
+                indictmentRulingDecision,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not correct', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.CORRECT,
           { id: uuid(), state: fromState, type } as Case,
           { id: uuid() } as User,
         )

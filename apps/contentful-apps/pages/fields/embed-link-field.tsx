@@ -9,6 +9,8 @@ const ALLOWED_EMBED_URLS = [
   'https://app.powerbi.com',
   'https://portal.land.is',
   'https://www.facebook.com',
+  'https://solmyrkvi2026.is',
+  'https://eclipse2026.is',
 ]
 
 const getIframeSrc = (iframe: string) => {

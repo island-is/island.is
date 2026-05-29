@@ -1,11 +1,13 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
   IndictmentCaseTransition,
+  IndictmentDecision,
   isDefenceUser,
   isIndictmentCase,
   isIndictmentCaseState,
@@ -145,6 +147,28 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.CORRECT,
+    {
+      fromStates: [IndictmentCaseState.COMPLETED],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        if (
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.WITHDRAWAL
+        ) {
+          throw new ForbiddenException(
+            'Cannot correct a case that has been withdrawn',
+          )
+        }
+
+        return {
+          ...update,
+          state: CaseState.CORRECTING,
+          courtRecordHash: null,
+        }
+      },
+    },
+  ],
+  [
     IndictmentCaseTransition.REOPEN,
     {
       fromStates: [IndictmentCaseState.COMPLETED],
@@ -158,9 +182,28 @@ const indictmentCaseStateMachine: Map<
           )
         }
 
+        if (theCase.mergeCaseId) {
+          throw new ForbiddenException(
+            'Cannot reopen a case that has been merged',
+          )
+        }
+
+        if (
+          theCase.appealCase &&
+          (theCase.appealCase.appealState === AppealCaseState.APPEALED ||
+            theCase.appealCase.appealState === AppealCaseState.RECEIVED)
+        ) {
+          throw new ForbiddenException(
+            'Cannot reopen a case with an active appeal',
+          )
+        }
+
         return {
           ...update,
-          state: CaseState.CORRECTING,
+          state: CaseState.RECEIVED,
+          indictmentDecision: IndictmentDecision.POSTPONING,
+          postponedIndefinitelyExplanation: 'Mál enduropnað',
+          indictmentReviewerId: null,
           courtRecordHash: null,
         }
       },

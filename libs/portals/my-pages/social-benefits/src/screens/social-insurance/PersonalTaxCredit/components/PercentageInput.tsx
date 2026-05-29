@@ -10,6 +10,7 @@ interface Props {
   onChange: (value: string) => void
   disabled?: boolean
   required?: boolean
+  backgroundColor?: 'blue' | 'white'
 }
 
 export const PercentageInput = ({
@@ -19,6 +20,7 @@ export const PercentageInput = ({
   onChange,
   disabled,
   required,
+  backgroundColor = 'blue',
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -28,9 +30,9 @@ export const PercentageInput = ({
       id={id}
       name={name}
       label={formatMessage(m.percentageFromNextMonth)}
-      placeholder="100%"
+      placeholder={formatMessage(m.percentagePlaceholder)}
       size="xs"
-      backgroundColor="blue"
+      backgroundColor={backgroundColor}
       suffix="%"
       allowNegative={false}
       isAllowed={({ floatValue }) =>

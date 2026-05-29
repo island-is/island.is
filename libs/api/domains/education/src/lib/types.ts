@@ -55,10 +55,6 @@ export interface Student {
   nationalId: string
 }
 
-/**
- * Intersection type used to thread studentId through field resolvers on PrimarySchoolAssessment.
- * `studentId` is not a @Field — it's internal state passed via @Parent() to child resolvers.
- */
 export type PrimarySchoolAssessmentWithContext = PrimarySchoolAssessment & {
   studentId: string
 }
