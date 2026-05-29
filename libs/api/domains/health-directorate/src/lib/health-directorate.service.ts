@@ -1,6 +1,12 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  ConversationAttachmentDto,
+  ConversationAttachmentRequestDto,
+  ConversationMessageDto,
+  ConversationStatusFilter,
+  CreateConversationRequestDto,
   CreateEuPatientConsentDto,
+  CreateReplyRequestDto,
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
@@ -8,6 +14,8 @@ import {
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
@@ -17,6 +25,8 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectorateCreateMessageInput } from './dto/createHealthMessage.input'
+import { HealthDirectorateReplyToMessageInput } from './dto/replyToHealthMessage.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -64,6 +74,12 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
+import { HealthDirectorateHealthMessage } from './models/healthMessage.model'
+import { HealthDirectorateHealthMessageAttachment } from './models/healthMessageAttachment.model'
+import { HealthDirectorateHealthMessageDetail } from './models/healthMessageDetail.model'
+import { HealthDirectorateHealthMessageEntry } from './models/healthMessageEntry.model'
+import { HealthDirectorateHealthMessageType } from './models/healthMessageType.model'
+import { HealthDirectorateHealthMessagingRecipient } from './models/healthMessagingRecipient.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -71,6 +87,10 @@ export class HealthDirectorateService {
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly healthApi: HealthDirectorateHealthService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   /* Organ Donation */
@@ -628,5 +648,212 @@ export class HealthDirectorateService {
         : undefined,
       practitioners: item.practitioners ?? [],
     }
+  }
+
+  /* Health Messages */
+
+  private mapMessageAttachment(
+    a: ConversationAttachmentDto,
+    conversationId: string,
+    messageId: string,
+  ): HealthDirectorateHealthMessageAttachment {
+    return {
+      id: a.id,
+      fileName: a.fileName,
+      description: a.description,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/messages/${conversationId}/${messageId}/${a.id}`,
+    }
+  }
+
+  private mapMessageEntry(
+    m: ConversationMessageDto,
+    conversationId: string,
+  ): HealthDirectorateHealthMessageEntry {
+    return {
+      id: m.id,
+      direction:
+        m.direction as HealthDirectorateHealthMessageEntry['direction'],
+      messageSentAt: m.messageSentAt,
+      messageTextContent: m.messageTextContent,
+      senderGroupName: m.senderGroupName,
+      attachments: m.attachments.map((a) =>
+        this.mapMessageAttachment(a, conversationId, m.id),
+      ),
+    }
+  }
+
+  async getHealthMessages(
+    auth: Auth,
+    status?: ConversationStatusFilter,
+    starred?: boolean,
+  ): Promise<HealthDirectorateHealthMessage[] | null> {
+    const items = await this.healthApi.getConversations(auth, status, starred)
+    if (!items) return null
+
+    return items.map((c) => ({
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      isRead: !c.unread,
+    }))
+  }
+
+  async getHealthMessage(
+    auth: Auth,
+    id: string,
+  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+    const c = await this.healthApi.getConversation(auth, id)
+    if (!c) return null
+
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
+    }
+  }
+
+  async createHealthMessage(
+    auth: Auth,
+    input: HealthDirectorateCreateMessageInput,
+  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+    const body: CreateConversationRequestDto = {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      title: input.title ?? '',
+      messageTextContent: input.messageTextContent,
+      attachments: input.attachments?.map((a) => ({
+        fileName: a.fileName,
+        description: a.description,
+        contentType:
+          a.contentType as ConversationAttachmentRequestDto['contentType'],
+        contentBase64: a.contentBase64,
+      })),
+    }
+
+    const c = await this.healthApi.createConversation(auth, body)
+    if (!c) return null
+
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
+    }
+  }
+
+  async replyToHealthMessage(
+    auth: Auth,
+    id: string,
+    input: HealthDirectorateReplyToMessageInput,
+  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+    const body: CreateReplyRequestDto = {
+      messageTextContent: input.messageTextContent,
+      attachments: input.attachments?.map((a) => ({
+        fileName: a.fileName,
+        description: a.description,
+        contentType:
+          a.contentType as ConversationAttachmentRequestDto['contentType'],
+        contentBase64: a.contentBase64,
+      })),
+    }
+
+    const c = await this.healthApi.replyToConversation(auth, id, body)
+    if (!c) return null
+
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
+    }
+  }
+
+  async markHealthMessageAsRead(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.markConversationAsRead(auth, id)
+    return true
+  }
+
+  async archiveHealthMessage(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.archiveConversation(auth, id)
+    return true
+  }
+
+  async unarchiveHealthMessage(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.unarchiveConversation(auth, id)
+    return true
+  }
+
+  async starHealthMessage(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.starConversation(auth, id)
+    return true
+  }
+
+  async unstarHealthMessage(auth: Auth, id: string): Promise<boolean> {
+    await this.healthApi.unstarConversation(auth, id)
+    return true
+  }
+
+  async getHealthMessagingRecipients(
+    auth: Auth,
+    locale: Locale = 'is',
+  ): Promise<HealthDirectorateHealthMessagingRecipient[] | null> {
+    const items = await this.healthApi.getMessagingRecipients(auth, locale)
+    if (!items) return null
+
+    return items.map(
+      (r): HealthDirectorateHealthMessagingRecipient => ({
+        nodeId: r.nodeId,
+        groupId: r.groupId,
+        name: r.name,
+        allowsMessaging: r.allowsMessaging,
+        messagingWindowOpen: r.messagingWindowOpen,
+        messagingWindowClose: r.messagingWindowClose,
+        isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+        patientReplyWindowDays: r.patientReplyWindowDays,
+        allowedMessageTypes: r.allowedConversationTypes.map(
+          (t): HealthDirectorateHealthMessageType => ({
+            patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+            title: t.title,
+            description: t.description,
+            isCertificate: t.isCertificate,
+          }),
+        ),
+      }),
+    )
   }
 }

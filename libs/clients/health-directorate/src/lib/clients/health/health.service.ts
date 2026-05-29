@@ -17,6 +17,17 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meConversationControllerArchiveConversationV1,
+  meConversationControllerCreateConversationV1,
+  meConversationControllerGetConversationByIdV1,
+  meConversationControllerGetConversationsV1,
+  meConversationControllerGetMessageAttachmentV1,
+  meConversationControllerMarkConversationAsReadV1,
+  meConversationControllerReplyToConversationV1,
+  meConversationControllerStarConversationV1,
+  meConversationControllerUnarchiveConversationV1,
+  meConversationControllerUnstarConversationV1,
+  meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -42,10 +53,16 @@ import {
   AppointmentBaseDto,
   AppointmentDetailDto,
   ConsentCountryDto,
+  ConversationBaseDto,
+  ConversationDetailDto,
+  ConversationStatusFilter,
+  CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
+  CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MessagingRecipientDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -532,5 +549,136 @@ export class HealthDirectorateHealthService {
     )
 
     return appointment ?? null
+  }
+
+  /* Conversations (Health Messages) */
+
+  public async getConversations(
+    auth: Auth,
+    status?: ConversationStatusFilter,
+    starred?: boolean,
+  ): Promise<ConversationBaseDto[] | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationsV1({
+          query: { status, starred },
+        }),
+      ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getConversation(
+    auth: Auth,
+    id: string,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerGetConversationByIdV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async createConversation(
+    auth: Auth,
+    input: CreateConversationRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerCreateConversationV1({
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async replyToConversation(
+    auth: Auth,
+    id: string,
+    input: CreateReplyRequestDto,
+  ): Promise<ConversationDetailDto | null> {
+    const conversation = await withAuthContext(auth, () =>
+      data(
+        meConversationControllerReplyToConversationV1({
+          path: { id },
+          body: input,
+        }),
+      ),
+    )
+
+    return conversation ?? null
+  }
+
+  public async markConversationAsRead(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerMarkConversationAsReadV1({ path: { id } })),
+    )
+  }
+
+  public async archiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerArchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unarchiveConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnarchiveConversationV1({ path: { id } })),
+    )
+  }
+
+  public async starConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerStarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async unstarConversation(auth: Auth, id: string): Promise<void> {
+    await withAuthContext(auth, () =>
+      data(meConversationControllerUnstarConversationV1({ path: { id } })),
+    )
+  }
+
+  public async getMessageAttachment(
+    auth: Auth,
+    conversationId: string,
+    messageId: string,
+    attachmentId: number,
+  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
+    const result = await withAuthContext(auth, () =>
+      meConversationControllerGetMessageAttachmentV1({
+        path: { id: conversationId, messageId, attachmentId },
+        parseAs: 'arrayBuffer',
+      }),
+    )
+    if (!result.data) return null
+    return {
+      data: result.data as ArrayBuffer,
+      contentType:
+        result.response.headers.get('content-type') ??
+        'application/octet-stream',
+    }
+  }
+
+  public async getMessagingRecipients(
+    auth: Auth,
+    locale?: Locale,
+  ): Promise<MessagingRecipientDto[] | null> {
+    const recipients = await withAuthContext(auth, () =>
+      data(
+        meMessagingRecipientControllerGetMessagingRecipientsV1({
+          query: { locale },
+        }),
+      ),
+    )
+
+    return recipients ?? null
   }
 }

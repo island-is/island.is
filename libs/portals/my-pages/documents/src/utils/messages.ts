@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  moveToInbox: {
+    id: 'sp.documents:move-to-inbox',
+    defaultMessage: 'Flytja í pósthólf',
+  },
   foundSingular: {
     id: 'sp.documents:found-singular',
     defaultMessage: 'skjal fannst',
