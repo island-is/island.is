@@ -78,21 +78,15 @@ export const SearchProgrammes = ({
       } else if (filter.key === 'isReferenceProgramme') {
         const boolValue = searchParam === 'YES' ? 'true' : 'false'
         orFilters.push({ isReferenceProgramme: `=${boolValue}` })
+
+        // When filtering for reference programmes, also require school to be MRN
+        if (searchParam === 'YES') {
+          queryMaker.$and.push({
+            $or: [{ 'school.abbreviation': '=MRN' }],
+          })
+        }
       }
     })
-
-    // When filtering exclusively for reference programmes, also require "school"(Mennta- og Barnamálaráðuneyti) to be MRN.
-    // Skip this constraint if both YES and NO are selected, since non-reference
-    // programmes from non-MRN schools would otherwise be excluded.
-    if (
-      filter.key === 'isReferenceProgramme' &&
-      filter.value.includes('YES') &&
-      !filter.value.includes('NO')
-    ) {
-      queryMaker.$and.push({
-        $or: [{ 'school.abbreviation': '=MRN' }],
-      })
-    }
 
     if (orFilters.length > 0) {
       queryMaker.$and.push({ $or: orFilters })
