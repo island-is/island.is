@@ -127,6 +127,7 @@ export class AppealCaseService {
 
     for (const caseFile of theCase.caseFiles ?? []) {
       if (
+        !caseFile.rulingFileId &&
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&
         caseFile.category &&
@@ -147,6 +148,46 @@ export class AppealCaseService {
       caseId: theCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
+  }
+
+  private addMessagesForRulingOrderAppealedCaseToQueue(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+  ): void {
+    let fileCategories: CaseFileCategory[]
+
+    if (isProsecutionUser(user)) {
+      fileCategories = [
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+      ]
+    } else if (isDefenceUser(user)) {
+      fileCategories = [
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+      ]
+    } else {
+      // Should never happen
+      fileCategories = []
+    }
+
+    for (const caseFile of theCase.caseFiles ?? []) {
+      if (
+        appealCase.rulingFileId === caseFile.rulingFileId &&
+        caseFile.state === CaseFileState.STORED_IN_RVG &&
+        caseFile.isKeyAccessible &&
+        caseFile.category &&
+        fileCategories.includes(caseFile.category)
+      ) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })
+      }
+    }
   }
 
   private addMessagesForReceivedAppealCaseToQueue(
@@ -399,9 +440,17 @@ export class AppealCaseService {
       appealCaseData.appealedByNationalId = user.nationalId
     }
 
-    return this.appealCaseRepositoryService.create(theCase.id, appealCaseData, {
-      transaction,
-    })
+    const appealCase = await this.appealCaseRepositoryService.create(
+      theCase.id,
+      appealCaseData,
+      {
+        transaction,
+      },
+    )
+
+    this.addMessagesForRulingOrderAppealedCaseToQueue(theCase, appealCase, user)
+
+    return appealCase
   }
 
   async update(
