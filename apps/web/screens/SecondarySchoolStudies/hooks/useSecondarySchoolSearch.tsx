@@ -32,7 +32,6 @@ type QueryLeaf =
   | { 'qualification.title': string }
   | { 'specialization.title': string }
   | { 'school.id': string }
-  | { 'school.abbreviation': string }
   | { 'school.countryArea.id': string }
   | { 'qualification.level.id': string }
   | { isReferenceProgramme: string }
