@@ -573,7 +573,7 @@ export class InternalCaseController {
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES]
-    }`,
+    }/:appealCaseId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
@@ -581,15 +581,18 @@ export class InternalCaseController {
   })
   deliverAssignedRolesToCourtOfAppeals(
     @Param('caseId') caseId: string,
+    @Param('appealCaseId') appealCaseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering the assigned roles for case ${caseId} to court of appeals`,
+      `Delivering the assigned roles for appeal case ${appealCaseId} of case ${caseId} to court of appeals`,
     )
 
     return this.internalCaseService.deliverAssignedRolesToCourtOfAppeals(
       theCase,
+      appealCase,
       deliverDto.user,
     )
   }

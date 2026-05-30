@@ -307,18 +307,20 @@ export class AppealCaseService {
     })
 
     if (this.allAppealRolesAssigned(appealCase)) {
-      this.addMessagesForAssignedAppealRolesToQueue(theCase, user)
+      this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
   }
 
   private addMessagesForAssignedAppealRolesToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
     })
   }
 
@@ -506,7 +508,7 @@ export class AppealCaseService {
           update.appealJudge3Id !== appealCase.appealJudge3Id))
     ) {
       // Queue messages for assigned roles
-      this.addMessagesForAssignedAppealRolesToQueue(theCase, user)
+      this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
 
     return updatedAppealCase
