@@ -294,7 +294,7 @@ export class AppealCaseService {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
-          elementId: caseFile.id,
+          elementId: [appealCase.id, caseFile.id],
         })
       }
     }
