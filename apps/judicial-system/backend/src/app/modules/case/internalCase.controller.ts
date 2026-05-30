@@ -28,8 +28,9 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
+import { AppealCaseExistsGuard, CurrentAppealCase } from '../appeal-case'
 import { EventService } from '../event'
-import { Case } from '../repository'
+import { AppealCase, Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
@@ -531,12 +532,12 @@ export class InternalCaseController {
       ...investigationCases,
       ...indictmentCases,
     ]),
-    CaseCompletedGuard,
+    AppealCaseExistsGuard,
   )
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE]
-    }`,
+    }/:appealCaseId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
@@ -544,15 +545,18 @@ export class InternalCaseController {
   })
   deliverReceivedDateToCourtOfAppeals(
     @Param('caseId') caseId: string,
+    @Param('appealCaseId') appealCaseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering the received date for case ${caseId} to court of appeals`,
+      `Delivering the received date for appeal case ${appealCaseId} of case ${caseId} to court of appeals`,
     )
 
     return this.internalCaseService.deliverReceivedDateToCourtOfAppeals(
       theCase,
+      appealCase,
       deliverDto.user,
     )
   }

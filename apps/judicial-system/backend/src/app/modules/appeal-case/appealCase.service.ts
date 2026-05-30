@@ -303,6 +303,7 @@ export class AppealCaseService {
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
     })
 
     if (this.allAppealRolesAssigned(appealCase)) {

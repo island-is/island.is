@@ -1181,14 +1181,15 @@ export class InternalCaseService {
 
   async deliverReceivedDateToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
       .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
-        theCase.appealCase?.appealCaseNumber,
-        theCase.appealCase?.appealReceivedByCourtDate,
+        appealCase.appealCaseNumber,
+        appealCase.appealReceivedByCourtDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
