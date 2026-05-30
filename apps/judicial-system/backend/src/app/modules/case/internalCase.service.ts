@@ -1234,33 +1234,22 @@ export class InternalCaseService {
 
   async deliverConclusionToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
-    // There is no timestamp for appeal ruling, so we use notifications to approximate the time.
-    // We know notifications occur in a decending order by time.
-    const appealCompletedNotifications = theCase.notifications?.filter(
-      (notification) =>
-        notification.type === TrackedNotificationType.APPEAL_COMPLETED,
-    )
-    const appealRulingDate =
-      appealCompletedNotifications && appealCompletedNotifications.length > 0
-        ? appealCompletedNotifications[appealCompletedNotifications.length - 1]
-            .created
-        : undefined
-
     return this.courtService
       .updateAppealCaseWithConclusion(
         user,
         theCase.id,
-        theCase.appealCase?.appealCaseNumber,
-        Boolean(theCase.appealCase?.appealRulingModifiedHistory),
-        theCase.appealCase?.appealRulingDecision,
-        appealRulingDate,
+        appealCase.appealCaseNumber,
+        Boolean(appealCase.appealRulingModifiedHistory),
+        appealCase.appealRulingDecision,
+        appealCase.appealRulingDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with conclusion`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with conclusion`,
           { reason },
         )
 

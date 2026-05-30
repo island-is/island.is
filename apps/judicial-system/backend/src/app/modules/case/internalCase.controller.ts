@@ -604,12 +604,12 @@ export class InternalCaseController {
       ...investigationCases,
       ...indictmentCases,
     ]),
-    CaseCompletedGuard,
+    AppealCaseExistsGuard,
   )
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION]
-    }`,
+    }/:appealCaseId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
@@ -617,15 +617,18 @@ export class InternalCaseController {
   })
   deliverConclusionToCourtOfAppeals(
     @Param('caseId') caseId: string,
+    @Param('appealCaseId') appealCaseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering the conclusion for case ${caseId} to court of appeals`,
+      `Delivering the conclusion for appeal case ${appealCaseId} of case ${caseId} to court of appeals`,
     )
 
     return this.internalCaseService.deliverConclusionToCourtOfAppeals(
       theCase,
+      appealCase,
       deliverDto.user,
     )
   }
