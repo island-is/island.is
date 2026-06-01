@@ -25,9 +25,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
 import {
-  GetHealthConversationsQuery,
+  HealthDirectorateHealthConversation,
+  HealthDirectorateHealthConversationStatusFilter,
+} from '@island.is/api/schema'
+import {
   useGetHealthConversationsQuery,
   useStarHealthConversationMutation,
   useUnstarHealthConversationMutation,
@@ -47,9 +49,6 @@ type FilterValues = {
   archived: boolean
 }
 
-type HealthConversation = NonNullable<
-  GetHealthConversationsQuery['healthDirectorateHealthConversations']
->[number]
 
 const CircleLogo = ({
   fallbackIcon,
@@ -131,9 +130,7 @@ const HealthConversations = () => {
     onError: onMutationError,
   })
 
-  const filteredConversations = useMemo<
-    HealthConversation[] | undefined
-  >(() => {
+  const filteredConversations = useMemo(() => {
     if (!data?.healthDirectorateHealthConversations) {
       return []
     }
@@ -336,18 +333,18 @@ const HealthConversations = () => {
                       archived={item.isArchived}
                       onFav={() => {
                         if (item.isStarred) {
-                          unstarMessage({ variables: { id: item.id } })
+                          unstarMessage({ variables: { input: { id: item.id } } })
                         } else {
-                          starMessage({ variables: { id: item.id } })
+                          starMessage({ variables: { input: { id: item.id } } })
                         }
                       }}
                       onStash={() => {
                         if (item.isArchived) {
                           unarchiveMessage({
-                            variables: { id: item.id },
+                            variables: { input: { id: item.id } },
                           })
                         } else {
-                          archiveMessage({ variables: { id: item.id } })
+                          archiveMessage({ variables: { input: { id: item.id } } })
                         }
                       }}
                     />

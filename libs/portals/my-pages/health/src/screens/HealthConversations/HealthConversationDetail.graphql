@@ -24,31 +24,30 @@ query GetHealthConversationDetail($id: String!) {
   }
 }
 
-mutation MarkHealthConversationAsRead($id: String!) {
-  healthDirectorateMarkHealthConversationAsRead(id: $id)
+mutation MarkHealthConversationAsRead($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateMarkHealthConversationAsRead(input: $input)
 }
 
-mutation StarHealthConversationDetail($id: String!) {
-  healthDirectorateStarHealthConversation(id: $id)
+mutation StarHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateStarHealthConversation(input: $input)
 }
 
-mutation UnstarHealthConversationDetail($id: String!) {
-  healthDirectorateUnstarHealthConversation(id: $id)
+mutation UnstarHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateUnstarHealthConversation(input: $input)
 }
 
-mutation ArchiveHealthConversationDetail($id: String!) {
-  healthDirectorateArchiveHealthConversation(id: $id)
+mutation ArchiveHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateArchiveHealthConversation(input: $input)
 }
 
-mutation UnarchiveHealthConversationDetail($id: String!) {
-  healthDirectorateUnarchiveHealthConversation(id: $id)
+mutation UnarchiveHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateUnarchiveHealthConversation(input: $input)
 }
 
 mutation ReplyToHealthConversation(
-  $id: String!
   $input: HealthDirectorateReplyToConversationInput!
 ) {
-  healthDirectorateReplyToHealthConversation(id: $id, input: $input) {
+  healthDirectorateReplyToHealthConversation(input: $input) {
     id
     messages {
       id

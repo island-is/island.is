@@ -14,18 +14,18 @@ query GetHealthConversations(
   }
 }
 
-mutation StarHealthConversation($id: String!) {
-  healthDirectorateStarHealthConversation(id: $id)
+mutation StarHealthConversation($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateStarHealthConversation(input: $input)
 }
 
-mutation UnstarHealthConversation($id: String!) {
-  healthDirectorateUnstarHealthConversation(id: $id)
+mutation UnstarHealthConversation($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateUnstarHealthConversation(input: $input)
 }
 
-mutation ArchiveHealthConversation($id: String!) {
-  healthDirectorateArchiveHealthConversation(id: $id)
+mutation ArchiveHealthConversation($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateArchiveHealthConversation(input: $input)
 }
 
-mutation UnarchiveHealthConversation($id: String!) {
-  healthDirectorateUnarchiveHealthConversation(id: $id)
+mutation UnarchiveHealthConversation($input: HealthDirectorateConversationIdInput!) {
+  healthDirectorateUnarchiveHealthConversation(input: $input)
 }

@@ -84,7 +84,7 @@ const HealthConversationDetail = () => {
   // Mark as read once when the thread first loads and hasn't been read yet
   useEffect(() => {
     if (item?.isRead === false) {
-      markAsRead({ variables: { id } })
+      markAsRead({ variables: { input: { id } } })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.id])
@@ -140,8 +140,7 @@ const HealthConversationDetail = () => {
     try {
       await replyToMessage({
         variables: {
-          id,
-          input: { messageTextContent: replyText },
+          input: { id, messageTextContent: replyText },
         },
       })
       setReplyText('')
@@ -192,16 +191,16 @@ const HealthConversationDetail = () => {
                 }
                 onFav={() => {
                   if (item.isStarred) {
-                    unstarMessage({ variables: { id } })
+                    unstarMessage({ variables: { input: { id } } })
                   } else {
-                    starMessage({ variables: { id } })
+                    starMessage({ variables: { input: { id } } })
                   }
                 }}
                 onStash={() => {
                   if (item.isArchived) {
-                    unarchiveMessage({ variables: { id } })
+                    unarchiveMessage({ variables: { input: { id } } })
                   } else {
-                    archiveMessage({ variables: { id } })
+                    archiveMessage({ variables: { input: { id } } })
                   }
                 }}
               />

@@ -1,10 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class HealthDirectorateReplyToConversationInput {
+export class HealthDirectorateConversationIdInput {
   @Field(() => ID)
   id!: string
-
-  @Field()
-  messageTextContent!: string
 }

@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
 
@@ -22,6 +22,7 @@ import type { Locale } from '@island.is/shared/types'
 
 import { HealthDirectorateService } from '../health-directorate.service'
 import { HealthDirectorateCreateConversationInput } from '../dto/createHealthConversation.input'
+import { HealthDirectorateConversationIdInput } from '../dto/healthConversationId.input'
 import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthConversation.input'
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
@@ -63,7 +64,7 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   getHealthConversation(
-    @Args('id', { type: () => String }) id: string,
+    @Args('id', { type: () => ID }) id: string,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
     return this.api.getHealthConversation(user, id)
@@ -106,11 +107,10 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   replyToHealthConversation(
-    @Args('id', { type: () => String }) id: string,
     @Args('input') input: HealthDirectorateReplyToConversationInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
-    return this.api.replyToHealthConversation(user, id, input)
+    return this.api.replyToHealthConversation(user, input.id, input)
   }
 
   @Mutation(() => Boolean, {
@@ -120,10 +120,10 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   markHealthConversationAsRead(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.markHealthConversationAsRead(user, id)
+    return this.api.markHealthConversationAsRead(user, input.id)
   }
 
   @Mutation(() => Boolean, {
@@ -133,10 +133,10 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   archiveHealthConversation(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.archiveHealthConversation(user, id)
+    return this.api.archiveHealthConversation(user, input.id)
   }
 
   @Mutation(() => Boolean, {
@@ -146,10 +146,10 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unarchiveHealthConversation(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.unarchiveHealthConversation(user, id)
+    return this.api.unarchiveHealthConversation(user, input.id)
   }
 
   @Mutation(() => Boolean, {
@@ -159,10 +159,10 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   starHealthConversation(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.starHealthConversation(user, id)
+    return this.api.starHealthConversation(user, input.id)
   }
 
   @Mutation(() => Boolean, {
@@ -172,9 +172,9 @@ export class HealthConversationsResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
   unstarHealthConversation(
-    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: HealthDirectorateConversationIdInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.unstarHealthConversation(user, id)
+    return this.api.unstarHealthConversation(user, input.id)
   }
 }
