@@ -1,12 +1,19 @@
-import { Box, Hidden, Table as T, Text } from '@island.is/island-ui/core'
+import { useCallback, useMemo, useState } from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { EmptyTable, ExpandHeader } from '@island.is/portals/my-pages/core'
-import { useMemo } from 'react'
+import {
+  Table,
+  createColumnHelper,
+  useIsMobile,
+  type Row,
+} from '@island.is/portals/my-pages/core'
+import type { CellContext } from '@tanstack/react-table'
+import format from 'date-fns/format'
 import { vehicleMessage } from '../../../lib/messages'
 import { displayWithUnit } from '../../../utils/displayWithUnit'
 import { OdometerUnit, VehicleType } from '../types'
-import { VehicleBulkMileageMobileRow } from './VehicleBulkMileageMobileRow'
-import { VehicleBulkMileageMobileCardRow } from './VehicleBulkMileageMobileCardRow'
+import { VehicleBulkMileageActionCell } from './VehicleBulkMileageActionCell'
+import { VehicleBulkMileageHistoryRow } from './VehicleBulkMileageHistoryRow'
 
 interface Props {
   vehicles: Array<VehicleType>
@@ -14,45 +21,105 @@ interface Props {
   onMileageUpdateCallback?: () => void
 }
 
+const columnHelper = createColumnHelper<VehicleType>()
+
+const makeVehicleInfoCell =
+  (isMobile: boolean) =>
+  ({ row }: CellContext<VehicleType, unknown>) =>
+    (
+      <Box>
+        <Text
+          variant={isMobile ? 'h4' : 'medium'}
+          as={isMobile ? 'h2' : 'p'}
+          color={isMobile ? 'blue400' : 'dark400'}
+          translate="no"
+        >
+          {row.original.vehicleType}
+        </Text>
+        <Text variant="medium" color="dark300" translate="no" as="span">
+          {row.original.vehicleId}
+        </Text>
+      </Box>
+    )
+
 const VehicleBulkMileageMobileTable = ({
   vehicles,
   loading,
   onMileageUpdateCallback,
 }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
+  const { isMobile } = useIsMobile()
+  const [refreshMap, setRefreshMap] = useState<Record<string, number>>({})
 
-  const desktopRows = useMemo(
-    () =>
-      vehicles.map((item) => (
-        <VehicleBulkMileageMobileRow
-          key={`desktop-vehicle-row-${item.vehicleId}`}
-          vehicle={item}
-          onMileageUpdateCallback={onMileageUpdateCallback}
-        />
-      )),
-    [onMileageUpdateCallback, vehicles],
+  const onSaveSuccess = useCallback((vehicleId: string) => {
+    setRefreshMap((prev) => ({
+      ...prev,
+      [vehicleId]: (prev[vehicleId] ?? 0) + 1,
+    }))
+  }, [])
+
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'vehicleInfo',
+        header: formatMessage(vehicleMessage.type),
+        cell: makeVehicleInfoCell(isMobile),
+        meta: { noTextWrapper: true },
+        enableSorting: false,
+      }),
+      columnHelper.display({
+        id: 'lastRegistered',
+        header: formatMessage(vehicleMessage.lastRegistered),
+        cell: ({ row }) => {
+          const date = row.original.lastMileageRegistration?.date
+          return date ? format(new Date(date), 'dd.MM.yyyy') : '-'
+        },
+        enableSorting: false,
+      }),
+      columnHelper.display({
+        id: 'lastStatus',
+        header: formatMessage(vehicleMessage.lastStatus),
+        cell: ({ row }) => {
+          const mileage = row.original.lastMileageRegistration?.mileage
+          const unit: OdometerUnit = row.original.hasMilesOdometer ? 'mi' : 'km'
+          return mileage != null ? displayWithUnit(mileage, unit, true) : '-'
+        },
+        enableSorting: false,
+      }),
+      columnHelper.display({
+        id: 'action',
+        header: formatMessage(vehicleMessage.odometerBulkColumn),
+        cell: VehicleBulkMileageActionCell,
+        meta: { noTextWrapper: true, mobileFullWidth: true },
+        enableSorting: false,
+      }),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [locale, isMobile],
   )
 
-  const mobileRows = useMemo(
-    () =>
-      vehicles.map((item) => (
-        <VehicleBulkMileageMobileCardRow
-          key={`mobile-vehicle-row-${item.vehicleId}`}
-          vehicle={item}
-          onMileageUpdateCallback={onMileageUpdateCallback}
+  const renderExpandedRow = useCallback(
+    (row: Row<VehicleType>) => {
+      const unit: OdometerUnit = row.original.hasMilesOdometer ? 'mi' : 'km'
+      return (
+        <VehicleBulkMileageHistoryRow
+          vehicle={row.original}
+          unit={unit}
+          refreshTrigger={refreshMap[row.original.vehicleId] ?? 0}
         />
-      )),
-    [onMileageUpdateCallback, vehicles],
+      )
+    },
+    [refreshMap],
   )
 
-  const totalLastMileage = useMemo(() => {
-    if (!vehicles.length) return 0
-    return vehicles.reduce(
-      (totalMileage, vehicle) =>
-        totalMileage + (vehicle.lastMileageRegistration?.mileage ?? 0),
-      0,
-    )
-  }, [vehicles])
+  const totalLastMileage = useMemo(
+    () =>
+      vehicles.reduce(
+        (total, v) => total + (v.lastMileageRegistration?.mileage ?? 0),
+        0,
+      ),
+    [vehicles],
+  )
 
   const totalUnit = useMemo((): OdometerUnit | undefined => {
     const units = new Set(
@@ -69,81 +136,31 @@ const VehicleBulkMileageMobileTable = ({
   return (
     <Box>
       <form>
-        {/* ── Desktop view ─────────────────────────────────────── */}
-        <Hidden below="md">
-          {desktopRows && !loading && (
-            <T.Table>
-              <ExpandHeader
-                data={[
-                  { value: '', printHidden: true },
-                  { value: formatMessage(vehicleMessage.type) },
-                  { value: formatMessage(vehicleMessage.lastRegistered) },
-                  { value: formatMessage(vehicleMessage.lastStatus) },
-                  { value: formatMessage(vehicleMessage.odometerBulkColumn) },
-                  { value: '', printHidden: true },
-                ]}
-              />
-              <T.Body>
-                {desktopRows}
-                {desktopRows.length > 0 && (
-                  <T.Row>
-                    <td>
-                      <Box marginTop={2}>
-                        <Text variant="medium" fontWeight="semiBold">
-                          {formatMessage(vehicleMessage.total)}
-                        </Text>
-                      </Box>
-                    </td>
-                    <td />
-                    <td />
-                    <td>
-                      <Box padding={2}>
-                        <Text variant="medium" fontWeight="semiBold">
-                          {totalDisplay}
-                        </Text>
-                      </Box>
-                    </td>
-                    <td />
-                  </T.Row>
-                )}
-              </T.Body>
-            </T.Table>
-          )}
-          {(!desktopRows.length || loading) && (
-            <EmptyTable
-              loading={loading}
-              message={formatMessage(vehicleMessage.noVehiclesFound)}
-            />
-          )}
-        </Hidden>
-
-        {/* ── Mobile view ──────────────────────────────────────── */}
-        <Hidden above="sm">
-          {!loading && mobileRows.length > 0 && (
-            <Box>
-              {mobileRows}
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                background="blue100"
-                borderRadius="large"
-                padding={2}
-                marginTop={2}
-              >
-                <Text fontWeight="semiBold">
-                  {formatMessage(vehicleMessage.total)}
-                </Text>
-                <Text fontWeight="semiBold">{totalDisplay}</Text>
-              </Box>
-            </Box>
-          )}
-          {(!mobileRows.length || loading) && (
-            <EmptyTable
-              loading={loading}
-              message={formatMessage(vehicleMessage.noVehiclesFound)}
-            />
-          )}
-        </Hidden>
+        <Table
+          columns={columns}
+          data={vehicles}
+          loading={loading}
+          emptyMessage={formatMessage(vehicleMessage.noVehiclesFound)}
+          mobileTitleKey="vehicleInfo"
+          renderExpandedRow={renderExpandedRow}
+          getRowId={(v) => v.vehicleId}
+          meta={{ onMileageUpdateCallback, onSaveSuccess }}
+        />
+        {vehicles.length > 0 && !loading && (
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            background="blue100"
+            borderRadius="large"
+            padding={2}
+            marginTop={2}
+          >
+            <Text fontWeight="semiBold">
+              {formatMessage(vehicleMessage.total)}
+            </Text>
+            <Text fontWeight="semiBold">{totalDisplay}</Text>
+          </Box>
+        )}
       </form>
     </Box>
   )

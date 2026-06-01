@@ -11,6 +11,3 @@ export const mwInput = style({
   minWidth: 120,
 })
 
-export const cardRowDivider = style({
-  borderBottom: `1px solid ${theme.color.blue200}`,
-})

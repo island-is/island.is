@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { formatDate, m } from '@island.is/portals/my-pages/core'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { m } from '@island.is/portals/my-pages/core'
 import {
   useGetUsersMileageLazyQuery,
   usePutSingleVehicleMileageMutation,
   usePostSingleVehicleMileageMutation,
-  useVehicleMileageRegistrationHistoryLazyQuery,
 } from '../VehicleBulkMileage.generated'
-import { displayWithUnit } from '../../../utils/displayWithUnit'
 import { VehicleType } from '../types'
 
 type MutationStatus =
@@ -23,48 +20,24 @@ type MutationStatus =
 interface Props {
   vehicle: VehicleType
   onMileageUpdateCallback?: () => void
+  onSaveSuccess?: (vehicleId: string) => void
 }
 
 export const useVehicleBulkMileageRowState = ({
   vehicle,
   onMileageUpdateCallback,
+  onSaveSuccess,
 }: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
   const [localInternalId, setLocalInternalId] = useState<number>()
-  const [localMileage, setLocalMileage] = useState<number>()
-  const [localDate, setLocalDate] = useState<Date>()
   const [postStatus, setPostStatus] = useState<MutationStatus>('initial')
-  const [showSubdata, setShowSubdata] = useState<boolean>(false)
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isServicePortalVehicleBulkMileageSubdataPageEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setShowSubdata(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const [
-    executeRegistrationsQuery,
-    { data, loading, error, refetch: registrationsRefetch },
-  ] = useVehicleMileageRegistrationHistoryLazyQuery({
-    variables: { input: { permno: vehicle.vehicleId } },
-  })
 
   const [putAction] = usePutSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
     onCompleted: ({ vehicleMileagePutV2: data }) => {
       if (data?.__typename === 'VehicleMileagePutModel' && data.internalId) {
         setLocalInternalId(parseInt(data.internalId, 10))
-        setLocalMileage(data.mileageNumber ?? undefined)
       }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
@@ -80,8 +53,6 @@ export const useVehicleBulkMileageRowState = ({
     onCompleted: ({ vehicleMileagePostV2: data }) => {
       if (data?.__typename === 'VehicleMileageDetail' && data.internalId) {
         setLocalInternalId(parseInt(data.internalId, 10))
-        setLocalMileage(data.mileageNumber ?? undefined)
-        setLocalDate(data.readDate ? new Date(data.readDate) : undefined)
       }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
@@ -135,16 +106,21 @@ export const useVehicleBulkMileageRowState = ({
   }, [errors, vehicle.vehicleId])
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       if (postStatus === 'success') {
-        registrationsRefetch()
-        if (onMileageUpdateCallback) {
-          onMileageUpdateCallback()
-        }
+        onMileageUpdateCallback?.()
+        onSaveSuccess?.(vehicle.vehicleId)
         reset()
       }
     }, 500)
-  }, [onMileageUpdateCallback, postStatus, registrationsRefetch, reset])
+    return () => clearTimeout(timer)
+  }, [
+    onMileageUpdateCallback,
+    onSaveSuccess,
+    postStatus,
+    reset,
+    vehicle.vehicleId,
+  ])
 
   useEffect(() => {
     switch (postStatus) {
@@ -167,10 +143,8 @@ export const useVehicleBulkMileageRowState = ({
 
   const getValueFromForm = async (
     formFieldId: string,
-    skipEmpty = false,
   ): Promise<number | undefined> => {
     const value = getValues(formFieldId)
-    if (!value && skipEmpty) return
     const isValid = await trigger(formFieldId)
     if (isValid) return Number(value)
     setPostStatus('validation-error')
@@ -240,37 +214,11 @@ export const useVehicleBulkMileageRowState = ({
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
   const unit = (vehicle.hasMilesOdometer ? 'mi' : 'km') as 'mi' | 'km'
-  const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
-  const displayMileage = localMileage ?? vehicle.lastMileageRegistration?.mileage
-
-  const nestedTable = useMemo(() => {
-    if (!data?.vehiclesMileageRegistrationHistory) return [[]]
-    const tableData: Array<Array<string>> = [[]]
-    for (const reg of data.vehiclesMileageRegistrationHistory
-      .mileageRegistrationHistory ?? []) {
-      if (reg) {
-        tableData.push([
-          formatDate(reg.date),
-          reg.originCode,
-          displayWithUnit(reg.mileage, unit, true),
-        ])
-      }
-    }
-    return tableData
-  }, [data?.vehiclesMileageRegistrationHistory, unit])
 
   return {
     postStatus,
     postError,
-    showSubdata,
     unit,
-    displayDate,
-    displayMileage,
-    nestedTable,
-    data,
-    loading,
-    error,
-    executeRegistrationsQuery,
     control,
     onInputChange,
     onSaveButtonClick,
