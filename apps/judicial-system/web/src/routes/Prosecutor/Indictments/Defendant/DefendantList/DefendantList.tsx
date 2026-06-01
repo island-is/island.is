@@ -140,9 +140,9 @@ export const DefendantList = () => {
         {showPoliceDefendantsUI && loading && <LoadingDots size="small" />}
       </Box>
       <AnimatePresence>
-        {workingCase.defendants?.map((defendant, index) => (
+        {workingCase.defendants?.map((defendant) => (
           <motion.div
-            key={index}
+            key={defendant.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
