@@ -316,6 +316,12 @@ export const useGrantTypeModal = ({
 
   const handleEnvironmentSwitch = (env: AuthAdminEnvironment) => {
     if (userAvailableEnvironments.includes(env)) {
+      setEnvFormDataMap((prev) => ({
+        ...prev,
+        [selectedEnvResult.environment]: {
+          description: formData.description,
+        },
+      }))
       updateEnvironment(env)
 
       const envData = envFormDataMap[env]
@@ -375,6 +381,13 @@ export const useGrantTypeModal = ({
 
   const setFormField = (field: keyof GrantTypeFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+
+    if (isEditing && field === 'description') {
+      setEnvFormDataMap((prev) => ({
+        ...prev,
+        [selectedEnvResult.environment]: { description: value },
+      }))
+    }
     if (formErrors[field]) {
       setFormErrors((prev) => ({ ...prev, [field]: undefined }))
     }
