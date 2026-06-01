@@ -1,6 +1,6 @@
 import {
   CodeOwners,
-  ScheduledJob,
+  ScheduledJobBuilder,
   scheduledJob,
   service,
   ServiceBuilder,
@@ -95,7 +95,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
 
 const cleanupId = 'services-sessions-cleanup'
 
-export const cleanupSetup = (): ScheduledJob<typeof cleanupId> =>
+export const cleanupSetup = (): ScheduledJobBuilder<typeof cleanupId> =>
   scheduledJob(cleanupId)
     .namespace(namespace)
     .image(imageName)
