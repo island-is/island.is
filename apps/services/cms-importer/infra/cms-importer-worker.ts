@@ -82,9 +82,9 @@ export const webSitemapImportSetup =
       .command('node')
       .args('main.cjs', '--job', 'web-sitemap')
       .extraAttributes({
-        dev: { schedule: '0 0 * * *' },
-        staging: { schedule: '0 0 * * 0' },
-        prod: { schedule: '0 */3 * * *' },
+        dev: { schedule: '0 3 */2 * *' },
+        staging: { schedule: '0 4 * * 0' },
+        prod: { schedule: '0 0 * * *' },
       })
 
 export const cmsCleanupSetup = (): ServiceBuilder<'cms-importer-cms-cleanup'> =>

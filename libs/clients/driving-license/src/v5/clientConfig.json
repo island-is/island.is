@@ -114,6 +114,16 @@
             "schema": { "type": "string", "default": "5.0" }
           }
         ],
+        "requestBody": {
+          "description": "Optional confirmation model with additional data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Models.V5.ConfirmBEApplicationModel"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -4548,12 +4558,14 @@
         "description": "Dto for image and signature data"
       },
       "Dto.V5.ImageDto": {
+        "required": ["dateRegistered", "image", "socialSecurityNumber"],
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "description": "Picture id",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "socialSecurityNumber": {
             "type": "string",
@@ -4574,17 +4586,20 @@
           "quality": {
             "type": "integer",
             "description": "Quality",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "program": {
             "type": "integer",
             "description": "Belongs to what program",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "type": {
             "type": "integer",
             "description": "Type of image",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -4822,20 +4837,51 @@
       "Dto.V5.PenaltyPointDetailDto": {
         "type": "object",
         "properties": {
-          "caseNr": { "type": "string", "nullable": true },
-          "ssn": { "type": "string", "nullable": true },
+          "caseNr": {
+            "type": "string",
+            "description": "Case number",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number of the offender",
+            "nullable": true
+          },
           "offenseDate": {
             "type": "string",
+            "description": "Date the offense was committed",
             "format": "date-time",
             "nullable": true
           },
-          "penalty": { "type": "string", "nullable": true },
-          "penaltyStatus": { "type": "string", "nullable": true },
-          "points": { "type": "integer", "format": "int32", "nullable": true },
-          "districtName": { "type": "string", "nullable": true },
-          "statusCode": { "type": "string", "nullable": true }
+          "penalty": {
+            "type": "string",
+            "description": "Penalty description",
+            "nullable": true
+          },
+          "penaltyStatus": {
+            "type": "string",
+            "description": "Current status of the penalty",
+            "nullable": true
+          },
+          "points": {
+            "type": "integer",
+            "description": "Number of penalty points",
+            "format": "int32",
+            "nullable": true
+          },
+          "districtName": {
+            "type": "string",
+            "description": "Name of the district that issued the penalty",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Status code",
+            "nullable": true
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Penalty point detail entry"
       },
       "Dto.V5.PenaltyPointsDto": {
         "required": ["ok"],
@@ -5022,6 +5068,19 @@
         },
         "additionalProperties": false,
         "description": "Health declaration when applying for driver's license"
+      },
+      "Models.V5.ConfirmBEApplicationModel": {
+        "type": "object",
+        "properties": {
+          "testFinished": {
+            "type": "string",
+            "description": "Date the BE driving test was completed (date only, e.g. \"2025-03-15\")",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request model for confirming a BE license application is finished"
       },
       "Models.V5.LicenseProductionErrorMsgModel": {
         "type": "object",
@@ -5432,6 +5491,16 @@
             "type": "string",
             "description": "Applicant mobile number",
             "nullable": true
+          },
+          "photoBiometricsId": {
+            "type": "string",
+            "description": "Biometrics ID for photo from temporary image store",
+            "nullable": true
+          },
+          "signatureBiometricsId": {
+            "type": "string",
+            "description": "Biometrics ID for signature from temporary image store",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -5489,6 +5558,16 @@
           },
           "healthDeclaration": {
             "$ref": "#/components/schemas/Models.HealthDeclarationModel"
+          },
+          "photoBiometricsId": {
+            "type": "string",
+            "description": "Biometrics ID for photo from temporary image store",
+            "nullable": true
+          },
+          "signatureBiometricsId": {
+            "type": "string",
+            "description": "Biometrics ID for signature from temporary image store",
+            "nullable": true
           }
         },
         "additionalProperties": false,

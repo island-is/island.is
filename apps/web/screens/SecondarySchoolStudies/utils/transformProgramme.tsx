@@ -1,13 +1,12 @@
 import { ReactElement } from 'react'
 import { IntlShape } from 'react-intl'
 
-import { SecondarySchoolAllProgrammesQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeSimple } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages/messages'
 import { getSchoolData } from './schoolDataMap'
 
-type SecondarySchoolProgramme =
-  SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes'][0]
+type SecondarySchoolProgramme = SecondarySchoolProgrammeSimple
 
 export interface ProgrammeCardProps {
   id: string

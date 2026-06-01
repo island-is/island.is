@@ -139,6 +139,8 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
+        approved: z.boolean().optional(),
+        approvedDate: z.string().optional(),
         phone: z.string().optional().default(''),
         email: z.string().optional().default(''),
         // Málsvari
@@ -756,4 +758,9 @@ export const estateSchema = z.object({
   confirmAction: z.array(z.enum([YES])).length(1),
   confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
+  inReviewSigningConfirmation: z
+    .array(z.enum([YES]))
+    .refine((v) => v.includes(YES), {
+      params: m.applicantInReviewStatementError,
+    }),
 })

@@ -10,8 +10,13 @@ import { OfflineProvider } from '../components/providers/offline-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { FeatureFlagProvider } from '../components/providers/feature-flag-provider'
 import { ApolloProvider } from '@apollo/client'
-import { checkIsAuthenticated, readAuthorizeResult } from '../stores/auth-store'
-import { getNextOnboardingStep } from '../utils/onboarding'
+import {
+  authStore,
+  checkIsAuthenticated,
+  readAuthorizeResult,
+} from '../stores/auth-store'
+import { getNextOnboardingStep, isOnboarded } from '../utils/onboarding'
+import { config } from '../config'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -81,6 +86,11 @@ export default function RootLayout() {
         //    The reactive Redirect in (tabs)/_layout then drives routing.
         if (isAuthenticated) {
           await getNextOnboardingStep()
+          // Stamp cold-start lock before splash hides so the overlay is on
+          // first paint. `0` is past any grace, so it forces auth.
+          if (isOnboarded() && !config.isTestingApp) {
+            authStore.setState({ lockScreenActivatedAt: 0 })
+          }
         }
 
         // 4. Initialize Apollo client (with persisted cache)

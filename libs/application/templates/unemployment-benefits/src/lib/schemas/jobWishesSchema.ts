@@ -13,7 +13,10 @@ export const jobWishesSchema = z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
     location: z.array(z.string()).optional(),
-    wantedJobPercentage: z.string().min(1),
+    wantedJobPercentage: z
+      .string()
+      .min(1)
+      .refine((v) => Number(v) >= 1),
     jobTimelineStartDate: z.string().min(1),
   })
   .refine(
