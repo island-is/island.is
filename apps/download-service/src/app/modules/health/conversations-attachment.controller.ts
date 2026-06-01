@@ -11,9 +11,9 @@ import { AuditService } from '@island.is/nest/audit'
 import { Features, FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   Controller,
-  Get,
   Param,
   ParseIntPipe,
+  Post,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -30,7 +30,7 @@ export class HealthConversationsAttachmentController {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Get(':conversationId/:messageId/:attachmentId')
+  @Post(':conversationId/:messageId/:attachmentId')
   @ApiOkResponse({
     description: 'Downloads a health message attachment',
   })

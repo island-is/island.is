@@ -3,7 +3,6 @@ import {
   Button,
   Checkbox,
   Filter,
-  Icon,
   Input,
   Stack,
   Text,
@@ -23,6 +22,7 @@ import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import ConversationAvatar from './components/ConversationAvatar'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
@@ -44,28 +44,6 @@ type FilterValues = {
   searchQuery: string
   starred: boolean
   archived: boolean
-}
-
-// TODO: Remove this when we have institution logos and a decided fallback icon
-const CircleLogo = ({
-  fallbackIcon,
-}: {
-  fallbackIcon: 'heart' | 'document'
-}) => {
-  return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      borderRadius="full"
-      background="blue100"
-      borderColor="blue200"
-      borderWidth="standard"
-      style={{ width: 48, height: 48, flexShrink: 0, overflow: 'hidden' }}
-    >
-      <Icon icon={fallbackIcon} type="outline" color="blue400" />
-    </Box>
-  )
 }
 
 const HealthConversations = () => {
@@ -294,8 +272,8 @@ const HealthConversations = () => {
                       color: 'inherit',
                     }}
                   >
-                    <CircleLogo
-                      fallbackIcon={item.hasAttachment ? 'document' : 'heart'}
+                    <ConversationAvatar
+                      icon={item.hasAttachment ? 'document' : 'heart'}
                     />
                     <Box minWidth={0}>
                       <Text variant="medium">{item.lastSenderGroupName}</Text>
