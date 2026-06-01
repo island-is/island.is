@@ -355,8 +355,6 @@ export const educationHistorySubSection = buildSubSection({
           doesNotRequireAnswer: true,
         }),
 
-        //Optional field repeater to add more education history
-
         buildFieldsRepeaterField({
           id: 'educationHistory.educationHistory',
           formTitle: educationMessages.labels.educationHistoryTitle,
