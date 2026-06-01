@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { col, Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -520,7 +520,13 @@ export const include: Includeable[] = [
             required: false,
             order: [['created', 'DESC']],
             separate: true,
-            where: { created: { [Op.lt]: col('Case.created') } },
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },

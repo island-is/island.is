@@ -1,4 +1,4 @@
-import { col, Includeable, Op } from 'sequelize'
+import { col, Includeable, literal, Op } from 'sequelize'
 
 import {
   appealEventTypes,
@@ -439,7 +439,13 @@ export const caseInclude: Includeable[] = [
             required: false,
             order: [['created', 'DESC']],
             separate: true,
-            where: { created: { [Op.lt]: col('Case.created') } },
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },
