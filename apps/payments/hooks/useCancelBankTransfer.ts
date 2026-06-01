@@ -12,7 +12,7 @@ interface UseCancelBankTransferProps {
  *  - "Start Again" on the failed screen — soft-deletes the failed row so SSR flips back to UNPAID.
  *
  * Both call sites await the promise, then `router.reload()` to re-fetch the canonical state.
- * Idempotent on the server side; safe to retry on transient network errors.
+ * Idempotent on the server side.
  */
 export const useCancelBankTransfer = ({
   paymentFlowId,

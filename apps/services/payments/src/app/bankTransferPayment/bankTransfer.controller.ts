@@ -1,5 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import { BankTransferService } from './bankTransfer.service'
 import { CreateBankTransferInput } from './dtos/createBankTransfer.input'
@@ -9,6 +15,8 @@ import { VerifyBankTransferResponse } from './dtos/verifyBankTransfer.response'
 import { CancelBankTransferInput } from './dtos/cancelBankTransfer.input'
 import { CancelBankTransferResponse } from './dtos/cancelBankTransfer.response'
 
+@UseGuards(FeatureFlagGuard)
+@FeatureFlag(Features.isIslandisBankTransferPaymentEnabled)
 @ApiTags('payments')
 @Controller({
   path: 'payments/bank-transfer',
