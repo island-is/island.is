@@ -6,6 +6,7 @@ import {
   timeFormat,
 } from '@island.is/shared/constants'
 import cn from 'classnames'
+import format from 'date-fns/format'
 import getYear from 'date-fns/getYear'
 import isValid from 'date-fns/isValid'
 import en from 'date-fns/locale/en-US'
@@ -151,6 +152,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, selectedRange])
 
+  useEffect(() => {
+    if (isOpen && window.innerWidth < 767) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [isOpen])
+
   return (
     <div
       ref={containerRef}
@@ -194,7 +204,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           fixedHeight={fixedHeight}
           showPopperArrow={false}
-          popperPlacement="bottom-start"
+          popperPlacement="auto"
           open={isOpen}
           onInputClick={() => {
             if (!range) setIsOpen(true)
@@ -415,9 +425,21 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               {...props}
             />
           )}
-          calendarContainer={(props) => (
+          calendarContainer={(props) => {
+            const fmt = showTimeInput
+              ? currentLanguage.formatWithTime
+              : currentLanguage.format
+            const formatDate = (d: Date | null) =>
+              d && isValidDate(d) ? format(d, fmt) : ''
+            const inputValue = range
+              ? `${formatDate(startDate)}${endDate ? ` - ${formatDate(endDate)}` : ''}`
+              : formatDate(startDate)
+            return (
             <CustomCalendarContainer
               {...props}
+              onClose={() => setIsOpen(false)}
+              inputLabel={label}
+              inputValue={inputValue}
               startDate={startDate}
               endDate={endDate}
               setDate={(startDay, endDay) => {
@@ -434,7 +456,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               displaySelectInput={displaySelectInput}
               children={props.children}
             />
-          )}
+            )
+          }}
           {...ariaError}
         />
         {hasError && errorMessage && (
