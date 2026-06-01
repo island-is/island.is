@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, IconMapIcon } from '@island.is/island-ui/core'
 import {
   APPEAL_FILES_ROUTE,
   APPEAL_ROUTE,
@@ -176,6 +176,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
   // the row without status text or actions.
   let statusText: string | undefined
+  let statusIcon: IconMapIcon | undefined = undefined
+  let statusIconColor: string | undefined = undefined
 
   if (!hasBeenAppealed) {
     // Pre-appeal: only the appealing-eligible parties see the deadline.
@@ -183,6 +185,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       statusText = `Kærufrestur ${
         file.isAppealDeadlineExpired ? 'rann' : 'rennur'
       } út ${formatDate(file.appealDeadline, 'PPPp')}`
+      statusIcon = 'warning'
+      statusIconColor = 'yellow600'
     }
   } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
     statusText = 'Kæra afturkölluð'
@@ -230,6 +234,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         <PdfButton
           title={fileName}
           subtitle={statusText}
+          subtitleIcon={statusIcon}
+          subtitleIconColor={statusIconColor}
           renderAs="row"
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
