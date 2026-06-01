@@ -72,6 +72,7 @@ export const CreateBankTransferMutation = gql`
     paymentsCreateBankTransfer(input: $input) {
       providerPaymentId
       scaRedirectUrl
+      expiresAt
     }
   }
 `
@@ -81,6 +82,14 @@ export const VerifyBankTransferMutation = gql`
     paymentsVerifyBankTransfer(input: $input) {
       status
       message
+    }
+  }
+`
+
+export const CancelBankTransferMutation = gql`
+  mutation cancelBankTransfer($input: PaymentsCancelBankTransferInput!) {
+    paymentsCancelBankTransfer(input: $input) {
+      ok
     }
   }
 `

@@ -30,6 +30,8 @@ import { CreateBankTransferInput } from './dto/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
 
 @Injectable()
 export class PaymentsService {
@@ -136,6 +138,14 @@ export class PaymentsService {
   ): Promise<VerifyBankTransferResponse> {
     return this.paymentsApi.bankTransferControllerVerify({
       verifyBankTransferInput,
+    })
+  }
+
+  async cancelBankTransfer(
+    cancelBankTransferInput: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    return this.paymentsApi.bankTransferControllerCancel({
+      cancelBankTransferInput,
     })
   }
 

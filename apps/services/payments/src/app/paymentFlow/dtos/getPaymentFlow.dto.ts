@@ -13,6 +13,7 @@ import {
   PaymentFlowEventType,
   PaymentFlowEventReason,
 } from '../../../types'
+import { BankTransferFailureReason } from '../../bankTransferPayment/bankTransfer.types'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {
@@ -210,6 +211,33 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional()
   cancelUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_failed. Indicates the reason the most recent bank-transfer attempt failed, so the FE can render a specific error message.',
+    enum: BankTransferFailureReason,
+  })
+  @IsOptional()
+  @IsEnum(BankTransferFailureReason)
+  lastBankTransferFailure?: BankTransferFailureReason
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. The provider SCA URL the user can return to in order to resume their in-flight attempt. Empty/undefined indicates back-channel SCA (no URL to redirect to).',
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  bankTransferScaRedirectUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'Populated only when paymentStatus is bank_transfer_pending. The timestamp at which the in-flight attempt expires (the same TTL we shared with Blikk on create). The FE polling loop derives its hard timeout from this so it matches the backend TTL exactly.',
+    type: Date,
+  })
+  @IsOptional()
+  @IsDate()
+  bankTransferExpiresAt?: Date
 }
 
 export class GetPaymentFlowsPaginatedDTO {

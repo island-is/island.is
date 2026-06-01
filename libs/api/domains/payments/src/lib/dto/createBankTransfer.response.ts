@@ -13,4 +13,10 @@ export class CreateBankTransferResponse {
       'Where the frontend should redirect the user for Strong Customer Authentication. Empty means back-channel SCA — no redirect.',
   })
   scaRedirectUrl?: string
+
+  @Field(() => Date, {
+    description:
+      'When this attempt expires (the TTL we shared with Blikk). The FE polling loop derives its hard timeout from this.',
+  })
+  expiresAt!: Date
 }

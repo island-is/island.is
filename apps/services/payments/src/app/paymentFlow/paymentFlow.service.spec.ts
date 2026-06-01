@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
 
@@ -334,129 +334,6 @@ describe('PaymentFlowService', () => {
     })
   })
 
-  describe('createBankTransferFulfillment', () => {
-    const dummyCharge = {} as TestPartial
-
-    const createFlow = async (paymentFlowId: string) => {
-      const paymentFlowModel = app.get<typeof PaymentFlow>(
-        getModelToken(PaymentFlow),
-      )
-      await paymentFlowModel.create({
-        id: paymentFlowId,
-        payerNationalId: '1234567890',
-        availablePaymentMethods: [PaymentMethod.CARD],
-        organisationId: '5534567890',
-      } as TestPartial)
-    }
-
-    const fulfillmentCount = (paymentFlowId: string) =>
-      app
-        .get<typeof PaymentFulfillment>(getModelToken(PaymentFulfillment))
-        .count({ where: { paymentFlowId, isDeleted: false } })
-
-    afterEach(() => {
-      jest.restoreAllMocks()
-    })
-
-    it('creates the fulfillment on the first call and no-ops on a re-verify', async () => {
-      const paymentFlowId = uuid()
-      await createFlow(paymentFlowId)
-      // Mock the FJS call so this test doesn't depend on the FJS HTTP backend.
-      jest
-        .spyOn(service, 'createFjsCharge')
-        .mockResolvedValue({ receptionId: 'r-1' } as TestPartial)
-
-      await service.createBankTransferFulfillment(
-        paymentFlowId,
-        uuid(),
-        dummyCharge,
-      )
-      // A re-verify of the same flow must not create a second fulfillment.
-      await service.createBankTransferFulfillment(
-        paymentFlowId,
-        uuid(),
-        dummyCharge,
-      )
-
-      expect(await fulfillmentCount(paymentFlowId)).toBe(1)
-    })
-
-    it('treats a unique-constraint race as a no-op (no throw)', async () => {
-      const model = (service as TestPartial).paymentFulfillmentModel
-      jest.spyOn(model, 'findOne').mockResolvedValue(null)
-      jest.spyOn(model, 'create').mockRejectedValue(
-        Object.assign(new Error('duplicate key'), {
-          name: 'SequelizeUniqueConstraintError',
-        }),
-      )
-
-      await expect(
-        service.createBankTransferFulfillment(uuid(), uuid(), dummyCharge),
-      ).resolves.toBeUndefined()
-    })
-
-    it('rethrows non-uniqueness errors', async () => {
-      const model = (service as TestPartial).paymentFulfillmentModel
-      jest.spyOn(model, 'findOne').mockResolvedValue(null)
-      jest
-        .spyOn(model, 'create')
-        .mockRejectedValue(new Error('connection reset'))
-
-      await expect(
-        service.createBankTransferFulfillment(uuid(), uuid(), dummyCharge),
-      ).rejects.toThrow('connection reset')
-    })
-
-    it('creates the FJS charge once on the first payment when a payload is given', async () => {
-      const paymentFlowId = uuid()
-      await createFlow(paymentFlowId)
-      const createFjsChargeSpy = jest
-        .spyOn(service, 'createFjsCharge')
-        .mockResolvedValue({ receptionId: 'r-1' } as TestPartial)
-
-      await service.createBankTransferFulfillment(
-        paymentFlowId,
-        uuid(),
-        dummyCharge,
-      )
-
-      expect(createFjsChargeSpy).toHaveBeenCalledTimes(1)
-      expect(createFjsChargeSpy).toHaveBeenCalledWith(paymentFlowId, dummyCharge)
-    })
-
-    it('retries then keeps the fulfillment when the FJS charge keeps failing', async () => {
-      const paymentFlowId = uuid()
-      await createFlow(paymentFlowId)
-      jest
-        .spyOn(service, 'createFjsCharge')
-        .mockRejectedValue(new Error('FJS down'))
-
-      // The transfer already settled, so a failed FJS charge must not throw or un-pay the flow.
-      await expect(
-        service.createBankTransferFulfillment(paymentFlowId, uuid(), dummyCharge),
-      ).resolves.toBeUndefined()
-
-      expect(service.createFjsCharge).toHaveBeenCalledTimes(3)
-      expect(await fulfillmentCount(paymentFlowId)).toBe(1)
-    })
-
-    it('does not retry the FJS charge when it already exists', async () => {
-      const paymentFlowId = uuid()
-      await createFlow(paymentFlowId)
-      jest
-        .spyOn(service, 'createFjsCharge')
-        .mockRejectedValue(new Error(FjsErrorCode.AlreadyCreatedCharge))
-
-      await service.createBankTransferFulfillment(
-        paymentFlowId,
-        uuid(),
-        dummyCharge,
-      )
-
-      expect(service.createFjsCharge).toHaveBeenCalledTimes(1)
-    })
-  })
-
   describe('findPaidFlowsWithoutFjsCharge — bank transfer exclusion', () => {
     it('does not return a paid bank_transfer flow (no worker backfill for transfers)', async () => {
       const paymentFlowModel = app.get<typeof PaymentFlow>(
@@ -488,4 +365,5 @@ describe('PaymentFlowService', () => {
       expect(result.map((flow) => flow.id)).not.toContain(paymentFlowId)
     })
   })
+
 })

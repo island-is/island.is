@@ -2,7 +2,14 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { SubmitHandler } from 'react-hook-form'
 
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  PaymentsBankTransferFailureReason,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+} from '@island.is/shared/constants'
 import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
@@ -19,6 +26,25 @@ interface UsePaymentOrchestrationProps {
   isApplePayPaymentEnabledForUser: boolean
 }
 
+const deriveInitialBankTransferError = (
+  paymentFlow: UsePaymentOrchestrationProps['paymentFlow'],
+): PaymentError | null => {
+  if (
+    paymentFlow?.paymentStatus !==
+    PaymentsGetFlowPaymentStatus.bank_transfer_failed
+  ) {
+    return null
+  }
+  switch (paymentFlow.lastBankTransferFailure) {
+    case PaymentsBankTransferFailureReason.rejected:
+      return { code: BankTransferErrorCode.BankTransferRejected }
+    case PaymentsBankTransferFailureReason.cancelled:
+      return { code: BankTransferErrorCode.BankTransferCancelled }
+    default:
+      return { code: BankTransferErrorCode.BankTransferGenericError }
+  }
+}
+
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
@@ -30,13 +56,15 @@ export const usePaymentOrchestration = ({
   )
   // This local submitting state is for the brief period before a specific hook takes over
   const [isInitiatingSubmit, setIsInitiatingSubmit] = useState(false)
-  const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
+  const [paymentError, setPaymentError] = useState<PaymentError | null>(() =>
+    deriveInitialBankTransferError(paymentFlow),
+  )
 
   const [isThreeDSecureModalActive, setIsThreeDSecureModalActive] =
     useState(false)
 
   const commonOnPaymentSuccess = useCallback(
-    (paymentMethod: 'card' | 'invoice') => {
+    (paymentMethod: 'card' | 'invoice' | 'bank_transfer') => {
       if (paymentMethod === 'invoice') {
         if (
           paymentFlow?.redirectOnInvoiceCreation &&
@@ -168,5 +196,6 @@ export const usePaymentOrchestration = ({
     supportsApplePay: applePayPayment.supportsApplePay ?? false,
     initiateApplePay: applePayPayment.initiateApplePay,
     bankTransferLastAttemptAt: bankTransferPayment.lastAttemptAt,
+    bankTransferExpiresAt: bankTransferPayment.expiresAt,
   }
 }

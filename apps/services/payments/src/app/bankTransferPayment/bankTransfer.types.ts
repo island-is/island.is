@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
+import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 
-/** Normalized status the rest of the service and the frontend work with. */
+/** Normalized bank-transfer status used internally and on the wire. */
 export enum BankTransferStatus {
   PENDING = 'pending',
   SUCCESS = 'success',
@@ -11,44 +12,52 @@ export enum BankTransferStatus {
   CANCELLED = 'cancelled',
 }
 
-/** PENDING is the only non-terminal state; everything else is final. */
+/** Failure subset of BankTransferStatus surfaced on the GetPaymentFlow response. */
+export enum BankTransferFailureReason {
+  REJECTED = 'rejected',
+  CANCELLED = 'cancelled',
+  ERROR = 'error',
+}
+
+/** True for any status that won't change again (SUCCESS and the three failure values). */
 export const isTerminalBankTransferStatus = (
   status: BankTransferStatus,
 ): boolean => status !== BankTransferStatus.PENDING
 
 export interface CreateBankTransferPaymentInput {
-  // Amount in the smallest currency unit (e.g. ISK).
   amount: number
   currency: string
-  // Our payment flow id — used for correlation/logging and the partner redirect URL; NOT the provider
-  // idempotency key. See `sourceReferenceId`.
   paymentFlowId: string
-  // Per-attempt idempotency key sent to the provider — fresh per attempt so that retries after a
-  // terminal failure are not blocked by the provider's idempotency cache. The caller (the create
-  // controller) generates this; we use the `bank_transfer_payment.id` row UUID for it.
+  // Per-attempt idempotency key sent to the provider — distinct from paymentFlowId to allow retries.
   correlationId: string
-  // Webhook target the provider calls on status updates.
   callbackUrl?: string
-  // Where the provider returns the user after SCA.
   partnerRedirectUrl?: string
-  // Optional merchant-defined source identifier.
   source?: string
   items?: CatalogItemWithQuantity[]
-  // Unix timestamp (seconds) after which the payment expires.
+  // Unix seconds.
   expiresAt?: number
 }
 
 export interface BankTransferPaymentResult {
-  // The provider's payment id.
   providerPaymentId: string
-  // The provider's raw status string, persisted to `bank_transfer_payment.last_known_status`.
+  // Raw provider status, persisted verbatim to `last_known_status`.
   rawStatus: string
-  // Normalized status used for branching and surfaced to the frontend.
   status: BankTransferStatus
-  // URL to redirect the user to for SCA. can be empty. FE should not redirect if this is empty.
+  // Empty / undefined = back-channel SCA, no redirect.
   scaRedirectUrl?: string
-  // Provider message (e.g. error detail), if any.
   message?: string
+}
+
+/** Bank-transfer overlay folded into GetPaymentFlow when the base status is UNPAID. */
+export interface BankTransferStatusOverlay {
+  paymentStatus:
+    | PaymentStatus.BANK_TRANSFER_PENDING
+    | PaymentStatus.BANK_TRANSFER_FAILED
+  updatedAt: Date
+  bankTransferScaRedirectUrl?: string
+  lastBankTransferFailure?: BankTransferFailureReason
+  // Row TTL; drives the FE polling hard timeout.
+  bankTransferExpiresAt?: Date
 }
 
 export const blikkCreatePaymentResponseSchema = z.object({

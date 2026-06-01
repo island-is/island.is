@@ -397,7 +397,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
-    // If a payment fulfillment exists, the payment flow is paid by card
+    // If a payment fulfillment exists, the payment flow is paid by card or bank transfer
     if (paymentFulfillment) {
       return {
         paymentStatus: PaymentStatus.PAID,
@@ -423,7 +423,7 @@ export class PaymentFlowService {
       }
     }
 
-    // If neither the payment fulfillment nor the fjs charge exist, the payment flow is unpaid
+    // Bank-transfer overlay is added at the controller layer.
     return {
       paymentStatus: PaymentStatus.UNPAID,
       updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
@@ -446,6 +446,7 @@ export class PaymentFlowService {
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
 
+      // Bank-transfer overlay is composed at the controller layer.
       return {
         ...paymentFlow,
         productTitle:
@@ -894,63 +895,6 @@ export class PaymentFlowService {
     throw new BadRequestException(
       InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
     )
-  }
-
-  /**
-   * Creates the payment fulfillment for a bank-transfer payment and the FJS charge.
-   */
-  async createBankTransferFulfillment(
-    paymentFlowId: string,
-    confirmationRefId: string,
-    chargePayload: Charge,
-  ): Promise<void> {
-    // The flow is already fulfilled.
-    const existing = await this.paymentFulfillmentModel.findOne({
-      where: { paymentFlowId, isDeleted: false },
-    })
-
-    if (existing) {
-      this.logger.info(
-        `[${paymentFlowId}] Bank transfer already fulfilled — skipping FJS charge`,
-      )
-      return
-    }
-
-    try {
-      await this.paymentFulfillmentModel.create({
-        paymentFlowId,
-        paymentMethod: 'bank_transfer',
-        confirmationRefId,
-      })
-    } catch (error) {
-      // Lost the race to a concurrent caller — the unique index rejected our insert.
-      if ((error as Error)?.name === 'SequelizeUniqueConstraintError') {
-        this.logger.info(
-          `[${paymentFlowId}] Bank transfer fulfillment already claimed — skipping FJS charge`,
-        )
-        return
-      }
-      throw error
-    }
-
-    // First payment only — create the FJS charge inline.
-    try {
-      await retry(() => this.createFjsCharge(paymentFlowId, chargePayload), {
-        maxRetries: 3,
-        retryDelayMs: 1000,
-        logger: this.logger,
-        logPrefix: `[${paymentFlowId}] Create bank transfer FJS charge`,
-        shouldRetryOnError: (error) =>
-          error.message !== FjsErrorCode.AlreadyCreatedCharge,
-      })
-    } catch (error) {
-      // The transfer already settled and the fulfillment is committed, so the flow stays PAID — we must
-      // not un-pay it. The missing FJS charge needs manual reconciliation.
-      this.logger.error(
-        `[${paymentFlowId}] CRITICAL: bank transfer settled but FJS charge failed after retries — manual reconciliation required`,
-        { error: (error as Error)?.message },
-      )
-    }
   }
 
   async createFjsCharge(paymentFlowId: string, chargePayload: Charge) {

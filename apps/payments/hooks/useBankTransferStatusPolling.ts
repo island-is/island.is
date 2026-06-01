@@ -1,43 +1,55 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { PaymentsBankTransferStatus } from '@island.is/api/schema'
 import { CardErrorCode } from '@island.is/shared/constants'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 
 /**
- * Drives the bank-transfer settlement loop. Verifies immediately on enable, then polls with the
- * backoff `1s → 2s → 4s → 8s → 15s` (capped at 15 s thereafter). Hard timeout at 5 min. The verify
- * mutation itself is what triggers settlement on the backend (see `BankTransferService.verify` →
- * `confirmBankTransferPayment`), so polling is also doing the settling — Blikk's webhook to the FE
- * Next.js handler is a fast-path optimization, not a requirement.
- *
- * Terminal results call `onSuccess` / `onFailure` once and stop the loop. `BankTransferNotFound`
- * (no active attempt) also stops the loop silently — the caller should bump `trigger` after starting
- * a new attempt to restart polling (covers the back-channel SCA case, where the user stays on the
- * page after submit and a row only exists once `paymentsCreateBankTransfer` returns).
+ * Polls `paymentsVerifyBankTransfer` until the attempt reaches a terminal state.
  */
 interface UseBankTransferStatusPollingProps {
   paymentFlowId: string | undefined
-  /** Gate the loop. Typically `paymentStatus === 'unpaid'`. */
+  // Gate the loop`.
   enabled: boolean
-  /** Bump to restart polling (e.g. after a no-redirect submit). */
+  // Bump to restart polling
   trigger?: unknown
+  // Bank transfer payment `expires_at` (matches the TTL we shared with Blikk). Drives the hard timeout
+  expiresAt?: Date | string | null
   onSuccess: () => void
   onFailure: (error: PaymentError) => void
 }
 
-const HARD_TIMEOUT_MS = 5 * 60 * 1000
 const POLL_INTERVALS_MS = [1000, 2000, 4000, 8000, 15000]
 const NOT_FOUND_MARKER = 'BankTransferNotFound'
+const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
+const FALLBACK_HARD_TIMEOUT_MS = 15 * 60 * 1000 // 15 minutes
 
 const nextInterval = (attempt: number) =>
   POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
+
+const computeHardTimeoutMs = (
+  expiresAt: Date | string | null | undefined,
+): number => {
+  if (!expiresAt) {
+    return FALLBACK_HARD_TIMEOUT_MS
+  }
+
+  const expiry = new Date(expiresAt).getTime()
+  if (Number.isNaN(expiry)) {
+    return FALLBACK_HARD_TIMEOUT_MS
+  }
+
+  // Clamp to a minimum positive value so at least one poll runs.
+  return Math.max(1000, expiry - Date.now() + TIMEOUT_GRACE_MS)
+}
 
 export const useBankTransferStatusPolling = ({
   paymentFlowId,
   enabled,
   trigger,
+  expiresAt,
   onSuccess,
   onFailure,
 }: UseBankTransferStatusPollingProps) => {
@@ -64,19 +76,27 @@ export const useBankTransferStatusPolling = ({
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let attempt = 0
     const startedAt = Date.now()
+    const hardTimeoutMs = computeHardTimeoutMs(expiresAt)
 
     setIsPolling(true)
 
     const stop = () => {
       cancelled = true
-      if (timeoutId) clearTimeout(timeoutId)
+
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+
       setIsPolling(false)
     }
 
     const poll = async () => {
-      if (cancelled) return
+      if (cancelled) {
+        return
+      }
 
-      if (Date.now() - startedAt > HARD_TIMEOUT_MS) {
+      // hard timeout reached
+      if (Date.now() - startedAt > hardTimeoutMs) {
         stop()
         onFailureRef.current({ code: CardErrorCode.UnknownCardError })
         return
@@ -86,18 +106,22 @@ export const useBankTransferStatusPolling = ({
         const result = await verifyBankTransferMutation({
           variables: { input: { paymentFlowId } },
         })
-        if (cancelled) return
+
+        // if the request was cancelled, stop polling
+        if (cancelled) {
+          return
+        }
 
         const status = result.data?.paymentsVerifyBankTransfer.status
-        if (status === 'success') {
+        if (status === PaymentsBankTransferStatus.success) {
           stop()
           onSuccessRef.current()
           return
         }
         if (
-          status === 'error' ||
-          status === 'rejected' ||
-          status === 'cancelled'
+          status === PaymentsBankTransferStatus.error ||
+          status === PaymentsBankTransferStatus.rejected ||
+          status === PaymentsBankTransferStatus.cancelled
         ) {
           stop()
           onFailureRef.current({ code: CardErrorCode.GenericDecline })
@@ -107,7 +131,9 @@ export const useBankTransferStatusPolling = ({
         timeoutId = setTimeout(poll, nextInterval(attempt))
         attempt++
       } catch (e) {
-        if (cancelled) return
+        if (cancelled) {
+          return
+        }
         const message = e instanceof Error ? e.message : ''
         if (message.includes(NOT_FOUND_MARKER)) {
           // No active attempt — exit silently. A subsequent `trigger` change restarts the loop.
@@ -124,10 +150,13 @@ export const useBankTransferStatusPolling = ({
 
     return () => {
       cancelled = true
-      if (timeoutId) clearTimeout(timeoutId)
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
     }
-    // `trigger` is in deps so callers can restart polling explicitly.
-  }, [paymentFlowId, enabled, trigger, verifyBankTransferMutation])
+    // `trigger` is in deps so callers can restart polling explicitly; `expiresAt` is in deps so
+    // a post-submit value updates the timeout when it arrives.
+  }, [paymentFlowId, enabled, trigger, expiresAt, verifyBankTransferMutation])
 
   return { isPolling }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -8,19 +8,15 @@ import { BankTransferController } from './bankTransfer.controller'
 import { BankTransferService } from './bankTransfer.service'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 
-/**
- * Module for the instant bank-transfer payment method (Blikk as the v1 provider).
- *
- * Depends one-way on PaymentFlowModule: it uses PaymentFlowService (status, FJS charge, confirmation,
- * upstream notifications). PaymentFlowModule must not import this module (would be circular).
- */
+/** Bank-transfer module (Blikk v1). Uses forwardRef both ways to resolve the cycle with PaymentFlowModule. */
 @Module({
   imports: [
     SequelizeModule.forFeature([BankTransferPayment]),
     ConfigModule.forRoot({ load: [BankTransferModuleConfig] }),
-    PaymentFlowModule,
+    forwardRef(() => PaymentFlowModule),
   ],
   controllers: [BankTransferController],
   providers: [BankTransferService],
+  exports: [BankTransferService],
 })
 export class BankTransferPaymentModule {}

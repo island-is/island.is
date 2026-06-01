@@ -6,6 +6,8 @@ import { CreateBankTransferInput } from './dtos/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dtos/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dtos/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dtos/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dtos/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dtos/cancelBankTransfer.response'
 
 @ApiTags('payments')
 @Controller({
@@ -39,5 +41,18 @@ export class BankTransferController {
     @Body() input: VerifyBankTransferInput,
   ): Promise<VerifyBankTransferResponse> {
     return this.bankTransferService.verify(input)
+  }
+
+  /**
+   * Cancels the active bank-transfer attempt for a flow. Driven by the FE's "Cancel" button on the
+   * pending screen and "Start Again" button on the failed screen. Best-effort calls Blikk's cancel
+   * endpoint when the row is still PENDING + fresh; always soft-deletes the local row. Idempotent.
+   */
+  @Post('/cancel')
+  @ApiOkResponse({ type: CancelBankTransferResponse })
+  async cancel(
+    @Body() input: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    return this.bankTransferService.cancel(input)
   }
 }
