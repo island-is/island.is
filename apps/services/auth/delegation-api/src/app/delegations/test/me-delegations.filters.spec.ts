@@ -371,7 +371,7 @@ describe('MeDelegationsController filters', () => {
     expect(res.status).toEqual(204)
   })
 
-  it('PATCH /v1/me/delegations/:id should return 400 for incoming delegations when updating scopes', async () => {
+  it('PATCH /v1/me/delegations/:id should return 204 for incoming delegations', async () => {
     // Arrange
     const dto: PatchDelegationDTO = {
       updateScopes: [
@@ -384,8 +384,8 @@ describe('MeDelegationsController filters', () => {
       .patch(`/v1/me/delegations/${delegations.incomingValid.id}`)
       .send(dto)
 
-    // Assert
-    expect(res.status).toEqual(400)
+    // Assert:
+    expect(res.status).toEqual(204)
   })
 
   it('DELETE /v1/me/delegations/:id should return 204 if delegation belongs to another user', async () => {
@@ -396,6 +396,36 @@ describe('MeDelegationsController filters', () => {
 
     // Assert
     expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient revokes the only scope on an incoming delegation', async () => {
+    // Act
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 if delegation does not belong to the user', async () => {
+    // Act
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.otherUsers.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when scopeNames is empty', async () => {
+    // Act
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.validOutgoing.id}/scopes`)
+      .send({ scopeNames: [] })
+
+    // Assert
+    expect(res.status).toEqual(400)
   })
 })
 

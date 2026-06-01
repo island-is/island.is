@@ -22,6 +22,7 @@ import {
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
+  DeleteDelegationScopesInput,
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
@@ -223,6 +224,20 @@ export class MeDelegationsService {
         deleteScopes,
         updateScopes,
       },
+    })
+    const delegation = request.raw.status === 204 ? null : await request.value()
+    return delegation ? this.includeDomainNameInScopes(delegation) : null
+  }
+
+  async deleteDelegationScopes(
+    user: User,
+    { delegationId, scopeNames }: DeleteDelegationScopesInput,
+  ): Promise<DelegationDTO | null> {
+    const request = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerDeleteScopesRaw({
+      delegationId,
+      deleteDelegationScopesDTO: { scopeNames },
     })
     const delegation = request.raw.status === 204 ? null : await request.value()
     return delegation ? this.includeDomainNameInScopes(delegation) : null

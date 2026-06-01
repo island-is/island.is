@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { and, Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -15,20 +17,28 @@ import { ClientDelegationType } from '../clients/models/client-delegation-type.m
 import { Client } from '../clients/models/client.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { AliveStatusService, NameInfo } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationProviderService } from './delegation-provider.service'
+import { DelegationScopeService } from './delegation-scope.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import { DelegationsIndexService } from './delegations-index.service'
-import { validateDistrictCommissionersDelegations } from './utils/delegations'
+import {
+  getDelegationNoActorWhereClause,
+  validateDistrictCommissionersDelegations,
+} from './utils/delegations'
 import { DelegationRecordDTO } from './dto/delegation-index.dto'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
+import { DelegationDirection } from './types/delegationDirection'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -60,12 +70,16 @@ export class DelegationsIncomingService {
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
+    @InjectModel(Delegation)
+    private delegationModel: typeof Delegation,
     private incomingDelegationsCompanyService: IncomingDelegationsCompanyService,
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
+    private delegationScopeService: DelegationScopeService,
+    private delegationResourceService: DelegationResourcesService,
     private aliveStatusService: AliveStatusService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
@@ -321,6 +335,78 @@ export class DelegationsIncomingService {
     })
 
     return [...mergedDelegationMap.values()]
+  }
+
+  async deleteScopes(
+    user: User,
+    delegationId: string,
+    scopeNames: string[],
+  ): Promise<DelegationDTO> {
+    if (scopeNames.length === 0) {
+      throw new BadRequestException('scopeNames must not be empty.')
+    }
+
+    const currentDelegation = await this.delegationModel.findOne({
+      where: and(
+        { id: delegationId, toNationalId: user.nationalId },
+        getDelegationNoActorWhereClause(user),
+      ),
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          as: 'delegationScopes',
+        },
+      ],
+    })
+    if (!currentDelegation) {
+      throw new NoContentException()
+    }
+
+    if (
+      !(await this.delegationResourceService.validateScopeAccess(
+        user,
+        currentDelegation.domainName ?? null,
+        DelegationDirection.INCOMING,
+        scopeNames,
+      ))
+    ) {
+      throw new BadRequestException(
+        'User does not have access to the requested scopes.',
+      )
+    }
+
+    await this.delegationScopeService.deleteByName(delegationId, scopeNames)
+
+    // Reindex the recipient's own delegation cache.
+    void this.delegationsIndexService.indexDelegations(user)
+
+    // Refetch with the remaining scopes so the caller can echo the new state.
+    const refreshed = await this.delegationModel.findOne({
+      where: and(
+        { id: delegationId, toNationalId: user.nationalId },
+        getDelegationNoActorWhereClause(user),
+      ),
+      useMaster: true,
+      include: [
+        {
+          model: DelegationScope,
+          required: false,
+          include: [
+            {
+              attributes: ['displayName'],
+              model: ApiScope,
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!refreshed || (refreshed.delegationScopes?.length ?? 0) === 0) {
+      throw new NoContentException()
+    }
+
+    return refreshed.toDTO()
   }
 
   async verifyDelegationAtProvider(

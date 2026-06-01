@@ -357,10 +357,7 @@ export class DelegationsOutgoingService {
         [Op.and]: [
           {
             id: delegationId,
-            [Op.or]: [
-              { fromNationalId: user.nationalId },
-              { toNationalId: user.nationalId },
-            ],
+            fromNationalId: user.nationalId,
           },
           getDelegationNoActorWhereClause(user),
         ],
@@ -377,22 +374,11 @@ export class DelegationsOutgoingService {
       throw new NoContentException()
     }
 
-    const isFromUser = currentDelegation.fromNationalId === user.nationalId
-    const direction = isFromUser
-      ? DelegationDirection.OUTGOING
-      : DelegationDirection.INCOMING
-
-    if (!isFromUser && (patchedDelegation.updateScopes?.length ?? 0) > 0) {
-      throw new BadRequestException(
-        'Only the from-user of a delegation can update scopes.',
-      )
-    }
-
     if (
       !(await this.delegationResourceService.validateScopeAccess(
         user,
         currentDelegation.domainName ?? null,
-        direction,
+        DelegationDirection.OUTGOING,
         [
           ...(patchedDelegation.updateScopes ?? []).map((scope) => scope.name),
           ...(patchedDelegation.deleteScopes ?? []),
@@ -430,15 +416,7 @@ export class DelegationsOutgoingService {
       )
     }
 
-    const delegation = await this.findOneInternal(user, direction, {
-      id: delegationId,
-      ...(isFromUser
-        ? { fromNationalId: user.nationalId }
-        : { toNationalId: user.nationalId }),
-    })
-    if (!delegation) {
-      throw new NoContentException()
-    }
+    const delegation = await this.findById(user, delegationId)
 
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
@@ -446,12 +424,10 @@ export class DelegationsOutgoingService {
       user,
     )
 
-    if (isFromUser) {
-      const hasExistingScopes =
-        (currentDelegation.delegationScopes?.length ?? 0) > 0
+    const hasExistingScopes =
+      (currentDelegation.delegationScopes?.length ?? 0) > 0
 
-      void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
-    }
+    void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
 
     return delegation
   }

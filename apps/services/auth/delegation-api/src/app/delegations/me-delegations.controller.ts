@@ -22,6 +22,7 @@ import {
   DelegationsOutgoingService,
   DelegationsService,
   DelegationValidity,
+  DeleteDelegationScopesDTO,
   PatchDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -256,6 +257,43 @@ export class MeDelegationsController {
         }),
       },
       this.delegationsOutgoingService.delete(user, delegationId),
+    )
+  }
+
+  @Delete(':delegationId/scopes')
+  @Documentation({
+    includeNoContentResponse: true,
+    response: { status: 200, type: DelegationDTO },
+    request: {
+      params: {
+        delegationId,
+      },
+    },
+  })
+  @Audit<DelegationDTO>({
+    resources: (delegation) => delegation?.id ?? undefined,
+  })
+  deleteScopes(
+    @CurrentUser() user: User,
+    @Param('delegationId') delegationId: string,
+    @Body() body: DeleteDelegationScopesDTO,
+  ): Promise<DelegationDTO> {
+    return this.auditService.auditPromise<DelegationDTO>(
+      {
+        auth: user,
+        namespace,
+        action: 'deleteScopes',
+        resources: (delegation) => delegation?.id ?? undefined,
+        meta: (delegation) => ({
+          deleteScopes: body.scopeNames,
+          scopes: delegation?.scopes?.map((s) => s.scopeName),
+        }),
+      },
+      this.delegationsIncomingService.deleteScopes(
+        user,
+        delegationId,
+        body.scopeNames,
+      ),
     )
   }
 }

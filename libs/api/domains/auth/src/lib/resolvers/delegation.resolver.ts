@@ -23,6 +23,7 @@ import {
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
+  DeleteDelegationScopesInput,
   PatchDelegationInput,
   UpdateDelegationInput,
 } from '../dto'
@@ -131,6 +132,18 @@ export class DelegationResolver {
     input: PatchDelegationInput,
   ): Promise<DelegationDTO | null> {
     return this.meDelegationsService.patchDelegation(user, input)
+  }
+
+  @Mutation(() => Delegation, {
+    name: 'deleteAuthDelegationScopes',
+    nullable: true,
+  })
+  deleteDelegationScopes(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DeleteDelegationScopesInput })
+    input: DeleteDelegationScopesInput,
+  ): Promise<DelegationDTO | null> {
+    return this.meDelegationsService.deleteDelegationScopes(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })

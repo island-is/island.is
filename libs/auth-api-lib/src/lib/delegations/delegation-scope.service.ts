@@ -112,6 +112,18 @@ export class DelegationScopeService {
     })
   }
 
+  async deleteByName(
+    delegationId: string,
+    scopeNames: string[],
+    transaction?: Transaction,
+  ): Promise<number> {
+    if (scopeNames.length === 0) return 0
+    return this.delegationScopeModel.destroy({
+      where: { delegationId, scopeName: scopeNames },
+      transaction,
+    })
+  }
+
   async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
       where: { delegationId },

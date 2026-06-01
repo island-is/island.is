@@ -118,6 +118,17 @@ export class PatchDelegationDTO {
   deleteScopes?: string[]
 }
 
+export class DeleteDelegationScopesDTO {
+  @ApiProperty({
+    description:
+      'List of scope names to remove from a delegation. Used by the recipient of an incoming delegation to revoke their own scopes.',
+    type: [String],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  scopeNames!: string[]
+}
+
 export class CreateDelegationDTO {
   @IsString()
   @ApiProperty({
