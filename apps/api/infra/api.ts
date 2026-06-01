@@ -330,6 +330,7 @@ export const serviceSetup = (services: {
         dev: 'https://identity-server.staging01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
+      },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',
         staging: 'https://api.serlyfjaskra.is',
