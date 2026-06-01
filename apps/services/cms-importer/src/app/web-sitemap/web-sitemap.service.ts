@@ -162,7 +162,7 @@ export class WebSitemapService {
 
     if (urls.length > 0) await flushSitemapUrlsToFile()
 
-    const timestamp = new Date().toISOString()
+    const timestamp = `${new Date().toISOString().split('.')[0]}+00:00`
 
     await this.uploadXmlFile(
       `<?xml version="1.0" encoding="UTF-8"?>

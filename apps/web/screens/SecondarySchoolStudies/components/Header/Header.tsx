@@ -16,7 +16,6 @@ export const Header = () => {
       image="/assets/framhaldsskolanamHeaderImage.svg"
       imagePadding="0"
       background={BACKGROUND_COLOR}
-      mobileBackground={BACKGROUND_COLOR}
       logo="/assets/skjaldarmerki.svg"
       logoAltText="Icelandic coat of arms"
       fullWidth={false}

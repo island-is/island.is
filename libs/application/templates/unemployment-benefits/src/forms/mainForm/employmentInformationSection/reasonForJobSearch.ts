@@ -40,6 +40,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'reasonForJobSearch.mainReason',
+          required: true,
           title:
             employmentMessages.reasonForJobSearch.labels
               .reasonForJobSearchLabel,
