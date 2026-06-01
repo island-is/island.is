@@ -75,7 +75,11 @@ const NotificationsModule = React.memo(
     )
 
     const onNotificationPress = (notification: Notification) => {
-      void markUserNotificationAsRead({ variables: { id: notification.id } })
+      void markUserNotificationAsRead({
+        variables: { id: notification.id },
+      }).catch(() => {
+        // ignore mark-as-read failures; navigation should still proceed
+      })
       navigateToUniversalLink({
         link: notification.message?.link?.url,
         fromScreen: '/notifications',
