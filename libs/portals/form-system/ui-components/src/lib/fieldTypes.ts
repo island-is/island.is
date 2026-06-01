@@ -14,6 +14,9 @@ export type FieldTypeMapping = {
   [FieldTypesEnum.NATIONAL_ID]: {
     nationalId?: FormSystemValue['nationalId']
     name?: FormSystemValue['name']
+    address?: FormSystemValue['address']
+    municipality?: FormSystemValue['municipality']
+    postalCode?: FormSystemValue['postalCode']
   }
   [FieldTypesEnum.BANK_ACCOUNT]: {
     bankAccount?: FormSystemValue['bankAccount']
@@ -83,7 +86,13 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.PHONE_NUMBER:
       return { phoneNumber: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NATIONAL_ID:
-      return { nationalId: undefined, name: undefined } as FieldTypeMapping[T]
+      return {
+        nationalId: undefined,
+        name: undefined,
+        address: undefined,
+        municipality: undefined,
+        postalCode: undefined,
+      } as FieldTypeMapping[T]
     case FieldTypesEnum.BANK_ACCOUNT:
       return { bankAccount: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.ISK_NUMBERBOX:

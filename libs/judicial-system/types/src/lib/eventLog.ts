@@ -15,6 +15,7 @@ export enum EventType {
   COURT_DATE_SCHEDULED = 'COURT_DATE_SCHEDULED',
   REQUEST_COMPLETED = 'REQUEST_COMPLETED', // Request case is completed
   INDICTMENT_SPLIT_COMPLETED = 'INDICTMENT_SPLIT_COMPLETED',
+  INDICTMENT_REOPENED = 'INDICTMENT_REOPENED',
 }
 
 export const eventTypes = Object.values(EventType)

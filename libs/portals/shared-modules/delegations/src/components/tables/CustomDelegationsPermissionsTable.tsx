@@ -124,7 +124,9 @@ export const CustomDelegationsPermissionsTable = ({
         ? 'authDelegationsGroupedByIdentityOutgoing'
         : 'authDelegationsGroupedByIdentityIncoming'
 
-    const cacheUpdate = (cache: ReturnType<typeof useApolloClient>['cache']) => {
+    const cacheUpdate = (
+      cache: ReturnType<typeof useApolloClient>['cache'],
+    ) => {
       if (isLastScope) {
         if (personCacheId) {
           cache.evict({ id: personCacheId })
