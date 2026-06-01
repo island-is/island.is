@@ -810,7 +810,7 @@ export class InternalCaseController {
       ...investigationCases,
       ...indictmentCases,
     ]),
-    CaseCompletedGuard,
+    AppealCaseExistsGuard,
   )
   @Post(
     `case/:caseId/${
