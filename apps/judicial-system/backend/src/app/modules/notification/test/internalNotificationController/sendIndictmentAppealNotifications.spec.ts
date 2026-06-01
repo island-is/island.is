@@ -4,12 +4,14 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
+  AppealCaseNotificationType,
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseType,
   InstitutionType,
+  RequestCaseNotificationType,
+  TrackedNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -116,7 +118,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
           } as Case,
           {
             user,
-            type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -338,7 +340,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT,
+            type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -484,7 +486,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
           } as Case,
           {
             user,
-            type: CaseNotificationType.APPEAL_STATEMENT,
+            type: AppealCaseNotificationType.APPEAL_STATEMENT as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -672,12 +674,12 @@ describe('InternalNotificationController - Send indictment appeal completed noti
             appealCase: {
               appealState: AppealCaseState.COMPLETED,
               appealCaseNumber,
-              appealRulingDecision: CaseAppealRulingDecision.ACCEPTING,
+              appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
             },
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: CaseNotificationType.APPEAL_COMPLETED,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -812,7 +814,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
           } as Case,
           {
             user,
-            type: CaseNotificationType.APPEAL_WITHDRAWN,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))
@@ -981,12 +983,12 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
             civilClaimants,
             appealCase: {
               appealCaseNumber,
-              appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+              appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
             },
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: CaseNotificationType.APPEAL_COMPLETED,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
           },
         )
         .then((result) => (then.result = result))

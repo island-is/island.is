@@ -11,7 +11,7 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -20,18 +20,6 @@ export class UpdateAppealCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly appealCaseNumber?: string
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly prosecutorStatementDate?: Date
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly defendantStatementDate?: Date
 
   @IsOptional()
   @IsString()
@@ -64,9 +52,9 @@ export class UpdateAppealCaseDto {
   readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @IsEnum(AppealCaseRulingDecision)
+  @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
+  readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
   @Type(() => Date)

@@ -36,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile as TCaseFile,
+  Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -62,6 +63,7 @@ interface Props {
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
   setEditCount: Dispatch<SetStateAction<number>>
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers' | 'gender'>[] | null
 }
 
 interface PoliceDigitalCaseFileItemProps {
@@ -334,6 +336,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     subtypes,
     crimeScenes,
     setEditCount,
+    defendants,
   } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useUpdateFilesMutation()
@@ -557,6 +560,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             policeCaseNumber={policeCaseNumber}
             subtypes={subtypes}
             crimeScenes={crimeScenes}
+            defendants={defendants}
           />
         </Box>
         <Box marginBottom={3}>

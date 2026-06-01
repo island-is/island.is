@@ -130,6 +130,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       description
       canBeFoundInSearchResults
       showPastEventsOption
+      newsOverviewCardVariant
       topLevelNavigation {
         links {
           label
@@ -309,6 +310,8 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         ...AllSlices
       }
       showTableOfContents
+      contentLastReviewed
+      showDateOfTheMostRecentReview
       sliceCustomRenderer
       sliceExtraText
       featuredImage {

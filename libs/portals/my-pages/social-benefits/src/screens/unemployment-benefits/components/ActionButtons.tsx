@@ -1,0 +1,66 @@
+import { Box, DropdownMenu } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
+import { VmstApplicationsAvailableActions } from '@island.is/portals/my-pages/graphql'
+import { LinkButton } from '@island.is/portals/my-pages/core'
+
+interface ActionButtonsProps {
+  availableActions?: VmstApplicationsAvailableActions
+  loading?: boolean
+}
+
+export const ActionButtons = ({
+  availableActions,
+  loading,
+}: ActionButtonsProps) => {
+  const { formatMessage } = useLocale()
+
+  const showContactButton = availableActions?.canContact === true
+  const dropdownActions = [
+    {
+      title: formatMessage(um.statusSubmitDocuments),
+      href: formatMessage(um.statusSubmitDocumentsUrl),
+      visible: availableActions?.canSubmitDocuments === true,
+    },
+    {
+      title: formatMessage(um.statusReportIncome),
+      href: formatMessage(um.statusReportIncomeUrl),
+      visible: availableActions?.canReportWork === true,
+    },
+    {
+      title: formatMessage(um.statusReportTravel),
+      href: formatMessage(um.statusReportTravelUrl),
+      visible: availableActions?.canReportTravel === true,
+    },
+    {
+      title: formatMessage(um.statusUnsubscribe),
+      href: formatMessage(um.statusUnsubscribeUrl),
+      visible: availableActions?.canUnregister === true,
+    },
+  ].filter((b) => b.visible)
+
+  if (loading || (!showContactButton && dropdownActions.length === 0)) {
+    return null
+  }
+
+  return (
+    <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
+      {showContactButton && (
+        <LinkButton
+          to={formatMessage(um.statusContactUsUrl)}
+          text={formatMessage(um.statusContactUs)}
+          variant="utility"
+          size="small"
+        />
+      )}
+      {dropdownActions.length > 0 && (
+        <DropdownMenu
+          icon="ellipsisVertical"
+          menuLabel={formatMessage(um.statusMoreActions)}
+          title={formatMessage(um.statusMoreActions)}
+          items={dropdownActions}
+        />
+      )}
+    </Box>
+  )
+}

@@ -96,6 +96,9 @@
       "@island.is/api/domains/energy-funds": [
         "libs/api/domains/energy-funds/src/index.ts"
       ],
+      "@island.is/api/domains/farmers": [
+        "libs/api/domains/farmers/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -141,6 +144,9 @@
       ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
+      ],
+      "@island.is/api/domains/icelandic-medicines-agency": [
+        "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
@@ -666,6 +672,18 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/confirm-job-search": [
+        "libs/application/templates/vmst/confirm-job-search/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/confirm-travel": [
+        "libs/application/templates/vmst/confirm-travel/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/de-register-unemployment-benefits": [
+        "libs/application/templates/vmst/de-register-unemployment-benefits/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/edit-unemployment-information": [
+        "libs/application/templates/vmst/edit-unemployment-information/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -776,8 +794,10 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
+      "@island.is/clients/farmers": ["libs/clients/farmers/src/index.ts"],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "@island.is/clients/financial-management-authority": [
         "libs/clients/financial-management-authority/src/index.ts"
       ],
@@ -842,6 +862,10 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
+      "@island.is/clients/lyfjastofnun-pharmacies": [
+        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -890,6 +914,9 @@
       ],
       "@island.is/clients/practical-exams-ver": [
         "libs/clients/practical-exams-ver/src/index.ts"
+      ],
+      "@island.is/clients/recycling-fund": [
+        "libs/clients/recycling-fund/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
@@ -1245,9 +1272,6 @@
       "@island.is/portals/my-pages/licenses/messages": [
         "libs/portals/my-pages/licenses/src/lib/messages.ts"
       ],
-      "@island.is/portals/my-pages/mileage-registration": [
-        "libs/portals/my-pages/mileage-registration/src/index.ts"
-      ],
       "@island.is/portals/my-pages/modules": [
         "libs/portals/my-pages/modules/src/index.ts"
       ],
@@ -1334,7 +1358,6 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true

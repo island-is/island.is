@@ -1,32 +1,70 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsString, IsObject, ValidateNested } from 'class-validator'
+import {
+  IsIn,
+  IsObject,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator'
 
 class ApplePayPaymentHeader {
   @IsString()
-  @ApiProperty({ description: 'Ephemeral public key', type: String })
+  @MaxLength(256)
+  @ApiProperty({
+    description: 'Ephemeral public key (SPKI base64)',
+    type: String,
+  })
   ephemeralPublicKey!: string
 
   @IsString()
-  @ApiProperty({ description: 'Public key hash', type: String })
+  @Length(1, 128)
+  @ApiProperty({
+    description: 'Public key hash (SHA-256 base64)',
+    type: String,
+  })
   publicKeyHash!: string
 
   @IsString()
-  @ApiProperty({ description: 'Transaction ID', type: String })
+  @Matches(/^[a-fA-F0-9]{64}$/)
+  @ApiProperty({
+    description:
+      'Apple Pay device transaction id: exactly 64 hex chars (32 bytes). Apple emits a SHA-256-derived value here. The strict format prevents odd-length truncation in Buffer.from(s, "hex") from producing two distinct strings that decode to the same bytes — which would otherwise weaken digest binding and replay-cache lookups.',
+    type: String,
+  })
   transactionId!: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(8192)
+  @ApiPropertyOptional({
+    description:
+      'Optional merchant-supplied application data (base64). Included in the signed bytes per PassKit spec.',
+    type: String,
+  })
+  applicationData?: string
 }
 
 class ApplePayPaymentData {
   @IsString()
-  @ApiProperty({ description: 'Version', type: String })
+  @IsIn(['EC_v1'])
+  @ApiProperty({ description: 'Token version', type: String })
   version!: string
 
   @IsString()
-  @ApiProperty({ description: 'Data', type: String })
+  @MaxLength(8192)
+  @ApiProperty({ description: 'Encrypted payment data (base64)', type: String })
   data!: string
 
   @IsString()
-  @ApiProperty({ description: 'Signature', type: String })
+  @MaxLength(16384)
+  @ApiProperty({
+    description: 'Detached PKCS#7 signature (base64)',
+    type: String,
+  })
   signature!: string
 
   @IsObject()
@@ -36,18 +74,9 @@ class ApplePayPaymentData {
   header!: ApplePayPaymentHeader
 }
 
-class ApplePayPaymentMethod {
-  @IsString()
-  @ApiProperty({ description: 'Display name', type: String })
-  displayName!: string
-
-  @IsString()
-  @ApiProperty({ description: 'Network', type: String })
-  network!: string
-}
-
 export class ApplePayChargeInput {
   @IsString()
+  @Length(1, 128)
   @ApiProperty({ description: 'Payment flow ID', type: String })
   paymentFlowId!: string
 
@@ -57,13 +86,12 @@ export class ApplePayChargeInput {
   @ApiProperty({ description: 'Payment data', type: ApplePayPaymentData })
   paymentData!: ApplePayPaymentData
 
-  @IsObject()
-  @ValidateNested()
-  @Type(() => ApplePayPaymentMethod)
-  @ApiProperty({ description: 'Payment method', type: ApplePayPaymentMethod })
-  paymentMethod!: ApplePayPaymentMethod
-
   @IsString()
-  @ApiProperty({ description: 'Transaction identifier', type: String })
+  @Matches(/^[a-fA-F0-9]{64}$/)
+  @ApiProperty({
+    description:
+      "Apple Pay transaction identifier: exactly 64 hex chars (32 bytes). Used as a replay-protection cache key. Strict format matches Apple's canonical transactionId so two formatting variants can never bypass replay detection.",
+    type: String,
+  })
   transactionIdentifier!: string
 }

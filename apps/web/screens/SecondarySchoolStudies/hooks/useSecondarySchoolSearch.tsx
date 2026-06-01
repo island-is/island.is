@@ -32,8 +32,10 @@ type QueryLeaf =
   | { 'qualification.title': string }
   | { 'specialization.title': string }
   | { 'school.id': string }
+  | { 'school.abbreviation': string }
   | { 'school.countryArea.id': string }
   | { 'qualification.level.id': string }
+  | { isReferenceProgramme: string }
 
 interface QueryOr {
   $or: Array<QueryLeaf>
@@ -73,8 +75,24 @@ export const SearchProgrammes = ({
         orFilters.push({ 'school.countryArea.id': `=${searchParam}` })
       } else if (filter.key === 'levels') {
         orFilters.push({ 'qualification.level.id': `=${searchParam}` })
+      } else if (filter.key === 'isReferenceProgramme') {
+        const boolValue = searchParam === 'YES' ? 'true' : 'false'
+        orFilters.push({ isReferenceProgramme: `=${boolValue}` })
       }
     })
+
+    // When filtering exclusively for reference programmes, also require "school"(Mennta- og Barnamálaráðuneyti) to be MRN.
+    // Skip this constraint if both YES and NO are selected, since non-reference
+    // programmes from non-MRN schools would otherwise be excluded.
+    if (
+      filter.key === 'isReferenceProgramme' &&
+      filter.value.includes('YES') &&
+      !filter.value.includes('NO')
+    ) {
+      queryMaker.$and.push({
+        $or: [{ 'school.abbreviation': '=MRN' }],
+      })
+    }
 
     if (orFilters.length > 0) {
       queryMaker.$and.push({ $or: orFilters })

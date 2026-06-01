@@ -3,7 +3,10 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AuthAdminEnvironment,
+  AuthAdminEnvironmentFailure,
+} from '@island.is/api/schema'
 
 import {
   UpdateClientDocument,
@@ -11,7 +14,6 @@ import {
   UpdateClientMutationVariables,
 } from './EditClient.generated'
 import { getIntent } from '../../utils/getIntent'
-import { authAdminEnvironments } from '../../utils/environments'
 import {
   ClientFormTypes,
   MergedFormDataSchema,
@@ -19,10 +21,15 @@ import {
 } from './EditClient.schema'
 
 export type EditClientResult = RouterActionResponse<
-  UpdateClientMutation['patchAuthAdminClient'],
+  UpdateClientMutation['patchAuthAdminClient']['environments'],
   ValidateFormDataResult<MergedFormDataSchema>['errors'],
   keyof typeof ClientFormTypes
->
+> & {
+  failedEnvironments?: Pick<
+    AuthAdminEnvironmentFailure,
+    'environment' | 'message'
+  >[]
+}
 
 export const editClientAction: WrappedActionFn =
   ({ client }) =>
@@ -60,9 +67,10 @@ export const editClientAction: WrappedActionFn =
     // then update all environments with the same settings as the current environment intent
     if (sync && syncEnvironments && syncEnvironments.length > 0) {
       environments.push(...syncEnvironments)
-      // If the save in all environments was enabled, then update all environments
+      // If the save in all environments was enabled,
+      // then update every environment the client is configured in
     } else if (saveInAllEnvironments) {
-      environments.push(...authAdminEnvironments)
+      environments.push(environment, ...(syncEnvironments ?? []))
     } else {
       // Otherwise, just update the current environment
       environments.push(environment)
@@ -95,9 +103,13 @@ export const editClientAction: WrappedActionFn =
         return globalErrorResponse
       }
 
+      const failedEnvironments =
+        response.data?.patchAuthAdminClient.failedEnvironments ?? []
+
       return {
-        data: response.data?.patchAuthAdminClient ?? null,
+        data: response.data?.patchAuthAdminClient.environments ?? null,
         intent,
+        ...(failedEnvironments.length > 0 && { failedEnvironments }),
       }
     } catch (error) {
       return globalErrorResponse

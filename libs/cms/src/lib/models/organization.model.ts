@@ -82,6 +82,9 @@ export class Organization {
 
   @Field(() => Boolean, { nullable: true })
   canPagesBeFoundInSearchResults?: boolean
+
+  @Field(() => String, { nullable: true })
+  lang?: string
 }
 
 export const mapOrganization = ({
@@ -119,5 +122,6 @@ export const mapOrganization = ({
     newsBottomSlices: (fields.newsBottomSlices ?? []).map(mapEmailSignup),
     canPagesBeFoundInSearchResults:
       fields.canPagesBeFoundInSearchResults ?? true,
+    lang: sys.locale === 'is-IS' ? 'is' : sys.locale,
   }
 }

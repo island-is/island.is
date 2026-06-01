@@ -5,8 +5,8 @@ import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
-  CaseAppealRulingDecision,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -14,7 +14,7 @@ import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
   appealState?: AppealCaseState | null
-  appealRulingDecision?: CaseAppealRulingDecision | null
+  appealRulingDecision?: AppealCaseRulingDecision | null
   appealCaseNumber?: string | null
 }
 
@@ -28,7 +28,7 @@ const TagAppealState: FC<Props> = ({
 
   const getTagVariantForAppealState = (
     state?: AppealCaseState | null,
-    ruling?: CaseAppealRulingDecision | null,
+    ruling?: AppealCaseRulingDecision | null,
   ):
     | {
         color: TagVariant
@@ -65,12 +65,12 @@ const TagAppealState: FC<Props> = ({
     if (state === AppealCaseState.COMPLETED) {
       return {
         color:
-          ruling === CaseAppealRulingDecision.ACCEPTING
+          ruling === AppealCaseRulingDecision.ACCEPTING
             ? 'mint'
-            : ruling === CaseAppealRulingDecision.CHANGED ||
-              ruling === CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-              ruling === CaseAppealRulingDecision.REPEAL ||
-              ruling === CaseAppealRulingDecision.DISCONTINUED
+            : ruling === AppealCaseRulingDecision.CHANGED ||
+              ruling === AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY ||
+              ruling === AppealCaseRulingDecision.REPEAL ||
+              ruling === AppealCaseRulingDecision.DISCONTINUED
             ? 'rose'
             : 'blueberry',
         text: getAppealResultTextByValue(ruling),

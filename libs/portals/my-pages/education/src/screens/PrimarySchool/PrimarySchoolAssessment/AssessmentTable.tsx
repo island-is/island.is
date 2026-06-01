@@ -19,17 +19,25 @@ const columnHelper =
   createColumnHelper<EducationPrimarySchoolAssessmentResult>()
 
 export const AssessmentTable = ({ results, loading }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
+
+  const hasExamSitting = results.some(
+    (r) =>
+      typeof r.period?.startDateString === 'string' &&
+      r.period.startDateString.trim().length > 0,
+  )
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('schoolYear', {
         header: formatMessage(psm.schoolYear),
+        enableSorting: false,
         cell: ({ getValue }) => getValue() ?? '',
       }),
       columnHelper.accessor((row) => row.grade?.level, {
         id: 'gradeLevel',
         header: formatMessage(psm.gradeLevel),
+        enableSorting: false,
         cell: ({ getValue }) => {
           const level = getValue()
           return level != null
@@ -37,31 +45,43 @@ export const AssessmentTable = ({ results, loading }: Props) => {
             : ''
         },
       }),
-      columnHelper.accessor((row) => row.period?.startDateString, {
-        id: 'examSitting',
-        header: formatMessage(psm.examSitting),
-        cell: ({ getValue }) => getValue() ?? '',
-      }),
+      ...(hasExamSitting
+        ? [
+            columnHelper.accessor((row) => row.period?.startDateString, {
+              id: 'examSitting',
+              header: formatMessage(psm.examSitting),
+              enableSorting: false,
+              cell: ({ getValue }) => getValue() ?? '',
+            }),
+          ]
+        : []),
       columnHelper.display({
-        id: 'download',
-        header: formatMessage(psm.downloadResults),
+        id: 'viewResults',
+        header: () => null,
         enableSorting: false,
-        cell: ({ row }) =>
-          row.original.downloadServiceUrl ? (
+        meta: { align: 'right' },
+        cell: ({ row }) => {
+          const url = row.original.downloadServiceUrl
+          if (!url) return null
+
+          return (
             <Button
               variant="text"
               size="small"
-              icon="download"
+              icon="copy"
               iconType="outline"
-              onClick={() => formSubmit(row.original.downloadServiceUrl!)}
+              aria-label={`${formatMessage(psm.viewResults)}${
+                row.original.schoolYear ? `: ${row.original.schoolYear}` : ''
+              }`}
+              onClick={() => formSubmit(url)}
             >
-              {formatMessage(psm.downloadResults)}
+              {formatMessage(psm.viewResults)}
             </Button>
-          ) : null,
+          )
+        },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage, hasExamSitting],
   )
 
   return (

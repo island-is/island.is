@@ -1,9 +1,5 @@
 import {
   AppealCaseState,
-  CaseIndictmentRulingDecision,
-  CaseState,
-  completedIndictmentCaseStates,
-  completedRequestCaseStates,
   courtOfAppealsRoles,
   indictmentCases,
   InstitutionType,
@@ -22,157 +18,132 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
     institution: { type: InstitutionType.COURT_OF_APPEALS },
   } as User
 
-  const accessibleRequestCaseTypes = [
+  const accessibleCaseTypes = [
     ...restrictionCases,
     ...investigationCases,
+    ...indictmentCases,
   ]
 
-  describe.each(accessibleRequestCaseTypes)(
-    'accessible request case type %s',
-    (type) => {
-      const accessibleCaseStates = completedRequestCaseStates
+  const accessibleAppealCaseStates = [
+    AppealCaseState.RECEIVED,
+    AppealCaseState.COMPLETED,
+    AppealCaseState.WITHDRAWN,
+  ]
 
-      describe.each(
-        Object.values(CaseState).filter(
-          (state) => !accessibleCaseStates.includes(state),
-        ),
-      )('inaccessible case state %s', (state) => {
-        const theCase = { type, state } as Case
+  const inaccessibleAppealCaseStates = [
+    undefined,
+    ...Object.values(AppealCaseState),
+  ].filter((s) => !s || !accessibleAppealCaseStates.includes(s))
 
-        verifyNoAccess(theCase, user)
-      })
+  describe.each(accessibleCaseTypes)('accessible case type %s', (type) => {
+    describe('no appeal case', () => {
+      const theCase = { type } as Case
 
-      describe.each(accessibleCaseStates)(
-        'accessible case state %s',
-        (state) => {
-          const accessibleAppealCaseStates = [
-            AppealCaseState.RECEIVED,
-            AppealCaseState.COMPLETED,
-            AppealCaseState.WITHDRAWN,
-          ]
+      verifyNoAccess(theCase, user)
+    })
 
-          describe.each(
-            [undefined, ...Object.values(AppealCaseState)].filter(
-              (state) => !state || !accessibleAppealCaseStates.includes(state),
-            ),
-          )('inaccessible case appeal state %s', (appealState) => {
-            const theCase = {
-              type,
-              state,
-              appealCase: { appealState },
-            } as Case
-
-            verifyNoAccess(theCase, user)
-          })
-
-          describe.each(accessibleAppealCaseStates)(
-            'accessible case appeal state %s',
-            (appealState) => {
-              const theCase = {
-                type,
-                state,
-                appealCase: {
-                  appealState,
-                  appealReceivedByCourtDate: nowFactory(),
-                },
-              } as Case
-
-              verifyFullAccess(theCase, user)
-            },
-          )
-        },
-      )
-    },
-  )
-
-  describe.each(indictmentCases)(
-    'accessible indictment case type %s',
-    (type) => {
-      const accessibleCaseStates = completedIndictmentCaseStates
-
-      describe.each(
-        Object.values(CaseState).filter(
-          (state) => !accessibleCaseStates.includes(state),
-        ),
-      )('inaccessible case state %s', (state) => {
+    describe.each(inaccessibleAppealCaseStates)(
+      'inaccessible case appeal state %s',
+      (appealState) => {
         const theCase = {
           type,
-          state,
-          indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+          appealCase: { appealState },
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      },
+    )
+
+    describe.each(accessibleAppealCaseStates)(
+      'accessible case appeal state %s',
+      (appealState) => {
+        const theCase = {
+          type,
+          appealCase: {
+            appealState,
+            appealReceivedByCourtDate: nowFactory(),
+          },
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      },
+    )
+
+    describe('withdrawn appeal case without appeal-received-by-court date', () => {
+      const theCase = {
+        type,
+        appealCase: { appealState: AppealCaseState.WITHDRAWN },
+      } as Case
+
+      verifyNoAccess(theCase, user)
+    })
+  })
+
+  // Ruling-order appeals are indictment-only (request cases never carry them).
+  describe.each(indictmentCases)(
+    'indictment case type %s — ruling-order appeals',
+    (type) => {
+      describe.each(inaccessibleAppealCaseStates)(
+        'single ruling-order appeal in inaccessible state %s',
+        (appealState) => {
+          const theCase = {
+            type,
+            rulingOrderAppealCases: [{ appealState }],
+          } as Case
+
+          verifyNoAccess(theCase, user)
+        },
+      )
+
+      describe.each(accessibleAppealCaseStates)(
+        'single ruling-order appeal in accessible state %s',
+        (appealState) => {
+          const theCase = {
+            type,
+            rulingOrderAppealCases: [
+              { appealState, appealReceivedByCourtDate: nowFactory() },
+            ],
+          } as Case
+
+          verifyFullAccess(theCase, user)
+        },
+      )
+
+      describe('withdrawn ruling-order appeal without appeal-received-by-court date', () => {
+        const theCase = {
+          type,
+          rulingOrderAppealCases: [{ appealState: AppealCaseState.WITHDRAWN }],
         } as Case
 
         verifyNoAccess(theCase, user)
       })
 
-      describe.each(accessibleCaseStates)(
-        'accessible case state %s',
-        (state) => {
-          // Non-dismissal ruling decisions should not be accessible
-          const inaccessibleRulingDecisions = Object.values(
-            CaseIndictmentRulingDecision,
-          ).filter((d) => d !== CaseIndictmentRulingDecision.DISMISSAL)
-
-          describe.each([undefined, ...inaccessibleRulingDecisions])(
-            'inaccessible ruling decision %s',
-            (rulingDecision) => {
-              const theCase = {
-                type,
-                state,
-                indictmentRulingDecision: rulingDecision,
-                appealCase: {
-                  appealState: AppealCaseState.RECEIVED,
-                  appealReceivedByCourtDate: nowFactory(),
-                },
-              } as Case
-
-              verifyNoAccess(theCase, user)
+      describe('multiple ruling-order appeals — at least one accessible', () => {
+        const theCase = {
+          type,
+          rulingOrderAppealCases: [
+            { appealState: AppealCaseState.APPEALED },
+            {
+              appealState: AppealCaseState.RECEIVED,
+              appealReceivedByCourtDate: nowFactory(),
             },
-          )
+          ],
+        } as Case
 
-          describe('dismissal ruling decision', () => {
-            const accessibleAppealCaseStates = [
-              AppealCaseState.RECEIVED,
-              AppealCaseState.COMPLETED,
-              AppealCaseState.WITHDRAWN,
-            ]
+        verifyFullAccess(theCase, user)
+      })
 
-            describe.each(
-              [undefined, ...Object.values(AppealCaseState)].filter(
-                (state) =>
-                  !state || !accessibleAppealCaseStates.includes(state),
-              ),
-            )('inaccessible case appeal state %s', (appealState) => {
-              const theCase = {
-                type,
-                state,
-                indictmentRulingDecision:
-                  CaseIndictmentRulingDecision.DISMISSAL,
-                appealCase: { appealState },
-              } as Case
+      describe('multiple ruling-order appeals — none accessible', () => {
+        const theCase = {
+          type,
+          rulingOrderAppealCases: [
+            { appealState: AppealCaseState.APPEALED },
+            { appealState: AppealCaseState.WITHDRAWN },
+          ],
+        } as Case
 
-              verifyNoAccess(theCase, user)
-            })
-
-            describe.each(accessibleAppealCaseStates)(
-              'accessible case appeal state %s',
-              (appealState) => {
-                const theCase = {
-                  type,
-                  state,
-                  indictmentRulingDecision:
-                    CaseIndictmentRulingDecision.DISMISSAL,
-                  appealCase: {
-                    appealState,
-                    appealReceivedByCourtDate: nowFactory(),
-                  },
-                } as Case
-
-                verifyFullAccess(theCase, user)
-              },
-            )
-          })
-        },
-      )
+        verifyNoAccess(theCase, user)
+      })
     },
   )
 })

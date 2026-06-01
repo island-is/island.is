@@ -1,23 +1,31 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
-import { Case, UpdateAppealCase, UpdateCase } from '../../repository'
+import {
+  AppealCase,
+  Case,
+  UpdateAppealCase,
+  UpdateCase,
+} from '../../repository'
 
 export interface AppealTransitionResult {
   caseUpdate: UpdateCase
   appealCaseUpdate: UpdateAppealCase
 }
 
-type AppealTransition = (theCase: Case) => AppealTransitionResult
+type AppealTransition = (
+  theCase: Case,
+  appealCase: AppealCase,
+) => AppealTransitionResult
 
 interface AppealCaseRule {
   fromAppealStates: AppealCaseState[]
@@ -43,7 +51,10 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.COMPLETE_APPEAL,
       {
         fromAppealStates: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
-        transition: (theCase: Case): AppealTransitionResult => {
+        transition: (
+          theCase: Case,
+          appealCase: AppealCase,
+        ): AppealTransitionResult => {
           const caseUpdate: UpdateCase = {}
           const currentDecision = theCase.decision
 
@@ -53,22 +64,20 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
             (currentDecision === CaseDecision.ACCEPTING ||
               currentDecision === CaseDecision.ACCEPTING_PARTIALLY)
           ) {
-            const currentAppealRulingDecision =
-              theCase.appealCase?.appealRulingDecision
+            const currentAppealRulingDecision = appealCase.appealRulingDecision
 
             if (
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED ||
+                AppealCaseRulingDecision.CHANGED ||
               currentAppealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+                AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY
             ) {
-              caseUpdate.validToDate = theCase.appealCase?.appealValidToDate
+              caseUpdate.validToDate = appealCase.appealValidToDate
               caseUpdate.isCustodyIsolation =
-                theCase.appealCase?.isAppealCustodyIsolation
-              caseUpdate.isolationToDate =
-                theCase.appealCase?.appealIsolationToDate
+                appealCase.isAppealCustodyIsolation
+              caseUpdate.isolationToDate = appealCase.appealIsolationToDate
             } else if (
-              currentAppealRulingDecision === CaseAppealRulingDecision.REPEAL
+              currentAppealRulingDecision === AppealCaseRulingDecision.REPEAL
             ) {
               caseUpdate.validToDate = nowFactory()
             }
@@ -76,7 +85,10 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 
           return {
             caseUpdate,
-            appealCaseUpdate: { appealState: AppealCaseState.COMPLETED },
+            appealCaseUpdate: {
+              appealState: AppealCaseState.COMPLETED,
+              appealRulingDate: nowFactory(),
+            },
           }
         },
       },
@@ -95,16 +107,19 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
       AppealCaseTransition.WITHDRAW_APPEAL,
       {
         fromAppealStates: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
-        transition: (theCase: Case): AppealTransitionResult => {
+        transition: (
+          _: Case,
+          appealCase: AppealCase,
+        ): AppealTransitionResult => {
           if (
-            !theCase.appealCase?.appealRulingDecision &&
-            theCase.appealCase?.appealState === AppealCaseState.RECEIVED
+            !appealCase.appealRulingDecision &&
+            appealCase.appealState === AppealCaseState.RECEIVED
           ) {
             return {
               caseUpdate: {},
               appealCaseUpdate: {
                 appealState: AppealCaseState.WITHDRAWN,
-                appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+                appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
               },
             }
           }
@@ -121,8 +136,9 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 export const transitionAppealCase = (
   transition: AppealCaseTransition,
   theCase: Case,
+  appealCase: AppealCase,
 ): AppealTransitionResult => {
-  const currentAppealState = theCase.appealCase?.appealState
+  const currentAppealState = appealCase.appealState
 
   const rule = appealCaseStateMachine.get(transition)
 
@@ -141,5 +157,5 @@ export const transitionAppealCase = (
     )
   }
 
-  return rule.transition(theCase)
+  return rule.transition(theCase, appealCase)
 }

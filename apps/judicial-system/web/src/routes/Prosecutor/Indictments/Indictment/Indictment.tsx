@@ -441,7 +441,10 @@ const Indictment = () => {
   const initialize = useCallback(() => {
     const indictmentCounts = workingCase.indictmentCounts || []
 
-    if (indictmentCounts.length === 0) {
+    if (
+      indictmentCounts.length === 0 &&
+      workingCase.origin !== CaseOrigin.LOKE
+    ) {
       handleCreateIndictmentCount()
     }
 
@@ -479,9 +482,9 @@ const Indictment = () => {
 
     // We don't want to mutate the original array, so we create a copy
     return [...indictmentCounts].sort(
-      getIndictmentCountCompare(workingCase.policeCaseNumbers),
+      getIndictmentCountCompare(workingCase.crimeScenes),
     )
-  }, [workingCase.indictmentCounts, workingCase.policeCaseNumbers])
+  }, [workingCase.indictmentCounts, workingCase.crimeScenes])
 
   return (
     <PageLayout

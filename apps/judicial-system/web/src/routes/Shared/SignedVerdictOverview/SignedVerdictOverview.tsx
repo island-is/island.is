@@ -3,7 +3,7 @@ import { IntlShape, useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
@@ -24,6 +24,7 @@ import {
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
+  ChangeProsecutorModal,
   CommentsAccordionItem,
   Conclusion,
   conclusion,
@@ -36,6 +37,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
@@ -48,6 +50,7 @@ import {
   AppealCaseState,
   Case,
   CaseDecision,
+  CaseOrigin,
   CaseState,
   Institution,
   RequestSignatureResponse,
@@ -55,8 +58,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UpdateCase,
-  useAppealCase,
+  useAppealCaseBanner,
   useCase,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -152,6 +156,7 @@ type availableModals =
   | 'NoModal'
   | 'SigningConfirmationModal'
   | 'CourtRecordSigningConfirmationModal'
+  | 'ChangeProsecutor'
 
 export const SignedVerdictOverview: FC = () => {
   const {
@@ -215,7 +220,9 @@ export const SignedVerdictOverview: FC = () => {
     isSendingNotification,
   } = useCase()
 
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   /**
    * If the case is not rejected it must be accepted because
@@ -381,15 +388,6 @@ export const SignedVerdictOverview: FC = () => {
         />
         <FormContentContainer>
           <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                preTextIcon="arrowBack"
-                onClick={() => router.push(getStandardUserDashboardRoute(user))}
-              >
-                {formatMessage(core.back)}
-              </Button>
-            </Box>
             <CaseTitleInfoAndTags />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
@@ -473,7 +471,12 @@ export const SignedVerdictOverview: FC = () => {
                     courtCaseNumber,
                     prosecutorsOffice,
                     court,
-                    prosecutor(workingCase.type),
+                    prosecutor(
+                      workingCase.type,
+                      isProsecutionUser(user)
+                        ? () => setModalVisible('ChangeProsecutor')
+                        : undefined,
+                    ),
                     judge,
                     ...(isInvestigationCase(workingCase.type)
                       ? [caseType]
@@ -511,6 +514,13 @@ export const SignedVerdictOverview: FC = () => {
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     user={user}
+                  />
+                )}
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
                   />
                 )}
                 {(workingCase.comments ||
@@ -646,6 +656,9 @@ export const SignedVerdictOverview: FC = () => {
               navigateOnClose={false}
             />
           )}
+        {modalVisible === 'ChangeProsecutor' && (
+          <ChangeProsecutorModal onClose={() => setModalVisible('NoModal')} />
+        )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
         )}

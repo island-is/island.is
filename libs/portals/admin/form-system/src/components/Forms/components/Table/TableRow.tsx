@@ -25,7 +25,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
@@ -44,6 +44,7 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
   url?: string
+  lastModifiedBy?: string
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -65,6 +66,7 @@ export const TableRow = ({
   id,
   name,
   lastModified,
+  lastModifiedBy,
   setFormsState,
   slug,
   status,
@@ -76,7 +78,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
-
+  const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
@@ -306,26 +308,37 @@ export const TableRow = ({
       console.error('Error updating form:', error)
     }
 
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+        },
       },
-    })
+    )
   }
 
   const view = async () => {
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+          readOnly: true,
+        },
       },
-    })
+    )
   }
 
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
         <Row key={id}>
-          <Column span="7/12">
+          <Column span={['6/12', '7/12', '6/12', '7/12']}>
             <Inline space={2}>
               <Icon
                 icon={isOpen ? 'remove' : 'add'}
@@ -335,8 +348,8 @@ export const TableRow = ({
               <ColumnText text={name ? name : ''} isOpen={isOpen} />
             </Inline>
           </Column>
-          <Column span="2/12">
-            <Box display="flex" justifyContent="flexEnd">
+          <Column span="2/12" hiddenBelow="md">
+            <Box display="flex" justifyContent="flexStart">
               <Text variant="medium">
                 {formatDate(lastModified ? lastModified : new Date(), {
                   day: '2-digit',
@@ -347,13 +360,13 @@ export const TableRow = ({
             </Box>
           </Column>
 
-          <Column span="2/12">
-            <Box display="flex" justifyContent="center">
+          <Column span={['2/12', '2/12', '2/12', '1/12']}>
+            <Box display="flex" justifyContent="flexStart">
               <StatusTag status={status ?? ''} />
             </Box>
           </Column>
 
-          <Column span="1/12">
+          <Column span={['4/12', '3/12', '2/12', '2/12']}>
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
@@ -368,24 +381,25 @@ export const TableRow = ({
                     colorScheme="negative"
                     inline
                     onClick={() => updateForm(status)}
+                    title="Breyta"
                   />
                 </Box>
               )}
-              {status === FormStatus.PUBLISHED && (
-                <Box
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                >
-                  <Button
-                    icon="eye"
-                    circle
-                    colorScheme="negative"
-                    inline
-                    onClick={() => view()}
-                  />
-                </Box>
-              )}
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
+
               <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}
@@ -456,6 +470,11 @@ export const TableRow = ({
               <Row>
                 <Text variant="medium" className={styles.capitalizeText}>
                   <strong>Móttökukerfi:</strong> {url || '—'}
+                </Text>
+              </Row>
+              <Row>
+                <Text variant="medium">
+                  <strong>Síðast breytt af:</strong> {lastModifiedBy ?? '—'}
                 </Text>
               </Row>
             </Stack>

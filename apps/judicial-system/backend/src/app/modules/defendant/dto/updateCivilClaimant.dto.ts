@@ -1,8 +1,10 @@
 import { Transform } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   MaxLength,
 } from 'class-validator'
@@ -74,4 +76,16 @@ export class UpdateCivilClaimantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isSpokespersonConfirmed?: boolean
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  readonly policeCaseNumbers?: string[]
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID(undefined, { each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  readonly defendantIds?: string[]
 }

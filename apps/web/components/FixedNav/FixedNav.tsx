@@ -99,7 +99,13 @@ export const FixedNav = ({ organizationSearchFilter }: Props) => {
                 white
                 size="medium"
                 activeLocale={activeLocale}
-                placeholder={t.searchPlaceholder}
+                placeholder={
+                  organizationSearchFilter
+                    ? activeLocale === 'is'
+                      ? 'Leita'
+                      : 'Search'
+                    : t.searchPlaceholder
+                }
                 autocomplete={true}
                 autosuggest={false}
                 organization={organizationSearchFilter}

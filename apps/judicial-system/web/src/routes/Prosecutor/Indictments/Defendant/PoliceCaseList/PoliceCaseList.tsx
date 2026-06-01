@@ -54,7 +54,7 @@ interface Checkpoint {
 
 export const PoliceCaseList = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
   const { setAndSendCaseToServer } = useCase()
   const { updateIndictmentCount } = useIndictmentCounts()
 
@@ -300,7 +300,9 @@ export const PoliceCaseList = () => {
     checkpoint.current.update = update
   }
 
-  const handleUpdatePoliceCase = (updates: IndexedPoliceCaseUpdate[] = []) => {
+  const handleUpdatePoliceCase = async (
+    updates: IndexedPoliceCaseUpdate[] = [],
+  ) => {
     const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
       getWorkingCaseUpdates(policeCases, updates)
 
@@ -346,7 +348,7 @@ export const PoliceCaseList = () => {
       return
     }
 
-    setAndSendCaseToServer(
+    await setAndSendCaseToServer(
       [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
       workingCase,
       setWorkingCase,
@@ -357,6 +359,8 @@ export const PoliceCaseList = () => {
       { policeCaseNumbers, indictmentSubtypes, crimeScenes },
       unsavedUpdates,
     )
+
+    refreshCase()
   }
 
   const handleDeletePoliceCase = async (index: number) => {
@@ -420,6 +424,7 @@ export const PoliceCaseList = () => {
       ) {
         subtypes = policeCaseInfo.subtypes
       }
+
       if (!place && !date && !subtypes) {
         continue
       }

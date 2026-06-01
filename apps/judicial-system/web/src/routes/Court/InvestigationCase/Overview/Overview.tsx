@@ -33,14 +33,19 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -53,6 +58,8 @@ const Overview = () => {
 
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const {
     defendants,
@@ -211,6 +218,13 @@ const Overview = () => {
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 user={user}
+              />
+            )}
+            {workingCase.origin === CaseOrigin.LOKE && (
+              <PoliceDigitalCaseFilesAccordionItem
+                digitalCaseFiles={digitalCaseFiles}
+                digitalCaseFilesLoading={digitalCaseFilesLoading}
+                openDigitalCaseFileUrl={openDigitalCaseFileUrl}
               />
             )}
           </Accordion>

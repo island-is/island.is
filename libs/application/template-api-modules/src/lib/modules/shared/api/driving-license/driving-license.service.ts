@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages } from '@island.is/application/core'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { StudentAssessment, DrivingLicense, HasQualitySignature } from './types'
 import {
@@ -31,6 +33,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseApi,
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {
     super('DrivingLicenseShared')
   }
@@ -246,13 +249,32 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const fakeData = getFakeData(application.answers)
     if (fakeData) {
-      return buildFakeQualityPhotoAndSignature(fakeData)
+      const fake = buildFakeQualityPhotoAndSignature(fakeData)
+      // undefined = "use real data"; null = "fake no photo"; object = fake photo
+      if (fake !== undefined) {
+        return fake
+      }
     }
 
     try {
-      return await this.drivingLicenseService.getQualityPhotoAndSignature({
-        token: auth.authorization,
-      })
+      const result =
+        await this.drivingLicenseService.getQualityPhotoAndSignature({
+          token: auth.authorization,
+        })
+      // Some legacy RLS records return metadata + signature but no photo
+      // binary. Submission still resolves the photo by imageId, but log the
+      // case so we can spot patterns (image type, date range, frequency).
+      if (result && result.imageId != null && !result.pohto) {
+        this.logger.info(
+          '[driving-license] quality photo metadata returned without binary',
+          {
+            imageTypeId: result.imageTypeId,
+            imageTypeName: result.imageTypeName,
+            imageDate: result.imageDate,
+          },
+        )
+      }
+      return result
     } catch {
       return null
     }
@@ -264,7 +286,12 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const fakeData = getFakeData(application.answers)
     if (fakeData) {
-      return buildFakeAllPhotosFromThjodskra(fakeData)
+      const fake = buildFakeAllPhotosFromThjodskra(fakeData)
+      // undefined = "use real data"; the substitution helper otherwise returns
+      // either fake images or { images: [] } (fake "no photos").
+      if (fake !== undefined) {
+        return fake
+      }
     }
 
     try {

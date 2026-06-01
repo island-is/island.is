@@ -99,6 +99,10 @@ export enum ApplicationTypes {
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
   MILE_CAR = 'MileCar',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
+  EDIT_UNEMPLOYMENT_INFORMATION = 'EditUnemploymentInformation',
+  CONFIRM_JOB_SEARCH = 'ConfirmJobSearch',
+  DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
+  UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
 }
 
 export const ApplicationConfigurations = {
@@ -505,5 +509,21 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
     slug: 'hh-namskeid',
     translation: ['hh.courses.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
+    slug: 'breyta-upplysingum-atvinnuleysisbaetur',
+    translation: ['vmst.eui.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
+    slug: 'stadfesta-atvinnuleit',
+    translation: ['vmst.cjs', 'uiForms.application'],
+  },
+  [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
+    slug: 'afskraning-atvinnuleysisbota',
+    translation: ['vmst.dub.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
+    slug: 'atvinnuleysisbaetur-stadfesting-ferda',
+    translation: ['vmst.ct.application', 'uiForms.application'],
   },
 }

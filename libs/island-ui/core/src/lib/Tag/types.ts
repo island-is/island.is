@@ -30,4 +30,6 @@ export interface TagProps {
   textLeft?: boolean
   CustomLink?: FC<React.PropsWithChildren<unknown>>
   whiteBackground?: boolean
+  /** When true, mint focus styling uses :focus-visible only (no flash on pointer click). */
+  focusVisibleOnly?: boolean
 }

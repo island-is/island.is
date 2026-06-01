@@ -64,4 +64,29 @@ describe('DrivingLicenseDuplicateService', () => {
       expect(response).toBe(true)
     })
   })
+
+  describe('postApplyForRenewal65', () => {
+    it('returns true when the apply-for endpoint succeeds', async () => {
+      const result = await service.postApplyForRenewal65({
+        token: MOCK_TOKEN.STUDENT,
+        districtId: 37,
+        phoneNumber: '5551234',
+        email: 'test@example.is',
+        pickupPlasticAtDistrict: true,
+        sendPlasticToPerson: false,
+        contentList: [
+          {
+            fileName: 'cert.pdf',
+            fileExtension: 'pdf',
+            contentType: 'application/pdf',
+            content: 'base64data',
+            description: 'Laeknisvottord',
+          },
+        ],
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+      expect(result).toBe(true)
+    })
+  })
 })

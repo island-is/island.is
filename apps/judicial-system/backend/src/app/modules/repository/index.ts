@@ -1,4 +1,5 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealEventLog } from './models/appealEventLog.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -26,10 +27,15 @@ export { User } from './models/user.model'
 export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
+export { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
+export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 export { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
-export { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
+export {
+  CourtSessionRepositoryService,
+  UpdateCourtSession,
+} from './services/courtSessionRepository.service'
 export { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 export { DefendantRepositoryService } from './services/defendantRepository.service'
 export { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
@@ -40,7 +46,7 @@ export { VerdictRepositoryService } from './services/verdictRepository.service'
 
 export {
   caseInclude,
-  UpdateCase,
   UpdateAppealCase,
-  appealCaseFields,
+  UpdateCase,
+  UpdateDefendant,
 } from './types/caseRepository.types'

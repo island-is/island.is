@@ -38,7 +38,7 @@ import {
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
@@ -77,7 +77,7 @@ const IndictmentOverview: FC = () => {
     ConfirmationModal | undefined
   >()
 
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
 
   const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===

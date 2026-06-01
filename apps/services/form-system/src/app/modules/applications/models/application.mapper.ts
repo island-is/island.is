@@ -1,4 +1,9 @@
-import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
+import {
+  ApplicationEvents,
+  ApplicationStatus,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
@@ -11,6 +16,11 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
 import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 import { ApplicationDto } from './dto/application.dto'
+import {
+  ApplicationXroadDto,
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+} from './dto/application.xroad.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { ValueDto } from './dto/value.dto'
 
@@ -35,7 +45,6 @@ export class ApplicationMapper {
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
       useValidate: form.useValidate,
-      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
@@ -44,7 +53,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      completedSectionInfo: form.completedSectionInfo,
+      sectionInfo: form.sectionInfo,
       organizationNationalId: form.organizationNationalId,
     }
 
@@ -80,7 +89,6 @@ export class ApplicationMapper {
               multiMax: screen.multiMax,
               isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
-              shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
                 hasError: false,
                 title: { is: '', en: '' },
@@ -164,6 +172,45 @@ export class ApplicationMapper {
       }),
     }
     return applicationMinimalDto
+  }
+
+  mapApplicationDtoToApplicationXroadDto(
+    applicationDto: ApplicationDto,
+  ): ApplicationXroadDto {
+    const fields: ApplicationXroadFieldDto[] = (applicationDto.sections ?? [])
+      .flatMap((section) => section.screens ?? [])
+      .flatMap((screen) =>
+        (screen.fields ?? []).map((field) => ({
+          field,
+          screenIdentifier: screen.identifier,
+        })),
+      )
+      .filter(({ field }) => !field.isHidden)
+      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter(({ field }) => (field.values?.length ?? 0) > 0)
+      .map(({ field, screenIdentifier }) => {
+        const xroadField = new ApplicationXroadFieldDto()
+        xroadField.identifier = field.identifier
+        xroadField.screenIdentifier = screenIdentifier
+        xroadField.fieldType = field.fieldType
+        xroadField.values = (field.values ?? []).map((value) => {
+          const xroadValue = new ApplicationXroadValueDto()
+          xroadValue.order = value.order
+          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+          return xroadValue
+        })
+        return xroadField
+      })
+
+    const xroadDto = new ApplicationXroadDto()
+    xroadDto.id = applicationDto.id ?? ''
+    xroadDto.slug = applicationDto.slug ?? ''
+    xroadDto.isTest = applicationDto.isTest ?? false
+    xroadDto.status = applicationDto.status ?? ''
+    xroadDto.submittedAt = applicationDto.submittedAt ?? null
+    xroadDto.fields = fields
+
+    return xroadDto
   }
 
   private isHidden(
@@ -253,13 +300,17 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: true,
-        history:
-          app.events?.map((event) => {
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
         displayPruneAt: true,
@@ -298,13 +349,17 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: false,
-        history:
-          app.events?.map((event) => {
+        history: (app.events ?? [])
+          .filter(
+            (event) =>
+              event.eventType !== ApplicationEvents.APPLICATION_FETCHED,
+          )
+          .map((event) => {
             return {
               date: event.created,
               log: event.eventMessage[locale],
             }
-          }) || [],
+          }),
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
         displayPruneAt: true,

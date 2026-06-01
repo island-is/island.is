@@ -2,7 +2,6 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Option, Text, toast } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -161,7 +160,7 @@ const IndictmentOverview = () => {
     >
       <PageHeader title="Yfirlit ákæru - Réttarvörslugátt" />
       <FormContentContainer>
-        <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
+        <PageTitle>
           {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.FINE
             ? 'Viðurlagaákvörðun til fullnustu'

@@ -1,26 +1,20 @@
-// NOTE: hack until we move to stable release branch
-const generateReleaseBranches = (majorVersions, minorVersionsPerMajor) => {
-  const branches = ['release']
-
-  for (const majorVersion of majorVersions) {
-    for (
-      let minorVersion = 1;
-      minorVersion <= minorVersionsPerMajor;
-      minorVersion++
-    ) {
-      branches.push(`release/${majorVersion}.${minorVersion}.0`)
-      branches.push(`pre-release/${majorVersion}.${minorVersion}.0`)
-    }
-  }
-
-  return branches
-}
-
-const majorVersions = Array.from({ length: 1000 }, (_, i) => 41 + i)
-const minorVersionsPerMajor = 3
-
-export const RELEASE_BRANCHES = generateReleaseBranches(
-  majorVersions,
-  minorVersionsPerMajor,
-)
 export const MAIN_BRANCHES = ['main']
+
+const SEMVER_RELEASE_BRANCH_REGEX = /^release\/\d+\.\d+\.\d+$/
+const CALVER_RELEASE_BRANCH_REGEX = /^release\/\d{4}\.\d{1,2}\.\d{1,2}\.\d+$/
+const SEMVER_PRE_RELEASE_BRANCH_REGEX = /^pre-release\/\d+\.\d+\.\d+$/
+const CALVER_PRE_RELEASE_BRANCH_REGEX =
+  /^pre-release\/\d{4}\.\d{1,2}\.\d{1,2}\.\d+$/
+
+export const isMainBranch = (branch) => MAIN_BRANCHES.includes(branch)
+
+export const isReleaseBranch = (branch) =>
+  SEMVER_RELEASE_BRANCH_REGEX.test(branch) ||
+  CALVER_RELEASE_BRANCH_REGEX.test(branch)
+
+export const isPreReleaseBranch = (branch) =>
+  SEMVER_PRE_RELEASE_BRANCH_REGEX.test(branch) ||
+  CALVER_PRE_RELEASE_BRANCH_REGEX.test(branch)
+
+export const isReleaseLikeBranch = (branch) =>
+  branch?.startsWith('release/') || branch?.startsWith('pre-release/')

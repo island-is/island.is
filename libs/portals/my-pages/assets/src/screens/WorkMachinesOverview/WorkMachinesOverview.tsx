@@ -18,7 +18,7 @@ import {
   CardLoader,
   formatDate,
   formSubmit,
-  IntroWrapperV2,
+  IntroWrapper,
   m,
   VINNUEFTIRLITID_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -132,7 +132,7 @@ const WorkMachinesOverview = () => {
   }, [data?.workMachinesPaginatedCollection?.linkCollection, formatMessage])
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={formatMessage(messages.workMachinesTitle)}
       intro={formatMessage(messages.workMachinesDescription)}
       serviceProvider={{
@@ -237,6 +237,7 @@ const WorkMachinesOverview = () => {
                     : formatMessage(messages.noInspection)
                 }`}
                 heading={wm?.type ? `${wm.type} ${wm.model}`.trim() : ''}
+                headingVariant="h4"
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',
@@ -279,7 +280,7 @@ const WorkMachinesOverview = () => {
           />
         </Box>
       ) : undefined}
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

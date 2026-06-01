@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   NotificationCommands,
   SectionTypes,
 } from '@island.is/form-system/shared'
@@ -34,6 +35,7 @@ import { Form } from '../forms/models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Organization } from '../organizations/models/organization.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ValidationErrorDto } from '../screens/models/dto/validationError.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
@@ -48,14 +50,21 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
+import {
+  ApplicationXroadFieldDto,
+  ApplicationXroadValueDto,
+} from './models/dto/application.xroad.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
+import { NotificationResponseDto } from './models/dto/notification.response.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { Payment } from '../payment/payment.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -70,6 +79,10 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    @InjectModel(Payment)
+    private readonly paymentModel: typeof Payment,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
@@ -270,7 +283,7 @@ export class ApplicationsService {
     return form.slug
   }
 
-  async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
+  async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],
     })
@@ -279,11 +292,13 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const loginTypes = await this.getLoginTypes(user)
-    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new ForbiddenException(
-        `User does not have permission to submit application '${id}'`,
-      )
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const form = await this.formModel.findByPk(application.formId)
@@ -301,6 +316,40 @@ export class ApplicationsService {
     }
 
     const applicationDto = applicationResponseDto.application
+
+    let paymentIsValid = false
+
+    if (form.hasPayment === true) {
+      const paymentSection = (applicationDto.sections ?? []).find(
+        (s) => s.sectionType === SectionTypes.PAYMENT,
+      )
+
+      const hasVisiblePayment =
+        !!paymentSection &&
+        paymentSection.isHidden === false &&
+        (paymentSection.screens ?? []).some(
+          (screen) => screen.isHidden === false,
+        )
+
+      if (hasVisiblePayment) {
+        const payment = await this.paymentModel.findOne({
+          where: { applicationId: id, fulfilled: true },
+        })
+        if (!payment) {
+          throw new ForbiddenException(
+            `Payment not fulfilled for application '${id}'`,
+          )
+        }
+        paymentIsValid = true
+      }
+    }
+
+    if (!user && !paymentIsValid) {
+      throw new ForbiddenException(
+        `Submitting application '${id}' without user context is only allowed when a visible payment exists and has been fulfilled.`,
+      )
+    }
+
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
     const applicationEvent = await this.applicationEventModel.create({
@@ -316,7 +365,26 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success = await this.serviceManager.send(applicationDto)
+    let zendeskInstance = ''
+    let zendeskBrandId = ''
+    if (applicationDto.submissionServiceUrl === 'zendesk') {
+      const organization = await this.organizationModel.findByPk(
+        application.organizationId,
+      )
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with id '${application.organizationId}' not found.`,
+        )
+      }
+      zendeskInstance = organization.zendeskInstance ?? ''
+      zendeskBrandId = organization.zendeskBrandId ?? ''
+    }
+
+    const success = await this.serviceManager.send(
+      applicationDto,
+      zendeskInstance,
+      zendeskBrandId,
+    )
 
     if (success) {
       try {
@@ -1048,6 +1116,109 @@ export class ApplicationsService {
     })
   }
 
+  async getDataFromUrl(
+    dataFromUrlRequestDto: DataFromUrlReqDto,
+    user: User,
+  ): Promise<DataFromUrlResDto> {
+    const fieldId = dataFromUrlRequestDto.fieldId?.trim()
+    if (!fieldId) {
+      throw new BadRequestException(`fieldId is required`)
+    }
+    const slug = dataFromUrlRequestDto.slug?.trim()
+    if (!slug) {
+      throw new BadRequestException(`slug is required`)
+    }
+
+    const field = await this.fieldModel.findByPk(fieldId)
+
+    if (!field) {
+      throw new NotFoundException(`Field with id '${fieldId}' not found`)
+    }
+
+    const fieldSettings = field.fieldSettings
+
+    if (!fieldSettings) {
+      throw new NotFoundException(
+        `Field settings for field with id '${fieldId}' not found`,
+      )
+    }
+    const fieldType = field.fieldType
+
+    // Ownership + access check: field must belong to the requested form,
+    // and the current user's loginTypes must be allowed for that form.
+    const form = await this.getForm(slug)
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for form '${slug}'`,
+      )
+    }
+
+    const fieldBelongsToForm = (form.sections ?? []).some((section) =>
+      (section.screens ?? []).some((screen) =>
+        (screen.fields ?? []).some((f) => f.id === field.id),
+      ),
+    )
+    if (!fieldBelongsToForm) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for field '${field.id}'`,
+      )
+    }
+
+    let response = new DataFromUrlResDto()
+
+    if (
+      fieldType === FieldTypesEnum.DROPDOWN_LIST &&
+      fieldSettings.listType &&
+      (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+        fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
+    ) {
+      const orgNationalId = dataFromUrlRequestDto.orgNationalId?.trim()
+      if (!orgNationalId) {
+        throw new BadRequestException(
+          `orgNationalId is required for Zendesk list lookups`,
+        )
+      }
+      if (orgNationalId !== form.organizationNationalId) {
+        throw new ForbiddenException(
+          `User does not have permission to fetch Zendesk data for organization '${orgNationalId}'`,
+        )
+      }
+
+      const organizationInstance = await this.getOrganizationZendeskInfo(
+        orgNationalId,
+      )
+
+      dataFromUrlRequestDto.zendeskInstance =
+        organizationInstance.zendeskInstance
+
+      response = await this.serviceManager.getListFromZendesk(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    } else {
+      dataFromUrlRequestDto.loggedInUserNationalId =
+        user.actor?.nationalId || user.nationalId
+
+      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
+        ? user.nationalId
+        : undefined
+
+      dataFromUrlRequestDto.fieldType = fieldType
+      dataFromUrlRequestDto.identifier = field.identifier
+      dataFromUrlRequestDto.fieldId = undefined
+      dataFromUrlRequestDto.orgNationalId = undefined
+
+      response = await this.serviceManager.getDataFromUrl(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    }
+
+    return response
+  }
+
   async notifyExternalService(
     notificationDto: NotificationDto,
     user: User,
@@ -1089,10 +1260,22 @@ export class ApplicationsService {
 
     notificationDto.nationalId = nationalId
 
-    if (!notificationDto.screen) {
+    if (!notificationDto.screenDto) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
+    }
+
+    const screen = notificationDto.screenDto
+
+    if (
+      notificationDto.command !== NotificationCommands.SUBMIT &&
+      notificationDto.screenDto
+    ) {
+      notificationDto.fields = this.mapScreenToNotificationFields(
+        notificationDto.screenDto,
+      )
+      notificationDto.screenDto = undefined
     }
 
     const response = await this.notifyService.sendNotification(
@@ -1100,39 +1283,84 @@ export class ApplicationsService {
       submissionUrl,
     )
 
+    response.screen = screen
+
+    response.screen.screenError = {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    }
+
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'Please try again later or send an email to island@island.is',
-          },
-        }
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        notificationDto.screen.screenError = {
-          hasError: true,
-          title: {
-            is: 'Ekki tókst að tengjast ytri þjónustu',
-            en: 'Could not connect to external service',
-          },
-          message: {
-            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-            en: 'Please try to refresh the page or send an email to island@island.is',
-          },
-        }
+        response.screen.screenError = this.getDefaultScreenErrorValidate()
       }
-      response.screen = notificationDto.screen
+    } else if (response.screenError?.hasError) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        response.screen.screenError =
+          response.screenError.title?.is || response.screenError.message?.is
+            ? response.screenError
+            : this.getDefaultScreenErrorValidate()
+      }
+    }
+
+    if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
       )
     }
 
     return response
+  }
+
+  private getDefaultScreenErrorValidate(): ValidationErrorDto {
+    return {
+      hasError: true,
+      title: {
+        is: 'Ekki tókst að tengjast ytri þjónustu',
+        en: 'Could not connect to external service',
+      },
+      message: {
+        is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+        en: 'Please try again later or send an email to island@island.is',
+      },
+    }
+  }
+
+  private mapScreenToNotificationFields(
+    screen: ScreenDto,
+  ): ApplicationXroadFieldDto[] {
+    return (screen.fields ?? []).map((field) => {
+      const xroadField = new ApplicationXroadFieldDto()
+      xroadField.identifier = field.identifier
+      xroadField.screenIdentifier = screen.identifier
+      xroadField.fieldType = field.fieldType
+      xroadField.values = (field.values ?? []).map((value) => {
+        const xroadValue = new ApplicationXroadValueDto()
+        xroadValue.order = value.order
+        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+        return xroadValue
+      })
+      return xroadField
+    })
+  }
+
+  private async getOrganizationZendeskInfo(
+    organizationNationalId: string,
+  ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${organizationNationalId}' not found`,
+      )
+    }
+
+    const zendeskInstance = organization.zendeskInstance ?? ''
+    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    return { zendeskInstance, zendeskBrandId }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

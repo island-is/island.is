@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 import { ApplicantTypeDtoFragment } from './applicant'
-import { CompletedSectionInfoFragment } from './completedSectionInfo'
 import { LanguageFields } from './languageFields'
 import { SectionFragment } from './section'
+import { SectionInfoFragment } from './sectionInfo'
 
 export const ApplicationFragment = gql`
   fragment Application on FormSystemApplication {
@@ -41,13 +41,13 @@ export const ApplicationFragment = gql`
       childProps
       isSelected
     }
-    completedSectionInfo {
-      ...CompletedSectionInfo
+    sectionInfo {
+      ...SectionInfo
     }
     organizationNationalId
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}
   ${SectionFragment}
-  ${CompletedSectionInfoFragment}
+  ${SectionInfoFragment}
 `

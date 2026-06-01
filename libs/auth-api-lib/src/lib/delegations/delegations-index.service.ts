@@ -819,4 +819,43 @@ export class DelegationsIndexService {
           .filter((d) => d.validTo !== null), // if child has already turned 18/16, we don't want to index the delegation
     )
   }
+
+  async getSubjectIdsForDelegations(
+    delegations: DelegationDTO[],
+  ): Promise<DelegationDTO[]> {
+    if (delegations.length === 0) return delegations
+
+    const pairs = [
+      ...new Set(
+        delegations.map((d) => `${d.fromNationalId}|${d.toNationalId}`),
+      ),
+    ]
+
+    const records = await this.delegationIndexModel.findAll({
+      attributes: ['fromNationalId', 'toNationalId', 'subjectId'],
+      where: {
+        [Op.or]: pairs.map((pair) => {
+          const [fromNationalId, toNationalId] = pair.split('|')
+          return { fromNationalId, toNationalId }
+        }),
+        subjectId: { [Op.ne]: null },
+      },
+      group: ['fromNationalId', 'toNationalId', 'subjectId'],
+    })
+
+    const subjectIdMap = new Map(
+      records.map((r) => [
+        `${r.fromNationalId}|${r.toNationalId}`,
+        r.subjectId,
+      ]),
+    )
+
+    return delegations.map((d) => ({
+      ...d,
+      subjectId:
+        d.subjectId ??
+        subjectIdMap.get(`${d.fromNationalId}|${d.toNationalId}`) ??
+        null,
+    }))
+  }
 }

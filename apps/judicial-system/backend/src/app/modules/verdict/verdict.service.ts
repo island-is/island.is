@@ -43,19 +43,21 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 
-type UpdateVerdict = { serviceDate?: Date | null } & Pick<
+type UpdateVerdict = {
+  serviceDate?: Date | null
+  isAcquittedByPublicProsecutionOffice?: boolean | null
+  defendantHasRequestedAppeal?: boolean | null
+  serviceRequirement?: ServiceRequirement | null
+} & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
   | 'serviceStatus'
-  | 'serviceRequirement'
   | 'servedBy'
   | 'deliveredToDefenderNationalId'
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
-  | 'isAcquittedByPublicProsecutionOffice'
-  | 'defendantHasRequestedAppeal'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -284,6 +286,21 @@ export class VerdictService {
       transaction,
     )
     return updatedVerdict
+  }
+
+  async resetVerdictDataForReopen(
+    verdict: Verdict,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    return this.updateVerdict(
+      verdict,
+      {
+        isAcquittedByPublicProsecutionOffice: null,
+        defendantHasRequestedAppeal: null,
+        serviceRequirement: null,
+      },
+      transaction,
+    )
   }
 
   async updatePoliceDelivery(

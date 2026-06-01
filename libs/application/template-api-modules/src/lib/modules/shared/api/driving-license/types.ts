@@ -9,14 +9,18 @@ export type HasQualitySignature = {
 
 type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'C' | 'C1' | 'D' | 'D1'
 
+// 'yes' = inject fake photo, 'no' = inject "no photo" fake, 'real' = fall through to real data,
+// 'metadata-only' = prod-observed legacy shape: RLS metadata returned, photo binary missing
+export type FakePhotoMode = 'yes' | 'no' | 'real' | 'metadata-only'
+
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   qualitySignature?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
-  hasThjodskraPhoto?: YesOrNo
-  hasRLSPhoto?: YesOrNo
+  hasThjodskraPhoto?: FakePhotoMode
+  hasRLSPhoto?: FakePhotoMode
 }
 
 export type DrivingLicenseCategory = {
