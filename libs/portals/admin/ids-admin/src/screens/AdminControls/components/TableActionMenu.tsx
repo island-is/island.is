@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { Colors } from '@island.is/island-ui/theme'
 import { MessageDescriptor } from 'react-intl'
 
+import { m } from '../../../lib/messages'
 import * as styles from './TableActionMenu.css'
 
 export type TableMenuAction = {
@@ -40,8 +41,10 @@ export const buildTableMenuItems = (
 
 export const TableActionMenu = ({
   actions,
+  ariaLabel,
 }: {
   actions: TableMenuAction[]
+  ariaLabel?: string
 }) => {
   const { formatMessage } = useLocale()
   const items = buildTableMenuItems(formatMessage, actions)
@@ -50,11 +53,18 @@ export const TableActionMenu = ({
     return null
   }
 
+  const label = ariaLabel ?? formatMessage(m.rowActionsAriaLabel)
+
   return (
     <DropdownMenu
       disclosure={
-        <button type="button">
-          <Icon icon="ellipsisHorizontal" size="medium" color="blue400" />
+        <button type="button" aria-label={label} title={label}>
+          <Icon
+            icon="ellipsisHorizontal"
+            size="medium"
+            color="blue400"
+            ariaHidden
+          />
         </button>
       }
       items={items}

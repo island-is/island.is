@@ -637,6 +637,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-failure',
     defaultMessage: 'Could not copy to clipboard',
   },
+  rowActionsAriaLabel: {
+    id: 'ap.ids-admin:row-actions-aria-label',
+    defaultMessage: 'Row actions',
+  },
   permissions: {
     id: 'ap.ids-admin:permissions',
     defaultMessage: 'API scopes',

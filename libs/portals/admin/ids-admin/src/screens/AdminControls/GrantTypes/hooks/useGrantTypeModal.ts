@@ -53,6 +53,10 @@ export const useGrantTypeModal = ({
   const [archivedEnvironments, setArchivedEnvironments] = useState<
     AuthAdminEnvironment[]
   >([])
+
+  const [envFormDataMap, setEnvFormDataMap] = useState<
+    Partial<Record<AuthAdminEnvironment, { description: string }>>
+  >({})
   const [loadingGrantType, setLoadingGrantType] = useState(false)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
   const [saveOnAllEnvs, setSaveOnAllEnvs] = useState(false)
@@ -80,6 +84,7 @@ export const useGrantTypeModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setArchivedEnvironments([])
+    setEnvFormDataMap({})
     setFormErrors({})
     setSaveOnAllEnvs(false)
   }, [])
@@ -96,10 +101,12 @@ export const useGrantTypeModal = ({
 
     if (!fetcher.data.globalError) {
       const data = fetcher.data.data as {
+        affectedEnvironments?: AuthAdminEnvironment[]
         failedEnvironments?: { environment: string; message: string }[]
       } | null
 
       const failedEnvs = data?.failedEnvironments
+      const affectedEnvs = data?.affectedEnvironments
 
       switch (fetcher.data.intent) {
         case GrantTypeIntent.create:
@@ -113,6 +120,12 @@ export const useGrantTypeModal = ({
           break
         case GrantTypeIntent.restore:
           toast.success(formatMessage(m.grantTypesRestoreSuccess))
+
+          if (affectedEnvs && affectedEnvs.length > 0) {
+            setArchivedEnvironments((prev) =>
+              prev.filter((e) => !affectedEnvs.includes(e)),
+            )
+          }
           break
       }
 
@@ -143,6 +156,7 @@ export const useGrantTypeModal = ({
     setSelectedEnvironments([])
     setUserAvailableEnvironments([])
     setArchivedEnvironments([])
+    setEnvFormDataMap({})
     setFormErrors({})
     setModalVisible(true)
   }
@@ -155,6 +169,7 @@ export const useGrantTypeModal = ({
     })
     setUserAvailableEnvironments([])
     setArchivedEnvironments([])
+    setEnvFormDataMap({})
     setFormErrors({})
     setLoadingGrantType(true)
     setModalVisible(true)
@@ -172,6 +187,14 @@ export const useGrantTypeModal = ({
             ?.filter((e) => !!e.archived)
             .map((e) => e.environment) ?? []
         setArchivedEnvironments(archivedEnvs)
+
+        const map: Partial<
+          Record<AuthAdminEnvironment, { description: string }>
+        > = {}
+        gtData?.environments?.forEach((e) => {
+          map[e.environment] = { description: e.description }
+        })
+        setEnvFormDataMap(map)
 
         // Prefer a non-archived env when picking the initial selection
         const nonArchivedEnvs = availableEnvironments.filter(
@@ -266,6 +289,10 @@ export const useGrantTypeModal = ({
       })
 
       setUserAvailableEnvironments((prev) => [...prev, targetEnvironment])
+      setEnvFormDataMap((prev) => ({
+        ...prev,
+        [targetEnvironment]: { description: formData.description },
+      }))
       updateEnvironment(targetEnvironment)
       revalidator.revalidate()
       toast.success(
@@ -290,6 +317,14 @@ export const useGrantTypeModal = ({
   const handleEnvironmentSwitch = (env: AuthAdminEnvironment) => {
     if (userAvailableEnvironments.includes(env)) {
       updateEnvironment(env)
+
+      const envData = envFormDataMap[env]
+      if (envData) {
+        setFormData((prev) => ({
+          ...prev,
+          description: envData.description,
+        }))
+      }
     } else {
       handlePublish(env)
     }
@@ -318,9 +353,7 @@ export const useGrantTypeModal = ({
 
   const restoreCurrentEnvironment = () => {
     const env = selectedEnvResult.environment
-    // Optimistically clear the archived banner; the loader will revalidate
-    // the table in the background.
-    setArchivedEnvironments((prev) => prev.filter((e) => e !== env))
+
     handleRestore(formData.name, [env])
   }
 

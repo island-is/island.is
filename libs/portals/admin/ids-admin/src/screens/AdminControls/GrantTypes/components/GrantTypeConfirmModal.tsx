@@ -72,8 +72,12 @@ export const GrantTypeConfirmModal = ({
   const eligibleEnvironments = config.eligibleEnvsFor(target)
   const ineligibleEnvironments = config.ineligibleEnvsFor(target)
 
-  const [selectedEnvironments, setSelectedEnvironments] =
-    useState<AuthAdminEnvironment[]>(eligibleEnvironments)
+  // Only seed envs that are both eligible (in the target's state) AND
+  // configured for this client. Otherwise a disabled-but-checked env could
+  // be submitted, asking the backend to act on an env we can't reach.
+  const [selectedEnvironments, setSelectedEnvironments] = useState<
+    AuthAdminEnvironment[]
+  >(eligibleEnvironments.filter((e) => configuredEnvironments.includes(e)))
   const [error, setError] = useState<string | undefined>(undefined)
 
   const handleEnvironmentChange = (env: AuthAdminEnvironment) => {
