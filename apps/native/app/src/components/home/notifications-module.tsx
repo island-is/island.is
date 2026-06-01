@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import { Image, View, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { ApolloError } from '@apollo/client'
 
@@ -87,7 +87,7 @@ const NotificationsModule = React.memo(
     }
 
     return (
-      <SafeAreaView style={{ marginTop: theme.spacing[2] }}>
+      <View style={{ marginTop: theme.spacing[2] }}>
         <Host>
           <TouchableOpacity
             disabled={!notifications.length}
@@ -156,7 +156,7 @@ const NotificationsModule = React.memo(
             ))
           )}
         </Host>
-      </SafeAreaView>
+      </View>
     )
   },
 )
