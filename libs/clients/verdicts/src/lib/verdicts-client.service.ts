@@ -279,7 +279,7 @@ export class VerdictsClientService {
                   name: judge.name ?? '',
                   title: !goproItem.court?.name
                     ?.toLowerCase()
-                    ?.startsWith('endurupp')
+                    ?.startsWith('enduruppt')
                     ? judge.title ?? ''
                     : '',
                 }))
