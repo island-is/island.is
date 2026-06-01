@@ -1,6 +1,6 @@
 import { Defendant } from '../../repository'
 import {
-  getConfirmedDefendantClientsForDefender,
+  getConfirmedDefendantsForDefender,
   getDefenderVisiblePoliceCaseNumbers,
   isConfirmedDefenderOfSpecificDefendant,
 } from './caseFileCategory'
@@ -194,58 +194,55 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
   })
 })
 
-describe('getConfirmedDefendantClientsForDefender', () => {
+describe('getConfirmedDefendantsForDefender', () => {
   it('should return only defendants where user is confirmed defender', () => {
-    const confirmedClient = makeDefendant({
-      id: 'client-1',
+    const confirmedDefendant = makeDefendant({
+      id: 'defendant-1',
       defenderNationalId: '1234567890',
       isDefenderChoiceConfirmed: true,
     })
-    const unconfirmedClient = makeDefendant({
-      id: 'client-2',
+    const unconfirmedDefendant = makeDefendant({
+      id: 'defendant-2',
       defenderNationalId: '1234567890',
       isDefenderChoiceConfirmed: false,
     })
-    const otherDefenderClient = makeDefendant({
-      id: 'client-3',
+    const otherDefenderDefendant = makeDefendant({
+      id: 'defendant-3',
       defenderNationalId: '0987654321',
       isDefenderChoiceConfirmed: true,
     })
 
-    const result = getConfirmedDefendantClientsForDefender('1234567890', [
-      confirmedClient,
-      unconfirmedClient,
-      otherDefenderClient,
+    const result = getConfirmedDefendantsForDefender('1234567890', [
+      confirmedDefendant,
+      unconfirmedDefendant,
+      otherDefenderDefendant,
     ])
 
-    expect(result).toEqual([confirmedClient])
+    expect(result).toEqual([confirmedDefendant])
   })
 
-  it('should return multiple defendants when defender represents multiple clients', () => {
-    const client1 = makeDefendant({
-      id: 'client-1',
+  it('should return multiple defendants when defender represents multiple defendants', () => {
+    const defendant1 = makeDefendant({
+      id: 'defendant-1',
       defenderNationalId: '1234567890',
       isDefenderChoiceConfirmed: true,
     })
-    const client2 = makeDefendant({
-      id: 'client-2',
+    const defendant2 = makeDefendant({
+      id: 'defendant-2',
       defenderNationalId: '1234567890',
       isDefenderChoiceConfirmed: true,
     })
 
-    const result = getConfirmedDefendantClientsForDefender('1234567890', [
-      client1,
-      client2,
+    const result = getConfirmedDefendantsForDefender('1234567890', [
+      defendant1,
+      defendant2,
     ])
 
-    expect(result).toEqual([client1, client2])
+    expect(result).toEqual([defendant1, defendant2])
   })
 
   it('should return empty array when defendants is undefined', () => {
-    const result = getConfirmedDefendantClientsForDefender(
-      '1234567890',
-      undefined,
-    )
+    const result = getConfirmedDefendantsForDefender('1234567890', undefined)
 
     expect(result).toEqual([])
   })
@@ -258,10 +255,7 @@ describe('getConfirmedDefendantClientsForDefender', () => {
       }),
     ]
 
-    const result = getConfirmedDefendantClientsForDefender(
-      '1234567890',
-      defendants,
-    )
+    const result = getConfirmedDefendantsForDefender('1234567890', defendants)
 
     expect(result).toEqual([])
   })
@@ -271,12 +265,12 @@ describe('isConfirmedDefenderOfSpecificDefendant', () => {
   it('should return true when user is confirmed defender of the specific defendant', () => {
     const defendants = [
       makeDefendant({
-        id: 'client-1',
+        id: 'defendant-1',
         defenderNationalId: '1234567890',
         isDefenderChoiceConfirmed: true,
       }),
       makeDefendant({
-        id: 'client-2',
+        id: 'defendant-2',
         defenderNationalId: '0987654321',
         isDefenderChoiceConfirmed: true,
       }),
@@ -284,7 +278,7 @@ describe('isConfirmedDefenderOfSpecificDefendant', () => {
 
     const result = isConfirmedDefenderOfSpecificDefendant(
       '1234567890',
-      'client-1',
+      'defendant-1',
       defendants,
     )
 
@@ -294,12 +288,12 @@ describe('isConfirmedDefenderOfSpecificDefendant', () => {
   it('should return false when user is not confirmed defender of the specific defendant', () => {
     const defendants = [
       makeDefendant({
-        id: 'client-1',
+        id: 'defendant-1',
         defenderNationalId: '1234567890',
         isDefenderChoiceConfirmed: true,
       }),
       makeDefendant({
-        id: 'client-2',
+        id: 'defendant-2',
         defenderNationalId: '0987654321',
         isDefenderChoiceConfirmed: true,
       }),
@@ -307,7 +301,7 @@ describe('isConfirmedDefenderOfSpecificDefendant', () => {
 
     const result = isConfirmedDefenderOfSpecificDefendant(
       '1234567890',
-      'client-2',
+      'defendant-2',
       defendants,
     )
 

@@ -380,7 +380,7 @@ export const getDefenderVisiblePoliceCaseNumbers = (
   )
 }
 
-export const getConfirmedDefendantClientsForDefender = (
+export const getConfirmedDefendantsForDefender = (
   userNationalId: string,
   defendants?: Defendant[],
 ): Defendant[] => {
@@ -399,6 +399,6 @@ export const isConfirmedDefenderOfSpecificDefendant = (
   defendantId: string,
   defendants?: Defendant[],
 ): boolean =>
-  getConfirmedDefendantClientsForDefender(userNationalId, defendants).some(
+  getConfirmedDefendantsForDefender(userNationalId, defendants).some(
     (defendant) => defendant.id === defendantId,
   )

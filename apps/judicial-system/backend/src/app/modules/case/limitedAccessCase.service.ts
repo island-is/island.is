@@ -35,7 +35,7 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import {
   FileService,
-  getConfirmedDefendantClientsForDefender,
+  getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
   getDefenderVisiblePoliceCaseNumbers,
@@ -869,12 +869,12 @@ export class LimitedAccessCaseService {
         )
       })
 
-      const myDefendantClients = getConfirmedDefendantClientsForDefender(
+      const myDefendants = getConfirmedDefendantsForDefender(
         user.nationalId,
         theCase.defendants,
       )
 
-      myDefendantClients.forEach((defendant) =>
+      myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
@@ -891,7 +891,7 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const allMyClientsDismissed = Boolean(
+      const allMyDefendantsDismissed = Boolean(
         getDefenceUserCutoffDate(
           user.nationalId,
           theCase.defendants,
@@ -904,7 +904,7 @@ export class LimitedAccessCaseService {
         !theCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
         ) &&
-        !allMyClientsDismissed &&
+        !allMyDefendantsDismissed &&
         hasGeneratedCourtRecordPdf(
           theCase.state,
           theCase.indictmentRulingDecision,

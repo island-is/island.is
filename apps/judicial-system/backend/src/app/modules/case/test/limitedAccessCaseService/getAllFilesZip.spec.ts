@@ -96,22 +96,22 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   })
 
   describe('subpoenas', () => {
-    it('should only generate subpoena pdfs for confirmed defender clients', async () => {
-      const subpoenaForClient = { id: uuid() } as Subpoena
-      const subpoenaForOther = { id: uuid() } as Subpoena
-      const clientDefendant = makeDefendant({
-        id: 'client-1',
-        name: 'Client One',
-        subpoenas: [subpoenaForClient],
+    it('should only generate subpoena pdfs for defendants the defender is confirmed for', async () => {
+      const subpoenaForDefendant = { id: uuid() } as Subpoena
+      const subpoenaForOtherDefendant = { id: uuid() } as Subpoena
+      const representedDefendant = makeDefendant({
+        id: 'defendant-1',
+        name: 'Defendant One',
+        subpoenas: [subpoenaForDefendant],
       })
       const otherDefendant = makeDefendant({
-        id: 'client-2',
-        name: 'Client Two',
+        id: 'defendant-2',
+        name: 'Defendant Two',
         defenderNationalId: '0202020202',
-        subpoenas: [subpoenaForOther],
+        subpoenas: [subpoenaForOtherDefendant],
       })
       const theCase = makeIndictmentCase({
-        defendants: [clientDefendant, otherDefendant],
+        defendants: [representedDefendant, otherDefendant],
       })
 
       await limitedAccessCaseService.getAllFilesZip(
@@ -123,9 +123,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledTimes(1)
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
-        clientDefendant,
+        representedDefendant,
         transaction,
-        subpoenaForClient,
+        subpoenaForDefendant,
       )
     })
   })
@@ -148,7 +148,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       ).not.toHaveBeenCalled()
     })
 
-    it('should not generate court record pdf when all defender clients are dismissed', async () => {
+    it('should not generate court record pdf when all represented defendants are dismissed', async () => {
       const dismissedAt = new Date('2024-01-10')
       const theCase = makeIndictmentCase({
         defendants: [
