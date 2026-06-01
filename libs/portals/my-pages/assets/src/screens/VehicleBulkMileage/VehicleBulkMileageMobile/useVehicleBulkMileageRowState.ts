@@ -239,7 +239,7 @@ export const useVehicleBulkMileageRowState = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
-  const unit = vehicle.hasMilesOdometer ? 'mi' : 'km'
+  const unit = (vehicle.hasMilesOdometer ? 'mi' : 'km') as 'mi' | 'km'
   const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
   const displayMileage = localMileage ?? vehicle.lastMileageRegistration?.mileage
 
