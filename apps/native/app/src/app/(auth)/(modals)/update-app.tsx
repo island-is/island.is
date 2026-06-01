@@ -1,12 +1,6 @@
 import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import {
-  View,
-  Image,
-  SafeAreaView,
-  Linking,
-  BackHandler,
-} from 'react-native'
+import { View, Image, SafeAreaView, Linking, BackHandler } from 'react-native'
 import styled from 'styled-components/native'
 import { Stack, router, useLocalSearchParams } from 'expo-router'
 
