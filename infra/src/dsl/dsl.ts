@@ -623,7 +623,6 @@ export type ScheduledJobOmittedMethods =
  *     prod: '0 1 * * *',
  *   })
  *   .concurrencyPolicy('Forbid')
- *   .backoffLimit(3)
  *   .namespace('islandis')
  *   .command('node')
  *   .args('main.cjs')
@@ -662,7 +661,7 @@ export class ScheduledJobBuilder<
    * - `'Forbid'` — prevents concurrent runs; skips a new run if the previous is still running
    * - `'Replace'` — cancels the running job and starts a new one
    *
-   * Defaults to `'Forbid'` if not set.
+   * Omitted from output unless explicitly set.
    */
   concurrencyPolicy(policy: ConcurrencyPolicy): this {
     this.ensureScheduledJobConfig()
