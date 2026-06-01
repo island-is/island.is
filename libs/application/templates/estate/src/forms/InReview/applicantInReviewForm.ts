@@ -9,12 +9,11 @@ import {
   buildRadioField,
   buildCheckboxField,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
-import { EstateTypes } from '../../lib/constants'
+import { EstateTypes, YES } from '../../lib/constants'
 import { EstateMember } from '../../types'
 import { allPartiesHaveApproved } from '../../lib/utils/allPartiesHaveApproved'
 
