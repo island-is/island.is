@@ -1,4 +1,4 @@
-import { CustomersDto } from '@island.is/clients/elfur'
+import { CustomersDto } from '@island.is/clients/government-invoices'
 import { Customers } from '../models/customers.model'
 import { Customer } from '../models/customer.model'
 

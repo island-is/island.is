@@ -1,4 +1,4 @@
-import { InvoiceGroupDto } from '@island.is/clients/elfur'
+import { InvoiceGroupDto } from '@island.is/clients/government-invoices'
 import { InvoiceGroup } from '../models/invoiceGroup.model'
 import { mapInvoice } from './invoiceMapper'
 import { isDefined } from '@island.is/shared/utils'

@@ -1,4 +1,4 @@
-import { ElfurClientService } from '@island.is/clients/elfur'
+import { GovernmentInvoicesClientService } from '@island.is/clients/government-invoices'
 import { Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
@@ -21,12 +21,12 @@ import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
-  constructor(private elfurService: ElfurClientService) {}
+  constructor(private govInvoicesService: GovernmentInvoicesClientService) {}
 
   async getOpenInvoicesGroup(
     input: InvoicesInput,
   ): Promise<InvoiceGroup | null> {
-    const data = await this.elfurService.getOpenInvoiceGroup(input)
+    const data = await this.govInvoicesService.getOpenInvoiceGroup(input)
 
     if (!data) {
       return null
@@ -38,7 +38,7 @@ export class InvoicesService implements IInvoicesService {
   async getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroupCollection | null> {
-    const data = await this.elfurService.getOpenInvoiceGroups(input)
+    const data = await this.govInvoicesService.getOpenInvoiceGroups(input)
 
     if (!data) {
       return null
@@ -57,7 +57,7 @@ export class InvoicesService implements IInvoicesService {
   }
 
   async getCustomers(input?: CustomersInput): Promise<Customers | null> {
-    const data = await this.elfurService.getCustomers(input)
+    const data = await this.govInvoicesService.getCustomers(input)
 
     if (!data) {
       return null
@@ -69,7 +69,7 @@ export class InvoicesService implements IInvoicesService {
   async getInvoicePaymentTypes(
     input?: InvoicePaymentTypesInput,
   ): Promise<InvoicePaymentTypes | null> {
-    const data = await this.elfurService.getInvoicePaymentTypes(input)
+    const data = await this.govInvoicesService.getInvoicePaymentTypes(input)
 
     if (!data) {
       return null
@@ -81,7 +81,7 @@ export class InvoicesService implements IInvoicesService {
   async getInvoiceTypes(
     input?: InvoiceTypesInput,
   ): Promise<InvoiceTypes | null> {
-    const data = await this.elfurService.getInvoiceTypes(input)
+    const data = await this.govInvoicesService.getInvoiceTypes(input)
 
     if (!data) {
       return null
@@ -91,7 +91,7 @@ export class InvoicesService implements IInvoicesService {
   }
 
   async getSuppliers(input?: SuppliersInput): Promise<Suppliers | null> {
-    const data = await this.elfurService.getSuppliers(input)
+    const data = await this.govInvoicesService.getSuppliers(input)
 
     if (!data) {
       return null

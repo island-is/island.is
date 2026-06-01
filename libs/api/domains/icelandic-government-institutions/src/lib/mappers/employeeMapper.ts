@@ -1,4 +1,4 @@
-import { EmployeeDto } from '@island.is/clients/elfur'
+import { EmployeeDto } from '@island.is/clients/government-invoices'
 import { Employee } from '../models/employee.model'
 
 export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {

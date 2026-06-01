@@ -1,4 +1,4 @@
-import { SuppliersDto } from '@island.is/clients/elfur'
+import { SuppliersDto } from '@island.is/clients/government-invoices'
 import { Suppliers } from '../models/suppliers.model'
 import { Supplier } from '../models/supplier.model'
 

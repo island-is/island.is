@@ -1,7 +1,7 @@
 {
-  "name": "clients-elfur",
+  "name": "clients-government-invoices",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/elfur/src",
+  "sourceRoot": "libs/clients/government-invoices/src",
   "projectType": "library",
   "tags": ["scope:client", "lib:client"],
   "targets": {
@@ -12,7 +12,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/elfur/jest.config.ts"
+        "jestConfig": "libs/clients/government-invoices/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -24,13 +24,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/elfur"
+        "cwd": "libs/clients/government-invoices"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/elfur/gen/fetch -i libs/clients/elfur/src/clientConfig.json"
+        "command": "yarn openapi-ts -f libs/clients/government-invoices/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

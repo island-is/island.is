@@ -129,7 +129,7 @@ import {
   LegalGazetteClientConfig,
   LegalGazetteClientModule,
 } from '@island.is/clients/legal-gazette'
-import { ElfurClientConfig } from '@island.is/clients/elfur'
+import { GovernmentInvoicesClientConfig } from '@island.is/clients/government-invoices'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -421,7 +421,7 @@ const environment = getConfig
         SeminarsClientConfig,
         NvsPermitsClientConfig,
         AirDiscountSchemeClientConfig,
-        ElfurClientConfig,
+        GovernmentInvoicesClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,

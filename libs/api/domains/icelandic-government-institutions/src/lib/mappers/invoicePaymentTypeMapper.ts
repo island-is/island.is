@@ -1,7 +1,7 @@
 import {
   InvoicePaymentTypeDto,
   InvoicePaymentTypesDto,
-} from '@island.is/clients/elfur'
+} from '@island.is/clients/government-invoices'
 import { InvoicePaymentType } from '../models/invoicePaymentType.model'
 import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
 

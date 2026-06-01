@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   basePath: z.string().url(),
@@ -8,8 +8,8 @@ const schema = z.object({
   authUrl: z.string().url(),
 })
 
-export const ElfurClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'ElfurClient',
+export const GovernmentInvoicesClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'GovernmentInvoicesClient',
   schema,
   load(env) {
     return {

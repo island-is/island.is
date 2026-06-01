@@ -1,10 +1,10 @@
 export default {
-  displayName: 'elfur',
+  displayName: 'government-invoices',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/elfur',
+  coverageDirectory: '../../../coverage/libs/clients/government-invoices',
 }

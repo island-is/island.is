@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { ElfurClientModule } from '@island.is/clients/elfur'
+import { GovernmentInvoicesClientModule } from '@island.is/clients/government-invoices'
 import { EmployeesResolver } from './resolvers/employees.resolver'
 import { EmployeesService } from './services/employees/employees.service'
 import { MockInvoicesService } from './services/invoices/invoices.service.mock'
@@ -19,7 +19,7 @@ export class IcelandicGovernmentInstitutionsModule {
   ): DynamicModule {
     return {
       module: IcelandicGovernmentInstitutionsModule,
-      imports: [ElfurClientModule],
+      imports: [GovernmentInvoicesClientModule],
       providers: [
         {
           provide: 'IInvoicesService',

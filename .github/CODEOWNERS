@@ -199,7 +199,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/questionnaires/                                                                                            @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
-/libs/clients/elfur                                                                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
 /libs/clients/finance-v3/                                                                                                    @island-is/hugsmidjan
@@ -228,6 +227,7 @@ codemagic.yaml                                                                  
 /libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                                             @island-is/hugsmidjan
 /libs/clients/inna/                                                                                                          @island-is/hugsmidjan
+/libs/clients/government-invoices/                                                                                           @island-is/hugsmidjan
 /libs/clients/grants/                                                                                                        @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                                     @island-is/hugsmidjan
 /libs/clients/official-journal-of-iceland/                                                                                   @island-is/hugsmidjan

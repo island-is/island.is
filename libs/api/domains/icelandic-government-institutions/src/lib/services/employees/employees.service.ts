@@ -1,4 +1,4 @@
-import { ElfurClientService } from '@island.is/clients/elfur'
+import { GovernmentInvoicesClientService } from '@island.is/clients/government-invoices'
 import { Injectable } from '@nestjs/common'
 import { Employees } from '../../models/employees.model'
 import { mapEmployee } from '../../mappers/employeeMapper'
@@ -8,13 +8,13 @@ import { type IEmployeesService } from './employees.service.interface'
 
 @Injectable()
 export class EmployeesService implements IEmployeesService {
-  constructor(private elfurService: ElfurClientService) {}
+  constructor(private govInvoicesService: GovernmentInvoicesClientService) {}
 
   async getEmployees(
     organizationId: string,
     locale: Locale,
   ): Promise<Employees> {
-    const data = await this.elfurService.getOrganizationEmployees(
+    const data = await this.govInvoicesService.getOrganizationEmployees(
       organizationId,
     )
 

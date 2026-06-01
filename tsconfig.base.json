@@ -788,7 +788,6 @@
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
-      "@island.is/clients/elfur": ["libs/clients/elfur/src/index.ts"],
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
@@ -814,6 +813,9 @@
       ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
+      ],
+      "@island.is/clients/government-invoices": [
+        "libs/clients/government-invoices/src/index.ts"
       ],
       "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
@@ -860,10 +862,10 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/lyfjastofnun-pharmacies": [
         "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
       ],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],

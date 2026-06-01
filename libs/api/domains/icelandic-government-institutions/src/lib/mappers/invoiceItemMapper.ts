@@ -1,4 +1,4 @@
-import { InvoiceItemization } from '@island.is/clients/elfur'
+import { InvoiceItemization } from '@island.is/clients/government-invoices'
 import { InvoiceItem } from '../models/invoiceItem.model'
 import { mapInvoicePaymentType } from './invoicePaymentTypeMapper'
 
