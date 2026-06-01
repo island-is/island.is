@@ -813,7 +813,9 @@ export class InternalCaseController {
     CaseCompletedGuard,
   )
   @Post(
-    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_POLICE_APPEAL]}`,
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_APPEAL]
+    }/:appealCaseId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
@@ -821,13 +823,18 @@ export class InternalCaseController {
   })
   deliverAppealToPolice(
     @Param('caseId') caseId: string,
+    @Param('appealCaseId') appealCaseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
-    this.logger.debug(`Delivering appeal ${caseId} to police`)
+    this.logger.debug(
+      `Delivering appeal ruling for appeal case ${appealCaseId} of case ${caseId} to police`,
+    )
 
     return this.internalCaseService.deliverAppealToPolice(
       theCase,
+      appealCase,
       deliverDto.user,
     )
   }

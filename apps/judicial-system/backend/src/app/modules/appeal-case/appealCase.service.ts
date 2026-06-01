@@ -244,6 +244,7 @@ export class AppealCaseService {
         type: MessageType.DELIVERY_TO_POLICE_APPEAL,
         user,
         caseId: theCase.id,
+        elementId: appealCase.id,
       })
     }
   }
