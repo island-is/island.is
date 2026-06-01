@@ -49,7 +49,6 @@ type FilterValues = {
   archived: boolean
 }
 
-
 const CircleLogo = ({
   fallbackIcon,
 }: {
@@ -333,7 +332,9 @@ const HealthConversations = () => {
                       archived={item.isArchived}
                       onFav={() => {
                         if (item.isStarred) {
-                          unstarMessage({ variables: { input: { id: item.id } } })
+                          unstarMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         } else {
                           starMessage({ variables: { input: { id: item.id } } })
                         }
@@ -344,7 +345,9 @@ const HealthConversations = () => {
                             variables: { input: { id: item.id } },
                           })
                         } else {
-                          archiveMessage({ variables: { input: { id: item.id } } })
+                          archiveMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         }
                       }}
                     />

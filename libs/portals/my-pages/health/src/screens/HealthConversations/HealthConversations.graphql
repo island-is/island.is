@@ -18,14 +18,20 @@ mutation StarHealthConversation($input: HealthDirectorateConversationIdInput!) {
   healthDirectorateStarHealthConversation(input: $input)
 }
 
-mutation UnstarHealthConversation($input: HealthDirectorateConversationIdInput!) {
+mutation UnstarHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateUnstarHealthConversation(input: $input)
 }
 
-mutation ArchiveHealthConversation($input: HealthDirectorateConversationIdInput!) {
+mutation ArchiveHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateArchiveHealthConversation(input: $input)
 }
 
-mutation UnarchiveHealthConversation($input: HealthDirectorateConversationIdInput!) {
+mutation UnarchiveHealthConversation(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateUnarchiveHealthConversation(input: $input)
 }

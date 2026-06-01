@@ -24,23 +24,33 @@ query GetHealthConversationDetail($id: String!) {
   }
 }
 
-mutation MarkHealthConversationAsRead($input: HealthDirectorateConversationIdInput!) {
+mutation MarkHealthConversationAsRead(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateMarkHealthConversationAsRead(input: $input)
 }
 
-mutation StarHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+mutation StarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateStarHealthConversation(input: $input)
 }
 
-mutation UnstarHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+mutation UnstarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateUnstarHealthConversation(input: $input)
 }
 
-mutation ArchiveHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+mutation ArchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateArchiveHealthConversation(input: $input)
 }
 
-mutation UnarchiveHealthConversationDetail($input: HealthDirectorateConversationIdInput!) {
+mutation UnarchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
   healthDirectorateUnarchiveHealthConversation(input: $input)
 }
 
