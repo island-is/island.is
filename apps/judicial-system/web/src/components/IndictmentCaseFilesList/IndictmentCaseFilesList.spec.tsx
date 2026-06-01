@@ -131,9 +131,7 @@ describe('IndictmentCaseFilesList', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(
-      screen.queryByText(/Fyrirkall Defendant One/),
-    ).toBeInTheDocument()
+    expect(screen.queryByText(/Fyrirkall Defendant One/)).toBeInTheDocument()
     expect(
       screen.queryByText(/Fyrirkall Defendant Two/),
     ).not.toBeInTheDocument()

@@ -52,7 +52,10 @@ describe('Defender Subpoena Access Guard', () => {
     beforeEach(() => {
       mockRequest.mockReturnValueOnce({
         user: {
-          currentUser: { role: UserRole.DEFENDER, nationalId: defenderNationalId },
+          currentUser: {
+            role: UserRole.DEFENDER,
+            nationalId: defenderNationalId,
+          },
         },
         case: theCase,
         defendant: { id: defendantId },
@@ -105,7 +108,9 @@ describe('Defender Subpoena Access Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockReturnValueOnce({
-        user: { currentUser: { role: UserRole.PROSECUTOR, nationalId: '1234567890' } },
+        user: {
+          currentUser: { role: UserRole.PROSECUTOR, nationalId: '1234567890' },
+        },
         case: { id: uuid(), defendants: [] },
         defendant: { id: uuid() },
       })

@@ -11,7 +11,6 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { PdfService } from '../../pdf.service'
 import {
   Case,
   Defendant,
@@ -19,6 +18,7 @@ import {
   Subpoena,
 } from '../../../repository'
 import { LimitedAccessCaseService } from '../../limitedAccessCase.service'
+import { PdfService } from '../../pdf.service'
 
 const defenderNationalId = '0101010101'
 const pdfBuffer = Buffer.from('pdf')
@@ -34,13 +34,12 @@ const makeDefendant = (overrides: Partial<Defendant> = {}): Defendant =>
     subpoenas: [],
     policeCaseNumbers: ['007-2026-1'],
     ...overrides,
-  }) as Defendant
+  } as Defendant)
 
 const makeEventLog = (
   eventType: DefendantEventType,
   created: Date,
-): DefendantEventLog =>
-  ({ eventType, created }) as unknown as DefendantEventLog
+): DefendantEventLog => ({ eventType, created } as unknown as DefendantEventLog)
 
 const makeIndictmentCase = (overrides: Partial<Case> = {}): Case =>
   ({
@@ -54,7 +53,7 @@ const makeIndictmentCase = (overrides: Partial<Case> = {}): Case =>
     withCourtSessions: true,
     courtSessions: [{ isConfirmed: true }],
     ...overrides,
-  }) as Case
+  } as Case)
 
 describe('LimitedAccessCaseService - getAllFilesZip', () => {
   let limitedAccessCaseService: LimitedAccessCaseService
@@ -68,7 +67,8 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   } as User
 
   beforeEach(async () => {
-    const { limitedAccessCaseService: service } = await createTestingCaseModule()
+    const { limitedAccessCaseService: service } =
+      await createTestingCaseModule()
 
     limitedAccessCaseService = service
     mockPdfService = (
@@ -114,11 +114,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         defendants: [representedDefendant, otherDefendant],
       })
 
-      await limitedAccessCaseService.getAllFilesZip(
-        theCase,
-        user,
-        transaction,
-      )
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
 
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledTimes(1)
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
@@ -137,11 +133,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         courtSessions: [{ isConfirmed: true }],
       })
 
-      await limitedAccessCaseService.getAllFilesZip(
-        theCase,
-        user,
-        transaction,
-      )
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
 
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
@@ -163,11 +155,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         ],
       })
 
-      await limitedAccessCaseService.getAllFilesZip(
-        theCase,
-        user,
-        transaction,
-      )
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
 
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
@@ -181,11 +169,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
         caseFiles: [],
       })
 
-      await limitedAccessCaseService.getAllFilesZip(
-        theCase,
-        user,
-        transaction,
-      )
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
 
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
