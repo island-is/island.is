@@ -28,9 +28,10 @@ export const Email = ({ item, dispatch, valueIndex = 0 }: Props) => {
         control={control}
         defaultValue={getValue(item, 'email', valueIndex) ?? ''}
         rules={{
-          required: item?.isRequired
-            ? { value: true, message: formatMessage(m.required) }
-            : false,
+          required: {
+            value: item.isRequired ?? false,
+            message: formatMessage(m.required),
+          },
           pattern: {
             value: EMAIL_REGEX,
             message: formatMessage(m.invalidEmail),

@@ -4,6 +4,7 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   CaseType,
+  DefendantEventType,
   EventType,
   IndictmentCaseNotificationType,
   RequestCaseNotificationType,
@@ -155,7 +156,16 @@ describe('InternalNotificationController - Send indictment reopened notification
   describe('sends to prison admin when case was sent to prison admin', () => {
     const caseWithPrisonAdmin = {
       ...baseCase,
-      defendants: [{ isSentToPrisonAdmin: true }],
+      defendants: [
+        {
+          eventLogs: [
+            {
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+              created: new Date(),
+            },
+          ],
+        },
+      ],
     } as unknown as Case
 
     beforeEach(async () => {
@@ -181,7 +191,7 @@ describe('InternalNotificationController - Send indictment reopened notification
   describe('does not send to prison admin when case was not sent to prison admin', () => {
     const caseWithoutPrisonAdmin = {
       ...baseCase,
-      defendants: [{ isSentToPrisonAdmin: false }],
+      defendants: [{ eventLogs: [] }],
     } as unknown as Case
 
     beforeEach(async () => {
@@ -192,6 +202,88 @@ describe('InternalNotificationController - Send indictment reopened notification
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
           to: [expect.objectContaining({ name: 'Fangelsismálastofnun' })],
+        }),
+      )
+    })
+  })
+
+  describe('does not send to prison admin on a second reopen when not re-sent in between', () => {
+    const sentToFmsDate = new Date('2026-01-01T00:00:00Z')
+    const firstReopenDate = new Date('2026-02-01T00:00:00Z')
+    const secondReopenDate = new Date('2026-03-01T00:00:00Z')
+    const caseReopenedTwiceWithoutResend = {
+      ...baseCase,
+      eventLogs: [
+        { eventType: EventType.INDICTMENT_REOPENED, created: firstReopenDate },
+        { eventType: EventType.INDICTMENT_REOPENED, created: secondReopenDate },
+      ] as unknown as EventLog[],
+      defendants: [
+        {
+          eventLogs: [
+            {
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+              created: sentToFmsDate,
+            },
+          ],
+        },
+      ],
+    } as unknown as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseReopenedTwiceWithoutResend)
+    })
+
+    it('should not send email to prison admin', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [expect.objectContaining({ name: 'Fangelsismálastofnun' })],
+        }),
+      )
+    })
+  })
+
+  describe('sends to prison admin on a second reopen when re-sent in between', () => {
+    const firstSentToFmsDate = new Date('2026-01-01T00:00:00Z')
+    const firstReopenDate = new Date('2026-02-01T00:00:00Z')
+    const secondSentToFmsDate = new Date('2026-02-15T00:00:00Z')
+    const secondReopenDate = new Date('2026-03-01T00:00:00Z')
+    const caseReopenedTwiceWithResend = {
+      ...baseCase,
+      eventLogs: [
+        { eventType: EventType.INDICTMENT_REOPENED, created: firstReopenDate },
+        { eventType: EventType.INDICTMENT_REOPENED, created: secondReopenDate },
+      ] as unknown as EventLog[],
+      defendants: [
+        {
+          eventLogs: [
+            {
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+              created: firstSentToFmsDate,
+            },
+            {
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+              created: secondSentToFmsDate,
+            },
+          ],
+        },
+      ],
+    } as unknown as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseReopenedTwiceWithResend)
+    })
+
+    it('should send email to prison admin', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Fangelsismálastofnun',
+              address: 'jl+d+prisonAdmin@kolibri.is',
+            },
+          ],
+          subject: prosecutorSubject,
+          html: bodyText,
         }),
       )
     })
@@ -238,6 +330,74 @@ describe('InternalNotificationController - Send indictment reopened notification
       expect(
         mockInstitutionContactRepositoryService.getInstitutionContact,
       ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('does not send to public prosecutor on a second reopen when not re-sent in between', () => {
+    const sentToPpDate = new Date('2026-01-01T00:00:00Z')
+    const firstReopenDate = new Date('2026-02-01T00:00:00Z')
+    const secondReopenDate = new Date('2026-03-01T00:00:00Z')
+    const caseReopenedTwiceWithoutResend = {
+      ...baseCase,
+      eventLogs: [
+        {
+          eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          created: sentToPpDate,
+        },
+        { eventType: EventType.INDICTMENT_REOPENED, created: firstReopenDate },
+        { eventType: EventType.INDICTMENT_REOPENED, created: secondReopenDate },
+      ] as unknown as EventLog[],
+    } as unknown as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseReopenedTwiceWithoutResend)
+    })
+
+    it('should not look up public prosecutor contact', () => {
+      expect(
+        mockInstitutionContactRepositoryService.getInstitutionContact,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('sends to public prosecutor on a second reopen when re-sent in between', () => {
+    const publicProsecutorEmail = `publicProsecutor-${uuid()}@omnitrix.is`
+    const firstSentToPpDate = new Date('2026-01-01T00:00:00Z')
+    const firstReopenDate = new Date('2026-02-01T00:00:00Z')
+    const secondSentToPpDate = new Date('2026-02-15T00:00:00Z')
+    const secondReopenDate = new Date('2026-03-01T00:00:00Z')
+    const caseReopenedTwiceWithResend = {
+      ...baseCase,
+      eventLogs: [
+        {
+          eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          created: firstSentToPpDate,
+        },
+        { eventType: EventType.INDICTMENT_REOPENED, created: firstReopenDate },
+        {
+          eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          created: secondSentToPpDate,
+        },
+        { eventType: EventType.INDICTMENT_REOPENED, created: secondReopenDate },
+      ] as unknown as EventLog[],
+    } as unknown as Case
+
+    beforeEach(async () => {
+      const mockGetInstitutionContact =
+        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
+      mockGetInstitutionContact.mockResolvedValueOnce(publicProsecutorEmail)
+
+      await givenWhenThen(caseReopenedTwiceWithResend)
+    })
+
+    it('should send email to public prosecutor', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: 'Ríkissaksóknari', address: publicProsecutorEmail }],
+          subject: prosecutorSubject,
+          html: bodyText,
+        }),
+      )
     })
   })
 })
