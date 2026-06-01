@@ -66,6 +66,7 @@ interface PaymentPageProps {
   }
   isInvoicePaymentEnabledForUser: boolean
   isApplePayPaymentEnabledForUser: boolean
+  isBankTransferPaymentEnabledForUser: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -104,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let organization: PaymentPageProps['organization'] = null
   let isInvoicePaymentEnabledForUser = false
   let isApplePayPaymentEnabledForUser = false
+  let isBankTransferPaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -195,6 +197,17 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     } catch (e) {
       console.error('Error getting Apple Pay payment enabled for user', e)
     }
+
+    try {
+      isBankTransferPaymentEnabledForUser =
+        await configCatClient.getValueAsync(
+          Features.isIslandisBankTransferPaymentAllowedForUser,
+          false,
+          userObj,
+        )
+    } catch (e) {
+      console.error('Error getting bank transfer payment enabled for user', e)
+    }
   }
 
   const productInformation = {
@@ -212,6 +225,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       productInformation,
       isInvoicePaymentEnabledForUser,
       isApplePayPaymentEnabledForUser,
+      isBankTransferPaymentEnabledForUser,
     },
   }
 }
@@ -222,6 +236,7 @@ function PaymentPage({
   productInformation,
   isInvoicePaymentEnabledForUser,
   isApplePayPaymentEnabledForUser,
+  isBankTransferPaymentEnabledForUser,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -313,11 +328,16 @@ function PaymentPage({
       methods.push('invoice')
     }
 
-    // TEST OVERRIDE — remove once the backend emits bank_transfer based on FJS `paymentOptions`.
-    methods.push('bank_transfer')
+    if (isBankTransferPaymentEnabledForUser) {
+      methods.push('bank_transfer')
+    }
 
     return Array.from(new Set(methods)) as PaymentMethod[]
-  }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
+  }, [
+    paymentFlow?.availablePaymentMethods,
+    isInvoicePaymentEnabledForUser,
+    isBankTransferPaymentEnabledForUser,
+  ])
 
   // Invoice payment or bank transfer doesn't have any input fields, so we don't need to check if it's valid
   const isCardPaymentInvalid =
