@@ -149,6 +149,11 @@ export class FieldSettings {
   isEmailRequired?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchEmailFromMyPages?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   chargeItemCode?: string

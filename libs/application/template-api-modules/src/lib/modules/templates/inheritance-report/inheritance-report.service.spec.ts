@@ -8,6 +8,7 @@ import { SyslumennService } from '@island.is/clients/syslumenn'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { SharedTemplateApiService } from '../../shared'
 
 const mockLogger = {
   info: jest.fn(),
@@ -24,6 +25,10 @@ const mockSyslumennService = {
   getInheritanceReportSignatories: jest.fn(),
 }
 
+const mockSharedTemplateApiService = {
+  sendEmail: jest.fn(),
+}
+
 describe('InheritanceReportService', () => {
   let service: InheritanceReportService
   let module: TestingModule
@@ -37,6 +42,10 @@ describe('InheritanceReportService', () => {
         { provide: NationalRegistryV3Service, useValue: {} },
         { provide: S3Service, useValue: {} },
         { provide: FeatureFlagService, useValue: { getValue: jest.fn() } },
+        {
+          provide: SharedTemplateApiService,
+          useValue: mockSharedTemplateApiService,
+        },
       ],
     }).compile()
 

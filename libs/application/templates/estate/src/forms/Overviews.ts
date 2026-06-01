@@ -21,6 +21,9 @@ const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
   return Array.isArray(paymentData) && paymentData.length > 0
 }
 
+const isReviewEnabled = (externalData: Record<string, unknown>): boolean =>
+  getValueViaPath(externalData, 'checkReviewFlag.data.reviewEnabled') === true
+
 export const overview = buildSection({
   id: 'overviewEstateDivision',
   title: m.overviewTitle,
@@ -32,7 +35,9 @@ export const overview = buildSection({
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
-          EstateTypes.divisionOfEstateByHeirs && isPaymentEnabled(externalData),
+          EstateTypes.divisionOfEstateByHeirs &&
+        isPaymentEnabled(externalData) &&
+        !isReviewEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
@@ -41,7 +46,7 @@ export const overview = buildSection({
       ],
     }),
 
-    /* Einkaskipti WITHOUT payment (feature flag off) */
+    /* Einkaskipti WITHOUT payment, or with review before payment */
     buildMultiField({
       id: 'overviewPrivateDivisionNoPayment',
       title: m.overviewTitle,
@@ -49,7 +54,7 @@ export const overview = buildSection({
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.divisionOfEstateByHeirs &&
-        !isPaymentEnabled(externalData),
+        (!isPaymentEnabled(externalData) || isReviewEnabled(externalData)),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
@@ -77,7 +82,8 @@ export const overview = buildSection({
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.permitForUndividedEstate &&
-        isPaymentEnabled(externalData),
+        isPaymentEnabled(externalData) &&
+        !isReviewEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
@@ -86,7 +92,7 @@ export const overview = buildSection({
       ],
     }),
 
-    /* Seta í óskiptu búi WITHOUT payment (feature flag off) */
+    /* Seta í óskiptu búi WITHOUT payment, or with review before payment */
     buildMultiField({
       id: 'overviewUndividedEstateNoPayment',
       title: m.overviewTitle,
@@ -94,7 +100,7 @@ export const overview = buildSection({
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.permitForUndividedEstate &&
-        !isPaymentEnabled(externalData),
+        (!isPaymentEnabled(externalData) || isReviewEnabled(externalData)),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,

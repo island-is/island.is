@@ -19,11 +19,11 @@ const columnHelper =
   createColumnHelper<EducationPrimarySchoolAssessmentResult>()
 
 export const AssessmentTable = ({ results, loading }: Props) => {
-  const { formatMessage, locale } = useLocale()
   const [activePdf, setActivePdf] = useState<{
     url: string
     title: string
   } | null>(null)
+  const { formatMessage } = useLocale()
 
   const hasExamSitting = results.some(
     (r) =>
@@ -95,8 +95,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale, hasExamSitting],
+    [formatMessage, hasExamSitting],
   )
 
   return (

@@ -2246,6 +2246,10 @@ export const m = defineMessages({
     defaultMessage:
       'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
   },
+  unemploymentHasConfirmedJobSearch: {
+    id: 'service.portal:unemployment-has-confirmed-job-search',
+    defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

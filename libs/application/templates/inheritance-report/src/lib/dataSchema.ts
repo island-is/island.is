@@ -809,6 +809,11 @@ export const inheritanceReportSchema = z.object({
   assetsConfirmation: z.array(z.enum([YES])).length(1),
   debtsConfirmation: z.array(z.enum([YES])).length(1),
   heirsConfirmation: z.array(z.enum([YES])).length(1),
+  inReviewSigningConfirmation: z
+    .array(z.enum([YES]))
+    .refine((v) => v.includes(YES), {
+      params: m.applicantInReviewStatementError,
+    }),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>
