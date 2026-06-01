@@ -4,9 +4,10 @@ import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
+  requiredMissing?: boolean
 }
 
-export const FileUploadDisplay = ({ item }: Props) => {
+export const FileUploadDisplay = ({ item, requiredMissing = false }: Props) => {
   const { lang } = useLocale()
 
   const s3Keys = (item.values?.[0]?.json?.s3Key ?? []).filter(
@@ -23,6 +24,14 @@ export const FileUploadDisplay = ({ item }: Props) => {
     >
       <Text as="p" fontWeight="semiBold">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="semiBold" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
       <Box marginLeft={2}>
         {s3Keys.map((k) => (

@@ -94,4 +94,8 @@ export const dataSchema = z.object({
   // tried first but fired prematurely at the prerequisites→draft transition,
   // before the user had reached the upload screen, blocking advance.
   is65RenewalRedesignEnabled: z.boolean().optional(),
+  // Captured into answers via a hidden input during prerequisites so the
+  // B-temp photo selector / eligibility gating and the submission service can
+  // branch on the redesign flag. Same mechanism as is65RenewalRedesignEnabled.
+  isBTempRedesignEnabled: z.boolean().optional(),
 })
