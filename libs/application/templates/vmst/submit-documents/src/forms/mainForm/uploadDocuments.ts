@@ -42,6 +42,7 @@ export const uploadDocumentsSection = buildSection({
             },
             file: {
               component: 'fileUpload',
+              required: true,
               label: udm.fileLabel,
               uploadAccept: '.pdf,.docx,.rtf,.doc,.jpg,.jpeg,.png,.heic',
             },

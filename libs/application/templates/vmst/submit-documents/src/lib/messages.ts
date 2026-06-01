@@ -93,7 +93,7 @@ export const application = defineMessages({
   },
   completedFormAlertTitle: {
     id: 'vmst.vsd.application:completedFormAlertTitle',
-    defaultMessage: 'Breytingar þínar hafa verið vistaðar',
+    defaultMessage: 'Vinnumálastofnun hefur móttekið gögnin.',
     description: 'Title for alert when form is completed',
   },
   completedFormDescriptionFieldTitle: {

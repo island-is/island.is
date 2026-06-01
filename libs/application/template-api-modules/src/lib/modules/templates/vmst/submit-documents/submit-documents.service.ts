@@ -251,17 +251,18 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       }),
     )
 
-    // Log outcome for each file
+    // Log outcome for each file (no file names to avoid PII exposure)
     for (let i = 0; i < results.length; i++) {
       const result = results[i]
-      const { file, attachmentTypeId } = fileEntries[i]
+      const { attachmentTypeId } = fileEntries[i]
       if (result.status === 'fulfilled') {
         this.logger.info(
-          `[VMST-Submit-Documents] - Attachment created successfully: fileName=${file.name}, typeId=${attachmentTypeId}, attachmentId=${result.value.attachmentId}`,
+          `[VMST-Submit-Documents] - Attachment created successfully: index=${i}, typeId=${attachmentTypeId}, attachmentId=${result.value.attachmentId}`,
         )
       } else {
         this.logger.error(
-          `[VMST-Submit-Documents] - Failed to create attachment: fileName=${file.name}, typeId=${attachmentTypeId}, reason=${result.reason}`,
+          `[VMST-Submit-Documents] - Failed to create attachment: index=${i}, typeId=${attachmentTypeId}`,
+          { reason: result.reason },
         )
       }
     }

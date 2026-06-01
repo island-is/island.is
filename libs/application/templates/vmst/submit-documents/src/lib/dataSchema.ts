@@ -32,7 +32,10 @@ export const dataSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [docs.length - 1, 'type'],
-          params: errorMessages.documentsMaxError,
+          params: {
+            ...errorMessages.documentsMaxError,
+            values: { max: MAX_DOCUMENTS },
+          },
         })
       }
     }),
