@@ -1,3 +1,4 @@
+import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
@@ -7,22 +8,27 @@ import {
   IsDate,
   IsOptional,
   IsNumber,
-  IsObject,
   IsString,
   ValidateNested,
+  IsObject,
 } from 'class-validator'
 
-export class ApplicationXroadValueDto {
+export class ApplicationJsonValueDto {
   @ApiProperty()
   @IsNumber()
   order!: number
 
-  @ApiProperty({ type: Object })
-  @IsObject()
-  json!: Record<string, unknown>
+  // @ApiProperty({ type: Object })
+  // @IsObject()
+  // json!: Record<string, unknown>
+
+  @ApiProperty({ type: ValueType })
+  @ValidateNested()
+  @Type(() => ValueType)
+  json!: ValueType
 }
 
-export class ApplicationXroadListItemDto {
+export class ApplicationJsonListItemDto {
   @ApiProperty({ type: LanguageType })
   @ValidateNested()
   @Type(() => LanguageType)
@@ -46,7 +52,7 @@ export class ApplicationXroadListItemDto {
   @IsBoolean()
   isSelected!: boolean
 }
-export class ApplicationXroadFieldDto {
+export class ApplicationJsonFieldDto {
   @ApiProperty()
   @IsString()
   identifier!: string
@@ -59,20 +65,20 @@ export class ApplicationXroadFieldDto {
   @IsString()
   fieldType!: string
 
-  @ApiPropertyOptional({ type: [ApplicationXroadListItemDto] })
+  @ApiPropertyOptional({ type: [ApplicationJsonListItemDto] })
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => ApplicationXroadListItemDto)
-  list?: ApplicationXroadListItemDto[]
+  @Type(() => ApplicationJsonListItemDto)
+  list?: ApplicationJsonListItemDto[]
 
-  @ApiProperty({ type: [ApplicationXroadValueDto] })
+  @ApiProperty({ type: [ApplicationJsonValueDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ApplicationXroadValueDto)
-  values!: ApplicationXroadValueDto[]
+  @Type(() => ApplicationJsonValueDto)
+  values!: ApplicationJsonValueDto[]
 }
 
-export class ApplicationXroadDto {
+export class ApplicationJsonDto {
   @ApiProperty()
   @IsString()
   id!: string
@@ -95,9 +101,9 @@ export class ApplicationXroadDto {
   @Type(() => Date)
   submittedAt?: Date | null
 
-  @ApiProperty({ type: [ApplicationXroadFieldDto] })
+  @ApiProperty({ type: [ApplicationJsonFieldDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ApplicationXroadFieldDto)
-  fields!: ApplicationXroadFieldDto[]
+  @Type(() => ApplicationJsonFieldDto)
+  fields!: ApplicationJsonFieldDto[]
 }

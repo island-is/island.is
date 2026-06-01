@@ -66,6 +66,11 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
 import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
+import {
+  ApplicationJsonDto,
+  ApplicationJsonFieldDto,
+  ApplicationJsonValueDto,
+} from '../applications/models/dto/application.json.dto'
 
 @Injectable()
 export class FormsService {
@@ -210,6 +215,34 @@ export class FormsService {
     }
 
     const formResponse = await this.buildFormResponse(form)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  async getJsonSample(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    const form = await this.findById(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get JSON sample for form with id '${id}'`,
+      )
+    }
+
+    console.log('form', JSON.stringify(form, null, 2))
+    const formResponse = new FormResponseDto()
+    formResponse.jsonSample = this.mapFormToJsonSample(form)
 
     if (!formResponse) {
       throw new Error('Error generating form response')
@@ -1164,5 +1197,90 @@ export class FormsService {
     }
 
     return newForm
+  }
+
+  private mapFormToJsonSample(form: Form): ApplicationJsonDto {
+    const fields: ApplicationJsonFieldDto[] = (form.sections ?? [])
+      .flatMap((section) => section.screens ?? [])
+      .flatMap((screen) =>
+        (screen.fields ?? []).map((field) => ({
+          field,
+          screenIdentifier: screen.identifier,
+        })),
+      )
+      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .map(({ field, screenIdentifier }) => {
+        const jsonField = new ApplicationJsonFieldDto()
+        jsonField.identifier = field.identifier
+        jsonField.screenIdentifier = screenIdentifier
+        jsonField.fieldType = field.fieldType
+
+        const shaped =
+          ValueTypeFactory.getClass(field.fieldType, new ValueType()) ?? {}
+
+        jsonField.values = [
+          {
+            order: 0,
+            json: this.fillValueTypeExamples(shaped),
+          } as ApplicationJsonValueDto,
+        ]
+        return jsonField
+      })
+
+    const jsonSample = new ApplicationJsonDto()
+    jsonSample.id = uuidV4()
+    jsonSample.slug = form.slug ?? ''
+    jsonSample.isTest = true
+    jsonSample.status = 'COMPLETED'
+    jsonSample.submittedAt = new Date()
+    jsonSample.fields = fields
+
+    console.log('jsonSample', jsonSample)
+    return jsonSample
+  }
+
+  private fillValueTypeExamples(partial: Partial<ValueType>): ValueType {
+    const v = partial as any
+
+    if ('text' in v) v.text = 'Dæmi texti'
+    if ('number' in v) v.number = 123
+    if ('date' in v) v.date = new Date('2026-01-01')
+    if ('label' in v) v.label = { is: 'Dæmi', en: 'Example' }
+    if ('value' in v) v.value = 'example_value'
+
+    if ('nationalId' in v) v.nationalId = '0101302399'
+    if ('name' in v) v.name = 'Test Nafn'
+    if ('address' in v) v.address = 'Dæmigata 1'
+    if ('postalCode' in v) v.postalCode = '101'
+    if ('municipality' in v) v.municipality = 'Reykjavík'
+    if ('jobTitle' in v) v.jobTitle = 'Developer'
+    if ('altName' in v) v.altName = 'Aukanafn'
+
+    if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
+    if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
+
+    if ('totalDays' in v) v.totalDays = 10
+    if ('totalAmount' in v) v.totalAmount = 50000
+    if ('year' in v) v.year = 2026
+    if ('isNullReport' in v) v.isNullReport = false
+
+    if ('months' in v) {
+      v.months = [{ month: 1, amount: 1000, days: [1, 2, 3] }]
+    }
+
+    if ('email' in v) v.email = 'test@example.is'
+    if ('iskNumber' in v) v.iskNumber = '12.345'
+    if ('checkboxValue' in v) v.checkboxValue = true
+    if ('phoneNumber' in v) v.phoneNumber = '+3545551234'
+    if ('bankAccount' in v) v.bankAccount = '0000-00-000000'
+
+    if ('time' in v) v.time = '12:34'
+    if ('s3Key' in v) v.s3Key = ['uploads/example.pdf']
+
+    if ('paymentCode' in v) v.paymentCode = 'PAYMENT-CODE-123'
+    if ('applicantType' in v) v.applicantType = 'INDIVIDUAL'
+    if ('isLoggedInUser' in v) v.isLoggedInUser = true
+
+    return v as ValueType
   }
 }

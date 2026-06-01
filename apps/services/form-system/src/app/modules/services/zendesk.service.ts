@@ -86,7 +86,7 @@ export class ZendeskService {
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(
-      this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
+      this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
         applicationDto,
       ),
     )
