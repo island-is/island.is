@@ -131,7 +131,9 @@ const HealthConversations = () => {
     onError: onMutationError,
   })
 
-  const filteredConversations = useMemo<HealthConversation[] | undefined>(() => {
+  const filteredConversations = useMemo<
+    HealthConversation[] | undefined
+  >(() => {
     if (!data?.healthDirectorateHealthConversations) {
       return []
     }
@@ -147,7 +149,11 @@ const HealthConversations = () => {
 
       return matchesSearch
     })
-  }, [filterValues, healthConversations, data?.healthDirectorateHealthConversations])
+  }, [
+    filterValues,
+    healthConversations,
+    data?.healthDirectorateHealthConversations,
+  ])
 
   return (
     <IntroWrapper
@@ -217,7 +223,9 @@ const HealthConversations = () => {
             <Box paddingTop={1}>
               <Checkbox
                 id="filter-archived"
-                label={formatMessage(messages.healthConversationsFilterArchived)}
+                label={formatMessage(
+                  messages.healthConversationsFilterArchived,
+                )}
                 checked={filterValues.archived}
                 onChange={(e) =>
                   setFilterValues((prev) => ({

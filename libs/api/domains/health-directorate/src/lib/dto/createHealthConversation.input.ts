@@ -18,6 +18,8 @@ export class HealthDirectorateCreateConversationInput {
   @Field()
   messageTextContent!: string
 
-  @Field(() => [HealthDirectorateConversationAttachmentInput], { nullable: true })
+  @Field(() => [HealthDirectorateConversationAttachmentInput], {
+    nullable: true,
+  })
   attachments?: HealthDirectorateConversationAttachmentInput[]
 }

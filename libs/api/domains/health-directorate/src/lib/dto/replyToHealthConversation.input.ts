@@ -6,6 +6,8 @@ export class HealthDirectorateReplyToConversationInput {
   @Field()
   messageTextContent!: string
 
-  @Field(() => [HealthDirectorateConversationAttachmentInput], { nullable: true })
+  @Field(() => [HealthDirectorateConversationAttachmentInput], {
+    nullable: true,
+  })
   attachments?: HealthDirectorateConversationAttachmentInput[]
 }

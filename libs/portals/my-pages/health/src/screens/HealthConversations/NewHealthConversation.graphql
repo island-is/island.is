@@ -12,7 +12,9 @@ query GetHealthConversationRecipientsForNew($locale: String) {
   }
 }
 
-mutation CreateHealthConversation($input: HealthDirectorateCreateConversationInput!) {
+mutation CreateHealthConversation(
+  $input: HealthDirectorateCreateConversationInput!
+) {
   healthDirectorateCreateHealthConversation(input: $input) {
     id
   }

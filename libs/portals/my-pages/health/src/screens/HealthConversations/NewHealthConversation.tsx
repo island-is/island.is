@@ -37,11 +37,13 @@ const NewHealthConversation = () => {
   const [messageText, setMessageText] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
 
-  const { data, loading, error } = useGetHealthConversationRecipientsForNewQuery({
-    variables: { locale: lang },
-  })
+  const { data, loading, error } =
+    useGetHealthConversationRecipientsForNewQuery({
+      variables: { locale: lang },
+    })
 
-  const [createMessage, { loading: sending }] = useCreateHealthConversationMutation()
+  const [createMessage, { loading: sending }] =
+    useCreateHealthConversationMutation()
 
   const recipient = data?.healthDirectorateHealthConversationRecipients?.find(
     (r) => r.allowsMessaging,
@@ -114,7 +116,10 @@ const NewHealthConversation = () => {
             paddingX={4}
             paddingY={3}
           >
-            <ConversationAvatar variant="user" name={userInfo.profile.name ?? ''} />
+            <ConversationAvatar
+              variant="user"
+              name={userInfo.profile.name ?? ''}
+            />
             <Box>
               <Text variant="medium">
                 {formatMessage(messages.healthConversationTo, {
@@ -133,7 +138,9 @@ const NewHealthConversation = () => {
             <Box marginBottom={3}>
               <Select
                 name="service-type"
-                label={formatMessage(messages.healthConversationsNewSelectService)}
+                label={formatMessage(
+                  messages.healthConversationsNewSelectService,
+                )}
                 placeholder={formatMessage(
                   messages.healthConversationsNewSelectServicePlaceholder,
                 )}
@@ -168,7 +175,9 @@ const NewHealthConversation = () => {
                 onChange={(e) => setTermsAccepted(e.target.checked)}
                 label={`${formatMessage(
                   messages.healthConversationsNewTermsAccept,
-                )} ${formatMessage(messages.healthConversationsNewTermsLinkText)}`}
+                )} ${formatMessage(
+                  messages.healthConversationsNewTermsLinkText,
+                )}`}
               />
             </Box>
 

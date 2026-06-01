@@ -235,7 +235,10 @@ const HealthConversationDetail = () => {
                         name={userInfo.profile.name ?? ''}
                       />
                     ) : (
-                      <ConversationAvatar variant="organization" name={senderName} />
+                      <ConversationAvatar
+                        variant="organization"
+                        name={senderName}
+                      />
                     )}
                     <Box
                       display="flex"
@@ -350,7 +353,9 @@ const HealthConversationDetail = () => {
                     circle
                     icon="close"
                     colorScheme="light"
-                    aria-label={formatMessage(messages.healthConversationCloseReply)}
+                    aria-label={formatMessage(
+                      messages.healthConversationCloseReply,
+                    )}
                     onClick={() => setReplyOpen(false)}
                   />
                 </Box>
