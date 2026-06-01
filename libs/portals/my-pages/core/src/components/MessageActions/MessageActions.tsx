@@ -4,17 +4,17 @@ import cn from 'classnames'
 import React, { MouseEvent } from 'react'
 import { Tooltip } from '../ToolTip/ToolTip'
 import { m } from '../../lib/messages'
-import * as styles from './FavAndStash.css'
+import * as styles from './MessageActions.css'
 
-type FavAndStashProps = {
+type MessageActionsProps = {
   onFav?: (event: MouseEvent<HTMLElement>) => void
   onStash?: (event: MouseEvent<HTMLElement>) => void
   onRead?: (event: MouseEvent<HTMLElement>) => void
+  onReply?: (event: MouseEvent<HTMLElement>) => void
   bookmarked?: boolean
   archived?: boolean
   loading?: boolean
   stashLabels?: { add: string; remove: string }
-  /** Use 'light' on blue-tinted backgrounds (default), 'negative' on white backgrounds */
   colorScheme?: 'light' | 'negative'
 }
 
@@ -25,10 +25,11 @@ const blurAfter =
     ;(e.currentTarget as HTMLElement).blur()
   }
 
-export const FavAndStash: React.FC<FavAndStashProps> = ({
+export const MessageActions: React.FC<MessageActionsProps> = ({
   onFav,
   onStash,
   onRead,
+  onReply,
   bookmarked,
   archived,
   loading,
@@ -98,8 +99,20 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
           />
         </Tooltip>
       )}
+      {onReply && (
+        <Tooltip text={formatMessage(m.replyDocument)}>
+          <Button
+            circle
+            icon="undo"
+            iconType="outline"
+            onClick={blurAfter(onReply)}
+            size="small"
+            colorScheme={colorScheme}
+          />
+        </Tooltip>
+      )}
     </Box>
   )
 }
 
-export default FavAndStash
+export default MessageActions

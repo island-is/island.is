@@ -13,7 +13,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
-  FavAndStash,
+  MessageActions,
   IntroWrapper,
   formatDate,
   m,
@@ -25,10 +25,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import {
-  HealthDirectorateHealthConversation,
-  HealthDirectorateHealthConversationStatusFilter,
-} from '@island.is/api/schema'
+import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
 import {
   useGetHealthConversationsQuery,
   useStarHealthConversationMutation,
@@ -49,7 +46,7 @@ type FilterValues = {
   archived: boolean
 }
 
-
+// TODO: Remove this when we have institution logos and a decided fallback icon
 const CircleLogo = ({
   fallbackIcon,
 }: {
@@ -146,11 +143,7 @@ const HealthConversations = () => {
 
       return matchesSearch
     })
-  }, [
-    filterValues,
-    healthConversations,
-    data?.healthDirectorateHealthConversations,
-  ])
+  }, [filterValues, healthConversations])
 
   return (
     <IntroWrapper
@@ -327,13 +320,15 @@ const HealthConversations = () => {
                         ? formatDate(item.lastMessageSentAt)
                         : ''}
                     </Text>
-                    <FavAndStash
+                    <MessageActions
                       colorScheme="negative"
                       bookmarked={item.isStarred}
                       archived={item.isArchived}
                       onFav={() => {
                         if (item.isStarred) {
-                          unstarMessage({ variables: { input: { id: item.id } } })
+                          unstarMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         } else {
                           starMessage({ variables: { input: { id: item.id } } })
                         }
@@ -344,7 +339,9 @@ const HealthConversations = () => {
                             variables: { input: { id: item.id } },
                           })
                         } else {
-                          archiveMessage({ variables: { input: { id: item.id } } })
+                          archiveMessage({
+                            variables: { input: { id: item.id } },
+                          })
                         }
                       }}
                     />

@@ -1,4 +1,4 @@
-query GetHealthConversationDetail($id: String!) {
+query GetHealthConversationDetail($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
     title

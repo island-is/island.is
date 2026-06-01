@@ -13,17 +13,17 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  MessageActions,
   formSubmit,
   formatDateWithTime,
   m,
 } from '@island.is/portals/my-pages/core'
-import ConversationAvatar from './ConversationAvatar'
+import ConversationAvatar from './components/ConversationAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import HealthConversationActionBar from './HealthConversationActionBar'
 import {
   useGetHealthConversationDetailQuery,
   useMarkHealthConversationAsReadMutation,
@@ -172,7 +172,7 @@ const HealthConversationDetail = () => {
               <Text variant="h3" as="h1">
                 {item.title}
               </Text>
-              <HealthConversationActionBar
+              <MessageActions
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
                 onReply={

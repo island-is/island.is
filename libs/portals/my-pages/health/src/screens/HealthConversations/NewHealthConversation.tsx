@@ -15,7 +15,7 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import ConversationAvatar from './ConversationAvatar'
+import ConversationAvatar from './components/ConversationAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
