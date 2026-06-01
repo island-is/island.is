@@ -33,7 +33,7 @@ export const ProgrammeHeader = ({
         </Text>
         <Box display="flex" alignItems="center" columnGap={1}>
           {isReferenceProgramme && (
-            <Tag outlined variant="yellow" disabled>
+            <Tag outlined variant="purple" disabled>
               {formatMessage(m.details.referenceProgramme)}
             </Tag>
           )}

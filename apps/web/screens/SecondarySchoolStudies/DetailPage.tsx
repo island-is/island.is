@@ -6,6 +6,7 @@ import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolProgrammeByIdQuery,
+  SecondarySchoolProgrammeDetail,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -25,7 +26,7 @@ import {
 import * as styles from './SecondarySchoolStudies.css'
 
 interface SecondarySchoolStudiesDetailsPageProps {
-  programme: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']
+  programme: SecondarySchoolProgrammeDetail
   locale: string
 }
 
