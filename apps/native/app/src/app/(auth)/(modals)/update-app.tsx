@@ -1,14 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, SafeAreaView, Linking } from 'react-native'
+import {
+  View,
+  Image,
+  SafeAreaView,
+  Linking,
+  BackHandler,
+} from 'react-native'
 import styled from 'styled-components/native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { Stack, router, useLocalSearchParams } from 'expo-router'
 
-import { Button, Typography, NavigationBarSheet } from '@/ui'
+import { Button, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
 import { preferencesStore } from '@/stores/preferences-store'
+import { modalScreenOptions } from '../../../constants/screen-options'
+import {
+  spacingItem,
+  navbarCloseItem,
+} from '../../../components/navbar/navbar-items'
 
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -40,19 +51,26 @@ export default function UpdateAppScreen() {
   const closable = closableParam !== 'false'
   const intl = useIntl()
 
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => true)
+    return () => sub.remove()
+  }, [closable])
+
   return (
     <View style={{ flex: 1 }}>
-      <NavigationBarSheet
-        componentId="update-app"
-        title={''}
-        onClosePress={() => {
-          if (closable) {
-            preferencesStore.setState({ skippedSoftUpdate: true })
-            router.back()
-          }
+      <Stack.Screen
+        options={{
+          ...modalScreenOptions,
+          headerTitle: '',
+          gestureEnabled: closable,
+          sheetGrabberVisible: closable,
+          unstable_headerRightItems: closable
+            ? () => [spacingItem(), navbarCloseItem()]
+            : undefined,
         }}
-        style={{ marginHorizontal: 16 }}
-        closable={closable}
       />
       <SafeAreaView style={{ flex: 1 }}>
         <Host>

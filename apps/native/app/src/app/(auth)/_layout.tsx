@@ -119,6 +119,13 @@ export default function AuthLayout() {
             headerTitle: '',
           }}
         />
+        <Stack.Screen
+          name="(modals)/update-app"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: '',
+          }}
+        />
       </Stack>
       <AppLock />
     </>
