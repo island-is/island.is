@@ -35,12 +35,18 @@ export const validateUri = (uri: string, allowedUris: string[]): boolean => {
       const parsedAllowedUri = new URL(allowedUri.trim().toLowerCase())
 
       const isSameProtocol = parsedUri.protocol === parsedAllowedUri.protocol
-      const isSameHostname =
-        parsedUri.hostname === parsedAllowedUri.hostname ||
-        // Allow feature deployment hostnames, e.g. "feat-foo-beta.dev01.devland.is"
-        // when "beta.dev01.devland.is" is an allowed hostname.
-        (parsedAllowedUri.hostname.startsWith('beta.') &&
-          parsedUri.hostname.endsWith(`-${parsedAllowedUri.hostname}`))
+      let isSameHostname = parsedUri.hostname === parsedAllowedUri.hostname
+      // Allow feature deployment hostnames, e.g. "feat-foo-beta.dev01.devland.is"
+      // when "beta.dev01.devland.is" is an allowed hostname.
+      if (!isSameHostname && parsedAllowedUri.hostname.startsWith('beta.')) {
+        const suffix = `-${parsedAllowedUri.hostname}`
+        if (parsedUri.hostname.endsWith(suffix)) {
+          const prefix = parsedUri.hostname.slice(0, -suffix.length)
+          // Restrict to valid DNS/k8s slug — prevents arbitrary-prefix open redirects
+          // via crafted hostnames (e.g. "evil.sub-beta.dev01.devland.is").
+          isSameHostname = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(prefix)
+        }
+      }
       const isSamePathname =
         parsedUri.pathname === parsedAllowedUri.pathname ||
         parsedUri.pathname.startsWith(parsedAllowedUri.pathname)

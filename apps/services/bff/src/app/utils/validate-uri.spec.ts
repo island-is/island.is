@@ -101,4 +101,36 @@ describe('validateUri', () => {
       ),
     ).toBe(false)
   })
+
+  it('should return false for arbitrary-prefix hostname when beta host is allowed', () => {
+    // "evil.sub" contains a dot — not a valid DNS slug — so it must be rejected
+    // even though the full hostname ends with "-beta.dev01.devland.is".
+    const betaAllowedUris = ['https://beta.dev01.devland.is/stjornbord']
+    expect(
+      validateUri(
+        'https://evil.sub-beta.dev01.devland.is/stjornbord',
+        betaAllowedUris,
+      ),
+    ).toBe(false)
+  })
+
+  it('should return true for feature deployment hostnames when beta host is allowed', () => {
+    const betaAllowedUris = ['https://beta.dev01.devland.is/minarsidur']
+    expect(
+      validateUri(
+        'https://featcreate-pdf-viewer-beta.dev01.devland.is/minarsidur/menntun/grunnskoli/nemendur',
+        betaAllowedUris,
+      ),
+    ).toBe(true)
+  })
+
+  it('should return false for non-feature subdomain when only beta host is allowed', () => {
+    const betaAllowedUris = ['https://beta.dev01.devland.is/minarsidur']
+    expect(
+      validateUri(
+        'https://evil-beta.staging01.devland.is/minarsidur',
+        betaAllowedUris,
+      ),
+    ).toBe(false)
+  })
 })

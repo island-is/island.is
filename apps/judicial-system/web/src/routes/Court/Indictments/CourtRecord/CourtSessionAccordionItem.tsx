@@ -46,7 +46,7 @@ import {
   Modal,
   MultipleValueList,
   SectionHeading,
-  TinyMCE,
+  // TinyMCE,
 } from '@island.is/judicial-system-web/src/components'
 import EditableCaseFile, {
   Supplement,
@@ -1438,7 +1438,40 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                <TinyMCE
+                <Input
+                  data-testid="entries"
+                  name="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  value={courtSession.entries || ''}
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  onChange={(event) => {
+                    setEntriesErrorMessage('')
+
+                    patchSession(courtSession.id, {
+                      entries: event.target.value,
+                    })
+                  }}
+                  onBlur={(event) => {
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      event.target.value,
+                      setEntriesErrorMessage,
+                    )
+
+                    patchSession(
+                      courtSession.id,
+                      { entries: event.target.value },
+                      { persist: true },
+                    )
+                  }}
+                  hasError={entriesErrorMessage !== ''}
+                  errorMessage={entriesErrorMessage}
+                  rows={15}
+                  disabled={courtSession.isConfirmed || false}
+                  textarea
+                  required
+                />
+                {/* <TinyMCE
                   data-testid="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
@@ -1468,7 +1501,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   errorMessage={entriesErrorMessage || undefined}
                   disabled={courtSession.isConfirmed || false}
                   required
-                />
+                /> */}
               </Box>
               <Box>
                 <SectionHeading

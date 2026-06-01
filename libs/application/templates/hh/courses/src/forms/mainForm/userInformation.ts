@@ -64,7 +64,8 @@ export const userInformation = buildSection({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
           readOnly: true,
-          condition: (_, externalData) =>
+          condition: (answers, externalData) =>
+            !isCourseForProfessionals(answers) &&
             !!getValueViaPath(
               externalData,
               'currentHealthcenter.data.healthCenter',
@@ -80,7 +81,8 @@ export const userInformation = buildSection({
           title: m.userInformation.healthcenter,
           message: m.userInformation.noHealthcenter,
           alertType: 'info',
-          condition: (_, externalData) =>
+          condition: (answers, externalData) =>
+            !isCourseForProfessionals(answers) &&
             !getValueViaPath(
               externalData,
               'currentHealthcenter.data.healthCenter',
