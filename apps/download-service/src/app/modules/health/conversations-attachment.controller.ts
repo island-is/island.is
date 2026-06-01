@@ -11,9 +11,9 @@ import { AuditService } from '@island.is/nest/audit'
 import { Features, FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   Controller,
+  Get,
   Param,
   ParseIntPipe,
-  Post,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -30,7 +30,7 @@ export class HealthConversationsAttachmentController {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Post(':conversationId/:messageId/:attachmentId')
+  @Get(':conversationId/:messageId/:attachmentId')
   @ApiOkResponse({
     description: 'Downloads a health message attachment',
   })
@@ -51,7 +51,7 @@ export class HealthConversationsAttachmentController {
       return res.status(403).json({ statusCode: 403, message: 'Not allowed' })
     }
 
-    const attachment = await this.healthService.getConversationAttachment(
+    const attachment = await this.healthService.getMessageAttachment(
       user,
       conversationId,
       messageId,

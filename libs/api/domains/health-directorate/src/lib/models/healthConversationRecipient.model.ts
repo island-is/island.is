@@ -3,10 +3,10 @@ import { HealthDirectorateHealthConversationType } from './healthConversationTyp
 
 @ObjectType()
 export class HealthDirectorateHealthConversationRecipient {
-  @Field()
+  @Field({ description: 'Hekla node ID of the recipient.' })
   nodeId!: string
 
-  @Field(() => Int)
+  @Field(() => Int, { description: 'Hekla group ID of the recipient provider.' })
   groupId!: number
 
   @Field()

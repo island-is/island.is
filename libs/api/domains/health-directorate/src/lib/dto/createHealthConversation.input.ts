@@ -1,12 +1,14 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { HealthDirectorateConversationAttachmentInput } from './healthConversationAttachment.input'
 
 @InputType()
 export class HealthDirectorateCreateConversationInput {
-  @Field()
+  @Field({ description: 'Hekla node ID of the recipient. Obtained from the recipient list.' })
   nodeId!: string
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    description:
+      'Hekla group ID of the recipient provider. Obtained from the recipient list.',
+  })
   groupId!: number
 
   @Field()
@@ -17,7 +19,4 @@ export class HealthDirectorateCreateConversationInput {
 
   @Field()
   messageTextContent!: string
-
-  @Field(() => [HealthDirectorateConversationAttachmentInput], { nullable: true })
-  attachments?: HealthDirectorateConversationAttachmentInput[]
 }

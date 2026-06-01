@@ -121,9 +121,9 @@ registerEnumType(HealthConversationDirectionEnum, {
 })
 
 export enum HealthConversationStatusFilterEnum {
-  active = 'active',
-  archived = 'archived',
-  all = 'all',
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  ALL = 'all',
 }
 registerEnumType(HealthConversationStatusFilterEnum, {
   name: 'HealthDirectorateHealthConversationStatusFilter',

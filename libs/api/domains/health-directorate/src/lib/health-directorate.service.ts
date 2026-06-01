@@ -1,7 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
-  ConversationAttachmentRequestDto,
   ConversationMessageDto,
   ConversationStatusFilter,
   CreateConversationRequestDto,
@@ -50,7 +49,10 @@ import {
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
-import { PermitStatusEnum } from './models/enums'
+import {
+  HealthConversationStatusFilterEnum,
+  PermitStatusEnum,
+} from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
@@ -652,7 +654,7 @@ export class HealthDirectorateService {
     }
   }
 
-  /* Health Messages */
+  /* Health Conversations */
 
   private mapConversationAttachment(
     a: ConversationAttachmentDto,
@@ -660,7 +662,7 @@ export class HealthDirectorateService {
     messageId: string,
   ): HealthDirectorateHealthConversationAttachment {
     return {
-      id: a.id,
+      id: String(a.id),
       fileName: a.fileName,
       description: a.description,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/conversations/${conversationId}/${messageId}/${a.id}`,
@@ -686,10 +688,14 @@ export class HealthDirectorateService {
 
   async getHealthConversations(
     auth: Auth,
-    status?: ConversationStatusFilter,
+    status?: HealthConversationStatusFilterEnum,
     starred?: boolean,
   ): Promise<HealthDirectorateHealthConversation[] | null> {
-    const items = await this.healthApi.getConversations(auth, status, starred)
+    const items = await this.healthApi.getConversations(
+      auth,
+      status as ConversationStatusFilter | undefined,
+      starred,
+    )
     if (!items) return null
 
     return items.map((c) => ({
@@ -740,13 +746,6 @@ export class HealthDirectorateService {
       patientInitiatedTypeCode: input.patientInitiatedTypeCode,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
-      attachments: input.attachments?.map((a) => ({
-        fileName: a.fileName,
-        description: a.description,
-        contentType:
-          a.contentType as ConversationAttachmentRequestDto['contentType'],
-        contentBase64: a.contentBase64,
-      })),
     }
 
     const c = await this.healthApi.createConversation(auth, body)
@@ -776,13 +775,6 @@ export class HealthDirectorateService {
   ): Promise<HealthDirectorateHealthConversationDetail | null> {
     const body: CreateReplyRequestDto = {
       messageTextContent: input.messageTextContent,
-      attachments: input.attachments?.map((a) => ({
-        fileName: a.fileName,
-        description: a.description,
-        contentType:
-          a.contentType as ConversationAttachmentRequestDto['contentType'],
-        contentBase64: a.contentBase64,
-      })),
     }
 
     const c = await this.healthApi.replyToConversation(auth, id, body)

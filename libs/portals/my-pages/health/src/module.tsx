@@ -634,7 +634,7 @@ export const healthModule: PortalModule = {
     {
       name: m.messages,
       path: HealthPaths.HealthConversations,
-      key: 'HealthConversations',
+      key: 'HealthMessages',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -643,7 +643,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.healthConversationsNewTitle,
       path: HealthPaths.HealthConversationsNew,
-      key: 'HealthConversations',
+      key: 'HealthMessages',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
@@ -652,7 +652,7 @@ export const healthModule: PortalModule = {
     {
       name: m.messages,
       path: HealthPaths.HealthConversationsDetail,
-      key: 'HealthConversations',
+      key: 'HealthMessages',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
