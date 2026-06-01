@@ -6,7 +6,9 @@ export class HealthDirectorateHealthConversationRecipient {
   @Field({ description: 'Hekla node ID of the recipient.' })
   nodeId!: string
 
-  @Field(() => Int, { description: 'Hekla group ID of the recipient provider.' })
+  @Field(() => Int, {
+    description: 'Hekla group ID of the recipient provider.',
+  })
   groupId!: number
 
   @Field()

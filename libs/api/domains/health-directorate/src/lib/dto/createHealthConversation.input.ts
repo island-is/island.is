@@ -2,7 +2,10 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
 export class HealthDirectorateCreateConversationInput {
-  @Field({ description: 'Hekla node ID of the recipient. Obtained from the recipient list.' })
+  @Field({
+    description:
+      'Hekla node ID of the recipient. Obtained from the recipient list.',
+  })
   nodeId!: string
 
   @Field(() => Int, {
