@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseFilesOverview,
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
@@ -41,6 +42,7 @@ import {
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
+  RulingModifiedAlert,
   SignatureConfirmationModal,
   SignatureType,
   UserContext,
@@ -67,7 +69,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
-import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
@@ -406,22 +407,6 @@ export const SignedVerdictOverview: FC = () => {
                   }
                 />
               )}
-            {workingCase.appealCase?.appealRulingModifiedHistory && (
-              <Box marginBottom={5} marginTop={5}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(strings.rulingModifiedTitle)}
-                  message={
-                    <MarkdownWrapper
-                      markdown={
-                        workingCase.appealCase?.appealRulingModifiedHistory
-                      }
-                      textProps={{ variant: 'small' }}
-                    />
-                  }
-                />
-              </Box>
-            )}
           </Box>
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             {workingCase.caseModifiedExplanation && (
@@ -438,18 +423,8 @@ export const SignedVerdictOverview: FC = () => {
                 }
               />
             )}
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.sections.modifyRulingInfo.title)}
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <InfoCard
               sections={[
                 {

@@ -31,6 +31,7 @@ import {
 import { getAppealActorText, getCurrentUserStatementDate } from '../../utils'
 import useAppealCase from '../useAppealCase'
 import useAppealCaseModals from '../useAppealCaseModals'
+import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 import * as styles from './useAppealCaseBanner.css'
 
 const renderLinkButton = (text: string, href: string) => (
@@ -76,6 +77,9 @@ const useAppealCaseBanner = () => {
   const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  // Resolves to the case-level appeal by default, or to the ruling-order
+  // appeal selected by `?appealCaseId=…` on COA detail pages.
+  const appealCase = useTargetAppealCaseByAppealCaseId()
 
   const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
   const statementRoute = isDefenceUser(user)
@@ -95,7 +99,7 @@ const useAppealCaseBanner = () => {
   const handleReceivedTransition = async () => {
     const success = await transitionAppealCase(
       workingCase.id,
-      workingCase.appealCase?.id ?? '',
+      appealCase?.id ?? '',
       AppealCaseTransition.RECEIVE_APPEAL,
       setWorkingCase,
     )
@@ -113,7 +117,6 @@ const useAppealCaseBanner = () => {
   let child: ReactElement | null = null
 
   const {
-    appealCase,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
