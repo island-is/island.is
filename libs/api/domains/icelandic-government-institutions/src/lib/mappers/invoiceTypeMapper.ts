@@ -1,4 +1,7 @@
-import { InvoiceTypeDto, InvoiceTypesDto } from '@island.is/clients/government-invoices'
+import {
+  InvoiceTypeDto,
+  InvoiceTypesDto,
+} from '@island.is/clients/government-invoices'
 import { InvoiceTypes } from '../models/invoiceTypes.model'
 import { InvoiceType } from '../models/invoiceType.model'
 

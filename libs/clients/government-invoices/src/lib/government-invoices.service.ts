@@ -77,13 +77,12 @@ export class GovernmentInvoicesClientService {
   public async getOpenInvoiceGroup(
     requestParams: InvoiceRequestDto,
   ): Promise<InvoiceGroupDto | null> {
-    const { data } =
-      await getV1OpeninvoicesInvoicesBySupplierIdByCustomerId({
-        path: {
-          supplierId: requestParams.supplier,
-          customerId: requestParams.customer,
-        },
-      })
+    const { data } = await getV1OpeninvoicesInvoicesBySupplierIdByCustomerId({
+      path: {
+        supplierId: requestParams.supplier,
+        customerId: requestParams.customer,
+      },
+    })
 
     if (!data) {
       return null

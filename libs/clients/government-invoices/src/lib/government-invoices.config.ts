@@ -8,7 +8,9 @@ const schema = z.object({
   authUrl: z.string().url(),
 })
 
-export const GovernmentInvoicesClientConfig = defineConfig<z.infer<typeof schema>>({
+export const GovernmentInvoicesClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
   name: 'GovernmentInvoicesClient',
   schema,
   load(env) {
