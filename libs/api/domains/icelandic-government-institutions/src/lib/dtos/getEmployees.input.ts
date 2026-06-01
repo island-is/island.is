@@ -1,7 +1,7 @@
 import { ArgsType, Field, registerEnumType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 import { IsLocale } from '@island.is/nest/core'
-import { LocaleEnum } from '@island.is/shared/types'
+import { LocaleEnum } from '@island.is/nest/graphql'
 
 registerEnumType(LocaleEnum, {
   name: 'Locale',
