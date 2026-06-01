@@ -78,6 +78,7 @@ const NotificationsModule = React.memo(
       void markUserNotificationAsRead({ variables: { id: notification.id } })
       navigateToUniversalLink({
         link: notification.message?.link?.url,
+        fromScreen: '/notifications',
       })
     }
 
