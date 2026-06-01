@@ -38,10 +38,7 @@ const Prod: EnvironmentConfig = {
   defaultMinReplicas: 2,
 }
 
-const runFor = async (
-  svc: ScheduledJob<string>,
-  env: EnvironmentConfig,
-) =>
+const runFor = async (svc: ScheduledJob<string>, env: EnvironmentConfig) =>
   generateOutputOne({
     outputFormat: renderers.helm,
     service: svc as any, // ScheduledJob<S> is Omit<ScheduledJobBuilder<S>, ...>; class hierarchy lost by Omit
@@ -53,8 +50,13 @@ describe('scheduledJob()', () => {
   describe('schedule', () => {
     it('emits schedule as top-level extra field (single string)', async () => {
       const sut = scheduledJob('my-job').schedule('0 3 * * *')
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
-      expect(result.serviceDef[0].extra).toMatchObject({ schedule: '0 3 * * *' })
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
+      expect(result.serviceDef[0].extra).toMatchObject({
+        schedule: '0 3 * * *',
+      })
     })
 
     it('emits per-env schedule for dev', async () => {
@@ -64,7 +66,9 @@ describe('scheduledJob()', () => {
         prod: '0 3 * * *',
       })
       const result = (await runFor(sut, Dev)) as SerializeSuccess<HelmService>
-      expect(result.serviceDef[0].extra).toMatchObject({ schedule: '* * * * *' })
+      expect(result.serviceDef[0].extra).toMatchObject({
+        schedule: '* * * * *',
+      })
     })
 
     it('emits per-env schedule for staging', async () => {
@@ -73,8 +77,13 @@ describe('scheduledJob()', () => {
         staging: '0 * * * *',
         prod: '0 3 * * *',
       })
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
-      expect(result.serviceDef[0].extra).toMatchObject({ schedule: '0 * * * *' })
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
+      expect(result.serviceDef[0].extra).toMatchObject({
+        schedule: '0 * * * *',
+      })
     })
 
     it('emits per-env schedule for prod', async () => {
@@ -84,12 +93,17 @@ describe('scheduledJob()', () => {
         prod: '0 3 * * *',
       })
       const result = (await runFor(sut, Prod)) as SerializeSuccess<HelmService>
-      expect(result.serviceDef[0].extra).toMatchObject({ schedule: '0 3 * * *' })
+      expect(result.serviceDef[0].extra).toMatchObject({
+        schedule: '0 3 * * *',
+      })
     })
 
     it('supports Kubernetes shorthands like @hourly', async () => {
       const sut = scheduledJob('my-job').schedule('@hourly')
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({ schedule: '@hourly' })
     })
 
@@ -109,8 +123,13 @@ describe('scheduledJob()', () => {
 
   describe('cron-specific fields', () => {
     it('emits concurrencyPolicy', async () => {
-      const sut = scheduledJob('my-job').schedule('0 3 * * *').concurrencyPolicy('Forbid')
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const sut = scheduledJob('my-job')
+        .schedule('0 3 * * *')
+        .concurrencyPolicy('Forbid')
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         schedule: '0 3 * * *',
         concurrencyPolicy: 'Forbid',
@@ -124,7 +143,10 @@ describe('scheduledJob()', () => {
         .startingDeadlineSeconds(200)
         .successfulJobsHistoryLimit(5)
         .failedJobsHistoryLimit(2)
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         schedule: '0 3 * * *',
         concurrencyPolicy: 'Replace',
@@ -136,7 +158,10 @@ describe('scheduledJob()', () => {
 
     it('does not emit optional fields when not set', async () => {
       const sut = scheduledJob('my-job').schedule('0 3 * * *')
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       const extra = result.serviceDef[0].extra!
       expect(extra).not.toHaveProperty('concurrencyPolicy')
       expect(extra).not.toHaveProperty('startingDeadlineSeconds')
@@ -156,7 +181,10 @@ describe('scheduledJob()', () => {
         .command('node')
         .args('main.js')
 
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       const def = result.serviceDef[0]
       expect(def.namespace).toBe('my-ns')
       expect(def.image.repository).toContain('my-image')
@@ -167,11 +195,12 @@ describe('scheduledJob()', () => {
     })
 
     it('supports .db() for database access', async () => {
-      const sut = scheduledJob('my-job')
-        .schedule('0 3 * * *')
-        .db()
+      const sut = scheduledJob('my-job').schedule('0 3 * * *').db()
 
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       const def = result.serviceDef[0]
       // '-job' postfix is stripped by ServiceBuilder.stripPostfix() when deriving DB_NAME
       expect(def.env).toMatchObject({ DB_NAME: 'my' })
@@ -188,7 +217,10 @@ describe('scheduledJob()', () => {
         })
         .schedule('0 3 * * *')
 
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         customField: 'value',
         schedule: '0 3 * * *',
@@ -205,7 +237,10 @@ describe('scheduledJob()', () => {
         .schedule('0 3 * * *')
         .concurrencyPolicy('Forbid')
 
-      const result = (await runFor(sut, Staging)) as SerializeSuccess<HelmService>
+      const result = (await runFor(
+        sut,
+        Staging,
+      )) as SerializeSuccess<HelmService>
       expect(result.serviceDef[0].extra).toMatchObject({
         schedule: '0 3 * * *',
         concurrencyPolicy: 'Forbid',

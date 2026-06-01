@@ -83,7 +83,9 @@ export async function main(testContext = null) {
       _MANIFEST_PATHS.length > 1
         ? `{${_MANIFEST_PATHS.join(',')}}`
         : _MANIFEST_PATHS[0]
-    const files = await glob(`${manifestPath}/**/values.{${STAGE_NAME},cronjob.${STAGE_NAME}}.yaml`)
+    const files = await glob(
+      `${manifestPath}/**/values.{${STAGE_NAME},cronjob.${STAGE_NAME}}.yaml`,
+    )
     console.log(files)
 
     for (const file of files) {

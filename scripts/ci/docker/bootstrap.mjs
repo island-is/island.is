@@ -28,7 +28,9 @@ const namespacesToAdd = {}
 
 for (const [chart, deployment] of Object.entries(bootstrap)) {
   for (const [type, name] of Object.entries(deployment)) {
-    const files = await glob(`${chart}/**/values.{${type},cronjob.${type}}.yaml`)
+    const files = await glob(
+      `${chart}/**/values.{${type},cronjob.${type}}.yaml`,
+    )
     for (const file of files) {
       const textContent = readFileSync(file, 'utf8')
       const yamlContent = await jsyaml.load(textContent)
