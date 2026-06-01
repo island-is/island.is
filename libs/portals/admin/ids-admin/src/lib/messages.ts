@@ -1105,6 +1105,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users',
     defaultMessage: 'API Scope Users',
   },
+  authorizedUsers: {
+    id: 'ap.ids-admin:authorized-users',
+    defaultMessage: 'Authorized users',
+  },
   apiScopeUsersDescription: {
     id: 'ap.ids-admin:api-scope-users-description',
     defaultMessage: 'Manage users who have access to API scopes.',
