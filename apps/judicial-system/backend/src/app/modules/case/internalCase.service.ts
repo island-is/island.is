@@ -1635,6 +1635,7 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+              separate: true,
             },
             {
               model: Verdict,
@@ -1659,6 +1660,7 @@ export class InternalCaseService {
           as: 'eventLogs',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
@@ -1668,6 +1670,7 @@ export class InternalCaseService {
           as: 'courtSessions',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           attributes: ['ruling'],
           where: {
             ruling_type: CourtSessionRulingType.JUDGEMENT,
@@ -1760,6 +1763,7 @@ export class InternalCaseService {
           as: 'eventLogs',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
@@ -1769,6 +1773,7 @@ export class InternalCaseService {
           as: 'defendants',
           required: true,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             indictmentReviewDecision: null,
           },
