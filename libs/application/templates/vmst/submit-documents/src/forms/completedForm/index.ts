@@ -11,10 +11,9 @@ export const completedForm = buildForm({
       multiFieldTitle: am.multiFieldTitle,
       alertTitle: am.completedFormAlertTitle,
       alertMessage: '',
-      expandableHeader: 'Hvað gerist næst?',
+      expandableHeader: am.expandableHeader,
       expandableIntro: '',
-      expandableDescription:
-        '- Nú eru gögnin þín aðgengileg inni á Mínum síðum. ',
+      expandableDescription: am.expandableDescription,
       descriptionFieldTitle: am.completedFormDescriptionFieldTitle,
       descriptionFieldDescription: am.completedFormDescriptionFieldDescription,
       bottomButtonLabel: am.bottomButtonLabel,

@@ -218,66 +218,61 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     )
 
     // Phase 2: Create attachments in parallel in Galdur
-    let createdAttachments: CreatedAttachment[]
+    const results = await Promise.allSettled(
+      fileEntries.map(async ({ attachmentTypeId }, i) => {
+        const { content, fileName } = fileContents[i]
+        const mimeType = getMimeType(fileName)
 
-    try {
-      createdAttachments = await Promise.all(
-        fileEntries.map(async ({ attachmentTypeId }, i) => {
-          const { content, fileName } = fileContents[i]
-          const mimeType = getMimeType(fileName)
-
-          const response =
-            await this.vmstUnemploymentClientService.createAttachmentForApplication(
-              {
-                galdurDomainModelsAttachmentsCreateAttachmentRequest: {
-                  attachmentTypeId,
-                  fileName,
-                  fileType: mimeType,
-                  data: content,
-                },
+        const response =
+          await this.vmstUnemploymentClientService.createAttachmentForApplication(
+            {
+              galdurDomainModelsAttachmentsCreateAttachmentRequest: {
+                attachmentTypeId,
+                fileName,
+                fileType: mimeType,
+                data: content,
               },
-            )
+            },
+          )
 
-          if (!response.success) {
-            this.logger.error(
-              `[VMST-Submit-Documents] - Failed to create attachment: ${response.errorMessage}`,
-            )
-            throw new TemplateApiError(
-              {
-                title: coreErrorMessages.defaultTemplateApiError,
-                summary: response.errorMessage ?? '',
-              },
-              400,
-            )
-          }
+        if (!response.success) {
+          throw new Error(`API rejected attachment: ${response.errorMessage}`)
+        }
 
-          if (!response.attachment?.id) {
-            this.logger.error(
-              '[VMST-Submit-Documents] - Attachment created but no ID returned',
-            )
-            throw new TemplateApiError(
-              {
-                title: coreErrorMessages.defaultTemplateApiError,
-                summary: coreErrorMessages.errorDataProvider,
-              },
-              500,
-            )
-          }
+        if (!response.attachment?.id) {
+          throw new Error('Attachment created but no ID returned')
+        }
 
-          return {
-            attachmentId: response.attachment.id,
-            attachmentTypeId,
-          }
-        }),
-      )
-    } catch (e) {
-      if (e instanceof TemplateApiError) {
-        throw e
+        return {
+          attachmentId: response.attachment.id,
+          attachmentTypeId,
+          fileName,
+        }
+      }),
+    )
+
+    // Log outcome for each file
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i]
+      const { file, attachmentTypeId } = fileEntries[i]
+      if (result.status === 'fulfilled') {
+        this.logger.info(
+          `[VMST-Submit-Documents] - Attachment created successfully: fileName=${file.name}, typeId=${attachmentTypeId}, attachmentId=${result.value.attachmentId}`,
+        )
+      } else {
+        this.logger.error(
+          `[VMST-Submit-Documents] - Failed to create attachment: fileName=${file.name}, typeId=${attachmentTypeId}, reason=${result.reason}`,
+        )
       }
+    }
 
+    const failed = results.filter(
+      (r): r is PromiseRejectedResult => r.status === 'rejected',
+    )
+
+    if (failed.length > 0) {
       this.logger.error(
-        '[VMST-Submit-Documents] - Unexpected error creating attachments',
-        e,
+        `[VMST-Submit-Documents] - ${failed.length}/${results.length} attachments failed to create`,
       )
       throw new TemplateApiError(
         {
@@ -288,6 +283,12 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       )
     }
 
+    const createdAttachments: CreatedAttachment[] = results.map(
+      (r) =>
+        (r as PromiseFulfilledResult<CreatedAttachment & { fileName: string }>)
+          .value,
+    )
+
     // Phase 3: Link created attachments to the applicant
     const applicantId =
       getValueViaPath<string>(
@@ -295,27 +296,47 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
         'submitDocumentsEligibility.data.applicantId',
       ) || ''
 
-    const linkResponse =
-      await this.vmstUnemploymentClientService.createApplicantRequestedAttachments(
-        {
-          applicantId,
-          galdurExternalDomainRequestsApplicantSubmitAttachmentRequestRequest:
-            createdAttachments.map((a) => ({
-              attachmentId: a.attachmentId,
-            })),
-        },
-      )
+    try {
+      const linkResponse =
+        await this.vmstUnemploymentClientService.createApplicantRequestedAttachments(
+          {
+            applicantId,
+            galdurExternalDomainRequestsApplicantSubmitAttachmentRequestRequest:
+              createdAttachments.map((a) => ({
+                attachmentId: a.attachmentId,
+              })),
+          },
+        )
 
-    if (!linkResponse.success) {
+      if (!linkResponse.success) {
+        this.logger.error(
+          `[VMST-Submit-Documents] - Failed to link attachments to applicant: ${linkResponse.errorMessage}`,
+        )
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.defaultTemplateApiError,
+            summary: linkResponse.errorMessage ?? '',
+          },
+          400,
+        )
+      }
+    } catch (e) {
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+
       this.logger.error(
-        `[VMST-Submit-Documents] - Failed to link attachments to applicant: ${linkResponse.errorMessage}`,
+        `[VMST-Submit-Documents] - Unexpected error linking attachments to applicant. Created attachment IDs: ${createdAttachments
+          .map((a) => a.attachmentId)
+          .join(', ')}`,
+        e,
       )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
-          summary: linkResponse.errorMessage ?? '',
+          summary: coreErrorMessages.failedDataProvider,
         },
-        400,
+        500,
       )
     }
 

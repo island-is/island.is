@@ -35,6 +35,21 @@ export const uploadDocuments = defineMessages({
     defaultMessage: 'Hlaða upp gögnum',
     description: 'Upload documents section step title',
   },
+  typeLabel: {
+    id: 'vmst.vsd.uploadDocuments:typeLabel',
+    defaultMessage: 'Tegund gagna',
+    description: 'Label for document type select',
+  },
+  fileLabel: {
+    id: 'vmst.vsd.uploadDocuments:fileLabel',
+    defaultMessage: 'Skjal',
+    description: 'Label for file upload',
+  },
+  commentLabel: {
+    id: 'vmst.vsd.uploadDocuments:commentLabel',
+    defaultMessage: 'Athugasemd',
+    description: 'Label for comment input',
+  },
 })
 
 export const application = defineMessages({
@@ -103,6 +118,16 @@ export const application = defineMessages({
     defaultMessage: 'Opna Mínar síður',
     description: 'Bottom button label on completed form',
   },
+  expandableHeader: {
+    id: 'vmst.vsd.application:expandableHeader',
+    defaultMessage: 'Hvað gerist næst?',
+    description: 'Expandable header on completed form',
+  },
+  expandableDescription: {
+    id: 'vmst.vsd.application:expandableDescription',
+    defaultMessage: '- Nú eru gögnin þín aðgengileg inni á Mínum síðum. ',
+    description: 'Expandable description on completed form',
+  },
   actionCardDraft: {
     id: 'vmst.vsd.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
@@ -126,5 +151,15 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Samkvæmt sóttum gögnum er ekki hægt að skila inn gögnum á þessari stundu.',
     description: 'Error summary when user is not eligible to submit documents',
+  },
+  documentsMinError: {
+    id: 'vmst.vsd.error:documentsMinError',
+    defaultMessage: 'Þú þarft að skila að minnsta kosti einu skjali',
+    description: 'Error message when no documents are submitted',
+  },
+  documentsMaxError: {
+    id: 'vmst.vsd.error:documentsMaxError',
+    defaultMessage: 'Þú getur ekki skilað fleiri en {max} skjölum',
+    description: 'Error message when too many documents are submitted',
   },
 })

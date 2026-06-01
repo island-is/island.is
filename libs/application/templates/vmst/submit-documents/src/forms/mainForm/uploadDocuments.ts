@@ -25,7 +25,7 @@ export const uploadDocumentsSection = buildSection({
           fields: {
             type: {
               component: 'select',
-              label: 'Tegund gagna',
+              label: udm.typeLabel,
               width: 'full',
               required: true,
               options: (application) => {
@@ -42,12 +42,12 @@ export const uploadDocumentsSection = buildSection({
             },
             file: {
               component: 'fileUpload',
-              label: 'Skjal',
+              label: udm.fileLabel,
               uploadAccept: '.pdf,.docx,.rtf,.doc,.jpg,.jpeg,.png,.heic',
             },
             comment: {
               component: 'input',
-              label: 'Athugasemd',
+              label: udm.commentLabel,
               width: 'full',
               textarea: true,
               displayInTable: false,
