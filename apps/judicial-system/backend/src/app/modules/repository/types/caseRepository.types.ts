@@ -431,12 +431,14 @@ export const caseInclude: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
+            separate: true,
             where: { created: { [Op.lt]: col('Case.created') } },
           },
         ],
