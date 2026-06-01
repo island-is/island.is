@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { EducationPrimarySchoolAssessmentResult } from '@island.is/api/schema'
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,8 +6,10 @@ import {
   PdfModal,
   Table,
   createColumnHelper,
+  formSubmit,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 
 interface Props {
@@ -24,6 +26,13 @@ export const AssessmentTable = ({ results, loading }: Props) => {
     title: string
   } | null>(null)
   const { formatMessage } = useLocale()
+  const featureFlagClient = useFeatureFlagClient()
+  const [pdfViewerEnabled, setPdfViewerEnabled] = useState(false)
+  useEffect(() => {
+    featureFlagClient
+      .getValue(Features.isServicePortalPrimarySchoolPdfViewerEnabled, false)
+      .then(setPdfViewerEnabled)
+  }, [featureFlagClient])
 
   const hasExamSitting = results.some(
     (r) =>
@@ -87,7 +96,11 @@ export const AssessmentTable = ({ results, loading }: Props) => {
               aria-label={`${formatMessage(psm.viewResults)}${
                 row.original.schoolYear ? `: ${row.original.schoolYear}` : ''
               }`}
-              onClick={() => setActivePdf({ url, title })}
+              onClick={() =>
+                pdfViewerEnabled
+                  ? setActivePdf({ url, title })
+                  : formSubmit(url)
+              }
             >
               {formatMessage(psm.viewResults)}
             </Button>
@@ -95,7 +108,7 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         },
       }),
     ],
-    [formatMessage, hasExamSitting],
+    [formatMessage, hasExamSitting, pdfViewerEnabled],
   )
 
   return (
@@ -106,12 +119,14 @@ export const AssessmentTable = ({ results, loading }: Props) => {
         loading={loading}
         emptyMessage={formatMessage(m.noDataFoundDetail)}
       />
-      <PdfModal
-        url={activePdf?.url}
-        onClose={() => setActivePdf(null)}
-        aria-label={formatMessage(psm.downloadResults)}
-        title={activePdf?.title}
-      />
+      {pdfViewerEnabled && (
+        <PdfModal
+          url={activePdf?.url}
+          onClose={() => setActivePdf(null)}
+          aria-label={formatMessage(psm.downloadResults)}
+          title={activePdf?.title}
+        />
+      )}
     </>
   )
 }

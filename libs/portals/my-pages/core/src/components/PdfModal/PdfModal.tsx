@@ -167,19 +167,15 @@ export const PdfModal = ({
           </Button>
           <DialogDismiss
             render={
-              <FocusableBox
-                component="button"
-                type="button"
-                className={styles.zoomButton}
-                aria-label={formatMessage(m.closeActiveDocument)}
+              <Button
+                icon="close"
+                iconType="outline"
+                variant="utility"
+                size="small"
+                aria-label={formatMessage(m.close)}
               >
-                <Icon
-                  icon="close"
-                  type="outline"
-                  size="small"
-                  color="blue400"
-                />
-              </FocusableBox>
+                {isMobile ? undefined : formatMessage(m.close)}
+              </Button>
             }
           />
         </Box>
@@ -193,6 +189,11 @@ export const PdfModal = ({
           </Box>
         )}
         {(error || pdfError) && (
+          <Box padding={4}>
+            <Problem noBorder={false} />
+          </Box>
+        )}
+        {!loading && !data && !error && !pdfError && (
           <Box padding={4}>
             <Problem type="no_data" noBorder={false} />
           </Box>

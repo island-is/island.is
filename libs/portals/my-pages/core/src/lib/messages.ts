@@ -1836,6 +1836,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open-enlarged-aria-label',
     defaultMessage: '{subject} stækkað',
   },
+  close: {
+    id: 'service.portal:close',
+    defaultMessage: 'Loka',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',

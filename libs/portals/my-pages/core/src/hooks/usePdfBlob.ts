@@ -31,10 +31,15 @@ export const usePdfBlob = (url: string | null | undefined) => {
       signal: controller.signal,
     })
       .then((res) => {
+        if (res.status === 404) return null
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.blob()
       })
       .then((blob) => {
+        if (!blob) {
+          setState(idle)
+          return
+        }
         objectUrl = URL.createObjectURL(blob)
         setState({ data: objectUrl, loading: false, error: null })
       })
