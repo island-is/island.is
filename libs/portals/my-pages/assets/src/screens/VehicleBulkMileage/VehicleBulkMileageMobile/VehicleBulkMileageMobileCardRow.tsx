@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   AlertMessage,
   Box,
@@ -21,6 +21,7 @@ import { vehicleMessage } from '../../../lib/messages'
 import { displayWithUnit } from '../../../utils/displayWithUnit'
 import { VehicleType } from '../types'
 import { useVehicleBulkMileageRowState } from './useVehicleBulkMileageRowState'
+import * as styles from '../VehicleBulkMileage.css'
 
 interface Props {
   vehicle: VehicleType
@@ -33,6 +34,16 @@ export const VehicleBulkMileageMobileCardRow = ({
 }: Props) => {
   const { formatMessage } = useLocale()
   const [expanded, setExpanded] = useState(false)
+  const expandedContentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (expanded) {
+      expandedContentRef.current?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      })
+    }
+  }, [expanded])
 
   const {
     postStatus,
@@ -103,7 +114,7 @@ export const VehicleBulkMileageMobileCardRow = ({
       paddingTop={3}
       marginBottom={expanded ? 2 : 0}
       background={expanded ? 'blue100' : undefined}
-      style={{ borderBottom: expanded ? undefined : '1px solid #d2d2d2' }}
+      className={expanded ? undefined : styles.cardRowDivider}
     >
       {/* Header: title + expand toggle */}
       <Box
@@ -117,7 +128,7 @@ export const VehicleBulkMileageMobileCardRow = ({
           <Text variant="h4" as="h2" color="blue400" translate="no">
             {vehicle.vehicleType}
           </Text>
-          <Text variant="small" color="dark300" translate="no">
+          <Text variant="small" color="dark300" translate="no" as="span">
             {vehicle.vehicleId}
           </Text>
         </Box>
@@ -130,6 +141,7 @@ export const VehicleBulkMileageMobileCardRow = ({
             icon={expanded ? 'remove' : 'add'}
             onClick={onToggleExpand}
             colorScheme="light"
+            aria-expanded={expanded}
           />
         </Box>
       </Box>
@@ -169,11 +181,12 @@ export const VehicleBulkMileageMobileCardRow = ({
       {/* Action area: input + save (or success message) */}
       <Box width="full" marginY={1}>
         {isSuccess ? (
-          <AlertMessage
-            type="success"
-            aria-live="polite"
-            message={formatMessage(vehicleMessage.mileagePostSuccess)}
-          />
+          <Box aria-live="polite" aria-atomic="true">
+            <AlertMessage
+              type="success"
+              message={formatMessage(vehicleMessage.mileagePostSuccess)}
+            />
+          </Box>
         ) : (
           <Stack space={1}>
             <Text variant="small" fontWeight="semiBold">
@@ -215,7 +228,7 @@ export const VehicleBulkMileageMobileCardRow = ({
               type="button"
               loading={isLoading}
               variant="primary"
-              disabled={isError || isSuccess}
+              disabled={isError}
               icon={isError ? 'closeCircle' : 'pencil'}
               onClick={onSaveButtonClick}
             >
@@ -228,12 +241,16 @@ export const VehicleBulkMileageMobileCardRow = ({
       </Box>
 
       {/* Expandable history */}
-      <AnimateHeight height={expanded ? 'auto' : 0} duration={800}>
-        <Box paddingTop={2} paddingBottom={3}>
-          <Divider />
-        </Box>
-        <Box paddingBottom={3}>{children}</Box>
-      </AnimateHeight>
+      {expanded && (
+        <AnimateHeight height="auto" duration={800}>
+          <Box paddingTop={2} paddingBottom={3}>
+            <Divider />
+          </Box>
+          <Box ref={expandedContentRef} paddingBottom={3}>
+            {children}
+          </Box>
+        </AnimateHeight>
+      )}
     </Box>
   )
 }

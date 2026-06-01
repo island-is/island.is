@@ -8,4 +8,9 @@ export const link = style({
 
 export const mwInput = style({
   maxWidth: 150,
+  minWidth: 120,
+})
+
+export const cardRowDivider = style({
+  borderBottom: `1px solid ${theme.color.blue200}`,
 })
