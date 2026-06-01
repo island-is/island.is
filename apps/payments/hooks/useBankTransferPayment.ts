@@ -24,10 +24,10 @@ export const useBankTransferPayment = ({
   const { lang } = useLocale()
   const [createBankTransferMutation, { loading: createBankTransferLoading }] =
     useCreateBankTransferMutation()
-  // Timestamp of the most-recent successful `paymentsCreateBankTransfer`. The page reads this and
-  // feeds it as the polling hook's `trigger` so the back-channel-SCA case (empty `scaRedirectUrl`,
-  // user stays on the page) restarts polling after the row is persisted.
+  // Bump after a successful create — used as the polling hook's `trigger` for back-channel SCA.
   const [lastAttemptAt, setLastAttemptAt] = useState<number>(0)
+  // Latest expiry from create — feeds the polling hook's hard timeout.
+  const [expiresAt, setExpiresAt] = useState<Date | undefined>(undefined)
 
   const processBankTransferPayment = useCallback(async () => {
     if (!paymentFlowId) {
@@ -44,22 +44,17 @@ export const useBankTransferPayment = ({
           },
         },
       })
-      // Mark the attempt as started regardless of redirect; the page's polling hook restarts on
-      // this signal so back-channel SCA works without a separate "kick polling" call.
       setLastAttemptAt(Date.now())
+      setExpiresAt(response.data?.paymentsCreateBankTransfer.expiresAt)
 
       const scaRedirectUrl =
         response.data?.paymentsCreateBankTransfer.scaRedirectUrl
 
+      // Interactive SCA → redirect. Empty URL = back-channel SCA, stay on the page.
       if (scaRedirectUrl) {
-        // The bank requires an interactive SCA — send the user there. After they finish, Blikk
-        // returns them to the partnerRedirectUrl (the existing flow page) and the polling loop
-        // resolves the terminal status.
         window.location.assign(scaRedirectUrl)
         return
       }
-      // Empty scaRedirectUrl ⇒ back-channel SCA (push notification in the bank app). Stay on the
-      // page; polling picks up the eventual terminal status.
     } catch (e: unknown) {
       onPaymentError({
         code: (e instanceof Error
@@ -73,5 +68,6 @@ export const useBankTransferPayment = ({
     processBankTransferPayment,
     isBankTransferPaymentProcessing: createBankTransferLoading,
     lastAttemptAt,
+    expiresAt,
   }
 }

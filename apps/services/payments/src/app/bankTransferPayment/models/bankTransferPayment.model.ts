@@ -51,10 +51,7 @@ export class BankTransferPayment extends Model<
   @BelongsTo(() => PaymentFlow)
   paymentFlow?: PaymentFlow
 
-  /**
-   * Identifies the external provider (e.g. 'blikk'). Kept provider-neutral so a
-   * future provider can be swapped in without a schema change.
-   */
+  // External provider name (e.g. 'blikk'); provider-neutral to allow swapping without a migration.
   @ApiProperty()
   @Column({
     type: DataType.STRING,
@@ -63,7 +60,7 @@ export class BankTransferPayment extends Model<
   })
   provider!: string
 
-  /** The payment id returned by the provider; used to look the flow up from a webhook. */
+  // Provider-side payment id; used to look the row up from a webhook.
   @ApiProperty()
   @Column({
     type: DataType.STRING,
@@ -72,7 +69,7 @@ export class BankTransferPayment extends Model<
   })
   providerPaymentId!: string
 
-  /** Idempotency key sent to the provider on create (our payment flow id). */
+  // Per-attempt idempotency key sent to the provider on create (equal to this row's `id`).
   @ApiProperty()
   @Column({
     type: DataType.STRING,
@@ -89,11 +86,7 @@ export class BankTransferPayment extends Model<
   })
   amount!: number
 
-  /**
-   * The provider's raw status verbatim (e.g. 'PENDING', 'SUCCESS'). Stored as a
-   * string rather than a provider-shaped DB enum so it stays provider-neutral and
-   * does not need a migration if a provider's status vocabulary changes.
-   */
+  // Raw provider status; stored as string for provider-neutrality.
   @ApiProperty()
   @Column({
     type: DataType.STRING,
@@ -102,7 +95,7 @@ export class BankTransferPayment extends Model<
   })
   lastKnownStatus!: string
 
-  /** May be empty when the bank uses back-channel (push-notification) SCA. */
+  // Empty when the bank uses back-channel (push-notification) SCA.
   @ApiPropertyOptional()
   @Column({
     type: DataType.TEXT,
@@ -110,6 +103,15 @@ export class BankTransferPayment extends Model<
     field: 'sca_redirect_url',
   })
   scaRedirectUrl?: string | null
+
+  // TTL set on creation; mirrors the value sent to Blikk. Past this, the row is silent-stale.
+  @ApiProperty()
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    field: 'expires_at',
+  })
+  expiresAt!: Date
 
   @ApiProperty()
   @Column({

@@ -39,6 +39,8 @@ import { CreateBankTransferInput } from './dto/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -165,6 +167,20 @@ export class PaymentsResolver {
   ): Promise<VerifyBankTransferResponse> {
     try {
       return this.paymentsService.verifyBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => CancelBankTransferResponse, {
+    name: 'paymentsCancelBankTransfer',
+  })
+  async cancelBankTransfer(
+    @Args('input', { type: () => CancelBankTransferInput })
+    input: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    try {
+      return this.paymentsService.cancelBankTransfer(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

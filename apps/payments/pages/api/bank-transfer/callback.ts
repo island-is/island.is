@@ -30,9 +30,12 @@ export default async function bankTransferCallbackHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  console.log('BANK TRANSFER CALLBACK RECEIVED', req.body)
   if (req.method !== 'POST') {
     // Even for the "wrong method" case we return 200 to keep Blikk's webhook off the retry path.
-    return res.status(200).json({ received: false, reason: 'method-not-allowed' })
+    return res
+      .status(200)
+      .json({ received: false, reason: 'method-not-allowed' })
   }
 
   let id: string

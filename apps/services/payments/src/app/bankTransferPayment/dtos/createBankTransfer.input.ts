@@ -1,10 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum, IsUUID } from 'class-validator'
 
-/**
- * Locales the consuming frontend can land the user back on after SCA. Used to construct the
- * `partnerRedirectUrl` we send to Blikk.
- */
+/** Locale for the partner-redirect URL sent to Blikk. */
 export enum BankTransferLocale {
   IS = 'is',
   EN = 'en',

@@ -1,17 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsDate, IsOptional, IsString } from 'class-validator'
 
 export class CreateBankTransferResponse {
   @IsString()
   @ApiProperty()
   readonly providerPaymentId!: string
 
-  /**
-   * Where the frontend should redirect the user for Strong Customer Authentication. Empty / undefined
-   * means back-channel SCA (the user gets a push from their bank); the frontend stays on the page.
-   */
+  // Empty / undefined = back-channel SCA, no redirect.
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly scaRedirectUrl?: string
+
+  @IsDate()
+  @ApiProperty()
+  readonly expiresAt!: Date
 }

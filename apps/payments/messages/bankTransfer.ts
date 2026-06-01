@@ -28,6 +28,12 @@ export const bankTransfer = defineMessages({
     description:
       'Single status string shown while the user completes SCA and we poll for terminal status',
   },
+  continuePayment: {
+    id: 'payments:bankTransfer.continuePayment',
+    defaultMessage: 'Halda áfram með greiðslu',
+    description:
+      'Primary CTA on the pending screen — resumes the in-flight bank-transfer attempt by redirecting back to the provider SCA URL',
+  },
 })
 
 export const bankTransferSuccess = defineMessages({
@@ -44,14 +50,32 @@ export const bankTransferError = defineMessages({
     defaultMessage: 'Millifærsla mistókst',
     description: 'Generic error after a failed bank transfer',
   },
+  genericTitle: {
+    id: 'payments:bankTransferError.genericTitle',
+    defaultMessage: 'Millifærsla mistókst',
+    description:
+      'Header on the standard error view for a generic bank-transfer failure (ERROR status)',
+  },
   rejected: {
     id: 'payments:bankTransferError.rejected',
     defaultMessage: 'Bankinn hafnaði millifærslunni',
     description: 'Error shown when the bank rejected the transfer',
   },
+  rejectedTitle: {
+    id: 'payments:bankTransferError.rejectedTitle',
+    defaultMessage: 'Millifærslunni hafnað',
+    description:
+      'Header on the standard error view for a bank-transfer rejected by the bank (REJECTED status)',
+  },
   cancelled: {
     id: 'payments:bankTransferError.cancelled',
     defaultMessage: 'Millifærslan var afturkölluð',
     description: 'Error shown when the bank-transfer attempt was cancelled',
+  },
+  cancelledTitle: {
+    id: 'payments:bankTransferError.cancelledTitle',
+    defaultMessage: 'Millifærsla afturkölluð',
+    description:
+      'Header on the standard error view for a bank-transfer cancelled by the user (CANCELLED status)',
   },
 })

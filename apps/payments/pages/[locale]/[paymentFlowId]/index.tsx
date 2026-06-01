@@ -1,13 +1,17 @@
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
-import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
+import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
+import { AlertMessage, Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+} from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
@@ -47,6 +51,7 @@ import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
 import { useBankTransferStatusPolling } from '../../../hooks/useBankTransferStatusPolling'
+import { useCancelBankTransfer } from '../../../hooks/useCancelBankTransfer'
 import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
@@ -228,7 +233,6 @@ function PaymentPage({
     },
   })
   const { formatMessage } = useLocale()
-
   const {
     selectedPaymentMethod,
     changePaymentMethod,
@@ -242,6 +246,7 @@ function PaymentPage({
     supportsApplePay,
     initiateApplePay,
     bankTransferLastAttemptAt,
+    bankTransferExpiresAt: bankTransferExpiresAtFromCreate,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
@@ -250,25 +255,56 @@ function PaymentPage({
 
   const router = useRouter()
 
-  // Drives bank-transfer settlement. We only poll when there's a real reason:
-  //   - The Blikk redirect appended `?bank_transfer=pending` to the partnerRedirectUrl, so the
-  //     user is returning from SCA, OR
-  //   - The user just submitted on this page (`lastAttemptAt` bumped — covers back-channel SCA).
-  // Without either signal a fresh visit to an unpaid flow doesn't poll, so the submit button never
-  // flashes loading for card/invoice users.
-  const isReturningFromBankTransfer =
-    router.query.bank_transfer === 'pending'
+  const bankTransferExpiresAt =
+    bankTransferExpiresAtFromCreate ??
+    paymentFlow?.bankTransferExpiresAt ??
+    undefined
+
   const { isPolling: isBankTransferPolling } = useBankTransferStatusPolling({
     paymentFlowId: paymentFlow?.id,
     enabled:
-      paymentFlow?.paymentStatus === 'unpaid' &&
-      (isReturningFromBankTransfer || bankTransferLastAttemptAt > 0),
+      paymentFlow?.paymentStatus ===
+        PaymentsGetFlowPaymentStatus.bank_transfer_pending ||
+      (paymentFlow?.paymentStatus === PaymentsGetFlowPaymentStatus.unpaid &&
+        bankTransferLastAttemptAt > 0),
     trigger: bankTransferLastAttemptAt,
+    expiresAt: bankTransferExpiresAt,
     onSuccess: () => router.reload(),
-    onFailure: setPaymentError,
+    onFailure: () => router.reload(),
   })
 
-  console.log('isBankTransferPolling', isBankTransferPolling)
+  const { cancelBankTransfer, isCancelling } = useCancelBankTransfer({
+    paymentFlowId: paymentFlow?.id,
+  })
+
+  const handleCancelBankTransfer = async () => {
+    await cancelBankTransfer()
+    router.reload()
+  }
+
+  // Spans the cancel mutation + router.reload(); cleared only on mutation failure.
+  const [isStartingAgain, setIsStartingAgain] = useState(false)
+
+  /** Error-view Back button: bank-transfer codes cancel + reload, others just clear paymentError. */
+  const onErrorBack = async () => {
+    const code = paymentError?.code
+    const isBankTransferCode =
+      code === BankTransferErrorCode.BankTransferRejected ||
+      code === BankTransferErrorCode.BankTransferCancelled ||
+      code === BankTransferErrorCode.BankTransferGenericError
+    if (!isBankTransferCode) {
+      setPaymentError(null)
+      return
+    }
+    setIsStartingAgain(true)
+    try {
+      await cancelBankTransfer()
+      router.reload()
+    } catch {
+      setIsStartingAgain(false)
+      setPaymentError({ code: CardErrorCode.UnknownCardError })
+    }
+  }
 
   const availablePaymentMethods = useMemo(() => {
     const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
@@ -277,16 +313,13 @@ function PaymentPage({
       methods.push('invoice')
     }
 
-    // TEST OVERRIDE: always offer bank_transfer in the selector so we can exercise the new flow end
-    // to end while it's behind no feature flag. Remove this once the backend's
-    // `determinePaymentMethods` (paymentFlow.utils.ts) starts emitting `bank_transfer` based on FJS's
-    // catalog `paymentOptions` (see the handoff's note about flipping `FjsPaymentMethod.TRANSFER`).
+    // TEST OVERRIDE — remove once the backend emits bank_transfer based on FJS `paymentOptions`.
     methods.push('bank_transfer')
 
     return Array.from(new Set(methods)) as PaymentMethod[]
   }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
 
-  // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
+  // Invoice payment or bank transfer doesn't have any input fields, so we don't need to check if it's valid
   const isCardPaymentInvalid =
     selectedPaymentMethod === 'card' && !methods.formState.isValid
 
@@ -304,8 +337,62 @@ function PaymentPage({
     paymentError,
   )
 
-  const isPaid = paymentFlow?.paymentStatus === 'paid'
-  const isInvoicePending = paymentFlow?.paymentStatus === 'invoice_pending'
+  const paymentStatus = paymentFlow?.paymentStatus
+  const bankTransferScaRedirectUrl =
+    paymentFlow?.bankTransferScaRedirectUrl || undefined
+
+  const isPaid = paymentStatus === PaymentsGetFlowPaymentStatus.paid
+  const isInvoicePending =
+    paymentStatus === PaymentsGetFlowPaymentStatus.invoice_pending
+  const isBankTransferPending =
+    paymentStatus === PaymentsGetFlowPaymentStatus.bank_transfer_pending
+
+  if (canRenderMainFlow && isBankTransferPending) {
+    // Pending screen: polling reloads on terminal SUCCESS; the Cancel button cancels + reloads.
+    return (
+      <PageCard
+        headerSlot={
+          <PaymentHeader
+            title={organization?.title}
+            imageSrc={organization?.logo?.url}
+            imageAlt={organization?.logo?.title}
+            amount={productInformation.amount}
+            subTitle={productInformation.title}
+            type="primary"
+          />
+        }
+        bodySlot={
+          <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
+            <AlertMessage
+              type="default"
+              message={formatMessage(bankTransfer.waiting)}
+            />
+            {bankTransferScaRedirectUrl && (
+              <Button
+                fluid
+                unfocusable
+                onClick={() =>
+                  window.location.assign(bankTransferScaRedirectUrl)
+                }
+              >
+                {formatMessage(bankTransfer.continuePayment)}
+              </Button>
+            )}
+            <Box display="flex" justifyContent="center">
+              <Button
+                unfocusable
+                variant="text"
+                loading={isCancelling}
+                onClick={handleCancelBankTransfer}
+              >
+                {formatMessage(generic.buttonCancel)}
+              </Button>
+            </Box>
+          </Box>
+        }
+      />
+    )
+  }
 
   if (canRenderMainFlow && (isPaid || isInvoicePending)) {
     const title = isPaid ? cardSuccess.title : invoiceSuccess.title
@@ -445,7 +532,9 @@ function PaymentPage({
                 <Button
                   variant="ghost"
                   fluid
-                  onClick={() => setPaymentError(null)}
+                  loading={isStartingAgain}
+                  disabled={isStartingAgain}
+                  onClick={onErrorBack}
                 >
                   {formatMessage(generic.back)}
                 </Button>

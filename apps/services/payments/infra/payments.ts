@@ -94,6 +94,13 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         // TODO: confirm Blikk's production API host with Blikk before flipping bank-transfer on.
         prod: 'https://api.blikk.tech',
       },
+      // TTL passed as `expireAt` on every Blikk create. Also draws the recency line for our row's
+      // status gating — see BankTransferService and `getPaymentFlowStatus`.
+      BLIKK_PAYMENT_TTL_SECONDS: {
+        dev: '300',
+        staging: '300',
+        prod: '600',
+      },
     })
     .secrets({
       ...secrets,

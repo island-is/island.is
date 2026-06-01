@@ -4,6 +4,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 
 import { BankTransferStatus } from './bankTransfer.types'
+import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
@@ -61,15 +62,37 @@ export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   sku: item.chargeItemCode,
 })
 
-/**
- * Builds the FJS charge payload for a settled bank transfer. Mirrors `generateCardChargeFJSPayload`:
- * a PAID charge (`payInfo` present). The card-only `payInfo` fields are omitted; the provider payment id
- * is carried in `RRN` so FJS can reconcile the transfer.
- *
- * Depends on the FJS `payInfo` contract change (transfer `paymentMeans` + optional card fields). FJS will
- * deploy the matching backend change and the generated client (`gen/`) will be regenerated before this
- * feature goes live.
- */
+/** True when the row's TTL has elapsed. Anchored on `expires_at`, which we sent to Blikk on create. */
+export const isRowExpired = (
+  row: Pick<BankTransferPayment, 'expiresAt'>,
+): boolean => row.expiresAt.getTime() < Date.now()
+
+/** Structured log prefix used throughout the bank-transfer flow. */
+export const createLogPrefix = (
+  paymentFlowId: string,
+  correlationId: string,
+  providerPaymentId: string,
+): string =>
+  `[${paymentFlowId}][correlationId: ${correlationId}][rrn: ${providerPaymentId}]`
+
+/** Row-driven convenience wrapper around `createLogPrefix`. */
+export const rowLogPrefix = (
+  row: Pick<
+    BankTransferPayment,
+    'paymentFlowId' | 'sourceReferenceId' | 'providerPaymentId'
+  >,
+): string =>
+  createLogPrefix(row.paymentFlowId, row.sourceReferenceId, row.providerPaymentId)
+
+/** True for ERROR / REJECTED / CANCELLED (distinct from `isTerminalBankTransferStatus` which includes SUCCESS). */
+export const isBankTransferFailureStatus = (
+  status: BankTransferStatus,
+): boolean =>
+  status === BankTransferStatus.ERROR ||
+  status === BankTransferStatus.REJECTED ||
+  status === BankTransferStatus.CANCELLED
+
+/** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({
   paymentFlow,
   charges,

@@ -10,15 +10,16 @@ import { BankTransferLocale } from './dtos/createBankTransfer.input'
 describe('BankTransferController', () => {
   let controller: BankTransferController
   let bankTransferService: jest.Mocked<
-    Pick<BankTransferService, 'create' | 'verify'>
+    Pick<BankTransferService, 'create' | 'verify' | 'cancel'>
   >
 
   beforeEach(async () => {
     bankTransferService = {
       create: jest.fn(),
       verify: jest.fn(),
+      cancel: jest.fn(),
     } as unknown as jest.Mocked<
-      Pick<BankTransferService, 'create' | 'verify'>
+      Pick<BankTransferService, 'create' | 'verify' | 'cancel'>
     >
 
     const module: TestingModule = await Test.createTestingModule({
@@ -83,6 +84,19 @@ describe('BankTransferController', () => {
         paymentFlowId: 'flow-1',
       })
       expect(result.status).toBe(BankTransferStatus.PENDING)
+    })
+  })
+
+  describe('POST /cancel', () => {
+    it('delegates to bankTransferService.cancel with the input body', async () => {
+      bankTransferService.cancel.mockResolvedValue({ ok: true })
+
+      const result = await controller.cancel({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferService.cancel).toHaveBeenCalledWith({
+        paymentFlowId: 'flow-1',
+      })
+      expect(result).toEqual({ ok: true })
     })
   })
 })
