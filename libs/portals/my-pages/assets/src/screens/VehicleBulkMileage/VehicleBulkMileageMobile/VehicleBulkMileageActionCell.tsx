@@ -32,6 +32,8 @@ export const VehicleBulkMileageActionCell = ({
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const { onMileageUpdateCallback, onSaveSuccess } = table.options.meta ?? {}
+  const isExpanded = row.getIsExpanded()
+  const inputBackground = isExpanded ? 'white' : 'blue'
 
   const {
     postStatus,
@@ -83,7 +85,7 @@ export const VehicleBulkMileageActionCell = ({
           control={control}
           id={mobileId}
           name={row.original.vehicleId}
-          backgroundColor="blue"
+          backgroundColor={inputBackground}
           placeholder={unit}
           type="number"
           suffix={' ' + unit}
@@ -126,7 +128,7 @@ export const VehicleBulkMileageActionCell = ({
           control={control}
           id={row.original.vehicleId}
           name={row.original.vehicleId}
-          backgroundColor="blue"
+          backgroundColor={inputBackground}
           placeholder={unit}
           type="number"
           suffix={' ' + unit}
