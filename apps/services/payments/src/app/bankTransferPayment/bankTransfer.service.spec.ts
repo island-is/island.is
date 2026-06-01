@@ -835,7 +835,13 @@ describe('BankTransferService', () => {
 
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
       )
       expect(result).toEqual({ ok: true })
     })
@@ -851,7 +857,13 @@ describe('BankTransferService', () => {
       expect(fetchMock).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'REJECTED',
+          },
+        },
       )
       expect(result).toEqual({ ok: true })
     })
@@ -866,7 +878,13 @@ describe('BankTransferService', () => {
 
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
       )
       expect(result).toEqual({ ok: true })
     })
@@ -879,7 +897,13 @@ describe('BankTransferService', () => {
 
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
       )
       expect(result).toEqual({ ok: true })
     })
@@ -895,7 +919,13 @@ describe('BankTransferService', () => {
       expect(fetchMock).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
       )
       expect(result).toEqual({ ok: true })
     })
@@ -954,6 +984,52 @@ describe('BankTransferService', () => {
 
       await service.cancel({ paymentFlowId: 'flow-1' })
 
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('throws PaymentFlowAlreadyPaid and does not soft-delete when the row is already SUCCESS', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SUCCESS',
+      })
+
+      await expect(
+        service.cancel({ paymentFlowId: 'flow-1' }),
+      ).rejects.toThrow(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(fetchMock).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('throws PaymentFlowAlreadyPaid when the row flips to SUCCESS between fetch and soft-delete (race)', async () => {
+      bankTransferPaymentModel.findOne
+        .mockResolvedValueOnce(baseRow)
+        .mockResolvedValueOnce({ ...baseRow, lastKnownStatus: 'SUCCESS' })
+      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
+      fetchMock.mockResolvedValue(
+        mockFetchResponse({ ok: true, status: 204, json: {} }),
+      )
+
+      await expect(
+        service.cancel({ paymentFlowId: 'flow-1' }),
+      ).rejects.toThrow(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('returns { ok: true } when the soft-delete races against a concurrent cancel (idempotent)', async () => {
+      bankTransferPaymentModel.findOne
+        .mockResolvedValueOnce(baseRow)
+        .mockResolvedValueOnce({ ...baseRow, isDeleted: true })
+      bankTransferPaymentModel.update.mockResolvedValueOnce([0])
+      fetchMock.mockResolvedValue(
+        mockFetchResponse({ ok: true, status: 204, json: {} }),
+      )
+
+      const result = await service.cancel({ paymentFlowId: 'flow-1' })
+
+      expect(result).toEqual({ ok: true })
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
   })
