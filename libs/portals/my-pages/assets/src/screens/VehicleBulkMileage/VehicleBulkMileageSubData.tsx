@@ -94,7 +94,7 @@ export const VehicleBulkMileageSubData = ({
   }, [data, unit])
 
   return (
-    <Box paddingX={3} paddingY={2} background="blue100">
+    <Box paddingRight={2} paddingTop={2} background="blue100">
       <Box display="flex" justifyContent="spaceBetween">
         <Text fontWeight="semiBold">
           {formatMessage(vehicleMessage.registrationHistory)}

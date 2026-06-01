@@ -182,7 +182,7 @@ const VehicleBulkMileage = () => {
           {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>
               <GridRow>
-                <GridColumn span={['12/12', '12/12', '4/12']}>
+                <GridColumn span={['12/12', '12/12', '5/12', '5/12', '4/12']}>
                   <Input
                     icon={{ name: 'search' }}
                     backgroundColor="blue"

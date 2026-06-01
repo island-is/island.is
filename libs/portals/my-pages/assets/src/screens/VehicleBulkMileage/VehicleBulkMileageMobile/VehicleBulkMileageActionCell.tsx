@@ -115,7 +115,12 @@ export const VehicleBulkMileageActionCell = ({
   }
 
   return (
-    <Box display="flex" alignItems="center" columnGap={2}>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+      columnGap={2}
+    >
       <Box className={styles.mwInput}>
         <InputController
           control={control}

@@ -36,7 +36,12 @@ const makeVehicleInfoCell =
         >
           {row.original.vehicleType}
         </Text>
-        <Text variant="medium" color="dark300" translate="no" as="span">
+        <Text
+          variant={isMobile ? 'medium' : 'small'}
+          color={isMobile ? 'dark300' : 'dark400'}
+          translate="no"
+          as="span"
+        >
           {row.original.vehicleId}
         </Text>
       </Box>
