@@ -432,30 +432,32 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             const formatDate = (d: Date | null) =>
               d && isValidDate(d) ? format(d, fmt) : ''
             const inputValue = range
-              ? `${formatDate(startDate)}${endDate ? ` - ${formatDate(endDate)}` : ''}`
+              ? `${formatDate(startDate)}${
+                  endDate ? ` - ${formatDate(endDate)}` : ''
+                }`
               : formatDate(startDate)
             return (
-            <CustomCalendarContainer
-              {...props}
-              onClose={() => setIsOpen(false)}
-              inputLabel={label}
-              inputValue={inputValue}
-              startDate={startDate}
-              endDate={endDate}
-              setDate={(startDay, endDay) => {
-                setStartDate(startDay)
-                endDay && setEndDate(endDay)
+              <CustomCalendarContainer
+                {...props}
+                onClose={() => setIsOpen(false)}
+                inputLabel={label}
+                inputValue={inputValue}
+                startDate={startDate}
+                endDate={endDate}
+                setDate={(startDay, endDay) => {
+                  setStartDate(startDay)
+                  endDay && setEndDate(endDay)
 
-                if (startDay && endDay) {
-                  handleChange && handleChange(startDay, endDay)
-                  setIsOpen(false)
-                }
-              }}
-              ranges={ranges}
-              highlightWeekends={highlightWeekends}
-              displaySelectInput={displaySelectInput}
-              children={props.children}
-            />
+                  if (startDay && endDay) {
+                    handleChange && handleChange(startDay, endDay)
+                    setIsOpen(false)
+                  }
+                }}
+                ranges={ranges}
+                highlightWeekends={highlightWeekends}
+                displaySelectInput={displaySelectInput}
+                children={props.children}
+              />
             )
           }}
           {...ariaError}
