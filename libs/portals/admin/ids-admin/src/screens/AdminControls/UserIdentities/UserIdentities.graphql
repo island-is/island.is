@@ -26,9 +26,7 @@ query GetUserIdentityConfiguredEnvironments {
   authAdminUserIdentityConfiguredEnvironments
 }
 
-mutation DeactivateUserIdentity(
-  $input: DeactivateAuthAdminUserIdentityInput!
-) {
+mutation DeactivateUserIdentity($input: DeactivateAuthAdminUserIdentityInput!) {
   deactivateAuthAdminUserIdentity(input: $input) {
     success
     affectedEnvironments
@@ -39,9 +37,7 @@ mutation DeactivateUserIdentity(
   }
 }
 
-mutation ReactivateUserIdentity(
-  $input: ReactivateAuthAdminUserIdentityInput!
-) {
+mutation ReactivateUserIdentity($input: ReactivateAuthAdminUserIdentityInput!) {
   reactivateAuthAdminUserIdentity(input: $input) {
     success
     affectedEnvironments

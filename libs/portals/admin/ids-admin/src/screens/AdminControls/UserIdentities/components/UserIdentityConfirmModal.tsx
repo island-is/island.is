@@ -47,10 +47,7 @@ interface UserIdentityConfirmModalProps {
   variant: 'deactivate' | 'reactivate'
   target: UserIdentityRow
   configuredEnvironments: AuthAdminEnvironment[]
-  onConfirm: (
-    subjectId: string,
-    environments: AuthAdminEnvironment[],
-  ) => void
+  onConfirm: (subjectId: string, environments: AuthAdminEnvironment[]) => void
   onClose: () => void
 }
 
@@ -67,9 +64,8 @@ export const UserIdentityConfirmModal = ({
   const eligibleEnvironments = target[config.eligibleEnvironmentsKey]
   const ineligibleEnvironments = target[config.ineligibleEnvironmentsKey]
 
-  const [selectedEnvironments, setSelectedEnvironments] = useState<
-    AuthAdminEnvironment[]
-  >(eligibleEnvironments)
+  const [selectedEnvironments, setSelectedEnvironments] =
+    useState<AuthAdminEnvironment[]>(eligibleEnvironments)
   const [error, setError] = useState<string | undefined>(undefined)
 
   const handleEnvironmentChange = (env: AuthAdminEnvironment) => {
