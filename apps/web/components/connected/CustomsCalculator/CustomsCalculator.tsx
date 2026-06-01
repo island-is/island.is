@@ -1,14 +1,17 @@
 import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 
 import {
   Box,
   Button,
-  Filter,
-  FilterMultiChoice,
+  Inline,
   Input,
+  Select,
   Stack,
+  StringOption,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -71,9 +74,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const [tariffNumber, setTariffNumber] = useState(
     (slice?.configJson?.tariffNumber as string) ?? DEFAULT_INPUT.tariffNumber,
   )
-  const [referenceDate, setReferenceDate] = useState(
-    (slice?.configJson?.referenceDate as string) ?? DEFAULT_INPUT.referenceDate,
-  )
 
   const [getUnits, unitsState] = useLazyQuery<UnitsQueryResult>(
     GET_CUSTOMS_CALCULATOR_UNITS,
@@ -94,14 +94,18 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     )
   }, [productCategoriesResponse.data?.customsCalculatorProductCategories])
 
-  const fetchUnits = () => {
-    getUnits({
-      variables: {
-        tariffNumber,
-        referenceDate,
-      },
-    })
-  }
+  useDebounce(
+    () => {
+      getUnits({
+        variables: {
+          tariffNumber: DEFAULT_INPUT.tariffNumber,
+          referenceDate: new Date().toISOString(),
+        },
+      })
+    },
+    500,
+    [tariffNumber],
+  )
 
   const runCalculation = () => {
     calculate({
@@ -109,108 +113,139 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         input: {
           ...DEFAULT_INPUT,
           tariffNumber,
-          referenceDate,
+          referenceDate: new Date().toISOString(),
         },
       },
     })
   }
 
+  const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
+    const tariffNumbers = slice.configJson?.tariffNumberShortcuts ?? []
+    const shortcuts: { label: string; value: string }[] = []
+    for (const tariffNumber of tariffNumbers) {
+      const label =
+        productCategoriesResponse.data?.customsCalculatorProductCategories?.categories?.find(
+          (category) => category.tariffNumber === tariffNumber,
+        )?.category
+      if (label) shortcuts.push({ label, value: tariffNumber })
+    }
+    return shortcuts
+  }, [
+    slice.configJson?.tariffNumberShortcuts,
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.categories,
+  ])
+
+  const currencyOptions = useMemo<StringOption[]>(() => {
+    return (
+      slice.json?.currencyOptions ?? [
+        { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
+        { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
+        { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
+        { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
+        { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
+        { label: 'EUR', value: 'EUR', description: 'Evra' },
+        { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
+        { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
+        { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
+        { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
+        { label: 'NOK', value: 'NOK', description: 'Norsk króna' },
+        { label: 'NZD', value: 'NZD', description: 'Ný-Sjálenskur dalur' },
+        { label: 'PLN', value: 'PLN', description: 'Pólskt slot' },
+        { label: 'SEK', value: 'SEK', description: 'Sænsk króna' },
+        { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
+        { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
+        { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
+        { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
+      ]
+    )
+  }, [slice.json?.currencyOptions])
+
+  const [selectedCurrency, setSelectedCurrency] = useState<
+    StringOption | null | undefined
+  >(currencyOptions?.[0])
+
   return (
-    <Box background="blue100" padding={[3, 3, 4]}>
-      <Stack space={3}>
-        <Text variant="h3">{formatMessage(translationStrings.title)}</Text>
-        <Text variant="small">
-          {formatMessage(translationStrings.description)}
-        </Text>
+    <Stack space={3}>
+      {shortcuts.length > 0 && (
+        <Stack space={2}>
+          <Text variant="h5">
+            {formatMessage(translationStrings.shortcutsTitle)}
+          </Text>
+          <Inline space={1}>
+            {shortcuts.map((shortcut) => (
+              <Tag
+                onClick={() => setTariffNumber(shortcut.value)}
+                key={shortcut.value}
+              >
+                {shortcut.label}
+              </Tag>
+            ))}
+          </Inline>
+        </Stack>
+      )}
+      <Box display="flex" columnGap={2}>
+        <Button onClick={runCalculation} loading={calculationState.loading}>
+          {formatMessage(translationStrings.runCalculation)}
+        </Button>
+      </Box>
 
-        <Input
-          name="tariffNumber"
-          label={formatMessage(translationStrings.tariffNumberLabel)}
-          value={tariffNumber}
-          onChange={(event) => setTariffNumber(event.target.value)}
-        />
-        <Input
-          name="referenceDate"
-          label={formatMessage(translationStrings.referenceDateLabel)}
-          value={referenceDate}
-          onChange={(event) => setReferenceDate(event.target.value)}
-        />
+      <Button icon="filter" size="small" variant="utility">
+        {formatMessage(translationStrings.searchForCategory)}
+      </Button>
 
-        <Box display="flex" columnGap={2}>
-          <Button
-            size="small"
-            onClick={fetchUnits}
-            loading={unitsState.loading}
-          >
-            {formatMessage(translationStrings.fetchUnits)}
-          </Button>
-          <Button
-            size="small"
-            variant="ghost"
-            onClick={runCalculation}
-            loading={calculationState.loading}
-          >
-            {formatMessage(translationStrings.runCalculation)}
-          </Button>
+      <Inline space={1}>
+        <Box className={styles.currencySelect}>
+          <Select
+            options={currencyOptions}
+            size="sm"
+            label={formatMessage(translationStrings.currencyLabel)}
+            backgroundColor="blue"
+            value={selectedCurrency}
+            onChange={(option) => setSelectedCurrency(option)}
+          />
         </Box>
-
-        <Filter
-          labelClear={formatMessage(translationStrings.filterClear)}
-          labelClearAll={formatMessage(translationStrings.filterClearAll)}
-          labelOpen={formatMessage(translationStrings.filterOpen)}
-          labelClose={formatMessage(translationStrings.filterClose)}
-          labelTitle={formatMessage(translationStrings.filterTitle)}
-          labelResult={formatMessage(translationStrings.filterApply)}
-          align="left"
-          variant="popover"
-          reverse
-          onFilterClear={() => {
-            setTariffNumber('')
-          }}
-        >
-          <Box className={styles.dialog}>
-            <FilterMultiChoice
-              labelClear={formatMessage(translationStrings.filterClear)}
-              categories={filterCategories}
-              onChange={(event) => {
-                const nextTariffNumber = event.selected[0] ?? ''
-                setTariffNumber(nextTariffNumber)
-              }}
-              onClear={() => {
-                setTariffNumber('')
-              }}
-              singleExpand
-            />
-          </Box>
-        </Filter>
-
-        {Boolean(unitsState.data?.customsCalculatorUnits) && (
-          <Box>
-            <Text variant="h5" marginBottom={1}>
-              {formatMessage(translationStrings.unitsResponse)}
+        <Stack space={1}>
+          <Input
+            name="asdf"
+            size="sm"
+            label={formatMessage(translationStrings.priceWithShippingLabel)}
+            backgroundColor="blue"
+          />
+          <Box paddingLeft={1}>
+            <Text variant="small">
+              {formatMessage(translationStrings.priceWithShippingDescription)}
             </Text>
-            <pre>
-              {JSON.stringify(unitsState.data?.customsCalculatorUnits, null, 2)}
-            </pre>
           </Box>
-        )}
+        </Stack>
+      </Inline>
 
-        {Boolean(calculationState.data?.customsCalculatorCalculate) && (
-          <Box>
-            <Text variant="h5" marginBottom={1}>
-              {formatMessage(translationStrings.calculationResponse)}
-            </Text>
-            <pre>
-              {JSON.stringify(
-                calculationState.data?.customsCalculatorCalculate,
-                null,
-                2,
-              )}
-            </pre>
-          </Box>
-        )}
-      </Stack>
-    </Box>
+      {Boolean(unitsState.data?.customsCalculatorUnits) && (
+        <Box>
+          <Text variant="h5" marginBottom={1}>
+            {formatMessage(translationStrings.unitsResponse)}
+          </Text>
+          <pre>
+            {JSON.stringify(unitsState.data?.customsCalculatorUnits, null, 2)}
+          </pre>
+        </Box>
+      )}
+
+      {Boolean(calculationState.data?.customsCalculatorCalculate) && (
+        <Box>
+          <Text variant="h5" marginBottom={1}>
+            {formatMessage(translationStrings.calculationResponse)}
+          </Text>
+          <pre>
+            {JSON.stringify(
+              calculationState.data?.customsCalculatorCalculate,
+              null,
+              2,
+            )}
+          </pre>
+        </Box>
+      )}
+    </Stack>
   )
 }
 

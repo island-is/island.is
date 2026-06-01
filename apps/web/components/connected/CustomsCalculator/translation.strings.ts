@@ -1,16 +1,20 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
-  title: {
-    id: 'web.customsCalculator:title',
-    defaultMessage: 'Tollreiknivél',
-    description: 'Title for the customs calculator connected component',
+  priceWithShippingDescription: {
+    id: 'web.customsCalculator:priceWithShippingDescription',
+    defaultMessage: 'Verð vöru komin til Íslands',
+    description: 'Description for the price with shipping input',
   },
-  description: {
-    id: 'web.customsCalculator:description',
-    defaultMessage:
-      'Einfalt prufusvæði tengt GraphQL virkni tollreiknivélarinnar.',
-    description: 'Description text for the customs calculator component',
+  searchForCategory: {
+    id: 'web.customsCalculator:searchForCategory',
+    defaultMessage: 'Leita eftir vöruflokki',
+    description: 'Button label for searching for a category',
+  },
+  shortcutsTitle: {
+    id: 'web.customsCalculator:shortcutsTitle',
+    defaultMessage: 'Algengar vörur',
+    description: 'Title for the shortcuts section',
   },
   tariffNumberLabel: {
     id: 'web.customsCalculator:tariffNumberLabel',
@@ -29,38 +33,8 @@ export const translation = defineMessages({
   },
   runCalculation: {
     id: 'web.customsCalculator:runCalculation',
-    defaultMessage: 'Keyra útreikning',
+    defaultMessage: 'Reikna',
     description: 'Button label for running customs calculation',
-  },
-  filterClear: {
-    id: 'web.customsCalculator:filterClear',
-    defaultMessage: 'Hreinsa síu',
-    description: 'Clear filter label',
-  },
-  filterClearAll: {
-    id: 'web.customsCalculator:filterClearAll',
-    defaultMessage: 'Hreinsa allar síur',
-    description: 'Clear all filters label',
-  },
-  filterOpen: {
-    id: 'web.customsCalculator:filterOpen',
-    defaultMessage: 'Leita eftir vöruflokki',
-    description: 'Open category filter menu label',
-  },
-  filterClose: {
-    id: 'web.customsCalculator:filterClose',
-    defaultMessage: 'Loka flokkasíu',
-    description: 'Close category filter menu label',
-  },
-  filterTitle: {
-    id: 'web.customsCalculator:filterTitle',
-    defaultMessage: 'Leita eftir vöruflokki',
-    description: 'Category filter menu title',
-  },
-  filterApply: {
-    id: 'web.customsCalculator:filterApply',
-    defaultMessage: 'Nota',
-    description: 'Apply filter label',
   },
   otherCategory: {
     id: 'web.customsCalculator:otherCategory',
@@ -76,5 +50,15 @@ export const translation = defineMessages({
     id: 'web.customsCalculator:calculationResponse',
     defaultMessage: 'Svar við útreikningi',
     description: 'Heading for calculation response output',
+  },
+  priceWithShippingLabel: {
+    id: 'web.customsCalculator:priceWithShippingLabel',
+    defaultMessage: 'Verð með flutningi (tollverð)',
+    description: 'Label for price with shipping input',
+  },
+  currencyLabel: {
+    id: 'web.customsCalculator:currencyLabel',
+    defaultMessage: 'Gjaldmiðill',
+    description: 'Label for currency input',
   },
 })
