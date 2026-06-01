@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { HealthDirectorateHealthMessageType } from './healthMessageType.model'
+import { HealthDirectorateHealthConversationType } from './healthConversationType.model'
 
 @ObjectType()
-export class HealthDirectorateHealthMessagingRecipient {
+export class HealthDirectorateHealthConversationRecipient {
   @Field()
   nodeId!: string
 
@@ -31,6 +31,6 @@ export class HealthDirectorateHealthMessagingRecipient {
   @Field(() => Int)
   patientReplyWindowDays!: number
 
-  @Field(() => [HealthDirectorateHealthMessageType])
-  allowedMessageTypes!: HealthDirectorateHealthMessageType[]
+  @Field(() => [HealthDirectorateHealthConversationType])
+  allowedMessageTypes!: HealthDirectorateHealthConversationType[]
 }

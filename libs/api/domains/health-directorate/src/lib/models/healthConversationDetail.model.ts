@@ -1,8 +1,8 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
-import { HealthDirectorateHealthMessageEntry } from './healthMessageEntry.model'
+import { HealthDirectorateHealthConversationEntry } from './healthConversationEntry.model'
 
 @ObjectType()
-export class HealthDirectorateHealthMessageDetail {
+export class HealthDirectorateHealthConversationDetail {
   @Field(() => ID)
   id!: string
 
@@ -48,6 +48,6 @@ export class HealthDirectorateHealthMessageDetail {
   })
   isRead!: boolean
 
-  @Field(() => [HealthDirectorateHealthMessageEntry])
-  messages!: HealthDirectorateHealthMessageEntry[]
+  @Field(() => [HealthDirectorateHealthConversationEntry])
+  messages!: HealthDirectorateHealthConversationEntry[]
 }

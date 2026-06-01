@@ -1,7 +1,7 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class HealthDirectorateHealthMessage {
+export class HealthDirectorateHealthConversation {
   @Field(() => ID)
   id!: string
 

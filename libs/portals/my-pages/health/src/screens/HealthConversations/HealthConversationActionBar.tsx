@@ -1,7 +1,7 @@
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Tooltip, m } from '@island.is/portals/my-pages/core'
-import * as styles from './HealthMessageActionBar.css'
+import * as styles from './HealthConversationActionBar.css'
 
 type Props = {
   bookmarked?: boolean
@@ -11,7 +11,7 @@ type Props = {
   onStash?: () => void
 }
 
-const HealthMessageActionBar = ({
+const HealthConversationActionBar = ({
   bookmarked,
   archived,
   onReply,
@@ -71,4 +71,4 @@ const HealthMessageActionBar = ({
   )
 }
 
-export default HealthMessageActionBar
+export default HealthConversationActionBar

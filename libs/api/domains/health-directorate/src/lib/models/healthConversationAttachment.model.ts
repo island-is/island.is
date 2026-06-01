@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class HealthDirectorateHealthMessageAttachment {
+export class HealthDirectorateHealthConversationAttachment {
   @Field(() => Int)
   id!: number
 

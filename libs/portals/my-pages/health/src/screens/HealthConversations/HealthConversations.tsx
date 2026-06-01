@@ -25,15 +25,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { HealthDirectorateHealthMessageStatusFilter } from '@island.is/api/schema'
+import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
 import {
-  GetHealthMessagesQuery,
-  useGetHealthMessagesQuery,
-  useStarHealthMessageMutation,
-  useUnstarHealthMessageMutation,
-  useArchiveHealthMessageMutation,
-  useUnarchiveHealthMessageMutation,
-} from './HealthMessages.generated'
+  GetHealthConversationsQuery,
+  useGetHealthConversationsQuery,
+  useStarHealthConversationMutation,
+  useUnstarHealthConversationMutation,
+  useArchiveHealthConversationMutation,
+  useUnarchiveHealthConversationMutation,
+} from './HealthConversations.generated'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -47,8 +47,8 @@ type FilterValues = {
   archived: boolean
 }
 
-type HealthMessage = NonNullable<
-  GetHealthMessagesQuery['healthDirectorateHealthMessages']
+type HealthConversation = NonNullable<
+  GetHealthConversationsQuery['healthDirectorateHealthConversations']
 >[number]
 
 const CircleLogo = ({
@@ -72,7 +72,7 @@ const CircleLogo = ({
   )
 }
 
-const HealthMessages = () => {
+const HealthConversations = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -80,16 +80,16 @@ const HealthMessages = () => {
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
 
-  const { data, loading, error } = useGetHealthMessagesQuery({
+  const { data, loading, error } = useGetHealthConversationsQuery({
     variables: {
       ...(filterValues.archived
-        ? { status: HealthDirectorateHealthMessageStatusFilter.archived }
+        ? { status: HealthDirectorateHealthConversationStatusFilter.archived }
         : {}),
       ...(filterValues.starred ? { starred: true } : {}),
     },
   })
 
-  const healthMessages = data?.healthDirectorateHealthMessages
+  const healthConversations = data?.healthDirectorateHealthConversations
 
   const debouncedSetSearchQuery = useMemo(
     () =>
@@ -114,29 +114,29 @@ const HealthMessages = () => {
 
   const onMutationError = () => toast.error(formatMessage(m.errorTitle))
 
-  const [starMessage] = useStarHealthMessageMutation({
-    refetchQueries: ['GetHealthMessages'],
+  const [starMessage] = useStarHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
-  const [unstarMessage] = useUnstarHealthMessageMutation({
-    refetchQueries: ['GetHealthMessages'],
+  const [unstarMessage] = useUnstarHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
-  const [archiveMessage] = useArchiveHealthMessageMutation({
-    refetchQueries: ['GetHealthMessages'],
+  const [archiveMessage] = useArchiveHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
-  const [unarchiveMessage] = useUnarchiveHealthMessageMutation({
-    refetchQueries: ['GetHealthMessages'],
+  const [unarchiveMessage] = useUnarchiveHealthConversationMutation({
+    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
 
-  const filteredMessages = useMemo<HealthMessage[] | undefined>(() => {
-    if (!data?.healthDirectorateHealthMessages) {
+  const filteredConversations = useMemo<HealthConversation[] | undefined>(() => {
+    if (!data?.healthDirectorateHealthConversations) {
       return []
     }
 
-    return healthMessages?.filter((message) => {
+    return healthConversations?.filter((message) => {
       const matchesSearch =
         message.title
           ?.toLowerCase()
@@ -147,12 +147,12 @@ const HealthMessages = () => {
 
       return matchesSearch
     })
-  }, [filterValues, healthMessages, data?.healthDirectorateHealthMessages])
+  }, [filterValues, healthConversations, data?.healthDirectorateHealthConversations])
 
   return (
     <IntroWrapper
       title={m.messages}
-      intro={messages.healthMessagesIntro}
+      intro={messages.healthConversationsIntro}
       desktopContentSpan="10/12"
     >
       <Box display={['block', 'block', 'block', 'none']} marginBottom={3}>
@@ -160,9 +160,9 @@ const HealthMessages = () => {
           variant="primary"
           size="small"
           iconType="outline"
-          onClick={() => navigate(HealthPaths.HealthMessagesNew)}
+          onClick={() => navigate(HealthPaths.HealthConversationsNew)}
         >
-          {formatMessage(messages.healthMessagesCreate)}
+          {formatMessage(messages.healthConversationsCreate)}
         </Button>
       </Box>
       <Box
@@ -183,7 +183,7 @@ const HealthMessages = () => {
               <Input
                 name="messageSearch"
                 placeholder={formatMessage(
-                  messages.healthMessagesSearchPlaceholder,
+                  messages.healthConversationsSearchPlaceholder,
                 )}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 icon={{ type: 'outline', name: 'search' }}
@@ -204,7 +204,7 @@ const HealthMessages = () => {
             <Box>
               <Checkbox
                 id="filter-starred"
-                label={formatMessage(messages.healthMessagesFilterStarred)}
+                label={formatMessage(messages.healthConversationsFilterStarred)}
                 checked={filterValues.starred}
                 onChange={(e) =>
                   setFilterValues((prev) => ({
@@ -217,7 +217,7 @@ const HealthMessages = () => {
             <Box paddingTop={1}>
               <Checkbox
                 id="filter-archived"
-                label={formatMessage(messages.healthMessagesFilterArchived)}
+                label={formatMessage(messages.healthConversationsFilterArchived)}
                 checked={filterValues.archived}
                 onChange={(e) =>
                   setFilterValues((prev) => ({
@@ -237,9 +237,9 @@ const HealthMessages = () => {
             variant="primary"
             size="small"
             iconType="outline"
-            onClick={() => navigate(HealthPaths.HealthMessagesNew)}
+            onClick={() => navigate(HealthPaths.HealthConversationsNew)}
           >
-            {formatMessage(messages.healthMessagesCreate)}
+            {formatMessage(messages.healthConversationsCreate)}
           </Button>
         </Box>
       </Box>
@@ -247,7 +247,7 @@ const HealthMessages = () => {
       {error && <Problem error={error} noBorder={false} />}
       {!loading &&
         !error &&
-        (filteredMessages?.length === 0 ? (
+        (filteredConversations?.length === 0 ? (
           <EmptyState title={messages.noData} />
         ) : (
           <>
@@ -268,7 +268,7 @@ const HealthMessages = () => {
               </Text>
             </Box>
             <Stack space={0}>
-              {filteredMessages?.map((item) => (
+              {filteredConversations?.map((item) => (
                 <Box
                   key={item.id}
                   display="flex"
@@ -282,7 +282,7 @@ const HealthMessages = () => {
                   columnGap={2}
                 >
                   <Link
-                    to={HealthPaths.HealthMessagesDetail.replace(
+                    to={HealthPaths.HealthConversationsDetail.replace(
                       ':id',
                       item.id,
                     )}
@@ -353,4 +353,4 @@ const HealthMessages = () => {
   )
 }
 
-export default HealthMessages
+export default HealthConversations

@@ -17,28 +17,28 @@ import {
   formatDateWithTime,
   m,
 } from '@island.is/portals/my-pages/core'
-import MessageAvatar from './MessageAvatar'
+import ConversationAvatar from './ConversationAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import HealthMessageActionBar from './HealthMessageActionBar'
+import HealthConversationActionBar from './HealthConversationActionBar'
 import {
-  useGetHealthMessageDetailQuery,
-  useMarkHealthMessageAsReadMutation,
-  useStarHealthMessageDetailMutation,
-  useUnstarHealthMessageDetailMutation,
-  useArchiveHealthMessageDetailMutation,
-  useUnarchiveHealthMessageDetailMutation,
-  useReplyToHealthMessageMutation,
-} from './HealthMessageDetail.generated'
+  useGetHealthConversationDetailQuery,
+  useMarkHealthConversationAsReadMutation,
+  useStarHealthConversationDetailMutation,
+  useUnstarHealthConversationDetailMutation,
+  useArchiveHealthConversationDetailMutation,
+  useUnarchiveHealthConversationDetailMutation,
+  useReplyToHealthConversationMutation,
+} from './HealthConversationDetail.generated'
 
 type UseParams = {
   id: string
 }
 
-const HealthMessageDetail = () => {
+const HealthConversationDetail = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
@@ -51,35 +51,35 @@ const HealthMessageDetail = () => {
   const [replyText, setReplyText] = useState('')
   const replyRef = useRef<HTMLDivElement>(null)
 
-  const { data, loading, error } = useGetHealthMessageDetailQuery({
+  const { data, loading, error } = useGetHealthConversationDetailQuery({
     variables: { id },
   })
 
-  const [markAsRead] = useMarkHealthMessageAsReadMutation()
+  const [markAsRead] = useMarkHealthConversationAsReadMutation()
   const onMutationError = () => toast.error(formatMessage(m.errorTitle))
 
-  const [starMessage] = useStarHealthMessageDetailMutation({
-    refetchQueries: ['GetHealthMessageDetail'],
+  const [starMessage] = useStarHealthConversationDetailMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [unstarMessage] = useUnstarHealthMessageDetailMutation({
-    refetchQueries: ['GetHealthMessageDetail'],
+  const [unstarMessage] = useUnstarHealthConversationDetailMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [archiveMessage] = useArchiveHealthMessageDetailMutation({
-    refetchQueries: ['GetHealthMessageDetail'],
+  const [archiveMessage] = useArchiveHealthConversationDetailMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
-  const [unarchiveMessage] = useUnarchiveHealthMessageDetailMutation({
-    refetchQueries: ['GetHealthMessageDetail'],
+  const [unarchiveMessage] = useUnarchiveHealthConversationDetailMutation({
+    refetchQueries: ['GetHealthConversationDetail'],
     onError: onMutationError,
   })
   const [replyToMessage, { loading: replySending }] =
-    useReplyToHealthMessageMutation({
-      refetchQueries: ['GetHealthMessageDetail'],
+    useReplyToHealthConversationMutation({
+      refetchQueries: ['GetHealthConversationDetail'],
     })
 
-  const item = data?.healthDirectorateHealthMessage
+  const item = data?.healthDirectorateHealthConversation
 
   // Mark as read once when the thread first loads and hasn't been read yet
   useEffect(() => {
@@ -126,7 +126,7 @@ const HealthMessageDetail = () => {
               <Problem
                 type="no_data"
                 noBorder={false}
-                title={formatMessage(messages.healthMessageNotFound)}
+                title={formatMessage(messages.healthConversationNotFound)}
               />
             </Box>
           </GridColumn>
@@ -173,7 +173,7 @@ const HealthMessageDetail = () => {
               <Text variant="h3" as="h1">
                 {item.title}
               </Text>
-              <HealthMessageActionBar
+              <HealthConversationActionBar
                 bookmarked={item.isStarred}
                 archived={item.isArchived}
                 onReply={
@@ -230,12 +230,12 @@ const HealthMessageDetail = () => {
                     marginBottom={3}
                   >
                     {isPatient ? (
-                      <MessageAvatar
+                      <ConversationAvatar
                         variant="user"
                         name={userInfo.profile.name ?? ''}
                       />
                     ) : (
-                      <MessageAvatar variant="organization" name={senderName} />
+                      <ConversationAvatar variant="organization" name={senderName} />
                     )}
                     <Box
                       display="flex"
@@ -305,8 +305,8 @@ const HealthMessageDetail = () => {
               <Box marginTop={4}>
                 <AlertMessage
                   type="success"
-                  title={formatMessage(messages.healthMessageSentTitle)}
-                  message={formatMessage(messages.healthMessageSentText)}
+                  title={formatMessage(messages.healthConversationSentTitle)}
+                  message={formatMessage(messages.healthConversationSentText)}
                 />
               </Box>
             )}
@@ -326,7 +326,7 @@ const HealthMessageDetail = () => {
                   marginBottom={3}
                 >
                   <Box display="flex" flexDirection="row">
-                    <MessageAvatar
+                    <ConversationAvatar
                       variant="user"
                       name={userInfo.profile.name ?? ''}
                     />
@@ -340,7 +340,7 @@ const HealthMessageDetail = () => {
                         {userInfo.profile.name ?? ''}
                       </Text>
                       <Text variant="medium">
-                        {formatMessage(messages.healthMessageTo, {
+                        {formatMessage(messages.healthConversationTo, {
                           arg: item.lastSenderGroupName ?? '',
                         })}
                       </Text>
@@ -350,7 +350,7 @@ const HealthMessageDetail = () => {
                     circle
                     icon="close"
                     colorScheme="light"
-                    aria-label={formatMessage(messages.healthMessageCloseReply)}
+                    aria-label={formatMessage(messages.healthConversationCloseReply)}
                     onClick={() => setReplyOpen(false)}
                   />
                 </Box>
@@ -374,7 +374,7 @@ const HealthMessageDetail = () => {
                     loading={replySending}
                     disabled={!replyText.trim()}
                   >
-                    {formatMessage(messages.healthMessageSend)}
+                    {formatMessage(messages.healthConversationSend)}
                   </Button>
                 </Box>
               </div>
@@ -386,4 +386,4 @@ const HealthMessageDetail = () => {
   )
 }
 
-export default HealthMessageDetail
+export default HealthConversationDetail

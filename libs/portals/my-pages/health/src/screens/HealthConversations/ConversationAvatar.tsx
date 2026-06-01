@@ -6,7 +6,7 @@ type Props = {
   variant: 'user' | 'organization'
 }
 
-const MessageAvatar = ({ name, variant }: Props) => (
+const ConversationAvatar = ({ name, variant }: Props) => (
   <Box
     display="flex"
     alignItems="center"
@@ -21,4 +21,4 @@ const MessageAvatar = ({ name, variant }: Props) => (
   </Box>
 )
 
-export default MessageAvatar
+export default ConversationAvatar

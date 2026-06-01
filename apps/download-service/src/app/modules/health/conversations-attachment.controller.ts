@@ -22,8 +22,8 @@ import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.health)
-@Controller('health/messages')
-export class HealthMessagesAttachmentController {
+@Controller('health/conversations')
+export class HealthConversationsAttachmentController {
   constructor(
     private readonly healthService: HealthDirectorateHealthService,
     private readonly auditService: AuditService,
@@ -34,7 +34,7 @@ export class HealthMessagesAttachmentController {
   @ApiOkResponse({
     description: 'Downloads a health message attachment',
   })
-  async getMessageAttachment(
+  async getConversationAttachment(
     @Param('conversationId') conversationId: string,
     @Param('messageId') messageId: string,
     @Param('attachmentId', ParseIntPipe) attachmentId: number,
@@ -51,7 +51,7 @@ export class HealthMessagesAttachmentController {
       return res.status(403).json({ statusCode: 403, message: 'Not allowed' })
     }
 
-    const attachment = await this.healthService.getMessageAttachment(
+    const attachment = await this.healthService.getConversationAttachment(
       user,
       conversationId,
       messageId,
@@ -63,7 +63,7 @@ export class HealthMessagesAttachmentController {
     }
 
     this.auditService.audit({
-      action: 'getHealthMessageAttachment',
+      action: 'getHealthConversationAttachment',
       auth: user,
       resources: `${conversationId}/${messageId}/${attachmentId}`,
     })

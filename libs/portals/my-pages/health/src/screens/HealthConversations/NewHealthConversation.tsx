@@ -15,7 +15,7 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import MessageAvatar from './MessageAvatar'
+import ConversationAvatar from './ConversationAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
@@ -23,11 +23,11 @@ import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import {
-  useGetHealthMessagingRecipientsForNewQuery,
-  useCreateHealthMessageMutation,
-} from './NewHealthMessage.generated'
+  useGetHealthConversationRecipientsForNewQuery,
+  useCreateHealthConversationMutation,
+} from './NewHealthConversation.generated'
 
-const NewHealthMessage = () => {
+const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
@@ -37,13 +37,13 @@ const NewHealthMessage = () => {
   const [messageText, setMessageText] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
 
-  const { data, loading, error } = useGetHealthMessagingRecipientsForNewQuery({
+  const { data, loading, error } = useGetHealthConversationRecipientsForNewQuery({
     variables: { locale: lang },
   })
 
-  const [createMessage, { loading: sending }] = useCreateHealthMessageMutation()
+  const [createMessage, { loading: sending }] = useCreateHealthConversationMutation()
 
-  const recipient = data?.healthDirectorateHealthMessagingRecipients?.find(
+  const recipient = data?.healthDirectorateHealthConversationRecipients?.find(
     (r) => r.allowsMessaging,
   )
 
@@ -75,13 +75,13 @@ const NewHealthMessage = () => {
           },
         },
       })
-      const id = result.data?.healthDirectorateCreateHealthMessage?.id
+      const id = result.data?.healthDirectorateCreateHealthConversation?.id
       if (id) {
-        navigate(HealthPaths.HealthMessagesDetail.replace(':id', id), {
+        navigate(HealthPaths.HealthConversationsDetail.replace(':id', id), {
           state: { justCreated: true },
         })
       } else {
-        navigate(HealthPaths.HealthMessages)
+        navigate(HealthPaths.HealthConversations)
       }
     } catch {
       toast.error(formatMessage(m.errorTitle))
@@ -90,14 +90,14 @@ const NewHealthMessage = () => {
 
   return (
     <IntroWrapper
-      title={messages.healthMessagesNewTitle}
-      intro={messages.healthMessagesNewIntro}
+      title={messages.healthConversationsNewTitle}
+      intro={messages.healthConversationsNewIntro}
       desktopContentSpan="10/12"
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && !recipient && (
-        <EmptyState title={messages.healthMessagesNoRecipient} />
+        <EmptyState title={messages.healthConversationsNoRecipient} />
       )}
       {!loading && !error && recipient && (
         <Box
@@ -114,15 +114,15 @@ const NewHealthMessage = () => {
             paddingX={4}
             paddingY={3}
           >
-            <MessageAvatar variant="user" name={userInfo.profile.name ?? ''} />
+            <ConversationAvatar variant="user" name={userInfo.profile.name ?? ''} />
             <Box>
               <Text variant="medium">
-                {formatMessage(messages.healthMessageTo, {
+                {formatMessage(messages.healthConversationTo, {
                   arg: recipient?.name ?? '',
                 })}
               </Text>
               <Text fontWeight="semiBold">
-                {formatMessage(messages.healthMessagesCreate)}
+                {formatMessage(messages.healthConversationsCreate)}
               </Text>
             </Box>
           </Box>
@@ -133,9 +133,9 @@ const NewHealthMessage = () => {
             <Box marginBottom={3}>
               <Select
                 name="service-type"
-                label={formatMessage(messages.healthMessagesNewSelectService)}
+                label={formatMessage(messages.healthConversationsNewSelectService)}
                 placeholder={formatMessage(
-                  messages.healthMessagesNewSelectServicePlaceholder,
+                  messages.healthConversationsNewSelectServicePlaceholder,
                 )}
                 options={typeOptions}
                 value={selectedOption}
@@ -153,7 +153,7 @@ const NewHealthMessage = () => {
                 name="message-body"
                 label={formatMessage(m.messages)}
                 placeholder={formatMessage(
-                  messages.healthMessagesNewBodyPlaceholder,
+                  messages.healthConversationsNewBodyPlaceholder,
                 )}
                 backgroundColor="blue"
                 value={messageText}
@@ -167,8 +167,8 @@ const NewHealthMessage = () => {
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
                 label={`${formatMessage(
-                  messages.healthMessagesNewTermsAccept,
-                )} ${formatMessage(messages.healthMessagesNewTermsLinkText)}`}
+                  messages.healthConversationsNewTermsAccept,
+                )} ${formatMessage(messages.healthConversationsNewTermsLinkText)}`}
               />
             </Box>
 
@@ -178,7 +178,7 @@ const NewHealthMessage = () => {
                 loading={sending}
                 disabled={!canSubmit}
               >
-                {formatMessage(messages.healthMessageSend)}
+                {formatMessage(messages.healthConversationSend)}
               </Button>
             </Box>
           </Box>
@@ -188,4 +188,4 @@ const NewHealthMessage = () => {
   )
 }
 
-export default NewHealthMessage
+export default NewHealthConversation

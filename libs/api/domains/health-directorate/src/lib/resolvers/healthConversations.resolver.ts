@@ -21,160 +21,160 @@ import {
 import type { Locale } from '@island.is/shared/types'
 
 import { HealthDirectorateService } from '../health-directorate.service'
-import { HealthDirectorateCreateMessageInput } from '../dto/createHealthMessage.input'
-import { HealthDirectorateReplyToMessageInput } from '../dto/replyToHealthMessage.input'
-import { HealthDirectorateHealthMessage } from '../models/healthMessage.model'
-import { HealthDirectorateHealthMessageDetail } from '../models/healthMessageDetail.model'
-import { HealthDirectorateHealthMessagingRecipient } from '../models/healthMessagingRecipient.model'
-import { HealthMessageStatusFilterEnum } from '../models/enums'
+import { HealthDirectorateCreateConversationInput } from '../dto/createHealthConversation.input'
+import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthConversation.input'
+import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
+import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
+import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
+import { HealthConversationStatusFilterEnum } from '../models/enums'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
-@Resolver(() => HealthDirectorateHealthMessage)
-export class HealthMessagesResolver {
+@Resolver(() => HealthDirectorateHealthConversation)
+export class HealthConversationsResolver {
   constructor(private api: HealthDirectorateService) {}
 
-  @Query(() => [HealthDirectorateHealthMessage], {
-    name: 'healthDirectorateHealthMessages',
+  @Query(() => [HealthDirectorateHealthConversation], {
+    name: 'healthDirectorateHealthConversations',
     nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  getHealthMessages(
+  getHealthConversations(
     @Args('status', {
-      type: () => HealthMessageStatusFilterEnum,
+      type: () => HealthConversationStatusFilterEnum,
       nullable: true,
     })
-    status: HealthMessageStatusFilterEnum | undefined,
+    status: HealthConversationStatusFilterEnum | undefined,
     @Args('starred', { type: () => Boolean, nullable: true })
     starred: boolean | undefined,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateHealthMessage[] | null> {
-    return this.api.getHealthMessages(user, status, starred)
+  ): Promise<HealthDirectorateHealthConversation[] | null> {
+    return this.api.getHealthConversations(user, status, starred)
   }
 
-  @Query(() => HealthDirectorateHealthMessageDetail, {
-    name: 'healthDirectorateHealthMessage',
+  @Query(() => HealthDirectorateHealthConversationDetail, {
+    name: 'healthDirectorateHealthConversation',
     nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  getHealthMessage(
+  getHealthConversation(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
-    return this.api.getHealthMessage(user, id)
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    return this.api.getHealthConversation(user, id)
   }
 
-  @Query(() => [HealthDirectorateHealthMessagingRecipient], {
-    name: 'healthDirectorateHealthMessagingRecipients',
+  @Query(() => [HealthDirectorateHealthConversationRecipient], {
+    name: 'healthDirectorateHealthConversationRecipients',
     nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  getHealthMessagingRecipients(
+  getHealthConversationRecipients(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateHealthMessagingRecipient[] | null> {
-    return this.api.getHealthMessagingRecipients(user, locale)
+  ): Promise<HealthDirectorateHealthConversationRecipient[] | null> {
+    return this.api.getHealthConversationRecipients(user, locale)
   }
 
-  @Mutation(() => HealthDirectorateHealthMessageDetail, {
-    name: 'healthDirectorateCreateHealthMessage',
+  @Mutation(() => HealthDirectorateHealthConversationDetail, {
+    name: 'healthDirectorateCreateHealthConversation',
     nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  createHealthMessage(
-    @Args('input') input: HealthDirectorateCreateMessageInput,
+  createHealthConversation(
+    @Args('input') input: HealthDirectorateCreateConversationInput,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
-    return this.api.createHealthMessage(user, input)
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    return this.api.createHealthConversation(user, input)
   }
 
-  @Mutation(() => HealthDirectorateHealthMessageDetail, {
-    name: 'healthDirectorateReplyToHealthMessage',
+  @Mutation(() => HealthDirectorateHealthConversationDetail, {
+    name: 'healthDirectorateReplyToHealthConversation',
     nullable: true,
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  replyToHealthMessage(
+  replyToHealthConversation(
     @Args('id', { type: () => String }) id: string,
-    @Args('input') input: HealthDirectorateReplyToMessageInput,
+    @Args('input') input: HealthDirectorateReplyToConversationInput,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
-    return this.api.replyToHealthMessage(user, id, input)
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
+    return this.api.replyToHealthConversation(user, id, input)
   }
 
   @Mutation(() => Boolean, {
-    name: 'healthDirectorateMarkHealthMessageAsRead',
+    name: 'healthDirectorateMarkHealthConversationAsRead',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  markHealthMessageAsRead(
+  markHealthConversationAsRead(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.markHealthMessageAsRead(user, id)
+    return this.api.markHealthConversationAsRead(user, id)
   }
 
   @Mutation(() => Boolean, {
-    name: 'healthDirectorateArchiveHealthMessage',
+    name: 'healthDirectorateArchiveHealthConversation',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  archiveHealthMessage(
+  archiveHealthConversation(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.archiveHealthMessage(user, id)
+    return this.api.archiveHealthConversation(user, id)
   }
 
   @Mutation(() => Boolean, {
-    name: 'healthDirectorateUnarchiveHealthMessage',
+    name: 'healthDirectorateUnarchiveHealthConversation',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  unarchiveHealthMessage(
+  unarchiveHealthConversation(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.unarchiveHealthMessage(user, id)
+    return this.api.unarchiveHealthConversation(user, id)
   }
 
   @Mutation(() => Boolean, {
-    name: 'healthDirectorateStarHealthMessage',
+    name: 'healthDirectorateStarHealthConversation',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  starHealthMessage(
+  starHealthConversation(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.starHealthMessage(user, id)
+    return this.api.starHealthConversation(user, id)
   }
 
   @Mutation(() => Boolean, {
-    name: 'healthDirectorateUnstarHealthMessage',
+    name: 'healthDirectorateUnstarHealthConversation',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
-  unstarHealthMessage(
+  unstarHealthConversation(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    return this.api.unstarHealthMessage(user, id)
+    return this.api.unstarHealthConversation(user, id)
   }
 }

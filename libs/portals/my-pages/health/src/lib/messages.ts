@@ -1878,82 +1878,82 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
-  healthMessagesIntro: {
+  healthConversationsIntro: {
     defaultMessage:
       'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
     id: 'sp.health:health-messages-intro',
   },
-  healthMessagesSearchPlaceholder: {
+  healthConversationsSearchPlaceholder: {
     defaultMessage: 'Sía eftir leitarorði',
     id: 'sp.health:health-messages-search-placeholder',
   },
-  healthMessagesCreate: {
+  healthConversationsCreate: {
     defaultMessage: 'Ný skilaboð',
     id: 'sp.health:health-messages-create',
   },
-  healthMessagesFilterStarred: {
+  healthConversationsFilterStarred: {
     defaultMessage: 'Stjörnumerkt',
     id: 'sp.health:health-messages-filter-starred',
   },
-  healthMessagesFilterArchived: {
+  healthConversationsFilterArchived: {
     defaultMessage: 'Geymsla',
     id: 'sp.health:health-messages-filter-archived',
   },
-  healthMessagesNewTitle: {
+  healthConversationsNewTitle: {
     defaultMessage: 'Hafa samband',
     id: 'sp.health:health-messages-new-title',
   },
-  healthMessagesNewIntro: {
+  healthConversationsNewIntro: {
     defaultMessage:
       'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-messages-new-intro',
   },
-  healthMessagesNewSelectService: {
+  healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
     id: 'sp.health:health-messages-new-select-service',
   },
-  healthMessagesNewSelectServicePlaceholder: {
+  healthConversationsNewSelectServicePlaceholder: {
     defaultMessage: 'Veldu þjónustu úr fellilistanum',
     id: 'sp.health:health-messages-new-select-service-placeholder',
   },
-  healthMessagesNewBodyPlaceholder: {
+  healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
-  healthMessagesNewTermsAccept: {
+  healthConversationsNewTermsAccept: {
     defaultMessage: 'Ég samþykki',
     id: 'sp.health:health-messages-new-terms-accept',
   },
-  healthMessagesNewTermsLinkText: {
+  healthConversationsNewTermsLinkText: {
     defaultMessage: 'skilmála',
     id: 'sp.health:health-messages-new-terms-link-text',
   },
-  healthMessageNotFound: {
+  healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
   },
-  healthMessageTo: {
+  healthConversationTo: {
     defaultMessage: 'Til: {arg}',
     id: 'sp.health:health-message-to',
   },
-  healthMessageSend: {
+  healthConversationSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },
-  healthMessageCloseReply: {
+  healthConversationCloseReply: {
     defaultMessage: 'Loka svarglugga',
     id: 'sp.health:health-message-close-reply',
   },
-  healthMessageSentTitle: {
+  healthConversationSentTitle: {
     defaultMessage: 'Skilaboð móttekin',
     id: 'sp.health:health-message-sent-title',
   },
-  healthMessageSentText: {
+  healthConversationSentText: {
     defaultMessage:
       'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-message-sent-text',
   },
-  healthMessagesNoRecipient: {
+  healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
   },

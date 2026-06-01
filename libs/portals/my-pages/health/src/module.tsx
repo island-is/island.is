@@ -140,16 +140,16 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
-const HealthMessages = lazy(() =>
-  import('./screens/HealthMessages/HealthMessages'),
+const HealthConversations = lazy(() =>
+  import('./screens/HealthConversations/HealthConversations'),
 )
 
-const NewHealthMessage = lazy(() =>
-  import('./screens/HealthMessages/NewHealthMessage'),
+const NewHealthConversation = lazy(() =>
+  import('./screens/HealthConversations/NewHealthConversation'),
 )
 
-const HealthMessageDetail = lazy(() =>
-  import('./screens/HealthMessages/HealthMessageDetail'),
+const HealthConversationDetail = lazy(() =>
+  import('./screens/HealthConversations/HealthConversationDetail'),
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
@@ -633,30 +633,30 @@ export const healthModule: PortalModule = {
     },
     {
       name: m.messages,
-      path: HealthPaths.HealthMessages,
-      key: 'HealthMessages',
+      path: HealthPaths.HealthConversations,
+      key: 'HealthConversations',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
-      element: <HealthMessages />,
+      element: <HealthConversations />,
     },
     {
-      name: hm.healthMessagesNewTitle,
-      path: HealthPaths.HealthMessagesNew,
-      key: 'HealthMessages',
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthConversationsNew,
+      key: 'HealthConversations',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
-      element: <NewHealthMessage />,
+      element: <NewHealthConversation />,
     },
     {
       name: m.messages,
-      path: HealthPaths.HealthMessagesDetail,
-      key: 'HealthMessages',
+      path: HealthPaths.HealthConversationsDetail,
+      key: 'HealthConversations',
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
-      element: <HealthMessageDetail />,
+      element: <HealthConversationDetail />,
     },
   ],
 }

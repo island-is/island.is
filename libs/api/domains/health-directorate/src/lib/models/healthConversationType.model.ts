@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class HealthDirectorateHealthMessageType {
+export class HealthDirectorateHealthConversationType {
   @Field({
     description:
       'PatientInitiatedConversationType code (e.g. TREATMENT_FOLLOWUP). Pass this back when creating a message.',
