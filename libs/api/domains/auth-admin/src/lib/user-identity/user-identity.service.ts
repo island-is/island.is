@@ -149,8 +149,8 @@ export class UserIdentityService extends MultiEnvironmentService {
     active: boolean,
     targetEnvironments: Environment[],
   ): Promise<DeleteEnvironmentResult> {
-    const envsToUpdate =
-      targetEnvironments.length > 0 ? targetEnvironments : environments
+    const isFallback = targetEnvironments.length === 0
+    const envsToUpdate = isFallback ? environments : targetEnvironments
 
     const affectedEnvironments: Environment[] = []
     const failedEnvironments: EnvironmentFailure[] = []
@@ -165,6 +165,8 @@ export class UserIdentityService extends MultiEnvironmentService {
         )
         if (result) {
           affectedEnvironments.push(environment)
+        } else if (isFallback && !this.isEnvironmentConfigured(environment)) {
+          continue
         } else {
           failedEnvironments.push({
             environment,

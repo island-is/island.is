@@ -18,12 +18,18 @@ export const userIdentitiesLoader: WrappedLoaderFn = ({ client }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get('search')?.trim() ?? ''
 
-    const envsPromise = client.query<GetUserIdentityConfiguredEnvironmentsQuery>(
-      {
+    const envsPromise = client
+      .query<GetUserIdentityConfiguredEnvironmentsQuery>({
         query: GetUserIdentityConfiguredEnvironmentsDocument,
         fetchPolicy: 'network-only',
-      },
-    )
+      })
+      .then(
+        (result) => ({ data: result.data, error: result.error as unknown }),
+        (error: unknown) => {
+          console.error('Failed to fetch configured environments', error)
+          return { data: undefined, error }
+        },
+      )
 
     // Empty search ⇒ skip the user query entirely, the screen renders an empty
     // state until the user enters something.
@@ -63,8 +69,7 @@ export const userIdentitiesLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     return {
-      userIdentities:
-        userIdentitiesResult.data?.authAdminUserIdentities ?? [],
+      userIdentities: userIdentitiesResult.data?.authAdminUserIdentities ?? [],
       configuredEnvironments:
         envsResult.data?.authAdminUserIdentityConfiguredEnvironments ?? [],
       search,

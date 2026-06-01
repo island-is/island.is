@@ -45,9 +45,15 @@ export const UserIdentitiesTable = ({
   const { formatMessage } = useLocale()
 
   const handleCopySubjectId = (subjectId: string) => {
-    navigator.clipboard.writeText(subjectId).then(() => {
-      toast.success(formatMessage(m.copySuccess))
-    })
+    navigator.clipboard
+      .writeText(subjectId)
+      .then(() => {
+        toast.success(formatMessage(m.copySuccess))
+      })
+      .catch((error) => {
+        console.error('Failed to copy to clipboard', error)
+        toast.error(formatMessage(m.copyFailure))
+      })
   }
 
   if (!search) {

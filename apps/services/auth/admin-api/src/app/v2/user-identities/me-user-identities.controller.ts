@@ -60,7 +60,7 @@ export class MeUserIdentitiesController {
         identifier,
       )
 
-      if (!userIdentities) {
+      if (!userIdentities || userIdentities.length === 0) {
         throw new NotFoundException("This user identity doesn't exist")
       }
 

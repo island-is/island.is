@@ -633,6 +633,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
   },
+  copyFailure: {
+    id: 'ap.ids-admin:copy-failure',
+    defaultMessage: 'Could not copy to clipboard',
+  },
   permissions: {
     id: 'ap.ids-admin:permissions',
     defaultMessage: 'API scopes',
