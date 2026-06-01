@@ -11,8 +11,9 @@ interface UseCancelBankTransferProps {
  *  - "Cancel" on the pending screen — soft-deletes the active row + best-effort tells Blikk.
  *  - "Start Again" on the failed screen — soft-deletes the failed row so SSR flips back to UNPAID.
  *
- * Both call sites await the promise, then `router.reload()` to re-fetch the canonical state.
- * Idempotent on the server side.
+ * Callers `router.reload()` on success and on `PaymentServiceCode.PaymentFlowAlreadyPaid` (race with
+ * a concurrent finalize → server is now PAID, reload to receipt). Other mutation errors are surfaced
+ * via `toast.error`. Idempotent on the server side.
  */
 export const useCancelBankTransfer = ({
   paymentFlowId,

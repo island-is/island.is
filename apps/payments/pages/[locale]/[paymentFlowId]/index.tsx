@@ -1,16 +1,18 @@
+import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useMemo, useState } from 'react'
 
 import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
-import { AlertMessage, Box, Button, LinkV2 } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, LinkV2, toast } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import {
   BankTransferErrorCode,
   CardErrorCode,
+  PaymentServiceCode,
 } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
@@ -199,12 +201,11 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
 
     try {
-      isBankTransferPaymentEnabledForUser =
-        await configCatClient.getValueAsync(
-          Features.isIslandisBankTransferPaymentAllowedForUser,
-          false,
-          userObj,
-        )
+      isBankTransferPaymentEnabledForUser = await configCatClient.getValueAsync(
+        Features.isIslandisBankTransferPaymentAllowedForUser,
+        false,
+        userObj,
+      )
     } catch (e) {
       console.error('Error getting bank transfer payment enabled for user', e)
     }
@@ -292,32 +293,51 @@ function PaymentPage({
     paymentFlowId: paymentFlow?.id,
   })
 
+  // PaymentFlowAlreadyPaid = we lost the race to finalizeBankTransferSuccess.
+  // The row settled; reload to land on the receipt.
+  const isAlreadyPaidError = (e: ApolloError | undefined) =>
+    findProblemInApolloError(e)?.detail ===
+    PaymentServiceCode.PaymentFlowAlreadyPaid
+
   const handleCancelBankTransfer = async () => {
-    await cancelBankTransfer()
-    router.reload()
+    try {
+      await cancelBankTransfer()
+      router.reload()
+    } catch (e) {
+      if (isAlreadyPaidError(e)) {
+        router.reload()
+        return
+      }
+      toast.error(formatMessage(bankTransfer.cancelFailedToast))
+    }
   }
 
-  // Spans the cancel mutation + router.reload(); cleared only on mutation failure.
   const [isStartingAgain, setIsStartingAgain] = useState(false)
 
-  /** Error-view Back button: bank-transfer codes cancel + reload, others just clear paymentError. */
   const onErrorBack = async () => {
     const code = paymentError?.code
     const isBankTransferCode =
       code === BankTransferErrorCode.BankTransferRejected ||
       code === BankTransferErrorCode.BankTransferCancelled ||
       code === BankTransferErrorCode.BankTransferGenericError
+
     if (!isBankTransferCode) {
       setPaymentError(null)
       return
     }
+
+    // for bank transfer errors, we need to cancel the bank transfer and reload
     setIsStartingAgain(true)
     try {
       await cancelBankTransfer()
       router.reload()
-    } catch {
+    } catch (e) {
+      if (isAlreadyPaidError(e)) {
+        router.reload()
+        return
+      }
       setIsStartingAgain(false)
-      setPaymentError({ code: CardErrorCode.UnknownCardError })
+      toast.error(formatMessage(bankTransfer.cancelFailedToast))
     }
   }
 

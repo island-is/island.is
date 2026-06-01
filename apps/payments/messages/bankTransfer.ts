@@ -34,6 +34,12 @@ export const bankTransfer = defineMessages({
     description:
       'Primary CTA on the pending screen — resumes the in-flight bank-transfer attempt by redirecting back to the provider SCA URL',
   },
+  cancelFailedToast: {
+    id: 'payments:bankTransfer.cancelFailedToast',
+    defaultMessage: 'Ekki tókst að hætta við millifærsluna. Reyndu aftur.',
+    description:
+      'Error toast shown when the cancel-bank-transfer mutation fails (non-already-paid)',
+  },
 })
 
 export const bankTransferSuccess = defineMessages({

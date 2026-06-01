@@ -247,36 +247,67 @@ export class BankTransferService {
     const logPrefix = rowLogPrefix(row)
     const mappedStatus = mapBlikkStatusToBankTransferStatus(row.lastKnownStatus)
 
+    // Refuse to cancel a settled payment. Money already moved and a
+    // paymentFulfillment exists (or is being created)
+    if (mappedStatus === BankTransferStatus.SUCCESS) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
     if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
       await this.cancelPaymentBestEffort(row.providerPaymentId, logPrefix)
     }
 
-    const [affectedRows] = await this.softDeleteRow(row.id)
+    // Race-safe soft-delete: bail if finalizeBankTransferSuccess (or any
+    // concurrent writer) flipped lastKnownStatus between fetch and write.
+    const [affectedRows] = await this.bankTransferPaymentModel.update(
+      { isDeleted: true },
+      {
+        where: {
+          id: row.id,
+          isDeleted: false,
+          lastKnownStatus: row.lastKnownStatus,
+        },
+      },
+    )
 
-    if (affectedRows > 0) {
-      this.logger.info(`${logPrefix}Bank transfer cancelled`, {
-        paymentFlowId: row.paymentFlowId,
-        mappedStatus,
+    if (affectedRows === 0) {
+      // Either already soft-deleted by a concurrent cancel (idempotent → ok)
+      // or finalizeBankTransferSuccess flipped to SUCCESS under us (refuse).
+      const fresh = await this.bankTransferPaymentModel.findOne({
+        where: { id: row.id },
       })
-
-      // Only active-PENDING cancels emit; terminal-failed cleanups already emitted payment_failed.
-      if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
-        await this.paymentFlowService.logPaymentFlowUpdate(
-          {
-            paymentFlowId: row.paymentFlowId,
-            type: 'update',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.BANK_TRANSFER,
-            reason: 'payment_cancelled',
-            message: 'Bank transfer cancelled by user',
-            metadata: {
-              providerPaymentId: row.providerPaymentId,
-              correlationId: row.id,
-            },
-          },
-          { useRetry: true, throwOnError: false },
-        )
+      if (
+        fresh &&
+        mapBlikkStatusToBankTransferStatus(fresh.lastKnownStatus) ===
+          BankTransferStatus.SUCCESS
+      ) {
+        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
+      return { ok: true }
+    }
+
+    this.logger.info(`${logPrefix}Bank transfer cancelled`, {
+      paymentFlowId: row.paymentFlowId,
+      mappedStatus,
+    })
+
+    // Only active-PENDING cancels emit; terminal-failed cleanups already emitted payment_failed.
+    if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId: row.paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.BANK_TRANSFER,
+          reason: 'payment_cancelled',
+          message: 'Bank transfer cancelled by user',
+          metadata: {
+            providerPaymentId: row.providerPaymentId,
+            correlationId: row.id,
+          },
+        },
+        { useRetry: true, throwOnError: false },
+      )
     }
 
     return { ok: true }
