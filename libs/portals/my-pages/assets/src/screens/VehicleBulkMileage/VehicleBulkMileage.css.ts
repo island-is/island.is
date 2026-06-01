@@ -10,4 +10,3 @@ export const mwInput = style({
   maxWidth: 150,
   minWidth: 120,
 })
-
