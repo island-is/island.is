@@ -511,6 +511,30 @@ export class BankTransferService {
     return this.toResult(data)
   }
 
+  /**
+   * Returns the latest non-deleted row's `providerPaymentId` if it is in SUCCESS, else `null`.
+   * Used by the refund saga to look up the original Blikk payment id when the fulfillment lacks an
+   * FJS charge (inline-pay path where the original FJS create failed).
+   */
+  async getRefundableProviderPaymentId(
+    paymentFlowId: string,
+  ): Promise<string | null> {
+    const row = await this.bankTransferPaymentModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+      order: [['created', 'DESC']],
+    })
+
+    if (
+      !row ||
+      mapBlikkStatusToBankTransferStatus(row.lastKnownStatus) !==
+        BankTransferStatus.SUCCESS
+    ) {
+      return null
+    }
+
+    return row.providerPaymentId
+  }
+
   // ─── Private helpers ──────────────────────────────────────────────────────────
 
   /** Resolves an existing row found at the start of `create`: backfill SUCCESS, reject fresh PENDING, else soft-delete. */
