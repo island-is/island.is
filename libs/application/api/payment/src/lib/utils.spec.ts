@@ -1,5 +1,13 @@
-import { isWorkday, addWorkDays } from './utils'
+import {
+  isWorkday,
+  addWorkDays,
+  createDailyCompletionNotifications,
+} from './utils'
 import { getHolidays } from 'fridagar'
+import {
+  NotificationConfig,
+  NotificationType,
+} from '@island.is/application/types'
 
 describe('payment utils', () => {
   describe('isWorkday', () => {
