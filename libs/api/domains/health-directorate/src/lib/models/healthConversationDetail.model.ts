@@ -1,39 +1,11 @@
-import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { HealthDirectorateHealthConversation } from './healthConversation.model'
 import { HealthDirectorateHealthConversationEntry } from './healthConversationEntry.model'
 
 @ObjectType()
-export class HealthDirectorateHealthConversationDetail {
-  @Field(() => ID)
-  id!: string
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  status?: string
-
+export class HealthDirectorateHealthConversationDetail extends HealthDirectorateHealthConversation {
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date
-
-  @Field(() => Int)
-  messageCount!: number
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  lastMessageSentAt?: Date
-
-  @Field({ nullable: true })
-  lastSenderGroupName?: string
-
-  @Field()
-  hasAttachment!: boolean
-
-  @Field()
-  isStarred!: boolean
-
-  @Field({
-    description: 'True when the patient has archived this message thread.',
-  })
-  isArchived!: boolean
 
   @Field({
     nullable: true,
@@ -41,12 +13,6 @@ export class HealthDirectorateHealthConversationDetail {
       'Whether the patient can reply. Null means no staff decision yet — replies are allowed unless explicitly false.',
   })
   patientCanReply?: boolean
-
-  @Field({
-    description:
-      'True when the patient has read the latest message in this thread.',
-  })
-  isRead!: boolean
 
   @Field(() => [HealthDirectorateHealthConversationEntry])
   messages!: HealthDirectorateHealthConversationEntry[]

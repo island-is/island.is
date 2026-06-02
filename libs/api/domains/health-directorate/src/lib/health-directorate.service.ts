@@ -1,6 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
+  ConversationDetailDto,
   ConversationMessageDto,
   ConversationStatusFilter,
   CreateConversationRequestDto,
@@ -9,7 +10,6 @@ import {
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
-  UserVisibleAppointmentStatuses,
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -38,6 +38,8 @@ import {
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
+  toConversationDirectionEnum,
+  toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
 import {
   mapDelegationStatus,
@@ -675,14 +677,33 @@ export class HealthDirectorateService {
   ): HealthDirectorateHealthConversationEntry {
     return {
       id: m.id,
-      direction:
-        m.direction as HealthDirectorateHealthConversationEntry['direction'],
+      direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
         this.mapConversationAttachment(a, conversationId, m.id),
       ),
+    }
+  }
+
+  private mapConversationDetail(
+    c: ConversationDetailDto,
+  ): HealthDirectorateHealthConversationDetail {
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
     }
   }
 
@@ -693,7 +714,7 @@ export class HealthDirectorateService {
   ): Promise<HealthDirectorateHealthConversation[] | null> {
     const items = await this.healthApi.getConversations(
       auth,
-      status as ConversationStatusFilter | undefined,
+      status ? toConversationStatusFilter(status) : undefined,
       starred,
     )
     if (!items) return null
@@ -719,21 +740,7 @@ export class HealthDirectorateService {
     const c = await this.healthApi.getConversation(auth, id)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
   async createHealthConversation(
@@ -751,21 +758,7 @@ export class HealthDirectorateService {
     const c = await this.healthApi.createConversation(auth, body)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
   async replyToHealthConversation(
@@ -780,21 +773,7 @@ export class HealthDirectorateService {
     const c = await this.healthApi.replyToConversation(auth, id, body)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
   async markHealthConversationAsRead(auth: Auth, id: string): Promise<boolean> {

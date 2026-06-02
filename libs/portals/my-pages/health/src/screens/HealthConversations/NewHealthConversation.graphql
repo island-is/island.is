@@ -1,4 +1,4 @@
-query GetHealthConversationRecipientsForNew($locale: String) {
+query GetHealthConversationRecipientsForNew($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId

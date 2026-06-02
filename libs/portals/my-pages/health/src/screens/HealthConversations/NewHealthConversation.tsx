@@ -22,6 +22,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import {
   useGetHealthConversationRecipientsForNewQuery,
   useCreateHealthConversationMutation,
@@ -39,7 +40,7 @@ const NewHealthConversation = () => {
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
-      variables: { locale: lang },
+      variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
     })
 
   const [createMessage, { loading: sending }] =

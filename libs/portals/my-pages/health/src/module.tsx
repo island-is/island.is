@@ -635,27 +635,21 @@ export const healthModule: PortalModule = {
       name: m.messages,
       path: HealthPaths.HealthConversations,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthConversations />,
     },
     {
       name: hm.healthConversationsNewTitle,
       path: HealthPaths.HealthConversationsNew,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <NewHealthConversation />,
     },
     {
       name: m.messages,
       path: HealthPaths.HealthConversationsDetail,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthConversationDetail />,
     },
   ],

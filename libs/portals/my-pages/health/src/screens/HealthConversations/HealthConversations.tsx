@@ -57,10 +57,15 @@ const HealthConversations = () => {
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     variables: {
-      ...(filterValues.archived
-        ? { status: HealthDirectorateHealthConversationStatusFilter.ARCHIVED }
-        : {}),
-      ...(filterValues.starred ? { starred: true } : {}),
+      input: {
+        ...(filterValues.archived
+          ? {
+              status:
+                HealthDirectorateHealthConversationStatusFilter.ARCHIVED,
+            }
+          : {}),
+        ...(filterValues.starred ? { starred: true } : {}),
+      },
     },
   })
 

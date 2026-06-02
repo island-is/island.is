@@ -1,8 +1,7 @@
 query GetHealthConversations(
-  $status: HealthDirectorateHealthConversationStatusFilter
-  $starred: Boolean
+  $input: HealthDirectorateHealthConversationsFilterInput
 ) {
-  healthDirectorateHealthConversations(status: $status, starred: $starred) {
+  healthDirectorateHealthConversations(input: $input) {
     id
     title
     lastSenderGroupName
