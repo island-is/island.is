@@ -13,3 +13,7 @@ bootstrap({
   stripNonClassValidatorInputs: false,
   jsonBodyLimit: '350kb',
 })
+
+// Intentional no-op touch so the deploy-feature pipeline picks up an
+// api change alongside the web-only watson chat fixes on this branch.
+// Revert before merging.
