@@ -156,4 +156,14 @@ describe('getLegalArguments', () => {
 
     expect(result).toEqual('')
   })
+
+  test('should format the general law on its own without a leading comma', () => {
+    const lawsBroken = [[95, 1]]
+
+    const result = getLegalArguments(lawsBroken, formatMessage)
+
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
+    )
+  })
 })

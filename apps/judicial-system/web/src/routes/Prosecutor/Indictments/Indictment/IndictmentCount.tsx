@@ -226,7 +226,8 @@ export const getLegalArguments = (
   }
 
   if (generalLaw) {
-    articles = `${articles}, sbr. ${generalLaw[1]}. mgr. ${generalLaw[0]}. gr.`
+    const suffix = `sbr. ${generalLaw[1]}. mgr. ${generalLaw[0]}. gr.`
+    articles = articles ? `${articles}, ${suffix}` : suffix
   }
 
   return formatMessage(strings.legalArgumentsAutofill, { articles })
