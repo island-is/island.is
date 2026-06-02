@@ -523,6 +523,7 @@ export class CaseController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRepresentativeRule,
   )
   @Get([
     'case/:caseId/courtRecord',

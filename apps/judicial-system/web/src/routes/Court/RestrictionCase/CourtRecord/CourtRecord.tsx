@@ -11,7 +11,10 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
   lowercase,
@@ -499,9 +502,11 @@ export const CourtRecord: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)
+            handleNavigationTo(
+              DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
+            )
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={

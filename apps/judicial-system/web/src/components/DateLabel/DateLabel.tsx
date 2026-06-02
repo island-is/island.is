@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 
 const DateLabel: FC<Props> = ({ date, text, hideTime, as }) => {
   const formattedDate = formatDate(date, 'PPP')
-  const formattedTime = `kl. ${formatDate(date, constants.TIME_FORMAT)}`
+  const formattedTime = `kl. ${formatDate(date, TIME_FORMAT)}`
 
   return (
     <Text as={as ?? 'h5'} variant="h5">

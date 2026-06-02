@@ -6,10 +6,12 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
+  RulingModifiedAlert,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -136,18 +138,8 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           }
         />
       )}
-      {workingCase.rulingModifiedHistory && (
-        <AlertMessage
-          type="info"
-          title={formatMessage(m.sections.modifyRulingInfo.title)}
-          message={
-            <MarkdownWrapper
-              markdown={workingCase.rulingModifiedHistory}
-              textProps={{ variant: 'small' }}
-            />
-          }
-        />
-      )}
+      <AppealRulingModifiedAlert />
+      <RulingModifiedAlert />
     </div>
   )
 }

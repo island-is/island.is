@@ -9,7 +9,11 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -135,7 +139,7 @@ const OverviewBody = ({
               size="small"
               onClick={() => {
                 router.push(
-                  `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
+                  `${DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
                 )
               }}
               disabled={workingCase.state === CaseState.CORRECTING}
@@ -149,7 +153,7 @@ const OverviewBody = ({
                 size="small"
                 onClick={() => {
                   router.push(
-                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                    `${DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
                   )
                 }}
                 disabled={workingCase.state === CaseState.CORRECTING}
@@ -167,7 +171,7 @@ const OverviewBody = ({
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+              DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
             )
           }
           nextButtonText={formatMessage(core.continue)}

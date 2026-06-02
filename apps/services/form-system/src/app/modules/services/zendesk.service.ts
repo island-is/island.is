@@ -14,7 +14,6 @@ import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApplicationMapper } from '../applications/models/application.mapper'
 import {
   Instance,
   mapToCustomFields,
@@ -32,13 +31,13 @@ export class ZendeskService {
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
   private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
+  private readonly HASKOLI_ISLANDS_API_KEY = process.env.HASKOLI_ISLANDS_API_KEY
 
   private readonly CHECKBOX_TRUE = 'Valið'
   private readonly CHECKBOX_FALSE = 'Ekki valið'
 
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly applicationMapper: ApplicationMapper,
     private readonly fileService: FileService,
   ) {
     this.enhancedFetch = createEnhancedFetch({
@@ -52,21 +51,25 @@ export class ZendeskService {
   async sendToZendesk(
     applicationDto: ApplicationDto,
     storedInstance?: string,
-    zendeskBrandId?: string,
+    storedBrandId?: string,
   ): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
 
+    let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
     let apiKey = this.SANDBOX_API_KEY
 
     if (applicationDto.isTest === false && environment.production === true) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
       apiKey = this.PROD_API_KEY
+      zendeskBrandId = storedBrandId
     }
 
     if (zendeskInstance === 'heilsa') {
       apiKey = this.HEILSA_API_KEY
+    } else if (zendeskInstance === 'haskoliislands') {
+      apiKey = this.HASKOLI_ISLANDS_API_KEY
     }
 
     if (!zendeskInstance || !apiKey) {
@@ -85,21 +88,13 @@ export class ZendeskService {
       zendeskInstance as Instance,
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
-    const data = JSON.stringify(
-      this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
-        applicationDto,
-      ),
-    )
+    // const data = JSON.stringify(
+    //   this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
+    //     applicationDto,
+    //   ),
+    // )
     const isInternal = applicationDto.zendeskInternal === true
     const applicationId = applicationDto.id ?? ''
-
-    // Always attach the JSON representation
-    const applicationJsonToken = await this.uploadFile(
-      data,
-      applicationId,
-      zendeskUrl,
-      credentials,
-    )
 
     // Upload rendered attachments sequentially; do not fail the whole submission
     const attachmentTokens: string[] = []
@@ -125,14 +120,12 @@ export class ZendeskService {
       missingFilenames,
     )
 
-    const uploadTokens = [applicationJsonToken, ...attachmentTokens]
-
     return await this.createTicket(
       applicationId,
       subject,
       body,
       customFields,
-      uploadTokens,
+      attachmentTokens,
       zendeskUrl,
       credentials,
       name,
@@ -203,51 +196,6 @@ export class ZendeskService {
         { error },
       )
       return false
-    }
-  }
-
-  private async uploadFile(
-    data: string,
-    applicationId: string,
-    url: string,
-    credentials: string,
-  ): Promise<string> {
-    const serviceUrl = new URL(
-      `${url}/api/v2/uploads.json?filename=${applicationId}.json`,
-    )
-
-    try {
-      const response = await this.enhancedFetch(serviceUrl.toString(), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Basic ' + credentials,
-        },
-        body: data,
-      })
-
-      if (!response.ok) {
-        this.logger.error(
-          `Failed to upload file for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
-        )
-        throw new Error('Failed to upload file to Zendesk')
-      }
-
-      const result = await response.json()
-      return result.upload.token
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === 'Failed to upload file to Zendesk'
-      ) {
-        throw error
-      }
-      this.logger.error(
-        `Unexpected error while uploading file for application ${applicationId}`,
-        { error },
-      )
-      throw new Error('Unexpected error while uploading file to Zendesk')
     }
   }
 

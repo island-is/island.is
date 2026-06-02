@@ -1202,6 +1202,7 @@
             "description": "Title of the programme.",
             "nullable": true
           },
+          "status": { "$ref": "#/components/schemas/ProgrammeStatus" },
           "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
             "$ref": "#/components/schemas/QualificationReturnDto"
@@ -1377,6 +1378,10 @@
           }
         },
         "additionalProperties": false
+      },
+      "ProgrammeStatus": {
+        "enum": ["Draft", "Active", "Discontinued", "Outdated"],
+        "type": "string"
       },
       "ProgrammeStructureDto": {
         "type": "object",

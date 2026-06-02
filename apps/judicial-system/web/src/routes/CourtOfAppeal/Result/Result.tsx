@@ -73,7 +73,7 @@ const CourtOfAppealResult = () => {
 
   return (
     <>
-      {workingCase.hasBeenAppealed && appealBanner}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -95,18 +95,6 @@ const CourtOfAppealResult = () => {
                   : undefined
               }
             />
-            {targetAppealCase?.appealRulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(strings.rulingModifiedTitle)}
-                message={
-                  <MarkdownWrapper
-                    markdown={targetAppealCase.appealRulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
             {isIndictment ? (
               <InfoCardClosedIndictment />
             ) : (
