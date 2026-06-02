@@ -17,25 +17,13 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: messages.prerequisites.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: messages.dataProviders.userProfileTitle,
-            }),
-            buildDataProviderItem({
-              provider: IdentityApi,
-            }),
-            buildDataProviderItem({
-              provider: CompanyRegistryApi,
-              title: messages.dataProviders.companyDataTitle,
-              subTitle: messages.dataProviders.companyDataSubTitle,
-            }),
-          ],
+          title: messages.prerequisites.formTitle,
+          description: messages.prerequisites.formIntro,
+          checkboxLabel: messages.dataProviders.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -48,6 +36,23 @@ export const Prerequisites = buildForm({
               },
             ],
           }),
+          dataProviders: [
+            buildDataProviderItem({
+              provider: CompanyRegistryApi,
+              title: messages.dataProviders.companyDataTitle,
+              subTitle: messages.dataProviders.companyDataIntro,
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: messages.dataProviders.userProfileTitle,
+              subTitle: messages.dataProviders.userProfileIntro,
+            }),
+            buildDataProviderItem({
+              provider: IdentityApi,
+              title: messages.dataProviders.nationalRegistryTitle,
+              subTitle: messages.dataProviders.nationalRegistryIntro,
+            }),
+          ],
         }),
       ],
     }),

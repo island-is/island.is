@@ -1,11 +1,11 @@
 import { z } from 'zod'
+import { messages } from './messages'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
-})
 
 export const dataSchema = z.object({
-  dummy: dummySchema,
+  approveExternalData: z.boolean().refine((value) => value === true, {
+    params: messages.prerequisites.approveExternalData
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
