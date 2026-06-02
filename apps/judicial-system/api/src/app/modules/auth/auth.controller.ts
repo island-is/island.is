@@ -558,13 +558,7 @@ export class AuthController {
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute([
-        '/beinir',
-        '/krafa',
-        '/kaera',
-        '/greinargerd',
-        '/akaera',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa', '/kaera', '/akaera'])
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {

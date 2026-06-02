@@ -5,7 +5,10 @@ import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
 import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   core,
   defendant as m,
@@ -315,10 +318,10 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+              PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={!stepIsValid}
