@@ -13,6 +13,7 @@ import { tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   IconButton,
+  InfoBox,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -183,6 +184,9 @@ const CaseFileTable: FC<Props> = ({
           )
         })}
       </TableContainer>
+      <Box marginTop={2}>
+        <InfoBox text="Engin viðbótargögn hafa verið send" />
+      </Box>
       {RejectCaseFileModal}
     </>
   )

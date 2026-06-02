@@ -744,25 +744,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            {filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                  canRejectFiles={
-                    isDistrictCourtUser(user) &&
-                    !connectedCaseParentId &&
-                    workingCase.state !== CaseState.CORRECTING
-                  }
-                />
-              </Box>
-            )}
+            <Box>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+                canRejectFiles={
+                  isDistrictCourtUser(user) &&
+                  !connectedCaseParentId &&
+                  workingCase.state !== CaseState.CORRECTING
+                }
+              />
+            </Box>
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />
