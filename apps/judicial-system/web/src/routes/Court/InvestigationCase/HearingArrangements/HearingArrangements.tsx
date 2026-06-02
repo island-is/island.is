@@ -8,7 +8,10 @@ import {
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -333,9 +336,9 @@ const HearingArrangements = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
+            handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextButtonText={formatMessage(m.continueButton.label)}

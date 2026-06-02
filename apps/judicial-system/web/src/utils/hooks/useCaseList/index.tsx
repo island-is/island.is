@@ -4,10 +4,24 @@ import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+  courtInvestigationCasesRoutes,
+  courtRestrictionCasesRoutes,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  PRISON_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
@@ -69,13 +83,13 @@ const useCaseList = () => {
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
-          routeTo = DEFENDER_ROUTE
+          routeTo = DEFENDER_REQUEST_CASE_ROUTE
         } else {
-          routeTo = DEFENDER_INDICTMENT_ROUTE
+          routeTo = DEFENDER_INDICTMENT_CASE_ROUTE
         }
       } else if (isPublicProsecutionOfficeUser(user)) {
         // Public prosecutor users can only see completed indictments
-        routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
+        routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
         // Court of appeals users see one row per appeal — case-level or
         // ruling-order. Pick OVERVIEW vs RESULT based on the *target* appeal's
@@ -87,40 +101,40 @@ const useCaseList = () => {
         )
 
         if (targetAppealCase?.appealState === AppealCaseState.COMPLETED) {
-          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+          routeTo = COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+          routeTo = COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.courtRestrictionCasesRoutes,
+              courtRestrictionCasesRoutes,
               caseToOpen,
             )
           }
         } else if (isInvestigationCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.courtInvestigationCasesRoutes,
+              courtInvestigationCasesRoutes,
               caseToOpen,
             )
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
             if (caseToOpen.state === CaseState.CORRECTING) {
-              routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+              routeTo = DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE
             } else {
-              routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+              routeTo = DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE
             }
           } else {
             // Route to Indictment Overview section since it always a valid step and
             // would be skipped if we route to the last valid step
-            routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+            routeTo = DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE
           }
         }
       } else {
@@ -128,40 +142,40 @@ const useCaseList = () => {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
-              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+              ? PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorRestrictionCasesRoutes,
+              prosecutorRestrictionCasesRoutes,
               caseToOpen,
             )
           }
         } else if (isInvestigationCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
-              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+              ? PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorInvestigationCasesRoutes,
+              prosecutorInvestigationCasesRoutes,
               caseToOpen,
             )
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
-              : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+              ? PRISON_INDICTMENT_CASE_OVERVIEW_ROUTE
+              : PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
           } else if (
             caseToOpen.state === CaseState.RECEIVED &&
             isProsecutionUser(user)
           ) {
             // Prosecutor cannot edit earlier steps once the court has received
             // the case — same rule as in useSections.
-            routeTo = constants.INDICTMENTS_OVERVIEW_ROUTE
+            routeTo = PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorIndictmentRoutes,
+              prosecutorIndictmentRoutes,
               caseToOpen,
             )
           }

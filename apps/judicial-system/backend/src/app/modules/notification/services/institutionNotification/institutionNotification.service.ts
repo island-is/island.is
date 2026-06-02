@@ -13,8 +13,8 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  INDICTMENTS_TO_REVIEW,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENTS_TO_REVIEW,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
@@ -124,8 +124,8 @@ export class InstitutionNotificationService extends BaseNotificationService {
         .join(', ')
 
       const redirectUrl = areMultipleCases
-        ? INDICTMENTS_TO_REVIEW
-        : `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${cases[0].id}`
+        ? PROSECUTION_INDICTMENTS_TO_REVIEW
+        : `${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${cases[0].id}`
       const subject = 'Áminning um yfirlestur'
       const html = `Áminning um yfirlestur á mál${
         areMultipleCases ? 'um:' : 'i'
