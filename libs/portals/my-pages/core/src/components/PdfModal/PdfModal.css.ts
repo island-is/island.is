@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const backdrop = style({
@@ -35,8 +35,12 @@ export const dialog = style({
 export const toolbar = style({
   flexShrink: 0,
   display: 'grid',
-  gridTemplateColumns: '1fr auto 1fr',
   alignItems: 'center',
+  columnGap: theme.spacing[2],
+  ...themeUtils.responsiveStyle({
+    xs: { gridTemplateColumns: 'minmax(0, 1fr) auto auto' },
+    md: { gridTemplateColumns: '1fr auto 1fr' },
+  }),
 })
 
 export const zoomLabel = style({
@@ -68,4 +72,11 @@ export const pdfContent = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+})
+
+export const pdfContentReady = style({
+  ...themeUtils.responsiveStyle({
+    xs: { alignItems: 'initial', margin: 'auto 0' },
+    sm: { alignItems: 'center', margin: 'initial' },
+  }),
 })

@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { Dialog, DialogDismiss, useDialogStore } from '@ariakit/react'
 import {
   Box,
@@ -33,7 +34,7 @@ export const PdfModal = ({
   title,
   id = 'pdf-modal',
 }: PdfModalProps) => {
-  const { data, loading, error } = usePdfBlob(url)
+  const { blob, dataUrl, loading, error } = usePdfBlob(url)
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const [scale, setScale] = useState(1.0)
@@ -54,13 +55,13 @@ export const PdfModal = ({
   })
 
   const handlePrint = () => {
-    if (!data) return
-    printBlobUrl(data)
+    if (!blob) return
+    printBlobUrl(blob)
   }
 
   const handleDownload = () => {
-    if (!data) return
-    downloadBlobUrl(data, title ?? 'document.pdf')
+    if (!blob) return
+    downloadBlobUrl(blob, title ?? 'document.pdf')
   }
 
   return (
@@ -68,7 +69,7 @@ export const PdfModal = ({
       store={store}
       id={id}
       aria-label={ariaLabel}
-      backdrop={<div className={styles.backdrop} />}
+      backdrop={<Box className={styles.backdrop} />}
       className={styles.dialog}
       unmountOnHide
     >
@@ -87,7 +88,15 @@ export const PdfModal = ({
           minWidth={0}
           className={styles.toolbarLeft}
         >
-          <Icon icon="document" type="outline" size="small" color="blue400" />
+          <Box display="flex" flexShrink={0}>
+            <Icon
+              icon="document"
+              type="outline"
+              size="small"
+              color="blue400"
+              aria-hidden={true}
+            />
+          </Box>
           {title && (
             <Text variant="small" fontWeight="semiBold" truncate>
               {title}
@@ -117,13 +126,15 @@ export const PdfModal = ({
           >
             <Icon icon="remove" type="outline" size="small" color="blue400" />
           </FocusableBox>
-          <Text
-            fontWeight="semiBold"
-            variant="small"
-            className={styles.zoomLabel}
-          >
-            {Math.round(scale * 100)}%
-          </Text>
+          <Box aria-live="polite" aria-atomic="true">
+            <Text
+              fontWeight="semiBold"
+              variant="small"
+              className={styles.zoomLabel}
+            >
+              {Math.round(scale * 100)}%
+            </Text>
+          </Box>
           <FocusableBox
             component="button"
             type="button"
@@ -150,18 +161,20 @@ export const PdfModal = ({
             iconType="outline"
             variant="utility"
             size="small"
-            disabled={!data}
+            disabled={!blob}
             onClick={handlePrint}
+            aria-label={isMobile ? formatMessage(m.print) : undefined}
           >
             {isMobile ? undefined : formatMessage(m.print)}
           </Button>
           <Button
-            disabled={!data}
+            disabled={!blob}
             icon="download"
             iconType="outline"
             variant="utility"
             size="small"
             onClick={handleDownload}
+            aria-label={isMobile ? formatMessage(m.download) : undefined}
           >
             {isMobile ? undefined : formatMessage(m.download)}
           </Button>
@@ -182,8 +195,16 @@ export const PdfModal = ({
       </Box>
 
       {/* Content */}
-      <Box className={styles.pdfContent} background="blue100">
-        {(loading || (!!data && !docReady && !pdfError)) && (
+      <Box
+        className={cn(
+          styles.pdfContent,
+          docReady && !pdfError && styles.pdfContentReady,
+        )}
+        background="blue100"
+        aria-busy={loading || (!!dataUrl && !docReady && !pdfError)}
+        aria-live="polite"
+      >
+        {(loading || (!!dataUrl && !docReady && !pdfError)) && (
           <Box padding={4} marginTop={4}>
             <LoadingDots size="large" />
           </Box>
@@ -193,15 +214,15 @@ export const PdfModal = ({
             <Problem noBorder={false} />
           </Box>
         )}
-        {!loading && !data && !error && !pdfError && (
+        {!loading && !dataUrl && !error && !pdfError && (
           <Box padding={4}>
             <Problem type="no_data" noBorder={false} />
           </Box>
         )}
-        {data && !pdfError && (
+        {dataUrl && !pdfError && (
           <Box display={docReady ? 'block' : 'none'}>
             <PdfViewer
-              file={data}
+              file={dataUrl}
               showAllPages
               scale={scale}
               autoWidth={false}

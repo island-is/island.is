@@ -2,12 +2,26 @@ import { useEffect, useState } from 'react'
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
 
 interface PdfBlobState {
-  data: string | null
+  blob: Blob | null
+  dataUrl: string | null
   loading: boolean
   error: Error | null
 }
 
-const idle: PdfBlobState = { data: null, loading: false, error: null }
+const idle: PdfBlobState = {
+  blob: null,
+  dataUrl: null,
+  loading: false,
+  error: null,
+}
+
+const blobToDataUrl = (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
 
 export const usePdfBlob = (url: string | null | undefined) => {
   const [state, setState] = useState<PdfBlobState>(idle)
@@ -19,9 +33,9 @@ export const usePdfBlob = (url: string | null | undefined) => {
     }
 
     const controller = new AbortController()
-    let objectUrl: string | null = null
+    let cancelled = false
 
-    setState({ data: null, loading: true, error: null })
+    setState({ blob: null, dataUrl: null, loading: true, error: null })
 
     const bffUrl = createBffUrlGenerator()('/api', { url })
 
@@ -37,24 +51,36 @@ export const usePdfBlob = (url: string | null | undefined) => {
       })
       .then((blob) => {
         if (!blob) {
-          setState(idle)
+          if (!cancelled) setState(idle)
           return
         }
-        objectUrl = URL.createObjectURL(blob)
-        setState({ data: objectUrl, loading: false, error: null })
+        return blobToDataUrl(blob).then((dataUrl) => ({ blob, dataUrl }))
+      })
+      .then((result) => {
+        if (!cancelled && result) {
+          setState({
+            blob: result.blob,
+            dataUrl: result.dataUrl,
+            loading: false,
+            error: null,
+          })
+        }
       })
       .catch((err) => {
         if (err.name === 'AbortError') return
-        setState({
-          data: null,
-          loading: false,
-          error: err instanceof Error ? err : new Error(String(err)),
-        })
+        if (!cancelled) {
+          setState({
+            blob: null,
+            dataUrl: null,
+            loading: false,
+            error: err instanceof Error ? err : new Error(String(err)),
+          })
+        }
       })
 
     return () => {
+      cancelled = true
       controller.abort()
-      if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
   }, [url])
 
