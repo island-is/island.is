@@ -44,7 +44,7 @@ import {
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview = () => {
+const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -201,4 +201,4 @@ const CourtOfAppealOverview = () => {
   )
 }
 
-export default CourtOfAppealOverview
+export default Overview

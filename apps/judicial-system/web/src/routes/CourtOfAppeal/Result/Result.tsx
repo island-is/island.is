@@ -39,7 +39,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult = () => {
+const Result = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<modalTypes>('none')
@@ -202,4 +202,4 @@ const CourtOfAppealResult = () => {
   )
 }
 
-export default CourtOfAppealResult
+export default Result
