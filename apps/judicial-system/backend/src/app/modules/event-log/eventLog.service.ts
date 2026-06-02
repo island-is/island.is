@@ -67,7 +67,8 @@ export class EventLogService {
       {
         eventType,
         caseId,
-        nationalId: nationalIdTransformer({ value: user.nationalId }) ?? undefined,
+        nationalId:
+          nationalIdTransformer({ value: user.nationalId }) ?? undefined,
         userRole: user.role,
         userName: user.name,
         userTitle: user.title,
