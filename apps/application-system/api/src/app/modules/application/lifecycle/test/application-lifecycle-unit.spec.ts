@@ -469,7 +469,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
         },
       ])
       expect(applicationService.update).toHaveBeenCalledWith('invoice-app', {
-        ...entry.application,
         pruneAt: expectedPruneAt,
       })
       expect(mockLogger.info).toHaveBeenCalledWith(
