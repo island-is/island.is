@@ -461,7 +461,8 @@ describe('EstateTemplate', () => {
       Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
       Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
     ])('should define %s in the payment state', (roleId) => {
-      const stateConfig = EstateTemplate.stateMachineConfig.states[States.payment]
+      const stateConfig =
+        EstateTemplate.stateMachineConfig.states[States.payment]
       const roleIds = stateConfig?.meta?.roles?.map((role) => role.id)
       expect(roleIds).toContain(roleId)
     })
