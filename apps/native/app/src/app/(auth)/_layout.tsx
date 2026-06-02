@@ -121,9 +121,26 @@ export default function AuthLayout() {
         />
         <Stack.Screen
           name="(modals)/update-app"
-          options={{
-            ...modalScreenOptions,
-            headerTitle: '',
+          options={({ route }) => {
+            const closable =
+              (route.params as { closable?: string } | undefined)?.closable !==
+              'false'
+            if (closable) {
+              return {
+                ...modalScreenOptions,
+                headerTitle: '',
+              }
+            }
+            return {
+              ...modalScreenOptions,
+              headerTitle: '',
+              headerShown: false,
+              gestureEnabled: false,
+              sheetGrabberVisible: false,
+              presentation:
+                Platform.OS === 'ios' ? 'fullScreenModal' : 'modal',
+              unstable_headerRightItems: () => [],
+            }
           }}
         />
       </Stack>
