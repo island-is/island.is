@@ -42,7 +42,7 @@ const SocialBenefitsOverview = () => {
       intro={formatMessage(sharedMessages.overviewIntro)}
     >
       <Stack space={3}>
-        {(loading || vmstFlagLoading) && <ActionCardLoader repeat={2} />}
+        {(loading || vmstFlagLoading) && <ActionCardLoader repeat={1} />}
         {!loading && !!error && (
           <AlertMessage
             type="error"
