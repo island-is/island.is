@@ -104,6 +104,7 @@ export const VehicleBulkMileageSubData = ({
           variant="utility"
           icon={displayMode === 'table' ? 'gridView' : 'menu'}
           colorScheme="white"
+          aria-pressed={displayMode === 'chart'}
           onClick={() =>
             setDisplayMode(displayMode === 'table' ? 'chart' : 'table')
           }

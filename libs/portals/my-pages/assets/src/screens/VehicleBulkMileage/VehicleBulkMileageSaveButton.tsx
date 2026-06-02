@@ -8,12 +8,14 @@ interface Props {
   onClick: () => void
   disabled?: boolean
   submissionStatus: SubmissionStatus
+  ariaLabel?: string
 }
 
 export const VehicleBulkMileageSaveButton = ({
   submissionStatus,
   onClick,
   disabled,
+  ariaLabel,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -49,6 +51,7 @@ export const VehicleBulkMileageSaveButton = ({
       onClick={onClick}
       disabled={disabled || submissionStatus === 'success'}
       nowrap
+      aria-label={ariaLabel}
     >
       {tag.text}
     </Button>

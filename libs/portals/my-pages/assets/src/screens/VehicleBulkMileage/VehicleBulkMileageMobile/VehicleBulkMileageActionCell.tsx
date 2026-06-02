@@ -7,6 +7,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { m, useIsMobile } from '@island.is/portals/my-pages/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -76,9 +77,10 @@ export const VehicleBulkMileageActionCell = ({
 
   if (isMobile) {
     const mobileId = `mobile-${row.original.vehicleId}`
+    const saveLabel = `${formatMessage(m.save)} – ${row.original.vehicleId}`
     return (
       <Stack space={1}>
-        <Text variant="default" fontWeight="semiBold">
+        <Text id={`${mobileId}-label`} variant="default" fontWeight="semiBold">
           {formatMessage(vehicleMessage.odometerBulkColumn)}
         </Text>
         <Box
@@ -92,6 +94,7 @@ export const VehicleBulkMileageActionCell = ({
               control={control}
               id={mobileId}
               name={row.original.vehicleId}
+              aria-labelledby={`${mobileId}-label`}
               backgroundColor={inputBackground}
               placeholder={unit}
               type="number"
@@ -118,6 +121,7 @@ export const VehicleBulkMileageActionCell = ({
               disabled={isError}
               icon={isError ? 'closeCircle' : 'pencil'}
               onClick={onSaveButtonClick}
+              aria-label={saveLabel}
             >
               {isError ? formatMessage(m.errorTitle) : formatMessage(m.save)}
             </Button>
@@ -127,6 +131,8 @@ export const VehicleBulkMileageActionCell = ({
     )
   }
 
+  const desktopId = row.original.vehicleId
+  const saveLabel = `${formatMessage(m.save)} – ${desktopId}`
   return (
     <Box
       display="flex"
@@ -135,10 +141,18 @@ export const VehicleBulkMileageActionCell = ({
       columnGap={2}
     >
       <Box className={styles.mwInput}>
+        <Text
+          id={`${desktopId}-label`}
+          className={helperStyles.srOnly}
+          variant="default"
+        >
+          {formatMessage(vehicleMessage.odometerBulkColumn)}
+        </Text>
         <InputController
           control={control}
-          id={row.original.vehicleId}
-          name={row.original.vehicleId}
+          id={desktopId}
+          name={desktopId}
+          aria-labelledby={`${desktopId}-label`}
           backgroundColor={inputBackground}
           placeholder={unit}
           type="number"
@@ -151,9 +165,7 @@ export const VehicleBulkMileageActionCell = ({
           onChange={onInputChange}
           error={postError ?? undefined}
           aria-invalid={!!postError}
-          aria-describedby={
-            postError ? `${row.original.vehicleId}-error` : undefined
-          }
+          aria-describedby={postError ? `${desktopId}-error` : undefined}
           rules={inputRules}
         />
       </Box>
@@ -161,6 +173,7 @@ export const VehicleBulkMileageActionCell = ({
         submissionStatus={isError ? 'error' : isLoading ? 'loading' : 'idle'}
         onClick={onSaveButtonClick}
         disabled={isError}
+        ariaLabel={saveLabel}
       />
     </Box>
   )

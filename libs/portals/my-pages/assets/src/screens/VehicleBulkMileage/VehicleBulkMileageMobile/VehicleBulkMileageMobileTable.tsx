@@ -140,7 +140,7 @@ const VehicleBulkMileageMobileTable = ({
 
   return (
     <Box>
-      <form>
+      <form aria-label={formatMessage(vehicleMessage.vehicleMileageInputTitle)}>
         <Table
           columns={columns}
           data={vehicles}

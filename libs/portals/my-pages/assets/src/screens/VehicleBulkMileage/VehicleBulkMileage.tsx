@@ -218,7 +218,7 @@ const VehicleBulkMileage = () => {
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
-                    aria-label={formatMessage(m.goToPage)}
+                    aria-label={`${formatMessage(m.goToPage)} ${page}`}
                     onClick={() => {
                       setPage(page)
                     }}

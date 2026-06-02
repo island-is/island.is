@@ -110,11 +110,12 @@ export const useVehicleBulkMileageRowState = ({
       if (postStatus === 'success') {
         onMileageUpdateCallback?.()
         onSaveSuccess?.(vehicle.vehicleId)
-        reset()
+        reset({ ...getValues(), [vehicle.vehicleId]: '' })
       }
     }, 500)
     return () => clearTimeout(timer)
   }, [
+    getValues,
     onMileageUpdateCallback,
     onSaveSuccess,
     postStatus,
@@ -130,6 +131,8 @@ export const useVehicleBulkMileageRowState = ({
       case 'waiting':
         if (mileageData?.vehicleMileageDetails) {
           setPostStatus('posting')
+        } else if (mileageData !== undefined) {
+          updateStatusAndMessage('error', formatMessage(m.errorTitle))
         }
         return
       case 'validation-error':
@@ -161,12 +164,20 @@ export const useVehicleBulkMileageRowState = ({
   }
 
   const onSaveButtonClick = async () => {
-    if (postStatus !== 'initial') {
-      mileageRefetch()
-    } else {
-      executeMileageQuery()
-    }
     updateStatusAndMessage('waiting')
+    try {
+      const result =
+        postStatus !== 'initial'
+          ? await mileageRefetch()
+          : await executeMileageQuery()
+      if (result?.data?.vehicleMileageDetails) {
+        setPostStatus('posting')
+      } else {
+        updateStatusAndMessage('error', formatMessage(m.errorTitle))
+      }
+    } catch {
+      updateStatusAndMessage('error', formatMessage(m.errorTitle))
+    }
   }
 
   const postToServer = useCallback(async () => {

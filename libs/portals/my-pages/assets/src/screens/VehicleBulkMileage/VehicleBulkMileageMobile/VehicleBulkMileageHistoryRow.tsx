@@ -94,7 +94,7 @@ export const VehicleBulkMileageHistoryRow = ({
       <EmptyTable
         background="blue100"
         loading={loading}
-        message={formatMessage(vehicleMessage.noVehiclesFound)}
+        message={formatMessage(vehicleMessage.mileageHistoryNotFound)}
       />
     )
   }
