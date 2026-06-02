@@ -4,6 +4,8 @@ import { useDebounce } from 'react-use'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 
 import {
+  AsyncSearch,
+  AsyncSearchInput,
   Box,
   Button,
   Inline,
@@ -71,70 +73,6 @@ const DEFAULT_INPUT = {
 
 const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const { formatMessage } = useIntl()
-  const [tariffNumber, setTariffNumber] = useState(
-    (slice?.configJson?.tariffNumber as string) ?? DEFAULT_INPUT.tariffNumber,
-  )
-
-  const [getUnits, unitsState] = useLazyQuery<UnitsQueryResult>(
-    GET_CUSTOMS_CALCULATOR_UNITS,
-  )
-  const productCategoriesResponse =
-    useQuery<CustomsCalculatorProductCategoriesQuery>(
-      GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
-    )
-  const [calculate, calculationState] =
-    useMutation<CalculateMutationResult>(CALCULATE_CUSTOMS)
-
-  const filterCategories = useMemo(() => {
-    return (
-      extractFilterCategories(
-        productCategoriesResponse.data?.customsCalculatorProductCategories
-          ?.categories ?? [],
-      ) ?? []
-    )
-  }, [productCategoriesResponse.data?.customsCalculatorProductCategories])
-
-  useDebounce(
-    () => {
-      getUnits({
-        variables: {
-          tariffNumber: DEFAULT_INPUT.tariffNumber,
-          referenceDate: new Date().toISOString(),
-        },
-      })
-    },
-    500,
-    [tariffNumber],
-  )
-
-  const runCalculation = () => {
-    calculate({
-      variables: {
-        input: {
-          ...DEFAULT_INPUT,
-          tariffNumber,
-          referenceDate: new Date().toISOString(),
-        },
-      },
-    })
-  }
-
-  const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
-    const tariffNumbers = slice.configJson?.tariffNumberShortcuts ?? []
-    const shortcuts: { label: string; value: string }[] = []
-    for (const tariffNumber of tariffNumbers) {
-      const label =
-        productCategoriesResponse.data?.customsCalculatorProductCategories?.categories?.find(
-          (category) => category.tariffNumber === tariffNumber,
-        )?.category
-      if (label) shortcuts.push({ label, value: tariffNumber })
-    }
-    return shortcuts
-  }, [
-    slice.configJson?.tariffNumberShortcuts,
-    productCategoriesResponse.data?.customsCalculatorProductCategories
-      ?.categories,
-  ])
 
   const currencyOptions = useMemo<StringOption[]>(() => {
     return (
@@ -161,9 +99,73 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     )
   }, [slice.json?.currencyOptions])
 
-  const [selectedCurrency, setSelectedCurrency] = useState<
-    StringOption | null | undefined
-  >(currencyOptions?.[0])
+  const [inputState, setInputState] = useState({
+    searchInput: '',
+    tariffNumber: '',
+    currency: currencyOptions?.[0],
+    priceWithShipping: '',
+  })
+
+  const [getUnits, unitsState] = useLazyQuery<UnitsQueryResult>(
+    GET_CUSTOMS_CALCULATOR_UNITS,
+  )
+  const productCategoriesResponse =
+    useQuery<CustomsCalculatorProductCategoriesQuery>(
+      GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
+    )
+  const [calculate, calculationState] =
+    useMutation<CalculateMutationResult>(CALCULATE_CUSTOMS)
+
+  const filterCategories = useMemo(() => {
+    return (
+      extractFilterCategories(
+        productCategoriesResponse.data?.customsCalculatorProductCategories
+          ?.categories ?? [],
+      ) ?? []
+    )
+  }, [productCategoriesResponse.data?.customsCalculatorProductCategories])
+
+  useDebounce(
+    () => {
+      getUnits({
+        variables: {
+          tariffNumber: inputState.tariffNumber,
+          referenceDate: new Date().toISOString(),
+        },
+      })
+    },
+    500,
+    [inputState.tariffNumber],
+  )
+
+  const runCalculation = () => {
+    calculate({
+      variables: {
+        input: {
+          ...DEFAULT_INPUT,
+          tariffNumber: inputState.tariffNumber,
+          referenceDate: new Date().toISOString(),
+        },
+      },
+    })
+  }
+
+  const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
+    const tariffNumbers = slice.configJson?.tariffNumberShortcuts ?? []
+    const shortcuts: { label: string; value: string }[] = []
+    for (const tariffNumber of tariffNumbers) {
+      const label =
+        productCategoriesResponse.data?.customsCalculatorProductCategories?.categories?.find(
+          (category) => category.tariffNumber === tariffNumber,
+        )?.category
+      if (label) shortcuts.push({ label, value: tariffNumber })
+    }
+    return shortcuts
+  }, [
+    slice.configJson?.tariffNumberShortcuts,
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.categories,
+  ])
 
   return (
     <Stack space={3}>
@@ -175,7 +177,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           <Inline space={1}>
             {shortcuts.map((shortcut) => (
               <Tag
-                onClick={() => setTariffNumber(shortcut.value)}
+                onClick={() =>
+                  setInputState({ ...inputState, tariffNumber: shortcut.value })
+                }
                 key={shortcut.value}
               >
                 {shortcut.label}
@@ -184,11 +188,33 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           </Inline>
         </Stack>
       )}
-      <Box display="flex" columnGap={2}>
-        <Button onClick={runCalculation} loading={calculationState.loading}>
-          {formatMessage(translationStrings.runCalculation)}
-        </Button>
-      </Box>
+
+      <Stack space={1}>
+        <Text variant="h5">
+          {formatMessage(translationStrings.productSearchInputLabel)}
+        </Text>
+
+        <AsyncSearch
+          options={[{ label: 'test', value: 'test' }]}
+          size="large"
+          placeholder={formatMessage(
+            translationStrings.productSearchInputPlaceholder,
+          )}
+          colored={true}
+          inputValue={inputState.searchInput}
+          onInputValueChange={(value) =>
+            setInputState({ ...inputState, searchInput: value })
+          }
+          onChange={(option) =>
+            setInputState({
+              ...inputState,
+              tariffNumber: option?.value ?? '',
+            })
+          }
+        />
+
+        {<Text variant="small">{}</Text>}
+      </Stack>
 
       <Button icon="filter" size="small" variant="utility">
         {formatMessage(translationStrings.searchForCategory)}
@@ -201,8 +227,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             size="sm"
             label={formatMessage(translationStrings.currencyLabel)}
             backgroundColor="blue"
-            value={selectedCurrency}
-            onChange={(option) => setSelectedCurrency(option)}
+            value={inputState.currency}
+            onChange={(option) => {
+              if (option) setInputState({ ...inputState, currency: option })
+            }}
           />
         </Box>
         <Stack space={1}>
@@ -219,6 +247,17 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           </Box>
         </Stack>
       </Inline>
+
+      <Box className={styles.buttonContainer}>
+        <Button
+          fluid={true}
+          size="default"
+          onClick={runCalculation}
+          loading={calculationState.loading}
+        >
+          {formatMessage(translationStrings.runCalculation)}
+        </Button>
+      </Box>
 
       {Boolean(unitsState.data?.customsCalculatorUnits) && (
         <Box>

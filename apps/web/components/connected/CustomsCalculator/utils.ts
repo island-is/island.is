@@ -54,3 +54,32 @@ export const extractFilterCategories = (
 
   return filterCategories
 }
+
+type Category = CustomsCalculatorProductCategory & {
+  children?: Category[]
+}
+
+export const est = (productCategories: CustomsCalculatorProductCategory[]) => {
+  const topDownMap = new Map<string, string[]>()
+  let categoryStrings = productCategories
+    .map((category) => category.category)
+    .filter(Boolean)
+
+  while (categoryStrings.length > 0) {
+    const next: string[] = []
+    for (const categoryString of categoryStrings) {
+      const category = productCategories.find(
+        (category) => category.category === categoryString,
+      )
+      if (!category?.parentCategory || !category.category) continue
+      if (!topDownMap.has(category.parentCategory))
+        topDownMap.set(category.parentCategory, [category.category])
+      topDownMap.get(category.parentCategory)?.push(category.category)
+
+      next.push(category.parentCategory)
+    }
+    categoryStrings = next
+  }
+
+  return topDownMap
+}

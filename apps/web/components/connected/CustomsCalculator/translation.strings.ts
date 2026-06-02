@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
+  productSearchInputPlaceholder: {
+    id: 'web.customsCalculator:productSearchInputPlaceholder',
+    defaultMessage: 'Leitaðu eftir vöruheiti',
+    description: 'Placeholder for the product search input',
+  },
+  productSearchInputLabel: {
+    id: 'web.customsCalculator:productSearchInputLabel',
+    defaultMessage: 'Vöruleit',
+    description: 'Label for the product search input',
+  },
   priceWithShippingDescription: {
     id: 'web.customsCalculator:priceWithShippingDescription',
     defaultMessage: 'Verð vöru komin til Íslands',
