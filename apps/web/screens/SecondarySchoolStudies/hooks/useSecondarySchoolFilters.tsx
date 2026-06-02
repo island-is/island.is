@@ -8,18 +8,16 @@ import {
 } from 'next-usequerystate'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { SecondarySchoolProgrammeFilterOptionsQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeFilterOptions } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages/messages'
 
-type FilterOptions =
-  SecondarySchoolProgrammeFilterOptionsQuery['secondarySchoolProgrammeFilterOptions']
+type FilterOptions = SecondarySchoolProgrammeFilterOptions
 
 export interface SelectedFilters {
   levels: string[]
   countryAreas: string[]
   schools: string[]
-  isReferenceProgramme: string[]
 }
 
 interface UseSecondarySchoolFiltersReturn {
@@ -47,7 +45,6 @@ export const useSecondarySchoolFilters = (
       levels: parseAsArrayOf(parseAsString).withDefault([]),
       countryAreas: parseAsArrayOf(parseAsString).withDefault([]),
       schools: parseAsArrayOf(parseAsString).withDefault([]),
-      isReferenceProgramme: parseAsArrayOf(parseAsString).withDefault([]),
     },
     { shallow: true },
   )
@@ -77,12 +74,7 @@ export const useSecondarySchoolFilters = (
   )
 
   const clearAllFilters = useCallback(() => {
-    setSelectedFilters({
-      levels: null,
-      countryAreas: null,
-      schools: null,
-      isReferenceProgramme: null,
-    })
+    setSelectedFilters({ levels: null, countryAreas: null, schools: null })
     setSearchTermRaw(null)
   }, [setSelectedFilters, setSearchTermRaw])
 
@@ -126,17 +118,6 @@ export const useSecondarySchoolFilters = (
           ),
         })) ?? []
 
-    const isReferenceProgrammeFilters =
-      filterOptions?.isReferenceProgrammeFilterOption
-        ?.filter((value) => Boolean(value))
-        .map((value) => ({
-          value: String(value),
-          label:
-            value === 'YES'
-              ? formatMessage(m.filters.yes)
-              : formatMessage(m.filters.no),
-        })) ?? []
-
     return [
       {
         id: 'schools',
@@ -157,14 +138,6 @@ export const useSecondarySchoolFilters = (
         label: `${formatMessage(m.filters.levels)} (${levelFilters.length})`,
         selected: selectedFilters.levels,
         filters: levelFilters,
-      },
-      {
-        id: 'isReferenceProgramme',
-        label: `${formatMessage(m.filters.isReferenceProgramme)} (${
-          isReferenceProgrammeFilters.length
-        })`,
-        selected: selectedFilters.isReferenceProgramme,
-        filters: isReferenceProgrammeFilters,
       },
     ]
   }, [filterOptions, selectedFilters, formatMessage])

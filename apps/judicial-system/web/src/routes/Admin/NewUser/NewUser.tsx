@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
@@ -37,7 +37,7 @@ export const NewUser = () => {
 
   const [createUserMutation, { loading: userCreating }] = useCreateUserMutation(
     {
-      onCompleted: () => router.push(constants.USERS_ROUTE),
+      onCompleted: () => router.push(ADMIN_USERS_ROUTE),
       onError: () => {
         toast.error(formatMessage(strings.createError))
       },
