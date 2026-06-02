@@ -13,7 +13,10 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { application as am } from './messages'
 import {
   GetAttachmentTypesApi,
@@ -69,11 +72,7 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 2 * 24 * 3600 * 1000, // 2 days
-          },
+          lifecycle: pruneAfterDays(2),
           onExit: defineTemplateApi({
             action: 'completeApplication',
           }),
@@ -116,11 +115,7 @@ const template: ApplicationTemplate<
           name: 'Completed form',
           progress: 1,
           status: FormModes.COMPLETED,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
-          },
+          lifecycle: pruneAfterDays(30),
           roles: [
             {
               id: Roles.APPLICANT,

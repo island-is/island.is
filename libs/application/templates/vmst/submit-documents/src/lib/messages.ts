@@ -135,7 +135,7 @@ export const application = defineMessages({
   },
   applicationSent: {
     id: 'vmst.vsd.application:applicationSent',
-    defaultMessage: 'Breyting persónuupplýsinga móttekin',
+    defaultMessage: 'Gagnaskil móttekin',
     description: 'History log message when application is sent',
   },
 })

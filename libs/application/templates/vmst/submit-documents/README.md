@@ -2,7 +2,7 @@
 
 ## About
 
-This application allows users with an active case at **Vinnumálastofnun** (Directorate of Labour) to submit supplementary documents that have been requested. Users select a document type from a list fetched from Vinnumálastofnun, upload files, and add a comment for each entry. Up to 10 document entries can be submitted at once.
+This application allows users with an active case at **Vinnumálastofnun** (Directorate of Labour) to submit supplementary documents. Users select a document type from a list fetched from Vinnumálastofnun, upload files, and add a comment for each entry. Up to 10 document entries can be submitted at once.
 
 **Organization:** Vinnumálastofnun
 **Code owner:** Origo

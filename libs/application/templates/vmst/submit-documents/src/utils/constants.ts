@@ -15,3 +15,5 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export const MAX_DOCUMENTS = 10

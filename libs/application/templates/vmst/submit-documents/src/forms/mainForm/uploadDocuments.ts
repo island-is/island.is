@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { uploadDocuments as udm } from '../../lib/messages'
+import { MAX_DOCUMENTS } from '../../utils/constants'
 
 export const uploadDocumentsSection = buildSection({
   id: 'uploadDocumentsSection',
@@ -20,7 +21,7 @@ export const uploadDocumentsSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'documents',
-          maxRows: 10,
+          maxRows: MAX_DOCUMENTS,
           initActiveFieldIfEmpty: true,
           fields: {
             type: {

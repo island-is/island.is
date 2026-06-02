@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
 import { errorMessages } from './messages'
-
-const MAX_DOCUMENTS = 10
+import { MAX_DOCUMENTS } from '../utils/constants'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
