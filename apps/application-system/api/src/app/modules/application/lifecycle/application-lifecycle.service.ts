@@ -154,28 +154,34 @@ export class ApplicationLifeCycleService {
     this.processingApplications = output // Assign the filtered array to the processing applications array
 
     for (const prunable of incompleteWithInvoicePayments) {
-      const applicationLink =
-        await this.applicationChargeService.getApplicationLink(
-          prunable.application,
+      try {
+        const applicationLink =
+          await this.applicationChargeService.getApplicationLink(
+            prunable.application,
+          )
+        const oneMonthFromNow = addMonths(new Date(), 1)
+        const notifications = createDailyCompletionNotifications(
+          applicationLink,
+          new Date(),
+          oneMonthFromNow,
         )
-      const oneMonthFromNow = addMonths(new Date(), 1)
-      const notifications = createDailyCompletionNotifications(
-        applicationLink,
-        new Date(),
-        oneMonthFromNow,
-      )
-      await this.applicationService.cancelScheduledNotifications(
-        prunable.application.id, // cancel any existing notifications
-      )
-      await this.applicationService.createScheduledNotifications(
-        prunable.application.id,
-        prunable.application.state,
-        notifications,
-      )
-      await this.applicationService.update(prunable.application.id, {
-        ...prunable.application,
-        pruneAt: oneMonthFromNow,
-      })
+        await this.applicationService.cancelScheduledNotifications(
+          prunable.application.id, // cancel any existing notifications
+        )
+        await this.applicationService.createScheduledNotifications(
+          prunable.application.id,
+          prunable.application.state,
+          notifications,
+        )
+        await this.applicationService.update(prunable.application.id, {
+          pruneAt: oneMonthFromNow,
+        })
+      } catch (error) {
+        this.logger.error(
+          `Failed to extend invoice application ${prunable.application.id}`,
+          error,
+        )
+      }
     }
   }
 
