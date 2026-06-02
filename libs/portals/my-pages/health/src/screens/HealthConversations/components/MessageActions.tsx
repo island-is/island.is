@@ -1,9 +1,8 @@
 import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m, Tooltip } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
 import React, { MouseEvent } from 'react'
-import { Tooltip } from '../ToolTip/ToolTip'
-import { m } from '../../lib/messages'
 import * as styles from './MessageActions.css'
 
 type MessageActionsProps = {

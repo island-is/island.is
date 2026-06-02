@@ -1802,7 +1802,7 @@ export const m = defineMessages({
   },
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',
-    defaultMessage: 'Flytja úr geymslu',
+    defaultMessage: 'Flytja í pósthólf',
   },
   reply: {
     id: 'service.portal:reply',

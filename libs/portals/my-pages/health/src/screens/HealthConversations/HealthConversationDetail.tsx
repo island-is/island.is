@@ -13,11 +13,11 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  MessageActions,
   formSubmit,
   formatDateWithTime,
   m,
 } from '@island.is/portals/my-pages/core'
+import { MessageActions } from './components/MessageActions'
 import ConversationAvatar from './components/ConversationAvatar'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'

@@ -13,11 +13,11 @@ import {
   CardLoader,
   EmptyState,
   LinkButton,
-  MessageActions,
   IntroWrapper,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
+import { MessageActions } from './components/MessageActions'
 import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
