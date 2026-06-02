@@ -65,7 +65,7 @@ const AppointmentDetail = () => {
       {loading && !appointment && <CardLoader />}
       {!loading && !error && !appointment && <Problem type="no_data" />}
       {!error && appointment && (
-        <Stack space={3}>
+        <Stack space={5}>
           <Box
             border="standard"
             borderRadius="large"
