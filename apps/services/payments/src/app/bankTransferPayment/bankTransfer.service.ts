@@ -26,7 +26,6 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import {
-  BankTransferFailureReason,
   BankTransferPaymentResult,
   BankTransferStatus,
   BankTransferStatusOverlay,
@@ -52,6 +51,7 @@ import {
   isRowExpired,
   mapBlikkStatusToBankTransferStatus,
   rowLogPrefix,
+  toBankTransferFailureReason,
   toBlikkItem,
 } from './bankTransfer.utils'
 
@@ -209,30 +209,20 @@ export class BankTransferService {
       return { status: BankTransferStatus.SUCCESS }
     }
 
-    const logPrefix = rowLogPrefix(row)
+    // getPayment throws on transport failure — FE polling retries on the next tick.
     const result = await this.getPayment(row.providerPaymentId)
-
-    if (result.status === BankTransferStatus.SUCCESS) {
-      await this.finalizeBankTransferSuccess({
-        correlationId: row.id,
-        paymentFlowId: row.paymentFlowId,
-        providerPaymentId: row.providerPaymentId,
-        rawStatus: result.rawStatus,
-      })
-    } else if (isBankTransferFailureStatus(result.status)) {
-      await this.finalizeBankTransferFailure(row, result, logPrefix)
-    } else if (result.rawStatus !== row.lastKnownStatus) {
-      // PENDING raw-status drift
-      await this.bankTransferPaymentModel.update(
-        { lastKnownStatus: result.rawStatus },
-        { where: { id: row.id, isDeleted: false } },
-      )
-    }
+    await this.finalizeFromBlikkResult(row, result)
 
     return { status: result.status, message: result.message }
   }
 
-  /** Soft-deletes the active row and best-effort cancels on Blikk for still-pending rows. */
+  /**
+   * Cancels the active bank-transfer attempt for a flow. For a still-PENDING attempt we ask Blikk to
+   * cancel first; Blikk only honours this while the payment is in DRAFT, so a payment the user already
+   * took to the bank makes the Blikk cancel throw and we refuse the cancel rather than soft-delete a
+   * live payment (which would orphan a possible settlement). Soft-deletes the local row only once the
+   * payment is confirmed cancelled / already terminal / expired. Idempotent.
+   */
   async cancel(
     input: CancelBankTransferInput,
   ): Promise<CancelBankTransferResponse> {
@@ -245,27 +235,49 @@ export class BankTransferService {
     }
 
     const logPrefix = rowLogPrefix(row)
-    const mappedStatus = mapBlikkStatusToBankTransferStatus(row.lastKnownStatus)
+    const cachedMappedStatus = mapBlikkStatusToBankTransferStatus(
+      row.lastKnownStatus,
+    )
 
     // Refuse to cancel a settled payment. Money already moved and a
-    // paymentFulfillment exists (or is being created)
-    if (mappedStatus === BankTransferStatus.SUCCESS) {
+    // paymentFulfillment exists (or is being created).
+    if (cachedMappedStatus === BankTransferStatus.SUCCESS) {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
-    if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
-      await this.cancelPaymentBestEffort(row.providerPaymentId, logPrefix)
+    let mappedStatus = cachedMappedStatus
+    let lastKnownStatus = row.lastKnownStatus
+
+    if (
+      cachedMappedStatus === BankTransferStatus.PENDING &&
+      !isRowExpired(row)
+    ) {
+      // Authoritative refresh BEFORE any destructive action.
+      const refreshed = await this.refreshFromBlikkOrWarn(row)
+      if (refreshed) {
+        await this.finalizeFromBlikkResult(row, refreshed)
+        if (refreshed.status === BankTransferStatus.SUCCESS) {
+          throw new BadRequestException(
+            PaymentServiceCode.PaymentFlowAlreadyPaid,
+          )
+        }
+        mappedStatus = refreshed.status
+        lastKnownStatus = refreshed.rawStatus
+      }
+      // Only DELETE on Blikk while the attempt is still PENDING. Throws if Blikk refuses to cancel
+      // (payment past DRAFT / live) — we let that propagate so we never soft-delete a live payment.
+      if (mappedStatus === BankTransferStatus.PENDING) {
+        await this.cancelBlikkPayment(row.providerPaymentId, logPrefix)
+      }
     }
 
-    // Race-safe soft-delete: bail if finalizeBankTransferSuccess (or any
-    // concurrent writer) flipped lastKnownStatus between fetch and write.
     const [affectedRows] = await this.bankTransferPaymentModel.update(
       { isDeleted: true },
       {
         where: {
           id: row.id,
           isDeleted: false,
-          lastKnownStatus: row.lastKnownStatus,
+          lastKnownStatus,
         },
       },
     )
@@ -291,7 +303,9 @@ export class BankTransferService {
       mappedStatus,
     })
 
-    // Only active-PENDING cancels emit; terminal-failed cleanups already emitted payment_failed.
+    // Only active-PENDING cancels emit `payment_cancelled`. Finalize-on-failure
+    // cases were already emitted by finalizeFromBlikkResult; cached terminal-failed
+    // rows already emitted on the original verify/refresh that finalized them.
     if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
@@ -333,42 +347,21 @@ export class BankTransferService {
       const refreshed = await this.refreshFromBlikkOrWarn(row)
 
       if (refreshed) {
+        await this.finalizeFromBlikkResult(row, refreshed)
+
         if (refreshed.status === BankTransferStatus.SUCCESS) {
-          await this.finalizeBankTransferSuccess({
-            correlationId: row.id,
-            paymentFlowId,
-            providerPaymentId: row.providerPaymentId,
-            rawStatus: refreshed.rawStatus,
-          })
           return null
         }
 
         if (isBankTransferFailureStatus(refreshed.status)) {
-          await this.finalizeBankTransferFailure(
-            row,
-            refreshed,
-            rowLogPrefix(row),
-          )
           return {
             paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
             updatedAt: row.modified,
             lastBankTransferFailure:
-              refreshed.status as unknown as BankTransferFailureReason,
+              toBankTransferFailureReason(refreshed.status) ?? undefined,
           }
         }
 
-        if (refreshed.rawStatus !== row.lastKnownStatus) {
-          await this.bankTransferPaymentModel.update(
-            { lastKnownStatus: refreshed.rawStatus },
-            {
-              where: {
-                id: row.id,
-                isDeleted: false,
-                lastKnownStatus: row.lastKnownStatus,
-              },
-            },
-          )
-        }
         mapped = mapBlikkStatusToBankTransferStatus(refreshed.rawStatus)
       }
     }
@@ -394,7 +387,7 @@ export class BankTransferService {
     return {
       paymentStatus: PaymentStatus.BANK_TRANSFER_FAILED,
       updatedAt: row.modified,
-      lastBankTransferFailure: mapped as unknown as BankTransferFailureReason,
+      lastBankTransferFailure: toBankTransferFailureReason(mapped) ?? undefined,
     }
   }
 
@@ -622,6 +615,39 @@ export class BankTransferService {
     }
   }
 
+  /**
+   * Used to finalize the bank transfer after a refresh from Blikk.
+   */
+  private async finalizeFromBlikkResult(
+    row: BankTransferPayment,
+    refreshed: BankTransferPaymentResult,
+  ): Promise<void> {
+    // On SUCCESS, finalize the bank transfer.
+    if (refreshed.status === BankTransferStatus.SUCCESS) {
+      await this.finalizeBankTransferSuccess({
+        correlationId: row.id,
+        paymentFlowId: row.paymentFlowId,
+        providerPaymentId: row.providerPaymentId,
+        rawStatus: refreshed.rawStatus,
+      })
+      // On failure, finalize the bank transfer failure.
+    } else if (isBankTransferFailureStatus(refreshed.status)) {
+      await this.finalizeBankTransferFailure(row, refreshed, rowLogPrefix(row))
+      // On PENDING with raw-status drift, update the lastKnownStatus.
+    } else if (refreshed.rawStatus !== row.lastKnownStatus) {
+      await this.bankTransferPaymentModel.update(
+        { lastKnownStatus: refreshed.rawStatus },
+        {
+          where: {
+            id: row.id,
+            isDeleted: false,
+            lastKnownStatus: row.lastKnownStatus,
+          },
+        },
+      )
+    }
+  }
+
   /** Race-guarded persist of a terminal failure + payment_failed event (only the race winner fires). */
   private async finalizeBankTransferFailure(
     row: BankTransferPayment,
@@ -697,8 +723,11 @@ export class BankTransferService {
     )
   }
 
-  /** Best-effort DELETE on Blikk. Swallows non-2xx + network failures; local soft-delete is authoritative. */
-  private async cancelPaymentBestEffort(
+  /**
+   * DELETE Blikk payment. Blikk only cancels payments still in DRAFT; a payment the user has already
+   * taken to the bank (past DRAFT) returns a non-2xx and is NOT cancelled.
+   */
+  private async cancelBlikkPayment(
     providerPaymentId: string,
     logPrefix: string,
   ): Promise<void> {
@@ -708,8 +737,9 @@ export class BankTransferService {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
+    let response: Response
     try {
-      const response = await fetch(url, {
+      response = await fetch(url, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -717,28 +747,43 @@ export class BankTransferService {
         },
         signal: controller.signal,
       })
-
-      if (!response.ok) {
-        // 404 = unknown payment; 409 = already terminal. Both are no-ops from our perspective.
-        this.logger.warn(`${logPrefix}Blikk cancel returned non-2xx`, {
-          providerPaymentId,
-          status: response.status,
-          statusText: response.statusText,
-        })
-        return
-      }
-
-      this.logger.info(`${logPrefix}Blikk cancel succeeded`, {
-        providerPaymentId,
-      })
     } catch (e) {
+      // Network/timeout: we don't know whether the payment is live — fail safe (don't soft-delete).
       this.logger.warn(`${logPrefix}Blikk cancel request failed`, {
         providerPaymentId,
         error: (e as Error)?.message,
       })
+      throw new BadRequestException(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
+      )
     } finally {
       clearTimeout(timeout)
     }
+
+    if (response.ok) {
+      this.logger.info(`${logPrefix}Blikk cancel succeeded`, {
+        providerPaymentId,
+      })
+      return
+    }
+
+    if (response.status === 404) {
+      this.logger.warn(`${logPrefix}Blikk cancel target not found (404)`, {
+        providerPaymentId,
+      })
+      return
+    }
+
+    // Any other non-2xx means Blikk refused to cancel (payment is past DRAFT / live). Refuse to
+    // soft-delete so the still-live payment stays trackable by verify/webhook/TTL.
+    this.logger.warn(`${logPrefix}Blikk cancel returned non-2xx`, {
+      providerPaymentId,
+      status: response.status,
+      statusText: response.statusText,
+    })
+    throw new BadRequestException(
+      BankTransferErrorCode.BankTransferAlreadyInProgress,
+    )
   }
 
   /** Builds the FJS charge payload for a settled bank transfer. */

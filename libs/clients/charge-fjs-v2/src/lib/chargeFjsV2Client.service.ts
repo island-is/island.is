@@ -78,6 +78,23 @@ export class ChargeFjsV2ClientService {
   }
 
   async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
+    // Card-payment safety net: with the card-only payInfo fields now optional on
+    // the hand-written type (to allow Millifærsla / bank transfer), a card call
+    // missing any of them would silently send '' to FJS instead of being a compile
+    // error. Refuse at runtime until the generated client is regenerated.
+    if (
+      upcomingPayment.payInfo &&
+      (upcomingPayment.payInfo.paymentMeans === 'Kreditkort' ||
+        upcomingPayment.payInfo.paymentMeans === 'Debetkort')
+    ) {
+      const { RRN, cardType, authCode, PAN } = upcomingPayment.payInfo
+      if (!RRN || !cardType || !authCode || !PAN) {
+        throw new Error(
+          'createCharge: card payInfo missing required field(s) (RRN/cardType/authCode/PAN) — refusing to send empty strings to FJS',
+        )
+      }
+    }
+
     const response = await this.api.chargePOST1({
       input: {
         systemID: upcomingPayment.systemID,
@@ -92,11 +109,20 @@ export class ChargeFjsV2ClientService {
         effictiveDate: upcomingPayment.effictiveDate,
         comment: upcomingPayment.comment,
         charges: upcomingPayment.charges,
+        // TODO(fjs-spec): once FJS ships their spec update and `gen/fetch` is
+        // regenerated against it, drop the bridges below:
+        //   1. The four `?? ''` defaults — card-only fields will be optional
+        //      on the generated model, matching our hand-written type.
+        //   2. The `as unknown as GenPayInfoPaymentMeansEnum` cast — the
+        //      generated enum will include `Millifærsla`.
+        //   3. The runtime card-field assertion above — the regenerated types
+        //      will once again make missing card fields a compile error.
         payInfo: upcomingPayment.payInfo
           ? {
               // The card-only fields are optional on our type (omitted for bank transfers) but the
               // generated model still requires them; default to '' until the client is regenerated
-              // against the updated FJS spec. The card path always sets them, so this is a no-op there.
+              // against the updated FJS spec. The card path's runtime assertion above ensures these
+              // defaults are never actually hit for card calls.
               rRN: upcomingPayment.payInfo.RRN ?? '',
               cardType: upcomingPayment.payInfo.cardType ?? '',
               // The generated enum lacks the bank-transfer value until the client is regenerated against

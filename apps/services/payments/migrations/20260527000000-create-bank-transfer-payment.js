@@ -50,6 +50,10 @@ module.exports = {
             type: Sequelize.TEXT,
             allowNull: true,
           },
+          expires_at: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
           is_deleted: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

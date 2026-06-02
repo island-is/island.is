@@ -1,7 +1,12 @@
+import type { ApolloError } from '@apollo/client'
 import { useEffect, useRef, useState } from 'react'
 
 import { PaymentsBankTransferStatus } from '@island.is/api/schema'
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+} from '@island.is/shared/constants'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
@@ -22,9 +27,9 @@ interface UseBankTransferStatusPollingProps {
 }
 
 const POLL_INTERVALS_MS = [1000, 2000, 4000, 8000, 15000]
-const NOT_FOUND_MARKER = 'BankTransferNotFound'
 const TIMEOUT_GRACE_MS = 30 * 1000 // 30 seconds
-const FALLBACK_HARD_TIMEOUT_MS = 15 * 60 * 1000 // 15 minutes
+// Matches the prod Blikk TTL (600s). Used only when `expiresAt` is missing.
+const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
 
 const nextInterval = (attempt: number) =>
   POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
@@ -134,8 +139,8 @@ export const useBankTransferStatusPolling = ({
         if (cancelled) {
           return
         }
-        const message = e instanceof Error ? e.message : ''
-        if (message.includes(NOT_FOUND_MARKER)) {
+        const problemDetail = findProblemInApolloError(e as ApolloError)?.detail
+        if (problemDetail === BankTransferErrorCode.BankTransferNotFound) {
           // No active attempt — exit silently. A subsequent `trigger` change restarts the loop.
           stop()
           return
