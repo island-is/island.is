@@ -264,7 +264,10 @@ type InputSettingsActions =
       type: 'SET_APPLICANT_FIELD_SETTINGS'
       payload: {
         field: FormSystemField
-        property: 'isPhoneRequired' | 'isEmailRequired'
+        property:
+          | 'isPhoneRequired'
+          | 'isEmailRequired'
+          | 'fetchEmailFromMyPages'
         value: boolean
       }
     }

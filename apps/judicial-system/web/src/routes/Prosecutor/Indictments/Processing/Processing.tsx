@@ -9,7 +9,10 @@ import {
   Button,
   RadioButton,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -380,9 +383,9 @@ const Processing: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>

@@ -3,8 +3,8 @@ import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import {
-  INDICTMENTS_CONCLUSION_ROUTE,
-  INDICTMENTS_DEFENDER_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import {
@@ -86,7 +86,7 @@ const CourtRecord: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.withCourtSessions ? (
           <>
-            <Accordion dividerOnTop={false} singleExpand>
+            <Accordion dividerOnTop={false} singleExpand={false}>
               {workingCase.courtSessions?.map((courtSession, index) => (
                 <CourtSessionAccordionItem
                   key={courtSession.id}
@@ -137,11 +137,11 @@ const CourtRecord: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
+            handleNavigationTo(DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE)
           }
         />
       </FormContentContainer>

@@ -12,6 +12,7 @@ interface Props {
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
   tooltipText?: string
+  ariaLabel?: string
 }
 
 interface RenderButtonProps {
@@ -19,10 +20,11 @@ interface RenderButtonProps {
   colorScheme: 'blue' | 'red' | 'transparent'
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
+  ariaLabel?: string
 }
 
 const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
-  ({ icon, colorScheme, onClick, disabled }, ref) => (
+  ({ icon, colorScheme, onClick, disabled, ariaLabel }, ref) => (
     <Box
       component={Button}
       ref={ref}
@@ -39,7 +41,7 @@ const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
       }
       onClick={(evt) => onClick && onClick(evt)}
       disabled={disabled}
-      aria-label="Valmynd"
+      aria-label={ariaLabel ?? 'Valmynd'}
     >
       <Icon
         icon={icon}
@@ -55,7 +57,7 @@ const RenderButton = forwardRef<HTMLButtonElement, RenderButtonProps>(
 )
 
 const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
-  const { icon, colorScheme, onClick, disabled, tooltipText } = props
+  const { icon, colorScheme, onClick, disabled, tooltipText, ariaLabel } = props
 
   return tooltipText ? (
     <Tooltip placement="top" text={tooltipText}>
@@ -65,6 +67,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
           colorScheme={colorScheme}
           onClick={onClick}
           disabled={disabled}
+          ariaLabel={ariaLabel}
           ref={ref}
         />
       </span>
@@ -75,6 +78,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
       colorScheme={colorScheme}
       onClick={onClick}
       disabled={disabled}
+      ariaLabel={ariaLabel}
       ref={ref}
     />
   )

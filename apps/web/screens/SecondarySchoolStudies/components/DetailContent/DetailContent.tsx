@@ -12,12 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { SecondarySchoolProgrammeByIdQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeDetail } from '@island.is/web/graphql/schema'
 
 import { m } from '../../messages/messages'
 
 interface DetailContentProps {
-  programme: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']
+  programme: SecondarySchoolProgrammeDetail
 }
 
 export const DetailContent = ({ programme }: DetailContentProps) => {

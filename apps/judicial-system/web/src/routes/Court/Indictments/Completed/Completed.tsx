@@ -3,12 +3,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -16,13 +17,13 @@ import {
   FormFooter,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   ReopenModal,
   RulingInput,
+  RulingModifiedAlert,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -210,20 +211,6 @@ const Completed: FC = () => {
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.heading)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            </Box>
-          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -239,6 +226,8 @@ const Completed: FC = () => {
               ),
           )}
           <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <Box component="section">
               <InfoCardClosedIndictment />
             </Box>
@@ -254,6 +243,14 @@ const Completed: FC = () => {
                 judgeName={workingCase.judge?.name}
               />
             )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
             <AllIndictmentCaseFiles />
             {isRulingOrFine && (
               <Box component="section">

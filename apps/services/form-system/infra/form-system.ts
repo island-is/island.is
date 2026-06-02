@@ -87,6 +87,7 @@ export const serviceSetup = (services: {
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
       HEILSA_API_KEY: '/k8s/form-system/HEILSA_API_KEY',
+      HASKOLI_ISLANDS_API_KEY: '/k8s/form-system/HASKOLI_ISLANDS_API_KEY',
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',

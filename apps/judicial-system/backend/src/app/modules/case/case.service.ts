@@ -1448,6 +1448,18 @@ export class CaseService {
         transaction,
       )
     }
+
+    if (
+      theCase.state === CaseState.COMPLETED &&
+      updatedCase.state === CaseState.RECEIVED
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REOPENED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
   }
 
   private handleStateChangeEventLogUpdatesForRequest(
@@ -1852,7 +1864,7 @@ export class CaseService {
             transaction,
           ),
           ...(defendant.verdicts ?? []).map((verdict) =>
-            this.verdictService.resetPublicProsecutorData(verdict, transaction),
+            this.verdictService.resetVerdictDataForReopen(verdict, transaction),
           ),
         ]),
       )

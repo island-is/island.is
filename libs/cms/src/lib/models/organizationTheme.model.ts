@@ -74,8 +74,8 @@ export const mapOrganizationTheme = (
     textColor,
     imagePadding: theme.imagePadding || '0px',
     imageIsFullHeight: theme.imageIsFullHeight ?? true,
-    imageObjectFit: theme.imageObjectFit ?? 'cover',
-    imageObjectPosition: theme.imageObjectPosition ?? 'center',
+    imageObjectFit: theme.imageObjectFit ?? 'contain',
+    imageObjectPosition: theme.imageObjectPosition ?? 'right',
     titleSectionPaddingLeft: theme.titleSectionPaddingLeft,
   }
 }

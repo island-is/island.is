@@ -731,6 +731,13 @@ export const notifications = {
         'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). Niðurstaða Landsréttar: {appealRulingDecision}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar kæru er lokið',
     },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appeal_completed.text',
+      defaultMessage:
+        'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). Niðurstaða Landsréttar: {appealRulingDecision}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS til sækjanda þegar Landsréttur hefur úrskurðað í kærumáli',
+    },
   }),
   caseAppealResent: defineMessages({
     subject: {

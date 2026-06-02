@@ -10,8 +10,10 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -37,6 +39,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -44,11 +47,15 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  usePoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
@@ -84,6 +91,9 @@ export const Overview = () => {
     requestedCourtDate,
     parentCaseValidToDate,
   } = useInfoCardItems()
+
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
@@ -287,6 +297,13 @@ export const Overview = () => {
                   <CaseFileList caseId={workingCase.id} files={caseFiles} />
                 </Box>
               </AccordionItem>
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                />
+              )}
               {(workingCase.comments ||
                 workingCase.caseFilesComments ||
                 workingCase.caseResentExplanation) && (
@@ -314,7 +331,7 @@ export const Overview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertMessage } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -20,12 +20,15 @@ import {
   MarkdownWrapper,
   PageHeader,
   PageLayout,
+  PoliceDigitalCaseFilesAccordionItem,
   ReopenModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCaseBanner,
+  usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -36,7 +39,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult = () => {
+const Result = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<modalTypes>('none')
@@ -46,6 +49,9 @@ const CourtOfAppealResult = () => {
 
   const { appealBanner } = useAppealCaseBanner()
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+
   const {
     defendants,
     policeCaseNumbers,
@@ -67,7 +73,7 @@ const CourtOfAppealResult = () => {
 
   return (
     <>
-      {workingCase.hasBeenAppealed && appealBanner}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -89,18 +95,6 @@ const CourtOfAppealResult = () => {
                   : undefined
               }
             />
-            {targetAppealCase?.appealRulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(strings.rulingModifiedTitle)}
-                message={
-                  <MarkdownWrapper
-                    markdown={targetAppealCase.appealRulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
             {isIndictment ? (
               <InfoCardClosedIndictment />
             ) : (
@@ -149,16 +143,36 @@ const CourtOfAppealResult = () => {
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <AllIndictmentCaseFiles />
+                {workingCase.origin === CaseOrigin.LOKE && (
+                  <PoliceDigitalCaseFilesAccordionItem
+                    digitalCaseFiles={digitalCaseFiles}
+                    digitalCaseFilesLoading={digitalCaseFilesLoading}
+                    openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                  />
+                )}
               </>
             ) : (
               <>
-                {user ? (
-                  <CaseFilesAccordionItem
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    user={user}
-                  />
-                ) : null}
+                <Accordion
+                  dividers={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnTop={workingCase.origin === CaseOrigin.LOKE}
+                  dividerOnBottom={workingCase.origin === CaseOrigin.LOKE}
+                >
+                  {user ? (
+                    <CaseFilesAccordionItem
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      user={user}
+                    />
+                  ) : null}
+                  {workingCase.origin === CaseOrigin.LOKE && (
+                    <PoliceDigitalCaseFilesAccordionItem
+                      digitalCaseFiles={digitalCaseFiles}
+                      digitalCaseFilesLoading={digitalCaseFilesLoading}
+                      openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                    />
+                  )}
+                </Accordion>
                 <Conclusion
                   title={formatMessage(conclusion.title)}
                   conclusionText={workingCase.conclusion}
@@ -188,4 +202,4 @@ const CourtOfAppealResult = () => {
   )
 }
 
-export default CourtOfAppealResult
+export default Result

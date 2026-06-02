@@ -10,7 +10,10 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -33,14 +36,19 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -53,6 +61,8 @@ const Overview = () => {
 
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const {
     defendants,
@@ -207,6 +217,13 @@ const Overview = () => {
                 user={user}
               />
             )}
+            {workingCase.origin === CaseOrigin.LOKE && (
+              <PoliceDigitalCaseFilesAccordionItem
+                digitalCaseFiles={digitalCaseFiles}
+                digitalCaseFilesLoading={digitalCaseFilesLoading}
+                openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+              />
+            )}
           </Accordion>
           <Box alignItems="flexStart" className={grid({ gap: 2 })}>
             <PdfButton
@@ -236,11 +253,11 @@ const Overview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+              DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
