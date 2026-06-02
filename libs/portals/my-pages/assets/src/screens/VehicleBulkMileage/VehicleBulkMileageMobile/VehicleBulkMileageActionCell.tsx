@@ -81,37 +81,48 @@ export const VehicleBulkMileageActionCell = ({
         <Text variant="default" fontWeight="semiBold">
           {formatMessage(vehicleMessage.odometerBulkColumn)}
         </Text>
-        <InputController
-          control={control}
-          id={mobileId}
-          name={row.original.vehicleId}
-          backgroundColor={inputBackground}
-          placeholder={unit}
-          type="number"
-          suffix={' ' + unit}
-          thousandSeparator
-          decimalScale={0}
-          size="sm"
-          maxLength={12}
-          defaultValue={''}
-          onChange={onInputChange}
-          error={postError ?? undefined}
-          aria-invalid={!!postError}
-          aria-describedby={postError ? `${mobileId}-error` : undefined}
-          rules={inputRules}
-        />
-        <Button
-          fluid
-          size="small"
-          type="button"
-          loading={isLoading}
-          variant="primary"
-          disabled={isError}
-          icon={isError ? 'closeCircle' : 'pencil'}
-          onClick={onSaveButtonClick}
+        <Box
+          display="flex"
+          alignItems="flexStart"
+          justifyContent="spaceBetween"
+          columnGap={2}
         >
-          {isError ? formatMessage(m.errorTitle) : formatMessage(m.save)}
-        </Button>
+          <Box flexGrow={1}>
+            <InputController
+              control={control}
+              id={mobileId}
+              name={row.original.vehicleId}
+              backgroundColor={inputBackground}
+              placeholder={unit}
+              type="number"
+              suffix={' ' + unit}
+              thousandSeparator
+              decimalScale={0}
+              size="sm"
+              maxLength={12}
+              defaultValue={''}
+              onChange={onInputChange}
+              error={postError ?? undefined}
+              aria-invalid={!!postError}
+              aria-describedby={postError ? `${mobileId}-error` : undefined}
+              rules={inputRules}
+            />
+          </Box>
+          <Box flexGrow={0}>
+            <Button
+              fluid
+              size="small"
+              type="button"
+              loading={isLoading}
+              variant="primary"
+              disabled={isError}
+              icon={isError ? 'closeCircle' : 'pencil'}
+              onClick={onSaveButtonClick}
+            >
+              {isError ? formatMessage(m.errorTitle) : formatMessage(m.save)}
+            </Button>
+          </Box>
+        </Box>
       </Stack>
     )
   }
