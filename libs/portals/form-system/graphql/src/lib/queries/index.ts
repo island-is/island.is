@@ -12,5 +12,6 @@ export { GET_ORGANIZATION_ZENDESK_INSTANCE } from './getOrganizationZendeskInsta
 export { GET_PAYMENT_CATALOG } from './getPaymentCatalog'
 export { PAYMENT_STATUS } from './getPaymentStatus'
 export { GET_QNA } from './getQNA'
+export { GET_REAL_ESTATE } from './getRealEstate'
 export { GET_COMPANY } from './getRskCompany'
 export { IDENTITY_QUERY } from './identityQuery'

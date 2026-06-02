@@ -24,6 +24,7 @@ export const FieldTypesEnum = {
   PAYMENT: 'PAYMENT',
   APPLICANT: 'APPLICANT',
   PAYMENT_QUANTITY: 'PAYMENT_QUANTITY',
+  ASSETS: 'ASSETS',
 } as const
 
 export const CertificationTypesEnum = {

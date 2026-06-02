@@ -98,6 +98,17 @@ export class ValueTypeFactory {
           'isLoggedInUser',
         ]
         return this.pickSettings(valueType, keys)
+      case FieldTypesEnum.ASSETS:
+        keys = [
+          'value',
+          'label',
+          'name',
+          'propertyNumber',
+          'address',
+          'postalCode',
+          'municipality',
+        ]
+        return this.pickSettings(valueType, keys)
       default:
         return undefined
     }

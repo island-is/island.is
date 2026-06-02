@@ -114,4 +114,7 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => String, { nullable: true })
   dataSourceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  assetType?: string
 }

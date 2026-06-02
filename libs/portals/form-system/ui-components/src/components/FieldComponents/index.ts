@@ -1,3 +1,4 @@
+export { Asset } from './Asset/Asset'
 export { Banknumber } from './Banknumber/Banknumber'
 export { Checkbox } from './Checkbox/Checkbox'
 export { CurrencyField } from './CurrencyField/CurrencyField'

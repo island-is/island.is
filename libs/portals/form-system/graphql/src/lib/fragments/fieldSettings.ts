@@ -46,6 +46,7 @@ export const FieldSettingsFragment = gql`
     zendeskTicketFieldId
     zendeskCustomObjectKey
     dataSourceUrl
+    assetType
   }
   ${ListItemFragment}
   ${LanguageFields}
