@@ -40,12 +40,16 @@ export const DatePickerField = ({
     }
   }
 
+  const rawDefault = getValue(item, 'date', valueIndex)
+  const defaultValue =
+    rawDefault instanceof Date ? format(rawDefault, df) : rawDefault
+
   return (
     <Controller
       key={`${item.id}-${valueIndex}`}
       name={`${item.id}.${valueIndex}`}
       control={control}
-      defaultValue={getValue(item, 'date', valueIndex)}
+      defaultValue={defaultValue}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -78,7 +82,13 @@ export const DatePickerField = ({
           required={item.isRequired ?? false}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
           hasError={!!fieldState.error}
-          selected={value ? parseISO(value) : undefined}
+          selected={
+            value instanceof Date
+              ? value
+              : typeof value === 'string' && value
+              ? parseISO(value)
+              : undefined
+          }
           handleClear={() => {
             onControllerChange('')
             handleDateChange('')

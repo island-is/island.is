@@ -16,7 +16,7 @@ import {
 } from '@nestjs/swagger'
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
-import { ApplicationXroadDto } from './models/dto/application.xroad.dto'
+import { ApplicationJsonDto } from './models/dto/application.json.dto'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
@@ -56,7 +56,7 @@ export class ApplicationsXRoadController {
 
   @ApiOperation({ summary: 'Get application by id via X-Road' })
   @ApiOkResponse({
-    type: ApplicationXroadDto,
+    type: ApplicationJsonDto,
     description: 'Get application by id',
   })
   @ApiParam({ name: 'id', type: String })
@@ -69,7 +69,7 @@ export class ApplicationsXRoadController {
   async getApplication(
     @Param('id') id: string,
     @Req() req: Request,
-  ): Promise<ApplicationXroadDto> {
+  ): Promise<ApplicationJsonDto> {
     const xRoadClient = this.getValidatedXRoadClient(req)
     return await this.applicationsXRoadService.getApplication(id, xRoadClient)
   }

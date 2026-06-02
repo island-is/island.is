@@ -51,9 +51,9 @@ import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import {
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './models/dto/application.xroad.dto'
+  ApplicationJsonFieldDto,
+  ApplicationJsonValueDto,
+} from './models/dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -1329,14 +1329,14 @@ export class ApplicationsService {
 
   private mapScreenToNotificationFields(
     screen: ScreenDto,
-  ): ApplicationXroadFieldDto[] {
+  ): ApplicationJsonFieldDto[] {
     return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationXroadFieldDto()
+      const xroadField = new ApplicationJsonFieldDto()
       xroadField.identifier = field.identifier
       xroadField.screenIdentifier = screen.identifier
       xroadField.fieldType = field.fieldType
       xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationXroadValueDto()
+        const xroadValue = new ApplicationJsonValueDto()
         xroadValue.order = value.order
         xroadValue.json = (value.json ?? {}) as Record<string, unknown>
         return xroadValue
