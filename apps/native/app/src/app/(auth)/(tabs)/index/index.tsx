@@ -48,6 +48,11 @@ import {
   useGetAppointmentsQuery,
   validateAppointmentsInitialData,
 } from '@/components/home/appointments-module'
+import {
+  NotificationsModule,
+  useGetUserNotificationsQuery,
+  validateNotificationsInitialData,
+} from '@/components/home/notifications-module'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
@@ -94,6 +99,17 @@ export default function HomeScreen() {
     false,
     null,
   )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
+
   const [refetching, setRefetching] = useState(false)
 
   const vehiclesWidgetEnabled = usePreferencesStore(
@@ -114,6 +130,9 @@ export default function HomeScreen() {
   const appointmentsWidgetEnabled = usePreferencesStore(
     ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
   )
+  const notificationsWidgetEnabled = usePreferencesStore(
+    ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
+  )
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
@@ -128,7 +147,7 @@ export default function HomeScreen() {
     variables: {
       input: { page: 1, pageSize: 3 },
     },
-    skip: !inboxWidgetEnabled,
+    skip: !inboxWidgetEnabled || isInboxWidgetDisabled !== false,
   })
 
   const licensesRes = useListLicensesQuery({
@@ -173,6 +192,14 @@ export default function HomeScreen() {
     skip: !appointmentsWidgetEnabled || !isAppointmentsEnabled,
   })
 
+  const notificationsRes = useGetUserNotificationsQuery({
+    variables: {
+      input: { limit: 3 },
+      locale: useLocale(),
+    },
+    skip: !notificationsWidgetEnabled || !isNotificationsWidgetEnabled,
+  })
+
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
     if (!widgetsInitialised) {
@@ -195,14 +222,23 @@ export default function HomeScreen() {
       })
 
       preferencesStore.setState({
-        inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+        ...(isInboxWidgetDisabled !== null && {
+          inboxWidgetEnabled: isInboxWidgetDisabled
+            ? false
+            : shouldShowInboxWidget,
+        }),
         ...(isAppointmentsEnabled !== null && {
           appointmentsWidgetEnabled: isAppointmentsEnabled
             ? validateAppointmentsInitialData({ ...appointmentsRes })
+            : false,
+        }),
+        ...(isNotificationsWidgetEnabled !== null && {
+          notificationsWidgetEnabled: isNotificationsWidgetEnabled
+            ? validateNotificationsInitialData({ ...notificationsRes })
             : false,
         }),
       })
@@ -216,7 +252,10 @@ export default function HomeScreen() {
         airDiscountRes.loading ||
         vehiclesRes.loading ||
         appointmentsRes.loading ||
-        isAppointmentsEnabled === null
+        notificationsRes.loading ||
+        isAppointmentsEnabled === null ||
+        isNotificationsWidgetEnabled === null ||
+        isInboxWidgetDisabled === null
       ) {
         return
       }
@@ -230,6 +269,7 @@ export default function HomeScreen() {
     airDiscountRes.loading,
     vehiclesRes.loading,
     appointmentsRes.loading,
+    notificationsRes.loading,
     widgetsInitialised,
     inboxRes,
     licensesRes,
@@ -237,7 +277,10 @@ export default function HomeScreen() {
     vehiclesRes,
     airDiscountRes,
     appointmentsRes,
+    notificationsRes,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const renderItem = useCallback(
@@ -278,13 +321,18 @@ export default function HomeScreen() {
     try {
       const promises = [
         applicationsWidgetEnabled && applicationsRes.refetch(),
-        inboxWidgetEnabled && inboxRes.refetch(),
+        inboxWidgetEnabled &&
+          isInboxWidgetDisabled === false &&
+          inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
         appointmentsWidgetEnabled &&
           isAppointmentsEnabled &&
           appointmentsRes.refetch(),
+        notificationsWidgetEnabled &&
+          isNotificationsWidgetEnabled &&
+          notificationsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -300,13 +348,17 @@ export default function HomeScreen() {
     airDiscountRes,
     vehiclesRes,
     appointmentsRes,
+    notificationsRes,
     vehiclesWidgetEnabled,
     airDiscountWidgetEnabled,
     applicationsWidgetEnabled,
     licensesWidgetEnabled,
     inboxWidgetEnabled,
     appointmentsWidgetEnabled,
+    notificationsWidgetEnabled,
     isAppointmentsEnabled,
+    isNotificationsWidgetEnabled,
+    isInboxWidgetDisabled,
   ])
 
   const data = [
@@ -315,8 +367,18 @@ export default function HomeScreen() {
       component: <HelloModule />,
     },
     {
+      id: 'notifications',
+      component:
+        notificationsWidgetEnabled && isNotificationsWidgetEnabled ? (
+          <NotificationsModule {...notificationsRes} />
+        ) : null,
+    },
+    {
       id: 'inbox',
-      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+      component:
+        inboxWidgetEnabled && isInboxWidgetDisabled === false ? (
+          <InboxModule {...inboxRes} />
+        ) : null,
     },
     {
       id: 'appointments',
@@ -364,6 +426,7 @@ export default function HomeScreen() {
           airDiscountRes.networkStatus,
           vehiclesRes.networkStatus,
           appointmentsRes.networkStatus,
+          notificationsRes.networkStatus,
         ]}
         options={{
           headerTitle: '',

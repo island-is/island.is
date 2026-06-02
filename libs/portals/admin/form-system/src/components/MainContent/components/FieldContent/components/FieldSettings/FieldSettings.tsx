@@ -6,6 +6,7 @@ import { AssetsSettings } from './components/AssetsSettings'
 import { CheckboxSettings } from './components/CheckboxSettings'
 import { ListSettings } from './components/ListSettings'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
+import { NationalIdSettings } from './components/NationalIdSettings'
 import { NumberSettings } from './components/NumberSettings'
 import { PaymentFieldSettings } from './components/PaymentFieldSettings'
 import { TextFieldSettings } from './components/TextFieldSettings'
@@ -37,6 +38,9 @@ export const FieldSettings = () => {
         <PaymentFieldSettings />
       )}
       {currentItem.fieldType === FieldTypesEnum.ASSETS && <AssetsSettings />}
+      {currentItem.fieldType === FieldTypesEnum.NATIONAL_ID && (
+        <NationalIdSettings />
+      )}
     </>
   )
 }

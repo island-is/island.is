@@ -16,10 +16,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE,
   getStandardUserDashboardRoute,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_COURT_RECORD_ROUTE,
-  INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -142,13 +142,8 @@ const Conclusion: FC = () => {
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
   const { updateDefendantState, updateDefendant } = useDefendants()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
@@ -1023,7 +1018,7 @@ const Conclusion: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => {
             if (
               selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
@@ -1040,10 +1035,10 @@ const Conclusion: FC = () => {
 
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
-                ? INDICTMENTS_SUMMARY_ROUTE
+                ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
                 ? getStandardUserDashboardRoute(user)
-                : INDICTMENTS_COURT_OVERVIEW_ROUTE,
+                : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
             )
           }}
           nextButtonText={
@@ -1109,7 +1104,7 @@ const Conclusion: FC = () => {
             text: 'Staðfesta',
             onClick: () => {
               router.push(
-                `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
               )
             },
             isDisabled: !validate([
@@ -1201,7 +1196,9 @@ const Conclusion: FC = () => {
                       return
                     }
                   }
-                  handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE)
+                  handleNavigationTo(
+                    DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+                  )
                 } finally {
                   setIsSubmittingForSome(false)
                 }

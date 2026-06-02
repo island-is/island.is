@@ -26,6 +26,7 @@ export class ServiceManager {
   async send(
     applicationDto: ApplicationDto,
     zendeskInstance?: string,
+    zendeskBrandId?: string,
   ): Promise<boolean | NotificationResponseDto> {
     const submitUrl = applicationDto.submissionServiceUrl
 
@@ -37,6 +38,7 @@ export class ServiceManager {
       return await this.zendeskService.sendToZendesk(
         applicationDto,
         zendeskInstance,
+        zendeskBrandId,
       )
     } else if (submitUrl !== 'zendesk') {
       const notificationDto = {

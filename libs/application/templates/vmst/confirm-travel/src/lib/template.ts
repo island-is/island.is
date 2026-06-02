@@ -16,11 +16,14 @@ import { ConfirmTravelUnemploymentBenefitsSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { getEligibility } from '../dataProviders'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -75,6 +78,36 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: pruneAfterDays(2),
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: (application) => {
+                  const fromStr = getValueViaPath<string>(
+                    application.answers,
+                    'date.from',
+                  )
+                  const toStr = getValueViaPath<string>(
+                    application.answers,
+                    'date.to',
+                  )
+                  const formatDate = (d?: string) =>
+                    d ? format(new Date(d), 'd. MMMM yyyy', { locale: is }) : ''
+                  return {
+                    ...applicationMessages.applicationSent,
+                    values: {
+                      from: formatDate(fromStr),
+                      to: formatDate(toStr),
+                    },
+                  }
+                },
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           onExit: defineTemplateApi({
             action: 'submitApplication',
           }),
