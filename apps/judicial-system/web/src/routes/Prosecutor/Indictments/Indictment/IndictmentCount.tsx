@@ -207,7 +207,10 @@ export const getLegalArguments = (
     const subArticleText = subArticles
       .map((sub, index) => (index === 0 ? `${sub}.` : `, sbr. ${sub}.`))
       .join('')
-    parts.push({ text: `${subArticleText} mgr. ${article}. gr.`, isZero: false })
+    parts.push({
+      text: `${subArticleText} mgr. ${article}. gr.`,
+      isZero: false,
+    })
   }
 
   // Join the parts with ", ", placing "og" before the last one. A grouped
