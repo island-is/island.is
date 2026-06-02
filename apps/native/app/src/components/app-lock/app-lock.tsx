@@ -103,9 +103,19 @@ function useShouldShowLock() {
 }
 
 export function AppLock() {
+  const router = useRouter()
   const shouldShow = useShouldShowLock()
   const [renderable, setRenderable] = useState(shouldShow)
   const opacity = useSharedValue(shouldShow ? 1 : 0)
+
+  // Dismiss any stack-presented modals before showing the lock.
+  // Without this, iOS layers our RN <Modal> beneath an
+  // already-presented formSheet.
+  useEffect(() => {
+    if (shouldShow && router.canDismiss()) {
+      router.dismissAll()
+    }
+  }, [shouldShow, router])
 
   // Instant show; fade out on unlock. Re-lock mid-fade snaps back to 1.
   useEffect(() => {
