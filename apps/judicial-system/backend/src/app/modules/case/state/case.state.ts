@@ -182,6 +182,12 @@ const indictmentCaseStateMachine: Map<
           )
         }
 
+        if (theCase.mergeCaseId) {
+          throw new ForbiddenException(
+            'Cannot reopen a case that has been merged',
+          )
+        }
+
         if (
           theCase.appealCase &&
           (theCase.appealCase.appealState === AppealCaseState.APPEALED ||

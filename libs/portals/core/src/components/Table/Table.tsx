@@ -1,3 +1,4 @@
+import './tanstack-table'
 import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import {
@@ -299,7 +300,12 @@ export const Table = <TData extends object>({
                       : 'none'
                     : undefined
                 }
-                style={{ fontSize: '16px' }}
+                style={{
+                  fontSize: '16px',
+                  ...(header.column.columnDef.meta?.align && {
+                    textAlign: header.column.columnDef.meta.align,
+                  }),
+                }}
               >
                 {header.column.getCanSort() ? (
                   <FocusableBox
@@ -432,6 +438,7 @@ export const Table = <TData extends object>({
                             ? `${tableId}-row-title-${row.id}`
                             : undefined
                         }
+                        textAlign={cell.column.columnDef.meta?.align}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -453,6 +460,8 @@ export const Table = <TData extends object>({
                       position: 'relative',
                       background:
                         isExpanded || isCollapsing ? 'blue100' : undefined,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? 'standard' : undefined,
                     }}
                   >
                     <AnimateHeight

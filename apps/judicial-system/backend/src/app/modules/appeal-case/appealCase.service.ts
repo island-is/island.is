@@ -12,7 +12,11 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -421,7 +425,7 @@ export class AppealCaseService {
       const existingHistory = appealCase.appealRulingModifiedHistory
         ? `${appealCase.appealRulingModifiedHistory}\n\n`
         : ''
-      const today = nowFactory().toISOString()
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
