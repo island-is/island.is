@@ -1,3 +1,5 @@
+import { DirectorateOfEqualityModule } from './directorate-of-equality/directorate-of-equality.module'
+import { DirectorateOfEqualityService } from './directorate-of-equality/directorate-of-equality.service'
 import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
 import { ConfirmTravelService } from './vmst/confirm-travel/confirm-travel.service'
 import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
@@ -288,6 +290,7 @@ export const modules = [
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
   ConfirmTravelModule,
+  DirectorateOfEqualityModule,
 ]
 
 export const services = [
@@ -386,4 +389,5 @@ export const services = [
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
   ConfirmTravelService,
+  DirectorateOfEqualityService,
 ]

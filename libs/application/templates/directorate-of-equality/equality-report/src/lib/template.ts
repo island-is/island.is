@@ -9,7 +9,10 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  IdentityApi,
 } from '@island.is/application/types'
+import { isCompany } from 'kennitala'
+import { CompanyRegistryApi } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -17,7 +20,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { general } from './messages'
+import { messages } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 
@@ -27,19 +30,12 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EQUALITY_REPORT,
-  name: general.applicationName,
+  name: messages.general.applicationName,
   codeOwner: CodeOwners.Hugsmidjan,
-  institution: general.institution,
+  institution: messages.general.institution,
   translationNamespaces: ApplicationConfigurations.EqualityReport.translation,
   dataSchema,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
-    {
-      type: AuthDelegationType.Custom,
-    },
-  ],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   requiredScopes: [ApiScope.directorateOfEquality],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -62,8 +58,16 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, IdentityApi, CompanyRegistryApi],
               delete: true,
+            },
+            {
+              id: Roles.NOT_ALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowedForm').then((m) =>
+                  Promise.resolve(m.NotAllowedForm),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -126,10 +130,10 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    if (isCompany(application.applicant) && nationalId === application.applicant) {
       return Roles.APPLICANT
     }
-    return undefined
+    return Roles.NOT_ALLOWED
   },
 }
 

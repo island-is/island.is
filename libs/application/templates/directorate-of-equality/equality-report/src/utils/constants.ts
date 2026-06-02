@@ -14,4 +14,5 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  NOT_ALLOWED = 'notAllowed',
 }
