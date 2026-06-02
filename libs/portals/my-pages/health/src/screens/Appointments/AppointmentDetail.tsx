@@ -129,7 +129,7 @@ const AppointmentDetail = () => {
                         type="outline"
                       />
                     </Box>
-                    <Box display="flex" flexWrap="wrap" alignItems="center" columnGap={1}>
+                    <Box display="flex" flexWrap="wrap" alignItems="center" columnGap={2}>
                       <Text>{fullAddress}</Text>
                       {mapsLink && (
                         <LinkButton
@@ -145,12 +145,8 @@ const AppointmentDetail = () => {
                 )}
               </Stack>
             </Stack>
-            <Box display={['none', 'none', 'block']} flexShrink={0} marginLeft={3} marginRight={6} style={{ width: '95px' }}>
-              <img
-                src="./assets/images/appointment.svg"
-                alt=""
-                width="100%"
-              />
+            <Box display={['none', 'none', 'block']} flexShrink={0} marginLeft={3} marginRight={6}>
+              <img src="./assets/images/appointment.svg" alt="" />
             </Box>
           </Box>
 
