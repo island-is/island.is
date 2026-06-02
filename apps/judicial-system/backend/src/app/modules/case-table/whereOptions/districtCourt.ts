@@ -55,12 +55,7 @@ export const districtCourtRequestCasesAppealedWhereOptions = (
       },
     },
   },
-  where: {
-    [Op.and]: [
-      districtCourtRequestCasesAccessWhereOptions(user),
-      { state: completedRequestCaseStates },
-    ],
-  },
+  where: districtCourtRequestCasesAccessWhereOptions(user),
 })
 
 export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
@@ -146,12 +141,7 @@ export const districtCourtIndictmentsAppealedWhereOptions = (
       },
     },
   },
-  where: {
-    [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user),
-      { state: completedIndictmentCaseStates },
-    ],
-  },
+  where: districtCourtIndictmentsAccessWhereOptions(user),
 })
 
 export const districtCourtIndictmentsFinalizingWhereOptions = (

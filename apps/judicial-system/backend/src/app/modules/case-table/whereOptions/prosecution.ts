@@ -54,10 +54,7 @@ export const prosecutionRequestCasesAppealedWhereOptions = (
       },
     },
   },
-  where: {
-    ...prosecutionRequestCasesAccessWhereOptions(user),
-    state: completedRequestCaseStates,
-  },
+  where: prosecutionRequestCasesAccessWhereOptions(user),
 })
 
 export const prosecutionRequestCasesCompletedWhereOptions = (
@@ -123,10 +120,7 @@ export const prosecutionIndictmentsAppealedWhereOptions = (
       },
     },
   },
-  where: {
-    ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: completedIndictmentCaseStates,
-  },
+  where: prosecutionIndictmentsAccessWhereOptions(user),
 })
 
 export const prosecutionIndictmentsCompletedWhereOptions = (
