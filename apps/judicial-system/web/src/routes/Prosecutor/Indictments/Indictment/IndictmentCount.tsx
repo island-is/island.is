@@ -180,42 +180,53 @@ export const getLegalArguments = (
     return ''
   }
 
-  const relevantLaws =
+  // The general law (95) is always rendered last, prefixed with "sbr.".
+  const hasGeneralLaw =
     lawsCompare(lawsBroken[lawsBroken.length - 1] as Law, generalLaws[0]) === 0
-      ? lawsBroken.slice(0, -1)
-      : lawsBroken
-  let andIndex = -1
-  if (relevantLaws.length > 1) {
-    for (let i = relevantLaws.length - 1; i > 0; i--) {
-      if (relevantLaws[i - 1][0] !== relevantLaws[i][0]) {
-        andIndex = i
-        break
-      }
+  const generalLaw = hasGeneralLaw
+    ? lawsBroken[lawsBroken.length - 1]
+    : undefined
+  const mainLaws = hasGeneralLaw ? lawsBroken.slice(0, -1) : lawsBroken
+
+  // Laws without a sub-article (sub-article 0) are grouped at the start, the
+  // rest are grouped by article (paragraph) number in their original order.
+  const parts: { text: string; isZero: boolean }[] = []
+
+  mainLaws
+    .filter((law) => law[1] === 0)
+    .forEach((law) => parts.push({ text: `${law[0]}. gr.`, isZero: true }))
+
+  const nonZeroLaws = mainLaws.filter((law) => law[1] !== 0)
+  for (let i = 0; i < nonZeroLaws.length; ) {
+    const article = nonZeroLaws[i][0]
+    const subArticles: number[] = []
+    while (i < nonZeroLaws.length && nonZeroLaws[i][0] === article) {
+      subArticles.push(nonZeroLaws[i][1])
+      i++
+    }
+    const subArticleText = subArticles
+      .map((sub, index) => (index === 0 ? `${sub}.` : `, sbr. ${sub}.`))
+      .join('')
+    parts.push({ text: `${subArticleText} mgr. ${article}. gr.`, isZero: false })
+  }
+
+  // Join the parts with ", ", placing "og" before the last one. A grouped
+  // sub-article-less law keeps its trailing comma before the "og".
+  let articles = parts.length > 0 ? parts[0].text : ''
+  for (let i = 1; i < parts.length; i++) {
+    if (i === parts.length - 1) {
+      const commaBeforeOg = parts[i - 1].isZero && i - 1 > 0
+      articles = `${articles}${commaBeforeOg ? ',' : ''} og ${parts[i].text}`
+    } else {
+      articles = `${articles}, ${parts[i].text}`
     }
   }
 
-  // handle the sub-article of the first laws tuple
-  let articles = lawsBroken[0][1] === 0 ? '' : `${lawsBroken[0][1]}.`
-
-  for (let i = 1; i < lawsBroken.length; i++) {
-    let useSbr = true
-    const hasNoArticle = lawsBroken[i - 1][1] === 0
-
-    if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      articles = `${articles}${hasNoArticle ? '' : ` mgr. `}${
-        lawsBroken[i - 1][0]
-      }. gr.`
-      useSbr = i > andIndex
-    }
-
-    articles = `${articles}${
-      i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
-    } ${lawsBroken[i][1]}.`
+  if (generalLaw) {
+    articles = `${articles}, sbr. ${generalLaw[1]}. mgr. ${generalLaw[0]}. gr.`
   }
 
-  return formatMessage(strings.legalArgumentsAutofill, {
-    articles: `${articles} mgr. ${lawsBroken[lawsBroken.length - 1][0]}. gr.`,
-  })
+  return formatMessage(strings.legalArgumentsAutofill, { articles })
 }
 
 export const IndictmentCount: FC<Props> = ({
