@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useContext } from 'react'
+import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
 import cn from 'classnames'
 
 import { Box, Button, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
@@ -13,7 +13,7 @@ interface Props {
   title?: string | null
   subtitle?: string | null
   subtitleIcon?: IconMapIcon
-  subtitleIconColor?: string
+  subtitleIconColor?: ComponentProps<typeof Icon>['color']
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
