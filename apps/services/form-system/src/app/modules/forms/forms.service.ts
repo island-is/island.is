@@ -1260,7 +1260,7 @@ export class FormsService {
     if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
 
     if ('totalDays' in v) v.totalDays = 10
-    if ('totalAmount' in v) v.totalAmount = 50000
+    if ('totalAmount' in v) v.totalAmount = 5000
     if ('year' in v) v.year = 2026
     if ('isNullReport' in v) v.isNullReport = false
 
