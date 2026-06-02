@@ -168,9 +168,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
       updatedDate: formatDate(item.updatedDate),
       // Internal field for sorting — listings are ordered by the publish/display
       // date (birtingardagsetning), which Elfur exposes as `publishDate`.
-      _creationDate: item.publishDate
-        ? new Date(item.publishDate)
-        : undefined,
+      _creationDate: item.publishDate ? new Date(item.publishDate) : undefined,
     })
   }
 
