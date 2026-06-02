@@ -1531,6 +1531,19 @@ export const m = defineMessages({
       'Þú hefur samþykkt gögnin í umsókninni. Umsóknin verður send til sýslumanns þegar allir erfingjar hafa samþykkt.',
     description: 'Assignee approved description',
   },
+  assigneeStatusTitle: {
+    id: 'es.application:assigneeStatus.title',
+    defaultMessage: 'Umsókn í vinnslu hjá umsækjanda',
+    description:
+      'Assignee status title when the application is back with the applicant',
+  },
+  assigneeStatusDescription: {
+    id: 'es.application:assigneeStatus.description',
+    defaultMessage:
+      'Umsóknin er í vinnslu hjá umsækjanda. Þú færð tilkynningu þegar kemur að næstu skrefum.',
+    description:
+      'Assignee status description when the application is back with the applicant',
+  },
 
   // Signing state messages
   signingTitle: {

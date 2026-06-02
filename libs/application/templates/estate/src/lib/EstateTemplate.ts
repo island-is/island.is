@@ -20,6 +20,7 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { buildPaymentState } from '@island.is/application/utils'
+import { PaymentForm } from '@island.is/application/ui-forms'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import {
@@ -212,6 +213,18 @@ const EstateTemplate: ApplicationTemplate<
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
               ],
+            },
+            {
+              // Assignees keep visibility after rejecting (assignees are not
+              // cleared on REJECT) and estate members always map to ASSIGNEE
+              // while review is enabled. Without a form for this role the
+              // form shell renders an infinite loader.
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.assigneeStatusForm),
+                ),
+              read: 'all',
             },
           ],
           actionCard: {
@@ -407,9 +420,44 @@ const EstateTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.payment]: buildPaymentState({
+      [States.payment]: buildPaymentState<EstateEvent>({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
+        // mapUserToRole never returns the default 'applicant' role once an
+        // estate type has been selected, so the payment state needs explicit
+        // roles for the estate-specific applicant roles. Assignees also keep
+        // visibility while the applicant pays and get a read-only status form.
+        roles: [
+          ...[
+            Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+            Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: async () => PaymentForm,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: 'Panta',
+                type: 'primary' as const,
+              },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary' as const,
+              },
+            ],
+            write: 'all' as const,
+            delete: true,
+          })),
+          {
+            id: Roles.ASSIGNEE,
+            formLoader: () =>
+              import('../forms/InReview').then((val) =>
+                Promise.resolve(val.assigneeStatusForm),
+              ),
+            read: 'all' as const,
+          },
+        ],
         submitTarget: [
           {
             target: States.signing,
@@ -629,6 +677,16 @@ const EstateTemplate: ApplicationTemplate<
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
+            {
+              // Estate members map to ASSIGNEE while review is enabled and
+              // can open a completed application, e.g. from My Pages.
+              id: Roles.ASSIGNEE,
               formLoader: () =>
                 import('../forms/Done').then((val) =>
                   Promise.resolve(val.done),
