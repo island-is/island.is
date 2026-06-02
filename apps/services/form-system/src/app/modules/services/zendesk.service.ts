@@ -88,11 +88,6 @@ export class ZendeskService {
       zendeskInstance as Instance,
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
-    // const data = JSON.stringify(
-    //   this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
-    //     applicationDto,
-    //   ),
-    // )
     const isInternal = applicationDto.zendeskInternal === true
     const applicationId = applicationDto.id ?? ''
 
