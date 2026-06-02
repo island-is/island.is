@@ -47,11 +47,11 @@ type UpdateVerdict = {
   serviceDate?: Date | null
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
+  serviceRequirement?: ServiceRequirement | null
 } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
   | 'serviceStatus'
-  | 'serviceRequirement'
   | 'servedBy'
   | 'deliveredToDefenderNationalId'
   | 'appealDecision'
@@ -288,7 +288,7 @@ export class VerdictService {
     return updatedVerdict
   }
 
-  async resetPublicProsecutorData(
+  async resetVerdictDataForReopen(
     verdict: Verdict,
     transaction: Transaction,
   ): Promise<Verdict> {
@@ -297,6 +297,7 @@ export class VerdictService {
       {
         isAcquittedByPublicProsecutionOffice: null,
         defendantHasRequestedAppeal: null,
+        serviceRequirement: null,
       },
       transaction,
     )
