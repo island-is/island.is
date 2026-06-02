@@ -12,6 +12,7 @@ export const completedForm = buildForm({
   children: [
     buildFormConclusionSection({
       alertTitle: cm.completedFormAlertTitle,
+      multiFieldTitle: cm.multiFieldTitle,
       alertMessage: '',
       accordion: true,
       expandableIntro: {
@@ -23,6 +24,7 @@ export const completedForm = buildForm({
       descriptionFieldTitle: cm.completedFormDescriptionFieldTitle,
       descriptionFieldDescription: cm.descriptionFieldDescription,
       bottomButtonMessage: cm.bottomButtonMessage,
+      bottomButtonLabel: cm.bottomButtonLabel,
     }),
   ],
 })

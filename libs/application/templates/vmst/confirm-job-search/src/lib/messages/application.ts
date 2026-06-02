@@ -40,4 +40,9 @@ export const application = defineMessages({
       'Vinnumálastofnun hefur móttekið umsókn þína og er hún komin til afgreiðslu.',
     description: 'Successful submission title',
   },
+  applicationSent: {
+    id: 'vmst.cjs.application:applicationSent',
+    defaultMessage: 'Atvinnuleit staðfest',
+    description: 'History log message when application is sent',
+  },
 })

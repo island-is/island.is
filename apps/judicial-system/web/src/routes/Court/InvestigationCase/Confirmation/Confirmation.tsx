@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
@@ -92,7 +95,7 @@ const Confirmation: FC = () => {
   }
 
   const continueToSignedVerdictOverview = () => {
-    router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+    router.push(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
   }
 
   const completeCaseWith = async (
@@ -183,7 +186,7 @@ const Confirmation: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={getStandardUserDashboardRoute(user)}
           nextIsLoading={isTransitioningCase}
           nextButtonText={formatMessage(

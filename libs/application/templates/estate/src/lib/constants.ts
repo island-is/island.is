@@ -22,6 +22,7 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
   approveByAssignee = 'approveByAssignee',
+  notifyAssignees = 'notifyAssignees',
   getSignatories = 'getSignatories',
   checkReviewFlag = 'checkReviewFlag',
 }

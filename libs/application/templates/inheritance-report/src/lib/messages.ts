@@ -2007,7 +2007,7 @@ export const m = defineMessages({
   applicantInReviewDescription: {
     id: 'ir.application:applicantInReview.description',
     defaultMessage:
-      'Umsóknin hefur verið send til erfingja til yfirferðar. Allir erfingjar þurfa að samþykkja gögnin áður en hægt er að halda áfram.',
+      'Umsóknin hefur verið send til erfingja til yfirferðar. Yfirferð erfingja er valkvæð og hægt er að halda áfram í undirritun án samþykkis allra.',
     description: 'Applicant in review description',
   },
   applicantInReviewTitleAllApproved: {
@@ -2050,13 +2050,52 @@ export const m = defineMessages({
   applicantInReviewInfoDescription: {
     id: 'ir.application:applicantInReview.infoDescription',
     defaultMessage:
-      'Þegar allir erfingjar hafa samþykkt birtist hnappur hér að neðan til að senda umsóknina í undirritun. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
+      'Yfirferð erfingja er valkvæð. Þú getur haldið áfram í undirritun núna eða beðið eftir að allir erfingjar samþykki. Ef þú vilt breyta gögnum í umsókninni velur þú "Breyta gögnum".',
     description: 'Next steps description',
+  },
+  applicantInReviewNextStepToSigning: {
+    id: 'ir.application:applicantInReview.nextStepToSigning',
+    defaultMessage: 'Halda áfram í undirritun',
+    description: 'Radio option to continue to signing',
+  },
+  applicantInReviewPreSignatureTitle: {
+    id: 'ir.application:applicantInReview.preSignatureTitle',
+    defaultMessage: 'Senda í undirritun',
+    description: 'Title of the pre-signature confirmation screen',
+  },
+  applicantInReviewPreSignatureInfo: {
+    id: 'ir.application:applicantInReview.preSignatureInfo#markdown',
+    defaultMessage:
+      '- Ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send í undirritun.\n- Ef nauðsynlegt þykir að gera breytingu þarf að útbúa nýja umsókn.',
+    description: 'Info bullets shown before signing',
+  },
+  applicantInReviewDirectWarning: {
+    id: 'ir.application:applicantInReview.directWarning#markdown',
+    defaultMessage:
+      'Ekki hafa allir erfingjar samþykkt umsóknina. Með því að halda áfram sendir þú hana beint í undirritun án samþykkis allra.',
+    description: 'Warning shown when not all heirs have approved',
+  },
+  applicantInReviewStatementLabel: {
+    id: 'ir.application:applicantInReview.statementLabel',
+    defaultMessage:
+      'Ég skil að ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send í undirritun.',
+    description: 'Acknowledgement checkbox label before signing',
+  },
+  applicantInReviewStatementError: {
+    id: 'ir.application:applicantInReview.statementError',
+    defaultMessage:
+      'Þú þarft að samþykkja skilyrði undirritunar til að halda áfram.',
+    description: 'Error shown when the acknowledgement is not checked',
   },
   applicantInReviewSubmit: {
     id: 'ir.application:applicantInReview.submit',
     defaultMessage: 'Senda í undirritun',
-    description: 'Send to signing button',
+    description: 'Send to signing button when all parties have approved',
+  },
+  applicantInReviewSubmitDirect: {
+    id: 'ir.application:applicantInReview.submitDirect',
+    defaultMessage: 'Senda beint í undirritun',
+    description: 'Send directly to signing without waiting for all approvals',
   },
 
   // Assignee InReview Messages
