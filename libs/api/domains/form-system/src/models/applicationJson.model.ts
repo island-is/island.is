@@ -12,24 +12,6 @@ export class ApplicationJsonValue {
   json!: Value
 }
 
-@ObjectType('FormSystemApplicationJsonListItem')
-export class ApplicationJsonListItem {
-  @Field(() => LanguageType)
-  label!: LanguageType
-
-  @Field(() => LanguageType, { nullable: true })
-  description?: LanguageType
-
-  @Field(() => String)
-  value!: string
-
-  @Field(() => Int)
-  displayOrder!: number
-
-  @Field(() => Boolean)
-  isSelected!: boolean
-}
-
 @ObjectType('FormSystemApplicationJsonField')
 export class ApplicationJsonField {
   @Field(() => String)
@@ -40,9 +22,6 @@ export class ApplicationJsonField {
 
   @Field(() => String)
   fieldType!: string
-
-  @Field(() => [ApplicationJsonListItem], { nullable: 'itemsAndList' })
-  list?: ApplicationJsonListItem[]
 
   @Field(() => [ApplicationJsonValue])
   values!: ApplicationJsonValue[]

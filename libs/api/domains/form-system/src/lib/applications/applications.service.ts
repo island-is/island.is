@@ -124,7 +124,6 @@ export class ApplicationsService {
   }
 
   async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    console.log('Saving screen with input:', input)
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )

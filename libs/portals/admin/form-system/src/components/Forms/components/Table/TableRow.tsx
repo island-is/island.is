@@ -31,6 +31,7 @@ import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
+import { removeTypename } from '../../../../lib/utils/removeTypename'
 
 interface Props {
   id?: string | null
@@ -214,16 +215,17 @@ export const TableRow = ({
             variables: { input: { id } },
           })
 
-          console.log('getJsonSample data:', data) // Debug log to check the structure of the returned data
-
           const jsonSample = data?.formSystemApplicationJsonSample?.jsonSample
           if (!jsonSample) return
+
+          // const trimmedJson = removeTypename(jsonSample)
 
           const blob = new Blob(
             [
               JSON.stringify(
                 jsonSample,
-                (key, value) => (key === '__typename' ? undefined : value),
+                (key, value) =>
+                  key === '__typename' || value === null ? undefined : value,
                 2,
               ),
             ],
@@ -233,7 +235,10 @@ export const TableRow = ({
           )
           const blobUrl = URL.createObjectURL(blob)
 
-          const safeSlug = (slug ?? 'form').replace(/[\\/:*?"<>|]/g, '-')
+          const safeSlug = (slug?.trim() || 'form').replace(
+            /[\\/:*?"<>|]/g,
+            '-',
+          )
           const fileName = `${safeSlug}.json`
 
           const a = document.createElement('a')

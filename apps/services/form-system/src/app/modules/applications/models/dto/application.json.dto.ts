@@ -1,5 +1,4 @@
 import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
@@ -10,7 +9,6 @@ import {
   IsNumber,
   IsString,
   ValidateNested,
-  IsObject,
 } from 'class-validator'
 
 export class ApplicationJsonValueDto {
@@ -18,40 +16,12 @@ export class ApplicationJsonValueDto {
   @IsNumber()
   order!: number
 
-  // @ApiProperty({ type: Object })
-  // @IsObject()
-  // json!: Record<string, unknown>
-
   @ApiProperty({ type: ValueType })
   @ValidateNested()
   @Type(() => ValueType)
   json!: ValueType
 }
 
-export class ApplicationJsonListItemDto {
-  @ApiProperty({ type: LanguageType })
-  @ValidateNested()
-  @Type(() => LanguageType)
-  label!: LanguageType
-
-  @IsOptional()
-  @ApiPropertyOptional({ type: LanguageType })
-  @ValidateNested()
-  @Type(() => LanguageType)
-  description?: LanguageType
-
-  @ApiProperty()
-  @IsString()
-  value!: string
-
-  @ApiProperty()
-  @IsNumber()
-  displayOrder!: number
-
-  @ApiProperty()
-  @IsBoolean()
-  isSelected!: boolean
-}
 export class ApplicationJsonFieldDto {
   @ApiProperty()
   @IsString()
@@ -64,12 +34,6 @@ export class ApplicationJsonFieldDto {
   @ApiProperty()
   @IsString()
   fieldType!: string
-
-  @ApiPropertyOptional({ type: [ApplicationJsonListItemDto] })
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => ApplicationJsonListItemDto)
-  list?: ApplicationJsonListItemDto[]
 
   @ApiProperty({ type: [ApplicationJsonValueDto] })
   @IsArray()

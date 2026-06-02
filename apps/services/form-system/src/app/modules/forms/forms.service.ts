@@ -240,7 +240,6 @@ export class FormsService {
       )
     }
 
-    console.log('form', JSON.stringify(form, null, 2))
     const formResponse = new FormResponseDto()
     formResponse.jsonSample = this.mapFormToJsonSample(form)
 
@@ -1235,7 +1234,6 @@ export class FormsService {
     jsonSample.submittedAt = new Date()
     jsonSample.fields = fields
 
-    console.log('jsonSample', jsonSample)
     return jsonSample
   }
 

@@ -14,19 +14,6 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
           identifier
           screenIdentifier
           fieldType
-          list {
-            label {
-              is
-              en
-            }
-            description {
-              is
-              en
-            }
-            value
-            displayOrder
-            isSelected
-          }
           values {
             order
             json {
