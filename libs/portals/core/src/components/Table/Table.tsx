@@ -470,8 +470,7 @@ export const Table = <TData extends object>({
                       }}
                     >
                       {cell.column.columnDef.meta?.noTextWrapper ? (
-                        mobileTitleKey &&
-                        cell.column.id === mobileTitleKey ? (
+                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
                           <Box id={`${tableId}-row-title-${row.id}`}>
                             {flexRender(
                               cell.column.columnDef.cell,
