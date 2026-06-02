@@ -5,6 +5,7 @@ import { Type } from 'class-transformer'
 import {
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
@@ -200,6 +201,8 @@ export class FieldSettings {
   dataSourceUrl?: string
 
   @IsOptional()
+  @IsString()
+  @IsEnum(AssetTypes)
   @ApiPropertyOptional({ enum: Object.values(AssetTypes) })
   assetType?: string
 }

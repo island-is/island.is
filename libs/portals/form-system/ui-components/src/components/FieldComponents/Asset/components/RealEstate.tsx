@@ -9,6 +9,7 @@ interface Props {
 export const RealEstate = ({ isDropdown }: Props) => {
   const { loading, error, data, fetchMore } = useQuery(GET_REAL_ESTATE, {
     variables: { input: { cursor: '1' } },
+    skip: !isDropdown,
   })
   const assetData = useMemo(() => data?.assetsOverview || {}, [data])
 

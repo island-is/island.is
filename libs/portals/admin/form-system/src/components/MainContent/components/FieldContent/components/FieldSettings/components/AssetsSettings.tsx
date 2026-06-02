@@ -47,6 +47,7 @@ export const AssetsSettings = () => {
         name="isDropdown"
         label="Er dropdown"
         checked={currentItem.fieldSettings?.isDropdown ?? false}
+        disabled={control.isReadOnly}
         onChange={(e) =>
           controlDispatch({
             type: 'SET_ANY_FIELD_SETTING',
