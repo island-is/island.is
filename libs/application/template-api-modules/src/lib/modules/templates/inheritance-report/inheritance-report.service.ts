@@ -11,6 +11,7 @@ import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  ApplicationConfigurations,
   ApplicationTypes,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
@@ -25,7 +26,8 @@ import { expandAnswers } from './utils/mappers'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { SharedTemplateApiService } from '../../shared'
 import set from 'lodash/set'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Features } from '@island.is/feature-flags'
@@ -63,6 +65,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
@@ -80,6 +83,104 @@ export class InheritanceReportService extends BaseTemplateApiService {
       reviewEnabled,
     })
     return { reviewEnabled }
+  }
+
+  async notifyAssignees({
+    application,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as InheritanceSchema
+    const assigneeNationalIds = new Set(application.assignees ?? [])
+    const heirs = answers?.heirs?.data ?? []
+    // Track who has already been emailed so re-entering inReview (e.g. on every
+    // APPROVE self-transition) does not re-notify the same assignees.
+    const alreadyNotified = new Set(
+      getValueViaPath<string[]>(
+        application.externalData,
+        'notifyAssignees.data.notifiedNationalIds',
+        [],
+      ) ?? [],
+    )
+    const pendingAssignees = heirs.filter(
+      (heir) =>
+        heir.enabled !== false &&
+        !heir.approved &&
+        !!heir.email &&
+        !!heir.nationalId &&
+        assigneeNationalIds.has(heir.nationalId) &&
+        !alreadyNotified.has(heir.nationalId),
+    )
+
+    await Promise.all(
+      pendingAssignees.map((heir) =>
+        this.sharedTemplateAPIService.sendEmail(
+          ({ application, options }) => {
+            const isIcelandic = options.locale !== 'en'
+            const subject = isIcelandic
+              ? 'Yfirferð á erfðafjárskýrslu'
+              : 'Review of inheritance report'
+            const greeting = isIcelandic ? 'Góðan dag.' : 'Hello.'
+            const intro = isIcelandic
+              ? 'Óskað er eftir að þú farir yfir erfðafjárskýrslu.'
+              : 'You are requested to review an inheritance report.'
+            const buttonCopy = isIcelandic ? 'Skoða umsókn' : 'View application'
+            const link = `${options.clientLocationOrigin}/${
+              ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
+                .slug
+            }/${application.id}`
+
+            return {
+              from: {
+                name: options.email.sender,
+                address: options.email.address,
+              },
+              to: [
+                {
+                  name: heir.name ?? '',
+                  address: heir.email ?? '',
+                },
+              ],
+              subject,
+              template: {
+                title: subject,
+                body: [
+                  { component: 'Heading', context: { copy: subject } },
+                  { component: 'Copy', context: { copy: greeting } },
+                  {
+                    component: 'Copy',
+                    context: {
+                      copy: intro,
+                    },
+                  },
+                  {
+                    component: 'Button',
+                    context: {
+                      copy: buttonCopy,
+                      href: link,
+                    },
+                  },
+                ],
+              },
+            }
+          },
+          application,
+          currentUserLocale,
+        ),
+      ),
+    )
+
+    const notifiedNationalIds = [
+      ...alreadyNotified,
+      ...pendingAssignees
+        .map((heir) => heir.nationalId)
+        .filter((nationalId): nationalId is string => !!nationalId),
+    ]
+
+    return {
+      success: true,
+      notified: pendingAssignees.length,
+      notifiedNationalIds,
+    }
   }
 
   async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {

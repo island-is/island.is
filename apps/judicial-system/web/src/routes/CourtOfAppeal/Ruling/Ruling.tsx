@@ -10,7 +10,10 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages'
@@ -395,11 +398,11 @@ const Ruling = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={appendAppealCaseIdQuery(
-            `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
+            `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
           nextUrl={appendAppealCaseIdQuery(
-            `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
           nextIsDisabled={!isStepValid}

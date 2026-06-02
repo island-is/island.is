@@ -4,8 +4,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -270,11 +273,11 @@ export const SignedVerdictOverview: FC = () => {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
-            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         } else {
           router.push(
-            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
@@ -282,11 +285,11 @@ export const SignedVerdictOverview: FC = () => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
               router.push(
-                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             } else {
               router.push(
-                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             }
           }

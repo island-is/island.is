@@ -4,7 +4,11 @@ import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -164,7 +168,7 @@ const AppealCaseFilesOverview = () => {
                     <Text whiteSpace="nowrap">
                       {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
                         file.created,
-                        constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </Text>
                     {file.category &&
@@ -226,8 +230,8 @@ const AppealCaseFilesOverview = () => {
                 onClick={() => {
                   router.push(
                     limitedAccess
-                      ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
-                      : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+                      ? `${DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE}/${workingCase.id}`
+                      : `${PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }}
                 disabled={
