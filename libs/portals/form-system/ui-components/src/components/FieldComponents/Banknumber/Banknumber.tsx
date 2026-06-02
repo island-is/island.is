@@ -40,6 +40,10 @@ export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
 
   // Combine and dispatch value on change
   useEffect(() => {
+    const allUninitialized =
+      bank === undefined && ledger === undefined && account === undefined
+    if (allUninitialized) return
+
     const combinedValue =
       bank || ledger || account
         ? `${bank ?? ''}-${ledger ?? ''}-${account ?? ''}`
