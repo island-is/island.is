@@ -18,8 +18,10 @@ import {
   Text,
   UserMenu,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  FEEDBACK_FORM_URL,
+  getUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatPhoneNumber,
@@ -190,9 +192,7 @@ const HeaderContainer = () => {
               <Button
                 variant="ghost"
                 size="small"
-                onClick={() =>
-                  window.open(constants.FEEDBACK_FORM_URL, '_blank')
-                }
+                onClick={() => window.open(FEEDBACK_FORM_URL, '_blank')}
               >
                 {formatMessage(header.feedbackButtonLabel)}
               </Button>
