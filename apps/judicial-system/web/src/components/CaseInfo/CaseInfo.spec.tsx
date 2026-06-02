@@ -174,6 +174,19 @@ describe('CourtCaseInfo - reopen button visibility', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('hides the reopen button when the case has been merged', () => {
+    const mergedCase = {
+      ...completedIndictmentCase,
+      mergeCase: { id: 'merged_case_id' },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, mergedCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('hides the reopen button when the case has not been sent to public prosecutor', () => {
     const notSentCase = {
       ...completedIndictmentCase,

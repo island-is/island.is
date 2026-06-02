@@ -11,8 +11,11 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -242,7 +245,7 @@ const Overview: FC = () => {
                 icon="add"
                 onClick={() =>
                   router.push(
-                    `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                    `${PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }
               >
@@ -293,7 +296,7 @@ const Overview: FC = () => {
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? getStandardUserDashboardRoute(user)
-              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
+              : `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             userCanSendIndictmentToCourt

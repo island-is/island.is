@@ -3,6 +3,15 @@ import { CustomField } from '../app/modules/services/models/zendeskCustomField.d
 export type Instance = keyof typeof fieldMappings
 
 const fieldMappings = {
+  haskoliislands: {
+    name: 111,
+    email: 222,
+    address: 333,
+    nationalId: 444,
+    postalCode: 555,
+    phoneNumber: 666,
+    municipality: 777,
+  },
   heilsa: {
     name: 111,
     email: 222,

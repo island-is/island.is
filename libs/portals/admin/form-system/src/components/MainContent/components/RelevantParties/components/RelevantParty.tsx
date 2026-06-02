@@ -130,7 +130,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
           />
         </GridColumn>
       </GridRow>
-      <GridRow marginBottom={4} marginTop={1}>
+      <GridRow marginBottom={1} marginTop={1}>
         {currentApplicant?.fieldSettings?.isEmailRequired !== undefined &&
           currentApplicant.fieldSettings?.isEmailRequired !== null && (
             <GridColumn span="4/12">
@@ -203,6 +203,41 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             </GridColumn>
           )}
       </GridRow>
+      {currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== undefined &&
+        currentApplicant?.fieldSettings?.fetchEmailFromMyPages !== null && (
+          <GridRow marginBottom={3}>
+            <GridColumn span="12/12">
+              <Checkbox
+                label="Sækja persónulegt netfang af Mínum síðum innskráðs notanda"
+                checked={currentApplicant.fieldSettings?.fetchEmailFromMyPages}
+                disabled={isReadOnly}
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'SET_APPLICANT_FIELD_SETTINGS',
+                    payload: {
+                      field: currentApplicant,
+                      property: 'fetchEmailFromMyPages',
+                      value: e.target.checked,
+                    },
+                  })
+                  updateField({
+                    variables: {
+                      input: {
+                        id: currentApplicant.id,
+                        updateFieldDto: {
+                          fieldSettings: {
+                            ...currentApplicant.fieldSettings,
+                            fetchEmailFromMyPages: e.target.checked,
+                          },
+                        },
+                      },
+                    },
+                  })
+                }}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
     </Box>
   )
 }

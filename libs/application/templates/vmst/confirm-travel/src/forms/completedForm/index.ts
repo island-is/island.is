@@ -11,11 +11,14 @@ export const completedForm = buildForm({
   children: [
     buildFormConclusionSection({
       alertTitle: completedFormMessages.alertTitle,
-      expandableHeader: completedFormMessages.expandableHeader,
-      expandableDescription: completedFormMessages.expandableDescription,
+      multiFieldTitle: completedFormMessages.multiFieldTitle,
+      alertMessage: '',
       descriptionFieldTitle: completedFormMessages.descriptionFieldTitle,
       descriptionFieldDescription:
         completedFormMessages.descriptionFieldDescription,
+      accordion: false,
+      bottomButtonLabel: completedFormMessages.bottomButtonLabel,
+      bottomButtonMessage: completedFormMessages.bottomButtonMessage,
     }),
   ],
 })

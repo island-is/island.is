@@ -36,6 +36,7 @@ export const FieldSettingsFragment = gql`
     hasDescription
     isPhoneRequired
     isEmailRequired
+    fetchEmailFromMyPages
     chargeItemCode
     chargeItemName
     chargeType
@@ -43,6 +44,7 @@ export const FieldSettingsFragment = gql`
     priceAmount
     isDropdown
     paymentQuantityId
+    showAddress
     zendeskTicketFieldId
     zendeskCustomObjectKey
     dataSourceUrl

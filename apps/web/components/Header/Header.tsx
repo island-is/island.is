@@ -134,6 +134,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         onMenuOpen={webMenuButtonClicked}
                         organizationSearchFilter={organizationSearchFilter}
                         languageToggleQueryParams={languageToggleQueryParams}
+                        searchInputPlaceholder={searchPlaceholder}
                       />
                     </Box>
                   </Box>

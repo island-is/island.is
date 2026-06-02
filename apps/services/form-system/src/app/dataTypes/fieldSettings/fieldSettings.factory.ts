@@ -48,11 +48,21 @@ export class FieldSettingsFactory {
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.APPLICANT:
-        keys = ['applicantType', 'isPhoneRequired', 'isEmailRequired', ...keys]
+        keys = [
+          'applicantType',
+          'isPhoneRequired',
+          'isEmailRequired',
+          'fetchEmailFromMyPages',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.CHECKBOX:
         keys = ['isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.NATIONAL_ID: {
+        keys = ['showAddress', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      }
       case FieldTypesEnum.PAYMENT:
         keys = [
           'chargeItemCode',

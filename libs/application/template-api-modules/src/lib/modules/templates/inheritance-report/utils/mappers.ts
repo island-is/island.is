@@ -170,6 +170,7 @@ export const expandAnswers = (
     assetsConfirmation: answers.assetsConfirmation,
     debtsConfirmation: answers.debtsConfirmation,
     heirsConfirmation: answers.heirsConfirmation,
+    inReviewSigningConfirmation: answers.inReviewSigningConfirmation,
     debts: {
       debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {

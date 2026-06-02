@@ -7,7 +7,7 @@ import {
   FileUploadStatus,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -46,7 +46,7 @@ const AddRulingOrder: FC = () => {
   const { user } = useContext(UserContext)
   const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
 
-  const previousRoute = `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
+  const previousRoute = `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
 
   const [confirmationDate, setConfirmationDate] = useState<Date>(new Date())
 

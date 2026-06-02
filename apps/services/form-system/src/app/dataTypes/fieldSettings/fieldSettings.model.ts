@@ -151,6 +151,11 @@ export class FieldSettings {
   isEmailRequired?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchEmailFromMyPages?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   chargeItemCode?: string
@@ -184,6 +189,11 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentQuantityId?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  showAddress?: boolean
 
   @IsOptional()
   @IsString()
