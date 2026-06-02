@@ -137,8 +137,7 @@ export default function AuthLayout() {
               headerShown: false,
               gestureEnabled: false,
               sheetGrabberVisible: false,
-              presentation:
-                Platform.OS === 'ios' ? 'fullScreenModal' : 'modal',
+              presentation: Platform.OS === 'ios' ? 'fullScreenModal' : 'modal',
               unstable_headerRightItems: () => [],
             }
           }}
