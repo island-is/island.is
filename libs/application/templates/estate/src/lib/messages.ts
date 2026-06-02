@@ -1539,8 +1539,7 @@ export const m = defineMessages({
   },
   assigneeStatusDescription: {
     id: 'es.application:assigneeStatus.description',
-    defaultMessage:
-      'Umsóknin er í vinnslu hjá umsækjanda. Þú færð tilkynningu þegar kemur að næstu skrefum.',
+    defaultMessage: 'Umsóknin er í vinnslu hjá umsækjanda.',
     description:
       'Assignee status description when the application is back with the applicant',
   },
