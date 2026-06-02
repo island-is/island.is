@@ -13,8 +13,8 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  DEFENDER_INDICTMENT_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
@@ -361,7 +361,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         user,
         courtDate,
         calendarInvite,
-        `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        `${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${theCase.id}`,
         theCase.prosecutor?.email,
         theCase.prosecutor?.name,
       ),
@@ -532,7 +532,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
               this.config.clientUrl,
               theCase.type,
               theCase.id,
-            )}${DEFENDER_INDICTMENT_ROUTE}/${
+            )}${DEFENDER_INDICTMENT_CASE_ROUTE}/${
               theCase.id
             }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
             recipientName: defenderName,

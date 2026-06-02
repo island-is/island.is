@@ -92,6 +92,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Subpoena,
                 as: 'subpoenas',
                 order: [['created', 'DESC']],
+                separate: true,
               },
               {
                 model: Verdict,
@@ -116,6 +117,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
             as: 'eventLogs',
             required: false,
             order: [['created', 'DESC']],
+            separate: true,
             where: {
               event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
             },
@@ -125,6 +127,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
             as: 'courtSessions',
             required: false,
             order: [['created', 'DESC']],
+            separate: true,
             attributes: ['ruling'],
             where: {
               ruling_type: CourtSessionRulingType.JUDGEMENT,

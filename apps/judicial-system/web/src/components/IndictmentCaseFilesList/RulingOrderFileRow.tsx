@@ -1,14 +1,15 @@
 import { ComponentProps, FC, useContext } from 'react'
+import router from 'next/router'
 
 import { Icon } from '@island.is/island-ui/core'
 import { Box, IconMapIcon } from '@island.is/island-ui/core'
 import {
-  APPEAL_FILES_ROUTE,
-  APPEAL_ROUTE,
-  DEFENDER_APPEAL_FILES_ROUTE,
-  DEFENDER_APPEAL_ROUTE,
-  DEFENDER_STATEMENT_ROUTE,
-  STATEMENT_ROUTE,
+  DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
+  DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
+  DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
+  PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -68,11 +69,15 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     (a) => a.rulingFileId === file.id,
   )
 
-  const appealRoute = isDefence ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
-  const statementRoute = isDefence ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+  const appealRoute = isDefence
+    ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+    : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
+  const statementRoute = isDefence
+    ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+    : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
   const appealFilesRoute = isDefence
-    ? DEFENDER_APPEAL_FILES_ROUTE
-    : APPEAL_FILES_ROUTE
+    ? DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE
+    : PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE
   const appealHref = `${appealRoute}/${workingCase.id}?rulingFileId=${file.id}`
   const statementHref = `${statementRoute}/${workingCase.id}?rulingFileId=${file.id}`
   const filesHref = `${appealFilesRoute}/${workingCase.id}?rulingFileId=${file.id}`
@@ -135,7 +140,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         icon: 'document',
         ...(file.isAppealDeadlineExpired
           ? { onClick: openConfirmAppealAfterDeadline }
-          : { href: appealHref }),
+          : { onClick: () => router.push(appealHref) }),
       })
     }
   } else if (
@@ -149,13 +154,13 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           icon: 'document',
           ...(appealCase.isStatementDeadlineExpired
             ? { onClick: openConfirmStatementAfterDeadline }
-            : { href: statementHref }),
+            : { onClick: () => router.push(statementHref) }),
         })
       }
       items.push({
         title: 'Bæta við gögnum',
         icon: 'add',
-        href: filesHref,
+        onClick: () => router.push(filesHref),
       })
       if (isAppellant) {
         items.push(withdrawAppeal(workingCase.id, appealCase.id))
