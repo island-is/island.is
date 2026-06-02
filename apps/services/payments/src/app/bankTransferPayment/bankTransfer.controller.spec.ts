@@ -1,102 +1,150 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { BadRequestException } from '@nestjs/common'
+import request from 'supertest'
+import { v4 as uuid } from 'uuid'
 
+import { TestApp } from '@island.is/testing/nest'
 import { BankTransferErrorCode } from '@island.is/shared/constants'
 
-import { BankTransferStatus } from './bankTransfer.types'
-import { BankTransferController } from './bankTransfer.controller'
+import { setupTestApp } from '../../../test/setup'
 import { BankTransferService } from './bankTransfer.service'
+import { BankTransferStatus } from './bankTransfer.types'
 import { BankTransferLocale } from './dtos/createBankTransfer.input'
 
+// POST defaults to 201 in Nest unless the controller decorates the handler with
+// @HttpCode(200) (e.g. via @Documentation, the way paymentFlow.controller does).
+// bankTransfer.controller currently uses @ApiOkResponse (Swagger metadata only),
+// so success responses come back as 201.
+const POST_SUCCESS = 201
+
 describe('BankTransferController', () => {
-  let controller: BankTransferController
-  let bankTransferService: jest.Mocked<
-    Pick<BankTransferService, 'create' | 'verify' | 'cancel'>
-  >
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
 
-  beforeEach(async () => {
-    bankTransferService = {
-      create: jest.fn(),
-      verify: jest.fn(),
-      cancel: jest.fn(),
-    } as unknown as jest.Mocked<
-      Pick<BankTransferService, 'create' | 'verify' | 'cancel'>
-    >
-
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [BankTransferController],
-      providers: [
-        { provide: BankTransferService, useValue: bankTransferService },
-      ],
-    }).compile()
-
-    controller = module.get<BankTransferController>(BankTransferController)
+  beforeAll(async () => {
+    app = await setupTestApp()
+    server = request(app.getHttpServer())
   })
 
   afterEach(() => {
+    // Restore the per-test prototype spies; keep the AppModule alive for siblings.
     jest.restoreAllMocks()
   })
 
-  describe('POST /create', () => {
-    it('delegates to bankTransferService.create with the input body', async () => {
-      bankTransferService.create.mockResolvedValue({
-        providerPaymentId: 'prov-1',
-        scaRedirectUrl: 'https://blikk/sca',
-      })
+  afterAll(() => {
+    app?.cleanUp()
+  })
 
-      const result = await controller.create({
-        paymentFlowId: 'flow-1',
+  describe('POST /v1/payments/bank-transfer/create', () => {
+    it('delegates to BankTransferService.create with the input body and returns the response', async () => {
+      const createSpy = jest
+        .spyOn(BankTransferService.prototype, 'create')
+        .mockResolvedValue({
+          providerPaymentId: 'prov-1',
+          scaRedirectUrl: 'https://blikk/sca',
+          expiresAt: new Date('2026-06-02T12:00:00Z'),
+        })
+
+      const paymentFlowId = uuid()
+      const response = await server
+        .post('/v1/payments/bank-transfer/create')
+        .send({ paymentFlowId, locale: BankTransferLocale.IS })
+
+      expect(response.status).toBe(POST_SUCCESS)
+      expect(createSpy).toHaveBeenCalledWith({
+        paymentFlowId,
         locale: BankTransferLocale.IS,
       })
-
-      expect(bankTransferService.create).toHaveBeenCalledWith({
-        paymentFlowId: 'flow-1',
-        locale: BankTransferLocale.IS,
-      })
-      expect(result).toEqual({
-        providerPaymentId: 'prov-1',
-        scaRedirectUrl: 'https://blikk/sca',
-      })
+      expect(response.body.providerPaymentId).toBe('prov-1')
+      expect(response.body.scaRedirectUrl).toBe('https://blikk/sca')
     })
 
-    it('propagates service errors to the caller', async () => {
-      bankTransferService.create.mockRejectedValue(
-        new Error(BankTransferErrorCode.BankTransferAlreadyInProgress),
+    it('surfaces service errors as 400 with the error code in body.detail', async () => {
+      jest
+        .spyOn(BankTransferService.prototype, 'create')
+        .mockRejectedValue(
+          new BadRequestException(
+            BankTransferErrorCode.BankTransferAlreadyInProgress,
+          ),
+        )
+
+      const response = await server
+        .post('/v1/payments/bank-transfer/create')
+        .send({ paymentFlowId: uuid(), locale: BankTransferLocale.IS })
+
+      expect(response.status).toBe(400)
+      expect(response.body.detail).toBe(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
       )
+    })
 
-      await expect(
-        controller.create({
-          paymentFlowId: 'flow-1',
-          locale: BankTransferLocale.IS,
-        }),
-      ).rejects.toThrow(BankTransferErrorCode.BankTransferAlreadyInProgress)
+    it('rejects a non-UUID paymentFlowId via ValidationPipe', async () => {
+      const createSpy = jest.spyOn(BankTransferService.prototype, 'create')
+
+      const response = await server
+        .post('/v1/payments/bank-transfer/create')
+        .send({ paymentFlowId: 'not-a-uuid', locale: BankTransferLocale.IS })
+
+      expect(response.status).toBe(400)
+      expect(createSpy).not.toHaveBeenCalled()
     })
   })
 
-  describe('POST /verify', () => {
-    it('delegates to bankTransferService.verify with the input body', async () => {
-      bankTransferService.verify.mockResolvedValue({
-        status: BankTransferStatus.PENDING,
-      })
+  describe('POST /v1/payments/bank-transfer/verify', () => {
+    it('delegates to BankTransferService.verify and returns the status', async () => {
+      const verifySpy = jest
+        .spyOn(BankTransferService.prototype, 'verify')
+        .mockResolvedValue({ status: BankTransferStatus.PENDING })
 
-      const result = await controller.verify({ paymentFlowId: 'flow-1' })
+      const paymentFlowId = uuid()
+      const response = await server
+        .post('/v1/payments/bank-transfer/verify')
+        .send({ paymentFlowId })
 
-      expect(bankTransferService.verify).toHaveBeenCalledWith({
-        paymentFlowId: 'flow-1',
-      })
-      expect(result.status).toBe(BankTransferStatus.PENDING)
+      expect(response.status).toBe(POST_SUCCESS)
+      expect(verifySpy).toHaveBeenCalledWith({ paymentFlowId })
+      expect(response.body.status).toBe(BankTransferStatus.PENDING)
+    })
+
+    it('rejects an empty body with 400 (no lookup key provided)', async () => {
+      const verifySpy = jest.spyOn(BankTransferService.prototype, 'verify')
+
+      const response = await server
+        .post('/v1/payments/bank-transfer/verify')
+        .send({})
+
+      expect(response.status).toBe(400)
+      expect(verifySpy).not.toHaveBeenCalled()
+    })
+
+    it('rejects with 400 when both paymentFlowId and providerPaymentId are provided', async () => {
+      const verifySpy = jest.spyOn(BankTransferService.prototype, 'verify')
+
+      const response = await server
+        .post('/v1/payments/bank-transfer/verify')
+        .send({
+          paymentFlowId: uuid(),
+          providerPaymentId: 'prov-1',
+        })
+
+      expect(response.status).toBe(400)
+      expect(verifySpy).not.toHaveBeenCalled()
     })
   })
 
-  describe('POST /cancel', () => {
-    it('delegates to bankTransferService.cancel with the input body', async () => {
-      bankTransferService.cancel.mockResolvedValue({ ok: true })
+  describe('POST /v1/payments/bank-transfer/cancel', () => {
+    it('delegates to BankTransferService.cancel and returns ok', async () => {
+      const cancelSpy = jest
+        .spyOn(BankTransferService.prototype, 'cancel')
+        .mockResolvedValue({ ok: true })
 
-      const result = await controller.cancel({ paymentFlowId: 'flow-1' })
+      const paymentFlowId = uuid()
+      const response = await server
+        .post('/v1/payments/bank-transfer/cancel')
+        .send({ paymentFlowId })
 
-      expect(bankTransferService.cancel).toHaveBeenCalledWith({
-        paymentFlowId: 'flow-1',
-      })
-      expect(result).toEqual({ ok: true })
+      expect(response.status).toBe(POST_SUCCESS)
+      expect(cancelSpy).toHaveBeenCalledWith({ paymentFlowId })
+      expect(response.body.ok).toBe(true)
     })
   })
 })

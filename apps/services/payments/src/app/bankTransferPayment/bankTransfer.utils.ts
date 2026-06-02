@@ -3,7 +3,10 @@ import {
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
 
-import { BankTransferStatus } from './bankTransfer.types'
+import {
+  BankTransferFailureReason,
+  BankTransferStatus,
+} from './bankTransfer.types'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
@@ -91,6 +94,22 @@ export const isBankTransferFailureStatus = (
   status === BankTransferStatus.ERROR ||
   status === BankTransferStatus.REJECTED ||
   status === BankTransferStatus.CANCELLED
+
+/** Narrows BankTransferStatus to its failure subset. Returns null for SUCCESS/PENDING. */
+export const toBankTransferFailureReason = (
+  status: BankTransferStatus,
+): BankTransferFailureReason | null => {
+  switch (status) {
+    case BankTransferStatus.ERROR:
+      return BankTransferFailureReason.ERROR
+    case BankTransferStatus.REJECTED:
+      return BankTransferFailureReason.REJECTED
+    case BankTransferStatus.CANCELLED:
+      return BankTransferFailureReason.CANCELLED
+    default:
+      return null
+  }
+}
 
 /** Builds a PAID FJS charge payload for a settled bank transfer; carries the provider id in `RRN`. */
 export const generateBankTransferChargeFJSPayload = ({

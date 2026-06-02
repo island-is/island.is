@@ -17,7 +17,7 @@ export const BankTransferModuleConfig = defineConfig({
   schema,
   load: (env) => {
     const apiKey = env.required('BLIKK_API_KEY', '')
-    const ttlRaw = env.required('BLIKK_PAYMENT_TTL_SECONDS', '100')
+    const ttlRaw = env.required('BLIKK_PAYMENT_TTL_SECONDS', '300')
     const paymentTtlSeconds = Number.parseInt(ttlRaw, 10)
 
     return {

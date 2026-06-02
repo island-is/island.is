@@ -1,4 +1,10 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -10,7 +16,10 @@ import {
 import { BankTransferService } from './bankTransfer.service'
 import { CreateBankTransferInput } from './dtos/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dtos/createBankTransfer.response'
-import { VerifyBankTransferInput } from './dtos/verifyBankTransfer.input'
+import {
+  VerifyBankTransferInput,
+  isVerifyBankTransferInputWellFormed,
+} from './dtos/verifyBankTransfer.input'
 import { VerifyBankTransferResponse } from './dtos/verifyBankTransfer.response'
 import { CancelBankTransferInput } from './dtos/cancelBankTransfer.input'
 import { CancelBankTransferResponse } from './dtos/cancelBankTransfer.response'
@@ -48,13 +57,19 @@ export class BankTransferController {
   async verify(
     @Body() input: VerifyBankTransferInput,
   ): Promise<VerifyBankTransferResponse> {
+    if (!isVerifyBankTransferInputWellFormed(input)) {
+      throw new BadRequestException(
+        'Provide exactly one of paymentFlowId or providerPaymentId',
+      )
+    }
     return this.bankTransferService.verify(input)
   }
 
   /**
    * Cancels the active bank-transfer attempt for a flow. Driven by the FE's "Cancel" button on the
-   * pending screen and "Start Again" button on the failed screen. Best-effort calls Blikk's cancel
-   * endpoint when the row is still PENDING + fresh; always soft-deletes the local row. Idempotent.
+   * pending screen and "Start Again" button on the failed screen. For a still-PENDING + fresh row it
+   * asks Blikk to cancel first; Blikk only cancels DRAFT payments, so a live (already-initiated)
+   * payment makes this throw and the local row is left active rather than orphaned. Idempotent.
    */
   @Post('/cancel')
   @ApiOkResponse({ type: CancelBankTransferResponse })

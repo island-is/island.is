@@ -766,7 +766,7 @@ describe('BankTransferService', () => {
       expect(result.status).toBe(BankTransferStatus.ERROR)
     })
 
-    it('updates lastKnownStatus when the provider returns a different non-terminal status', async () => {
+    it('updates lastKnownStatus race-guarded when the provider returns a different non-terminal status', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...activeRow,
         lastKnownStatus: 'DRAFT',
@@ -775,9 +775,13 @@ describe('BankTransferService', () => {
 
       const result = await service.verify({ paymentFlowId: 'flow-1' })
 
+      // Race-guard pins the where-clause to the prior lastKnownStatus so concurrent
+      // verify/refresh writers only land one drift update.
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { lastKnownStatus: 'SCA_REQUIRED' },
-        { where: { id: 'corr-1', isDeleted: false } },
+        {
+          where: { id: 'corr-1', isDeleted: false, lastKnownStatus: 'DRAFT' },
+        },
       )
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
       expect(result.status).toBe(BankTransferStatus.PENDING)
@@ -820,19 +824,160 @@ describe('BankTransferService', () => {
       expect(fetchMock).not.toHaveBeenCalled()
     })
 
-    it('calls Blikk DELETE and soft-deletes the row when PENDING + fresh', async () => {
+    it('calls Blikk GET then DELETE and soft-deletes the row when PENDING + fresh and Blikk still says PENDING', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      fetchMock.mockResolvedValue(
+      // 1st call: authoritative GET — Blikk confirms still PENDING.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({
+          ok: true,
+          status: 200,
+          json: { id: 'prov-1', status: 'PENDING' },
+        }),
+      )
+      // 2nd call: DELETE on Blikk.
+      fetchMock.mockResolvedValueOnce(
         mockFetchResponse({ ok: true, status: 204, json: {} }),
       )
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(fetchMock).toHaveBeenCalledTimes(1)
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
-      expect(options.method).toBe('DELETE')
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+      const [getUrl, getOptions] = fetchMock.mock.calls[0]
+      expect(getUrl).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
+      expect(getOptions.method).toBe('GET')
+      const [deleteUrl, deleteOptions] = fetchMock.mock.calls[1]
+      expect(deleteUrl).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
+      expect(deleteOptions.method).toBe('DELETE')
 
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { isDeleted: true },
+        {
+          where: {
+            id: 'corr-1',
+            isDeleted: false,
+            lastKnownStatus: 'PENDING',
+          },
+        },
+      )
+      expect(result).toEqual({ ok: true })
+    })
+
+    // Closes the cancel-vs-settlement race: if Blikk has settled but the webhook
+    // hasn't reached us yet, the cached PENDING row would silently soft-delete a
+    // paid attempt and the late webhook would be dropped by `isDeleted: false` —
+    // user could re-pay and get double-charged. The authoritative GET inside
+    // cancel finalizes SUCCESS and refuses the cancel.
+    it('throws PaymentFlowAlreadyPaid and finalizes success when the refresh GET shows SUCCESS', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
+      // Cached row is PENDING; Blikk now reports SUCCESS.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({
+          ok: true,
+          status: 200,
+          json: { id: 'prov-1', status: 'SUCCESS' },
+        }),
+      )
+      const finalizeSpy = jest
+        .spyOn(service, 'finalizeBankTransferSuccess')
+        .mockResolvedValue()
+
+      await expect(
+        service.cancel({ paymentFlowId: 'flow-1' }),
+      ).rejects.toThrow(PaymentServiceCode.PaymentFlowAlreadyPaid)
+
+      expect(finalizeSpy).toHaveBeenCalledWith({
+        correlationId: 'corr-1',
+        paymentFlowId: 'flow-1',
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SUCCESS',
+      })
+      // Blikk DELETE was never called — we don't try to cancel a settled payment.
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      // Local soft-delete also did NOT happen.
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      // No payment_cancelled event fired.
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it.each<[string]>([['ERROR'], ['REJECTED'], ['CANCELLED']])(
+      'finalizes %s (emits payment_failed) and soft-deletes without emitting payment_cancelled when the refresh GET shows the failure',
+      async (failureRawStatus) => {
+        bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
+        // 1st call: refresh GET reveals the terminal failure.
+        fetchMock.mockResolvedValueOnce(
+          mockFetchResponse({
+            ok: true,
+            status: 200,
+            json: {
+              id: 'prov-1',
+              status: failureRawStatus,
+              message: 'provider detail',
+            },
+          }),
+        )
+
+        const result = await service.cancel({ paymentFlowId: 'flow-1' })
+
+        // Blikk DELETE was NOT called — the attempt is already terminal at Blikk.
+        expect(fetchMock).toHaveBeenCalledTimes(1)
+        expect(fetchMock.mock.calls[0][1].method).toBe('GET')
+
+        // finalizeFromBlikkResult ran finalizeBankTransferFailure → terminal
+        // status persisted with race-guard pinned to the cached PENDING value.
+        expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+          { lastKnownStatus: failureRawStatus },
+          {
+            where: {
+              id: 'corr-1',
+              isDeleted: false,
+              lastKnownStatus: 'PENDING',
+            },
+          },
+        )
+
+        // Soft-delete is race-guarded to the POST-finalize lastKnownStatus.
+        expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+          { isDeleted: true },
+          {
+            where: {
+              id: 'corr-1',
+              isDeleted: false,
+              lastKnownStatus: failureRawStatus,
+            },
+          },
+        )
+
+        // Exactly one event: payment_failed from finalizeBankTransferFailure.
+        // No payment_cancelled because the row was already terminal at refresh time.
+        expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
+        expect(
+          paymentFlowService.logPaymentFlowUpdate.mock.calls[0][0],
+        ).toMatchObject({
+          paymentFlowId: 'flow-1',
+          type: 'error',
+          reason: 'payment_failed',
+        })
+
+        expect(result).toEqual({ ok: true })
+      },
+    )
+
+    it('falls through to the Blikk DELETE on cached state when the refresh GET fails (network)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
+      // 1st call: refresh GET fails.
+      fetchMock.mockRejectedValueOnce(new Error('ECONNRESET'))
+      // 2nd call: DELETE succeeds, so the cancel proceeds to soft-delete.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({ ok: true, status: 204, json: {} }),
+      )
+
+      const result = await service.cancel({ paymentFlowId: 'flow-1' })
+
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+      expect(fetchMock.mock.calls[0][1].method).toBe('GET')
+      expect(fetchMock.mock.calls[1][1].method).toBe('DELETE')
+
+      // Cached PENDING soft-delete uses the cached lastKnownStatus race-guard.
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
         {
@@ -868,9 +1013,18 @@ describe('BankTransferService', () => {
       expect(result).toEqual({ ok: true })
     })
 
-    it('still soft-deletes the row when Blikk cancel returns a non-2xx (404/409 tolerance)', async () => {
+    it('soft-deletes the row when the Blikk cancel returns 404 (nothing live to orphan)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      fetchMock.mockResolvedValue(
+      // GET: Blikk still PENDING.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({
+          ok: true,
+          status: 200,
+          json: { id: 'prov-1', status: 'PENDING' },
+        }),
+      )
+      // DELETE: 404 — the payment is unknown to Blikk, nothing live to orphan.
+      fetchMock.mockResolvedValueOnce(
         mockFetchResponse({ ok: false, status: 404, json: {} }),
       )
 
@@ -889,23 +1043,53 @@ describe('BankTransferService', () => {
       expect(result).toEqual({ ok: true })
     })
 
-    it('still soft-deletes the row when the Blikk fetch itself throws (network error tolerance)', async () => {
+    // Blikk only cancels DRAFT payments; a non-2xx (other than 404) means the payment is past DRAFT /
+    // live. Soft-deleting it would hide a possible settlement from the webhook/polling backstop and
+    // orphan the money, so we refuse the cancel instead.
+    it('throws and does NOT soft-delete when the Blikk cancel returns a non-2xx (payment is live)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      fetchMock.mockRejectedValue(new Error('ECONNRESET'))
-
-      const result = await service.cancel({ paymentFlowId: 'flow-1' })
-
-      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
-        { isDeleted: true },
-        {
-          where: {
-            id: 'corr-1',
-            isDeleted: false,
-            lastKnownStatus: 'PENDING',
-          },
-        },
+      // GET: Blikk still PENDING.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({
+          ok: true,
+          status: 200,
+          json: { id: 'prov-1', status: 'PENDING' },
+        }),
       )
-      expect(result).toEqual({ ok: true })
+      // DELETE: 409 — Blikk refuses to cancel a payment that is no longer in DRAFT.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({ ok: false, status: 409, json: {} }),
+      )
+
+      await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
+      )
+
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+      // The live payment must NOT be soft-deleted, and no payment_cancelled event fires.
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+    })
+
+    it('throws and does NOT soft-delete when the Blikk cancel request fails (network)', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
+      // GET: Blikk still PENDING.
+      fetchMock.mockResolvedValueOnce(
+        mockFetchResponse({
+          ok: true,
+          status: 200,
+          json: { id: 'prov-1', status: 'PENDING' },
+        }),
+      )
+      // DELETE: network failure — we can't confirm the cancel, so fail safe.
+      fetchMock.mockRejectedValueOnce(new Error('ECONNRESET'))
+
+      await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
+        BankTransferErrorCode.BankTransferAlreadyInProgress,
+      )
+
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
 
     it('skips the Blikk call when the row is PENDING but past expiresAt (Blikk has already cleaned up)', async () => {

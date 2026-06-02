@@ -9,15 +9,10 @@ import {
 } from '../../../graphql/mutations.graphql.generated'
 
 /**
- * Provider (Blikk) webhook. Blikk POSTs status changes here; we proxy through the GraphQL gateway
- * (`paymentsVerifyBankTransfer`) to the payments-service's `verify` endpoint, which is idempotent.
+ * Provider (Blikk) webhook. Blikk POSTs status changes here;
  *
  * Always returns 200 — the provider retries on non-2xx and we don't want them to. Settlement is
  * idempotent and a missed callback is recovered by the frontend's polling loop on the flow page.
- *
- * TODO: verify the inbound POST is actually from Blikk (HMAC/signature header) once we know Blikk's
- * signing scheme. Until then the route is bounded only by `verify` being idempotent and only acting
- * on existing rows.
  */
 const BlikkCallbackSchema = z.object({
   id: z.string().min(1),
@@ -30,7 +25,6 @@ export default async function bankTransferCallbackHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log('BANK TRANSFER CALLBACK RECEIVED', req.body)
   if (req.method !== 'POST') {
     // Even for the "wrong method" case we return 200 to keep Blikk's webhook off the retry path.
     return res
