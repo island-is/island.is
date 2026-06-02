@@ -89,7 +89,15 @@ export const VehicleBulkMileageActionCell = ({
           justifyContent="spaceBetween"
           columnGap={2}
         >
-          <Box flexGrow={1}>
+          <Box
+            flexGrow={1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                onSaveButtonClick()
+              }
+            }}
+          >
             <InputController
               control={control}
               id={mobileId}
@@ -140,7 +148,15 @@ export const VehicleBulkMileageActionCell = ({
       justifyContent="spaceBetween"
       columnGap={2}
     >
-      <Box className={styles.mwInput}>
+      <Box
+        className={styles.mwInput}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            onSaveButtonClick()
+          }
+        }}
+      >
         <Text
           id={`${desktopId}-label`}
           className={helperStyles.srOnly}
