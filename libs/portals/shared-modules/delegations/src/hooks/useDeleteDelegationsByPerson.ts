@@ -146,52 +146,51 @@ export const useDeleteDelegationsByPerson = ({ direction }: Options) => {
 
       if (delegationIds.length === 0) return true
 
-      try {
-        const results = await Promise.all(
-          delegationIds.map((delegationId) =>
-            deleteDelegation({
-              variables: { input: { delegationId } },
-            }),
-          ),
-        )
+      const results = await Promise.allSettled(
+        delegationIds.map((delegationId) =>
+          deleteDelegation({
+            variables: { input: { delegationId } },
+          }),
+        ),
+      )
 
-        const succeededDelegationIds: string[] = []
-        const failedDelegationIds: string[] = []
+      const succeededDelegationIds: string[] = []
+      const failedDelegationIds: string[] = []
 
-        delegationIds.forEach((delegationId, index) => {
-          if (isDeletionSuccessful(results[index])) {
-            succeededDelegationIds.push(delegationId)
-          } else {
-            failedDelegationIds.push(delegationId)
-          }
-        })
-
-        if (succeededDelegationIds.length > 0) {
-          evictSucceededDelegations(person, succeededDelegationIds)
-        }
-
-        if (failedDelegationIds.length === 0) {
-          return true
-        }
-
-        if (failedDelegationIds.length === delegationIds.length) {
-          toast.error(formatMessage(coreMessages.somethingWrong))
+      delegationIds.forEach((delegationId, index) => {
+        const settled = results[index]
+        if (
+          settled.status === 'fulfilled' &&
+          isDeletionSuccessful(settled.value)
+        ) {
+          succeededDelegationIds.push(delegationId)
         } else {
-          const failedLabels = failedDelegationIds.map((delegationId) =>
-            getDelegationLabel(person, delegationId),
-          )
-          toast.error(
-            formatMessage(m.deleteDelegationsFailed, {
-              delegations: failedLabels.join(', '),
-            }),
-          )
+          failedDelegationIds.push(delegationId)
         }
+      })
 
-        return false
-      } catch {
-        toast.error(formatMessage(coreMessages.somethingWrong))
-        return false
+      if (succeededDelegationIds.length > 0) {
+        evictSucceededDelegations(person, succeededDelegationIds)
       }
+
+      if (failedDelegationIds.length === 0) {
+        return true
+      }
+
+      if (failedDelegationIds.length === delegationIds.length) {
+        toast.error(formatMessage(coreMessages.somethingWrong))
+      } else {
+        const failedLabels = failedDelegationIds.map((delegationId) =>
+          getDelegationLabel(person, delegationId),
+        )
+        toast.error(
+          formatMessage(m.deleteDelegationsFailed, {
+            delegations: failedLabels.join(', '),
+          }),
+        )
+      }
+
+      return false
     },
     [deleteDelegation, evictSucceededDelegations, formatMessage],
   )

@@ -124,9 +124,13 @@ export class DelegationScopeService {
     })
   }
 
-  async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
+  async findByDelegationId(
+    delegationId: string,
+    transaction?: Transaction,
+  ): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
       where: { delegationId },
+      transaction,
     })
   }
 

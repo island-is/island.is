@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { and, Op } from 'sequelize'
+import { and } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
@@ -78,6 +79,7 @@ export class DelegationsIncomingService {
     private delegationProviderService: DelegationProviderService,
     private delegationScopeService: DelegationScopeService,
     private aliveStatusService: AliveStatusService,
+    private sequelize: Sequelize,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryV3FeatureService: NationalRegistryV3FeatureService,
@@ -343,69 +345,88 @@ export class DelegationsIncomingService {
       throw new BadRequestException('scopeNames must not be empty.')
     }
 
-    const currentDelegation = await this.delegationModel.findOne({
-      where: and(
-        { id: delegationId, toNationalId: user.nationalId },
-        getDelegationNoActorWhereClause(user),
-      ),
-      include: [
-        {
-          model: DelegationScope,
-          required: false,
-          as: 'delegationScopes',
-        },
-      ],
-    })
-    if (!currentDelegation) {
-      throw new NoContentException()
-    }
+    const result = await this.sequelize.transaction(async (transaction) => {
+      const currentDelegation = await this.delegationModel.findOne({
+        where: and(
+          { id: delegationId, toNationalId: user.nationalId },
+          getDelegationNoActorWhereClause(user),
+        ),
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+      if (!currentDelegation) {
+        return null
+      }
 
-    const existingScopeNames = new Set(
-      currentDelegation.delegationScopes?.map((s) => s.scopeName) ?? [],
-    )
-    const unknownScopes = scopeNames.filter((s) => !existingScopeNames.has(s))
-    if (unknownScopes.length > 0) {
-      throw new BadRequestException(
-        'One or more scopes are not part of this delegation.',
+      const existingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+
+      const existingScopeNames = new Set(existingScopes.map((s) => s.scopeName))
+      const unknownScopes = scopeNames.filter((s) => !existingScopeNames.has(s))
+      if (unknownScopes.length > 0) {
+        throw new BadRequestException(
+          'One or more scopes are not part of this delegation.',
+        )
+      }
+
+      await this.delegationScopeService.deleteByName(
+        delegationId,
+        scopeNames,
+        transaction,
       )
-    }
 
-    await this.delegationScopeService.deleteByName(delegationId, scopeNames)
+      const remainingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
 
-    // Reindex the recipient's own delegation cache.
+      if (remainingScopes.length === 0) {
+        // No scopes remain — destroy the row so it doesn't linger as an
+        // empty record that grants nothing.
+        await this.delegationModel.destroy({
+          where: { id: delegationId },
+          transaction,
+        })
+        return null
+      }
+
+      const refreshed = await this.delegationModel.findOne({
+        where: and(
+          { id: delegationId, toNationalId: user.nationalId },
+          getDelegationNoActorWhereClause(user),
+        ),
+        include: [
+          {
+            model: DelegationScope,
+            required: false,
+            include: [
+              {
+                attributes: ['displayName'],
+                model: ApiScope,
+              },
+            ],
+          },
+        ],
+        transaction,
+      })
+      if (!refreshed) {
+        return null
+      }
+
+      return refreshed.toDTO()
+    })
+
     void this.delegationsIndexService.indexDelegations(user)
 
-    // Refetch with the remaining scopes so the caller can echo the new state.
-    const refreshed = await this.delegationModel.findOne({
-      where: and(
-        { id: delegationId, toNationalId: user.nationalId },
-        getDelegationNoActorWhereClause(user),
-      ),
-      useMaster: true,
-      include: [
-        {
-          model: DelegationScope,
-          required: false,
-          include: [
-            {
-              attributes: ['displayName'],
-              model: ApiScope,
-            },
-          ],
-        },
-      ],
-    })
-
-    if (
-      !refreshed ||
-      (refreshed.delegationScopes && refreshed.delegationScopes?.length === 0)
-    ) {
-      // No scopes remain — destroy the delegation
-      await this.delegationModel.destroy({ where: { id: delegationId } })
+    if (!result) {
       throw new NoContentException()
     }
 
-    return refreshed.toDTO()
+    return result
   }
 
   async verifyDelegationAtProvider(

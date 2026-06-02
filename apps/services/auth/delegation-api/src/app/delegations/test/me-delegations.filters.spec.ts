@@ -408,6 +408,24 @@ describe('MeDelegationsController filters', () => {
     expect(res.status).toEqual(400)
   })
 
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when scopeNames is empty', async () => {
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [] })
+
+    // Assert
+    expect(res.status).toEqual(400)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient is not the to-user of the delegation', async () => {
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.validOutgoing.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
   it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient revokes the only scope on an incoming delegation', async () => {
     // Act
     const res = await server
@@ -426,16 +444,6 @@ describe('MeDelegationsController filters', () => {
 
     // Assert
     expect(res.status).toEqual(204)
-  })
-
-  it('DELETE /v1/me/delegations/:id/scopes returns 400 when scopeNames is empty', async () => {
-    // Act
-    const res = await server
-      .delete(`/v1/me/delegations/${delegations.validOutgoing.id}/scopes`)
-      .send({ scopeNames: [] })
-
-    // Assert
-    expect(res.status).toEqual(400)
   })
 })
 
