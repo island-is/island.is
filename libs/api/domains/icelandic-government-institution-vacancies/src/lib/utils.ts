@@ -143,6 +143,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
       applicationDeadlineTo: formatDate(item.openTo),
       intro: '',
       fieldOfWork: item.jobTitle ?? undefined,
+      jobCategory: item.jobCategory ?? undefined,
       institutionName: item.orgName ?? undefined,
       institutionReferenceIdentifier: (() => {
         const orgNrStr =
@@ -263,6 +264,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
       applicationDeadlineTo: formatDate(vacancy.openTo),
       intro,
       fieldOfWork: vacancy.jobTitle ?? undefined,
+      jobCategory: vacancy.jobCategory ?? undefined,
       institutionName: vacancy.orgName ?? undefined,
       institutionReferenceIdentifier: (() => {
         const orgNrStr =
