@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -323,7 +324,8 @@ export class AppealCaseService {
     } else if (isDefenceUser(user)) {
       caseUpdate.accusedPostponedAppealDate = nowFactory()
       if (isIndictmentCase(theCase.type)) {
-        appealCaseData.appealedByNationalId = user.nationalId
+        appealCaseData.appealedByNationalId =
+          nationalIdTransformer({ value: user.nationalId }) ?? undefined
       }
       fileCategories = [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -396,7 +398,8 @@ export class AppealCaseService {
     }
 
     if (isDefenceUser(user)) {
-      appealCaseData.appealedByNationalId = user.nationalId
+      appealCaseData.appealedByNationalId =
+        nationalIdTransformer({ value: user.nationalId }) ?? undefined
     }
 
     return this.appealCaseRepositoryService.create(theCase.id, appealCaseData, {

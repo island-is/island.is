@@ -7,6 +7,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { DefendantEventType, User } from '@island.is/judicial-system/types'
 
+import { nationalIdTransformer } from '../../../transformers'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 interface CreateDefendantEventLogOptions {
@@ -34,7 +35,7 @@ export class DefendantEventLogRepositoryService {
         eventType,
         caseId,
         defendantId,
-        nationalId: user.nationalId,
+        nationalId: nationalIdTransformer({ value: user.nationalId }) ?? undefined,
         userRole: user.role,
         userName: user.name,
         userTitle: user.title,

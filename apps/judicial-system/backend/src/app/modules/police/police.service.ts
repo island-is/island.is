@@ -40,6 +40,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
@@ -1340,7 +1341,8 @@ export class PoliceService {
           return {
             serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
-              response.defenderNationalId ?? undefined,
+              nationalIdTransformer({ value: response.defenderNationalId }) ??
+              undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: legalPaperServiceDate ?? servedAt,

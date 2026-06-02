@@ -18,6 +18,7 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { nationalIdTransformer } from '../../transformers'
 import { EventLog } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 
@@ -66,7 +67,7 @@ export class EventLogService {
       {
         eventType,
         caseId,
-        nationalId: user.nationalId,
+        nationalId: nationalIdTransformer({ value: user.nationalId }) ?? undefined,
         userRole: user.role,
         userName: user.name,
         userTitle: user.title,
