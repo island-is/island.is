@@ -50,12 +50,22 @@ const HealthConversationDetail = () => {
   const [replyOpen, setReplyOpen] = useState(false)
   const [replyText, setReplyText] = useState('')
   const replyRef = useRef<HTMLDivElement>(null)
+  const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
+
+  useEffect(() => {
+    if (replyOpen) {
+      replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      replyInputRef.current?.focus()
+    }
+  }, [replyOpen])
 
   const { data, loading, error } = useGetHealthConversationDetailQuery({
     variables: { id },
   })
 
-  const [markAsRead] = useMarkHealthConversationAsReadMutation()
+  const [markAsRead] = useMarkHealthConversationAsReadMutation({
+    refetchQueries: ['GetHealthConversations'],
+  })
   const onMutationError = () => toast.error(formatMessage(m.errorTitle))
 
   const [starMessage] = useStarHealthConversationDetailMutation({
@@ -160,8 +170,8 @@ const HealthConversationDetail = () => {
             borderWidth="standard"
             borderRadius="large"
             paddingTop={3}
-            paddingBottom={5}
-            paddingX={5}
+            paddingBottom={[3, 3, 5]}
+            paddingX={[2, 2, 5]}
           >
             <Box
               display="flex"
@@ -177,16 +187,7 @@ const HealthConversationDetail = () => {
                 archived={item.isArchived}
                 onReply={
                   item.patientCanReply !== false
-                    ? () => {
-                        setReplyOpen(true)
-                        setTimeout(
-                          () =>
-                            replyRef.current?.scrollIntoView({
-                              behavior: 'smooth',
-                            }),
-                          50,
-                        )
-                      }
+                    ? () => setReplyOpen(true)
                     : undefined
                 }
                 onFav={() => {
@@ -368,6 +369,7 @@ const HealthConversationDetail = () => {
                     backgroundColor="blue"
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
+                    ref={replyInputRef}
                   />
                 </Box>
 

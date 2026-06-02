@@ -16,6 +16,7 @@ type MessageActionsProps = {
   loading?: boolean
   stashLabels?: { add: string; remove: string }
   colorScheme?: 'light' | 'negative'
+  size?: 'small' | 'default' | 'large'
 }
 
 const blurAfter =
@@ -35,6 +36,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   loading,
   stashLabels,
   colorScheme = 'light',
+  size = 'small',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -67,8 +69,13 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             circle
             icon="fileTrayEmpty"
             iconType={archived ? 'filled' : 'outline'}
+            aria-label={
+              archived
+                ? stashLabels?.remove ?? formatMessage(m.removeFromStorage)
+                : stashLabels?.add ?? formatMessage(m.addToStorage)
+            }
             onClick={blurAfter(onStash)}
-            size="small"
+            size={size}
             colorScheme={colorScheme}
           />
         </Tooltip>
@@ -81,8 +88,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             circle
             icon="star"
             iconType={bookmarked ? 'filled' : 'outline'}
+            aria-label={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
             onClick={blurAfter(onFav)}
-            size="small"
+            size={size}
             colorScheme={colorScheme}
           />
         </Tooltip>
@@ -93,8 +101,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             circle
             icon="mailOpen"
             iconType="outline"
+            aria-label={formatMessage(m.markAsRead)}
             onClick={blurAfter(onRead)}
-            size="small"
+            size={size}
             colorScheme={colorScheme}
           />
         </Tooltip>
@@ -105,8 +114,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             circle
             icon="undo"
             iconType="outline"
+            aria-label={formatMessage(m.replyDocument)}
             onClick={blurAfter(onReply)}
-            size="small"
+            size={size}
             colorScheme={colorScheme}
           />
         </Tooltip>

@@ -10,6 +10,7 @@ type Props =
 // shared document component then which needs to be created.
 const ConversationAvatar = ({ name, icon, variant }: Props) => (
   <Box
+    aria-hidden="true"
     display="flex"
     alignItems="center"
     justifyContent="center"

@@ -1,17 +1,18 @@
 import {
   Box,
-  Button,
   Checkbox,
   Filter,
   Input,
   Stack,
   Text,
+  VisuallyHidden,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  LinkButton,
   MessageActions,
   IntroWrapper,
   formatDate,
@@ -21,7 +22,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -49,7 +50,6 @@ type FilterValues = {
 const HealthConversations = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
 
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
@@ -106,11 +106,11 @@ const HealthConversations = () => {
   })
 
   const filteredConversations = useMemo(() => {
-    if (!data?.healthDirectorateHealthConversations) {
+    if (!healthConversations) {
       return []
     }
 
-    return healthConversations?.filter((message) => {
+    return healthConversations.filter((message) => {
       const matchesSearch =
         message.title
           ?.toLowerCase()
@@ -129,15 +129,13 @@ const HealthConversations = () => {
       intro={messages.healthConversationsIntro}
       desktopContentSpan="10/12"
     >
-      <Box display={['block', 'block', 'block', 'none']} marginBottom={3}>
-        <Button
+      <Box display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']} marginBottom={3}>
+        <LinkButton
+          to={HealthPaths.HealthConversationsNew}
+          text={formatMessage(messages.healthConversationsCreate)}
           variant="primary"
           size="small"
-          iconType="outline"
-          onClick={() => navigate(HealthPaths.HealthConversationsNew)}
-        >
-          {formatMessage(messages.healthConversationsCreate)}
-        </Button>
+        />
       </Box>
       <Box
         display="flex"
@@ -153,18 +151,16 @@ const HealthConversations = () => {
           variant="popover"
           align="left"
           filterInput={
-            <Box style={{ width: '100%', maxWidth: 320 }}>
-              <Input
-                name="messageSearch"
-                placeholder={formatMessage(
-                  messages.healthConversationsSearchPlaceholder,
-                )}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                icon={{ type: 'outline', name: 'search' }}
-                size="sm"
-                backgroundColor="blue"
-              />
-            </Box>
+            <Input
+              name="messageSearch"
+              placeholder={formatMessage(
+                messages.healthConversationsSearchPlaceholder,
+              )}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              icon={{ type: 'outline', name: 'search' }}
+              size="xs"
+              backgroundColor="blue"
+            />
           }
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
@@ -209,14 +205,12 @@ const HealthConversations = () => {
           display={['none', 'none', 'none', 'block']}
           style={{ whiteSpace: 'nowrap' }}
         >
-          <Button
+          <LinkButton
+            to={HealthPaths.HealthConversationsNew}
+            text={formatMessage(messages.healthConversationsCreate)}
             variant="primary"
             size="small"
-            iconType="outline"
-            onClick={() => navigate(HealthPaths.HealthConversationsNew)}
-          >
-            {formatMessage(messages.healthConversationsCreate)}
-          </Button>
+          />
         </Box>
       </Box>
       {loading && <CardLoader />}
@@ -283,6 +277,11 @@ const HealthConversations = () => {
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
+                        {!item.isRead && (
+                          <VisuallyHidden>
+                            {` - ${formatMessage(m.notificationUnread)}`}
+                          </VisuallyHidden>
+                        )}
                       </Text>
                     </Box>
                   </Link>

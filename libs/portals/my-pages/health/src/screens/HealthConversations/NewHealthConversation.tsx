@@ -43,7 +43,9 @@ const NewHealthConversation = () => {
     })
 
   const [createMessage, { loading: sending }] =
-    useCreateHealthConversationMutation()
+    useCreateHealthConversationMutation({
+      refetchQueries: ['GetHealthConversations'],
+    })
 
   const recipient = data?.healthDirectorateHealthConversationRecipients?.find(
     (r) => r.allowsMessaging,
@@ -61,7 +63,7 @@ const NewHealthConversation = () => {
     !!selectedTypeCode && !!messageText.trim() && termsAccepted && !sending
 
   const handleSubmit = async () => {
-    if (!canSubmit || !recipient) return
+    if (!canSubmit || !recipient || !selectedTypeCode) return
     const selectedType = recipient.allowedMessageTypes.find(
       (t) => t.patientInitiatedTypeCode === selectedTypeCode,
     )
@@ -71,7 +73,7 @@ const NewHealthConversation = () => {
           input: {
             nodeId: recipient.nodeId,
             groupId: recipient.groupId,
-            patientInitiatedTypeCode: selectedTypeCode!,
+            patientInitiatedTypeCode: selectedTypeCode,
             title: selectedType?.title,
             messageTextContent: messageText,
           },
@@ -152,7 +154,6 @@ const NewHealthConversation = () => {
                 required
               />
             </Box>
-
             <Box marginBottom={3}>
               <Input
                 textarea
@@ -169,6 +170,7 @@ const NewHealthConversation = () => {
             </Box>
 
             <Box marginBottom={4}>
+              {/* TODO: Add terms and conditions link */}
               <Checkbox
                 id="terms-accept"
                 checked={termsAccepted}
@@ -180,7 +182,6 @@ const NewHealthConversation = () => {
                 )}`}
               />
             </Box>
-
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 onClick={handleSubmit}
