@@ -75,7 +75,7 @@ const NewHealthConversation = () => {
             groupId: recipient.groupId,
             patientInitiatedTypeCode: selectedTypeCode,
             title: selectedType?.title,
-            messageTextContent: messageText,
+            messageTextContent: messageText.trim(),
           },
         },
       })

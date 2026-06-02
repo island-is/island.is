@@ -72,7 +72,7 @@ export class HealthConversationsAttachmentController {
     res.header('Content-Length', buffer.length.toString())
     res.header('Content-Type', attachment.contentType)
     res.header('Pragma', 'no-cache')
-    res.header('Cache-Control', 'no-cache, max-age=0')
+    res.header('Cache-Control', 'no-store, private, max-age=0')
     return res.status(200).end(buffer)
   }
 }

@@ -53,6 +53,7 @@ const HealthConversations = () => {
 
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
+  const [searchInput, setSearchInput] = useState('')
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     variables: {
@@ -77,6 +78,7 @@ const HealthConversations = () => {
   )
 
   const handleSearchChange = (value: string) => {
+    setSearchInput(value)
     debouncedSetSearchQuery(value)
   }
 
@@ -110,16 +112,14 @@ const HealthConversations = () => {
       return []
     }
 
-    return healthConversations.filter((message) => {
-      const matchesSearch =
-        message.title
-          ?.toLowerCase()
-          .includes(filterValues.searchQuery.toLowerCase()) ||
-        message.lastSenderGroupName
-          ?.toLowerCase()
-          .includes(filterValues.searchQuery.toLowerCase())
+    const query = filterValues.searchQuery.trim().toLowerCase()
+    if (!query) return healthConversations
 
-      return matchesSearch
+    return healthConversations.filter((message) => {
+      return (
+        message.title?.toLowerCase().includes(query) ||
+        message.lastSenderGroupName?.toLowerCase().includes(query)
+      )
     })
   }, [filterValues, healthConversations])
 
@@ -156,6 +156,7 @@ const HealthConversations = () => {
               placeholder={formatMessage(
                 messages.healthConversationsSearchPlaceholder,
               )}
+              value={searchInput}
               onChange={(e) => handleSearchChange(e.target.value)}
               icon={{ type: 'outline', name: 'search' }}
               size="xs"
@@ -164,6 +165,7 @@ const HealthConversations = () => {
           }
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
+            setSearchInput('')
             setFilterValues(defaultFilterValues)
           }}
         >
