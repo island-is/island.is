@@ -198,6 +198,7 @@ export default function InboxScreen() {
 
   const [selectState, setSelectedState] = useState(false)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [selectAllMode, setSelectAllMode] = useState(false)
 
   const res = useListDocumentsQuery({
     variables: {
@@ -276,7 +277,17 @@ export default function InboxScreen() {
   const resetSelectState = () => {
     setSelectedItems([])
     setSelectedState(false)
+    setSelectAllMode(false)
   }
+
+  // Wrap the selectedItems setter passed to individual rows so any manual
+  // toggle disables select-all mode (the user is taking over control).
+  const handleItemSelectionChange = useCallback<
+    React.Dispatch<React.SetStateAction<string[]>>
+  >((updater) => {
+    setSelectAllMode(false)
+    setSelectedItems(updater)
+  }, [])
 
   const onRefresh = useCallback(async () => {
     try {
@@ -298,6 +309,13 @@ export default function InboxScreen() {
 
   const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = query.length > 2
+
+  // While select-all mode is on, keep selectedItems in sync with every loaded
+  // document so newly loaded items are also selected by default.
+  useEffect(() => {
+    if (!selectAllMode) return
+    setSelectedItems(items.map((item) => item.id))
+  }, [items, selectAllMode])
 
   const loadMore = async () => {
     if (res.loading || loadingMore) {
@@ -417,7 +435,7 @@ export default function InboxScreen() {
           item={document}
           selectable={selectState}
           selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
+          setSelectedItems={handleItemSelectionChange}
           setSelectedState={setSelectedState}
           listParams={{
             ...filters,
@@ -431,7 +449,7 @@ export default function InboxScreen() {
       filters,
       selectState,
       selectedItems,
-      setSelectedItems,
+      handleItemSelectionChange,
       availableCategories,
       isFeature2WayMailboxEnabled,
     ],
@@ -580,12 +598,15 @@ export default function InboxScreen() {
                     fontFamily: fontByWeight('400'),
                   },
                   onPress() {
-                    allDocumentsSelected
-                      ? setSelectedItems([])
-                      : setSelectedItems(
-                          res.data?.documentsV2?.data.map((doc) => doc.id) ??
-                            [],
-                        )
+                    if (allDocumentsSelected) {
+                      setSelectAllMode(false)
+                      setSelectedItems([])
+                    } else {
+                      setSelectAllMode(true)
+                      setSelectedItems(
+                        res.data?.documentsV2?.data.map((doc) => doc.id) ?? [],
+                      )
+                    }
                   },
                 },
               ]
