@@ -22,6 +22,18 @@ export class ApplicationJsonValueDto {
   json!: ValueType
 }
 
+export class ApplicationJsonFieldSettingsDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isDecimal?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  applicantType?: string
+}
+
 export class ApplicationJsonFieldDto {
   @ApiProperty()
   @IsString()
@@ -34,6 +46,12 @@ export class ApplicationJsonFieldDto {
   @ApiProperty()
   @IsString()
   fieldType!: string
+
+  @ApiPropertyOptional({ type: ApplicationJsonFieldSettingsDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ApplicationJsonFieldSettingsDto)
+  fieldSettings?: ApplicationJsonFieldSettingsDto
 
   @ApiProperty({ type: [ApplicationJsonValueDto] })
   @IsArray()

@@ -19,6 +19,7 @@ import { ApplicationDto } from './dto/application.dto'
 import {
   ApplicationJsonDto,
   ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
   ApplicationJsonValueDto,
 } from './dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
@@ -193,10 +194,25 @@ export class ApplicationMapper {
         jsonField.identifier = field.identifier
         jsonField.screenIdentifier = screenIdentifier
         jsonField.fieldType = field.fieldType
+
+        const settings = new ApplicationJsonFieldSettingsDto()
+        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+        }
+        if (field.fieldType === FieldTypesEnum.APPLICANT) {
+          settings.applicantType = field.fieldSettings?.applicantType
+        }
+        if (
+          settings.isDecimal !== undefined ||
+          settings.applicantType !== undefined
+        ) {
+          jsonField.fieldSettings = settings
+        }
+
         jsonField.values = (field.values ?? []).map((value) => {
           const jsonValue = new ApplicationJsonValueDto()
           jsonValue.order = value.order
-          jsonValue.json = (value.json ?? {}) as Record<string, unknown>
+          jsonValue.json = value.json ?? {}
           return jsonValue
         })
         return jsonField

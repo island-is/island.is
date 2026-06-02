@@ -14,6 +14,10 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
           identifier
           screenIdentifier
           fieldType
+          fieldSettings {
+            isDecimal
+            applicantType
+          }
           values {
             order
             json {

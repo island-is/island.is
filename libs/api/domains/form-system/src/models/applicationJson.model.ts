@@ -12,6 +12,15 @@ export class ApplicationJsonValue {
   json!: Value
 }
 
+@ObjectType('FormSystemApplicationJsonFieldSettings')
+export class ApplicationJsonFieldSettings {
+  @Field(() => Boolean, { nullable: true })
+  isDecimal?: boolean
+
+  @Field(() => String, { nullable: true })
+  applicantType?: string
+}
+
 @ObjectType('FormSystemApplicationJsonField')
 export class ApplicationJsonField {
   @Field(() => String)
@@ -22,6 +31,9 @@ export class ApplicationJsonField {
 
   @Field(() => String)
   fieldType!: string
+
+  @Field(() => ApplicationJsonFieldSettings, { nullable: true })
+  fieldSettings?: ApplicationJsonFieldSettings
 
   @Field(() => [ApplicationJsonValue])
   values!: ApplicationJsonValue[]

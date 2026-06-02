@@ -69,6 +69,7 @@ import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/orga
 import {
   ApplicationJsonDto,
   ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 
@@ -1214,9 +1215,22 @@ export class FormsService {
         jsonField.screenIdentifier = screenIdentifier
         jsonField.fieldType = field.fieldType
 
+        const settings = new ApplicationJsonFieldSettingsDto()
+        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+        }
+        if (field.fieldType === FieldTypesEnum.APPLICANT) {
+          settings.applicantType = field.fieldSettings?.applicantType
+        }
+        if (
+          settings.isDecimal !== undefined ||
+          settings.applicantType !== undefined
+        ) {
+          jsonField.fieldSettings = settings
+        }
+
         const shaped =
           ValueTypeFactory.getClass(field.fieldType, new ValueType()) ?? {}
-
         jsonField.values = [
           {
             order: 0,
