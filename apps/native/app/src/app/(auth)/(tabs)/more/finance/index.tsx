@@ -9,7 +9,14 @@ import { GetFinanceStatus } from '@/graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useBrowser } from '@/hooks/use-browser'
-import { Button, Heading, Skeleton, TableViewCell, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  Heading,
+  Skeleton,
+  TableViewCell,
+  Typography,
+} from '@/ui'
 import { FinanceStatusCard } from '../../../../../components/finance-status-card'
 import { StackScreen } from '../../../../../components/stack-screen'
 import { testIDs } from '@/utils/test-ids'
@@ -38,19 +45,21 @@ export default function FinanceScreen() {
 
   const organizations = financeStatusData?.organizations ?? []
 
-  function getChargeTypeTotal() {
-    const organizationChargeTypes = organizations.map((org) => org.chargeTypes)
-    const allChargeTypes = (organizationChargeTypes?.flat() ?? []) as Array<{
-      totals: number
-    }>
+  function getChargeTypeTotal(): number | undefined {
+    if (!res.data?.getFinanceStatus) {
+      return undefined
+    }
+    const allChargeTypes = organizations.flatMap(
+      (org) => org.chargeTypes ?? [],
+    ) as Array<{ totals: number }>
 
-    const chargeTypeTotal =
-      allChargeTypes.length > 0
-        ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
-        : 0
-
-    return chargeTypeTotal
+    if (allChargeTypes.length === 0) {
+      return undefined
+    }
+    return allChargeTypes.reduce((a, b) => a + (b?.totals ?? 0), 0)
   }
+
+  const chargeTypeTotal = getChargeTypeTotal()
 
   const financeStatusZero = financeStatusData?.statusTotals === 0
 
@@ -114,35 +123,46 @@ export default function FinanceScreen() {
             defaultMessage="Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum."
           />
         </Typography>
+        {financeStatusData?.message && (
+          <View style={{ marginTop: 16, marginBottom: 16 }}>
+            <Alert
+              type="warning"
+              message={financeStatusData.message}
+              hasBorder
+            />
+          </View>
+        )}
       </SafeAreaView>
-      <TableViewCell
-        style={{
-          marginTop: 16,
-          marginBottom: 24,
-        }}
-        title={
-          <Typography size={13} style={{ marginBottom: 4 }}>
-            <FormattedMessage
-              id="finance.statusCard.total"
-              defaultMessage="Samtals"
-            />
-            :
-          </Typography>
-        }
-        subtitle={
-          showLoading ? (
-            <Skeleton
-              active
-              style={{ borderRadius: 4, width: 150 }}
-              height={26}
-            />
-          ) : (
-            <Typography size={20} weight="600">{`${intl.formatNumber(
-              getChargeTypeTotal(),
-            )} kr.`}</Typography>
-          )
-        }
-      />
+      {chargeTypeTotal !== undefined && (
+        <TableViewCell
+          style={{
+            marginTop: 16,
+            marginBottom: 24,
+          }}
+          title={
+            <Typography size={13} style={{ marginBottom: 4 }}>
+              <FormattedMessage
+                id="finance.statusCard.total"
+                defaultMessage="Samtals"
+              />
+              :
+            </Typography>
+          }
+          subtitle={
+            showLoading ? (
+              <Skeleton
+                active
+                style={{ borderRadius: 4, width: 150 }}
+                height={26}
+              />
+            ) : (
+              <Typography size={20} weight="600">
+                {`${intl.formatNumber(chargeTypeTotal)} kr.`}
+              </Typography>
+            )
+          }
+        />
+      )}
       {scheduleButtonVisible && (
         <SafeAreaView
           style={{
