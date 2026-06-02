@@ -13,6 +13,7 @@ import {
   ApplicationWithAttachments,
   PruningApplication,
   RecordObject,
+  ApplicationStatus,
 } from '@island.is/application/types'
 import {
   getAdminDataForPruning,
@@ -20,6 +21,8 @@ import {
 } from './application-lifecycle.utils'
 import { HistoryService } from '@island.is/application/api/history'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import addMonths from 'date-fns/addMonths'
+import { createDailyCompletionNotifications } from '@island.is/application/api/payment'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -54,6 +57,7 @@ export class ApplicationLifeCycleService {
     // Pruning
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
+    await this.filterInvoicesFromPruning()
     await this.fetchAndSendCurrentScheduledNotifications()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
@@ -97,6 +101,81 @@ export class ApplicationLifeCycleService {
       if (notifications && notifications.length > 0) {
         this.pruneNotifications.set(application.id, notifications)
       }
+    }
+  }
+
+  private async filterInvoicesFromPruning() {
+    const incompleteWithPayment: ApplicationPruning[] = []
+    const incompleteWithInvoicePayments: ApplicationPruning[] = []
+    const output: ApplicationPruning[] = []
+
+    // Filter out applications that are not completed and have a successful payment creation
+    for (const application of this.processingApplications) {
+      if (
+        application.application.status !== ApplicationStatus.COMPLETED &&
+        application.application.externalData?.createCharge?.status === 'success'
+      ) {
+        incompleteWithPayment.push(application)
+      } else {
+        output.push(application)
+      }
+    }
+
+    if (incompleteWithPayment.length === 0) {
+      this.logger.info(
+        'No incomplete applications with payment to be extended.',
+      )
+      return
+    }
+
+    const inCompleteApplicationIds = incompleteWithPayment.map(
+      (application) => application.application.id,
+    )
+
+    // Fetch ids of applications that have invoice payments
+    const invoicePaymentApplicationIds =
+      await this.applicationChargeService.getInvoicePaymentApplicationIds(
+        inCompleteApplicationIds,
+      )
+
+    for (const application of incompleteWithPayment) {
+      if (invoicePaymentApplicationIds.has(application.application.id)) {
+        // Add the applications that have invoice payments to the incompleteWithInvoicePayments array
+        incompleteWithInvoicePayments.push(application)
+      } else {
+        // Add the applications that don't have invoice payments to the output array
+        output.push(application)
+      }
+    }
+
+    this.logger.info(
+      `Found ${incompleteWithInvoicePayments.length} applications with invoice payments to be extended.`,
+    )
+    this.processingApplications = output // Assign the filtered array to the processing applications array
+
+    for (const prunable of incompleteWithInvoicePayments) {
+      const applicationLink =
+        await this.applicationChargeService.getApplicationLink(
+          prunable.application,
+        )
+      const oneMonthFromNow = addMonths(new Date(), 1)
+      const notifications = createDailyCompletionNotifications(
+        applicationLink,
+        new Date(),
+        oneMonthFromNow,
+      )
+      await this.applicationService.cancelScheduledNotifications(
+        prunable.application.id, // cancel any existing notifications
+      )
+      await this.applicationService.createScheduledNotifications(
+        prunable.application.id,
+        prunable.application.state,
+        notifications,
+      )
+      await this.applicationService.update(prunable.application.id, {
+        ...prunable.application,
+        pruneAt: oneMonthFromNow,
+      })
     }
   }
 
