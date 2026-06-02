@@ -98,6 +98,7 @@ interface Props {
   workingCase: Case
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
+  forceDisplayAdditionalFiles?: boolean
   connectedCaseParentId?: string
 }
 
@@ -282,6 +283,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
   displayHeading = true,
+  forceDisplayAdditionalFiles = false,
   connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
@@ -326,7 +328,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
     workingCase.splitCases,
   )
   const permissions = useFilePermissions(workingCase, user)
-  const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const showFiles =
+    forceDisplayAdditionalFiles ||
+    Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,

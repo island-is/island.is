@@ -184,9 +184,11 @@ const CaseFileTable: FC<Props> = ({
           )
         })}
       </TableContainer>
-      <Box marginTop={2}>
-        <InfoBox text="Engin viðbótargögn hafa verið send" />
-      </Box>
+      {sortedData.length === 0 && (
+        <Box marginTop={2}>
+          <InfoBox text="Engin viðbótargögn hafa verið send" />
+        </Box>
+      )}
       {RejectCaseFileModal}
     </>
   )
