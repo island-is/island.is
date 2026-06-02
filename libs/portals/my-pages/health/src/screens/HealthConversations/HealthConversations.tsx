@@ -129,7 +129,10 @@ const HealthConversations = () => {
       intro={messages.healthConversationsIntro}
       desktopContentSpan="10/12"
     >
-      <Box display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']} marginBottom={3}>
+      <Box
+        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+        marginBottom={3}
+      >
         <LinkButton
           to={HealthPaths.HealthConversationsNew}
           text={formatMessage(messages.healthConversationsCreate)}
