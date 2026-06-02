@@ -1,5 +1,6 @@
-import { FC, useContext } from 'react'
+import { ComponentProps, FC, useContext } from 'react'
 
+import { Icon } from '@island.is/island-ui/core'
 import { Box, IconMapIcon } from '@island.is/island-ui/core'
 import {
   APPEAL_FILES_ROUTE,
@@ -177,7 +178,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   // the row without status text or actions.
   let statusText: string | undefined
   let statusIcon: IconMapIcon | undefined = undefined
-  let statusIconColor: string | undefined = undefined
+  let statusIconColor: ComponentProps<typeof Icon>['color'] | undefined =
+    undefined
 
   if (!hasBeenAppealed) {
     // Pre-appeal: only the appealing-eligible parties see the deadline.
