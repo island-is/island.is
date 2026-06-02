@@ -24,7 +24,6 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -1416,8 +1415,7 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
-    const normalizedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)[0]
+    const normalizedNationalId = defendantNationalId ?? ''
 
     const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
