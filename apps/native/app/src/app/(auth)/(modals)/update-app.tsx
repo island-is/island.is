@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, SafeAreaView, Linking, BackHandler } from 'react-native'
+import { View, Image, Linking, BackHandler } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 import { Stack, router, useLocalSearchParams } from 'expo-router'
 
@@ -45,6 +46,7 @@ export default function UpdateAppScreen() {
   const closable = closableParam !== 'false'
   const intl = useIntl()
 
+  // Make sure if closable = false that android back button does not work
   useEffect(() => {
     if (closable) {
       return
@@ -66,7 +68,7 @@ export default function UpdateAppScreen() {
             : undefined,
         }}
       />
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host>
           <Image
             source={logo}
