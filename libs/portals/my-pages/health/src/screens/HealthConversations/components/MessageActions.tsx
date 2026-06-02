@@ -2,14 +2,14 @@ import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, Tooltip } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
-import React, { MouseEvent } from 'react'
+import React from 'react'
 import * as styles from './MessageActions.css'
 
 type MessageActionsProps = {
-  onFav?: (event: MouseEvent<HTMLElement>) => void
-  onStash?: (event: MouseEvent<HTMLElement>) => void
-  onRead?: (event: MouseEvent<HTMLElement>) => void
-  onReply?: (event: MouseEvent<HTMLElement>) => void
+  onFav?: (event: React.MouseEvent<HTMLElement>) => void
+  onStash?: (event: React.MouseEvent<HTMLElement>) => void
+  onRead?: (event: React.MouseEvent<HTMLElement>) => void
+  onReply?: (event: React.MouseEvent<HTMLElement>) => void
   bookmarked?: boolean
   archived?: boolean
   loading?: boolean
@@ -19,10 +19,10 @@ type MessageActionsProps = {
 }
 
 const blurAfter =
-  (handler?: (e: MouseEvent<HTMLElement>) => void) =>
-  (e: MouseEvent<HTMLElement>) => {
+  (handler?: React.MouseEventHandler<HTMLElement>) =>
+  (e: React.MouseEvent<HTMLElement>) => {
     handler?.(e)
-    ;(e.currentTarget as HTMLElement).blur()
+    e.currentTarget.blur()
   }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
@@ -87,7 +87,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             circle
             icon="star"
             iconType={bookmarked ? 'filled' : 'outline'}
-            aria-label={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
+            aria-label={formatMessage(
+              bookmarked ? m.removeFavorite : m.addFavorite,
+            )}
             onClick={blurAfter(onFav)}
             size={size}
             colorScheme={colorScheme}
