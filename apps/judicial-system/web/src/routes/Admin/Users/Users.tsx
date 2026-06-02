@@ -10,7 +10,11 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ADMIN_CHANGE_USER_ROUTE,
+  ADMIN_CREATE_USER_ROUTE,
+  ADMIN_STATISTICS_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   formatDate,
   formatNationalId,
@@ -56,7 +60,7 @@ export const Users = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
+    router.push(`${ADMIN_CHANGE_USER_ROUTE}/${user.id}`)
   }
 
   return (
@@ -66,7 +70,7 @@ export const Users = () => {
         <Button
           icon="add"
           onClick={() => {
-            router.push(constants.CREATE_USER_ROUTE)
+            router.push(ADMIN_CREATE_USER_ROUTE)
           }}
         >
           Nýr notandi
@@ -75,7 +79,7 @@ export const Users = () => {
           variant="ghost"
           icon="calculator"
           onClick={() => {
-            router.push(constants.STATISTICS_ROUTE)
+            router.push(ADMIN_STATISTICS_ROUTE)
           }}
         >
           Tölfræði

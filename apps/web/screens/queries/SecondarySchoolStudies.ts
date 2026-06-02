@@ -186,6 +186,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY = gql`
           description
         }
       }
+      isReferenceProgramme
     }
   }
 `

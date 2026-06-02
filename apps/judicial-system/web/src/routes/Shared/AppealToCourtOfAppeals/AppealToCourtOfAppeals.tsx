@@ -9,7 +9,13 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -27,6 +33,7 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -44,13 +51,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id, rulingFileId: rulingFileIdQuery } = router.query
-  const rulingFileId =
-    typeof rulingFileIdQuery === 'string' ? rulingFileIdQuery : undefined
+  const rulingFileId = router.query.rulingFileId?.toString()
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
     workingCase,
@@ -84,14 +89,14 @@ const AppealToCourtOfAppeals = () => {
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
-        ? constants.DEFENDER_INDICTMENT_ROUTE
-        : constants.DEFENDER_ROUTE
+        ? DEFENDER_INDICTMENT_CASE_ROUTE
+        : DEFENDER_REQUEST_CASE_ROUTE
       : isIndictmentCase(workingCase.type)
       ? isCompletedCase(workingCase.state)
-        ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-        : constants.INDICTMENTS_OVERVIEW_ROUTE
-      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+        ? PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
+        : PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
+      : SIGNED_VERDICT_OVERVIEW_ROUTE
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -105,16 +110,19 @@ const AppealToCourtOfAppeals = () => {
 
     const appealCase = await createAppealCase(workingCase.id, rulingFileId)
 
+    refreshCase()
+
     if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
   }, [
     handleUpload,
-    createAppealCase,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
+    createAppealCase,
     workingCase.id,
     rulingFileId,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
@@ -160,6 +168,10 @@ const AppealToCourtOfAppeals = () => {
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
           )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={rulingFileId}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title="Kæra" required />

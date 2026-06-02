@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import './tanstack-table'
+import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import {
   ColumnDef,
@@ -13,8 +14,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import AnimateHeight from 'react-animate-height'
-import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  FocusableBox,
+  Icon,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
+import { helperStyles } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '../EmptyTable/EmptyTable'
 import { useIsMobile } from '../../hooks/useIsMobile/useIsMobile'
@@ -36,6 +47,8 @@ interface TableProps<TData extends object> {
   sorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
   defaultSorting?: SortingState
+  /** Screen-reader-only caption describing the table. Auto-included when the table has sortable columns. */
+  srCaption?: string
 }
 
 export const Table = <TData extends object>({
@@ -51,7 +64,9 @@ export const Table = <TData extends object>({
   sorting: controlledSorting,
   onSortingChange,
   defaultSorting,
+  srCaption,
 }: TableProps<TData>) => {
+  const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const [internalSorting, setInternalSorting] = useState<SortingState>(
     defaultSorting ?? [],
@@ -84,6 +99,8 @@ export const Table = <TData extends object>({
     return [expanderCol, ...providedColumns]
   }, [providedColumns, renderExpandedRow])
 
+  const tableId = useId()
+
   const table = useReactTable<TData>({
     data,
     columns,
@@ -108,11 +125,10 @@ export const Table = <TData extends object>({
     return <EmptyTable loading />
   }
 
-  if (!data.length) {
-    return <EmptyTable message={emptyMessage} />
-  }
-
   if (isMobile) {
+    if (!data.length) {
+      return <EmptyTable message={emptyMessage} />
+    }
     return (
       <Box>
         {table.getRowModel().rows.map((row) => {
@@ -145,7 +161,16 @@ export const Table = <TData extends object>({
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                <Text variant="h4" as="h2" color="blue400">
+                <Text
+                  variant="h4"
+                  as="h2"
+                  color="blue400"
+                  id={
+                    mobileTitleKey
+                      ? `${tableId}-row-title-${row.id}`
+                      : undefined
+                  }
+                >
                   {titleCell
                     ? flexRender(
                         titleCell.column.columnDef.cell,
@@ -163,6 +188,13 @@ export const Table = <TData extends object>({
                       size="small"
                       type="button"
                       variant="primary"
+                      aria-labelledby={
+                        mobileTitleKey
+                          ? `${tableId}-row-title-${row.id}`
+                          : undefined
+                      }
+                      aria-expanded={isExpanded}
+                      aria-controls={`${tableId}-row-expanded-${row.id}`}
                       onClick={() => {
                         if (isExpanded) {
                           setCollapsingRows((prev) => new Set(prev).add(row.id))
@@ -210,6 +242,7 @@ export const Table = <TData extends object>({
               </Box>
               {renderExpandedRow && (
                 <AnimateHeight
+                  id={`${tableId}-row-expanded-${row.id}`}
                   duration={300}
                   height={isExpanded ? 'auto' : 0}
                   onHeightAnimationEnd={(newHeight) => {
@@ -232,28 +265,65 @@ export const Table = <TData extends object>({
     )
   }
 
+  const hasSortableColumns = table
+    .getAllColumns()
+    .some((col) => col.getCanSort())
+
   return (
     <T.Table>
+      {hasSortableColumns && (
+        <caption>
+          <span className={helperStyles.srOnly}>
+            {srCaption ?? formatMessage(m.tableCaption)}{' '}
+            {formatMessage(m.tableSortHint)}
+          </span>
+        </caption>
+      )}
       <T.Head>
         {table.getHeaderGroups().map((headerGroup) => (
           <T.Row key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <T.HeadData
                 key={header.id}
+                scope="col"
+                aria-label={
+                  header.column.id === 'expander'
+                    ? formatMessage(m.tableExpandColumn)
+                    : undefined
+                }
+                aria-sort={
+                  header.column.getCanSort()
+                    ? header.column.getIsSorted() === 'asc'
+                      ? 'ascending'
+                      : header.column.getIsSorted() === 'desc'
+                      ? 'descending'
+                      : 'none'
+                    : undefined
+                }
                 style={{
-                  cursor: header.column.getCanSort() ? 'pointer' : 'default',
                   fontSize: '16px',
+                  ...(header.column.columnDef.meta?.align && {
+                    textAlign: header.column.columnDef.meta.align,
+                  }),
                 }}
-                onClick={header.column.getToggleSortingHandler()}
               >
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                  {header.column.getCanSort() && (
+                {header.column.getCanSort() ? (
+                  <FocusableBox
+                    component="button"
+                    type="button"
+                    display="flex"
+                    alignItems="center"
+                    color="blue"
+                    className={styles.sortButton}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
                     <Box
                       marginLeft={1}
+                      aria-hidden="true"
                       style={{
                         visibility: header.column.getIsSorted()
                           ? 'visible'
@@ -270,14 +340,28 @@ export const Table = <TData extends object>({
                         size="small"
                       />
                     </Box>
-                  )}
-                </Box>
+                  </FocusableBox>
+                ) : (
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </Box>
+                )}
               </T.HeadData>
             ))}
           </T.Row>
         ))}
       </T.Head>
       <T.Body>
+        {!data.length && (
+          <tr>
+            <td colSpan={columns.length}>
+              <EmptyTable message={emptyMessage} />
+            </td>
+          </tr>
+        )}
         {table.getRowModel().rows.map((row) => {
           const isExpanded = row.getIsExpanded()
           const isCollapsing = collapsingRows.has(row.id)
@@ -316,6 +400,13 @@ export const Table = <TData extends object>({
                           size="small"
                           type="button"
                           variant="primary"
+                          aria-labelledby={
+                            mobileTitleKey
+                              ? `${tableId}-row-title-${row.id}`
+                              : undefined
+                          }
+                          aria-expanded={isExpanded}
+                          aria-controls={`${tableId}-row-expanded-${row.id}`}
                           onClick={() => {
                             if (isExpanded) {
                               setCollapsingRows((prev) =>
@@ -340,7 +431,15 @@ export const Table = <TData extends object>({
                           isExpanded || isCollapsing ? undefined : 'standard',
                       }}
                     >
-                      <Text variant="medium">
+                      <Text
+                        variant="medium"
+                        id={
+                          mobileTitleKey && cell.column.id === mobileTitleKey
+                            ? `${tableId}-row-title-${row.id}`
+                            : undefined
+                        }
+                        textAlign={cell.column.columnDef.meta?.align}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -351,7 +450,9 @@ export const Table = <TData extends object>({
                 )}
               </T.Row>
               {renderExpandedRow && (
-                <T.Row>
+                // T.Row doesn't forward aria-hidden, so we use a native <tr>.
+                // Safe: content is not rendered when collapsed, so no focusable children exist when hidden.
+                <tr aria-hidden={!isExpanded && !isCollapsing}>
                   <T.Data
                     colSpan={columns.length}
                     style={{ padding: 0 }}
@@ -359,9 +460,12 @@ export const Table = <TData extends object>({
                       position: 'relative',
                       background:
                         isExpanded || isCollapsing ? 'blue100' : undefined,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? 'standard' : undefined,
                     }}
                   >
                     <AnimateHeight
+                      id={`${tableId}-row-expanded-${row.id}`}
                       duration={300}
                       height={isExpanded ? 'auto' : 0}
                       onHeightAnimationEnd={(newHeight) => {
@@ -384,7 +488,7 @@ export const Table = <TData extends object>({
                       )}
                     </AnimateHeight>
                   </T.Data>
-                </T.Row>
+                </tr>
               )}
             </Fragment>
           )

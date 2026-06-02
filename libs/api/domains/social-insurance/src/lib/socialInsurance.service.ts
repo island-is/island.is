@@ -8,9 +8,11 @@ import {
   SocialInsuranceAdministrationPaymentTypesOverviewService,
   SocialInsuranceAdministrationPensionCalculatorService,
   SocialInsuranceAdministrationPersonalTaxCreditService,
-  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -28,6 +30,7 @@ import { IncomePlanEligbility } from './models/income/incomePlanEligibility.mode
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
+import { mapToTaxCardType } from './enums/taxCardType'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
@@ -46,8 +49,11 @@ import {
   mapChildBenefitInformation,
   mapPaymentTypeOverview,
 } from './mappers/mapPaymentTypesOverview'
+import { parseTaxBracketAction } from './mappers/parseTaxBracketAction'
 import { PaymentTypeOverview } from './models/paymentTypes/paymentTypeOverview.model'
 import { ChildBenefitInformation } from './models/paymentTypes/childBenefitInformation.model'
+import { TaxBracketAction } from './enums/taxBracketAction'
+import { PersonalTaxCreditSpouseInfo } from './models/personalTaxCredit/spouseInfo.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -261,9 +267,8 @@ export class SocialInsuranceService {
   async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
     const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
 
-    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
-      ? undefined
-      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+    const registrationMonthsAndYears =
+      await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
 
     const discontinuingMonthsAndYears =
       taxCardsResult?.canDiscontinuePersonalAllowance
@@ -273,13 +278,20 @@ export class SocialInsuranceService {
         : undefined
 
     return {
-      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
-        ...tc,
-        validFrom: tc.validFrom ?? undefined,
-        validTo: tc.validTo ?? undefined,
-        type: tc.taxCardType ?? undefined,
-        percentage: tc.percentage ?? 0,
-      })),
+      taxCards: taxCardsResult?.taxCards
+        ?.map((tc) => {
+          const type = mapToTaxCardType(tc.taxCardType)
+          if (!type || tc.percentage == null || !tc.validFrom) {
+            return null
+          }
+          return {
+            percentage: tc.percentage,
+            validFrom: tc.validFrom,
+            validTo: tc.validTo ?? undefined,
+            type,
+          }
+        })
+        .filter(isDefined),
       canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
       canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
       registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
@@ -291,30 +303,33 @@ export class SocialInsuranceService {
 
   async setTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
   }
 
   async editTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
   }
 
   async discontinueTaxCardAllowance(
     user: User,
-    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
   }
 
-  async getPaymentTypes(user: User): Promise<PaymentTypeOverview[] | null> {
+  async getPaymentTypes(
+    user: User,
+    locale: Locale,
+  ): Promise<PaymentTypeOverview[] | null> {
     const data = await this.paymentTypesOverviewClient
       .getPaymentTypesOverview(user)
       .catch(handle404)
-    return data ? data.map(mapPaymentTypeOverview) : null
+    return data ? data.map((row) => mapPaymentTypeOverview(row, locale)) : null
   }
 
   async getChildBenefits(
@@ -324,5 +339,42 @@ export class SocialInsuranceService {
       .getChildBenefitsInformation(user)
       .catch(handle404)
     return data ? data.map(mapChildBenefitInformation) : null
+  }
+
+  async getTaxBracket(user: User): Promise<TaxBracketAction | null> {
+    const data = await this.personalTaxCreditClient
+      .getTaxBracket(user)
+      .catch(handle404)
+    return parseTaxBracketAction(data?.taxBracket)
+  }
+
+  async setTaxBracket(user: User, taxBracket: TaxBracketAction): Promise<void> {
+    return this.personalTaxCreditClient.setTaxBracket(user, taxBracket)
+  }
+
+  async getSpouseInfo(user: User): Promise<PersonalTaxCreditSpouseInfo | null> {
+    const data = await this.personalTaxCreditClient
+      .getSpouseInfo(user)
+      .catch(handle404)
+    if (!data?.nationalId) return null
+    return {
+      nationalId: data.nationalId,
+      name: data.name ?? undefined,
+      isDeceased: data.isDeceased ?? undefined,
+    }
+  }
+
+  async setSpouseTaxCard(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCard(user, input)
+  }
+
+  async setSpouseTaxCardDueToDeath(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }
 }

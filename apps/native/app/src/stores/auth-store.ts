@@ -10,6 +10,7 @@ import {
 import Keychain from 'react-native-keychain'
 
 import { bundleId, getConfig } from '../config'
+import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
 import { isAndroid } from '../utils/devices'
@@ -50,7 +51,6 @@ interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
-  lockScreenComponentId: string | undefined
   lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
   cognitoDismissCount: number
@@ -136,7 +136,6 @@ export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
-  lockScreenComponentId: undefined,
   lockScreenSuppressedUntil: undefined,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
@@ -291,6 +290,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        lockScreenActivatedAt: undefined,
       }),
       true,
     )
@@ -307,8 +307,6 @@ setAuthStoreRef(authStore)
 export const useAuthStore = <U = AuthStore>(
   selector?: (state: AuthStore) => U,
 ) => useStore(authStore, selector!)
-
-const LOCK_SCREEN_SUPPRESS_MAX_MS = 15 * 60 * 1000 // 60 min safety cap
 
 /**
  * Suppress the app lock screen until explicitly cleared or the safety cap expires.

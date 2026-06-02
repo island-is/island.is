@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { col, Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  AppealCaseNotificationType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -25,7 +26,6 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
-  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -334,6 +334,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -390,7 +391,7 @@ export const include: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: NotificationType.APPEAL_COMPLETED },
+    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -511,13 +512,21 @@ export const include: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
-            where: { created: { [Op.lt]: col('Case.created') } },
+            separate: true,
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },

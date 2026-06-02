@@ -23,10 +23,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import {
   createClient,
@@ -240,26 +237,10 @@ describe('ActorDelegationsController', () => {
             ),
           ]
 
-          beforeAll(async () => {
-            nationalRegistryApiSpy = jest
-              .spyOn(nationalRegistryApi, 'getIndividual')
-              .mockImplementation(async (id) => {
-                if (deceasedNationalIds.includes(id)) {
-                  return null
-                }
-
-                const user = nationalRegistryUsers.find(
-                  (u) => u?.nationalId === id,
-                )
-
-                return user ?? null
-              })
-            const nationalRegistryV3FeatureService = app.get(
-              NationalRegistryV3FeatureService,
-            )
-            jest
-              .spyOn(nationalRegistryV3FeatureService, 'getValue')
-              .mockImplementation(async () => featureFlag)
+          // Default Midlun (national-registry-v3) mock used across this block.
+          // The ward describe overrides it with a custody-aware mock and restores
+          // it via this function in its afterAll to avoid leaking into other blocks.
+          const applyDefaultV3Mock = () => {
             nationalRegistryV3ApiSpy = jest
               .spyOn(nationalRegistryV3Api, 'getAllDataIndividual')
               .mockImplementation(async (id) => {
@@ -282,6 +263,29 @@ describe('ActorDelegationsController', () => {
                     }
                   : null
               })
+          }
+
+          beforeAll(async () => {
+            nationalRegistryApiSpy = jest
+              .spyOn(nationalRegistryApi, 'getIndividual')
+              .mockImplementation(async (id) => {
+                if (deceasedNationalIds.includes(id)) {
+                  return null
+                }
+
+                const user = nationalRegistryUsers.find(
+                  (u) => u?.nationalId === id,
+                )
+
+                return user ?? null
+              })
+            const nationalRegistryV3FeatureService = app.get(
+              NationalRegistryV3FeatureService,
+            )
+            jest
+              .spyOn(nationalRegistryV3FeatureService, 'getValue')
+              .mockImplementation(async () => featureFlag)
+            applyDefaultV3Mock()
           })
 
           it('should return only valid delegations', async () => {
@@ -729,17 +733,31 @@ describe('ActorDelegationsController', () => {
             let getForsja: jest.SpyInstance
             let clientInstance: any
 
-            const mockForKt = (kt: string): void => {
+            // Custody-aware Midlun mock for the national-registry-v3 code path.
+            // Parent lookup returns the wards via forsja.born; per-child lookup
+            // returns that child's individual record.
+            const mockV3ForChildren = (childIds: string[]): void => {
               jest
-                .spyOn(clientInstance, 'getIndividual')
-                .mockResolvedValueOnce({
-                  nationalId: kt,
-                  name: nationalRegistryUser.name,
-                } as IndividualDto)
+                .spyOn(nationalRegistryV3Api, 'getAllDataIndividual')
+                .mockImplementation(async (id) => {
+                  if (id === user.nationalId) {
+                    return {
+                      kennitala: id,
+                      forsja: {
+                        born: childIds.map((childId) => ({
+                          barnKennitala: childId,
+                          barnNafn: nationalRegistryUser.name,
+                        })),
+                      },
+                    }
+                  }
 
-              jest
-                .spyOn(clientInstance, 'getCustodyChildren')
-                .mockResolvedValueOnce([kt])
+                  return { kennitala: id, nafn: nationalRegistryUser.name }
+                })
+            }
+
+            const mockForKt = (kt: string): void => {
+              mockV3ForChildren([kt])
             }
 
             beforeEach(() => {
@@ -747,10 +765,14 @@ describe('ActorDelegationsController', () => {
               getForsja = jest
                 .spyOn(clientInstance, 'getCustodyChildren')
                 .mockResolvedValue([nationalRegistryUser.nationalId])
+              mockV3ForChildren([nationalRegistryUser.nationalId])
             })
 
             afterAll(() => {
               getForsja.mockRestore()
+              // Restore the default Midlun mock so the custody-aware override does
+              // not leak into the procuring / personal-representative blocks.
+              applyDefaultV3Mock()
             })
 
             it('should return delegations', async () => {

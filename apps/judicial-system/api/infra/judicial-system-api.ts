@@ -51,7 +51,7 @@ export const serviceSetup = (services: {
         prod: 'master',
       },
       HIDDEN_FEATURES: {
-        dev: 'APPEAL_RULING_ORDER',
+        dev: '',
         staging: 'APPEAL_RULING_ORDER',
         prod: 'APPEAL_RULING_ORDER',
       },

@@ -10,7 +10,10 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -490,15 +493,15 @@ const Subpoena: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
             if (!isSchedulingArraignmentDate) {
               router.push(
-                `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+                `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`,
               )
             } else {
-              setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+              setNavigateTo(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE)
             }
           }}
           nextButtonText={

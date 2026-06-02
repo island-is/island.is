@@ -148,6 +148,13 @@ export const m = defineMessages({
       'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
+  healthDeclarationMultiField65DescriptionRedesigned: {
+    id: 'dl.application:healthDeclarationMultiField65DescriptionRedesigned#markdown',
+    defaultMessage:
+      'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og má ekki vera eldra en 3 mánaða. Hladdu vottorðinu hér að neðan til að halda áfram með umsóknina. Starfsmaður mun fara yfir vottorðið og samþykkja það áður en nýtt skírteini er pantað.',
+    description:
+      'Health declaration intro for 65+ renewal redesigned flow (in-app upload)',
+  },
   healthDeclarationMultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
@@ -550,10 +557,15 @@ export const m = defineMessages({
       'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
     description: 'Application received',
   },
+  applicationDoneAlertMessage65RenewalRedesigned: {
+    id: 'dl.application:applicationDoneAlertMessage65RenewalRedesigned',
+    defaultMessage:
+      'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin.',
+    description: 'Application received - 65+ renewal (redesigned flow)',
+  },
   applicationDoneAlertMessageBE: {
     id: 'dl.application:applicationDoneAlertMessageBE',
-    defaultMessage:
-      'Umsókn þín um að hefja ökunám fyrir BE réttindi hefur verið móttekin.',
+    defaultMessage: 'Umsókn þín um BE réttindi hefur verið móttekin.',
     description: 'Application received',
   },
   nextStepsTitle: {
@@ -581,19 +593,36 @@ export const m = defineMessages({
   nextStepsIntroBE: {
     id: 'dl.application:nextStepsIntroBE',
     defaultMessage:
-      'Umsókn þín verður nú yfirfarin, þegar því er lokið er stafræn ökunámsbók virkjuð.',
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
     description: '',
+  },
+  nextStepsIntro65RenewalRedesigned: {
+    id: 'dl.application:nextStepsIntro65RenewalRedesigned',
+    defaultMessage:
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+    description: 'Next steps intro - 65+ renewal (redesigned flow)',
   },
   nextStepsDescriptionBE: {
     id: 'dl.application:nextStepsDescriptionBE#markdown',
     defaultMessage:
-      'Þegar ökunámi og prófi er lokið, pöntum við nýtt ökuskírteini sem við afhendum eftir afhendingamáta sem þú valdir í umsókninni. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
     description: '',
   },
+  // Legacy 65+ flow: user submits the application here, then must take a
+  // health certificate to a district office before the license can be ordered.
   nextStepsDescription65Renewal: {
     id: 'dl.application:nextStepsDescription65Renewal#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at euismod nisi. In lobortis nisi purus, sit amet porta sem auctor vitae. Nunc aliquet elit nec ex gravida, a placerat quam eleifend.',
+      'Umsókn þín hefur verið send. Til þess að nýtt ökuskírteini verði pantað þarftu að skila inn læknisvottorði á valið sýslumannsembætti. Skírteinið verður ekki pantað fyrr en vottorðinu hefur verið skilað inn.',
+    description: '',
+  },
+  // Redesigned 65+ flow (flag is65RenewalRedesignEnabled = true): user has
+  // already uploaded the health certificate; an employee reviews it and the
+  // license is ordered automatically once approved.
+  nextStepsDescription65RenewalRedesigned: {
+    id: 'dl.application:nextStepsDescription65RenewalRedesigned#markdown',
+    defaultMessage:
+      'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
     description: '',
   },
   nextStepsInfoLink: {
@@ -1237,14 +1266,14 @@ export const requirementsMessages = defineMessages({
     description:
       'BE application does not support health certificate requirement',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  // Used by both BE and redesigned 65+ flows when no usable photo (Þjóðskrá
+  // facial photo or RLS quality photo) is available.
   beLicenseQualityPhotoTitle: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
     defaultMessage: 'Gæðavottuð mynd',
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoDescription: {
     id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
     defaultMessage:

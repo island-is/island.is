@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Icon,
@@ -49,6 +50,7 @@ import {
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
+import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -197,6 +199,7 @@ const useFilteredCaseFiles = (
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
+      defendantRulings: filterByCategories(CaseFileCategory.DEFENDANT_RULING),
       rulingOrders: filterByCategories(
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ),
@@ -235,6 +238,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewDefendantRulings: !isDefenceUser(user),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -606,6 +610,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
+              (permissions.canViewDefendantRulings &&
+                filteredFiles.defendantRulings.length > 0) ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
               <div>
@@ -618,7 +624,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {hideCourtRecord ? (
                   <AlertMessage
                     type="info"
-                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
+                    message="Hægt er að nálgast þingbók og dómsúrlausn hjá héraðsdómi"
                   />
                 ) : (
                   <>
@@ -641,6 +647,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}
+                    onOpenFile={onOpen}
+                  />
+                )}
+                {permissions.canViewDefendantRulings && (
+                  <RenderFiles
+                    caseFiles={filteredFiles.defendantRulings}
                     onOpenFile={onOpen}
                   />
                 )}
@@ -687,6 +699,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   })}
               </div>
             )}
+            {showRulingOrderAppealMenu &&
+              (workingCase.rulingOrderAppealCases?.length ?? 0) > 0 && (
+                <Box>
+                  <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                    {workingCase.rulingOrderAppealCases?.map((appealCase) => {
+                      const rulingFile = workingCase.caseFiles?.find(
+                        (f) => f.id === appealCase.rulingFileId,
+                      )
+                      if (!rulingFile) {
+                        return null
+                      }
+                      return (
+                        <RulingOrderAppealFilesAccordion
+                          key={appealCase.id}
+                          appealCase={appealCase}
+                          rulingFile={rulingFile}
+                          onOpenFile={onOpen}
+                        />
+                      )
+                    })}
+                  </Accordion>
+                </Box>
+              )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
               files={filteredFiles.criminalRecordUpdate}

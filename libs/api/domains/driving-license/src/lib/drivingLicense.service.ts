@@ -15,17 +15,15 @@ import {
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
-  PostRenewal65AndOverInput,
+  NewRenewal65DrivingLicenseInput,
 } from './drivingLicense.type'
 import {
-  CanApplyErrorCodeBFull,
-  CanApplyErrorCodeBTemporary,
   Disqualification,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
   TeacherV4,
-  PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
+  ModelsV5PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
   DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
 import {
@@ -326,7 +324,7 @@ export class DrivingLicenseService {
   }
 
   private canApplyErrorCodeToRequirementKey(
-    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+    errorCode?: string,
   ): RequirementKey {
     if (errorCode === undefined) {
       return RequirementKey.deniedByService
@@ -349,6 +347,8 @@ export class DrivingLicenseService {
         return RequirementKey.personNot17YearsOld
       case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
         return RequirementKey.personNotFoundInNationalRegistry
+      case 'PERSON_NOT_REGISTERED_IN_ICELAND':
+        return RequirementKey.localResidency
       default:
         this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 
@@ -497,6 +497,8 @@ export class DrivingLicenseService {
         email: input.email,
         phone: input.phone,
         auth,
+        photoBiometricsId: input.photoBiometricsId,
+        signatureBiometricsId: input.signatureBiometricsId,
       })
 
     return {
@@ -525,14 +527,45 @@ export class DrivingLicenseService {
     }
   }
 
+  async applyForRenewal65(
+    auth: User['authorization'],
+    input: NewRenewal65DrivingLicenseInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postApplyForRenewal65({
+      token: auth,
+      districtId: input.jurisdiction,
+      phoneNumber: input.primaryPhoneNumber,
+      email: input.studentEmail,
+      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
+      sendPlasticToPerson: input.sendPlasticToPerson,
+      contentList: input.contentList,
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
+  // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
+  // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
+  // has been ON in prod long enough to retire the legacy submit path.
   async renewDrivingLicense65AndOver(
     auth: User['authorization'],
-    input: PostRenewal65AndOverInput,
+    input: { jurisdiction: number } & Pick<
+      NewRenewal65DrivingLicenseInput,
+      'pickupPlasticAtDistrict' | 'sendPlasticToPerson'
+    >,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
-      input,
-      auth: auth,
+      token: auth,
+      districtId: input.jurisdiction,
+      pickupPlasticAtDistrict: input.pickupPlasticAtDistrict,
+      sendPlasticToPerson: input.sendPlasticToPerson,
     })
+
     return {
       success: response.isOk ?? false,
       errorMessage: response.errorCode ?? null,

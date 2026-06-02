@@ -35,6 +35,7 @@ import {
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
+import { VerdictService } from '../../verdict'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
 import { CaseService } from '../case.service'
@@ -56,6 +57,7 @@ jest.mock('../../defendant/defendant.service')
 jest.mock('../../defendant/civilClaimant.service')
 jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
+jest.mock('../../verdict/verdict.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
@@ -87,6 +89,7 @@ export const createTestingCaseModule = async () => {
       CivilClaimantService,
       IndictmentCountService,
       SubpoenaService,
+      VerdictService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
       DefendantEventLogRepositoryService,
@@ -157,6 +160,8 @@ export const createTestingCaseModule = async () => {
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
   const subpoenaService = caseModule.get<SubpoenaService>(SubpoenaService)
+
+  const verdictService = caseModule.get<VerdictService>(VerdictService)
 
   const civilClaimantService =
     caseModule.get<CivilClaimantService>(CivilClaimantService)
@@ -232,6 +237,7 @@ export const createTestingCaseModule = async () => {
     awsS3Service,
     defendantService,
     subpoenaService,
+    verdictService,
     civilClaimantService,
     indictmentCountService,
     caseRepositoryService,

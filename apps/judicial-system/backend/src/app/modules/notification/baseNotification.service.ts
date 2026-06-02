@@ -7,12 +7,21 @@ import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import {
+  TrackedNotificationType,
+  UserDescriptor,
+} from '@island.is/judicial-system/types'
 
-import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
+import {
+  filterWhitelistEmails,
+  formatArraignmentDateEmailNotification,
+  formatCourtCalendarInvitation,
+  stripHtmlTags,
+} from '../../formatters'
 import { notifications } from '../../messages'
+import { CourtService } from '../court'
 import { EventService } from '../event'
-import { Notification, Recipient } from '../repository'
+import { Case, DateLog, Notification, Recipient } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
 import { notificationModuleConfig } from './notification.config'
 
@@ -28,6 +37,7 @@ export abstract class BaseNotificationService {
     private readonly notificationModel: typeof Notification,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
+    private readonly courtService: CourtService,
     protected readonly config: ConfigType<typeof notificationModuleConfig>,
     protected readonly eventService: EventService,
     protected readonly logger: Logger,
@@ -161,7 +171,7 @@ export abstract class BaseNotificationService {
 
   protected async recordNotification(
     caseId: string,
-    type: string,
+    type: TrackedNotificationType,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
     await this.notificationModel.create({
@@ -178,16 +188,19 @@ export abstract class BaseNotificationService {
     }
   }
 
-  protected hasSentNotification(type: string, notifications?: Notification[]) {
+  protected hasSentNotification(
+    type: TrackedNotificationType,
+    notifications?: Notification[],
+  ) {
     return notifications?.some((notification) => notification.type === type)
   }
 
   protected hasReceivedNotification(
-    type?: string | string[],
+    type?: TrackedNotificationType | TrackedNotificationType[],
     address?: string,
     notifications?: Notification[],
   ) {
-    const types = type ? [type].flat() : Object.values(NotificationType)
+    const types = type ? [type].flat() : Object.values(TrackedNotificationType)
 
     return notifications?.some((notification) => {
       return (
@@ -229,5 +242,95 @@ export abstract class BaseNotificationService {
         )
         .render(),
     }
+  }
+
+  protected getCourtDateCalendarInvite = (
+    theCase: Case,
+    targetDateLog: DateLog,
+  ) => {
+    const { date: scheduledDate, location: courtRoom } = targetDateLog
+    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
+      theCase,
+      courtRoom,
+    )
+    const calendarInvite = this.createICalAttachment({
+      eventOrganizer,
+      scheduledDate,
+      title,
+      location,
+    })
+
+    return calendarInvite
+  }
+
+  protected async uploadEmailToCourt(
+    theCase: Case,
+    user: UserDescriptor,
+    subject: string,
+    body: string,
+    recipients?: string,
+  ): Promise<void> {
+    try {
+      await this.courtService.createEmail(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        subject,
+        body,
+        recipients ?? '',
+        this.config.email.fromEmail,
+        this.config.email.fromName,
+      )
+    } catch (error) {
+      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
+      this.logger.warn(
+        `Failed to upload email to court for case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
+  protected async sendArraignmentDateEmailNotification({
+    theCase,
+    user,
+    arraignmentDateLog,
+    recipientName,
+    recipientEmail,
+  }: {
+    theCase: Case
+    user: UserDescriptor
+    arraignmentDateLog: DateLog
+    recipientName: string
+    recipientEmail: string
+  }): Promise<Recipient> {
+    const { subject, body } = formatArraignmentDateEmailNotification({
+      formatMessage: this.formatMessage,
+      courtName: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+      judgeName: theCase.judge?.name,
+      registrarName: theCase.registrar?.name,
+      arraignmentDateLog,
+    })
+
+    const calendarInvite = this.getCourtDateCalendarInvite(
+      theCase,
+      arraignmentDateLog,
+    )
+
+    return this.sendEmail({
+      subject,
+      html: body,
+      recipientName,
+      recipientEmail,
+      attachments: calendarInvite ? [calendarInvite] : undefined,
+    }).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadEmailToCourt(theCase, user, subject, body, recipientEmail)
+      }
+
+      return recipient
+    })
   }
 }

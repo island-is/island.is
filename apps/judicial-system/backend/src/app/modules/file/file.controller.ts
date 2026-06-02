@@ -198,7 +198,11 @@ export class FileController {
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules() // This endpoint is not used by any role at the moment
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -466,6 +470,11 @@ export class FileController {
 
     return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
       caseId,
+      theCase.type,
+      theCase.state,
+      theCase.courtCaseNumber,
+      theCase.withCourtSessions,
+      theCase.prosecutor?.name,
       theCase.policeCaseNumbers,
       user,
     )

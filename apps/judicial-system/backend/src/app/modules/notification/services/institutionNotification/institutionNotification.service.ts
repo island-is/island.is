@@ -13,14 +13,15 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  INDICTMENTS_TO_REVIEW,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENTS_TO_REVIEW,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
 import { InternalCaseService } from '../../../case'
+import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import { Notification, type User } from '../../../repository'
 import { UserService } from '../../../user'
@@ -40,6 +41,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
+    courtService: CourtService,
     private readonly internalCaseService: InternalCaseService,
     private readonly userService: UserService,
   ) {
@@ -47,6 +49,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,
@@ -121,8 +124,8 @@ export class InstitutionNotificationService extends BaseNotificationService {
         .join(', ')
 
       const redirectUrl = areMultipleCases
-        ? INDICTMENTS_TO_REVIEW
-        : `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${cases[0].id}`
+        ? PROSECUTION_INDICTMENTS_TO_REVIEW
+        : `${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${cases[0].id}`
       const subject = 'Áminning um yfirlestur'
       const html = `Áminning um yfirlestur á mál${
         areMultipleCases ? 'um:' : 'i'

@@ -6,6 +6,7 @@ import {
   ChargeFjsV2,
   Client,
   CriminalRecord,
+  DirectorateOfEquality,
   DirectorateOfImmigration,
   Disability,
   DistrictCommissionersLicenses,
@@ -356,6 +357,7 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -511,6 +513,8 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
       FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
+      MATILDA_API_KEY: '/k8s/api/LANDSPITALI_MATILDA_API_KEY',
+      MATILDA_DISTRIBUTOR_ID: '/k8s/api/LANDSPITALI_MATILDA_DISTRIBUTOR_ID',
     })
     .xroad(
       AdrAndMachine,
@@ -560,6 +564,7 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
+      DirectorateOfEquality,
       DirectorateOfImmigration,
       SignatureCollection,
       SocialInsuranceAdministration,

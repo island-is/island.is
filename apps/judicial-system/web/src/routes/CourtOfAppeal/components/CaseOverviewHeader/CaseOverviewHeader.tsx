@@ -6,16 +6,19 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
+  RulingModifiedAlert,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseState,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
@@ -23,8 +26,9 @@ import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader
 const AppealResultAccessed = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
-  if (!workingCase.appealCase?.appealRulingDecision) {
+  if (!targetAppealCase?.appealRulingDecision) {
     return null
   }
 
@@ -83,18 +87,19 @@ interface Props {
 const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
   const { workingCase } = useContext(FormContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const { formatMessage } = useIntl()
 
   const wasAppealedAfterDeadline =
-    workingCase.appealCase?.appealedDate &&
+    targetAppealCase?.appealedDate &&
     workingCase.appealDeadline &&
-    workingCase.appealCase.appealedDate > workingCase.appealDeadline
+    targetAppealCase.appealedDate > workingCase.appealDeadline
 
   return (
     <div className={grid({ gap: 5 })}>
       <Box className={grid({ gap: 2 })}>
-        {!workingCase.appealCase?.appealRulingDecision &&
+        {!targetAppealCase?.appealRulingDecision &&
           wasAppealedAfterDeadline && (
             <AlertMessage
               message={formatMessage(strings.appealSentAfterDeadline)}
@@ -133,18 +138,8 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           }
         />
       )}
-      {workingCase.rulingModifiedHistory && (
-        <AlertMessage
-          type="info"
-          title={formatMessage(m.sections.modifyRulingInfo.title)}
-          message={
-            <MarkdownWrapper
-              markdown={workingCase.rulingModifiedHistory}
-              textProps={{ variant: 'small' }}
-            />
-          }
-        />
-      )}
+      <AppealRulingModifiedAlert />
+      <RulingModifiedAlert />
     </div>
   )
 }

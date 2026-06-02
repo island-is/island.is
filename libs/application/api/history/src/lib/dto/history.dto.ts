@@ -28,7 +28,8 @@ export class HistoryResponseDto {
   ) {
     this.date = timeStamp
     if (message) {
-      this.log = formatMessage(message)
+      const values = typeof message === 'object' ? message.values : undefined
+      this.log = formatMessage(message, values)
       if (subjectAndActorText) {
         this.subLog = subjectAndActorText
       } else {

@@ -1,8 +1,11 @@
-import { FC } from 'react'
+import { FC, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
+import { AnimatePresence } from 'motion/react'
+import { useRouter } from 'next/router'
 
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   enumerate,
@@ -10,16 +13,22 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseState,
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
+import Modal from '../Modals/Modal/Modal'
+import { UserContext } from '../UserProvider/UserProvider'
 import { strings } from './CaseInfo.strings'
 
 const PoliceCaseNumbersTags: FC<{
@@ -135,37 +144,132 @@ export const ProsecutorAndDefendantsEntries: FC<Props> = ({
 
 export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
+  const { updateCase } = useCase()
+  const router = useRouter()
+  const { user } = useContext(UserContext)
+
+  const [modalVisible, setModalVisible] = useState<'REOPEN'>()
+  const [reopenReason, setReopenReason] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
+  const canReopenCase =
+    isDistrictCourtUser(user) &&
+    !workingCase.mergeCase &&
+    workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.WITHDRAWAL &&
+    Boolean(
+      workingCase.indictmentCompletedDate &&
+        workingCase.indictmentSentToPublicProsecutorDate &&
+        workingCase.indictmentSentToPublicProsecutorDate >
+          workingCase.indictmentCompletedDate,
+    ) &&
+    (!workingCase.appealCase ||
+      workingCase.appealCase.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase.appealState === AppealCaseState.WITHDRAWN)
 
   return (
-    <Box component="section" marginBottom={5}>
-      {workingCase.courtCaseNumber && (
-        <Box marginBottom={1}>
-          <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
-      )}
-      {isIndictmentCase(workingCase.type) &&
-      isCompletedCase(workingCase.state) ? (
-        <Box marginTop={1}>
-          <Text as="h5" variant="h5">
-            {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
-            })}
-          </Text>
-          {workingCase.appealCase?.appealedDate && (
-            <Box marginBottom={1}>
-              <Text as="h5" variant="h5">
-                {getAppealActorText(workingCase)}
-              </Text>
+    <>
+      <Box component="section" marginBottom={5}>
+        {workingCase.courtCaseNumber && (
+          <Box marginBottom={1}>
+            <Text variant="h2" as="h2">
+              {formatMessage(core.caseNumber, {
+                caseNumber: workingCase.courtCaseNumber,
+              })}
+            </Text>
+          </Box>
+        )}
+        {isIndictmentCase(workingCase.type) &&
+        isCompletedCase(workingCase.state) ? (
+          <Box marginTop={1}>
+            <Text as="h5" variant="h5">
+              {formatMessage(strings.rulingDate, {
+                rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
+              })}
+            </Text>
+            {workingCase.hasBeenAppealed && (
+              <Box marginBottom={1}>
+                <Text as="h5" variant="h5">
+                  {getAppealActorText(workingCase)}
+                </Text>
+              </Box>
+            )}
+            {canReopenCase && (
+              <Button
+                variant="text"
+                colorScheme="destructive"
+                size="small"
+                onClick={() => setModalVisible('REOPEN')}
+              >
+                Enduropna mál
+              </Button>
+            )}
+          </Box>
+        ) : (
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
+        )}
+      </Box>
+      <AnimatePresence>
+        {modalVisible === 'REOPEN' && (
+          <Modal
+            title="Viltu opna mál aftur?"
+            text={
+              <ul style={{ listStyle: 'outside', paddingLeft: '24px' }}>
+                {[
+                  'Málið verður opnað að nýju, fyrri lyktum verður eytt og ljúka þarf málinu að nýju með nýrri dómsúrlausn.',
+                  'Aðilar máls fá tilkynningu um að málið hafi verið opnað að nýju, eftir atvikum ríkissaksóknari og Fangelsismálastofnun einnig.',
+                  'Ástæða enduropnunar verður sýnileg aðilum máls.',
+                  'Athugið - aðgerðin er óafturkræf',
+                ].map((item, i) => (
+                  <li key={item}>
+                    <Text variant={i === 3 ? 'h5' : 'default'}>{item}</Text>
+                  </li>
+                ))}
+              </ul>
+            }
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            primaryButton={{
+              text: 'Halda áfram',
+              colorScheme: 'destructive',
+              isDisabled: !reopenReason.trim() || isSubmitting,
+              onClick: async () => {
+                if (!reopenReason.trim()) {
+                  return
+                }
+                setIsSubmitting(true)
+                try {
+                  const updated = await updateCase(workingCase.id, {
+                    reopenReason,
+                  })
+                  if (updated) {
+                    router.push(
+                      `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                } finally {
+                  setIsSubmitting(false)
+                }
+              },
+            }}
+          >
+            <Box marginBottom={4}>
+              <Input
+                name="reopenReason"
+                label="Ástæða enduropnunar máls"
+                placeholder="Skráðu ástæðu enduropnunar máls, t.d. vegna endurupptöku eða niðurstöðu Landsréttar."
+                textarea
+                rows={6}
+                value={reopenReason}
+                onChange={(e) => setReopenReason(e.target.value)}
+                required
+              />
             </Box>
-          )}
-        </Box>
-      ) : (
-        <ProsecutorAndDefendantsEntries workingCase={workingCase} />
-      )}
-    </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

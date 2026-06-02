@@ -14,6 +14,8 @@ interface DrivingLicenseFormConfig {
   allowPickLicense?: boolean
   allowBELicense?: boolean
   allow65Renewal?: boolean
+  allow65RenewalRedesign?: boolean
+  allowBTempRedesign?: boolean
   allowAdvanced?: boolean
 }
 
@@ -22,6 +24,8 @@ export const getForm = ({
   allowPickLicense = false,
   allowBELicense = false,
   allow65Renewal = false,
+  allow65RenewalRedesign = false,
+  allowBTempRedesign = false,
   allowAdvanced = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
@@ -48,7 +52,7 @@ export const getForm = ({
               ]
             : []),
           ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
-          sectionRequirements,
+          sectionRequirements(allow65RenewalRedesign, allowBTempRedesign),
         ],
       }),
       buildSection({

@@ -25,7 +25,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
+  capitalize,
   formatDate,
+  lowercase,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -39,7 +41,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -58,6 +59,7 @@ import {
   isInvestigationCase,
   isRequestCase,
   isRestrictionCase,
+  RequestCaseNotificationType,
   ServiceStatus,
   StringType,
   stringTypes,
@@ -114,7 +116,10 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
 
 type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation' | 'civilDemands' | 'penalties'
+  | 'postponedIndefinitelyExplanation'
+  | 'civilDemands'
+  | 'penalties'
+  | 'reopenReason'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -122,6 +127,7 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
     StringType.POSTPONED_INDEFINITELY_EXPLANATION,
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
+  reopenReason: StringType.REOPEN_REASON,
 }
 
 export const caseListInclude: Includeable[] = [
@@ -504,7 +510,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.READY_FOR_COURT },
+      body: { type: RequestCaseNotificationType.READY_FOR_COURT },
     })
   }
 
@@ -516,7 +522,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      },
     })
   }
 
@@ -528,7 +536,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+      },
     })
   }
 
@@ -541,7 +551,7 @@ export class CaseService {
       user,
       caseId: theCase.id,
       body: {
-        type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        type: IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
       },
     })
   }
@@ -551,7 +561,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.RECEIVED_BY_COURT },
+      body: { type: RequestCaseNotificationType.RECEIVED_BY_COURT },
     })
 
     if (isIndictmentCase(theCase.type)) {
@@ -770,7 +780,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       },
     )
 
@@ -828,7 +838,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       })
     }
   }
@@ -859,7 +869,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: updatedCase.id,
-      body: { type: CaseNotificationType.RULING },
+      body: { type: RequestCaseNotificationType.RULING },
     })
 
     if (updatedCase.withCourtSessions) {
@@ -884,7 +894,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.MODIFIED },
+      body: { type: RequestCaseNotificationType.MODIFIED },
     })
 
     if (theCase.origin === CaseOrigin.LOKE) {
@@ -904,7 +914,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.REVOKED },
+      body: { type: RequestCaseNotificationType.REVOKED },
     })
   }
 
@@ -955,7 +965,19 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_DENIED },
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_DENIED },
+    })
+  }
+
+  private addMessagesForReopenedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
     })
   }
 
@@ -1001,6 +1023,13 @@ export class CaseService {
       ) {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         this.addMessagesForReceivedCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.RECEIVED &&
+        isCompletedCase(theCase.state) &&
+        isIndictment
+      ) {
+        // Only the REOPEN transition moves an indictment from a completed state to RECEIVED
+        this.addMessagesForReopenedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         if (!isIndictment) {
           this.addMessagesForDeletedCaseToQueue(updatedCase, user)
@@ -1419,6 +1448,18 @@ export class CaseService {
         transaction,
       )
     }
+
+    if (
+      theCase.state === CaseState.COMPLETED &&
+      updatedCase.state === CaseState.RECEIVED
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REOPENED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
   }
 
   private handleStateChangeEventLogUpdatesForRequest(
@@ -1700,14 +1741,10 @@ export class CaseService {
 
     await Promise.all(
       eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
-        if (!rulingDate) {
-          return this.defendantEventLogRepositoryService.createWithUser(
-            eventType,
-            theCase.id,
-            defendantId,
-            user,
-            transaction,
-          )
+        let created: Date | undefined
+        if (rulingDate) {
+          created = new Date(rulingDate)
+          created.setUTCHours(23, 59, 59, 999)
         }
 
         return this.defendantEventLogRepositoryService.createWithUser(
@@ -1716,7 +1753,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          rulingDate,
+          created,
         )
       }),
     )
@@ -1805,6 +1842,32 @@ export class CaseService {
 
     if (requiresCourtTransition) {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
+    }
+
+    if (update.reopenReason !== undefined) {
+      const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}.`
+      update.reopenReason = `${header}\n${update.reopenReason}`
+      update = transitionCase(CaseTransition.REOPEN, theCase, user, update)
+
+      await Promise.all(
+        (theCase.defendants ?? []).flatMap((defendant) => [
+          this.defendantService.updateDatabaseDefendant(
+            theCase.id,
+            defendant.id,
+            {
+              isSentToPrisonAdmin: false,
+              indictmentReviewDecision: null,
+              publicProsecutorIsRegisteredInPoliceSystem: null,
+            },
+            transaction,
+          ),
+          ...(defendant.verdicts ?? []).map((verdict) =>
+            this.verdictService.resetVerdictDataForReopen(verdict, transaction),
+          ),
+        ]),
+      )
     }
 
     // Keep transient defendant event log decisions out of the case persistence

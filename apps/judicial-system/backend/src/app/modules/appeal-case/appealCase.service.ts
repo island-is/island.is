@@ -12,13 +12,18 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
   AppealEventType,
@@ -26,7 +31,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
   isCompletedCase,
   isDefenceUser,
@@ -145,7 +149,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
   }
 
@@ -157,7 +161,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
+      body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
     })
   }
 
@@ -186,7 +190,7 @@ export class AppealCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_COMPLETED },
+        body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
       },
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -215,7 +219,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_STATEMENT },
+      body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
     })
   }
 
@@ -227,7 +231,7 @@ export class AppealCaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
+      body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
     })
   }
 
@@ -421,7 +425,7 @@ export class AppealCaseService {
       const existingHistory = appealCase.appealRulingModifiedHistory
         ? `${appealCase.appealRulingModifiedHistory}\n\n`
         : ''
-      const today = nowFactory().toISOString()
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 

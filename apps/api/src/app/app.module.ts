@@ -106,6 +106,10 @@ import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import {
+  DirectorateOfEqualityClientModule,
+  DirectorateOfEqualityClientConfig,
+} from '@island.is/clients/directorate-of-equality'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -250,6 +254,7 @@ import {
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
+import { MatildaClientConfig } from '@island.is/clients/matilda'
 import { LyfjastofnunPharmaciesClientConfig } from '@island.is/clients/lyfjastofnun-pharmacies'
 import { HmsConfig } from '@island.is/clients/hms'
 import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
@@ -308,6 +313,7 @@ const environment = getConfig
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
+    DirectorateOfEqualityClientModule,
     DirectorateOfLabourModule,
     FeatureFlagsApiModule,
     FileUploadModule,
@@ -422,6 +428,7 @@ const environment = getConfig
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
+        DirectorateOfEqualityClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
@@ -447,6 +454,7 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         LshClientConfig,
+        MatildaClientConfig,
         LyfjastofnunPharmaciesClientConfig,
         FeatureFlagConfig,
         HmsConfig,

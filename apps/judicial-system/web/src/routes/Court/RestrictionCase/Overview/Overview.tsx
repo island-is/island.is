@@ -10,7 +10,10 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -35,16 +38,19 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
+  CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
@@ -56,9 +62,10 @@ export const JudgeOverview = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
   const {
     defendants,
     policeCaseNumbers,
@@ -242,6 +249,13 @@ export const JudgeOverview = () => {
                   user={user}
                 />
               )}
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                />
+              )}
             </Accordion>
           </Box>
           <Box marginBottom={3}>
@@ -272,10 +286,10 @@ export const JudgeOverview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+          previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+              DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={uploadState === UploadState.UPLOADING}
