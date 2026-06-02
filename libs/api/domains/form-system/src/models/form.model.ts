@@ -13,6 +13,7 @@ import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
 import { OrganizationZendeskInstance } from './organizationZendeskInstance.model'
 import { SectionInfo } from './sectionInfo.model'
+import { ApplicationJson } from './applicationJson.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -150,4 +151,7 @@ export class FormResponse {
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
+
+  @Field(() => ApplicationJson, { nullable: true })
+  jsonSample?: ApplicationJson
 }
