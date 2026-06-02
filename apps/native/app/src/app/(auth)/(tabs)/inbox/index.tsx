@@ -219,6 +219,24 @@ export default function InboxScreen() {
     return res.data?.documentsV2?.categories ?? []
   }, [res.data])
 
+  // Remember sender/category names across query refetches so the active filter
+  // tags keep showing the name (never the ID) while the next response loads
+  // after a filter is removed.
+  const filterNamesRef = useRef({
+    senders: new Map<string, string>(),
+    categories: new Map<string, string>(),
+  })
+  for (const sender of availableSenders) {
+    if (sender.id && sender.name) {
+      filterNamesRef.current.senders.set(sender.id, sender.name.trim())
+    }
+  }
+  for (const category of availableCategories) {
+    if (category.id && category.name) {
+      filterNamesRef.current.categories.set(category.id, category.name)
+    }
+  }
+
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
 
@@ -733,13 +751,16 @@ export default function InboxScreen() {
                 )}
                 {!!senderNationalId.length &&
                   senderNationalId.map((senderId) => {
-                    const name = availableSenders.find(
-                      (sender) => sender.id === senderId,
-                    )
+                    const name =
+                      filterNamesRef.current.senders.get(senderId) ??
+                      availableSenders
+                        .find((sender) => sender.id === senderId)
+                        ?.name?.trim() ??
+                      senderId
                     return (
                       <Tag
                         key={senderId}
-                        title={name?.name?.trim() ?? senderId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({
@@ -753,13 +774,16 @@ export default function InboxScreen() {
                   })}
                 {!!categoryIds.length &&
                   categoryIds.map((categoryId) => {
-                    const name = availableCategories.find(
-                      (category) => category.id === categoryId,
-                    )
+                    const name =
+                      filterNamesRef.current.categories.get(categoryId) ??
+                      availableCategories.find(
+                        (category) => category.id === categoryId,
+                      )?.name ??
+                      categoryId
                     return (
                       <Tag
                         key={categoryId}
-                        title={name?.name ?? categoryId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({
