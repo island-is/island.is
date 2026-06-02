@@ -3,6 +3,7 @@ import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import {
   COPY_FORM,
+  GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
   UPDATE_FORM_STATUS,
 } from '@island.is/form-system/graphql'
@@ -30,6 +31,7 @@ import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
+import { removeTypename } from '../../../../lib/utils/removeTypename'
 
 interface Props {
   id?: string | null
@@ -78,6 +80,9 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
+  const [getJsonSample] = useLazyQuery(GET_APPLICATION_JSON_SAMPLE, {
+    fetchPolicy: 'no-cache',
+  })
   const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
@@ -198,18 +203,58 @@ export const TableRow = ({
       },
     }
 
-    const test = {
-      title: formatMessage(m.tryOut),
-      onClick: () => {
-        if (slug) {
-          window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
-        } else {
-          toast.error(
-            formatMessage({
-              id: 'slugMissing',
-              defaultMessage: 'Það vantar slug',
-            }),
+    const getJson = {
+      title: formatMessage(m.getJson),
+      icon: 'download' as const,
+      iconType: 'outline' as const,
+      onClick: async (_event: any, menu: any) => {
+        if (!id) return
+
+        try {
+          const { data } = await getJsonSample({
+            variables: { input: { id } },
+          })
+
+          const jsonSample = data?.formSystemApplicationJsonSample?.jsonSample
+          if (!jsonSample) return
+
+          // const trimmedJson = removeTypename(jsonSample)
+
+          const blob = new Blob(
+            [
+              JSON.stringify(
+                jsonSample,
+                (key, value) =>
+                  key === '__typename' || value === null ? undefined : value,
+                2,
+              ),
+            ],
+            {
+              type: 'application/json;charset=utf-8',
+            },
           )
+          const blobUrl = URL.createObjectURL(blob)
+
+          const safeSlug = (slug?.trim() || 'form').replace(
+            /[\\/:*?"<>|]/g,
+            '-',
+          )
+          const fileName = `${safeSlug}.json`
+
+          const a = document.createElement('a')
+          a.href = blobUrl
+          a.download = fileName
+          a.rel = 'noopener'
+          document.body.appendChild(a)
+          a.click()
+          a.remove()
+
+          menu?.hide?.()
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000)
+        } catch (e) {
+          // optionally toast / console.error here
+          console.error(e)
         }
       },
     }
@@ -275,12 +320,12 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [changePublishedForm, copy, del]
+      return [getJson, copy, changePublishedForm, del]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
-      return [test, publishChanged, del]
+      return [getJson, publishChanged, del]
     }
 
-    return [test, copy, publish, del]
+    return [getJson, copy, publish, del]
   }, [
     id,
     slug,
