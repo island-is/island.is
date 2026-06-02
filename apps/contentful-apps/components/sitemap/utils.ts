@@ -232,6 +232,7 @@ export const addNode = async (
         otherSlugsEN,
       },
       minHeight: CATEGORY_DIALOG_MIN_HEIGHT,
+      allowHeightOverflow: true,
     })
 
     if (!data) {
@@ -253,6 +254,7 @@ export const addNode = async (
         },
       },
       minHeight: URL_DIALOG_MIN_HEIGHT,
+      allowHeightOverflow: true,
     })
 
     if (!data) {

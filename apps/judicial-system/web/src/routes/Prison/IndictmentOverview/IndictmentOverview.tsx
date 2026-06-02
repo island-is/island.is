@@ -26,6 +26,7 @@ import {
   useSentToPrisonAdminDate,
 } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   Defendant,
@@ -214,6 +215,13 @@ const IndictmentOverview = () => {
                 judgeName={workingCase.judge?.name}
               />
             </Box>
+          )}
+        {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
+          workingCase.appealCase?.appealConclusion && (
+            <Conclusion
+              title="Úrskurðarorð Landsréttar"
+              conclusionText={workingCase.appealCase?.appealConclusion}
+            />
           )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
