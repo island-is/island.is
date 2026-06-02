@@ -3,18 +3,18 @@ import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { IsArray, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationErrorDto } from '../../../screens/models/dto/validationError.dto'
-import { ApplicationXroadFieldDto } from './application.xroad.dto'
+import { ApplicationJsonFieldDto } from './application.json.dto'
 
 export class NotificationResponseDto {
   @ApiPropertyOptional({ type: () => ScreenDto })
   screen?: ScreenDto
 
-  @ApiPropertyOptional({ type: [ApplicationXroadFieldDto] })
+  @ApiPropertyOptional({ type: [ApplicationJsonFieldDto] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ApplicationXroadFieldDto)
-  fields?: ApplicationXroadFieldDto[]
+  @Type(() => ApplicationJsonFieldDto)
+  fields?: ApplicationJsonFieldDto[]
 
   @ApiHideProperty()
   operationSuccessful?: boolean

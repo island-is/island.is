@@ -10,6 +10,7 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseFilesOverview,
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseResentExplanation,
   CaseScheduledCard,
@@ -22,6 +23,7 @@ import {
   PageHeader,
   PageLayout,
   PdfButton,
+  RulingModifiedAlert,
   SignedDocument,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -105,22 +107,9 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          {workingCase.appealCase?.appealRulingModifiedHistory && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title={formatMessage(strings.rulingModifiedTitle)}
-                message={
-                  <MarkdownWrapper
-                    markdown={
-                      workingCase.appealCase?.appealRulingModifiedHistory
-                    }
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            </Box>
-          )}
+          <Box marginBottom={5}>
+            <AppealRulingModifiedAlert />
+          </Box>
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
             workingCase.court && (

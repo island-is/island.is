@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input, LoadingDots, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   accused as m,
   core,
@@ -230,7 +232,7 @@ export const Defendant = () => {
               nextIsDisabled={!stepIsValid}
               onNextButtonClick={() =>
                 handleNavigationTo(
-                  constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                 )
               }
               nextButtonText={formatMessage(

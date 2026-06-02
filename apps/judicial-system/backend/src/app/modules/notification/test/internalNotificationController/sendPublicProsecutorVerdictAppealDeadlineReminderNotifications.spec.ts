@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  INDICTMENTS_TO_REVIEW,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENTS_TO_REVIEW,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
@@ -149,7 +149,7 @@ describe('InternalNotificationController - Send public prosecutor verdict appeal
           to: [{ name: prosecutor1.name, address: prosecutor1.email }],
           subject: 'Áminning um yfirlestur',
           html: expect.stringContaining(
-            `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseId}`,
+            `${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}`,
           ),
         }),
       )
@@ -193,7 +193,7 @@ describe('InternalNotificationController - Send public prosecutor verdict appeal
         expect.objectContaining({
           to: [{ name: prosecutor1.name, address: prosecutor1.email }],
           subject: 'Áminning um yfirlestur',
-          html: expect.stringContaining(INDICTMENTS_TO_REVIEW),
+          html: expect.stringContaining(PROSECUTION_INDICTMENTS_TO_REVIEW),
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(

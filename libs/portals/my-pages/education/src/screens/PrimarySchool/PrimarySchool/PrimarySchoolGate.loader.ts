@@ -16,3 +16,17 @@ export const primarySchoolGateLoader: WrappedLoaderFn =
 
     return null
   }
+
+export const educationAssessmentGateLoader: WrappedLoaderFn =
+  ({ featureFlagClient }) =>
+  async () => {
+    const enabled = await featureFlagClient
+      .getValue(Features.isServicePortalPrimarySchoolPageEnabled, false)
+      .catch(() => false)
+
+    if (enabled) {
+      return redirect(EducationPaths.EducationPrimarySchool)
+    }
+
+    return null
+  }

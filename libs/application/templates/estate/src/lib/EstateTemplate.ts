@@ -56,10 +56,6 @@ const isReviewEnabled = (context: ApplicationContext) => {
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
-const areAllPartiesApproved = (context: ApplicationContext) => {
-  return allPartiesHaveApproved(context.application.answers)
-}
-
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EstateEvent>,
@@ -258,6 +254,12 @@ const EstateTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.6,
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.notifyAssignees,
+            shouldPersistToExternalData: true,
+            externalDataId: 'notifyAssignees',
+            throwOnError: false,
+          }),
           onExit: defineTemplateApi({
             action: ApiActions.approveByAssignee,
             shouldPersistToExternalData: false,
@@ -388,13 +390,14 @@ const EstateTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.draft,
           },
+          // SUBMIT sends the application to signing. The applicant can do this
+          // directly without waiting for all estate members to approve; the
+          // irreversibility is acknowledged on the pre-signature screen.
           [DefaultEvents.SUBMIT]: {
             target: States.signing,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.APPROVE]: {
             target: States.inReview,
@@ -650,11 +653,11 @@ const EstateTemplate: ApplicationTemplate<
         return context
       }),
       clearAssignees: assign((context, event) => {
-        // Only clear assignees when going back to draft (EDIT or REJECT events)
+        // Only clear assignees when the applicant chooses to edit.
+        // A rejection also returns to draft, but assignees must keep visibility
+        // so they can see the application status after acting on it.
         // Keep assignees when progressing forward (SUBMIT/PAYMENT) or staying in review (APPROVE)
-        const shouldClearAssignees =
-          event.type === DefaultEvents.EDIT ||
-          event.type === DefaultEvents.REJECT
+        const shouldClearAssignees = event.type === DefaultEvents.EDIT
 
         if (!shouldClearAssignees) {
           return context

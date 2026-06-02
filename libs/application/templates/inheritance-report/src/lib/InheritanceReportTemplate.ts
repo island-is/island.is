@@ -50,10 +50,6 @@ const isReviewEnabled = (context: ApplicationContext) => {
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
-const areAllPartiesApproved = (context: ApplicationContext) => {
-  return allPartiesHaveApproved(context.application.answers)
-}
-
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   const externalData = context.application
     .externalData as InheritanceReportExternalData
@@ -205,6 +201,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.6,
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.notifyAssignees,
+            shouldPersistToExternalData: true,
+            externalDataId: 'notifyAssignees',
+            throwOnError: false,
+          }),
           onExit: defineTemplateApi({
             action: ApiActions.approveByAssignee,
             shouldPersistToExternalData: false,
@@ -307,9 +309,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
           EDIT: {
             target: States.draft,
           },
+          // SUBMIT sends the application to signing. The applicant can do this
+          // directly without waiting for all heirs to approve; the
+          // irreversibility is acknowledged on the pre-signature screen.
           SUBMIT: {
             target: States.signing,
-            cond: areAllPartiesApproved,
           },
           APPROVE: {
             target: States.inReview,
@@ -477,11 +481,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
         return context
       }),
       clearAssignees: assign((context, event) => {
-        // Only clear assignees when going back to draft (EDIT or REJECT events)
+        // Only clear assignees when the applicant chooses to edit.
+        // A rejection also returns to draft, but assignees must keep visibility
+        // so they can see the application status after acting on it.
         // Keep assignees when progressing forward (SUBMIT) or staying in review (APPROVE)
-        const shouldClearAssignees =
-          event.type === DefaultEvents.EDIT ||
-          event.type === DefaultEvents.REJECT
+        const shouldClearAssignees = event.type === DefaultEvents.EDIT
 
         if (!shouldClearAssignees) {
           return context
