@@ -1,4 +1,8 @@
-import { IntroWrapper, UserInfoLine } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  UserInfoLine,
+  m as coreMessages,
+} from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import {
   useGetApplicantAvailableActionsQuery,
@@ -63,13 +67,12 @@ const MyData = () => {
   const attachmentTypes =
     attachmentTypesData?.vmstAttachmentTypes?.attachmentTypes
 
-  const loading =
-    actionsLoading ||
-    attachmentsLoading ||
-    attachmentTypesLoading ||
-    applicantAttachmentsLoading
-  const attachmentsHasError =
-    !!attachmentsError || !!attachmentTypesError || !!applicantAttachmentsError
+  const coreLoading = actionsLoading || attachmentTypesLoading
+  const requestedLoading = coreLoading || attachmentsLoading
+  const submittedLoading = coreLoading || applicantAttachmentsLoading
+
+  const requestedAttachmentsHasError = !!attachmentsError
+  const submittedAttachmentsHasError = !!applicantAttachmentsError
 
   const attachmentTypeMap = new Map(
     attachmentTypes?.map((t) => [t.id, t]) ?? [],
@@ -145,68 +148,91 @@ const MyData = () => {
         slug: 'vinnumalastofnun',
         tooltip: formatMessage(um.tooltip),
       }}
-      loading={loading}
+      loading={coreLoading}
     >
-      <ActionButtons availableActions={availableActions} loading={loading} />
-      {loading && (
+      <ActionButtons
+        availableActions={availableActions}
+        loading={coreLoading}
+      />
+      {!coreLoading && !!attachmentTypesError && (
         <Box paddingTop={4}>
-          <SkeletonLoader repeat={5} space={2} />
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(coreMessages.noData)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
         </Box>
       )}
-      {!loading && attachmentsHasError && (
-        <Box paddingTop={4}>
-          <Problem type="no_data" noBorder={false} />
-        </Box>
-      )}
-      {!loading && !attachmentsHasError && missingAttachments.length > 0 && (
-        <Box paddingTop={4}>
-          <Text variant="eyebrow" color="purple600" marginBottom={2}>
-            {formatMessage(um.myDataMissingAttachmentsHeading)}
-          </Text>
-          <Stack space={0}>
-            {missingAttachments.map((attachment, index) => (
-              <Box key={attachment.id ?? index}>
-                <UserInfoLine
-                  label={getAttachmentName(attachment.attachmentTypeId)}
-                  renderContent={() => (
-                    <Tag variant="red" outlined disabled>
-                      {formatMessage(um.myDataMissingTag)}
-                    </Tag>
-                  )}
-                  editLink={{
-                    url: formatMessage(um.myDataSubmitDocumentsUrl),
-                    title: formatMessage(um.myDataSubmitDocuments),
-                    icon: 'arrowForward',
-                  }}
-                />
-                <Divider />
-              </Box>
-            ))}
-          </Stack>
-        </Box>
-      )}
-      {!loading && !attachmentsHasError && submittedAttachments.length > 0 && (
-        <Box paddingTop={4}>
-          <Text variant="eyebrow" color="purple600" marginBottom={2}>
-            {formatMessage(um.myDataSubmittedAttachmentsHeading)}
-          </Text>
-          <Stack space={0}>
-            {submittedAttachments.map((attachment) => (
-              <Box key={attachment.id}>
-                <UserInfoLine
-                  label={getAttachmentName(attachment.typeId)}
-                  button={{
-                    title: formatMessage(um.myDataViewDocument),
-                    onClick: () => {
-                      openAttachment(attachment.id)
-                    },
-                  }}
-                />
-                <Divider />
-              </Box>
-            ))}
-          </Stack>
-        </Box>
+      {!attachmentTypesError && (
+        <>
+          {/* Missing / requested attachments section */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataMissingAttachmentsHeading)}
+            </Text>
+            {requestedLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!requestedLoading && requestedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!requestedLoading &&
+              !requestedAttachmentsHasError &&
+              missingAttachments.length > 0 && (
+                <Stack space={0}>
+                  {missingAttachments.map((attachment, index) => (
+                    <Box key={attachment.id ?? index}>
+                      <UserInfoLine
+                        label={getAttachmentName(attachment.attachmentTypeId)}
+                        renderContent={() => (
+                          <Tag variant="red" outlined disabled>
+                            {formatMessage(um.myDataMissingTag)}
+                          </Tag>
+                        )}
+                        editLink={{
+                          url: formatMessage(um.myDataSubmitDocumentsUrl),
+                          title: formatMessage(um.myDataSubmitDocuments),
+                          icon: 'arrowForward',
+                        }}
+                      />
+                      <Divider />
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+          </Box>
+
+          {/* Submitted attachments section */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataSubmittedAttachmentsHeading)}
+            </Text>
+            {submittedLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!submittedLoading && submittedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!submittedLoading &&
+              !submittedAttachmentsHasError &&
+              submittedAttachments.length > 0 && (
+                <Stack space={0}>
+                  {submittedAttachments.map((attachment) => (
+                    <Box key={attachment.id}>
+                      <UserInfoLine
+                        label={getAttachmentName(attachment.typeId)}
+                        button={{
+                          title: formatMessage(um.myDataViewDocument),
+                          onClick: () => {
+                            openAttachment(attachment.id)
+                          },
+                        }}
+                      />
+                      <Divider />
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+          </Box>
+        </>
       )}
     </IntroWrapper>
   )
