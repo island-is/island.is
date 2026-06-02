@@ -1,25 +1,27 @@
 import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, Linking, BackHandler } from 'react-native'
+import {
+  View,
+  Image,
+  Linking,
+  BackHandler,
+  useWindowDimensions,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
-import { Stack, router, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 
 import { Button, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
 import { preferencesStore } from '@/stores/preferences-store'
-import { modalScreenOptions } from '../../../constants/screen-options'
-import {
-  spacingItem,
-  navbarCloseItem,
-} from '../../../components/navbar/navbar-items'
 
-const Text = styled.View`
+const Text = styled.View<{ isSmallDevice: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
   text-align: center;
-  margin-vertical: ${({ theme }) => theme.spacing[5]}px;
+  margin-vertical: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[3] : theme.spacing[5]}px;
 `
 
 const Host = styled.View`
@@ -28,9 +30,10 @@ const Host = styled.View`
   flex: 1;
 `
 
-const ButtonWrapper = styled.View`
+const ButtonWrapper = styled.View<{ isSmallDevice: boolean }>`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+  padding-vertical: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[2] : theme.spacing[4]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -45,6 +48,8 @@ export default function UpdateAppScreen() {
   }>()
   const closable = closableParam !== 'false'
   const intl = useIntl()
+  const { height } = useWindowDimensions()
+  const isSmallDevice = height < 800
 
   // Make sure if closable = false that android back button does not work
   useEffect(() => {
@@ -57,17 +62,6 @@ export default function UpdateAppScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
-        options={{
-          ...modalScreenOptions,
-          headerTitle: '',
-          gestureEnabled: closable,
-          sheetGrabberVisible: closable,
-          unstable_headerRightItems: closable
-            ? () => [spacingItem(), navbarCloseItem()]
-            : undefined,
-        }}
-      />
       <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host>
           <Image
@@ -75,7 +69,7 @@ export default function UpdateAppScreen() {
             resizeMode="contain"
             style={{ width: 45, height: 45 }}
           />
-          <Text>
+          <Text isSmallDevice={isSmallDevice}>
             <Title variant={'heading2'} textAlign="center">
               <FormattedMessage
                 id="updateApp.title"
@@ -91,13 +85,15 @@ export default function UpdateAppScreen() {
               />
             </Typography>
           </Text>
-          <Image
-            source={illustrationSrc}
-            style={{ width: 210, height: 240 }}
-            resizeMode="contain"
-          />
+          {height > 650 && (
+            <Image
+              source={illustrationSrc}
+              style={{ flex: 1, maxWidth: 210, maxHeight: 240 }}
+              resizeMode="contain"
+            />
+          )}
         </Host>
-        <ButtonWrapper>
+        <ButtonWrapper isSmallDevice={isSmallDevice}>
           <Button
             title={intl.formatMessage({
               id: 'updateApp.button',
