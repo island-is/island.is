@@ -1,6 +1,11 @@
 import { ApplicationService } from '@island.is/application/api/core'
 import { createApplication } from '@island.is/application/testing'
-import { ApplicationWithAttachments, ApplicationStatus, ApplicationTypes, ExternalData } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  ApplicationStatus,
+  ApplicationTypes,
+  ExternalData,
+} from '@island.is/application/types'
 import { S3Service } from '@island.is/nest/aws'
 import { setup } from '../../../../../../test/setup'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
@@ -130,7 +135,10 @@ class ApplicationServiceMock {
   update(
     id: string,
     application: Partial<
-      Pick<ApplicationWithAttachments, 'attachments' | 'answers' | 'externalData' | 'status'>
+      Pick<
+        ApplicationWithAttachments,
+        'attachments' | 'answers' | 'externalData' | 'status'
+      >
     >,
   ) {
     return { numberOfAffectedRows: 1, updatedApplication: application }
@@ -315,8 +323,8 @@ describe('ApplicationLifecycleService Unit tests', () => {
                 date: new Date(),
               },
             }
-          : {} as ExternalData,
-      } satisfies ApplicationWithAttachments,
+          : ({} as ExternalData),
+      } as ApplicationWithAttachments,
     })
 
     beforeEach(async () => {
