@@ -2,8 +2,8 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    type
     modified
+    type
     splitCases {
       id
       created

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   districtCourtAbbreviation,
   formatDate,
@@ -87,7 +87,7 @@ const ConnectedCasesInfo = ({
 
       return hasCourtAccess ? (
         <LinkV2
-          href={`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
+          href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
           className={link}
           key={key}
         >

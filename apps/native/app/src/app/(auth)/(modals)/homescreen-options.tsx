@@ -18,6 +18,16 @@ export default function HomeOptionsScreen() {
     false,
     null,
   )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
@@ -36,33 +46,41 @@ export default function HomeOptionsScreen() {
   const appointmentsWidgetEnabled = usePreferencesStore(
     ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
   )
-  const graphicWidgetEnabled = usePreferencesStore(
-    ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
+  const notificationsWidgetEnabled = usePreferencesStore(
+    ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
   )
 
   const items = [
-    {
-      enabled: graphicWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.graphic',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          graphicWidgetEnabled: value,
-        })
-      },
-    },
-    {
-      enabled: inboxWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.inbox',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          inboxWidgetEnabled: value,
-        })
-      },
-    },
+    ...(isNotificationsWidgetEnabled
+      ? [
+          {
+            enabled: notificationsWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.notifications',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                notificationsWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
+    ...(isInboxWidgetDisabled === false
+      ? [
+          {
+            enabled: inboxWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.inbox',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                inboxWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
     ...(isAppointmentsEnabled
       ? [
           {

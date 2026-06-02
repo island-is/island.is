@@ -275,7 +275,14 @@ export class VerdictsClientService {
           verdictDate: goproItem.verdictDate,
           verdictJudges:
             goproItem.court?.code !== 'landsrettur'
-              ? goproItem.judges ?? []
+              ? (goproItem.judges ?? []).map((judge) => ({
+                  name: judge.name ?? '',
+                  title: !goproItem.court?.name
+                    ?.toLowerCase()
+                    ?.startsWith('enduruppt')
+                    ? judge.title ?? ''
+                    : '',
+                }))
               : [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',

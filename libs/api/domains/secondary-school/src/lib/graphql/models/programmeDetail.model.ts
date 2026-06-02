@@ -67,4 +67,7 @@ export class SecondarySchoolProgrammeDetail {
 
   @Field(() => [SecondarySchoolSimple], { nullable: true })
   schools?: SecondarySchoolSimple[] | null
+
+  @Field(() => Boolean, { nullable: true })
+  isReferenceProgramme?: boolean
 }
