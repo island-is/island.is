@@ -114,13 +114,40 @@ export const prosecutionIndictmentsAppealedWhereOptions = (
   includes: {
     appealCase: {
       attributes: [],
-      required: true,
+      required: false,
+      where: {
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+      },
+    },
+    rulingOrderAppealCases: {
+      attributes: [],
+      required: false,
       where: {
         appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
       },
     },
   },
-  where: prosecutionIndictmentsAccessWhereOptions(user),
+  where: {
+    [Op.and]: [
+      prosecutionIndictmentsAccessWhereOptions(user),
+      {
+        [Op.or]: [
+          {
+            '$appealCase.appeal_state$': [
+              AppealCaseState.APPEALED,
+              AppealCaseState.RECEIVED,
+            ],
+          },
+          {
+            '$rulingOrderAppealCases.appeal_state$': [
+              AppealCaseState.APPEALED,
+              AppealCaseState.RECEIVED,
+            ],
+          },
+        ],
+      },
+    ],
+  },
 })
 
 export const prosecutionIndictmentsCompletedWhereOptions = (
