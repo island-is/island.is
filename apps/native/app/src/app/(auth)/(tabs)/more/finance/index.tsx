@@ -133,7 +133,7 @@ export default function FinanceScreen() {
           </View>
         )}
       </SafeAreaView>
-      {chargeTypeTotal !== undefined && (
+      {(showLoading || chargeTypeTotal !== undefined) && (
         <TableViewCell
           style={{
             marginTop: 16,
@@ -157,7 +157,9 @@ export default function FinanceScreen() {
               />
             ) : (
               <Typography size={20} weight="600">
-                {`${intl.formatNumber(chargeTypeTotal)} kr.`}
+                {chargeTypeTotal
+                  ? `${intl.formatNumber(chargeTypeTotal)} kr.`
+                  : ''}
               </Typography>
             )
           }
