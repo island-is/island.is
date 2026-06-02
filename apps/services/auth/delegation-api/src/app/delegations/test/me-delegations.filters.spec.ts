@@ -398,6 +398,26 @@ describe('MeDelegationsController filters', () => {
     expect(res.status).toEqual(204)
   })
 
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when a scope is grantable in the domain but not on this delegation', async () => {
+    // Arrange
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainFuture] })
+
+    // Assert
+    expect(res.status).toEqual(400)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when the user does not have grant access to the scope', async () => {
+    // Arrange
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainNotAllowed] })
+
+    // Assert
+    expect(res.status).toEqual(400)
+  })
+
   it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient revokes the only scope on an incoming delegation', async () => {
     // Act
     const res = await server

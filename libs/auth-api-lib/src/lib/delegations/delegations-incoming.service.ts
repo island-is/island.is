@@ -376,6 +376,16 @@ export class DelegationsIncomingService {
       )
     }
 
+    const existingScopeNames = new Set(
+      currentDelegation.delegationScopes?.map((s) => s.scopeName) ?? [],
+    )
+    const unknownScopes = scopeNames.filter((s) => !existingScopeNames.has(s))
+    if (unknownScopes.length > 0) {
+      throw new BadRequestException(
+        'One or more scopes are not part of this delegation.',
+      )
+    }
+
     await this.delegationScopeService.deleteByName(delegationId, scopeNames)
 
     // Reindex the recipient's own delegation cache.
@@ -402,7 +412,12 @@ export class DelegationsIncomingService {
       ],
     })
 
-    if (!refreshed || (refreshed.delegationScopes?.length ?? 0) === 0) {
+    if (
+      !refreshed ||
+      (refreshed.delegationScopes && refreshed.delegationScopes?.length === 0)
+    ) {
+      // No scopes remain — destroy the delegation
+      await this.delegationModel.destroy({ where: { id: delegationId } })
       throw new NoContentException()
     }
 

@@ -172,7 +172,10 @@ const EditAccess = () => {
     const didDelete = await deleteByPerson({
       nationalId: recipient.nationalId,
       type: personType,
-      scopes: initialScopes.map((s) => ({ delegationId: s.delegationId })),
+      scopes: initialScopes.map((s) => ({
+        delegationId: s.delegationId,
+        displayName: s.displayName,
+      })),
     })
     if (!didDelete) return
     setIsDeleteModalVisible(false)

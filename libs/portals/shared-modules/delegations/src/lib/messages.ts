@@ -258,6 +258,10 @@ export const m = defineMessages({
     defaultMessage:
       'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur síðar',
   },
+  deleteDelegationsFailed: {
+    id: 'sp.access-control-delegations:delete-delegations-failed',
+    defaultMessage: 'Ekki tókst að eyða eftirfarandi umboðum: {delegations}',
+  },
   dateError: {
     id: 'sp.access-control-delegations:date-error',
     defaultMessage: 'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
