@@ -17,7 +17,6 @@ import { ClientDelegationType } from '../clients/models/client-delegation-type.m
 import { Client } from '../clients/models/client.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
-import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { AliveStatusService, NameInfo } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
@@ -38,7 +37,6 @@ import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
-import { DelegationDirection } from './types/delegationDirection'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -79,7 +77,6 @@ export class DelegationsIncomingService {
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
     private delegationScopeService: DelegationScopeService,
-    private delegationResourceService: DelegationResourcesService,
     private aliveStatusService: AliveStatusService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
@@ -361,19 +358,6 @@ export class DelegationsIncomingService {
     })
     if (!currentDelegation) {
       throw new NoContentException()
-    }
-
-    if (
-      !(await this.delegationResourceService.validateScopeAccess(
-        user,
-        currentDelegation.domainName ?? null,
-        DelegationDirection.INCOMING,
-        scopeNames,
-      ))
-    ) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
     }
 
     const existingScopeNames = new Set(
