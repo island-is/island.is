@@ -107,6 +107,7 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.appointmentDetail,
           path: HealthPaths.HealthAppointmentDetail,
           navHide: true,
+          breadcrumbHide: true,
         },
       ],
     },
