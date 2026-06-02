@@ -13,7 +13,7 @@ export const DirectorateOfEqualityClientConfig = defineConfig<
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_DIRECTORATE_OF_EQUALITY_PATH',
-      'IS-DEV/GOV/10014/DMR-Protected/directorate-of-equality',
+      'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
     ),
   }),
 })
