@@ -60,8 +60,7 @@ const HealthConversations = () => {
       input: {
         ...(filterValues.archived
           ? {
-              status:
-                HealthDirectorateHealthConversationStatusFilter.ARCHIVED,
+              status: HealthDirectorateHealthConversationStatusFilter.ARCHIVED,
             }
           : {}),
         ...(filterValues.starred ? { starred: true } : {}),
