@@ -103,6 +103,7 @@ export enum ApplicationTypes {
   CONFIRM_JOB_SEARCH = 'ConfirmJobSearch',
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  CONFIRM_JOB_OR_INCOME = 'ConfirmJobOrIncome',
 }
 
 export const ApplicationConfigurations = {
@@ -525,5 +526,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     slug: 'atvinnuleysisbaetur-stadfesting-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    slug: 'atvinnuleysisbaetur-stadfesting-starf-eda-tekna',
+    translation: ['vmst.cjoi.application', 'uiForms.application'],
   },
 }

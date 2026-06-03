@@ -1,3 +1,6 @@
+
+import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
+import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
 import { ConfirmTravelService } from './vmst/confirm-travel/confirm-travel.service'
 import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
@@ -288,7 +291,8 @@ export const modules = [
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
   ConfirmTravelModule,
-]
+  ConfirmJobOrIncomeModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -386,4 +390,5 @@ export const services = [
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,
   ConfirmTravelService,
-]
+  ConfirmJobOrIncomeService,
+            ]
