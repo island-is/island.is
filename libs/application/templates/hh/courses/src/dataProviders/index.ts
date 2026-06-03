@@ -11,10 +11,9 @@ export const HhCoursesSelectedChargeItemApi = defineTemplateApi({
   externalDataId: 'hhCoursesSelectedChargeItem',
 })
 
-// Fetches the user's current health center, but only for public courses.
-// For professional courses (námskeið fyrir fagfólk) the backend skips the
-// fetch entirely. Uses the same externalDataId as the shared HealthCenterApi
-// so the form fields reading `currentHealthcenter` keep working unchanged.
+// Gated replacement for the shared HealthCenterApi: the backend only fetches
+// the health center for public courses (see CoursesService.getHealthCenter).
+// Keeps the `currentHealthcenter` externalDataId so the form is unchanged.
 export const HhCoursesHealthCenterApi = defineTemplateApi({
   action: ApiActions.getHealthCenter,
   externalDataId: 'currentHealthcenter',

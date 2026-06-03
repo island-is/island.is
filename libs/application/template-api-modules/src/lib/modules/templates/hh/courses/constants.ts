@@ -25,8 +25,6 @@ export const GET_COURSE_BY_ID_QUERY = `
 // Contentful ids of the HH course list pages.
 export const COURSE_LIST_PAGE_ID = {
   public: '6pkONOn80xzGTGij6qtjai',
-  // Health center information must NOT be fetched for registrations on
-  // professional courses (námskeið fyrir fagfólk).
   professionals: '147YftiWFQsBcbUFFe2rj1',
 } as const
 

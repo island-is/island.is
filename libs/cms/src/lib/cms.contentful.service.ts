@@ -1872,8 +1872,7 @@ export class CmsContentfulService {
       select: 'fields.title,sys',
       'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
       'fields.courseListPage.fields.organization.sys.id': input.organizationId,
-      // Optionally restrict to a single course list page (e.g. only public or
-      // only professional courses) so the consumer cannot mix course types.
+      // Optionally restrict the options to a single course list page.
       ...(input.courseListPageId
         ? { 'fields.courseListPage.sys.id': input.courseListPageId }
         : {}),
