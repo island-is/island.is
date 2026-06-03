@@ -1868,7 +1868,7 @@ export class CmsContentfulService {
     const params = {
       content_type: 'course',
       limit: 1000,
-      include: 0,
+      include: 1,
       select: 'fields.title,sys,fields.courseListPage',
       'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
       'fields.courseListPage.fields.organization.sys.id': input.organizationId,
