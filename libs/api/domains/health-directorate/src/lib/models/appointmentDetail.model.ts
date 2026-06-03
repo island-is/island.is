@@ -1,8 +1,5 @@
 import { Field, ObjectType, Int, GraphQLISODateTime, ID } from '@nestjs/graphql'
-import {
-  AppointmentStatusEnum,
-  AppointmentModalityEnum,
-} from './enums'
+import { AppointmentStatusEnum, AppointmentModalityEnum } from './enums'
 import {
   AppointmentLocation,
   AppointmentAssignee,
