@@ -109,6 +109,16 @@ export const messages = {
           'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum.',
       },
     }),
+    activeEqualityReport: defineMessages({
+      title: {
+        id: 'equalityReport.application:prerequisites.activeEqualityReport.title',
+        defaultMessage: 'Upplýsingar frá Jafnréttisstofu',
+      },
+      intro: {
+        id: 'equalityReport.application:prerequisites.activeEqualityReport.intro',
+        defaultMessage: 'Við sækjum upplýsingar um þína stöðu hjá Jafnréttisstofu.',
+      },
+    }),
     nationalRegistry: defineMessages({
       title: {
         id: 'equalityReport.application:prerequisites.nationalRegistry.title',
@@ -222,6 +232,20 @@ export const messages = {
       intro: {
         id: 'equalityReport.application:equalityReport.uplysingar.intro',
         defaultMessage: equalityReportIntro,
+      },
+    }),
+    eldriJafnrettisaetlun: defineMessages({
+      sectionTitle: {
+        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.sectionTitle',
+        defaultMessage: 'Eldri Jafnréttisáætlun',
+      },
+      title: {
+        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.title',
+        defaultMessage: 'Eldri Jafnréttisáætlun',
+      },
+      intro: {
+        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.intro',
+        defaultMessage: lorem,
       },
     }),
     markmidOgAdgerdir: defineMessages({

@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
 
@@ -10,6 +11,29 @@ export const equalityReportSection = buildSection({
   id: 'equalityReport',
   title: messages.equalityReport.section.sectionTitle,
   children: [
+    buildSubSection({
+      id: 'eldriJafnrettisaetlun',
+      title: messages.equalityReport.eldriJafnrettisaetlun.sectionTitle,
+      condition: (_answers, externalData) =>
+        getValueViaPath(
+          externalData,
+          'activeEqualityReport.data.hasActiveEqualityReport',
+        ) === true,
+      children: [
+        buildMultiField({
+          id: 'eldriJafnrettisaetlunMultiField',
+          title: messages.equalityReport.eldriJafnrettisaetlun.title,
+          description: messages.equalityReport.eldriJafnrettisaetlun.intro,
+          children: [
+            buildDescriptionField({
+              id: 'eldriJafnrettisaetlun.placeholder',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSubSection({
       id: 'uplysingar',
       title: messages.equalityReport.uplysingar.sectionTitle,

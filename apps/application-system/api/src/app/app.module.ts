@@ -78,6 +78,7 @@ import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-ag
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
+import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
 
 @Module({
   imports: [
@@ -153,6 +154,7 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],
