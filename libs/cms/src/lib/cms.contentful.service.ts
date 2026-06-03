@@ -1878,7 +1878,7 @@ export class CmsContentfulService {
       await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
         input.lang,
         params,
-        0,
+        1,
       )
 
     const items = response.items.map((item) => ({
