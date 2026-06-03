@@ -4,9 +4,9 @@ import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
-import { nowFactory } from '../factories'
-import { ruling } from '../messages'
-import { Case } from '../modules/repository'
+import { nowFactory } from '../../factories'
+import { ruling } from '../../messages'
+import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -18,7 +18,7 @@ import {
   addNormalText,
   setLineGap,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 const constructRulingPdf = (
   theCase: Case,

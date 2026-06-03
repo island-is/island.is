@@ -1,4 +1,4 @@
-import { Defendant } from '../modules/repository'
+import { Defendant } from '../../modules/repository'
 import { formatDefendant } from './caseFilesRecordPdf'
 
 describe('FormatDefendant', () => {

@@ -16,8 +16,8 @@ import {
   CourtSessionStringType,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../factories'
-import { Case, CaseFile, CourtDocument } from '../modules/repository'
+import { nowFactory } from '../../factories'
+import { Case, CaseFile, CourtDocument } from '../../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -32,7 +32,7 @@ import {
   drawConfirmation,
   setLineGap,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
   if (submitterText === 'Sækjandi') {

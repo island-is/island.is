@@ -8,8 +8,8 @@ import {
   Confirmation,
   drawTextWithEllipsisPDFKit,
   xsFontSize,
-} from './pdfHelpers'
-import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
+} from '../pdfHelpers'
+import { PDFKitCoatOfArms } from '../helpers/PDFKitCoatOfArms'
 
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING

@@ -7,9 +7,9 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import { caseFilesRecord } from '../messages'
-import { Case, Defendant, PoliceDigitalCaseFile } from '../modules/repository'
-import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
+import { caseFilesRecord } from '../../messages'
+import { Case, Defendant, PoliceDigitalCaseFile } from '../../modules/repository'
+import { Alignment, LineLink, PageLink, PdfDocument } from '../pdfHelpers/pdf'
 
 export const formatDefendant = (defendant: Defendant) => {
   const defendantDOB = formatDOB(

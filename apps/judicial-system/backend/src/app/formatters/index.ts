@@ -1,12 +1,12 @@
 export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-} from './courtRecordPdf'
-export { createIndictmentCourtRecordPdf } from './indictmentCourtRecordPdf'
+} from './generatedPdfs/courtRecordPdf'
+export { createIndictmentCourtRecordPdf } from './generatedPdfs/indictmentCourtRecordPdf'
 export {
   getCustodyNoticePdfAsBuffer,
   getCustodyNoticePdfAsString,
-} from './custodyNoticePdf'
+} from './generatedPdfs/custodyNoticePdf'
 export {
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -30,17 +30,23 @@ export {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
   filterWhitelistEmails,
+  formatCustodyRestrictions,
 } from './formatters'
-export { Confirmation } from './pdfHelpers'
-export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
-export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
-export { createCaseFilesRecord } from './caseFilesRecordPdf'
-export { createDigitalCaseFileMetadataPdf } from './digitalCaseFileMetadataPdf'
-export { createIndictment } from './indictmentPdf'
-export { createConfirmedPdf } from './confirmedPdf'
-export { createSubpoena } from './subpoenaPdf'
-export { createSubpoenaServiceCertificate } from './subpoenaServiceCertificatePdf'
-export { createRulingSentToPrisonAdminPdf } from './rulingSentToPrisonAdminPdf'
-export { createFineSentToPrisonAdminPdf } from './fineSentToPrisonAdminPdf'
-export { getCaseFileHash } from './getCaseFileHash'
-export { createVerdictServiceCertificate } from './verdictServiceCertificatePdf'
+export {
+  getRequestPdfAsBuffer,
+  getRequestPdfAsString,
+} from './generatedPdfs/requestPdf'
+export {
+  getRulingPdfAsBuffer,
+  getRulingPdfAsString,
+} from './generatedPdfs/rulingPdf'
+export { createCaseFilesRecord } from './generatedPdfs/caseFilesRecordPdf'
+export { createDigitalCaseFileMetadataPdf } from './generatedPdfs/digitalCaseFileMetadataPdf'
+export { createIndictment } from './generatedPdfs/indictmentPdf'
+export { createConfirmedPdf } from './confirmation/confirmedPdf'
+export { createSubpoena } from './generatedPdfs/subpoenaPdf'
+export { createSubpoenaServiceCertificate } from './generatedPdfs/subpoenaServiceCertificatePdf'
+export { createRulingSentToPrisonAdminPdf } from './generatedPdfs/rulingSentToPrisonAdminPdf'
+export { createFineSentToPrisonAdminPdf } from './generatedPdfs/fineSentToPrisonAdminPdf'
+export { getCaseFileHash } from './confirmation/getCaseFileHash'
+export { createVerdictServiceCertificate } from './generatedPdfs/verdictServiceCertificatePdf'

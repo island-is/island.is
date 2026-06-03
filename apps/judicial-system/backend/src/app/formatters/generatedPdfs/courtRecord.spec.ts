@@ -1,6 +1,6 @@
 import { createTestIntl } from '@island.is/cms-translations/test'
 
-import { courtRecord } from '../messages'
+import { courtRecord } from '../../messages'
 import { formatCourtEndDate } from './courtRecordPdf'
 
 describe('formatCourtEndDate', () => {
