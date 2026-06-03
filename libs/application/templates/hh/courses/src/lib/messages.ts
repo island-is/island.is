@@ -16,9 +16,16 @@ export const m = {
     applicationTitleWithCourse: {
       id: 'hh.courses.application:general.applicationTitleWithCourse',
       defaultMessage:
-        '{value} - Námskeið hjá Heilsugæslunni á höfuðborgarsvæðinu',
+        '{value} - Námskeið fyrir almenning (Heilsugæsla höfuðborgarsvæðisins)',
       description:
         'Title of application with course name, shown in the application list',
+    },
+    applicationTitleWithCourseForProfessionals: {
+      id: 'hh.courses.application:general.applicationTitleWithCourseForProfessionals',
+      defaultMessage:
+        '{value} - Námskeið fyrir fagfólk (Heilsugæsla höfuðborgarsvæðisins)',
+      description:
+        'Title of application with course name, shown in the application list for professionals',
     },
     shorterApplicationTitle: {
       id: 'hh.courses.application:general.shorterApplicationTitle',
