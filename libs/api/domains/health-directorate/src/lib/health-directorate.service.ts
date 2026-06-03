@@ -632,7 +632,7 @@ export class HealthDirectorateService {
             floor: item.location.floor,
             room: item.location.room,
             directions: item.location.directions,
-            link: item.links?.find((l) => l.type === 'ORGANIZATION_INFO')?.url,
+            link: item.location.link,
             city: item.location.city,
             postalCode: item.location.postalCode,
             country: item.location.country,
