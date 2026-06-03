@@ -13,6 +13,12 @@ export const m = {
         'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
       description: 'Title of application',
     },
+    applicationTitleForProfessionals: {
+      id: 'hh.courses.application:general.applicationTitleForProfessionals',
+      defaultMessage:
+        'Skráning á námskeið fyrir fagfólk (Heilsugæsla höfuðborgarsvæðisins)',
+      description: 'Title of application for professionals',
+    },
     applicationTitleWithCourse: {
       id: 'hh.courses.application:general.applicationTitleWithCourse',
       defaultMessage:

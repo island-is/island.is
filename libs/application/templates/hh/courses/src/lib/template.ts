@@ -51,6 +51,8 @@ const template: ApplicationTemplate<
             : m.general.applicationTitleWithCourse,
           value: courseTitle,
         }
+      : isCourseForProfessionals(application.answers)
+      ? m.general.applicationTitleForProfessionals
       : m.general.applicationTitle
   },
   codeOwner: CodeOwners.Stefna,
