@@ -3,6 +3,9 @@ import {
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
+  AppointmentAssigneeTypeEnum,
+  AppointmentLinkTypeEnum,
+  AppointmentModalityEnum,
   AppointmentStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -39,6 +42,34 @@ export const toAppointmentStatusEnum = (
 ): AppointmentStatusEnum | undefined =>
   Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
     ? (status as AppointmentStatusEnum)
+    : undefined
+
+export const toAppointmentModalityEnum = (
+  modality?: string,
+): AppointmentModalityEnum | undefined =>
+  modality &&
+  Object.values(AppointmentModalityEnum).includes(
+    modality as AppointmentModalityEnum,
+  )
+    ? (modality as AppointmentModalityEnum)
+    : undefined
+
+export const toAppointmentAssigneeTypeEnum = (
+  type: string,
+): AppointmentAssigneeTypeEnum | undefined =>
+  Object.values(AppointmentAssigneeTypeEnum).includes(
+    type as AppointmentAssigneeTypeEnum,
+  )
+    ? (type as AppointmentAssigneeTypeEnum)
+    : undefined
+
+export const toAppointmentLinkTypeEnum = (
+  type: string,
+): AppointmentLinkTypeEnum | undefined =>
+  Object.values(AppointmentLinkTypeEnum).includes(
+    type as AppointmentLinkTypeEnum,
+  )
+    ? (type as AppointmentLinkTypeEnum)
     : undefined
 
 export const mapAppointmentStatus = (

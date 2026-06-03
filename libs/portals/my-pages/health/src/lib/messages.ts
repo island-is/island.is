@@ -2607,4 +2607,40 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-more-info',
     defaultMessage: 'Nánari upplýsingar',
   },
+  appointmentModalityInPerson: {
+    id: 'sp.health:appointment-modality-in-person',
+    defaultMessage: 'Viðtal á staðnum',
+  },
+  appointmentModalityVideo: {
+    id: 'sp.health:appointment-modality-video',
+    defaultMessage: 'Fjarfundur',
+  },
+  appointmentAssignees: {
+    id: 'sp.health:appointment-assignees',
+    defaultMessage: 'Úthlutað til',
+  },
+  appointmentVideoCallLink: {
+    id: 'sp.health:appointment-video-call-link',
+    defaultMessage: 'Opna fjarfund',
+  },
+  appointmentPreparation: {
+    id: 'sp.health:appointment-preparation',
+    defaultMessage: 'Undirbúningur',
+  },
+  appointmentLocationRoom: {
+    id: 'sp.health:appointment-location-room',
+    defaultMessage: 'Herbergi',
+  },
+  appointmentLocationFloor: {
+    id: 'sp.health:appointment-location-floor',
+    defaultMessage: 'Hæð',
+  },
+  appointmentLocationWing: {
+    id: 'sp.health:appointment-location-wing',
+    defaultMessage: 'Álma',
+  },
+  appointmentLocationDepartment: {
+    id: 'sp.health:appointment-location-department',
+    defaultMessage: 'Deild',
+  },
 })

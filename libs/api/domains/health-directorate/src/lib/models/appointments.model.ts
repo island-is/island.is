@@ -5,7 +5,12 @@ import {
   Int,
   GraphQLISODateTime,
 } from '@nestjs/graphql'
-import { AppointmentStatusEnum } from './enums'
+import {
+  AppointmentStatusEnum,
+  AppointmentModalityEnum,
+  AppointmentAssigneeTypeEnum,
+  AppointmentLinkTypeEnum,
+} from './enums'
 
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
@@ -15,8 +20,20 @@ export class AppointmentLocation {
   @Field({ nullable: true })
   organization?: string
 
-  @Field()
-  address!: string
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  department?: string
+
+  @Field({ nullable: true })
+  wing?: string
+
+  @Field({ nullable: true })
+  floor?: string
+
+  @Field({ nullable: true })
+  room?: string
 
   @Field({ nullable: true })
   directions?: string
@@ -46,6 +63,24 @@ export class AppointmentLocation {
   openingHoursText?: string
 }
 
+@ObjectType('HealthDirectorateAppointmentAssignee')
+export class AppointmentAssignee {
+  @Field(() => AppointmentAssigneeTypeEnum)
+  type!: AppointmentAssigneeTypeEnum
+
+  @Field()
+  name!: string
+}
+
+@ObjectType('HealthDirectorateAppointmentLink')
+export class AppointmentLink {
+  @Field(() => AppointmentLinkTypeEnum)
+  type!: AppointmentLinkTypeEnum
+
+  @Field()
+  url!: string
+}
+
 @ObjectType('HealthDirectorateAppointment')
 export class Appointment {
   @Field()
@@ -60,6 +95,9 @@ export class Appointment {
   @Field(() => AppointmentStatusEnum, { nullable: true })
   status?: AppointmentStatusEnum
 
+  @Field(() => AppointmentModalityEnum, { nullable: true })
+  modality?: AppointmentModalityEnum
+
   @Field(() => AppointmentLocation, { nullable: true })
   location?: AppointmentLocation
 
@@ -71,6 +109,9 @@ export class Appointment {
 
   @Field(() => [String])
   practitioners!: string[]
+
+  @Field(() => [AppointmentAssignee])
+  assignees!: AppointmentAssignee[]
 }
 
 @ObjectType('HealthDirectorateAppointments')
