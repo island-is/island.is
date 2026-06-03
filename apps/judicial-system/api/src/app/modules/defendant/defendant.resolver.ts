@@ -12,7 +12,6 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser, type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
@@ -127,11 +126,7 @@ export class DefendantResolver {
       connectedCase.defendants?.some((d) =>
         defendant.noNationalId
           ? d.nationalId === defendant.nationalId && d.name === defendant.name
-          : d.nationalId !== null &&
-            d.nationalId !== undefined &&
-            normalizeAndFormatNationalId(defendant.nationalId ?? '').includes(
-              d.nationalId,
-            ),
+          : d.nationalId === defendant.nationalId,
       ) ?? false,
     )
   }
