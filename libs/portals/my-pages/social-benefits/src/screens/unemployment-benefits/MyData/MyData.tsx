@@ -1,6 +1,7 @@
 import {
   IntroWrapper,
   UserInfoLine,
+  formSubmit,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
@@ -9,7 +10,6 @@ import {
   useGetApplicantRequestedAttachmentsQuery,
   useGetApplicantAttachmentsQuery,
   useGetAttachmentTypesQuery,
-  useGetAttachmentLazyQuery,
 } from './MyData.generated'
 import {
   Box,
@@ -18,23 +18,10 @@ import {
   Stack,
   Tag,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
-import { useCallback, useState } from 'react'
-
-const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
-
-const base64ToBlob = (data: string, contentType: string): Blob => {
-  const byteCharacters = atob(data)
-  const byteNumbers = new Uint8Array(byteCharacters.length)
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i)
-  }
-  return new Blob([byteNumbers], { type: contentType })
-}
 
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
@@ -89,56 +76,6 @@ const MyData = () => {
     const type = attachmentTypeMap.get(attachmentTypeId)
     return type?.name ?? ''
   }
-
-  const [fetchAttachment] = useGetAttachmentLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
-
-  const [loadingAttachmentId, setLoadingAttachmentId] = useState<string | null>(
-    null,
-  )
-
-  const openAttachment = useCallback(
-    (attachmentId: string) => {
-      if (loadingAttachmentId) return
-      setLoadingAttachmentId(attachmentId)
-
-      fetchAttachment({
-        variables: { id: attachmentId },
-        onCompleted: (result) => {
-          try {
-            const attachment = result.vmstAttachment
-            if (!attachment.data) return
-
-            const blob = base64ToBlob(attachment.data, attachment.contentType)
-            const blobUrl = URL.createObjectURL(blob)
-
-            if (VIEWABLE_CONTENT_TYPES.includes(attachment.contentType)) {
-              window.open(blobUrl, '_blank')
-              setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
-            } else {
-              const link = document.createElement('a')
-              link.href = blobUrl
-              link.download = attachment.name
-              document.body.appendChild(link)
-              link.click()
-              document.body.removeChild(link)
-              URL.revokeObjectURL(blobUrl)
-            }
-          } catch {
-            toast.error(formatMessage(um.myDataAttachmentError))
-          } finally {
-            setLoadingAttachmentId(null)
-          }
-        },
-        onError: () => {
-          toast.error(formatMessage(um.myDataAttachmentError))
-          setLoadingAttachmentId(null)
-        },
-      })
-    },
-    [fetchAttachment, formatMessage, loadingAttachmentId],
-  )
 
   return (
     <IntroWrapper
@@ -219,12 +156,19 @@ const MyData = () => {
                     <Box key={attachment.id}>
                       <UserInfoLine
                         label={getAttachmentName(attachment.typeId)}
-                        button={{
-                          title: formatMessage(um.myDataViewDocument),
-                          onClick: () => {
-                            openAttachment(attachment.id)
-                          },
-                        }}
+                        button={
+                          attachment.downloadServiceUrl
+                            ? {
+                                title: formatMessage(um.myDataViewDocument),
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  if (attachment.downloadServiceUrl) {
+                                    formSubmit(attachment.downloadServiceUrl)
+                                  }
+                                },
+                              }
+                            : undefined
+                        }
                       />
                       <Divider />
                     </Box>

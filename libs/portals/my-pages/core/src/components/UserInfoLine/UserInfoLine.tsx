@@ -30,6 +30,7 @@ export type EditLink = {
 type LineButton = {
   title: MessageDescriptor | string
   onClick: () => void
+  icon?: ButtonProps['icon']
 }
 
 interface Props {
@@ -191,7 +192,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               <Button
                 onClick={button.onClick}
-                icon="pencil"
+                icon={button.icon ?? 'pencil'}
                 size="small"
                 variant="text"
               >

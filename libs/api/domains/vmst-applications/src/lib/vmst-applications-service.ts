@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
@@ -18,11 +18,17 @@ import {
   VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class VMSTApplicationsService {
   constructor(
     private readonly vmstUnemploymentService: VmstUnemploymentClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   async validateBankInformation(
@@ -185,6 +191,7 @@ export class VMSTApplicationsService {
           name: item.name,
           contentType: item.contentType,
           created: item.created,
+          downloadServiceUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${item.id}`,
         },
       ]
     })
