@@ -7,7 +7,9 @@ import { LocaleProvider } from '@island.is/localization'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import InfoCard from './InfoCard'
 
-const renderInfoCard = (sections: React.ComponentProps<typeof InfoCard>['sections']) =>
+const renderInfoCard = (
+  sections: React.ComponentProps<typeof InfoCard>['sections'],
+) =>
   render(
     <MockedProvider>
       <LocaleProvider locale="is" messages={{}}>
@@ -24,7 +26,11 @@ describe('InfoCard', () => {
           id: 'sec',
           items: [
             { id: 'empty', title: 'Hidden title', values: [] },
-            { id: 'visible', title: 'Visible title', values: ['Visible value'] },
+            {
+              id: 'visible',
+              title: 'Visible title',
+              values: ['Visible value'],
+            },
           ],
         },
       ])
@@ -38,7 +44,11 @@ describe('InfoCard', () => {
         {
           id: 'sec',
           items: [
-            { id: 'falsy', title: 'Falsy title', values: [null as unknown as string] },
+            {
+              id: 'falsy',
+              title: 'Falsy title',
+              values: [null as unknown as string],
+            },
             { id: 'visible', title: 'Visible title', values: ['Value'] },
           ],
         },
