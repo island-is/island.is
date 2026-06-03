@@ -31,7 +31,7 @@ import {
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
 import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
-import { isCourseForProfessionals } from '@/utils/isCourseForProfessionals'
+import { isCourseForProfessionals } from '../utils/isCourseForProfessionals'
 
 const template: ApplicationTemplate<
   ApplicationContext,
