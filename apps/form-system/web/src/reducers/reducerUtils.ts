@@ -101,7 +101,13 @@ export const incrementWithScreens = (
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
 
-  if (errors.length > 0 || !isValid) {
+  const isParties =
+    state.currentSection.data.sectionType === SectionTypes.PARTIES
+
+  if (
+    errors.length > 0 ||
+    (!isValid && (isParties || !state.application.allowProceedOnValidationFail))
+  ) {
     return { ...state, errors }
   }
 

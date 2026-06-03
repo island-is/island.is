@@ -1,8 +1,8 @@
 import type { FormatMessage } from '@island.is/cms-translations'
 
 import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
@@ -819,7 +819,9 @@ export const formatDefenderRoute = (
 ) => {
   const caseType = type as CaseType
   return `${baseUrl}${
-    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
+    isIndictmentCase(caseType)
+      ? DEFENDER_INDICTMENT_CASE_ROUTE
+      : DEFENDER_REQUEST_CASE_ROUTE
   }/${id}`
 }
 

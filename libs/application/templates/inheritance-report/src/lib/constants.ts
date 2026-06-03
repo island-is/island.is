@@ -72,6 +72,7 @@ export enum ApiActions {
   submitToSyslumenn = 'submitToSyslumenn',
   getSignatories = 'getSignatories',
   approveByAssignee = 'approveByAssignee',
+  notifyAssignees = 'notifyAssignees',
   checkReviewFlag = 'checkReviewFlag',
 }
 

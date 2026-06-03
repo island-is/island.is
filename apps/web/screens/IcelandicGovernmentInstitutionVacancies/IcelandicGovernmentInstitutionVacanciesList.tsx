@@ -156,10 +156,14 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
+      // The new API populates the "Störf" filter from the jobCategory field
+      const fieldOfWorkValue = useNewApiOverride
+        ? vacancy.jobCategory
+        : vacancy.fieldOfWork
       shouldBeShown = Boolean(
         shouldBeShown &&
-          vacancy.fieldOfWork &&
-          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
+          fieldOfWorkValue &&
+          parameters.fieldOfWork.includes(fieldOfWorkValue),
       )
     }
 
@@ -186,8 +190,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   })
 
   const fieldOfWorkOptions = useMemo(
-    () => mapVacanciesField(vacancies, 'fieldOfWork'),
-    [vacancies],
+    () =>
+      mapVacanciesField(
+        vacancies,
+        useNewApiOverride ? 'jobCategory' : 'fieldOfWork',
+      ),
+    [vacancies, useNewApiOverride],
   )
 
   const locationOptions = useMemo(

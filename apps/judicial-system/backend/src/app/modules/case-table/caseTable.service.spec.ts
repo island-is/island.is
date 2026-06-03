@@ -152,6 +152,244 @@ describe('CaseTableService', () => {
       )
       expect(exactIndex).toBeLessThan(partialIndex)
     })
+
+    it('returns appealCaseId null for non-COA users', async () => {
+      const user = prosecutionUser('user-1')
+      const mockCase = {
+        id: 'case-1',
+        type: 'CUSTODY',
+        decision: null,
+        policeCaseNumbers: ['456-2024'],
+        courtCaseNumber: null,
+        appealCase: {
+          id: 'appeal-1',
+          appealCaseNumber: 'L-1/2024',
+          appealState: AppealCaseState.RECEIVED,
+          appealReceivedByCourtDate: null,
+        },
+        defendants: [{ nationalId: '1', name: 'Defendant' }],
+        get: (key: string) =>
+          ({ matchedValue: '456-2024', matchedField: 'policeCaseNumbers' }[
+            key
+          ]),
+      }
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('456', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBeNull()
+      expect(result.rows[0].appealCaseNumber).toBe('L-1/2024')
+    })
+  })
+
+  describe('searchCases for Court of Appeals', () => {
+    const buildAppeal = (
+      id: string,
+      appealCaseNumber: string,
+      appealState: AppealCaseState = AppealCaseState.RECEIVED,
+      appealReceivedByCourtDate: Date | null = null,
+    ) => ({
+      id,
+      appealCaseNumber,
+      appealState,
+      appealReceivedByCourtDate,
+    })
+
+    const buildSearchCase = (overrides: {
+      id?: string
+      appealCase?: ReturnType<typeof buildAppeal> | null
+      rulingOrderAppealCases?: ReturnType<typeof buildAppeal>[]
+      defendants?: { nationalId: string; name: string }[]
+      matchedValue?: string
+      matchedField?: string
+    }) => ({
+      id: overrides.id ?? 'case-1',
+      type: 'CUSTODY',
+      decision: null,
+      policeCaseNumbers: ['001-2024'],
+      courtCaseNumber: null,
+      appealCase: overrides.appealCase ?? null,
+      rulingOrderAppealCases: overrides.rulingOrderAppealCases ?? [],
+      defendants: overrides.defendants ?? [],
+      get: (key: string) =>
+        ({
+          matchedValue: overrides.matchedValue ?? '001-2024',
+          matchedField: overrides.matchedField ?? 'policeCaseNumbers',
+        }[key]),
+    })
+
+    it('requests rulingOrderAppealCases and extra appealCase fields for COA users', async () => {
+      mockFindAll.mockResolvedValue([])
+      const user = courtOfAppealsUser('user-1')
+
+      await service.searchCases('test', user)
+
+      const call = mockFindAll.mock.calls[0][0]
+      const appealCaseInclude = call.include.find(
+        (i: { as: string }) => i.as === 'appealCase',
+      )
+      expect(appealCaseInclude.attributes).toEqual(
+        expect.arrayContaining([
+          'id',
+          'appealCaseNumber',
+          'appealState',
+          'appealReceivedByCourtDate',
+        ]),
+      )
+      const rulingOrderInclude = call.include.find(
+        (i: { as: string }) => i.as === 'rulingOrderAppealCases',
+      )
+      expect(rulingOrderInclude).toBeDefined()
+      expect(rulingOrderInclude.separate).toBe(true)
+      expect(rulingOrderInclude.attributes).toEqual(
+        expect.arrayContaining([
+          'id',
+          'appealCaseNumber',
+          'appealState',
+          'appealReceivedByCourtDate',
+        ]),
+      )
+    })
+
+    it('emits one row per qualifying appeal with appealCaseId and appealCaseNumber set per row', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal('appeal-cl', 'L-10/2024'),
+        rulingOrderAppealCases: [
+          buildAppeal('appeal-ro-1', 'L-11/2024'),
+          buildAppeal('appeal-ro-2', 'L-12/2024'),
+        ],
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(3)
+      expect(result.rows.map((r) => r.appealCaseId)).toEqual([
+        'appeal-cl',
+        'appeal-ro-1',
+        'appeal-ro-2',
+      ])
+      expect(result.rows.map((r) => r.appealCaseNumber)).toEqual([
+        'L-10/2024',
+        'L-11/2024',
+        'L-12/2024',
+      ])
+      result.rows.forEach((r) => expect(r.caseId).toBe('case-1'))
+    })
+
+    it('emits ruling-order rows when case-level appeal is missing', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: null,
+        rulingOrderAppealCases: [buildAppeal('appeal-ro-1', 'L-11/2024')],
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-ro-1')
+      expect(result.rows[0].appealCaseNumber).toBe('L-11/2024')
+    })
+
+    it('filters out non-qualifying appeals by state', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal(
+          'appeal-cl',
+          'L-10/2024',
+          AppealCaseState.APPEALED, // not qualifying
+        ),
+        rulingOrderAppealCases: [
+          buildAppeal(
+            'appeal-ro-1',
+            'L-11/2024',
+            AppealCaseState.WITHDRAWN, // not qualifying — missing received date
+            null,
+          ),
+          buildAppeal('appeal-ro-2', 'L-12/2024', AppealCaseState.COMPLETED),
+        ],
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-ro-2')
+      expect(result.rows[0].appealCaseNumber).toBe('L-12/2024')
+    })
+
+    it('treats WITHDRAWN appeals as qualifying when appealReceivedByCourtDate is set', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal(
+          'appeal-cl',
+          'L-10/2024',
+          AppealCaseState.WITHDRAWN,
+          new Date('2024-06-01'),
+        ),
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-cl')
+    })
+
+    it('expands by defendants × appeals (one row per defendant per appeal)', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal('appeal-cl', 'L-10/2024'),
+        rulingOrderAppealCases: [buildAppeal('appeal-ro-1', 'L-11/2024')],
+        defendants: [
+          { nationalId: '1', name: 'Alice' },
+          { nationalId: '2', name: 'Bob' },
+        ],
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(4)
+      expect(
+        result.rows.map((r) => ({
+          appealCaseId: r.appealCaseId,
+          defendantName: r.defendantName,
+        })),
+      ).toEqual([
+        { appealCaseId: 'appeal-cl', defendantName: 'Alice' },
+        { appealCaseId: 'appeal-cl', defendantName: 'Bob' },
+        { appealCaseId: 'appeal-ro-1', defendantName: 'Alice' },
+        { appealCaseId: 'appeal-ro-1', defendantName: 'Bob' },
+      ])
+    })
+
+    it('drops the case when no appeals qualify (defensive — access where options should prevent this)', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal(
+          'appeal-cl',
+          'L-10/2024',
+          AppealCaseState.APPEALED,
+        ),
+        rulingOrderAppealCases: [],
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(0)
+    })
   })
 
   describe('getCaseTableTypesForCases', () => {

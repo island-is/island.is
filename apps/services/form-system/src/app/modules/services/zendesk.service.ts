@@ -14,11 +14,12 @@ import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApplicationMapper } from '../applications/models/application.mapper'
 import {
   Instance,
   mapToCustomFields,
 } from '../../../utils/zendeskPartiesCustomFieldIds'
+import { FileService } from '../file/file.service'
+
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
@@ -30,13 +31,14 @@ export class ZendeskService {
     process.env.FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX
   private readonly PROD_API_KEY = process.env.FORM_SYSTEM_ZENDESK_API_KEY_PROD
   private readonly HEILSA_API_KEY = process.env.HEILSA_API_KEY
+  private readonly HASKOLI_ISLANDS_API_KEY = process.env.HASKOLI_ISLANDS_API_KEY
 
   private readonly CHECKBOX_TRUE = 'Valið'
   private readonly CHECKBOX_FALSE = 'Ekki valið'
 
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly applicationMapper: ApplicationMapper,
+    private readonly fileService: FileService,
   ) {
     this.enhancedFetch = createEnhancedFetch({
       name: 'form-system-zendesk',
@@ -49,20 +51,25 @@ export class ZendeskService {
   async sendToZendesk(
     applicationDto: ApplicationDto,
     storedInstance?: string,
+    storedBrandId?: string,
   ): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
 
+    let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
     let apiKey = this.SANDBOX_API_KEY
 
     if (applicationDto.isTest === false && environment.production === true) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
       apiKey = this.PROD_API_KEY
+      zendeskBrandId = storedBrandId
     }
 
     if (zendeskInstance === 'heilsa') {
       apiKey = this.HEILSA_API_KEY
+    } else if (zendeskInstance === 'haskoliislands') {
+      apiKey = this.HASKOLI_ISLANDS_API_KEY
     }
 
     if (!zendeskInstance || !apiKey) {
@@ -73,25 +80,39 @@ export class ZendeskService {
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     const { name, email } = this.getNameAndEmail(applicationDto)
-    const body = this.constructBody(applicationDto)
+    const { body: initialBody, attachmentKeys } =
+      this.constructBody(applicationDto)
+
     const customFields = this.getCustomFields(
       applicationDto,
       zendeskInstance as Instance,
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
-    const data = JSON.stringify(
-      this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
-        applicationDto,
-      ),
-    )
     const isInternal = applicationDto.zendeskInternal === true
     const applicationId = applicationDto.id ?? ''
 
-    const fileToken = await this.uploadFile(
-      data,
-      applicationId,
-      zendeskUrl,
-      credentials,
+    // Upload rendered attachments sequentially; do not fail the whole submission
+    const attachmentTokens: string[] = []
+    const missingFilenames: string[] = []
+
+    for (const key of attachmentKeys) {
+      const token = await this.uploadAttachmentFromS3Key(
+        key,
+        applicationId,
+        zendeskUrl,
+        credentials,
+      )
+
+      if (token) {
+        attachmentTokens.push(token)
+      } else {
+        missingFilenames.push(this.displayNameFromS3Key(key))
+      }
+    }
+
+    const body = this.appendMissingAttachmentsToBody(
+      initialBody,
+      missingFilenames,
     )
 
     return await this.createTicket(
@@ -99,12 +120,13 @@ export class ZendeskService {
       subject,
       body,
       customFields,
-      fileToken,
+      attachmentTokens,
       zendeskUrl,
       credentials,
       name,
       email,
       isInternal,
+      zendeskBrandId,
     )
   }
 
@@ -113,14 +135,20 @@ export class ZendeskService {
     subject: string,
     body: string,
     customFields: CustomField[],
-    fileToken: string,
+    uploadTokens: string[],
     url: string,
     credentials: string,
     name: string,
     email: string,
     isInternal: boolean,
+    zendeskBrandId?: string,
   ): Promise<boolean> {
     const serviceUrl = new URL(`${url}/api/v2/tickets.json`)
+
+    const brandId =
+      typeof zendeskBrandId === 'string' && /^\d+$/.test(zendeskBrandId.trim())
+        ? Number(zendeskBrandId.trim())
+        : undefined
 
     try {
       const response = await this.enhancedFetch(serviceUrl.toString(), {
@@ -134,7 +162,7 @@ export class ZendeskService {
             comment: {
               html_body: body,
               public: !isInternal,
-              uploads: [fileToken],
+              ...(uploadTokens.length ? { uploads: uploadTokens } : {}),
             },
             custom_fields: customFields,
             subject: subject,
@@ -142,9 +170,11 @@ export class ZendeskService {
               name,
               email,
             },
+            ...(brandId ? { brand_id: brandId } : {}),
           },
         }),
       })
+
       if (!response.ok) {
         this.logger.error(
           `Failed to create ticket for application ${applicationId}`,
@@ -152,6 +182,7 @@ export class ZendeskService {
         )
         return false
       }
+
       const result = await response.json()
       return result.ticket?.id ? true : false
     } catch (error) {
@@ -163,51 +194,95 @@ export class ZendeskService {
     }
   }
 
-  // private addAttachmentToTicket(): boolean {
-  //   // TODO: implement file attachment logic
-  //   return true
-  // }
+  private appendMissingAttachmentsToBody(
+    body: string,
+    missingFilenames: string[],
+  ): string {
+    const missing = [...new Set(missingFilenames)].filter((x) => x.length > 0)
+    if (missing.length === 0) return body
 
-  private async uploadFile(
-    data: string,
+    const lines = missing
+      .map((n) => `• ${n}`)
+      .map((line) => this.escapeHtml(line))
+      .join('<br />')
+
+    return [
+      body,
+      '<br />',
+      `<p style="margin:0"><strong>Fylgiskjöl sem tókst ekki að hlaða upp:</strong></p>`,
+      `<p style="margin:0;padding-left:20px">${lines}</p>`,
+    ].join('')
+  }
+
+  private async uploadAttachmentFromS3Key(
+    s3Key: string,
     applicationId: string,
     url: string,
     credentials: string,
-  ): Promise<string> {
+  ): Promise<string | undefined> {
+    try {
+      const base64 = await this.fileService.getFile(s3Key)
+      if (!base64) return undefined
+
+      const buffer = Buffer.from(base64, 'base64')
+      const filename = this.fileNameFromS3Key(s3Key)
+
+      return await this.uploadBinaryToZendesk(
+        buffer,
+        filename,
+        'application/octet-stream',
+        url,
+        credentials,
+        applicationId,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Unexpected error while attaching S3 file ${s3Key} for application ${applicationId}`,
+        { error },
+      )
+      return undefined
+    }
+  }
+
+  private async uploadBinaryToZendesk(
+    data: Buffer,
+    filename: string,
+    contentType: string,
+    url: string,
+    credentials: string,
+    applicationId: string,
+  ): Promise<string | undefined> {
+    const safeFilename = encodeURIComponent(filename || 'attachment')
     const serviceUrl = new URL(
-      `${url}/api/v2/uploads.json?filename=${applicationId}.json`,
+      `${url}/api/v2/uploads.json?filename=${safeFilename}`,
     )
 
     try {
       const response = await this.enhancedFetch(serviceUrl.toString(), {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': contentType,
           Authorization: 'Basic ' + credentials,
         },
         body: data,
       })
+
       if (!response.ok) {
         this.logger.error(
-          `Failed to upload file for application ${applicationId}`,
+          `Failed to upload attachment ${filename} for application ${applicationId}`,
           { status: response.status, statusText: response.statusText },
         )
-        throw new Error('Failed to upload file to Zendesk')
+        return undefined
       }
+
       const result = await response.json()
-      return result.upload.token
+      return result.upload?.token
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === 'Failed to upload file to Zendesk'
-      ) {
-        throw error
-      }
       this.logger.error(
-        `Unexpected error while uploading file for application ${applicationId}`,
+        `Unexpected error while uploading attachment ${filename} for application ${applicationId}`,
         { error },
       )
-      throw new Error('Unexpected error while uploading file to Zendesk')
+      return undefined
     }
   }
 
@@ -253,7 +328,10 @@ export class ZendeskService {
       .replace(/'/g, '&#039;')
   }
 
-  private constructBody(applicationDto: ApplicationDto): string {
+  private constructBody(applicationDto: ApplicationDto): {
+    body: string
+    attachmentKeys: string[]
+  } {
     const sections =
       applicationDto.sections?.filter(
         (section) =>
@@ -273,6 +351,8 @@ export class ZendeskService {
     const formatDateIs = (d?: Date) => d?.toLocaleString('is-IS') ?? ''
 
     const parts: string[] = []
+    const attachmentKeys: string[] = []
+    const seenKeys = new Set<string>()
 
     // Header
     parts.push(
@@ -325,6 +405,14 @@ export class ZendeskService {
                 const keys = this.normalizeS3Keys(
                   (json as Record<string, unknown>)['s3Key'],
                 )
+
+                for (const k of keys) {
+                  if (!seenKeys.has(k)) {
+                    seenKeys.add(k)
+                    attachmentKeys.push(k)
+                  }
+                }
+
                 const lines = keys.map(
                   (k) => `• ${this.displayNameFromS3Key(k)}`,
                 )
@@ -406,7 +494,7 @@ export class ZendeskService {
       }
     }
 
-    return parts.join('')
+    return { body: parts.join(''), attachmentKeys }
   }
 
   private normalizeS3Keys(raw: unknown): string[] {
@@ -436,6 +524,12 @@ export class ZendeskService {
     const end = fileName.length - Math.floor(keepLength / 2)
 
     return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
+  }
+
+  private fileNameFromS3Key(key: string): string {
+    const lastPart = key.split('/').pop() ?? key
+    const underscoreIndex = lastPart.indexOf('_')
+    return underscoreIndex >= 0 ? lastPart.slice(underscoreIndex + 1) : lastPart
   }
 
   private getCustomFields(

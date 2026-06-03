@@ -51,9 +51,9 @@ import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import {
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './models/dto/application.xroad.dto'
+  ApplicationJsonFieldDto,
+  ApplicationJsonValueDto,
+} from './models/dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -64,6 +64,7 @@ import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { Payment } from '../payment/payment.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -80,6 +81,8 @@ export class ApplicationsService {
     private readonly applicationEventModel: typeof ApplicationEvent,
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
+    @InjectModel(Payment)
+    private readonly paymentModel: typeof Payment,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
@@ -280,13 +283,22 @@ export class ApplicationsService {
     return form.slug
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
+  async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const form = await this.formModel.findByPk(application.formId)
@@ -304,6 +316,40 @@ export class ApplicationsService {
     }
 
     const applicationDto = applicationResponseDto.application
+
+    let paymentIsValid = false
+
+    if (form.hasPayment === true) {
+      const paymentSection = (applicationDto.sections ?? []).find(
+        (s) => s.sectionType === SectionTypes.PAYMENT,
+      )
+
+      const hasVisiblePayment =
+        !!paymentSection &&
+        paymentSection.isHidden === false &&
+        (paymentSection.screens ?? []).some(
+          (screen) => screen.isHidden === false,
+        )
+
+      if (hasVisiblePayment) {
+        const payment = await this.paymentModel.findOne({
+          where: { applicationId: id, fulfilled: true },
+        })
+        if (!payment) {
+          throw new ForbiddenException(
+            `Payment not fulfilled for application '${id}'`,
+          )
+        }
+        paymentIsValid = true
+      }
+    }
+
+    if (!user && !paymentIsValid) {
+      throw new ForbiddenException(
+        `Submitting application '${id}' without user context is only allowed when a visible payment exists and has been fulfilled.`,
+      )
+    }
+
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
     const applicationEvent = await this.applicationEventModel.create({
@@ -320,6 +366,7 @@ export class ApplicationsService {
     applicationDto.events.push(applicationEvent)
 
     let zendeskInstance = ''
+    let zendeskBrandId = ''
     if (applicationDto.submissionServiceUrl === 'zendesk') {
       const organization = await this.organizationModel.findByPk(
         application.organizationId,
@@ -330,11 +377,13 @@ export class ApplicationsService {
         )
       }
       zendeskInstance = organization.zendeskInstance ?? ''
+      zendeskBrandId = organization.zendeskBrandId ?? ''
     }
 
     const success = await this.serviceManager.send(
       applicationDto,
       zendeskInstance,
+      zendeskBrandId,
     )
 
     if (success) {
@@ -1280,14 +1329,14 @@ export class ApplicationsService {
 
   private mapScreenToNotificationFields(
     screen: ScreenDto,
-  ): ApplicationXroadFieldDto[] {
+  ): ApplicationJsonFieldDto[] {
     return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationXroadFieldDto()
+      const xroadField = new ApplicationJsonFieldDto()
       xroadField.identifier = field.identifier
       xroadField.screenIdentifier = screen.identifier
       xroadField.fieldType = field.fieldType
       xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationXroadValueDto()
+        const xroadValue = new ApplicationJsonValueDto()
         xroadValue.order = value.order
         xroadValue.json = (value.json ?? {}) as Record<string, unknown>
         return xroadValue

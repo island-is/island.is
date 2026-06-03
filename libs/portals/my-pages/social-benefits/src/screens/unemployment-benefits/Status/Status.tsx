@@ -8,6 +8,7 @@ import { useGetUnemploymentApplicationOverviewQuery } from './Status.generated'
 
 import {
   ActionCard,
+  AlertMessage,
   Box,
   SkeletonLoader,
   Tabs,
@@ -29,6 +30,7 @@ const Status = () => {
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
   const availableActions = overview?.availableActions
+  const jobSearchConfirmationStatus = overview?.jobSearchConfirmationStatus
   const hasData = !!overview?.unemploymentApplicationId
 
   if (!loading && error) {
@@ -79,7 +81,7 @@ const Status = () => {
         availableActions={availableActions ?? undefined}
         loading={loading}
       />
-      {!loading && availableActions?.canConfirmJobSearch === true && (
+      {!loading && jobSearchConfirmationStatus?.canConfirm === true && (
         <Box marginBottom={4}>
           <ActionCard
             heading={formatMessage(um.jobSearchConfirmationHeading)}
@@ -97,6 +99,16 @@ const Status = () => {
                   'noopener,noreferrer',
                 ),
             }}
+          />
+        </Box>
+      )}
+      {!loading && jobSearchConfirmationStatus?.hasConfirmed === true && (
+        <Box marginBottom={4}>
+          <AlertMessage
+            type="success"
+            message={formatMessage(
+              coreMessages.unemploymentHasConfirmedJobSearch,
+            )}
           />
         </Box>
       )}

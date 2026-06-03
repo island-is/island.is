@@ -69,6 +69,9 @@ export const SIGNATURE_INDEX = '{institutionIndex}'
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
 
+// Gateway (apps/api) enforces a 100kb JSON body limit. Leave headroom for other metadata.
+export const MAX_APPLICATION_PAYLOAD_BYTES = 90 * 1024
+
 export enum FileNames {
   DOCUMENT = 'document',
   ADDITIONS = 'additions',

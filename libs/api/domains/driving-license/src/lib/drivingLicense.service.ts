@@ -497,6 +497,8 @@ export class DrivingLicenseService {
         email: input.email,
         phone: input.phone,
         auth,
+        photoBiometricsId: input.photoBiometricsId,
+        signatureBiometricsId: input.signatureBiometricsId,
       })
 
     return {
