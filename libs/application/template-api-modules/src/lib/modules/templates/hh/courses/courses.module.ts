@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
-import {
-  RightsPortalClientConfig,
-  RightsPortalClientModule,
-} from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 import { SharedTemplateAPIModule } from '../../../shared'
 
@@ -18,7 +15,7 @@ import { ZendeskModule } from '@island.is/clients/zendesk'
     ApplicationApiCoreModule,
     RightsPortalClientModule,
     ConfigModule.forRoot({
-      load: [HHCoursesConfig, RightsPortalClientConfig],
+      load: [HHCoursesConfig],
     }),
     ZendeskModule,
   ],

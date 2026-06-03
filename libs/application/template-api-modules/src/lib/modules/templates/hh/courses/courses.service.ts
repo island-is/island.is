@@ -45,70 +45,44 @@ export class CoursesService extends BaseTemplateApiService {
   }
 
   /**
-   * Resolves the Contentful course list page id (public vs professional course)
-   * for the application. The initial query params are treated as a hint only;
-   * claims that would allow a health-center lookup are verified against the
-   * selected course before we trust them.
-   */
-  private async getCourseListPageId(
-    application: TemplateApiModuleActionProps['application'],
-    authorization: string,
-  ): Promise<string | null> {
-    const initialQuery = getValueViaPath<string>(
-      application.answers,
-      'initialQuery',
-    )
-
-    let courseId: string | undefined
-    let courseInstanceId: string | undefined
-
-    if (initialQuery) {
-      try {
-        const parsed = JSON.parse(initialQuery) as {
-          courseId?: string
-          courseInstanceId?: string
-          courseListPageId?: string
-        }
-        courseId = parsed.courseId
-        courseInstanceId = parsed.courseInstanceId
-        if (parsed.courseListPageId === COURSE_LIST_PAGE_ID.professionals) {
-          return parsed.courseListPageId
-        }
-      } catch {
-        // Ignore malformed query params and fall through to the lookup below.
-      }
-    }
-
-    courseId ??= getValueViaPath<string>(application.answers, 'courseSelect')
-    courseInstanceId ??= getValueViaPath<string>(
-      application.answers,
-      'dateSelect',
-    )
-
-    if (!courseId || !courseInstanceId) return null
-
-    const { course } = await this.getCourseById(
-      courseId,
-      courseInstanceId,
-      authorization,
-    )
-    return course.courseListPageId ?? null
-  }
-
-  /**
    * Fetches the user's current health center — but only for public courses.
    * For professional courses (námskeið fyrir fagfólk) we must not look up the
    * health center at all, so the fetch is skipped entirely. Returns null when
    * the course type cannot be determined (privacy-safe default).
+   *
+   * At the prerequisites step `courseSelect` is not set yet, so the course
+   * identity is read from the initial query params (falling back to the
+   * selected course once it exists).
    */
   async getHealthCenter({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const courseListPageId = await this.getCourseListPageId(
-        application,
+      const initialQuery = getValueViaPath<string>(
+        application.answers,
+        'initialQuery',
+      )
+      const parsed = initialQuery
+        ? (JSON.parse(initialQuery) as {
+            courseId?: string
+            courseInstanceId?: string
+          })
+        : {}
+
+      const courseId =
+        parsed.courseId ??
+        getValueViaPath<string>(application.answers, 'courseSelect')
+      const courseInstanceId =
+        parsed.courseInstanceId ??
+        getValueViaPath<string>(application.answers, 'dateSelect')
+
+      if (!courseId || !courseInstanceId) return null
+
+      const { course } = await this.getCourseById(
+        courseId,
+        courseInstanceId,
         auth.authorization,
       )
 
-      if (courseListPageId !== COURSE_LIST_PAGE_ID.public) {
+      if (course.courseListPageId !== COURSE_LIST_PAGE_ID.public) {
         return null
       }
 
