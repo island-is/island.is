@@ -1,12 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,10 +12,9 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { isDistrictCourtUser, type User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
-import { Case } from '../case'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
@@ -30,7 +22,7 @@ import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
-@Resolver(() => Defendant)
+@Resolver()
 export class DefendantResolver {
   constructor(
     private readonly auditTrailService: AuditTrailService,
@@ -95,46 +87,4 @@ export class DefendantResolver {
     )
   }
 
-  @ResolveField('connectedCases', () => [Case], { nullable: true })
-  async connectedCases(
-    @Parent() defendant: Defendant,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-    @Context() context: Record<string, unknown>,
-  ): Promise<Case[]> {
-    if (!isDistrictCourtUser(user)) {
-      return []
-    }
-
-    const { caseId } = defendant
-    if (!caseId) {
-      return []
-    }
-
-    const cacheKey = `__connectedCasesCache_${caseId}`
-    if (!context[cacheKey]) {
-      context[cacheKey] = this.auditTrailService.audit(
-        user.id,
-        AuditedAction.GET_CONNECTED_CASES,
-        backendService.getConnectedCases(caseId),
-        caseId,
-      )
-    }
-
-    let allConnectedCases: Case[]
-    try {
-      allConnectedCases = (await (context[cacheKey] as Promise<Case[]>)) ?? []
-    } catch {
-      return []
-    }
-
-    return allConnectedCases.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? d.nationalId === defendant.nationalId && d.name === defendant.name
-          : d.nationalId === defendant.nationalId,
-      ) ?? false,
-    )
-  }
 }

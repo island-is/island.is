@@ -277,4 +277,6 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  connectedCases?: Case[]
 }
