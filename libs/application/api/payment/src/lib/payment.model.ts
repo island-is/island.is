@@ -82,15 +82,16 @@ export class Payment extends Model {
   amount!: number
 
   @Column({
-    type: DataType.DATE,
-  })
-  @ApiProperty()
-  expires_at!: Date
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
   request_id?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  payment_method?: string
 }

@@ -125,6 +125,31 @@ export const healthNavigation: PortalNavigationItem = {
     },
 
     {
+      name: messages.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      searchTags: [],
+      children: [
+        {
+          name: messages.questionnaire,
+          path: HealthPaths.HealthQuestionnairesDetail,
+          navHide: true,
+          children: [
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswer,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+            {
+              name: messages.answers,
+              path: HealthPaths.HealthQuestionnairesAnswered,
+              navHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: messages.paymentsAndRights,
       description: m.paymentsIntro,
       path: HealthPaths.HealthPayments,
@@ -235,31 +260,6 @@ export const healthNavigation: PortalNavigationItem = {
               name: messages.otherVaccinations,
               path: HealthPaths.HealthVaccinationsOther,
               navHide: true,
-            },
-          ],
-        },
-        {
-          name: messages.questionnaires,
-          path: HealthPaths.HealthQuestionnaires,
-          searchTags: [],
-          children: [
-            {
-              name: messages.questionnaire,
-              path: HealthPaths.HealthQuestionnairesDetail,
-              navHide: true,
-              children: [
-                {
-                  name: messages.questionnaire,
-                  path: HealthPaths.HealthQuestionnairesAnswer,
-                  navHide: true,
-                  breadcrumbHide: true,
-                },
-                {
-                  name: messages.answers,
-                  path: HealthPaths.HealthQuestionnairesAnswered,
-                  navHide: true,
-                },
-              ],
             },
           ],
         },
