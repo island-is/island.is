@@ -12,7 +12,7 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_CASE_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CivilClaimantNotificationType,
@@ -79,7 +79,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       courtCaseNumber,
       spokespersonHasAccessToRVG,
       spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
+      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const promises: Promise<Recipient>[] = []

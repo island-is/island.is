@@ -125,6 +125,7 @@ describe('CaseController - Get court record pdf rules', () => {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRepresentativeRule,
   ])
 })
 
