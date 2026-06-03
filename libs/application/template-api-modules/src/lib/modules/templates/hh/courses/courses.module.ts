@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import {
+  ChargeFjsV2ClientModule,
+  ChargeFjsV2ClientConfig,
+} from '@island.is/clients/charge-fjs-v2'
 
 import { SharedTemplateAPIModule } from '../../../shared'
 
@@ -13,9 +17,10 @@ import { ZendeskModule } from '@island.is/clients/zendesk'
     SharedTemplateAPIModule,
     ApplicationApiCoreModule,
     ConfigModule.forRoot({
-      load: [HHCoursesConfig],
+      load: [HHCoursesConfig, ChargeFjsV2ClientConfig],
     }),
     ZendeskModule,
+    ChargeFjsV2ClientModule,
   ],
   providers: [CoursesService],
   exports: [CoursesService],

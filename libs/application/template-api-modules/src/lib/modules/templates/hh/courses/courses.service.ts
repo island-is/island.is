@@ -10,7 +10,12 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import {
+  type Ticket,
+  type CustomObjectRecord,
+  ZendeskService,
+} from '@island.is/clients/zendesk'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
@@ -20,6 +25,7 @@ import { HHCoursesConfig } from './courses.config'
 import {
   COURSE_LIST_PAGE_SLUG_MAP,
   GET_COURSE_BY_ID_QUERY,
+  HH_NATIONAL_ID,
   ZENDESK_TICKET_IDS,
 } from './constants'
 
@@ -28,6 +34,7 @@ export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
     private readonly zendeskService: ZendeskService,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly applicationApiService: ApplicationApiService,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
@@ -153,6 +160,8 @@ export class CoursesService extends BaseTemplateApiService {
           },
         ],
       })
+
+      await this.submitCustomObjects(course, courseInstance, participantList)
 
       return { success }
     } catch (error) {
@@ -460,6 +469,107 @@ export class CoursesService extends BaseTemplateApiService {
     if (!slug) return null
 
     return `https://island.is/s/hh/${slug}/${courseId}`
+  }
+
+  private async submitCustomObjects(
+    course: { id: string; title: string },
+    courseInstance: {
+      id: string
+      startDate: string
+      startDateTimeDuration?: { startTime?: string; endTime?: string }
+      chargeItemCode?: string | null
+    },
+    participantList: ApplicationAnswers['participantList'],
+  ): Promise<void> {
+    try {
+      const existing = await this.zendeskService.getCustomObjectRecord(
+        'hh_namskeid',
+        courseInstance.id,
+      )
+
+      if (!existing) {
+        const startDate = courseInstance.startDate.split('T')[0]
+        let timasetning: string | null = null
+        if (courseInstance.startDateTimeDuration?.startTime) {
+          timasetning = courseInstance.startDateTimeDuration.startTime
+          if (courseInstance.startDateTimeDuration.endTime) {
+            timasetning += ` - ${courseInstance.startDateTimeDuration.endTime}`
+          }
+        }
+
+        await this.zendeskService.createCustomObjectRecord('hh_namskeid', {
+          name: course.title,
+          external_id: courseInstance.id,
+          custom_object_fields: {
+            type: 'class',
+            upphafsdagsetning: startDate,
+            timasetning,
+            external_id: courseInstance.id,
+          },
+        })
+      }
+
+      let priceAmount: string | null = null
+      if (courseInstance.chargeItemCode) {
+        try {
+          const catalog =
+            await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+              performingOrgID: HH_NATIONAL_ID,
+              chargeItemCode: [courseInstance.chargeItemCode],
+            })
+          const item = catalog.item.find(
+            (i) => i.chargeItemCode === courseInstance.chargeItemCode,
+          )
+          if (item?.priceAmount != null) {
+            priceAmount = String(item.priceAmount)
+          }
+        } catch (e) {
+          this.logger.warn(
+            'Failed to look up charge catalog for custom object submission',
+            { error: e.message },
+          )
+        }
+      }
+
+      const startDate = courseInstance.startDate.split('T')[0]
+      let timasetning: string | null = null
+      if (courseInstance.startDateTimeDuration?.startTime) {
+        timasetning = courseInstance.startDateTimeDuration.startTime
+        if (courseInstance.startDateTimeDuration.endTime) {
+          timasetning += ` - ${courseInstance.startDateTimeDuration.endTime}`
+        }
+      }
+
+      const participantRecords: CustomObjectRecord[] = participantList.map(
+        (participant) => {
+          const p = participant.nationalIdWithName
+          return {
+            name: p.name,
+            external_id: `${courseInstance.id}_${p.nationalId}`,
+            custom_object_fields: {
+              type: 'participant',
+              netfang_thatttakanda: p.email,
+              kennitala_thatttakanda: p.nationalId,
+              namskeid_thatttakanda: courseInstance.id,
+              upphafsdagsetning: startDate,
+              timasetning,
+              greitt: priceAmount,
+              external_id: `${courseInstance.id}_${p.nationalId}`,
+            },
+          }
+        },
+      )
+
+      await this.zendeskService.bulkCreateCustomObjectRecords(
+        'hh_namskeid',
+        participantRecords,
+      )
+    } catch (e) {
+      this.logger.error(
+        'Failed to submit HH courses custom objects to Zendesk',
+        { error: e.message },
+      )
+    }
   }
 
   private async formatApplicationMessage(
