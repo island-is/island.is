@@ -1,9 +1,9 @@
+import { Cache as CacheManager } from 'cache-manager'
 import * as crypto from 'crypto'
 import { v4 as uuid } from 'uuid'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
