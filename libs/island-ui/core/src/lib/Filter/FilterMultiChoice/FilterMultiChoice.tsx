@@ -155,7 +155,6 @@ export const FilterMultiChoice: FC<
           label={category.label}
           variant="small"
           startExpanded={category.startExpanded}
-          iconVariant="small"
         >
           <Stack space={2}>
             <CheckboxWrapper inline={category.inline}>
@@ -194,7 +193,7 @@ export const FilterMultiChoice: FC<
             labelColor={
               category.selected.length > 0 ? 'blue400' : 'currentColor'
             }
-            iconVariant="small"
+            variant="mini"
             startExpanded={category.startExpanded}
           >
             <Stack space={2}>
