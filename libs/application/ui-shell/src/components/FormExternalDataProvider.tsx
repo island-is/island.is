@@ -17,7 +17,6 @@ import {
   coreMessages,
   getErrorReasonIfPresent,
   formatText,
-  shouldShowFormItem,
 } from '@island.is/application/core'
 import {
   Application,
@@ -236,17 +235,7 @@ const FormExternalDataProvider: FC<
     description,
     checkboxLabel,
   } = externalDataProvider
-  // Data provider items can be conditionally hidden. A hidden item is neither
-  // displayed nor fetched on submit.
-  const visibleDataProviders = dataProviders.filter((provider) =>
-    shouldShowFormItem(
-      provider,
-      application.answers,
-      application.externalData,
-      null,
-    ),
-  )
-  const relevantDataProviders = visibleDataProviders.filter((p) => p.action)
+  const relevantDataProviders = dataProviders.filter((p) => p.action)
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
   const enableMockPayment = dataProviders.some(
     (x) => x.action === 'Payment.mockPaymentCatalog',
@@ -341,7 +330,7 @@ const FormExternalDataProvider: FC<
         )}
       </Box>
       <Box marginBottom={5}>
-        {visibleDataProviders.map((provider) => (
+        {dataProviders.map((provider) => (
           <ProviderItem
             application={application}
             provider={provider}

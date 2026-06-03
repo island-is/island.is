@@ -69,7 +69,7 @@ const applyStaticConditionalCheck = (
 }
 
 export const shouldShowFormItem = (
-  formItem: Pick<FormItem, 'condition'>,
+  formItem: FormItem,
   formValue: FormValue,
   externalData: ExternalData = {},
   user: BffUser | null,

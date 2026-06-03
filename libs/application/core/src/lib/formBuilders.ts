@@ -54,7 +54,6 @@ export const buildDataProviderItem = (
     subTitle: data.subTitle,
     pageTitle: data.pageTitle,
     source: data.source,
-    condition: data.condition,
   }
 }
 
