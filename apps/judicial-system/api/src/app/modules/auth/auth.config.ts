@@ -34,9 +34,7 @@ export const authModuleConfig = defineConfig({
       'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
     ),
     redis: {
-      nodes: env.optional('REDIS_URL_NODE_01')
-        ? [env.optional('REDIS_URL_NODE_01') as string]
-        : [],
+      nodes: env.optionalJSON<string[]>('REDIS_NODES', []),
       ssl: env.optionalJSON('REDIS_SSL', false) ?? true,
       name: 'judicial-system',
     },
