@@ -46,31 +46,52 @@ export const toAppointmentStatusEnum = (
 
 export const toAppointmentModalityEnum = (
   modality?: string,
-): AppointmentModalityEnum | undefined =>
-  modality &&
-  Object.values(AppointmentModalityEnum).includes(
-    modality as AppointmentModalityEnum,
-  )
-    ? (modality as AppointmentModalityEnum)
-    : undefined
+): AppointmentModalityEnum | undefined => {
+  switch (modality) {
+    case 'IN_PERSON':
+      return AppointmentModalityEnum.IN_PERSON
+    case 'VIDEO':
+      return AppointmentModalityEnum.VIDEO
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentAssigneeTypeEnum = (
   type: string,
-): AppointmentAssigneeTypeEnum | undefined =>
-  Object.values(AppointmentAssigneeTypeEnum).includes(
-    type as AppointmentAssigneeTypeEnum,
-  )
-    ? (type as AppointmentAssigneeTypeEnum)
-    : undefined
+): AppointmentAssigneeTypeEnum | undefined => {
+  switch (type) {
+    case 'SERVICE':
+      return AppointmentAssigneeTypeEnum.SERVICE
+    case 'ROLE':
+      return AppointmentAssigneeTypeEnum.ROLE
+    case 'ROOM':
+      return AppointmentAssigneeTypeEnum.ROOM
+    case 'EQUIPMENT':
+      return AppointmentAssigneeTypeEnum.EQUIPMENT
+    case 'OTHER':
+      return AppointmentAssigneeTypeEnum.OTHER
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentLinkTypeEnum = (
   type: string,
-): AppointmentLinkTypeEnum | undefined =>
-  Object.values(AppointmentLinkTypeEnum).includes(
-    type as AppointmentLinkTypeEnum,
-  )
-    ? (type as AppointmentLinkTypeEnum)
-    : undefined
+): AppointmentLinkTypeEnum | undefined => {
+  switch (type) {
+    case 'PATIENT_INSTRUCTIONS':
+      return AppointmentLinkTypeEnum.PATIENT_INSTRUCTIONS
+    case 'PREPARATION':
+      return AppointmentLinkTypeEnum.PREPARATION
+    case 'ORGANIZATION_INFO':
+      return AppointmentLinkTypeEnum.ORGANIZATION_INFO
+    case 'VIDEO_CALL':
+      return AppointmentLinkTypeEnum.VIDEO_CALL
+    default:
+      return undefined
+  }
+}
 
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
