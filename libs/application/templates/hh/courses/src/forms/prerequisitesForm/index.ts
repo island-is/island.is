@@ -14,6 +14,7 @@ import {
   UserProfileApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
+import { isCourseForProfessionals } from '../../utils/isCourseForProfessionals'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -38,6 +39,9 @@ export const Prerequisites = buildForm({
               provider: HhCoursesHealthCenterApi,
               title: m.prerequisites.healthCenterTitle,
               subTitle: m.prerequisites.healthCenterSubTitle,
+              // Health center is only relevant for public courses. For
+              // professional courses we neither disclose nor fetch it.
+              condition: (answers) => !isCourseForProfessionals(answers),
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

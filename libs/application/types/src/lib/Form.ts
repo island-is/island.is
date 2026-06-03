@@ -182,6 +182,9 @@ export interface DataProviderItem {
   readonly subTitle?: FormText
   readonly pageTitle?: FormText
   readonly source?: string //TODO see if we can remove this
+  // When set and it evaluates to false, the item is neither displayed on the
+  // external data screen nor fetched on submit.
+  readonly condition?: Condition
 }
 
 export interface DataProviderBuilderItem {
@@ -192,6 +195,7 @@ export interface DataProviderBuilderItem {
   pageTitle?: FormText
   source?: string
   provider?: Provider
+  condition?: Condition
 }
 export interface Provider {
   externalDataId?: string
