@@ -10,7 +10,6 @@ import { DefaultEvents } from '@island.is/application/types'
 export const confirmationSection = buildSection({
   id: 'confirmationSection',
   title: confirmation.sectionStepTitle,
-  draftPageNumber: 1,
   children: [
     buildMultiField({
       id: 'confirmationMultiField',
