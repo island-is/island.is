@@ -1,5 +1,13 @@
-import { isWorkday, addWorkDays } from './utils'
+import {
+  isWorkday,
+  addWorkDays,
+  createDailyCompletionNotifications,
+} from './utils'
 import { getHolidays } from 'fridagar'
+import {
+  NotificationConfig,
+  NotificationType,
+} from '@island.is/application/types'
 
 describe('payment utils', () => {
   describe('isWorkday', () => {
@@ -176,6 +184,39 @@ describe('payment utils', () => {
       expect(result.getMinutes()).toBe(30)
       expect(result.getSeconds()).toBe(45)
       expect(result.getMilliseconds()).toBe(123)
+    })
+  })
+  describe('createDailyCompletionNotifications', () => {
+    it('creates one notification per day inclusive', () => {
+      const start = new Date('2026-01-01')
+      const end = new Date('2026-01-03')
+      const result = createDailyCompletionNotifications(
+        'https://link',
+        start,
+        end,
+      )
+      expect(result).toHaveLength(3)
+    })
+    it('includes applicationLink in args', () => {
+      const result = createDailyCompletionNotifications(
+        'https://link',
+        new Date('2026-01-01'),
+        new Date('2026-01-01'),
+      )
+      expect(result[0].args).toEqual([
+        { key: 'applicationLink', value: 'https://link' },
+      ])
+    })
+    it('uses ApplicationCompletionReminder template', () => {
+      const result = createDailyCompletionNotifications(
+        'https://link',
+        new Date('2026-01-01'),
+        new Date('2026-01-01'),
+      )
+      expect(result[0].template).toBe(
+        NotificationConfig[NotificationType.ApplicationCompletionReminder]
+          .templateId,
+      )
     })
   })
 })
