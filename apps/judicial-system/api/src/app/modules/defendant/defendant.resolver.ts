@@ -19,7 +19,10 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { isDistrictCourtUser, type User } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { Case } from '../case'
@@ -129,12 +132,13 @@ export class DefendantResolver {
       return []
     }
 
-    return allConnectedCases.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? d.nationalId === defendant.nationalId && d.name === defendant.name
-          : d.nationalId === defendant.nationalId,
-      ) ?? false,
+    return allConnectedCases.filter(
+      (connectedCase) =>
+        connectedCase.defendants?.some((d) =>
+          defendant.noNationalId
+            ? d.nationalId === defendant.nationalId && d.name === defendant.name
+            : d.nationalId === defendant.nationalId,
+        ) ?? false,
     )
   }
 }
