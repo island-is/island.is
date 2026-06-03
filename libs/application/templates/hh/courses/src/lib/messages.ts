@@ -108,13 +108,15 @@ export const m = {
     },
     healthCenterTitle: {
       id: 'hh.courses.application:prerequisites.healthCenterTitle',
-      defaultMessage: 'Sjúkratryggingar',
-      description: 'Information from the Health Center',
+      defaultMessage: 'Heilsugæslustöð',
+      description: 'Health center information',
     },
     healthCenterSubTitle: {
       id: 'hh.courses.application:prerequisites.healthCenterSubTitle',
-      defaultMessage: 'Upplýsingar um heilsugæslustöð',
-      description: 'Information about the health center',
+      defaultMessage:
+        'Upplýsingar um heilsugæslustöð eru aðeins sóttar fyrir námskeið fyrir almenning, ekki námskeið fyrir fagfólk',
+      description:
+        'Health center information is only fetched for public courses',
     },
     userProfileTitle: {
       id: 'hh.courses.application:prerequisites.userProfileTitle',
