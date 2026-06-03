@@ -122,8 +122,8 @@ export class Appointment {
   @Field(() => [String])
   practitioners!: string[]
 
-  @Field(() => [AppointmentAssignee])
-  assignees!: AppointmentAssignee[]
+  @Field(() => [AppointmentAssignee], { nullable: true })
+  assignees?: AppointmentAssignee[]
 }
 
 @ObjectType('HealthDirectorateAppointments')

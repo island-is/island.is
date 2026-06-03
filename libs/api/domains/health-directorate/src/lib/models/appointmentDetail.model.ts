@@ -37,8 +37,8 @@ export class AppointmentDetail {
   })
   practitioners!: string[]
 
-  @Field(() => [AppointmentAssignee])
-  assignees!: AppointmentAssignee[]
+  @Field(() => [AppointmentAssignee], { nullable: true })
+  assignees?: AppointmentAssignee[]
 
   @Field(() => [AppointmentLink], { nullable: true })
   links?: AppointmentLink[]
