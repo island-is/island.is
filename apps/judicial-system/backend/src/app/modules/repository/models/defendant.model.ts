@@ -278,5 +278,6 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
 
+  // Not persisted — computed on fetch and attached by the case controller
   connectedCases?: Case[]
 }
