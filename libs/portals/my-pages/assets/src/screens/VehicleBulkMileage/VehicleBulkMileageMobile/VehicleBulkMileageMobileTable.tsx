@@ -69,7 +69,7 @@ const VehicleBulkMileageMobileTable = ({
         id: 'vehicleInfo',
         header: formatMessage(vehicleMessage.type),
         cell: makeVehicleInfoCell(isMobile),
-        meta: { noTextWrapper: true },
+        meta: { type: 'interactive', span: 2 },
         enableSorting: false,
       }),
       columnHelper.display({
@@ -95,7 +95,7 @@ const VehicleBulkMileageMobileTable = ({
         id: 'action',
         header: formatMessage(vehicleMessage.odometerBulkColumn),
         cell: VehicleBulkMileageActionCell,
-        meta: { noTextWrapper: true, mobileFullWidth: true },
+        meta: { type: 'interactive', span: 2 },
         enableSorting: false,
       }),
     ],

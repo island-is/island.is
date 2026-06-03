@@ -50,7 +50,6 @@ interface TableProps<TData extends object> {
   defaultSorting?: SortingState
   /** Screen-reader-only caption describing the table. Auto-included when the table has sortable columns. */
   srCaption?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta?: TableMeta<TData>
 }
 
@@ -166,7 +165,7 @@ export const Table = <TData extends object>({
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                {titleCell?.column.columnDef.meta?.noTextWrapper ? (
+                {titleCell?.column.columnDef.meta?.type === 'interactive' ? (
                   <Box
                     id={
                       mobileTitleKey
@@ -232,7 +231,7 @@ export const Table = <TData extends object>({
                     (h) => h.column.id === cell.column.id,
                   )
                   const cellMeta = cell.column.columnDef.meta
-                  if (cellMeta?.mobileFullWidth) {
+                  if (cellMeta?.span === 2) {
                     return (
                       <Box key={cell.id} marginBottom={1}>
                         {flexRender(
@@ -250,7 +249,7 @@ export const Table = <TData extends object>({
                       marginBottom={1}
                     >
                       <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
+                        <Text fontWeight="semiBold">
                           {header
                             ? flexRender(
                                 header.column.columnDef.header,
@@ -260,13 +259,13 @@ export const Table = <TData extends object>({
                         </Text>
                       </Box>
                       <Box width="half">
-                        {cellMeta?.noTextWrapper ? (
+                        {cellMeta?.type === 'interactive' ? (
                           flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )
                         ) : (
-                          <Text variant="default">
+                          <Text>
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext(),
@@ -469,7 +468,7 @@ export const Table = <TData extends object>({
                           isExpanded || isCollapsing ? undefined : 'standard',
                       }}
                     >
-                      {cell.column.columnDef.meta?.noTextWrapper ? (
+                      {cell.column.columnDef.meta?.type === 'interactive' ? (
                         mobileTitleKey && cell.column.id === mobileTitleKey ? (
                           <Box id={`${tableId}-row-title-${row.id}`}>
                             {flexRender(
