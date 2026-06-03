@@ -20,7 +20,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
-  COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
+  COURSE_LIST_PAGE_ID,
   COURSE_LIST_PAGE_SLUG_MAP,
   GET_COURSE_BY_ID_QUERY,
   ZENDESK_TICKET_IDS,
@@ -108,7 +108,7 @@ export class CoursesService extends BaseTemplateApiService {
 
       if (
         !courseListPageId ||
-        courseListPageId === COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
+        courseListPageId === COURSE_LIST_PAGE_ID.professionals
       ) {
         return null
       }

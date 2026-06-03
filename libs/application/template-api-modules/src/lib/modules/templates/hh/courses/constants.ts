@@ -22,15 +22,18 @@ export const GET_COURSE_BY_ID_QUERY = `
   }
 `
 
-export const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
-  '6pkONOn80xzGTGij6qtjai': 'namskeid-fyrir-almenning',
-  '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',
-}
+// Contentful ids of the HH course list pages.
+export const COURSE_LIST_PAGE_ID = {
+  public: '6pkONOn80xzGTGij6qtjai',
+  // Health center information must NOT be fetched for registrations on
+  // professional courses (námskeið fyrir fagfólk).
+  professionals: '147YftiWFQsBcbUFFe2rj1',
+} as const
 
-// Contentful id of the course list page for professional courses
-// (námskeið fyrir fagfólk). Health center information must NOT be fetched
-// for registrations on professional courses.
-export const COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS = '147YftiWFQsBcbUFFe2rj1'
+export const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
+  [COURSE_LIST_PAGE_ID.public]: 'namskeid-fyrir-almenning',
+  [COURSE_LIST_PAGE_ID.professionals]: 'namskeid-fyrir-fagfolk',
+}
 
 export const ZENDESK_TICKET_IDS = {
   brandId: 46016159517467,
