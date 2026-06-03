@@ -62,28 +62,7 @@ const ConnectedCasesInfo = ({
   defendant: Defendant
   courtId?: string
 }) => {
-  const connectedCases = defendant.connectedCases?.map((connectedCase) => {
-      const hasCourtAccess = courtId === connectedCase.court?.id
-      const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
-
-      return hasCourtAccess ? (
-        <LinkV2
-          href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
-          className={link}
-          key={key}
-        >
-          <Text as="span" whiteSpace="pre">
-            {connectedCase.courtCaseNumber}
-          </Text>
-        </LinkV2>
-      ) : (
-        <Text as="span" whiteSpace="pre" key={key}>
-          {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
-            connectedCase.court?.name,
-          )})`}
-        </Text>
-      )
-    })
+  const connectedCases = defendant.connectedCases
 
   return (
     isNonEmptyArray(connectedCases) && (
@@ -97,14 +76,34 @@ const ConnectedCasesInfo = ({
           <Icon icon="warning" size="medium" color="blue400" type="outline" />
           <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
         </Box>
-        {connectedCases.map((connectedCase, i) => (
-          <Box component="span" key={i}>
-            {connectedCase}
-            {i < connectedCases.length - 1 && (
-              <Text as="span" whiteSpace="pre">{`, `}</Text>
-            )}
-          </Box>
-        ))}
+        {connectedCases.map((connectedCase, i) => {
+          const hasCourtAccess = courtId === connectedCase.court?.id
+          const key = `${defendant.id}-${connectedCase.id}`
+
+          return (
+            <Box component="span" key={key}>
+              {hasCourtAccess ? (
+                <LinkV2
+                  href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
+                  className={link}
+                >
+                  <Text as="span" whiteSpace="pre">
+                    {connectedCase.courtCaseNumber}
+                  </Text>
+                </LinkV2>
+              ) : (
+                <Text as="span" whiteSpace="pre">
+                  {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
+                    connectedCase.court?.name,
+                  )})`}
+                </Text>
+              )}
+              {i < connectedCases.length - 1 && (
+                <Text as="span" whiteSpace="pre">{`, `}</Text>
+              )}
+            </Box>
+          )
+        })}
       </Box>
     )
   )
