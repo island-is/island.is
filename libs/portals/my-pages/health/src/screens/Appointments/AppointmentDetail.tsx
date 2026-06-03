@@ -49,10 +49,7 @@ const AppointmentDetail = () => {
       .filter(Boolean)
       .join(', ') || undefined
 
-  const weekday = mapWeekday(
-    getWeekday(appointment?.date ?? ''),
-    formatMessage,
-  )
+  const weekday = mapWeekday(getWeekday(appointment?.date ?? ''), formatMessage)
 
   return (
     <IntroWrapper
@@ -129,7 +126,12 @@ const AppointmentDetail = () => {
                         type="outline"
                       />
                     </Box>
-                    <Box display="flex" flexWrap="wrap" alignItems="center" columnGap={2}>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      alignItems="center"
+                      columnGap={2}
+                    >
                       <Text>{fullAddress}</Text>
                       {mapsLink && (
                         <LinkButton
@@ -145,7 +147,12 @@ const AppointmentDetail = () => {
                 )}
               </Stack>
             </Stack>
-            <Box display={['none', 'none', 'block']} flexShrink={0} marginLeft={3} marginRight={6}>
+            <Box
+              display={['none', 'none', 'block']}
+              flexShrink={0}
+              marginLeft={3}
+              marginRight={6}
+            >
               <img src="./assets/images/appointment.svg" alt="" />
             </Box>
           </Box>
@@ -155,56 +162,56 @@ const AppointmentDetail = () => {
             appointment.location?.phoneNumber ||
             appointment.location?.openingHoursText ||
             appointment.location?.organization) && (
-          <InfoLineStack
-            label={formatMessage(messages.appointmentMoreInfo)}
-            space={1}
-          >
-            {(appointment.practitioners?.length ?? 0) > 0 && (
-              <InfoLine
-                loading={loading}
-                label={formatMessage(messages.appointmentAtSimple)}
-                content={appointment.practitioners.join(', ')}
-              />
-            )}
-            {appointment.instruction && (
-              <InfoLine
-                loading={loading}
-                label={formatMessage(messages.instructions)}
-                content={appointment.instruction}
-              />
-            )}
-            {appointment.location?.phoneNumber && (
-              <InfoLine
-                loading={loading}
-                label={formatMessage(messages.phoneNumber)}
-                content={appointment.location.phoneNumber}
-              />
-            )}
-            {appointment.location?.openingHoursText && (
-              <InfoLine
-                loading={loading}
-                label={formatMessage(messages.openingHours)}
-                content={appointment.location.openingHoursText}
-              />
-            )}
-            {appointment.location?.organization && (
-              <InfoLine
-                loading={loading}
-                label={formatMessage(messages.organization)}
-                content={appointment.location.organization}
-                button={
-                  appointment.location.link
-                    ? {
-                        type: 'link',
-                        to: appointment.location.link,
-                        icon: 'open',
-                        label: formatMessage(messages.appointmentMoreInfo),
-                      }
-                    : undefined
-                }
-              />
-            )}
-          </InfoLineStack>
+            <InfoLineStack
+              label={formatMessage(messages.appointmentMoreInfo)}
+              space={1}
+            >
+              {(appointment.practitioners?.length ?? 0) > 0 && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.appointmentAtSimple)}
+                  content={appointment.practitioners.join(', ')}
+                />
+              )}
+              {appointment.instruction && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.instructions)}
+                  content={appointment.instruction}
+                />
+              )}
+              {appointment.location?.phoneNumber && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.phoneNumber)}
+                  content={appointment.location.phoneNumber}
+                />
+              )}
+              {appointment.location?.openingHoursText && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.openingHours)}
+                  content={appointment.location.openingHoursText}
+                />
+              )}
+              {appointment.location?.organization && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.organization)}
+                  content={appointment.location.organization}
+                  button={
+                    appointment.location.link
+                      ? {
+                          type: 'link',
+                          to: appointment.location.link,
+                          icon: 'open',
+                          label: formatMessage(messages.appointmentMoreInfo),
+                        }
+                      : undefined
+                  }
+                />
+              )}
+            </InfoLineStack>
           )}
         </Stack>
       )}
