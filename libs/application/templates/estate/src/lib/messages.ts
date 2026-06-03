@@ -1384,18 +1384,18 @@ export const m = defineMessages({
   // InReview state messages
   inReviewGeneralTitle: {
     id: 'es.application:inReview.general.title',
-    defaultMessage: 'Yfirlit samþykkja',
+    defaultMessage: 'Staða yfirferðar',
     description: 'InReview state title',
   },
   applicantInReviewTitle: {
     id: 'es.application:applicantInReview.title',
-    defaultMessage: 'Yfirlit samþykkja erfingja',
+    defaultMessage: 'Staða yfirferðar',
     description: 'Applicant in review title',
   },
   applicantInReviewDescription: {
     id: 'es.application:applicantInReview.description',
     defaultMessage:
-      'Allir erfingjar þurfa að samþykkja gögnin áður en hægt er að senda umsóknina til sýslumanns.',
+      'Umsóknin hefur verið send til erfingja til yfirferðar. Yfirferð erfingja er valkvæð og hægt er að senda umsóknina til sýslumanns án samþykkis allra.',
     description: 'Applicant in review description',
   },
   applicantInReviewTableTitle: {
@@ -1426,13 +1426,52 @@ export const m = defineMessages({
   applicantInReviewInfoDescription: {
     id: 'es.application:applicantInReview.infoDescription',
     defaultMessage:
-      'Þegar allir erfingjar hafa samþykkt birtist hnappur hér að neðan til að senda umsóknina til sýslumanns. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
+      'Yfirferð erfingja er valkvæð. Þú getur haldið áfram og sent umsóknina til sýslumanns núna eða beðið eftir að allir erfingjar samþykki. Ef þú vilt breyta gögnum í umsókninni velur þú "Breyta gögnum".',
     description: 'Next steps description',
+  },
+  applicantInReviewNextStepToSigning: {
+    id: 'es.application:applicantInReview.nextStepToSigning',
+    defaultMessage: 'Halda áfram og senda til sýslumanns',
+    description: 'Radio option to continue to syslumenn',
+  },
+  applicantInReviewPreSignatureTitle: {
+    id: 'es.application:applicantInReview.preSignatureTitle',
+    defaultMessage: 'Senda til sýslumanns',
+    description: 'Title of the pre-signature confirmation screen',
+  },
+  applicantInReviewPreSignatureInfo: {
+    id: 'es.application:applicantInReview.preSignatureInfo#markdown',
+    defaultMessage:
+      '- Ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send til sýslumanns.\n- Ef nauðsynlegt þykir að gera breytingu þarf að útbúa nýja umsókn.',
+    description: 'Info bullets shown before sending to syslumenn',
+  },
+  applicantInReviewDirectWarning: {
+    id: 'es.application:applicantInReview.directWarning#markdown',
+    defaultMessage:
+      'Ekki hafa allir erfingjar samþykkt umsóknina. Með því að halda áfram sendir þú hana beint til sýslumanns án samþykkis allra.',
+    description: 'Warning shown when not all estate members have approved',
+  },
+  applicantInReviewStatementLabel: {
+    id: 'es.application:applicantInReview.statementLabel',
+    defaultMessage:
+      'Ég skil að ekki er hægt að gera breytingar á umsókninni eftir að hún hefur verið send til sýslumanns.',
+    description: 'Acknowledgement checkbox label before sending to syslumenn',
+  },
+  applicantInReviewStatementError: {
+    id: 'es.application:applicantInReview.statementError',
+    defaultMessage: 'Þú þarft að samþykkja skilyrði til að halda áfram.',
+    description: 'Error shown when the acknowledgement is not checked',
   },
   applicantInReviewSubmit: {
     id: 'es.application:applicantInReview.submit',
     defaultMessage: 'Senda til sýslumanns',
-    description: 'Submit to syslumenn button',
+    description: 'Submit to syslumenn button when all parties have approved',
+  },
+  applicantInReviewSubmitDirect: {
+    id: 'es.application:applicantInReview.submitDirect',
+    defaultMessage: 'Senda beint til sýslumanns',
+    description:
+      'Send directly to syslumenn/signing without waiting for all approvals',
   },
   applicantInReviewTitleAllApproved: {
     id: 'es.application:applicantInReview.titleAllApproved',
@@ -1491,6 +1530,18 @@ export const m = defineMessages({
     defaultMessage:
       'Þú hefur samþykkt gögnin í umsókninni. Umsóknin verður send til sýslumanns þegar allir erfingjar hafa samþykkt.',
     description: 'Assignee approved description',
+  },
+  assigneeStatusTitle: {
+    id: 'es.application:assigneeStatus.title',
+    defaultMessage: 'Umsókn í vinnslu hjá umsækjanda',
+    description:
+      'Assignee status title when the application is back with the applicant',
+  },
+  assigneeStatusDescription: {
+    id: 'es.application:assigneeStatus.description',
+    defaultMessage: 'Umsóknin er í vinnslu hjá umsækjanda.',
+    description:
+      'Assignee status description when the application is back with the applicant',
   },
 
   // Signing state messages

@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
   CommentsInput,
@@ -121,9 +124,9 @@ export const PoliceReport = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => {
-            handleNavigationTo(constants.RESTRICTION_CASE_CASE_FILES_ROUTE)
+            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE)
           }}
           nextIsDisabled={!stepIsValid}
         />

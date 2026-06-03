@@ -31,7 +31,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,

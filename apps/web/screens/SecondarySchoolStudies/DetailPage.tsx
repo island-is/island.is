@@ -2,11 +2,11 @@ import ReactHtmlParser from 'react-html-parser'
 import { useIntl } from 'react-intl'
 
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolProgrammeByIdQuery,
+  SecondarySchoolProgrammeDetail,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -26,7 +26,7 @@ import {
 import * as styles from './SecondarySchoolStudies.css'
 
 interface SecondarySchoolStudiesDetailsPageProps {
-  programme: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']
+  programme: SecondarySchoolProgrammeDetail
   locale: string
 }
 
@@ -95,6 +95,7 @@ const SecondarySchoolStudiesDetailsPage: Screen<
                 credits={programme?.credits}
                 qualificationLevel={programme?.qualification?.level?.name}
                 specializationTitle={programme?.specialization?.title}
+                isReferenceProgramme={programme?.isReferenceProgramme}
               />
 
               {programme?.description && (

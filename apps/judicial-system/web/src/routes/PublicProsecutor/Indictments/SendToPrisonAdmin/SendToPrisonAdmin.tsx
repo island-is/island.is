@@ -8,7 +8,7 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -88,7 +88,7 @@ const SendToPrisonAdmin: FC = () => {
     }
 
     router.push(
-      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
+      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`,
     )
   }
 
@@ -151,7 +151,7 @@ const SendToPrisonAdmin: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextButtonText={formatMessage(strings.nextButtonText)}
           onNextButtonClick={handleNextButtonClick}
         />

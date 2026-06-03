@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertBanner, Box, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
@@ -34,7 +34,7 @@ export const ChangeUser = () => {
 
   const [updateUserMutation, { loading: userUpdating }] = useUpdateUserMutation(
     {
-      onCompleted: () => router.push(constants.USERS_ROUTE),
+      onCompleted: () => router.push(ADMIN_USERS_ROUTE),
       onError: () => {
         toast.error(formatMessage(strings.updateError))
       },
@@ -66,7 +66,7 @@ export const ChangeUser = () => {
       title={formatMessage(strings.alertTitle)}
       description={formatMessage(strings.alertMessage)}
       variant="error"
-      link={{ href: constants.USERS_ROUTE, title: 'Fara á yfirlitssíðu' }}
+      link={{ href: ADMIN_USERS_ROUTE, title: 'Fara á yfirlitssíðu' }}
     />
   ) : (
     <Box background="purple100">

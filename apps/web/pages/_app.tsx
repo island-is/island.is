@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app'
 import getConfig from 'next/config'
+import Head from 'next/head'
 
 import { globalStyles } from '@island.is/island-ui/core'
 import { MatomoTracker } from '@island.is/matomo'
@@ -15,6 +16,11 @@ const IslandWebApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
+      <Head>
+        {/* Required by the IBM Watson web chat for correct rendering on mobile devices,
+            see https://cloud.ibm.com/docs/watson-assistant?topic=watson-assistant-web-chat-architecture */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <MatomoTracker
         matomoDomain={matomoDomain}
         matomoSiteId={matomoSiteId}

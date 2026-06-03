@@ -12,7 +12,10 @@ query getUnemploymentApplicationOverview($locale: String) {
       canReportWork
       canReportTravel
       canUnregister
-      canConfirmJobSearch
+    }
+    jobSearchConfirmationStatus {
+      canConfirm
+      hasConfirmed
     }
     overviewItems {
       key
