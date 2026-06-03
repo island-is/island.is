@@ -1,6 +1,10 @@
 import { getHolidays, Holiday } from 'fridagar'
 import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
+import {
+  NotificationConfig,
+  NotificationType,
+} from '@island.is/application/types'
 
 export const isWorkday = (date: Date, holidays: Holiday[]): boolean => {
   const wDay = date.getDay()
@@ -26,4 +30,23 @@ export const addWorkDays = (date: Date, days: number) => {
     }
   }
   return result
+}
+
+export const createDailyCompletionNotifications = (
+  applicationLink: string,
+  startDate: Date,
+  endDate: Date,
+) => {
+  const notifications = []
+
+  for (let date = startDate; date <= endDate; date = addDays(date, 1)) {
+    notifications.push({
+      template:
+        NotificationConfig[NotificationType.ApplicationCompletionReminder]
+          .templateId,
+      schedule_time: date,
+      args: [{ key: 'applicationLink', value: applicationLink }],
+    })
+  }
+  return notifications
 }
