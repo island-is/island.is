@@ -8,7 +8,6 @@ import {
   districtCourtAbbreviation,
   formatDate,
   formatDOB,
-  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
@@ -24,7 +23,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 
 import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
-import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
@@ -45,7 +43,6 @@ interface Defender {
 
 interface DefendantInfoProps {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
@@ -59,29 +56,12 @@ interface DefendantInfoProps {
 
 const ConnectedCasesInfo = ({
   defendant,
-  workingCaseId,
   courtId,
 }: {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
 }) => {
-  const { data: connectedCasesData } = useConnectedCasesQuery({
-    variables: { input: { id: workingCaseId } },
-  })
-
-  const connectedCases = connectedCasesData?.connectedCases
-    ?.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? defendant.nationalId === d.nationalId && defendant.name === d.name
-          : d.nationalId &&
-            normalizeAndFormatNationalId(defendant.nationalId).includes(
-              d.nationalId,
-            ),
-      ),
-    )
-    .map((connectedCase) => {
+  const connectedCases = defendant.connectedCases?.map((connectedCase) => {
       const hasCourtAccess = courtId === connectedCase.court?.id
       const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
 
@@ -133,7 +113,6 @@ const ConnectedCasesInfo = ({
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
-    workingCaseId,
     courtId,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
@@ -250,7 +229,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         {displayOpenCaseReference && (
           <ConnectedCasesInfo
             defendant={defendant}
-            workingCaseId={workingCaseId}
             courtId={courtId}
           />
         )}
