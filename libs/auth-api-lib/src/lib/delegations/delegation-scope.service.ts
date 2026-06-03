@@ -88,7 +88,9 @@ export class DelegationScopeService {
       delegationId,
     }))
 
-    await this.delegationScopeModel.bulkCreate(delegationScopes, { transaction })
+    await this.delegationScopeModel.bulkCreate(delegationScopes, {
+      transaction,
+    })
     return this.delegationScopeModel.findAll({
       where: {
         id: delegationScopes.map((s) => s.id),
