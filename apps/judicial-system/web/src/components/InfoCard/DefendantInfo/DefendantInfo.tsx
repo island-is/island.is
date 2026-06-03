@@ -93,9 +93,9 @@ const ConnectedCasesInfo = ({
                 </LinkV2>
               ) : (
                 <Text as="span" whiteSpace="pre">
-                  {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
-                    connectedCase.court?.name,
-                  )})`}
+                  {`${
+                    connectedCase.courtCaseNumber
+                  } (${districtCourtAbbreviation(connectedCase.court?.name)})`}
                 </Text>
               )}
               {i < connectedCases.length - 1 && (
@@ -226,10 +226,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}`}</Text>
         )}
         {displayOpenCaseReference && (
-          <ConnectedCasesInfo
-            defendant={defendant}
-            courtId={courtId}
-          />
+          <ConnectedCasesInfo defendant={defendant} courtId={courtId} />
         )}
       </div>
       {defendantTagConfig && defendant.verdict ? (

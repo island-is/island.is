@@ -1,5 +1,12 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,7 +20,10 @@ import {
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser, type User } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { Case } from '../case'
@@ -123,16 +133,17 @@ export class DefendantResolver {
       return []
     }
 
-    return allConnectedCases.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? d.nationalId === defendant.nationalId && d.name === defendant.name
-          : d.nationalId !== null &&
-            d.nationalId !== undefined &&
-            normalizeAndFormatNationalId(defendant.nationalId ?? '').includes(
-              d.nationalId,
-            ),
-      ) ?? false,
+    return allConnectedCases.filter(
+      (connectedCase) =>
+        connectedCase.defendants?.some((d) =>
+          defendant.noNationalId
+            ? d.nationalId === defendant.nationalId && d.name === defendant.name
+            : d.nationalId !== null &&
+              d.nationalId !== undefined &&
+              normalizeAndFormatNationalId(defendant.nationalId ?? '').includes(
+                d.nationalId,
+              ),
+        ) ?? false,
     )
   }
 }
