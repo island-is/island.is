@@ -270,8 +270,9 @@ export class AuthController {
         throw new Error('No session cookie found')
       }
 
-      const storedRefreshToken =
-        await this.tokenStorageService.getRefreshToken(sessionId)
+      const storedRefreshToken = await this.tokenStorageService.getRefreshToken(
+        sessionId,
+      )
 
       if (!storedRefreshToken) {
         throw new Error('Session not found in cache')
@@ -498,8 +499,9 @@ export class AuthController {
       !userId || currentUser?.id === userId ? requestedRedirectRoute : undefined
 
     if (idToken && refreshToken) {
-      const sessionId =
-        await this.tokenStorageService.storeRefreshToken(refreshToken)
+      const sessionId = await this.tokenStorageService.storeRefreshToken(
+        refreshToken,
+      )
 
       res.cookie(this.idToken.name, idToken, {
         ...this.idToken.options,

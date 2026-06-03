@@ -80,7 +80,9 @@ export class TokenStorageService {
     )
 
     if (!encryptedToken) {
-      this.logger.warn('Refresh token session not found in cache', { sessionId })
+      this.logger.warn('Refresh token session not found in cache', {
+        sessionId,
+      })
       return null
     }
 
