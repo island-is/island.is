@@ -48,6 +48,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isDistrictCourtUser,
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
@@ -375,10 +376,15 @@ export class CaseController {
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: User,
   ): Promise<Case> {
     this.logger.debug(`Getting case ${caseId} by id`)
 
-    if (isIndictmentCase(theCase.type) && theCase.defendants?.length) {
+    if (
+      isDistrictCourtUser(user) &&
+      isIndictmentCase(theCase.type) &&
+      theCase.defendants?.length
+    ) {
       const connectedCases =
         await this.caseService.getConnectedIndictmentCases(theCase)
 
