@@ -216,16 +216,14 @@ const AnsweredQuestionnaire: FC = () => {
                   (label === 'footer' || label === 'copyright')
                 )
               })
-              .map(
-              (answer) => ({
+              .map((answer) => ({
                 questionId: answer.id,
                 question: answer.label ?? '',
                 answers: answer.values.map((value) => ({
                   value,
                 })),
                 type: QuestionnaireAnswerOptionType.text,
-              }),
-            )}
+              }))}
           />
         </Box>
       )}
