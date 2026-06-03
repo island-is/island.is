@@ -16,14 +16,14 @@ export const Prerequisites = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'conditions',
-      tabTitle: messages.prerequisites.sectionTitle,
+      id: 'forsendur',
+      title: messages.prerequisites.section.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: messages.prerequisites.formTitle,
-          description: messages.prerequisites.formIntro,
-          checkboxLabel: messages.dataProviders.checkboxLabel,
+          title: messages.prerequisites.section.title,
+          description: messages.prerequisites.section.intro,
+          checkboxLabel: messages.prerequisites.section.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -39,22 +39,37 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: CompanyRegistryApi,
-              title: messages.dataProviders.companyDataTitle,
-              subTitle: messages.dataProviders.companyDataIntro,
+              title: messages.prerequisites.companyRegistry.title,
+              subTitle: messages.prerequisites.companyRegistry.intro,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: messages.dataProviders.userProfileTitle,
-              subTitle: messages.dataProviders.userProfileIntro,
+              title: messages.prerequisites.userProfile.title,
+              subTitle: messages.prerequisites.userProfile.intro,
             }),
             buildDataProviderItem({
               provider: IdentityApi,
-              title: messages.dataProviders.nationalRegistryTitle,
-              subTitle: messages.dataProviders.nationalRegistryIntro,
+              title: messages.prerequisites.nationalRegistry.title,
+              subTitle: messages.prerequisites.nationalRegistry.intro,
             }),
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'aboutTheCompany',
+      title: messages.aboutTheCompany.section.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'equalityReport',
+      title: messages.equalityReport.section.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'overview',
+      title: messages.overview.sectionTitle,
+      children: [],
     }),
   ],
 })

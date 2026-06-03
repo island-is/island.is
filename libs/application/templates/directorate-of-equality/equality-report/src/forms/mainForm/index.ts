@@ -1,12 +1,23 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { firstSection } from '../mainForm/firstSection'
-import { secondSection } from '../mainForm/secondSection'
+import { aboutTheCompanySection } from './aboutTheCompanySection'
+import { equalityReportSection } from './equalityReportSection'
 import { overviewSection } from './overview'
+import { messages } from '../../lib/messages'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: [firstSection, secondSection, overviewSection],
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'forsendur',
+      title: messages.prerequisites.section.sectionTitle,
+      children: [],
+    }),
+    aboutTheCompanySection,
+    equalityReportSection,
+    overviewSection,
+  ],
 })

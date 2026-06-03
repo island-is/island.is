@@ -4,7 +4,7 @@ import { messages } from './messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
-    params: messages.prerequisites.approveExternalData
+    params: messages.prerequisites.errors.approveExternalData,
   }),
 })
 
