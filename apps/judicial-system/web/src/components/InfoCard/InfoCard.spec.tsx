@@ -101,7 +101,7 @@ describe('InfoCard', () => {
                               defenderEmail: 'joe@joe.is',
                               defenderPhoneNumber: '455-5544',
                             }}
-                              />,
+                          />,
                         ],
                       },
                     ],
@@ -137,11 +137,7 @@ describe('InfoCard', () => {
                   {
                     id: 'itm_id',
                     title: 'Titill',
-                    values: [
-                      <DefendantInfo
-                        defendant={{ id: 'def_id' }}
-                      />,
-                    ],
+                    values: [<DefendantInfo defendant={{ id: 'def_id' }} />],
                   },
                 ],
               },
