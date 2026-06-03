@@ -86,5 +86,4 @@ export class DefendantResolver {
       defendantId,
     )
   }
-
 }
