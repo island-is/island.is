@@ -46,9 +46,9 @@ export class CoursesService extends BaseTemplateApiService {
 
   /**
    * Resolves the Contentful course list page id (public vs professional course)
-   * for the application. The id is carried in the initial query params set when
-   * the user opens the application from the external web. Falls back to looking
-   * the course up by id when the list page id is not present in the params.
+   * for the application. The initial query params are treated as a hint only;
+   * claims that would allow a health-center lookup are verified against the
+   * selected course before we trust them.
    */
   private async getCourseListPageId(
     application: TemplateApiModuleActionProps['application'],
@@ -69,9 +69,11 @@ export class CoursesService extends BaseTemplateApiService {
           courseInstanceId?: string
           courseListPageId?: string
         }
-        if (parsed.courseListPageId) return parsed.courseListPageId
         courseId = parsed.courseId
         courseInstanceId = parsed.courseInstanceId
+        if (parsed.courseListPageId === COURSE_LIST_PAGE_ID.professionals) {
+          return parsed.courseListPageId
+        }
       } catch {
         // Ignore malformed query params and fall through to the lookup below.
       }
@@ -106,10 +108,7 @@ export class CoursesService extends BaseTemplateApiService {
         auth.authorization,
       )
 
-      if (
-        !courseListPageId ||
-        courseListPageId === COURSE_LIST_PAGE_ID.professionals
-      ) {
+      if (courseListPageId !== COURSE_LIST_PAGE_ID.public) {
         return null
       }
 
