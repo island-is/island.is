@@ -385,8 +385,9 @@ export class CaseController {
       isIndictmentCase(theCase.type) &&
       theCase.defendants?.length
     ) {
-      const connectedCases =
-        await this.caseService.getConnectedIndictmentCases(theCase)
+      const connectedCases = await this.caseService.getConnectedIndictmentCases(
+        theCase,
+      )
 
       for (const defendant of theCase.defendants) {
         defendant.connectedCases = connectedCases.filter((cc) =>
