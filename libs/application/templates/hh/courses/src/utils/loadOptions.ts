@@ -15,6 +15,10 @@ import {
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../graphql'
+import {
+  COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
+  isCourseForProfessionals,
+} from './isCourseForProfessionals'
 
 const cache = storageFactory(() => localStorage)
 
@@ -41,6 +45,7 @@ export const doesCourseInstanceHaveChargeItemCode = (
 
 export const loadCourseSelectOptions = async ({
   apolloClient,
+  application,
 }: AsyncSelectContext) => {
   const { data } = await apolloClient.query<
     Query,
@@ -55,10 +60,16 @@ export const loadCourseSelectOptions = async ({
       },
     },
   })
-  return data.getCourseSelectOptions.items.map((item) => ({
-    value: item.id,
-    label: item.title,
-  }))
+  return data.getCourseSelectOptions.items
+    .filter((item) =>
+      isCourseForProfessionals(application.answers)
+        ? item.courseListPageId === COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
+        : item.courseListPageId !== COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
+    )
+    .map((item) => ({
+      value: item.id,
+      label: item.title,
+    }))
 }
 
 export const getCachedCourseListPageId = (

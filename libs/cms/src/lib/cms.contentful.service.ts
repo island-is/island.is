@@ -1884,6 +1884,7 @@ export class CmsContentfulService {
     const items = response.items.map((item) => ({
       id: item.sys.id,
       title: item.fields.title,
+      courseListPageId: item.fields.courseListPage?.sys?.id,
     }))
 
     items.sort(sortAlpha('title'))
