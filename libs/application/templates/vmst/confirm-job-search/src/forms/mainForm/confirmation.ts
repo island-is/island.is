@@ -3,7 +3,6 @@ import {
   buildSection,
   buildSubmitField,
   buildTableRepeaterField,
-  coreMessages,
 } from '@island.is/application/core'
 import { confirmation } from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -11,6 +10,7 @@ import { DefaultEvents } from '@island.is/application/types'
 export const confirmationSection = buildSection({
   id: 'confirmationSection',
   title: confirmation.sectionStepTitle,
+  draftPageNumber: 1,
   children: [
     buildMultiField({
       id: 'confirmationMultiField',
@@ -28,7 +28,6 @@ export const confirmationSection = buildSection({
               component: 'input',
               label: confirmation.companyNameLabel,
               width: 'full',
-              required: true,
             },
           },
           table: {
@@ -41,7 +40,7 @@ export const confirmationSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: coreMessages.buttonNext,
+              name: confirmation.nextButtonText,
               type: 'primary',
             },
           ],
