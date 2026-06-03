@@ -12,6 +12,15 @@ import {
   AppointmentLinkTypeEnum,
 } from './enums'
 
+@ObjectType('HealthDirectorateAppointmentLocationLink')
+export class AppointmentLocationLink {
+  @Field()
+  type!: string
+
+  @Field()
+  url!: string
+}
+
 @ObjectType('HealthDirectorateAppointmentLocation')
 export class AppointmentLocation {
   @Field()
@@ -61,6 +70,9 @@ export class AppointmentLocation {
 
   @Field({ nullable: true })
   openingHoursText?: string
+
+  @Field(() => [AppointmentLocationLink], { nullable: true })
+  locationLinks?: AppointmentLocationLink[]
 }
 
 @ObjectType('HealthDirectorateAppointmentAssignee')

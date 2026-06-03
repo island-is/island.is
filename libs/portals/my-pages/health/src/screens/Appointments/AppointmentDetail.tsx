@@ -33,10 +33,9 @@ const AppointmentDetail = () => {
 
   const appointment = data?.healthDirectorateAppointment
 
-  const organizationLink =
-    appointment?.links?.find((l) => l.type === 'ORGANIZATION_INFO')?.url ??
-    appointment?.location?.link ??
-    undefined
+  const locationLink =
+    appointment?.location?.locationLinks?.find((l) => l.type === 'WEBSITE')
+      ?.url ?? appointment?.location?.link ?? undefined
 
   const mapsLink = generateGoogleMapsLink(
     appointment?.location?.latitude,
@@ -205,10 +204,10 @@ const AppointmentDetail = () => {
                   label={formatMessage(messages.organization)}
                   content={appointment.location.organization}
                   button={
-                    organizationLink
+                    locationLink
                       ? {
                           type: 'link',
-                          to: organizationLink,
+                          to: locationLink,
                           icon: 'open',
                           label: formatMessage(messages.appointmentMoreInfo),
                         }
