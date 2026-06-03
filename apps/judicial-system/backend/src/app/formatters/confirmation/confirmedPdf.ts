@@ -9,7 +9,7 @@ import {
   drawTextWithEllipsisPDFKit,
   xsFontSize,
 } from '../pdfHelpers'
-import { PDFKitCoatOfArms } from '../helpers/PDFKitCoatOfArms'
+import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING

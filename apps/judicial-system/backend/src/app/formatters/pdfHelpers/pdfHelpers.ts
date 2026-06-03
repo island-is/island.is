@@ -4,8 +4,8 @@ import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
-import { coatOfArms } from '../helpers/coatOfArms'
-import { policeStar } from '../helpers/policeStar'
+import { coatOfArms } from '../svgs/coatOfArms'
+import { policeStar } from '../svgs/policeStar'
 
 export interface Confirmation {
   actor: string
