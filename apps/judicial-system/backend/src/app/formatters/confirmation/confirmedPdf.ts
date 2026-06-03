@@ -3,13 +3,13 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
+import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 import {
   calculatePt,
   Confirmation,
   drawTextWithEllipsisPDFKit,
   xsFontSize,
 } from '../pdfHelpers'
-import { PDFKitCoatOfArms } from '../svgs/PDFKitCoatOfArms'
 
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING
