@@ -15,8 +15,8 @@ import {
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
 import { BackendService } from '../backend'
+import { Case } from '../case'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
