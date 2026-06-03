@@ -13,7 +13,7 @@ import {
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import { isDistrictCourtUser, type User } from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
 import { BackendService } from '../backend'
@@ -97,6 +97,10 @@ export class DefendantResolver {
     { backendService }: { backendService: BackendService },
     @Context() context: Record<string, unknown>,
   ): Promise<Case[]> {
+    if (!isDistrictCourtUser(user)) {
+      return []
+    }
+
     const { caseId } = defendant
     if (!caseId) {
       return []
