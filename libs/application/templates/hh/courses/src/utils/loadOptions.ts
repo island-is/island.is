@@ -19,6 +19,8 @@ import {
   COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
   isCourseForProfessionals,
 } from './isCourseForProfessionals'
+import { getValueViaPath } from '@island.is/application/core'
+import { parseQueryParamValue } from './parseQueryParamValue'
 
 const cache = storageFactory(() => localStorage)
 
@@ -60,12 +62,23 @@ export const loadCourseSelectOptions = async ({
       },
     },
   })
+
+  const initialQuery = parseQueryParamValue(
+    getValueViaPath<string>(application.answers, 'initialQuery', ''),
+  )
+
+  const queryItem = data.getCourseSelectOptions.items.find(
+    (item) => item.id === initialQuery?.courseId,
+  )
+
   return data.getCourseSelectOptions.items
-    .filter((item) =>
-      isCourseForProfessionals(application.answers)
+    .filter((item) => {
+      if (queryItem?.courseListPageId)
+        return item.courseListPageId === queryItem?.courseListPageId
+      return isCourseForProfessionals(application.answers)
         ? item.courseListPageId === COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
-        : item.courseListPageId !== COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
-    )
+        : item.courseListPageId !== COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
+    })
     .map((item) => ({
       value: item.id,
       label: item.title,
