@@ -35,7 +35,9 @@ const AppointmentDetail = () => {
 
   const locationLink =
     appointment?.location?.locationLinks?.find((l) => l.type === 'WEBSITE')
-      ?.url ?? appointment?.location?.link ?? undefined
+      ?.url ??
+    appointment?.location?.link ??
+    undefined
 
   const mapsLink = generateGoogleMapsLink(
     appointment?.location?.latitude,
