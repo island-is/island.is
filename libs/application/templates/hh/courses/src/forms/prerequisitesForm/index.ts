@@ -6,13 +6,13 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  FormModes,
-  HealthCenterApi,
-} from '@island.is/application/types'
+import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { HeilsugaeslaHofudborgarsvaedisinsLogo } from '@island.is/application/assets/institution-logos'
-import { NationalRegistryUserApi, UserProfileApi } from '../../dataProviders'
+import {
+  HhCoursesHealthCenterApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -35,7 +35,7 @@ export const Prerequisites = buildForm({
               subTitle: m.prerequisites.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              provider: HealthCenterApi,
+              provider: HhCoursesHealthCenterApi,
               title: m.prerequisites.healthCenterTitle,
               subTitle: m.prerequisites.healthCenterSubTitle,
             }),

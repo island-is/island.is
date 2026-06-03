@@ -19,7 +19,13 @@ export enum Roles {
 export enum ApiActions {
   submitApplication = 'submitApplication',
   checkParticipantAvailability = 'checkParticipantAvailability',
+  getHealthCenter = 'getHealthCenter',
 }
+
+// Contentful id of the course list page for professional courses
+// (námskeið fyrir fagfólk). Used to decide that the user's health center
+// should NOT be fetched/shown for professional course registrations.
+export const COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS = '147YftiWFQsBcbUFFe2rj1'
 
 export enum IndividualOrCompany {
   individual = 'individual',

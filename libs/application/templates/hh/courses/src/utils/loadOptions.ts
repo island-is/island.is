@@ -11,10 +11,12 @@ import {
   InstitutionContentfulIds,
   type AsyncSelectContext,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../graphql'
+import { parseQueryParamValue } from './parseQueryParamValue'
 
 const cache = storageFactory(() => localStorage)
 
@@ -40,8 +42,18 @@ export const doesCourseInstanceHaveChargeItemCode = (
 }
 
 export const loadCourseSelectOptions = async ({
+  application,
   apolloClient,
 }: AsyncSelectContext) => {
+  // Restrict the options to the course category the user arrived with so they
+  // cannot switch between public and professional courses (which would
+  // invalidate the health-center fetch decision made at the prerequisites step).
+  const initialQuery = getValueViaPath<string>(
+    application.answers,
+    'initialQuery',
+  )
+  const courseListPageId = parseQueryParamValue(initialQuery)?.courseListPageId
+
   const { data } = await apolloClient.query<
     Query,
     QueryGetCourseSelectOptionsArgs
@@ -52,6 +64,7 @@ export const loadCourseSelectOptions = async ({
         lang: 'is',
         organizationId:
           InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+        ...(courseListPageId ? { courseListPageId } : {}),
       },
     },
   })

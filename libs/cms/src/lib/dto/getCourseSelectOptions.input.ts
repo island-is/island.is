@@ -9,4 +9,7 @@ export class GetCourseSelectOptionsInput {
 
   @Field(() => String, { nullable: true })
   organizationId?: string
+
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string
 }

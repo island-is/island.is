@@ -12,12 +12,15 @@ import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
+import { type Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { HealthcenterApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
+  COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS,
   COURSE_LIST_PAGE_SLUG_MAP,
   GET_COURSE_BY_ID_QUERY,
   ZENDESK_TICKET_IDS,
@@ -29,11 +32,92 @@ export class CoursesService extends BaseTemplateApiService {
     private readonly sharedTemplateApiService: SharedTemplateApiService,
     private readonly zendeskService: ZendeskService,
     private readonly applicationApiService: ApplicationApiService,
+    private readonly healthcenterApi: HealthcenterApi,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
+  }
+
+  private healthcenterApiWithAuth(auth: Auth) {
+    return this.healthcenterApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  /**
+   * Resolves the Contentful course list page id (public vs professional course)
+   * for the application. The id is carried in the initial query params set when
+   * the user opens the application from the external web. Falls back to looking
+   * the course up by id when the list page id is not present in the params.
+   */
+  private async getCourseListPageId(
+    application: TemplateApiModuleActionProps['application'],
+    authorization: string,
+  ): Promise<string | null> {
+    const initialQuery = getValueViaPath<string>(
+      application.answers,
+      'initialQuery',
+    )
+
+    let courseId: string | undefined
+    let courseInstanceId: string | undefined
+
+    if (initialQuery) {
+      try {
+        const parsed = JSON.parse(initialQuery) as {
+          courseId?: string
+          courseInstanceId?: string
+          courseListPageId?: string
+        }
+        if (parsed.courseListPageId) return parsed.courseListPageId
+        courseId = parsed.courseId
+        courseInstanceId = parsed.courseInstanceId
+      } catch {
+        // Ignore malformed query params and fall through to the lookup below.
+      }
+    }
+
+    courseId ??= getValueViaPath<string>(application.answers, 'courseSelect')
+    courseInstanceId ??= getValueViaPath<string>(
+      application.answers,
+      'dateSelect',
+    )
+
+    if (!courseId || !courseInstanceId) return null
+
+    const { course } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      authorization,
+    )
+    return course.courseListPageId ?? null
+  }
+
+  /**
+   * Fetches the user's current health center — but only for public courses.
+   * For professional courses (námskeið fyrir fagfólk) we must not look up the
+   * health center at all, so the fetch is skipped entirely. Returns null when
+   * the course type cannot be determined (privacy-safe default).
+   */
+  async getHealthCenter({ application, auth }: TemplateApiModuleActionProps) {
+    try {
+      const courseListPageId = await this.getCourseListPageId(
+        application,
+        auth.authorization,
+      )
+
+      if (
+        !courseListPageId ||
+        courseListPageId === COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS
+      ) {
+        return null
+      }
+
+      return await this.healthcenterApiWithAuth(auth).getCurrentHealthCenter()
+    } catch (error) {
+      this.logger.error('Failed getting current health center', error)
+      return null
+    }
   }
 
   async getSelectedChargeItem({

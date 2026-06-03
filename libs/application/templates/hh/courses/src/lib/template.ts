@@ -9,7 +9,6 @@ import {
   FormModes,
   ApplicationConfigurations,
   defineTemplateApi,
-  HealthCenterApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -26,6 +25,7 @@ import { dataSchema } from './dataSchema'
 import {
   HhCoursesSelectedChargeItemApi,
   HhCoursesParticipantAvailabilityApi,
+  HhCoursesHealthCenterApi,
 } from '../dataProviders'
 
 import { m } from './messages'
@@ -90,7 +90,7 @@ const template: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 NationalRegistryUserApi,
-                HealthCenterApi,
+                HhCoursesHealthCenterApi,
                 HhCoursesSelectedChargeItemApi,
               ],
               delete: true,

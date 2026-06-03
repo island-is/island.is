@@ -114,6 +114,9 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       JSON.stringify({
         courseId: course.id,
         courseInstanceId: instance.id,
+        // Carry the course category so the application can avoid fetching the
+        // user's health center for professional courses (námskeið fyrir fagfólk).
+        courseListPageId: courseListPage?.id,
       }),
     )
 

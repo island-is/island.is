@@ -27,6 +27,11 @@ export const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
   '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',
 }
 
+// Contentful id of the course list page for professional courses
+// (námskeið fyrir fagfólk). Health center information must NOT be fetched
+// for registrations on professional courses.
+export const COURSE_LIST_PAGE_ID_FOR_PROFESSIONALS = '147YftiWFQsBcbUFFe2rj1'
+
 export const ZENDESK_TICKET_IDS = {
   brandId: 46016159517467,
   ticketFormId: 46207982902171,
