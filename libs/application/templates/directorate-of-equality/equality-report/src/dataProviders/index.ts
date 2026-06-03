@@ -11,3 +11,8 @@ export const ActiveEqualityReportApi = defineTemplateApi({
   action: 'getActiveEqualityReport',
   externalDataId: 'activeEqualityReport',
 })
+
+export const DoeCompanyApi = defineTemplateApi({
+  action: 'getDoeCompany',
+  externalDataId: 'doeCompany',
+})

@@ -37,6 +37,14 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     return company
   }
 
+  async getDoeCompany({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.directorateOfEqualityService.getCompany(auth)
+    } catch {
+      return { employeeCountCategory: 'UNKNOWN' }
+    }
+  }
+
   async getActiveEqualityReport({ auth }: TemplateApiModuleActionProps) {
     try {
       const report = await this.directorateOfEqualityService.getActiveEqualityReport(auth)

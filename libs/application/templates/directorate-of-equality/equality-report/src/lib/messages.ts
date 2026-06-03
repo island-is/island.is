@@ -7,6 +7,21 @@ const equalityReportIntro =
   'Fyrirtæki og stofnanir þar sem starfa 25 eða fleiri að jafnaði á ársgrundvelli skulu setja sér jafnréttisáætlun eða samþætta jafnréttissjónarmið í starfsmannastefnu sína. Skal þar meðal annars sérstaklega kveðið á um markmið og gerð áætlunar um hvernig þeim skuli náð til að tryggja starfsfólki þau réttindi sem kveðið er á um í 6.-14. gr. Jafnréttisáætlun og jafnréttissjónarmið í starfsmannastefnu skal endurskoða á þriggja ára fresti.'
 
 export const messages = {
+  errors: defineMessages({
+    required: {
+      id: 'equalityReport.application:errors.required',
+      defaultMessage: 'Þessi reitur má ekki vera tómur',
+    },
+    invalidEmail: {
+      id: 'equalityReport.application:errors.invalidEmail',
+      defaultMessage: 'Netfang er ekki gilt',
+    },
+    invalidNonNegativeNumber: {
+      id: 'equalityReport.application:errors.invalidNonNegativeNumber',
+      defaultMessage: 'Talan verður að vera 0 eða hærri',
+    },
+  }),
+
   general: defineMessages({
     applicationName: {
       id: 'equalityReport.application:general.applicationName',
@@ -140,74 +155,214 @@ export const messages = {
         defaultMessage: 'Upplýsingar um fyrirtækið',
       },
     }),
-    almennarUpplysingar: defineMessages({
+    generalInformation: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:aboutTheCompany.almennarUpplysingar.sectionTitle',
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.sectionTitle',
         defaultMessage: 'Almennar upplýsingar',
       },
       title: {
-        id: 'equalityReport.application:aboutTheCompany.almennarUpplysingar.title',
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.title',
         defaultMessage: 'Almennar upplýsingar',
       },
       intro: {
-        id: 'equalityReport.application:aboutTheCompany.almennarUpplysingar.intro',
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.intro',
         defaultMessage: lorem,
       },
+      companyName: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.companyName',
+        defaultMessage: 'Nafn fyrirtækis',
+      },
+      nationalId: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.nationalId',
+        defaultMessage: 'Kennitala',
+      },
+      address: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.address',
+        defaultMessage: 'Heimilisfang',
+      },
+      postalCode: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.postalCode',
+        defaultMessage: 'Póstnúmer',
+      },
+      municipality: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.municipality',
+        defaultMessage: 'Sveitarfélag',
+      },
+      numberOfEmployees: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.numberOfEmployees',
+        defaultMessage: 'Fjöldi starfsmanna',
+      },
+      isatClassification: {
+        id: 'equalityReport.application:aboutTheCompany.generalInformation.isatClassification',
+        defaultMessage: 'ÍSAT atvinnugreinarflokkun',
+      },
     }),
-    aedstiStjornandi: defineMessages({
+    chiefExecutive: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:aboutTheCompany.aedstiStjornandi.sectionTitle',
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.sectionTitle',
         defaultMessage: 'Æðsti stjórnandi',
       },
       title: {
-        id: 'equalityReport.application:aboutTheCompany.aedstiStjornandi.title',
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.title',
         defaultMessage: 'Æðsti stjórnandi',
       },
       intro: {
-        id: 'equalityReport.application:aboutTheCompany.aedstiStjornandi.intro',
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.intro',
         defaultMessage: lorem,
       },
+      name: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.name',
+        defaultMessage: 'Nafn',
+      },
+      namePlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.namePlaceholder',
+        defaultMessage: 'Nafn æðsta stjórnanda',
+      },
+      email: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.email',
+        defaultMessage: 'Netfang',
+      },
+      emailPlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.emailPlaceholder',
+        defaultMessage: 'Netfang æðsta stjórnanda',
+      },
+      gender: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.gender',
+        defaultMessage: 'Kyn',
+      },
+      genderMale: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.genderMale',
+        defaultMessage: 'Karl',
+      },
+      genderFemale: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.genderFemale',
+        defaultMessage: 'Kona',
+      },
+      genderNonBinary: {
+        id: 'equalityReport.application:aboutTheCompany.chiefExecutive.genderNonBinary',
+        defaultMessage: 'Hlutlægt',
+      },
     }),
-    tengiliður: defineMessages({
+    contactPerson: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:aboutTheCompany.tengiliður.sectionTitle',
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.sectionTitle',
         defaultMessage: 'Tengiliður',
       },
       title: {
-        id: 'equalityReport.application:aboutTheCompany.tengiliður.title',
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.title',
         defaultMessage: 'Tengiliður',
       },
       intro: {
-        id: 'equalityReport.application:aboutTheCompany.tengiliður.intro',
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.intro',
         defaultMessage: lorem,
       },
+      contactInfoTitle: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.contactInfoTitle',
+        defaultMessage: 'Upplýsingar um tengilið',
+      },
+      name: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.name',
+        defaultMessage: 'Nafn',
+      },
+      namePlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.namePlaceholder',
+        defaultMessage: 'Nafn tengiliðs',
+      },
+      email: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.email',
+        defaultMessage: 'Netfang',
+      },
+      emailPlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.emailPlaceholder',
+        defaultMessage: 'Netfang tengiliðs',
+      },
+      phone: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.phone',
+        defaultMessage: 'Símanúmer',
+      },
+      phonePlaceholder: {
+        id: 'equalityReport.application:aboutTheCompany.contactPerson.phonePlaceholder',
+        defaultMessage: 'Símanúmer tengiliðs',
+      },
     }),
-    medalfjoldiStarfsmanna: defineMessages({
+    employeeCount: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:aboutTheCompany.medalfjoldiStarfsmanna.sectionTitle',
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.sectionTitle',
         defaultMessage: 'Meðalfjöldi starfsmanna',
       },
       title: {
-        id: 'equalityReport.application:aboutTheCompany.medalfjoldiStarfsmanna.title',
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.title',
         defaultMessage: 'Meðalfjöldi starfsmanna',
       },
       intro: {
-        id: 'equalityReport.application:aboutTheCompany.medalfjoldiStarfsmanna.intro',
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.intro',
         defaultMessage: lorem,
       },
+      women: {
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.women',
+        defaultMessage: 'Konur',
+      },
+      men: {
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.men',
+        defaultMessage: 'Karlar',
+      },
+      nonBinary: {
+        id: 'equalityReport.application:aboutTheCompany.employeeCount.nonBinary',
+        defaultMessage: 'Hlutlæg skráning kyns í þjóðskrá',
+      },
     }),
-    dotturfyrirtaeki: defineMessages({
+    subsidiaries: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:aboutTheCompany.dotturfyrirtaeki.sectionTitle',
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.sectionTitle',
         defaultMessage: 'Dótturfyrirtæki',
       },
       title: {
-        id: 'equalityReport.application:aboutTheCompany.dotturfyrirtaeki.title',
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.title',
         defaultMessage: 'Dótturfyrirtæki',
       },
       intro: {
-        id: 'equalityReport.application:aboutTheCompany.dotturfyrirtaeki.intro',
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.intro',
         defaultMessage: lorem,
+      },
+      includesSubsidiariesTitle: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.includesSubsidiariesTitle',
+        defaultMessage: 'Nær jafnréttisáætlun einnig til dótturfyrirtækja?',
+      },
+      yes: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.yes',
+        defaultMessage: 'Já',
+      },
+      no: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.no',
+        defaultMessage: 'Nei',
+      },
+      tableFormTitle: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableFormTitle',
+        defaultMessage: 'Upplýsingar um dótturfyrirtæki',
+      },
+      tableAddButton: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableAddButton',
+        defaultMessage: 'Bæta við dótturfyrirtæki',
+      },
+      tableSaveButton: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableSaveButton',
+        defaultMessage: 'Vista dótturfyrirtæki',
+      },
+      tableRemoveButton: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableRemoveButton',
+        defaultMessage: 'Eyða dótturfyrirtæki',
+      },
+      tableEditButton: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableEditButton',
+        defaultMessage: 'Breyta dótturfyrirtæki',
+      },
+      tableHeaderName: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableHeaderName',
+        defaultMessage: 'Nafn fyrirtækis',
+      },
+      tableHeaderNationalId: {
+        id: 'equalityReport.application:aboutTheCompany.subsidiaries.tableHeaderNationalId',
+        defaultMessage: 'Kennitala',
       },
     }),
   },
@@ -220,45 +375,45 @@ export const messages = {
         defaultMessage: 'Jafnréttisáætlun',
       },
     }),
-    uplysingar: defineMessages({
+    information: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:equalityReport.uplysingar.sectionTitle',
+        id: 'equalityReport.application:equalityReport.information.sectionTitle',
         defaultMessage: 'Upplýsingar',
       },
       title: {
-        id: 'equalityReport.application:equalityReport.uplysingar.title',
+        id: 'equalityReport.application:equalityReport.information.title',
         defaultMessage: 'Jafnréttisáætlun',
       },
       intro: {
-        id: 'equalityReport.application:equalityReport.uplysingar.intro',
+        id: 'equalityReport.application:equalityReport.information.intro',
         defaultMessage: equalityReportIntro,
       },
     }),
-    eldriJafnrettisaetlun: defineMessages({
+    previousEqualityPlan: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.sectionTitle',
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.sectionTitle',
         defaultMessage: 'Eldri Jafnréttisáætlun',
       },
       title: {
-        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.title',
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.title',
         defaultMessage: 'Eldri Jafnréttisáætlun',
       },
       intro: {
-        id: 'equalityReport.application:equalityReport.eldriJafnrettisaetlun.intro',
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.intro',
         defaultMessage: lorem,
       },
     }),
-    markmidOgAdgerdir: defineMessages({
+    goalsAndActions: defineMessages({
       sectionTitle: {
-        id: 'equalityReport.application:equalityReport.markmidOgAdgerdir.sectionTitle',
+        id: 'equalityReport.application:equalityReport.goalsAndActions.sectionTitle',
         defaultMessage: 'Markmið og aðgerðir',
       },
       title: {
-        id: 'equalityReport.application:equalityReport.markmidOgAdgerdir.title',
+        id: 'equalityReport.application:equalityReport.goalsAndActions.title',
         defaultMessage: 'Jafnréttisáætlun',
       },
       intro: {
-        id: 'equalityReport.application:equalityReport.markmidOgAdgerdir.intro',
+        id: 'equalityReport.application:equalityReport.goalsAndActions.intro',
         defaultMessage: equalityReportIntro,
       },
     }),

@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { ActiveEqualityReportApi, CompanyRegistryApi, IdentityApi, UserProfileApi } from '../../dataProviders'
+import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, IdentityApi, UserProfileApi } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -37,6 +37,9 @@ export const Prerequisites = buildForm({
             ],
           }),
           dataProviders: [
+            buildDataProviderItem({
+              provider: DoeCompanyApi,
+            }),
             buildDataProviderItem({
               provider: ActiveEqualityReportApi,
               title: messages.prerequisites.activeEqualityReport.title,

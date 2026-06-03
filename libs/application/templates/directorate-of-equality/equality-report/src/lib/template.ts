@@ -12,7 +12,7 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
-import { ActiveEqualityReportApi, CompanyRegistryApi } from '../dataProviders'
+import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -58,7 +58,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, CompanyRegistryApi, ActiveEqualityReportApi],
+              api: [UserProfileApi, IdentityApi, CompanyRegistryApi, ActiveEqualityReportApi, DoeCompanyApi],
               delete: true,
             },
             {

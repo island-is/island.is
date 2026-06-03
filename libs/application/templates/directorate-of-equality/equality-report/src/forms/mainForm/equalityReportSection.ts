@@ -12,8 +12,8 @@ export const equalityReportSection = buildSection({
   title: messages.equalityReport.section.sectionTitle,
   children: [
     buildSubSection({
-      id: 'eldriJafnrettisaetlun',
-      title: messages.equalityReport.eldriJafnrettisaetlun.sectionTitle,
+      id: 'previousEqualityPlan',
+      title: messages.equalityReport.previousEqualityPlan.sectionTitle,
       condition: (_answers, externalData) =>
         getValueViaPath(
           externalData,
@@ -21,12 +21,12 @@ export const equalityReportSection = buildSection({
         ) === true,
       children: [
         buildMultiField({
-          id: 'eldriJafnrettisaetlunMultiField',
-          title: messages.equalityReport.eldriJafnrettisaetlun.title,
-          description: messages.equalityReport.eldriJafnrettisaetlun.intro,
+          id: 'previousEqualityPlanMultiField',
+          title: messages.equalityReport.previousEqualityPlan.title,
+          description: messages.equalityReport.previousEqualityPlan.intro,
           children: [
             buildDescriptionField({
-              id: 'eldriJafnrettisaetlun.placeholder',
+              id: 'previousEqualityPlan.placeholder',
               title: '',
               description: '',
             }),
@@ -35,16 +35,16 @@ export const equalityReportSection = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'uplysingar',
-      title: messages.equalityReport.uplysingar.sectionTitle,
+      id: 'information',
+      title: messages.equalityReport.information.sectionTitle,
       children: [
         buildMultiField({
-          id: 'uplysingarMultiField',
-          title: messages.equalityReport.uplysingar.title,
-          description: messages.equalityReport.uplysingar.intro,
+          id: 'informationMultiField',
+          title: messages.equalityReport.information.title,
+          description: messages.equalityReport.information.intro,
           children: [
             buildDescriptionField({
-              id: 'uplysingar.placeholder',
+              id: 'information.placeholder',
               title: '',
               description: '',
             }),
@@ -53,16 +53,16 @@ export const equalityReportSection = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'markmidOgAdgerdir',
-      title: messages.equalityReport.markmidOgAdgerdir.sectionTitle,
+      id: 'goalsAndActions',
+      title: messages.equalityReport.goalsAndActions.sectionTitle,
       children: [
         buildMultiField({
-          id: 'markmidOgAdgerdirMultiField',
-          title: messages.equalityReport.markmidOgAdgerdir.title,
-          description: messages.equalityReport.markmidOgAdgerdir.intro,
+          id: 'goalsAndActionsMultiField',
+          title: messages.equalityReport.goalsAndActions.title,
+          description: messages.equalityReport.goalsAndActions.intro,
           children: [
             buildDescriptionField({
-              id: 'markmidOgAdgerdir.placeholder',
+              id: 'goalsAndActions.placeholder',
               title: '',
               description: '',
             }),
