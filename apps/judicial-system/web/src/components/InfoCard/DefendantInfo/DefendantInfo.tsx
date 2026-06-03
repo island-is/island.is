@@ -19,6 +19,7 @@ import {
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { UserContext } from '../../UserProvider/UserProvider'
@@ -85,8 +86,7 @@ const ConnectedCasesInfo = ({
     })
 
   return (
-    connectedCases &&
-    connectedCases.length > 0 && (
+    isNonEmptyArray(connectedCases) && (
       <Box display="flex" flexWrap="wrap">
         <Box
           display="inlineFlex"
