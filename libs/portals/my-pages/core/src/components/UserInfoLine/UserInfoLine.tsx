@@ -31,6 +31,7 @@ type LineButton = {
   title: MessageDescriptor | string
   onClick: () => void
   icon?: ButtonProps['icon']
+  iconType?: ButtonProps['iconType']
 }
 
 interface Props {
@@ -193,6 +194,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               <Button
                 onClick={button.onClick}
                 icon={button.icon ?? 'pencil'}
+                iconType={button.iconType}
                 size="small"
                 variant="text"
               >

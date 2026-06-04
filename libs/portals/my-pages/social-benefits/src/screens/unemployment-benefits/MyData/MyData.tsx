@@ -23,9 +23,11 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
 
+const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
+
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
 
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
@@ -152,30 +154,46 @@ const MyData = () => {
               !submittedAttachmentsHasError &&
               submittedAttachments.length > 0 && (
                 <Stack space={0}>
-                  {submittedAttachments.map((attachment) => (
-                    <Box key={attachment.id}>
-                      <UserInfoLine
-                        label={
-                          getAttachmentName(attachment.typeId) ||
-                          attachment.name
-                        }
-                        button={
-                          attachment.downloadServiceUrl
-                            ? {
-                                title: formatMessage(um.myDataViewDocument),
-                                icon: 'arrowForward',
-                                onClick: () => {
-                                  if (attachment.downloadServiceUrl) {
-                                    formSubmit(attachment.downloadServiceUrl)
-                                  }
-                                },
-                              }
-                            : undefined
-                        }
-                      />
-                      <Divider />
-                    </Box>
-                  ))}
+                  {submittedAttachments.map((attachment) => {
+                    const isViewable = VIEWABLE_CONTENT_TYPES.includes(
+                      attachment.contentType,
+                    )
+                    return (
+                      <Box key={attachment.id}>
+                        <UserInfoLine
+                          label={
+                            getAttachmentName(attachment.typeId) || attachment
+                          }
+                          content={
+                            attachment.created
+                              ? formatDateFns(attachment.created, 'dd.MM.yyyy')
+                              : ''
+                          }
+                          button={
+                            attachment.downloadServiceUrl
+                              ? {
+                                  title: formatMessage(
+                                    isViewable
+                                      ? um.myDataViewDocument
+                                      : um.myDataDownloadDocument,
+                                  ),
+                                  icon: isViewable
+                                    ? 'arrowForward'
+                                    : 'download',
+                                  iconType: isViewable ? undefined : 'outline',
+                                  onClick: () => {
+                                    if (attachment.downloadServiceUrl) {
+                                      formSubmit(attachment.downloadServiceUrl)
+                                    }
+                                  },
+                                }
+                              : undefined
+                          }
+                        />
+                        <Divider />
+                      </Box>
+                    )
+                  })}
                 </Stack>
               )}
           </Box>
