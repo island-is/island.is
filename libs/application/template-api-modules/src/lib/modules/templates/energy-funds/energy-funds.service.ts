@@ -194,7 +194,9 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
-    if (!vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)) {
+    if (
+      !vehicleApiDetails.owners?.find((x) => x.persidno === auth.nationalId)
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehicleNotOwner,
