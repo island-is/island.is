@@ -734,7 +734,7 @@ export class NotificationsWorkerService {
   ): Promise<boolean> {
     const enabled = await this.featureFlagService.getValue(
       Features.isUserNotificationDeceasedCheckEnabled,
-      true,
+      false,
       { nationalId } as User,
     )
 
@@ -761,7 +761,7 @@ export class NotificationsWorkerService {
   ): Promise<boolean> {
     const enabled = await this.featureFlagService.getValue(
       Features.isUserNotificationInactiveCompanyCheckEnabled,
-      true,
+      false,
       { nationalId } as User,
     )
 
