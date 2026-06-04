@@ -8,7 +8,8 @@ import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCas
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
 const usePoliceDigitalCaseFile = () => {
-  const { workingCase, isLoadingWorkingCase, refreshCase } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, refreshCase } =
+    useContext(FormContext)
   const { id: caseId, origin: caseOrigin, parentCase, splitCase } = workingCase
 
   const handleCompleted = useCallback(
