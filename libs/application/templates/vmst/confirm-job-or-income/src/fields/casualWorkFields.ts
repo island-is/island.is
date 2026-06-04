@@ -42,12 +42,27 @@ export const casualWorkFields = [
         label: m.application.monthFrom,
         width: 'half',
         required: true,
+        clearOnChange: (index: number) => [`registerIncome[${index}].monthTo`],
+        minDate: () => {
+          const tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          return tomorrow
+        },
       },
       monthTo: {
         component: 'date',
         label: m.application.monthTo,
         width: 'half',
         required: true,
+        minDate: (_application, activeField) => {
+          const fromDate = activeField?.monthFrom
+          if (fromDate) {
+            return new Date(fromDate)
+          }
+          const tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          return tomorrow
+        },
       },
       estimatedIncome: {
         component: 'input',

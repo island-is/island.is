@@ -28,20 +28,18 @@ export const capitalIncomeFields = [
         component: 'select',
         label: m.application.paymentType,
         required: true,
-        options: [
-          {
-            value: 'rent',
-            label: m.application.capitalIncomeRent,
-          },
-          {
-            value: 'dividend',
-            label: m.application.capitalIncomeDividend,
-          },
-          {
-            value: 'interest',
-            label: m.application.capitalIncomeInterest,
-          },
-        ],
+        options: (application) => {
+          const incomeTypes =
+            getValueViaPath<Array<{ id?: string; name?: string }>>(
+              application.externalData,
+              'incomeTypes.data.capitalIncomeTypes',
+            ) ?? []
+
+          return incomeTypes.map((type) => ({
+            label: type.name ?? '',
+            value: type.name ?? '',
+          }))
+        },
       },
       amountPerMonth: {
         component: 'input',

@@ -9,7 +9,11 @@ import { DefaultEvents } from '@island.is/application/types'
 import { application as applicationMessages } from '../../lib/messages'
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
-import { CanReportWorkApi, PensionFundsApi } from '../../dataProviders'
+import {
+  CanReportWorkApi,
+  PensionFundsApi,
+  IncomeTypesApi,
+} from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -33,6 +37,9 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: PensionFundsApi,
+            }),
+            buildDataProviderItem({
+              provider: IncomeTypesApi,
             }),
           ],
           submitField: buildSubmitField({

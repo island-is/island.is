@@ -19,6 +19,24 @@ export const pensionFields = [
     addItemButtonText: m.application.addLine,
     minRows: 1,
     fields: {
+      pensionType: {
+        component: 'select',
+        label: m.application.paymentType,
+        width: 'half',
+        required: true,
+        options: (application) => {
+          const incomeTypes =
+            getValueViaPath<Array<{ id?: string; name?: string }>>(
+              application.externalData,
+              'incomeTypes.data.pensionTypes',
+            ) ?? []
+
+          return incomeTypes.map((type) => ({
+            label: type.name ?? '',
+            value: type.id ?? '',
+          }))
+        },
+      },
       pensionFund: {
         component: 'select',
         label: m.application.pensionFund,

@@ -55,6 +55,26 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     return await this.vmstUnemploymentClientService.getPensionFunds()
   }
 
+  async getIncomeTypes() {
+    const [trTypes, pensionTypes, allTypes] = await Promise.all([
+      this.vmstUnemploymentClientService.getIncomeTypes({
+        onlyTrTypes: true,
+      }),
+      this.vmstUnemploymentClientService.getIncomeTypes({
+        onlyPensionTypes: true,
+      }),
+      this.vmstUnemploymentClientService.getIncomeTypes(),
+    ])
+
+    const trTypeIds = new Set(trTypes.map((t) => t.id))
+    const pensionTypeIds = new Set(pensionTypes.map((t) => t.id))
+    const capitalIncomeTypes = allTypes.filter(
+      (t) => !trTypeIds.has(t.id) && !pensionTypeIds.has(t.id),
+    )
+
+    return { trTypes, pensionTypes, capitalIncomeTypes }
+  }
+
   async submitApplication({
     application,
     auth,
@@ -182,6 +202,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
               applicantId,
               galdurExternalDomainRequestsIncomeCreateTRPaymentRequest: {
                 typeId: entry.socialPaymentType,
+                pensionFundId: entry.pensionFundId || undefined,
                 estimatedIncome: entry.amountPerMonth
                   ? Number(entry.amountPerMonth)
                   : undefined,
@@ -190,6 +211,22 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
                   : undefined,
                 periodTo:
                   entry.paymentFrequency === 'oneTime' ? null : undefined,
+              },
+            })
+          }
+          break
+        }
+
+        case 'pension': {
+          for (const entry of entries) {
+            await this.vmstUnemploymentClientService.createPensionPayment({
+              applicantId,
+              galdurExternalDomainRequestsIncomeCreatePensionPaymentRequest: {
+                typeId: entry.pensionType,
+                pensionFundId: entry.pensionFund,
+                estimatedIncome: entry.amountPerMonth
+                  ? Number(entry.amountPerMonth)
+                  : undefined,
               },
             })
           }

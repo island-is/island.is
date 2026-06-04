@@ -15,9 +15,14 @@ import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { CanReportWorkApi, PensionFundsApi, SubmitApi } from '../dataProviders'
+import { getHistoryLogMessage } from '../utils/getHistoryLogMessage'
+import {
+  CanReportWorkApi,
+  PensionFundsApi,
+  IncomeTypesApi,
+  SubmitApi,
+} from '../dataProviders'
 import { application as applicationMessages } from './messages'
 
 const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
@@ -53,7 +58,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [CanReportWorkApi, PensionFundsApi],
+              api: [CanReportWorkApi, PensionFundsApi, IncomeTypesApi],
               delete: true,
             },
           ],
@@ -77,35 +82,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: (application) => {
-                  const dateFrom = getValueViaPath<string>(
-                    application.answers,
-                    'registerIncome[0].monthFrom',
-                  )
-                  const dateTo = getValueViaPath<string>(
-                    application.answers,
-                    'registerIncome[0].monthTo',
-                  )
-                  return {
-                    ...applicationMessages.historyLogReceivedForPeriod,
-                    values: {
-                      dateFrom: dateFrom
-                        ? new Date(dateFrom).toLocaleDateString('is-IS', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })
-                        : '',
-                      dateTo: dateTo
-                        ? new Date(dateTo).toLocaleDateString('is-IS', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })
-                        : '',
-                    },
-                  }
-                },
+                logMessage: getHistoryLogMessage,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

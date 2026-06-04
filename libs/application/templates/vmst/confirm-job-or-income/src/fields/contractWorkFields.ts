@@ -37,12 +37,27 @@ export const contractWorkFields = [
         label: m.application.jobStart,
         width: 'half',
         required: true,
+        clearOnChange: (index: number) => [`registerIncome[${index}].workEnds`],
+        minDate: () => {
+          const tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          return tomorrow
+        },
       },
       workEnds: {
         component: 'date',
         label: m.application.workEnds,
         width: 'half',
         required: true,
+        minDate: (_application, activeField) => {
+          const fromDate = activeField?.contractJobStart
+          if (fromDate) {
+            return new Date(fromDate)
+          }
+          const tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          return tomorrow
+        },
       },
     },
   }),

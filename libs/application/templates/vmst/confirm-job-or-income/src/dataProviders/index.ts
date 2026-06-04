@@ -10,6 +10,11 @@ export const PensionFundsApi = defineTemplateApi({
   externalDataId: 'pensionFunds',
 })
 
+export const IncomeTypesApi = defineTemplateApi({
+  action: 'getIncomeTypes',
+  externalDataId: 'incomeTypes',
+})
+
 export const SubmitApi = defineTemplateApi({
   action: 'submitApplication',
 })

@@ -43,6 +43,11 @@ export const partTimeFields = [
         label: m.application.jobStart,
         width: 'half',
         required: true,
+        minDate: () => {
+          const tomorrow = new Date()
+          tomorrow.setDate(tomorrow.getDate() + 1)
+          return tomorrow
+        },
       },
       workPercentage: {
         component: 'input',

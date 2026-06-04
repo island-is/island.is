@@ -40,10 +40,12 @@ import {
   IncomeCreatePartTimeJobRequest,
   IncomeCreateCapitalIncomePaymentRequest,
   IncomeCreateTRPaymentRequest,
+  IncomeCreatePensionPaymentRequest,
   GaldurExternalDomainModelsIncomeIrregularJobDTO,
   GaldurExternalDomainModelsIncomePartTimeJobDTO,
   GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO,
   GaldurExternalDomainModelsIncomeTRPaymentDTO,
+  GaldurExternalDomainModelsIncomePensionPaymentDTO,
   GaldurExternalDomainModelsIncomeContractorJobDTO,
   IncomeSupportDataApi,
   GaldurExternalDomainModelsIncomeIncomeTypeDTO,
@@ -570,14 +572,25 @@ export class VmstUnemploymentClientService {
     return await api.uncompensatedPeriodsCreateContractorJob(requestParameters)
   }
 
-  async getIncomeTypes(): Promise<
-    Array<GaldurExternalDomainModelsIncomeIncomeTypeDTO>
-  > {
+  async getIncomeTypes(options?: {
+    onlyTrTypes?: boolean
+    onlyPensionTypes?: boolean
+  }): Promise<Array<GaldurExternalDomainModelsIncomeIncomeTypeDTO>> {
     const api = await this.createApiClient(
       IncomeSupportDataApi,
       'clients-vmst-unemployment',
     )
-    return await api.incomeSupportDataGetIncomeTypes({})
+    return await api.incomeSupportDataGetIncomeTypes(options ?? {})
+  }
+
+  async createPensionPayment(
+    requestParameters: IncomeCreatePensionPaymentRequest,
+  ): Promise<GaldurExternalDomainModelsIncomePensionPaymentDTO> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeCreatePensionPayment(requestParameters)
   }
 
   async getPensionFunds(): Promise<

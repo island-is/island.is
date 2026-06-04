@@ -28,16 +28,18 @@ export const socialInsuranceFields = [
         component: 'select',
         label: m.application.paymentType,
         required: true,
-        options: [
-          {
-            value: 'disability',
-            label: m.application.socialInsuranceDisability,
-          },
-          {
-            value: 'rehabilitation',
-            label: m.application.socialInsuranceRehabilitation,
-          },
-        ],
+        options: (application) => {
+          const incomeTypes =
+            getValueViaPath<Array<{ id?: string; name?: string }>>(
+              application.externalData,
+              'incomeTypes.data.trTypes',
+            ) ?? []
+
+          return incomeTypes.map((type) => ({
+            label: type.name ?? '',
+            value: type.id ?? '',
+          }))
+        },
       },
       amountPerMonth: {
         component: 'input',
@@ -48,8 +50,9 @@ export const socialInsuranceFields = [
       },
       paymentFrequency: {
         component: 'radio',
-        largeButtons: false,
+        largeButtons: true,
         required: true,
+        width: 'half',
         options: [
           { value: 'oneTime', label: m.application.oneTimePayment },
           { value: 'monthly', label: m.application.monthlyPayment },
