@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class CustomsCalculatorStatus {
@@ -14,29 +15,26 @@ export class CustomsCalculatorStatus {
 
 @ObjectType()
 export class CustomsCalculatorProductCategory {
-  @Field({ nullable: true })
-  parentCategory?: string
-
-  @Field({ nullable: true })
-  category?: string
+  @Field(() => [String], { nullable: true })
+  parentCategoryLabels?: string[]
 
   @Field({ nullable: true })
   tariffNumber?: string
 
   @Field({ nullable: true })
+  label?: string
+
+  @Field({ nullable: true })
   description?: string
+
+  @CacheField(() => [CustomsCalculatorProductCategory])
+  childCategories?: CustomsCalculatorProductCategory[]
 }
 
 @ObjectType()
 export class CustomsCalculatorProductCategoriesResponse {
-  @Field(() => CustomsCalculatorStatus, { nullable: true })
-  status?: CustomsCalculatorStatus
-
   @Field(() => [CustomsCalculatorProductCategory], { nullable: true })
   categories?: CustomsCalculatorProductCategory[]
-
-  @Field({ nullable: true })
-  errors?: string
 }
 
 @ObjectType()

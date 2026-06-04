@@ -28,7 +28,12 @@ export const ProductCategoryModal = ({
   if (!isVisible) return null
 
   return (
-    <Box className={styles.dropdown} padding={2} paddingX={3}>
+    <Box
+      className={styles.dropdown}
+      padding={2}
+      paddingLeft={3}
+      paddingRight={1}
+    >
       <Stack space={topComponent ? 2 : 3}>
         <Inline alignY="center" space={2} justifyContent="spaceBetween">
           <Text variant="h4">{modalTitle}</Text>
@@ -51,7 +56,7 @@ export const ProductCategoryModal = ({
         <Box paddingRight={4}>
           <Stack space={2}>
             {topComponent}
-            <Stack space={2}>
+            <Box>
               {options.map((option, index) => (
                 <Box
                   key={option.value}
@@ -60,7 +65,8 @@ export const ProductCategoryModal = ({
                   }
                   borderColor="blue200"
                   display="flex"
-                  paddingBottom={2}
+                  className={styles.option}
+                  paddingX={1}
                   justifyContent="spaceBetween"
                   alignItems="center"
                   cursor="pointer"
@@ -68,17 +74,11 @@ export const ProductCategoryModal = ({
                 >
                   <Text>{option.label}</Text>
                   {option.hasChildren && (
-                    <Box paddingRight={1}>
-                      <Icon
-                        icon="chevronForward"
-                        color="blue400"
-                        size="medium"
-                      />
-                    </Box>
+                    <Icon icon="chevronForward" color="blue400" size="medium" />
                   )}
                 </Box>
               ))}
-            </Stack>
+            </Box>
           </Stack>
         </Box>
       </Stack>

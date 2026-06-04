@@ -184,6 +184,23 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         label: 'A',
         value: 'A',
         hasChildren: true,
+        children: [
+          {
+            label: 'A1',
+            value: 'A1',
+            hasChildren: false,
+          },
+          {
+            label: 'A2',
+            value: 'A2',
+            hasChildren: false,
+          },
+          {
+            label: 'A3',
+            value: 'A3',
+            hasChildren: false,
+          },
+        ],
       },
       {
         label: 'B',
@@ -199,23 +216,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
     if (!selectedCategory) return options
 
-    return [
-      {
-        label: 'D',
-        value: 'D',
-        hasChildren: true,
-      },
-      {
-        label: 'E',
-        value: 'E',
-        hasChildren: false,
-      },
-      {
-        label: 'F',
-        value: 'F',
-        hasChildren: true,
-      },
-    ]
+    return (
+      options.find((option) => option.value === selectedCategory)?.children ??
+      []
+    )
   }, [selectedCategory])
 
   return (
@@ -263,8 +267,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             })
           }
         />
-
-        {<Text variant="small">{}</Text>}
+        <Text variant="small">{}</Text>
       </Stack>
 
       <div ref={categoryDropdownRef} style={{ position: 'relative' }}>

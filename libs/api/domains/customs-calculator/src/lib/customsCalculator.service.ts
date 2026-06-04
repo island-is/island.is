@@ -15,20 +15,17 @@ export class CustomsCalculatorService {
     const response = await this.customsCalculatorApi.getReiknivelVoruflokkar()
     const payload = response as Record<string, unknown>
     const data = (payload['Response'] ?? {}) as Record<string, unknown>
-    const categories =
-      ((data['Voruflokkar'] as Record<string, unknown>[] | undefined) ?? []).map(
-        (item) => ({
-          parentCategory: String(item['Yfirflokkur'] ?? ''),
-          category: String(item['Voruflokkur'] ?? ''),
-          tariffNumber: String(item['Tollnumer'] ?? ''),
-          description: String(item['Lysing'] ?? ''),
-        }),
-      )
+    const categories = (
+      (data['Voruflokkar'] as Record<string, unknown>[] | undefined) ?? []
+    ).map((item) => ({
+      parentCategory: String(item['Yfirflokkur'] ?? ''),
+      label: String(item['Voruflokkur'] ?? ''),
+      tariffNumber: String(item['Tollnumer'] ?? ''),
+      description: String(item['Lysing'] ?? ''),
+    }))
 
     return {
-      status: this.mapStatus(payload),
       categories,
-      errors: this.toNullableString(data['Villur']),
     }
   }
 
@@ -80,23 +77,24 @@ export class CustomsCalculatorService {
 
     const payload = response as Record<string, unknown>
     const responseData = (payload['Response'] ?? {}) as Record<string, unknown>
-    const linaGjald = (responseData['LinaGjald'] ?? {}) as Record<string, unknown>
-    const firstLine = ((linaGjald['LinaGjaldLinur'] ?? []) as Record<
+    const linaGjald = (responseData['LinaGjald'] ?? {}) as Record<
       string,
       unknown
-    >[])[0]
-    const charges =
-      ((firstLine?.['LinaAlagningar'] ?? []) as Record<string, unknown>[]).map(
-        (charge) => ({
-          chargeType: this.toNullableString(charge['tegund']),
-          code: this.toNullableString(charge['kodi']),
-          name: this.toNullableString(charge['heiti']),
-          amount: this.toNullableString(charge['bruttoupphaed']),
-          netAmount: this.toNullableString(charge['nettoupphaed']),
-          ratePercent: this.toNullableString(charge['TaxtiPros']),
-          rateAmount: this.toNullableString(charge['TaxtiUpph']),
-        }),
-      )
+    >
+    const firstLine = (
+      (linaGjald['LinaGjaldLinur'] ?? []) as Record<string, unknown>[]
+    )[0]
+    const charges = (
+      (firstLine?.['LinaAlagningar'] ?? []) as Record<string, unknown>[]
+    ).map((charge) => ({
+      chargeType: this.toNullableString(charge['tegund']),
+      code: this.toNullableString(charge['kodi']),
+      name: this.toNullableString(charge['heiti']),
+      amount: this.toNullableString(charge['bruttoupphaed']),
+      netAmount: this.toNullableString(charge['nettoupphaed']),
+      ratePercent: this.toNullableString(charge['TaxtiPros']),
+      rateAmount: this.toNullableString(charge['TaxtiUpph']),
+    }))
 
     return {
       status: this.mapStatus(payload),

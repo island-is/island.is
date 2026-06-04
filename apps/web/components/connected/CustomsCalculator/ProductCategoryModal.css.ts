@@ -15,3 +15,8 @@ export const dropdown = style({
   boxShadow: theme.shadows.strong,
   borderRadius: theme.border.radius.large,
 })
+
+export const option = style({
+  paddingTop: '12px',
+  paddingBottom: '12px',
+})
