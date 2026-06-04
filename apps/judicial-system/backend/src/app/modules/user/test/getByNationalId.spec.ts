@@ -63,6 +63,7 @@ describe('UserController - Get by national id', () => {
           role: UserRole.ADMIN,
           active: true,
           canConfirmIndictment: false,
+          canManageMessageSuspension: false,
         },
       ])
     })
