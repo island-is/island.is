@@ -65,6 +65,9 @@ describe('IndictmentCountController - Delete', () => {
       const mockDestroy = mockIndictmentCountModel.destroy as jest.Mock
       mockDestroy.mockResolvedValueOnce(1)
 
+      const mockFindAll = mockIndictmentCountModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce([])
+
       then = await givenWhenThen(caseId, indictmentCountId)
     })
 

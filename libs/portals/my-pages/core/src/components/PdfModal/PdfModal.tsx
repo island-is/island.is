@@ -174,9 +174,9 @@ export const PdfModal = ({
             variant="utility"
             size="small"
             onClick={handleDownload}
-            aria-label={isMobile ? formatMessage(m.download) : undefined}
+            aria-label={isMobile ? formatMessage(m.get) : undefined}
           >
-            {isMobile ? undefined : formatMessage(m.download)}
+            {isMobile ? undefined : formatMessage(m.get)}
           </Button>
           <DialogDismiss
             render={
