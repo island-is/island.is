@@ -199,7 +199,7 @@ export const en: TranslatedMessages = {
   'homeOptions.heading.title': 'Configure home screen',
   'homeOptions.heading.subtitle':
     'Here you can configure what is displayed on the home screen.',
-  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.notifications': 'Latest notifications',
   'homeOptions.inbox': 'Latest in inbox',
   'homeOptions.licenses': 'Licenses',
   'homeOptions.applications': 'Applications',
@@ -229,14 +229,14 @@ export const en: TranslatedMessages = {
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
-  'inboxFilters.unreadOnly': 'Show only unread',
+  'inboxFilters.unreadOnly': 'Show unread only',
   'inboxFilters.starred': 'Starred',
   'inboxFilters.archived': 'Archived',
   'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
-  'inbox.filterOrganizationTitle': 'Organization',
+  'inbox.filterOrganizationTitle': 'Institution',
   'inbox.filterCategoryTitle': 'Category',
   'inbox.filterDatesTitle': 'Dates',
   'inbox.filterClearButton': 'Clear',

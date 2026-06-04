@@ -4,8 +4,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -21,6 +24,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseFilesOverview,
+  AppealRulingModifiedAlert,
   CaseDates,
   CaseFilesAccordionItem,
   CaseTitleInfoAndTags,
@@ -41,6 +45,7 @@ import {
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
+  RulingModifiedAlert,
   SignatureConfirmationModal,
   SignatureType,
   UserContext,
@@ -67,7 +72,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
-import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
   open: boolean
@@ -269,11 +273,11 @@ export const SignedVerdictOverview: FC = () => {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
           router.push(
-            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         } else {
           router.push(
-            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
@@ -281,11 +285,11 @@ export const SignedVerdictOverview: FC = () => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
               router.push(
-                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             } else {
               router.push(
-                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
               )
             }
           }
@@ -406,22 +410,6 @@ export const SignedVerdictOverview: FC = () => {
                   }
                 />
               )}
-            {workingCase.appealCase?.appealRulingModifiedHistory && (
-              <Box marginBottom={5} marginTop={5}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(strings.rulingModifiedTitle)}
-                  message={
-                    <MarkdownWrapper
-                      markdown={
-                        workingCase.appealCase?.appealRulingModifiedHistory
-                      }
-                      textProps={{ variant: 'small' }}
-                    />
-                  }
-                />
-              </Box>
-            )}
           </Box>
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             {workingCase.caseModifiedExplanation && (
@@ -438,18 +426,8 @@ export const SignedVerdictOverview: FC = () => {
                 }
               />
             )}
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.sections.modifyRulingInfo.title)}
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             <InfoCard
               sections={[
                 {

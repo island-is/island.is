@@ -9,7 +9,13 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -48,7 +54,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealFiles = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -84,13 +90,13 @@ const AppealFiles = () => {
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
-        ? constants.DEFENDER_INDICTMENT_ROUTE
-        : constants.DEFENDER_ROUTE
+        ? DEFENDER_INDICTMENT_CASE_ROUTE
+        : DEFENDER_REQUEST_CASE_ROUTE
       : isIndictmentCase(workingCase.type)
       ? isCompletedCase(workingCase.state)
-        ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-        : constants.INDICTMENTS_OVERVIEW_ROUTE
-      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        ? PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
+        : PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
+      : SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
@@ -108,13 +114,16 @@ const AppealFiles = () => {
       TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
     )
 
+    refreshCase()
+
     setVisibleModal(true)
   }, [
     handleUpload,
     uploadFiles,
-    sendNotification,
     updateUploadFile,
+    sendNotification,
     workingCase.id,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {

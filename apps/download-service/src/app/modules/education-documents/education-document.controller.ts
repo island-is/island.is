@@ -70,7 +70,7 @@ export class EducationController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-${url}.pdf`,
+        `attachment; filename="${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-${url}.pdf"`,
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
@@ -114,7 +114,7 @@ export class EducationController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-namsmat-${assignmentResultId}.pdf`,
+        `attachment; filename="${user.nationalId}-namsmat-${assignmentResultId}.pdf"`,
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')
@@ -124,6 +124,6 @@ export class EducationController {
       )
       return res.status(200).end(buffer)
     }
-    return res.end()
+    return res.status(404).end()
   }
 }
