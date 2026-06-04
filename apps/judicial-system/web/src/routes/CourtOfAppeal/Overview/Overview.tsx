@@ -54,7 +54,7 @@ const Overview = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
   const {
     defendants,
     policeCaseNumbers,

@@ -226,7 +226,7 @@ export const SignedVerdictOverview: FC = () => {
 
   const { appealBanner, appealModals } = useAppealCaseBanner()
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   /**
    * If the case is not rejected it must be accepted because
