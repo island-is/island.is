@@ -10,7 +10,6 @@ import {
   AppState,
   BackHandler,
   Image,
-  Modal,
   SafeAreaView,
   StyleSheet,
   View,
@@ -106,14 +105,13 @@ export function AppLock() {
   const router = useRouter()
   const segments = useSegments()
   const shouldShow = useShouldShowLock()
+  const inModal = segments.includes('(modals)' as never)
   const [renderable, setRenderable] = useState(shouldShow)
   const opacity = useSharedValue(shouldShow ? 1 : 0)
 
-  // Dismiss any stack-presented modals before showing the lock.
-  // Without this, iOS layers our RN <Modal> beneath an
-  // already-presented formSheet. Scoped to (modals)/* so regular
-  // stack pushes (e.g. inbox document detail) aren't popped.
-  const inModal = segments.includes('(modals)' as never)
+  // Dismiss any stack-presented modal so the lock overlay isn't visually
+  // covered by a native formSheet on iOS. Scoped to (modals)/* so regular
+  // stack pushes (e.g. inbox document) aren't popped.
   useEffect(() => {
     if (shouldShow && inModal && router.canDismiss()) {
       router.dismissAll()
@@ -282,67 +280,67 @@ function AppLockContent({
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }))
 
   return (
-    <Modal
-      visible
-      transparent
-      animationType="none"
-      statusBarTranslucent
-      onRequestClose={() => undefined}
+    <View
+      style={[StyleSheet.absoluteFill, styles.overlay]}
+      pointerEvents={fading ? 'none' : 'auto'}
     >
-      <View
-        style={StyleSheet.absoluteFill}
-        pointerEvents={fading ? 'none' : 'auto'}
-      >
-        <Host style={animatedStyle} testID={testIDs.SCREEN_APP_LOCK}>
-          <SafeAreaView>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingTop: 50,
-                paddingBottom: 20,
-                maxHeight: 200,
-                flex: 1,
-              }}
-            >
-              <Image
-                source={require('../../assets/logo/logo-64w.png')}
-                resizeMode="contain"
-                style={{ width: 45, height: 45, marginBottom: 20 }}
-              />
-              <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
-              <Subtitle>
-                {pinTries > 0
-                  ? `${attemptsLeft} ${intl.formatMessage({
-                      id:
-                        attemptsLeft === 1
-                          ? 'applock.attempt'
-                          : 'applock.attempts',
-                    })}`
-                  : ''}
-              </Subtitle>
-            </View>
-            <Center>
-              <VisualizedPinCode
-                code={code}
-                invalid={invalidCode}
-                maxChars={MAX_PIN_CHARS}
-              />
-              <View style={{ height: 32 }} />
-              <PinKeypad
-                onInput={onPinInput}
-                onBackPress={onBackPress}
-                onFaceIdPress={onFaceIdPress}
-                back={code.length > 0}
-                biometricType={
-                  useBiometrics ? biometricType ?? 'faceid' : undefined
-                }
-              />
-              <View style={{ height: 64 }} />
-            </Center>
-          </SafeAreaView>
-        </Host>
-      </View>
-    </Modal>
+      <Host style={animatedStyle} testID={testIDs.SCREEN_APP_LOCK}>
+        <SafeAreaView>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: 50,
+              paddingBottom: 20,
+              maxHeight: 200,
+              flex: 1,
+            }}
+          >
+            <Image
+              source={require('../../assets/logo/logo-64w.png')}
+              resizeMode="contain"
+              style={{ width: 45, height: 45, marginBottom: 20 }}
+            />
+            <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
+            <Subtitle>
+              {pinTries > 0
+                ? `${attemptsLeft} ${intl.formatMessage({
+                    id:
+                      attemptsLeft === 1
+                        ? 'applock.attempt'
+                        : 'applock.attempts',
+                  })}`
+                : ''}
+            </Subtitle>
+          </View>
+          <Center>
+            <VisualizedPinCode
+              code={code}
+              invalid={invalidCode}
+              maxChars={MAX_PIN_CHARS}
+            />
+            <View style={{ height: 32 }} />
+            <PinKeypad
+              onInput={onPinInput}
+              onBackPress={onBackPress}
+              onFaceIdPress={onFaceIdPress}
+              back={code.length > 0}
+              biometricType={
+                useBiometrics ? biometricType ?? 'faceid' : undefined
+              }
+            />
+            <View style={{ height: 64 }} />
+          </Center>
+        </SafeAreaView>
+      </Host>
+    </View>
   )
 }
+
+// Force the lock onto the top of the in-tree z-order. Stack screens render
+// in tree order, but a high zIndex guards against unexpected restacking on
+// Android. (Native iOS formSheets still float above the RN root — those are
+// dismissed via router.dismissAll above.)
+const styles = StyleSheet.create({
+  overlay: { zIndex: 9999, elevation: 9999 },
+})
