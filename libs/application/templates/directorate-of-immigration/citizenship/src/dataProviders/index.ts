@@ -52,7 +52,7 @@ export const TravelDocumentTypesApi = defineTemplateApi({
 export const NationalRegistryIndividualApi = defineTemplateApi({
   action: 'nationalRegistry',
   externalDataId: 'individual',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
   params: {
     validateAlreadyHasIcelandicCitizenship: true,
     legalDomicileIceland: true,
@@ -67,7 +67,7 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
 export const NationalRegistryBirthplaceApi = defineTemplateApi({
   action: 'getBirthplace',
   externalDataId: 'birthplace',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
@@ -79,5 +79,5 @@ export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
 export const NationalRegistryParentsApi = defineTemplateApi({
   action: 'getParents',
   externalDataId: 'nationalRegistryParents',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })

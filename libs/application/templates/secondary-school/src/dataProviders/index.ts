@@ -23,7 +23,7 @@ export const SchoolsApi = defineTemplateApi({
 export const NationalRegistryCustodiansApi = defineTemplateApi({
   action: 'getCustodians',
   externalDataId: 'nationalRegistryCustodians',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const UserProfileApiWithValidation = UserProfileApi.configure({

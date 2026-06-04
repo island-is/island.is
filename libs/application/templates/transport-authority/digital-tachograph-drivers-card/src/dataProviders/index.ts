@@ -59,5 +59,5 @@ export const NewestDriversCardApi = defineTemplateApi({
 export const NationalRegistryBirthplaceApi = defineTemplateApi({
   action: 'getBirthplace',
   externalDataId: 'nationalRegistryBirthplace',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
