@@ -1707,10 +1707,9 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
   const items = courtAgendasResponse.data.webCourtAgendas.items
 
   const today = startOfDay(new Date())
-  const yesterday = addDays(today, -1)
 
   return {
-    minDateFrom: yesterday.toISOString(),
+    minDateFrom: today.toISOString(),
     minDateTo: today.toISOString(),
     initialData: {
       visibleCourtAgendas: items.slice(0, ITEMS_PER_PAGE),
