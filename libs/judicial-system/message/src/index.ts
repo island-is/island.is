@@ -8,4 +8,5 @@ export {
   MessageSuspensionCategory,
   messageTypeToSuspensionCategory,
   getMessageSuspensionCategory,
+  type SuspensionDecision,
 } from './lib/suspension'

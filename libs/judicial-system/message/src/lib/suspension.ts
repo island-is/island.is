@@ -84,3 +84,10 @@ export const getMessageSuspensionCategory = (
   type: MessageType,
 ): MessageSuspensionCategory | undefined =>
   messageTypeToSuspensionCategory[type]
+
+// The outcome of checking whether a message should currently be suspended. When
+// suspended, the message is re-queued after delaySeconds without being handled.
+export interface SuspensionDecision {
+  suspend: boolean
+  delaySeconds: number
+}
