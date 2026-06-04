@@ -732,6 +732,16 @@ export class NotificationsWorkerService {
     nationalId: string,
     messageId: string,
   ): Promise<boolean> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isUserNotificationDeceasedCheckEnabled,
+      true,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
     try {
       const individual =
         await this.nationalRegistryService.getAllDataIndividual(nationalId)

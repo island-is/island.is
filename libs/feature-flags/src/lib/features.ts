@@ -165,6 +165,9 @@ export enum Features {
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
+  // Should user-notification worker check deceased status via national registry
+  isUserNotificationDeceasedCheckEnabled = 'isUserNotificationDeceasedCheckEnabled',
+
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 
