@@ -125,7 +125,10 @@ const OverviewBody = ({
             </Accordion>
           )}
           <Box component="section">
-            <IndictmentCaseFilesList workingCase={workingCase} />
+            <IndictmentCaseFilesList
+              workingCase={workingCase}
+              forceDisplayAdditionalFiles={true}
+            />
           </Box>
           <Box
             component="section"

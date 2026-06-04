@@ -24,13 +24,14 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
-import { IndictmentCount, Offense } from '..//repository'
 import {
   CaseTypeGuard,
   MinimalCaseAccessGuard,
   MinimalCaseExistsGuard,
 } from '../case'
+import { IndictmentCount, Offense } from '../repository'
 import { CreateOffenseDto } from './dto/createOffense.dto'
+import { ReorderIndictmentCountsDto } from './dto/reorderIndictmentCounts.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
@@ -38,7 +39,7 @@ import { OffenseExistsGuard } from './guards/offenseExists.guard'
 import { DeleteResponse } from './models/delete.response'
 import { IndictmentCountService } from './indictmentCount.service'
 
-@Controller('api/case/:caseId/indictmentCount')
+@Controller('api/case/:caseId')
 @ApiTags('indictment-counts')
 @UseGuards(
   JwtAuthUserGuard,
@@ -55,7 +56,7 @@ export class IndictmentCountController {
   ) {}
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post()
+  @Post('indictmentCount')
   @ApiCreatedResponse({
     type: IndictmentCount,
     description: 'Creates a new indictment count',
@@ -63,12 +64,14 @@ export class IndictmentCountController {
   create(@Param('caseId') caseId: string): Promise<IndictmentCount> {
     this.logger.debug(`Creating a new indictment count for case ${caseId}`)
 
-    return this.indictmentCountService.create(caseId)
+    return this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.create(caseId, transaction),
+    )
   }
 
   @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Patch(':indictmentCountId')
+  @Patch('indictmentCount/:indictmentCountId')
   @ApiOkResponse({
     type: IndictmentCount,
     description: 'Updates an indictment count',
@@ -94,7 +97,7 @@ export class IndictmentCountController {
 
   @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Delete(':indictmentCountId')
+  @Delete('indictmentCount/:indictmentCountId')
   @ApiOkResponse({ description: 'Deletes an indictment count' })
   async delete(
     @Param('caseId') caseId: string,
@@ -117,7 +120,7 @@ export class IndictmentCountController {
 
   @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post(':indictmentCountId/offense')
+  @Post('indictmentCount/:indictmentCountId/offense')
   @ApiCreatedResponse({
     type: Offense,
     description: 'Creates a new indictment count offense',
@@ -139,7 +142,7 @@ export class IndictmentCountController {
 
   @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Patch(':indictmentCountId/offense/:offenseId')
+  @Patch('indictmentCount/:indictmentCountId/offense/:offenseId')
   @ApiOkResponse({
     type: Offense,
     description: 'Updates an offense',
@@ -163,7 +166,7 @@ export class IndictmentCountController {
 
   @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Delete(':indictmentCountId/offense/:offenseId')
+  @Delete('indictmentCount/:indictmentCountId/offense/:offenseId')
   @ApiOkResponse({ description: 'Deletes an offense' })
   async deleteOffense(
     @Param('caseId') caseId: string,
@@ -180,5 +183,21 @@ export class IndictmentCountController {
     )
 
     return { deleted }
+  }
+
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch('indictmentCounts/reorder')
+  @ApiOkResponse({
+    type: IndictmentCount,
+    isArray: true,
+    description: 'Reorders indictment counts',
+  })
+  reorder(
+    @Param('caseId') caseId: string,
+    @Body() body: ReorderIndictmentCountsDto,
+  ): Promise<IndictmentCount[]> {
+    return this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.reorder(caseId, body.counts, transaction),
+    )
   }
 }

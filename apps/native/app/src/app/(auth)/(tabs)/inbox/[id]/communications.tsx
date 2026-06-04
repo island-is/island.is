@@ -1,4 +1,4 @@
-import Clipboard from 'expo-clipboard'
+import { setStringAsync } from 'expo-clipboard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -168,7 +168,7 @@ export default function DocumentCommunicationsScreen() {
               </Typography>
               <Typography variant="body3">{ticketIdValue}</Typography>
               <TouchableOpacity
-                onPress={() => Clipboard.setStringAsync(ticketIdValue)}
+                onPress={() => setStringAsync(ticketIdValue)}
                 style={{ marginLeft: 4 }}
               >
                 <Image

@@ -436,6 +436,38 @@ describe('EstateTemplate', () => {
     })
   })
 
+  describe('assignee role coverage', () => {
+    // mapUserToRole returns ASSIGNEE for assignees and enabled estate members
+    // in every state while review is enabled, so each state they can land in
+    // must define the role with a form. Otherwise the form shell never
+    // resolves a form and renders an infinite loader (e.g. an heir reloading
+    // the application after rejecting it back to draft).
+    it.each([
+      States.draft,
+      States.inReview,
+      States.payment,
+      States.signing,
+      States.done,
+    ])('should define an ASSIGNEE role in the %s state', (state) => {
+      const stateConfig = EstateTemplate.stateMachineConfig.states[state]
+      const roleIds = stateConfig?.meta?.roles?.map((role) => role.id)
+      expect(roleIds).toContain(Roles.ASSIGNEE)
+    })
+
+    // The payment state must also define the estate-specific applicant roles,
+    // since mapUserToRole never returns the default 'applicant' role once an
+    // estate type has been selected.
+    it.each([
+      Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+      Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+    ])('should define %s in the payment state', (roleId) => {
+      const stateConfig =
+        EstateTemplate.stateMachineConfig.states[States.payment]
+      const roleIds = stateConfig?.meta?.roles?.map((role) => role.id)
+      expect(roleIds).toContain(roleId)
+    })
+  })
+
   describe('stateMachineOptions', () => {
     it('should have assignEstateMembers action defined', () => {
       expect(

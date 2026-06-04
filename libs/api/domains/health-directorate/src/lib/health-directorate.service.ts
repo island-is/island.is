@@ -25,6 +25,9 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  toAppointmentAssigneeTypeEnum,
+  toAppointmentLinkTypeEnum,
+  toAppointmentModalityEnum,
   toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
@@ -599,6 +602,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       duration: item.duration,
       location: item.location
         ? {
@@ -612,6 +616,13 @@ export class HealthDirectorateService {
         : undefined,
       instruction: item.patientInstruction,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
     }))
     return { data: appointments }
   }
@@ -631,6 +642,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       instruction: item.patientInstruction,
       duration: item.duration,
       location: item.location
@@ -638,8 +650,13 @@ export class HealthDirectorateService {
             name: item.location.name,
             organization: item.location.organization,
             address: item.location.address,
+            department: item.location.department,
+            wing: item.location.wing,
+            floor: item.location.floor,
+            room: item.location.room,
             directions: item.location.directions,
             link: item.location.link,
+            locationLinks: item.location.links,
             city: item.location.city,
             postalCode: item.location.postalCode,
             country: item.location.country,
@@ -650,6 +667,19 @@ export class HealthDirectorateService {
           }
         : undefined,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
+      links: item.links
+        ?.map((l) => {
+          const type = toAppointmentLinkTypeEnum(l.type)
+          return type ? { type, url: l.url } : null
+        })
+        .filter(isDefined),
     }
   }
 }

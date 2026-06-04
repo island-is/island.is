@@ -88,6 +88,38 @@ registerEnumType(AppointmentStatusEnum, {
   name: 'HealthDirectorateAppointmentStatus',
 })
 
+export enum AppointmentModalityEnum {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO = 'VIDEO',
+}
+
+registerEnumType(AppointmentModalityEnum, {
+  name: 'HealthDirectorateAppointmentModality',
+})
+
+export enum AppointmentAssigneeTypeEnum {
+  ROLE = 'ROLE',
+  ROOM = 'ROOM',
+  EQUIPMENT = 'EQUIPMENT',
+  SERVICE = 'SERVICE',
+  OTHER = 'OTHER',
+}
+
+registerEnumType(AppointmentAssigneeTypeEnum, {
+  name: 'HealthDirectorateAppointmentAssigneeType',
+})
+
+export enum AppointmentLinkTypeEnum {
+  PATIENT_INSTRUCTIONS = 'PATIENT_INSTRUCTIONS',
+  PREPARATION = 'PREPARATION',
+  ORGANIZATION_INFO = 'ORGANIZATION_INFO',
+  VIDEO_CALL = 'VIDEO_CALL',
+}
+
+registerEnumType(AppointmentLinkTypeEnum, {
+  name: 'HealthDirectorateAppointmentLinkType',
+})
+
 export enum WaitlistStatusTagColorEnum {
   blue = 'blue',
   purple = 'purple',
