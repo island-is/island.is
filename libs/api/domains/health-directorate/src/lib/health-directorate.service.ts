@@ -58,6 +58,7 @@ import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
@@ -334,9 +335,31 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    await this.healthApi.postRenewalPrescription(auth, input.id)
+    await this.healthApi.postRenewalPrescription(auth, input.id, {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+    })
 
     return null
+  }
+
+  /* Renewal targets */
+  async getPrescriptionRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<PrescriptionRenewalTarget[] | null> {
+    const data = await this.healthApi.getRenewalTargets(auth, id)
+
+    if (!data) {
+      return null
+    }
+
+    return data.map((item) => ({
+      groupId: item.groupId,
+      nodeId: item.nodeId,
+      name: item.name,
+      description: item.description,
+    }))
   }
 
   /* Prescription Documents */
