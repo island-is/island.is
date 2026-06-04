@@ -1,8 +1,8 @@
 import { Base, Client } from '../../../../infra/src/dsl/xroad'
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { scheduledJob, ScheduledJobBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
-  service('xroad-collector')
+export const serviceSetup = (): ScheduledJobBuilder<'xroad-collector'> =>
+  scheduledJob('xroad-collector')
     .namespace('xroad-collector')
     .image('services-xroad-collector')
     .serviceAccount()
@@ -18,8 +18,8 @@ export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
     .xroad(Base, Client)
     .command('node')
     .args('main.cjs')
-    .extraAttributes({
-      dev: { schedule: '0 2 * * *' },
-      staging: { schedule: '0 2 * * *' },
-      prod: { schedule: '0 2 * * *' },
+    .schedule({
+      dev: '0 2 * * *',
+      staging: '0 2 * * *',
+      prod: '0 2 * * *',
     })

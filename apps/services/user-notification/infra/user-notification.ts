@@ -4,6 +4,8 @@ import {
   json,
   ref,
   service,
+  scheduledJob,
+  ScheduledJobBuilder
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -245,10 +247,10 @@ export const userNotificationWorkerSetup = (services: {
     .liveness('/liveness')
     .readiness('/health/check')
 
-export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+export const userNotificationCleanUpWorkerSetup = (): ScheduledJobBuilder<
   typeof serviceCleanupWorkerName
 > =>
-  service(serviceCleanupWorkerName)
+  scheduledJob(serviceCleanupWorkerName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceCleanupWorkerName)
@@ -257,16 +259,16 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .args('main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
-    .extraAttributes({
-      dev: { schedule: '@hourly' },
-      staging: { schedule: '@midnight' },
-      prod: { schedule: '@midnight' },
+    .schedule({
+      dev: '@hourly',
+      staging: '@midnight',
+      prod: '@midnight',
     })
 
 export const userNotificationBirthdayWorkerSetup = (services: {
-  userProfileApi: ServiceBuilder<'service-portal-api'>
-}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
-  service(serviceBirthdayWorkerName)
+  userProfileApi: ScheduledJobBuilder<'service-portal-api'>
+}): ScheduledJobBuilder<typeof serviceBirthdayWorkerName> =>
+  scheduledJob(serviceBirthdayWorkerName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceBirthdayWorkerName)
@@ -300,8 +302,8 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       },
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
-    .extraAttributes({
-      dev: { schedule: '0 12 * * *' }, // 12 at noon every day
-      staging: { schedule: '@midnight' },
-      prod: { schedule: '@midnight' },
+    .schedule({
+      dev: '0 12 * * *', // 12 at noon every day
+      staging: '@midnight',
+      prod: '@midnight',
     })

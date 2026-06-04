@@ -5,6 +5,8 @@ import {
   ref,
   service,
   ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -71,10 +73,10 @@ const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
-  userNotificationService: ServiceBuilder<'services-user-notification'>
-  paymentsApi: ServiceBuilder<'services-payments'>
-}): ServiceBuilder<'application-system-api-worker'> =>
-  service('application-system-api-worker')
+  userNotificationService: ScheduledJobBuilder<'services-user-notification'>
+  paymentsApi: ScheduledJobBuilder<'services-payments'>
+}): ScheduledJobBuilder<'application-system-api-worker'> =>
+  scheduledJob('application-system-api-worker')
     .namespace(namespace)
     .image('application-system-api')
     .db()
@@ -169,10 +171,10 @@ export const workerSetup = (services: {
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
-    .extraAttributes({
-      dev: { schedule: '*/30 * * * *' },
-      staging: { schedule: '*/30 * * * *' },
-      prod: { schedule: '*/30 * * * *' },
+    .schedule({
+      dev: '*/30 * * * *',
+      staging: '*/30 * * * *',
+      prod: '*/30 * * * *'
     })
     .resources({
       limits: { cpu: '400m', memory: '768Mi' },

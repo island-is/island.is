@@ -4,6 +4,8 @@ import {
   ref,
   service,
   ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -121,8 +123,8 @@ export const serviceSetup = (services: {
       'nginx-ingress-internal',
     )
 
-export const workerSetup = (): ServiceBuilder<typeof workerName> =>
-  service(workerName)
+export const workerSetup = (): ScheduledJobBuilder<typeof workerName> =>
+  scheduledJob(workerName)
     .image(serviceName)
     .namespace(serviceName)
     .serviceAccount(workerName)
@@ -146,10 +148,10 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
-    .extraAttributes({
-      dev: { schedule: '*/30 * * * *' },
-      staging: { schedule: '*/30 * * * *' },
-      prod: { schedule: '*/30 * * * *' },
+    .schedule({
+      dev: '*/30 * * * *',
+      staging: '*/30 * * * *',
+      prod: '*/30 * * * *',
     })
     .resources({
       limits: { cpu: '400m', memory: '768Mi' },
