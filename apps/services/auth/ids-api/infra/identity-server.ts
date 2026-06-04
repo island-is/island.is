@@ -129,6 +129,7 @@ export const serviceSetup = (services: {
           staging: 'identity-server',
           prod: 'innskra.island.is',
         },
+        featureHostPrefix: 'identity-server-',
         paths: ['/'],
         public: true,
         extraAnnotations: {
