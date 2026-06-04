@@ -114,6 +114,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       JSON.stringify({
         courseId: course.id,
         courseInstanceId: instance.id,
+        courseListPageId: course.courseListPageId,
       }),
     )
 

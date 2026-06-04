@@ -204,16 +204,26 @@ const AnsweredQuestionnaire: FC = () => {
       {data?.getAnsweredQuestionnaire && !loading && !error && (
         <Box>
           <Answered
-            answers={data?.getAnsweredQuestionnaire?.data[0]?.answers?.map(
-              (answer) => ({
+            answers={data?.getAnsweredQuestionnaire?.data[0]?.answers
+              // TODO: The backend currently returns structural questionnaire fields
+              // (footer, copyright) as regular questions with no answers. Filter
+              // them out here until the backend excludes them from the response.
+              ?.filter((answer) => {
+                const label = answer.label?.toLowerCase() ?? ''
+                const isEmpty = answer.values.length === 0
+                return !(
+                  isEmpty &&
+                  (label === 'footer' || label === 'copyright')
+                )
+              })
+              .map((answer) => ({
                 questionId: answer.id,
                 question: answer.label ?? '',
                 answers: answer.values.map((value) => ({
                   value,
                 })),
                 type: QuestionnaireAnswerOptionType.text,
-              }),
-            )}
+              }))}
           />
         </Box>
       )}
