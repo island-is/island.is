@@ -9,7 +9,8 @@ import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generat
 
 const usePoliceDigitalCaseFile = () => {
   const { workingCase, refreshCase } = useContext(FormContext)
-  const { id: caseId, origin: caseOrigin } = workingCase
+  const { id: caseId, origin: caseOrigin, parentCase } = workingCase
+
   const handleCompleted = useCallback(
     (completedData: {
       policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
@@ -27,7 +28,7 @@ const usePoliceDigitalCaseFile = () => {
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId } },
+    variables: { input: { caseId: parentCase ? parentCase.id : caseId } },
     skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
