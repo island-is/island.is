@@ -1,5 +1,8 @@
 import { Base, Client } from '../../../../infra/src/dsl/xroad'
-import { scheduledJob, ScheduledJobBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  scheduledJob,
+  ScheduledJobBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ScheduledJobBuilder<'xroad-collector'> =>
   scheduledJob('xroad-collector')

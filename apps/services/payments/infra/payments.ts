@@ -5,7 +5,7 @@ import {
   json,
   ref,
   scheduledJob,
-  ScheduledJobBuilder
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 

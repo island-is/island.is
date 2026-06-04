@@ -3,7 +3,7 @@ import {
   service,
   ServiceBuilder,
   scheduledJob,
-  ScheduledJobBuilder
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -81,7 +81,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .grantNamespaces('islandis', 'nginx-ingress-internal', 'application-system')
 }
 
-export const workerSetup = (): ScheduledJobBuilder<typeof serviceWorkerName> => {
+export const workerSetup = (): ScheduledJobBuilder<
+  typeof serviceWorkerName
+> => {
   return scheduledJob(serviceWorkerName)
     .serviceAccount(serviceWorkerName)
     .namespace(namespace)

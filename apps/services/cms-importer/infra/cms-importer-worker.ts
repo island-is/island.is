@@ -1,4 +1,9 @@
-import { service, ServiceBuilder, scheduledJob, ScheduledJobBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  service,
+  ServiceBuilder,
+  scheduledJob,
+  ScheduledJobBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 export const workerSetup = (): ScheduledJobBuilder<'cms-importer-worker'> =>
   scheduledJob('cms-importer-worker')
@@ -87,18 +92,19 @@ export const webSitemapImportSetup =
         prod: '0 0 * * *',
       })
 
-export const cmsCleanupSetup = (): ScheduledJobBuilder<'cms-importer-cms-cleanup'> =>
-  scheduledJob('cms-importer-cms-cleanup')
-    .image('services-cms-importer')
-    .namespace('cms-importer')
-    .secrets({
-      CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
-        '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
-    })
-    .command('node')
-    .args('main.cjs', '--job', 'cms-cleanup')
-    .schedule({
-      dev: '0 0 * * 0',
-      staging: '0 0 * * 0',
-      prod: '0 0 * * 0',
-    })
+export const cmsCleanupSetup =
+  (): ScheduledJobBuilder<'cms-importer-cms-cleanup'> =>
+    scheduledJob('cms-importer-cms-cleanup')
+      .image('services-cms-importer')
+      .namespace('cms-importer')
+      .secrets({
+        CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+          '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
+      })
+      .command('node')
+      .args('main.cjs', '--job', 'cms-cleanup')
+      .schedule({
+        dev: '0 0 * * 0',
+        staging: '0 0 * * 0',
+        prod: '0 0 * * 0',
+      })

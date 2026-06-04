@@ -5,7 +5,7 @@ import {
   ref,
   service,
   scheduledJob,
-  ScheduledJobBuilder
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,

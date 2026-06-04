@@ -6,7 +6,7 @@ import {
   service,
   ServiceBuilder,
   scheduledJob,
-  ScheduledJobBuilder
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -174,7 +174,7 @@ export const workerSetup = (services: {
     .schedule({
       dev: '*/30 * * * *',
       staging: '*/30 * * * *',
-      prod: '*/30 * * * *'
+      prod: '*/30 * * * *',
     })
     .resources({
       limits: { cpu: '400m', memory: '768Mi' },
