@@ -111,6 +111,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
+        featureHostPrefix: 'identity-server-',
         paths: ['/api(/|$)(.*)'],
         public: true,
         pathTypeOverride: 'ImplementationSpecific',
