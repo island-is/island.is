@@ -168,6 +168,9 @@ export enum Features {
   // Should user-notification worker check deceased status via national registry
   isUserNotificationDeceasedCheckEnabled = 'isUserNotificationDeceasedCheckEnabled',
 
+  // Should user-notification worker check inactive company status via company registry
+  isUserNotificationInactiveCompanyCheckEnabled = 'isUserNotificationInactiveCompanyCheckEnabled',
+
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 
