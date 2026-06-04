@@ -3,7 +3,7 @@ import {
   authenticateAsync,
   AuthenticationType,
 } from 'expo-local-authentication'
-import { useRouter } from 'expo-router'
+import { useRouter, useSegments } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -104,18 +104,21 @@ function useShouldShowLock() {
 
 export function AppLock() {
   const router = useRouter()
+  const segments = useSegments()
   const shouldShow = useShouldShowLock()
   const [renderable, setRenderable] = useState(shouldShow)
   const opacity = useSharedValue(shouldShow ? 1 : 0)
 
   // Dismiss any stack-presented modals before showing the lock.
   // Without this, iOS layers our RN <Modal> beneath an
-  // already-presented formSheet.
+  // already-presented formSheet. Scoped to (modals)/* so regular
+  // stack pushes (e.g. inbox document detail) aren't popped.
+  const inModal = segments.includes('(modals)' as never)
   useEffect(() => {
-    if (shouldShow && router.canDismiss()) {
+    if (shouldShow && inModal && router.canDismiss()) {
       router.dismissAll()
     }
-  }, [shouldShow, router])
+  }, [shouldShow, inModal, router])
 
   // Instant show; fade out on unlock. Re-lock mid-fade snaps back to 1.
   useEffect(() => {
