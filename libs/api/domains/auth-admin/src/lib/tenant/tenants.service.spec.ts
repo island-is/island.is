@@ -327,16 +327,20 @@ describe('TenantsService', () => {
       deleteResult: 'success' | Error
     }) => ({
       withMiddleware: jest.fn().mockReturnThis(),
-      meTenantsControllerFindByIdForAdminRaw: jest.fn().mockImplementation(() =>
-        tenantExists
-          ? createMockApiResponse(mockDomain)
-          : Promise.reject(new Error('not found')),
-      ),
-      meTenantsControllerDeleteRaw: jest.fn().mockImplementation(() =>
-        deleteResult === 'success'
-          ? createMockApiResponse(undefined)
-          : Promise.reject(deleteResult),
-      ),
+      meTenantsControllerFindByIdForAdminRaw: jest
+        .fn()
+        .mockImplementation(() =>
+          tenantExists
+            ? createMockApiResponse(mockDomain)
+            : Promise.reject(new Error('not found')),
+        ),
+      meTenantsControllerDeleteRaw: jest
+        .fn()
+        .mockImplementation(() =>
+          deleteResult === 'success'
+            ? createMockApiResponse(undefined)
+            : Promise.reject(deleteResult),
+        ),
     })
 
     afterEach(async () => {
