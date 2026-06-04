@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -129,9 +130,9 @@ describe('AppealCaseController - Update', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
         {
-          appealRulingModifiedHistory: `${now.toISOString()} - ${user.name} ${
-            user.title
-          }\n\nFixed a typo`,
+          appealRulingModifiedHistory: `${capitalize(
+            formatDate(now, 'PPPPp'),
+          )} - ${user.name} ${user.title}\n\nFixed a typo`,
         },
         { transaction },
       )
