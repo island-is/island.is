@@ -273,17 +273,7 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          verdictJudges:
-            goproItem.court?.code !== 'landsrettur'
-              ? (goproItem.judges ?? []).map((judge) => ({
-                  name: judge.name ?? '',
-                  title: !goproItem.court?.name
-                    ?.toLowerCase()
-                    ?.startsWith('enduruppt')
-                    ? judge.title ?? ''
-                    : '',
-                }))
-              : [],
+          verdictJudges: [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -574,6 +564,20 @@ export class VerdictsClientService {
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setHours(0, 0, 0, 0)
+
+    const parsedInputDateFrom = input.dateFrom
+      ? safelyConvertStringToDate(input.dateFrom, 'dateFrom', this.logger)
+      : undefined
+    const effectiveGoproDateFrom =
+      parsedInputDateFrom && parsedInputDateFrom >= yesterday
+        ? parsedInputDateFrom
+        : yesterday
+    const goproDateFrom = effectiveGoproDateFrom.toISOString()
+    const goproDateTo = input.dateTo || undefined
+
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
       shouldFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
@@ -605,12 +609,8 @@ export class VerdictsClientService {
             pageNumber: pageNumber,
             courts: goproCourtsForApi,
             itemsPerPage,
-            dateFrom: input.dateFrom
-              ? input.dateFrom
-              : !input.dateTo
-              ? this.getDefaultDateFrom().dateString
-              : undefined,
-            dateTo: input.dateTo ? input.dateTo : undefined,
+            dateFrom: goproDateFrom,
+            dateTo: goproDateTo,
             lawyer: input.lawyer ? input.lawyer : undefined,
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',

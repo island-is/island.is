@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import addDays from 'date-fns/addDays'
+import startOfDay from 'date-fns/startOfDay'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
@@ -212,6 +214,8 @@ interface CourtAgendasProps {
   lawyers: GetVerdictLawyersQuery['webVerdictLawyers']['lawyers']
   scheduleTypes: Query['webCourtScheduleTypes']
   caseTypes: GetVerdictCaseFilterOptionsPerCourtQuery['webVerdictCaseFilterOptionsPerCourt']
+  minDateFrom: string
+  minDateTo: string
 }
 
 const buildCourtInput = (
@@ -448,6 +452,8 @@ interface FiltersProps {
   scheduleTypesOptions: { label: string; value: string }[]
   caseTypesOptions: { label: string; value: string }[]
   showScheduleTypeFilter: boolean
+  minDateFrom: string
+  minDateTo: string
 }
 
 const Filters = ({
@@ -461,6 +467,8 @@ const Filters = ({
   scheduleTypesOptions,
   caseTypesOptions,
   showScheduleTypeFilter,
+  minDateFrom,
+  minDateTo,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const filterAccordionItemIds = useMemo(
@@ -549,6 +557,7 @@ const Filters = ({
                   }}
                   value={queryState[QueryParam.DATE_FROM]}
                   maxDate={queryState[QueryParam.DATE_TO]}
+                  minDate={new Date(minDateFrom)}
                 />
                 <DebouncedDatePicker
                   debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
@@ -558,7 +567,9 @@ const Filters = ({
                     updateQueryState(QueryParam.DATE_TO, date)
                   }}
                   value={queryState[QueryParam.DATE_TO]}
-                  minDate={queryState[QueryParam.DATE_FROM]}
+                  minDate={
+                    queryState[QueryParam.DATE_FROM] ?? new Date(minDateTo)
+                  }
                 />
               </Stack>
               <Box display="flex" justifyContent="flexEnd">
@@ -868,7 +879,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateFromLabel)}: ${format(
           queryState[QueryParam.DATE_FROM],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_FROM, null)
@@ -881,7 +892,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateToLabel)}: ${format(
           queryState[QueryParam.DATE_TO],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_TO, null)
@@ -1413,6 +1424,8 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   scheduleTypesOptions={scheduleTypesOptions}
                   caseTypesOptions={caseTypesOptions}
                   showScheduleTypeFilter={showScheduleTypeFilter}
+                  minDateFrom={props.minDateFrom}
+                  minDateTo={props.minDateTo}
                 />
                 <Box
                   background="blue100"
@@ -1486,6 +1499,8 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         scheduleTypesOptions={scheduleTypesOptions}
                         caseTypesOptions={caseTypesOptions}
                         showScheduleTypeFilter={showScheduleTypeFilter}
+                        minDateFrom={props.minDateFrom}
+                        minDateTo={props.minDateTo}
                       />
                     </Box>
                   </Filter>
@@ -1691,7 +1706,12 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
 
   const items = courtAgendasResponse.data.webCourtAgendas.items
 
+  const today = startOfDay(new Date())
+  const yesterday = addDays(today, -1)
+
   return {
+    minDateFrom: yesterday.toISOString(),
+    minDateTo: today.toISOString(),
     initialData: {
       visibleCourtAgendas: items.slice(0, ITEMS_PER_PAGE),
       invisibleCourtAgendas: items.slice(ITEMS_PER_PAGE),
