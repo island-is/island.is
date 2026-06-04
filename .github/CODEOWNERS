@@ -433,6 +433,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
 /libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
 /libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
+/libs/application/templates/vmst/submit-documents                                                                            @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
@@ -533,7 +534,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
-
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
 
 libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
 

@@ -1,4 +1,8 @@
-import { sortVacancyList, VacancyWithCreationDate } from './utils'
+import {
+  mapIcelandicGovernmentInstitutionVacanciesFromElfur,
+  sortVacancyList,
+  VacancyWithCreationDate,
+} from './utils'
 
 describe('sortVacancyList', () => {
   const createVacancy = (
@@ -106,5 +110,34 @@ describe('sortVacancyList', () => {
 
     // Original order should be maintained when all dates equal
     expect(vacancies.map((v) => v.id)).toEqual(['1', '2', '3'])
+  })
+})
+
+describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
+  it('should map jobCategory (starfssvid) separately from fieldOfWork (job title)', async () => {
+    const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
+      {
+        vacancyID: '1',
+        heading: 'Hjúkrunarfræðingur óskast',
+        jobTitle: 'Hjúkrunarfræðingur',
+        jobCategory: 'Heilbrigðisþjónusta',
+      },
+    ])
+
+    expect(result).toHaveLength(1)
+    expect(result[0].fieldOfWork).toBe('Hjúkrunarfræðingur')
+    expect(result[0].jobCategory).toBe('Heilbrigðisþjónusta')
+  })
+
+  it('should leave jobCategory undefined when the API omits it', async () => {
+    const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
+      {
+        vacancyID: '1',
+        heading: 'Starf',
+        jobTitle: 'Sérfræðingur',
+      },
+    ])
+
+    expect(result[0].jobCategory).toBeUndefined()
   })
 })

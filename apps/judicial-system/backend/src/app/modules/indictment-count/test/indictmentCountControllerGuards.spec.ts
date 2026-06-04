@@ -61,3 +61,7 @@ describe('IndictmentCountController - Delete Offense', () => {
     OffenseExistsGuard,
   ])
 })
+
+describe('IndictmentCountController - Reorder', () => {
+  verifyGuards(IndictmentCountController, 'reorder', [])
+})
