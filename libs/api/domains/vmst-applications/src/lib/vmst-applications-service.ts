@@ -18,6 +18,7 @@ import {
   VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
+import { maskString } from '@island.is/shared/utils'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
 
@@ -175,26 +176,34 @@ export class VMSTApplicationsService {
 
   async getApplicantAttachments(
     applicantId: string,
+    nationalId: string,
   ): Promise<VmstApplicationsApplicantAttachment[]> {
     const items = await this.vmstUnemploymentService.getApplicantAttachments(
       applicantId,
     )
 
-    return items.flatMap((item) => {
-      if (!item.id || !item.name || !item.contentType || !item.created) {
-        return []
-      }
-      return [
-        {
-          id: item.id,
-          typeId: item.typeId ?? null,
-          name: item.name,
-          contentType: item.contentType,
-          created: item.created,
-          downloadServiceUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${item.id}`,
-        },
-      ]
-    })
+    return Promise.all(
+      items.flatMap((item) => {
+        if (!item.id || !item.name || !item.contentType || !item.created) {
+          return []
+        }
+
+        const { id, typeId, name, contentType, created } = item
+
+        return [
+          maskString(id, nationalId).then((maskedId) => ({
+            id,
+            typeId: typeId ?? null,
+            name,
+            contentType,
+            created,
+            downloadServiceUrl: maskedId
+              ? `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${maskedId}`
+              : null,
+          })),
+        ]
+      }),
+    )
   }
 
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {

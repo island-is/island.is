@@ -155,7 +155,10 @@ const MyData = () => {
                   {submittedAttachments.map((attachment) => (
                     <Box key={attachment.id}>
                       <UserInfoLine
-                        label={getAttachmentName(attachment.typeId)}
+                        label={
+                          getAttachmentName(attachment.typeId) ||
+                          attachment.name
+                        }
                         button={
                           attachment.downloadServiceUrl
                             ? {

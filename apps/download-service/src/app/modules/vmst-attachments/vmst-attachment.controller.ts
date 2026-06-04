@@ -9,6 +9,7 @@ import { AuditService } from '@island.is/nest/audit'
 import { Controller, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
+import { unmaskString } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('vmst')
@@ -18,15 +19,24 @@ export class VmstAttachmentController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/attachment/:attachmentId')
+  @Post('/attachment/:maskedAttachmentId')
   @ApiOkResponse({
     description: 'Get a VMST attachment document by ID',
   })
   async getAttachment(
-    @Param('attachmentId') attachmentId: string,
+    @Param('maskedAttachmentId') maskedAttachmentId: string,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
+    const attachmentId = await unmaskString(maskedAttachmentId, user.nationalId)
+
+    if (!attachmentId) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'Document not found',
+      })
+    }
+
     const attachment = await this.vmstService.getAttachment(attachmentId)
 
     if (attachment?.data) {
@@ -48,6 +58,10 @@ export class VmstAttachmentController {
       )
       return res.status(200).end(buffer)
     }
-    return res.end()
+
+    return res.status(404).json({
+      statusCode: 404,
+      message: 'Document not found',
+    })
   }
 }
