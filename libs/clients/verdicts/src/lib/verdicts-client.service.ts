@@ -564,17 +564,16 @@ export class VerdictsClientService {
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    yesterday.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
     const parsedInputDateFrom = input.dateFrom
       ? safelyConvertStringToDate(input.dateFrom, 'dateFrom', this.logger)
       : undefined
     const effectiveGoproDateFrom =
-      parsedInputDateFrom && parsedInputDateFrom >= yesterday
+      parsedInputDateFrom && parsedInputDateFrom >= today
         ? parsedInputDateFrom
-        : yesterday
+        : today
     const goproDateFrom = effectiveGoproDateFrom.toISOString()
     const goproDateTo = input.dateTo || undefined
 
