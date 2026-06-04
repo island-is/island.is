@@ -69,11 +69,11 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      if(file.includes('ids-deployments')){
+      if (file.includes('ids-deployments')) {
         // Hard code image tag for ids for testing purposes
         content.image.tag = 'main_20260522_VBHs2N1jBfMDePuv'
         fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
-      }else{
+      } else {
         content.image.tag = imageTag
         fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       }
