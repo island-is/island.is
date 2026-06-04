@@ -372,7 +372,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     )
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const showDigitalCaseFilesSection =
     (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&

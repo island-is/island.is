@@ -93,7 +93,7 @@ export const Overview = () => {
   } = useInfoCardItems()
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {

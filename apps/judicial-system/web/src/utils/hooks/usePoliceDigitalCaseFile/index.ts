@@ -7,11 +7,9 @@ import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
-const usePoliceDigitalCaseFile = (
-  caseId: string,
-  caseOrigin: CaseOrigin | null | undefined,
-) => {
-  const { refreshCase } = useContext(FormContext)
+const usePoliceDigitalCaseFile = () => {
+  const { workingCase, refreshCase } = useContext(FormContext)
+  const { id: caseId, origin: caseOrigin } = workingCase
   const handleCompleted = useCallback(
     (completedData: {
       policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
