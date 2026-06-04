@@ -640,17 +640,18 @@ export const HelmOutput: OutputFormat<HelmService> = {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      if(ingress.featureHostPrefix){
+      if (ingress.featureHostPrefix) {
         ingress.host.dev = ingress.host.dev.map((host) => {
           if (host.includes('.')) {
             const parts = host.split('.')
-            return `${ingress.featureHostPrefix}${env.feature}.${parts.slice(1).join('.')}`
+            return `${ingress.featureHostPrefix}${env.feature}.${parts
+              .slice(1)
+              .join('.')}`
           } else {
             return `${ingress.featureHostPrefix}${env.feature}`
           }
         })
-      }
-      else{
+      } else {
         ingress.host.dev = ingress.host.dev.map(
           (host) => `${env.feature}-${host}`,
         )
