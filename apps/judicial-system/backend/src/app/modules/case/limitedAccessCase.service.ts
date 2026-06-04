@@ -271,7 +271,10 @@ export const include: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
