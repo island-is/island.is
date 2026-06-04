@@ -407,7 +407,7 @@ export const m = defineMessages({
   corsDescription: {
     id: 'ap.ids-admin:cors-description',
     defaultMessage:
-      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
+      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com). Query strings and hash information are ignored Organization URL placeholders are supported',
   },
   translations: {
     id: 'ap.ids-admin:translations',

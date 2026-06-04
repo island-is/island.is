@@ -1,5 +1,6 @@
 import { redirect } from 'react-router-dom'
 
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
@@ -7,6 +8,8 @@ import { replaceParams } from '@island.is/react-spa/shared'
 
 import { IDSAdminPaths } from '../../../lib/paths'
 import {
+  TenantConfiguredEnvironmentsDocument,
+  TenantConfiguredEnvironmentsQuery,
   TenantDetailsDocument,
   TenantDetailsQuery,
   TenantDetailsQueryVariables,
@@ -18,6 +21,11 @@ export type EditTenantLoaderResult = NonNullable<
 
 export type EditTenantEnvironment =
   EditTenantLoaderResult['environments'][number]
+
+export interface EditTenantLoaderData {
+  tenant: EditTenantLoaderResult
+  configuredEnvironments: AuthAdminEnvironment[]
+}
 
 export const editTenantLoader: WrappedLoaderFn = ({
   client,
@@ -50,19 +58,30 @@ export const editTenantLoader: WrappedLoaderFn = ({
       )
     }
 
-    const response = await client.query<
-      TenantDetailsQuery,
-      TenantDetailsQueryVariables
-    >({
-      query: TenantDetailsDocument,
-      variables: { id: tenantId },
-      fetchPolicy: 'network-only',
-    })
+    const [tenantResult, envsResult] = await Promise.all([
+      client.query<TenantDetailsQuery, TenantDetailsQueryVariables>({
+        query: TenantDetailsDocument,
+        variables: { id: tenantId },
+        fetchPolicy: 'network-only',
+      }),
+      client.query<TenantConfiguredEnvironmentsQuery>({
+        query: TenantConfiguredEnvironmentsDocument,
+        fetchPolicy: 'network-only',
+      }),
+    ])
 
-    if (response.error || !response.data?.authAdminTenantDetails) {
-      throw response.error ?? new Error(`Tenant ${tenantId} not found`)
+    if (tenantResult.error || !tenantResult.data?.authAdminTenantDetails) {
+      throw tenantResult.error ?? new Error(`Tenant ${tenantId} not found`)
     }
 
-    return response.data.authAdminTenantDetails
+    if (envsResult.error) {
+      console.error('Failed to fetch configured environments', envsResult.error)
+    }
+
+    return {
+      tenant: tenantResult.data.authAdminTenantDetails,
+      configuredEnvironments:
+        envsResult.data?.authAdminTenantConfiguredEnvironments ?? [],
+    } satisfies EditTenantLoaderData
   }
 }
