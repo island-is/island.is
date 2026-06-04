@@ -11,6 +11,7 @@ const usePoliceDigitalCaseFile = () => {
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
   const { id: caseId, origin: caseOrigin, parentCase, splitCase } = workingCase
+  const effectiveCaseId = parentCase?.id ?? splitCase?.id ?? caseId
 
   const handleCompleted = useCallback(
     (completedData: {
@@ -29,7 +30,7 @@ const usePoliceDigitalCaseFile = () => {
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId: parentCase?.id ?? splitCase?.id ?? caseId } },
+    variables: { input: { caseId: effectiveCaseId } },
     skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -52,19 +53,19 @@ const usePoliceDigitalCaseFile = () => {
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
       window.open(
-        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
+        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
         '_blank',
         'noopener',
       )
     },
-    [caseId],
+    [effectiveCaseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId, fileId } },
+          variables: { input: { caseId: effectiveCaseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -77,7 +78,7 @@ const usePoliceDigitalCaseFile = () => {
         return false
       }
     },
-    [caseId, deleteMutation, refetch],
+    [effectiveCaseId, deleteMutation, refetch],
   )
 
   return {
