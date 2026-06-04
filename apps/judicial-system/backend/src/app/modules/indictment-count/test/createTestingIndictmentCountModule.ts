@@ -15,7 +15,6 @@ import { CaseService } from '../../case'
 import { IndictmentCount, Offense } from '../../repository'
 import { IndictmentCountController } from '../indictmentCount.controller'
 import { IndictmentCountService } from '../indictmentCount.service'
-import { IndictmentCountsController } from '../indictmentCounts.controller'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
@@ -23,7 +22,7 @@ jest.mock('../../case/case.service')
 export const createTestingIndictmentCountModule = async () => {
   const indictmentCountModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
-    controllers: [IndictmentCountController, IndictmentCountsController],
+    controllers: [IndictmentCountController],
     providers: [
       SharedAuthModule,
       CaseService,
@@ -78,11 +77,6 @@ export const createTestingIndictmentCountModule = async () => {
       IndictmentCountController,
     )
 
-  const indictmentCountsController =
-    indictmentCountModule.get<IndictmentCountsController>(
-      IndictmentCountsController,
-    )
-
   indictmentCountModule.close()
 
   return {
@@ -91,6 +85,5 @@ export const createTestingIndictmentCountModule = async () => {
     indictmentCountModel,
     indictmentCountService,
     indictmentCountController,
-    indictmentCountsController,
   }
 }

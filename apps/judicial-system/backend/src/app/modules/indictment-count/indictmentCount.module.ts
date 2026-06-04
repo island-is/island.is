@@ -5,14 +5,13 @@ import { IndictmentCount, Offense } from '../repository'
 import { CaseModule } from '..'
 import { IndictmentCountController } from './indictmentCount.controller'
 import { IndictmentCountService } from './indictmentCount.service'
-import { IndictmentCountsController } from './indictmentCounts.controller'
 
 @Module({
   imports: [
     forwardRef(() => CaseModule),
     SequelizeModule.forFeature([IndictmentCount, Offense]),
   ],
-  controllers: [IndictmentCountController, IndictmentCountsController],
+  controllers: [IndictmentCountController],
   providers: [IndictmentCountService],
   exports: [IndictmentCountService],
 })

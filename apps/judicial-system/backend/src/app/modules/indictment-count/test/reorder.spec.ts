@@ -18,13 +18,13 @@ type GivenWhenThen = (
   body: ReorderIndictmentCountsDto,
 ) => Promise<Then>
 
-describe('IndictmentCountsController - Reorder', () => {
+describe('IndictmentCountController - Reorder', () => {
   let mockIndictmentCountModel: typeof IndictmentCount
   let givenWhenThen: GivenWhenThen
   let transaction: Transaction
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountsController, sequelize } =
+    const { indictmentCountModel, indictmentCountController, sequelize } =
       await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
@@ -41,7 +41,7 @@ describe('IndictmentCountsController - Reorder', () => {
       const then = {} as Then
 
       try {
-        then.result = await indictmentCountsController.reorder(caseId, body)
+        then.result = await indictmentCountController.reorder(caseId, body)
       } catch (error) {
         then.error = error as Error
       }

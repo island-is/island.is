@@ -54,9 +54,9 @@ export class IndictmentCountService {
     return indictmentCount
   }
 
-  async getMaxDisplayOrder(
+  private async getMaxDisplayOrder(
     caseId: string,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<number> {
     const maxDisplayOrder = await this.indictmentCountModel.max(
       'displayOrder',
@@ -121,10 +121,17 @@ export class IndictmentCountService {
     )
   }
 
-  async create(caseId: string): Promise<IndictmentCount> {
-    const displayOrder = (await this.getMaxDisplayOrder(caseId)) + 1
+  async create(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<IndictmentCount> {
+    const displayOrder =
+      (await this.getMaxDisplayOrder(caseId, transaction)) + 1
 
-    return this.indictmentCountModel.create({ caseId, displayOrder })
+    return this.indictmentCountModel.create(
+      { caseId, displayOrder },
+      { transaction },
+    )
   }
 
   async createWithPoliceCaseNumber(
