@@ -24,6 +24,7 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isRequestCase,
   stringTypes,
@@ -34,6 +35,7 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import {
   FileService,
+  getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
   getDefenderVisiblePoliceCaseNumbers,
@@ -878,7 +880,12 @@ export class LimitedAccessCaseService {
         )
       })
 
-      theCase.defendants?.forEach((defendant) =>
+      const myDefendants = getConfirmedDefendantsForDefender(
+        user.nationalId,
+        theCase.defendants,
+      )
+
+      myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
@@ -895,12 +902,29 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      if (
+      const allMyDefendantsDismissed = Boolean(
+        getDefenceUserCutoffDate(
+          user.nationalId,
+          theCase.defendants,
+          theCase.civilClaimants,
+        ),
+      )
+
+      const shouldIncludeGeneratedCourtRecord =
         allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
         !theCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ) &&
+        !allMyDefendantsDismissed &&
+        hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
         )
-      ) {
+
+      if (shouldIncludeGeneratedCourtRecord) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCourtRecordPdfForIndictmentCase(
