@@ -1,4 +1,11 @@
-import { FC, PointerEvent, ReactNode, useEffect, useMemo, useState } from 'react'
+import {
+  FC,
+  PointerEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   animate,
   motion,
@@ -82,31 +89,30 @@ const IndictmentCountLabel = ({
       alignItems="center"
       justifyContent="spaceBetween"
     >
-        <Box className={styles.labelStart}>
-          <Text variant="h4" as="span">
-            <motion.span layout>{index + 1}.</motion.span>{' '}
-            {policeCaseNumberLabel}
-          </Text>
-          {warningMessage && (
-            <Box
-              className={styles.warningIcon}
-              onClick={(event) => event.stopPropagation()}
-              onPointerDown={(event) => event.stopPropagation()}
-            >
-              <Tooltip placement="top" as="span" text={warningMessage}>
-                <span>
-                  <Icon icon="warning" type="filled" color="yellow600" />
-                </span>
-              </Tooltip>
-            </Box>
-          )}
-        </Box>
-        {formattedDate && (
-          <Text variant="h4" as="span" className={styles.labelDate}>
-            {formattedDate}
-          </Text>
+      <Box className={styles.labelStart}>
+        <Text variant="h4" as="span">
+          <motion.span layout>{index + 1}.</motion.span> {policeCaseNumberLabel}
+        </Text>
+        {warningMessage && (
+          <Box
+            className={styles.warningIcon}
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <Tooltip placement="top" as="span" text={warningMessage}>
+              <span>
+                <Icon icon="warning" type="filled" color="yellow600" />
+              </span>
+            </Tooltip>
+          </Box>
         )}
       </Box>
+      {formattedDate && (
+        <Text variant="h4" as="span" className={styles.labelDate}>
+          {formattedDate}
+        </Text>
+      )}
+    </Box>
   )
 }
 
