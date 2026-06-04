@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
+import { useClickAway, useDebounce } from 'react-use'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 
 import {
   AsyncSearch,
-  AsyncSearchInput,
   Box,
   Button,
+  Icon,
   Inline,
   Input,
   Select,
@@ -26,6 +26,7 @@ import {
   GET_CUSTOMS_CALCULATOR_UNITS,
 } from '@island.is/web/screens/queries/CustomsCalculator'
 
+import { ProductCategoryModal } from './ProductCategoryModal'
 import { translation as translationStrings } from './translation.strings'
 import { extractFilterCategories } from './utils'
 import * as styles from './CustomsCalculator.css'
@@ -167,6 +168,56 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       ?.categories,
   ])
 
+  const [isProductCategoryModalVisible, setIsProductCategoryModalVisible] =
+    useState(false)
+
+  const categoryDropdownRef = useRef<HTMLDivElement>(null)
+  useClickAway(categoryDropdownRef, () =>
+    setIsProductCategoryModalVisible(false),
+  )
+
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  const categoryOptions = useMemo(() => {
+    const options = [
+      {
+        label: 'A',
+        value: 'A',
+        hasChildren: true,
+      },
+      {
+        label: 'B',
+        value: 'B',
+        hasChildren: false,
+      },
+      {
+        label: 'C',
+        value: 'C',
+        hasChildren: true,
+      },
+    ]
+
+    if (!selectedCategory) return options
+
+    return [
+      {
+        label: 'D',
+        value: 'D',
+        hasChildren: true,
+      },
+      {
+        label: 'E',
+        value: 'E',
+        hasChildren: false,
+      },
+      {
+        label: 'F',
+        value: 'F',
+        hasChildren: true,
+      },
+    ]
+  }, [selectedCategory])
+
   return (
     <Stack space={3}>
       {shortcuts.length > 0 && (
@@ -177,10 +228,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           <Inline space={1}>
             {shortcuts.map((shortcut) => (
               <Tag
+                key={shortcut.value}
                 onClick={() =>
                   setInputState({ ...inputState, tariffNumber: shortcut.value })
                 }
-                key={shortcut.value}
               >
                 {shortcut.label}
               </Tag>
@@ -216,9 +267,44 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         {<Text variant="small">{}</Text>}
       </Stack>
 
-      <Button icon="filter" size="small" variant="utility">
-        {formatMessage(translationStrings.searchForCategory)}
-      </Button>
+      <div ref={categoryDropdownRef} style={{ position: 'relative' }}>
+        <Button
+          icon="filter"
+          size="small"
+          variant="utility"
+          onClick={() => setIsProductCategoryModalVisible((v) => !v)}
+        >
+          {formatMessage(translationStrings.searchForCategory)}
+        </Button>
+
+        <ProductCategoryModal
+          modalTitle={formatMessage(translationStrings.searchForCategory)}
+          isVisible={isProductCategoryModalVisible}
+          onClose={() => setIsProductCategoryModalVisible(false)}
+          onOptionSelect={(option) => {
+            setSelectedCategory(option.value)
+            if (!option.hasChildren) setIsProductCategoryModalVisible(false)
+          }}
+          options={categoryOptions}
+          topComponent={
+            <Box
+              background="purple100"
+              paddingX={1}
+              paddingY={2}
+              display="flex"
+              justifyContent="flexStart"
+              alignItems="center"
+              columnGap={1}
+              role="button"
+              cursor="pointer"
+              onClick={() => setSelectedCategory(null)}
+            >
+              <Icon icon="chevronBack" color="blue400" size="medium" />
+              <Text variant="h5">Matvæli</Text>
+            </Box>
+          }
+        />
+      </div>
 
       <Inline space={1}>
         <Box className={styles.currencySelect}>
@@ -251,7 +337,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       <Box className={styles.buttonContainer}>
         <Button
           fluid={true}
-          size="default"
           onClick={runCalculation}
           loading={calculationState.loading}
         >
@@ -259,7 +344,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         </Button>
       </Box>
 
-      {Boolean(unitsState.data?.customsCalculatorUnits) && (
+      {/* {Boolean(unitsState.data?.customsCalculatorUnits) && (
         <Box>
           <Text variant="h5" marginBottom={1}>
             {formatMessage(translationStrings.unitsResponse)}
@@ -283,7 +368,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             )}
           </pre>
         </Box>
-      )}
+      )} */}
     </Stack>
   )
 }
