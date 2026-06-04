@@ -8,7 +8,7 @@ import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCas
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
 const usePoliceDigitalCaseFile = () => {
-  const { workingCase, refreshCase } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, refreshCase } = useContext(FormContext)
   const { id: caseId, origin: caseOrigin, parentCase } = workingCase
 
   const handleCompleted = useCallback(
@@ -29,7 +29,7 @@ const usePoliceDigitalCaseFile = () => {
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
     variables: { input: { caseId: parentCase ? parentCase.id : caseId } },
-    skip: caseOrigin !== CaseOrigin.LOKE,
+    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: handleCompleted,
