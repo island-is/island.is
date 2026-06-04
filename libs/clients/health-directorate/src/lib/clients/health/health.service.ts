@@ -142,6 +142,7 @@ export class HealthDirectorateHealthService {
           path: {
             id,
           },
+          body: {},
         }),
       ),
     )

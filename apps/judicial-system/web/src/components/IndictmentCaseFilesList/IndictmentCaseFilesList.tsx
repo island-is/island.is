@@ -321,7 +321,24 @@ const IndictmentCaseFilesList: FC<Props> = ({
     [workingCase],
   )
 
-  const showSubpoenaPdf = displayGeneratedPDFs && allSubpoenas.length > 0
+  const visibleSubpoenas = useMemo(() => {
+    if (!isDefenceUser(user)) {
+      return allSubpoenas
+    }
+
+    const normalizedUserNationalId = normalizeAndFormatNationalId(
+      user?.nationalId ?? '',
+    )
+
+    return allSubpoenas.filter(
+      ({ defendant }) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizedUserNationalId.includes(defendant.defenderNationalId),
+    )
+  }, [allSubpoenas, user])
+
+  const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
   const filteredFiles = useFilteredCaseFiles(
     workingCase.caseFiles,
@@ -482,7 +499,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
+            {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
                 strings.subpoenaButtonText,
                 {
