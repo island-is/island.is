@@ -32,7 +32,7 @@ export const editTenantLoader: WrappedLoaderFn = ({
   userInfo,
   featureFlagClient,
 }) => {
-  return async ({ params }) => {
+  return async ({ params }): Promise<EditTenantLoaderData | Response> => {
     const tenantId = params['tenant']
 
     if (!tenantId) {
@@ -82,6 +82,6 @@ export const editTenantLoader: WrappedLoaderFn = ({
       tenant: tenantResult.data.authAdminTenantDetails,
       configuredEnvironments:
         envsResult.data?.authAdminTenantConfiguredEnvironments ?? [],
-    } satisfies EditTenantLoaderData
+    }
   }
 }
