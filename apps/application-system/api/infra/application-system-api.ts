@@ -73,8 +73,8 @@ const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
-  userNotificationService: ScheduledJobBuilder<'services-user-notification'>
-  paymentsApi: ScheduledJobBuilder<'services-payments'>
+  userNotificationService: ServiceBuilder<'user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ScheduledJobBuilder<'application-system-api-worker'> =>
   scheduledJob('application-system-api-worker')
     .namespace(namespace)

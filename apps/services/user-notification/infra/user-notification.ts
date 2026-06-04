@@ -266,7 +266,7 @@ export const userNotificationCleanUpWorkerSetup = (): ScheduledJobBuilder<
     })
 
 export const userNotificationBirthdayWorkerSetup = (services: {
-  userProfileApi: ScheduledJobBuilder<'service-portal-api'>
+  userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ScheduledJobBuilder<typeof serviceBirthdayWorkerName> =>
   scheduledJob(serviceBirthdayWorkerName)
     .image(imageName)
