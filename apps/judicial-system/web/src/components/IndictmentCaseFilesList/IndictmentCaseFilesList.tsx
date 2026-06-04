@@ -98,6 +98,7 @@ interface Props {
   workingCase: Case
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
+  forceDisplayAdditionalFiles?: boolean
   connectedCaseParentId?: string
 }
 
@@ -282,6 +283,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
   displayHeading = true,
+  forceDisplayAdditionalFiles = false,
   connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
@@ -326,7 +328,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
     workingCase.splitCases,
   )
   const permissions = useFilePermissions(workingCase, user)
-  const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const showFiles =
+    forceDisplayAdditionalFiles ||
+    Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
@@ -744,25 +748,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            {filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                  canRejectFiles={
-                    isDistrictCourtUser(user) &&
-                    !connectedCaseParentId &&
-                    workingCase.state !== CaseState.CORRECTING
-                  }
-                />
-              </Box>
-            )}
+            <Box>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+                canRejectFiles={
+                  isDistrictCourtUser(user) &&
+                  !connectedCaseParentId &&
+                  workingCase.state !== CaseState.CORRECTING
+                }
+              />
+            </Box>
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />
