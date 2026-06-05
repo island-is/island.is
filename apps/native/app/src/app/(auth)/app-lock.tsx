@@ -173,9 +173,14 @@ export default function AppLockScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
-  // Hide splash now we're mounted (root _layout defers until this fires).
+  // Hide splash once we're mounted (root _layout defers until this fires).
+  // Wait a beat so iOS finishes presentViewController before the splash drops
+  // — otherwise the underlying tab paints briefly on cold start.
   useEffect(() => {
-    SplashScreen.hideAsync().catch(() => {})
+    const id = setTimeout(() => {
+      SplashScreen.hideAsync().catch(() => {})
+    }, 150)
+    return () => clearTimeout(id)
   }, [])
 
   // Swallow Android hardware back.
