@@ -8,7 +8,7 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { ToggleConnection } from './ToggleConnection'
 
