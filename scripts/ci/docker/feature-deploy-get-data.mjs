@@ -48,7 +48,10 @@ async function main(testContext = null) {
   core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
   //comment out to deploy ids feature
-  const _MANIFEST_PATHS = ['charts/features/deployments', 'charts/features/ids-deployments']
+  const _MANIFEST_PATHS = [
+    'charts/features/deployments',
+    'charts/features/ids-deployments',
+  ]
 
   const changedFiles = new Set()
 
