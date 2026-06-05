@@ -1309,20 +1309,48 @@ describe('BankTransferService', () => {
       expect(logger.warn).toHaveBeenCalled()
     })
 
-    it('returns null and soft-deletes the row when the cached PENDING row is expired (no Blikk call)', async () => {
+    it('refreshes from Blikk and soft-deletes an expired PENDING row that Blikk confirms is not settled', async () => {
       const expired = {
         ...baseRow,
         expiresAt: new Date(Date.now() - 60 * 1000),
       }
       bankTransferPaymentModel.findOne.mockResolvedValue(expired)
-      const getPaymentSpy = jest.spyOn(service, 'getPayment')
+      const getPaymentSpy = mockGetPayment(BankTransferStatus.PENDING, 'PENDING')
 
       const result = await service.getBankTransferStatus('flow-1')
 
-      expect(getPaymentSpy).not.toHaveBeenCalled()
+      // Even on expiry we ask Blikk first — only discard once it confirms the attempt is not a SUCCESS.
+      expect(getPaymentSpy).toHaveBeenCalledWith('prov-1')
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
         { where: { id: 'corr-1', isDeleted: false } },
+      )
+      expect(result).toBeNull()
+    })
+
+    it('finalizes an expired PENDING row that Blikk now reports as SUCCESS instead of orphaning the settlement (lost callback)', async () => {
+      const expired = {
+        ...baseRow,
+        expiresAt: new Date(Date.now() - 60 * 1000),
+      }
+      bankTransferPaymentModel.findOne.mockResolvedValue(expired)
+      mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
+      const confirmSpy = jest
+        .spyOn(service, 'finalizeBankTransferSuccess')
+        .mockResolvedValue()
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      expect(confirmSpy).toHaveBeenCalledWith({
+        correlationId: 'corr-1',
+        paymentFlowId: 'flow-1',
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SUCCESS',
+      })
+      // The settled row must NOT be soft-deleted.
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalledWith(
+        { isDeleted: true },
+        expect.anything(),
       )
       expect(result).toBeNull()
     })
