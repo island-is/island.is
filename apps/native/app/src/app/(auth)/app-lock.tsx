@@ -3,7 +3,7 @@ import {
   authenticateAsync,
   AuthenticationType,
 } from 'expo-local-authentication'
-import { router as routerImperative } from 'expo-router'
+import { router as routerImperative, useNavigation } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -141,11 +141,15 @@ export default function AppLockScreen() {
     return () => sub.remove()
   }, [])
 
-  // Root layout keeps splash up on cold-start-with-lock; dismiss now that
-  // the lock is on screen.
+  // Hide splash only after the native modal is on screen — hiding on mount
+  // fires before presentViewController completes and flashes the tab.
+  const navigation = useNavigation()
   useEffect(() => {
-    void SplashScreen.hideAsync()
-  }, [])
+    const sub = navigation.addListener('transitionEnd' as never, () => {
+      void SplashScreen.hideAsync()
+    })
+    return sub
+  }, [navigation])
 
   const validatePin = async (pin: string) => {
     try {
