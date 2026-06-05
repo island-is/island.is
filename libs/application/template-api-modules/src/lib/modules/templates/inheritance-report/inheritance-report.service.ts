@@ -30,7 +30,11 @@ import { expandAnswers } from './utils/mappers'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
@@ -85,7 +89,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
       'sendCopyToParties',
       [],
     )
-    if (!sendCopy?.includes('Yes')) {
+    if (!sendCopy?.includes(YES)) {
       return { sent: false, recipients: 0 }
     }
 

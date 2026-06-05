@@ -26,7 +26,11 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   ApplicationAttachments,
   AttachmentPaths,
@@ -67,7 +71,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       'sendCopyToParties',
       [],
     )
-    if (!sendCopy?.includes('Yes')) {
+    if (!sendCopy?.includes(YES)) {
       return { sent: false, recipients: 0 }
     }
 

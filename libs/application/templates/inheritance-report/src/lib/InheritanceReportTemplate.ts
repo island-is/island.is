@@ -127,6 +127,15 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
           actionCard: {
             displayPruneAt: true,
+            // Submission to syslumenn happens on entry to the signing state
+            // (reached via this SUBMIT transition), so log "applicationSent"
+            // here rather than on the later signing -> done finalization.
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           roles: [
             {
@@ -228,12 +237,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
                 displayStatus: 'info',
               }
             },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationSent,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
           },
           roles: [
             Roles.ESTATE_INHERITANCE_APPLICANT,
