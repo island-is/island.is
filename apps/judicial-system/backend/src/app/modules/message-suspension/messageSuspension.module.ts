@@ -7,7 +7,10 @@ import { MessageSuspensionService } from './messageSuspension.service'
 
 @Module({
   imports: [forwardRef(() => RepositoryModule)],
-  controllers: [MessageSuspensionController, InternalMessageSuspensionController],
+  controllers: [
+    MessageSuspensionController,
+    InternalMessageSuspensionController,
+  ],
   providers: [MessageSuspensionService],
   exports: [MessageSuspensionService],
 })
