@@ -237,7 +237,9 @@ const Overview: FC = () => {
               }}
             />
           </Box>
-          <AllIndictmentCaseFiles />
+          <AllIndictmentCaseFiles
+            forceDisplayAdditionalFiles={userCanAddDocuments}
+          />
           {userCanAddDocuments && (
             <Box display="flex" justifyContent="flexEnd">
               <Button

@@ -4,7 +4,7 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
-import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
+import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -106,10 +106,8 @@ export const createIndictment = async (
 
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
-  theCase.indictmentCounts
-    ?.slice()
-    .sort(getIndictmentCountCompare(theCase.crimeScenes))
-    .forEach((count, index) => {
+  sortIndictmentCounts(theCase.indictmentCounts ?? []).forEach(
+    (count, index) => {
       addEmptyLines(doc)
 
       if (hasManyCounts) {
@@ -121,7 +119,8 @@ export const createIndictment = async (
       addEmptyLines(doc)
       addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
       addNormalText(doc, `M: ${count.policeCaseNumber ?? ''}`)
-    })
+    },
+  )
 
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands ?? '')

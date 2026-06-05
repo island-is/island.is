@@ -8,7 +8,7 @@ export const dataSchema = z.object({
         companyName: z.string().min(1),
       }),
     )
-    .nonempty(),
+    .optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

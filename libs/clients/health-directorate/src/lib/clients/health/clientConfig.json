@@ -4830,40 +4830,70 @@
         },
         "required": ["type", "triggerId", "targetId", "visible"]
       },
-      "AttachmentReplyDto": {
+      "AttachmentReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
-          },
-          "answer": {
-            "type": "string"
-          }
-        },
-        "required": ["questionId", "answer"]
-      },
-      "BooleanReplyDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "type": "string"
-          },
-          "answer": {
-            "type": "boolean"
-          }
-        },
-        "required": ["questionId", "answer"]
-      },
-      "DateReplyDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "type": "string"
-          },
-          "answer": {
             "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "BooleanReplyViewDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "DateReplyViewDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
@@ -4892,35 +4922,56 @@
         },
         "required": ["questionId", "values"]
       },
-      "NumberReplyDto": {
+      "NumberReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "answer": {
-            "type": "number"
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
       },
-      "StringReplyDto": {
+      "StringReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "answer": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
       },
-      "TableReplyDto": {
+      "TableReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "rows": {
             "type": "array",
@@ -4935,7 +4986,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -4947,7 +5005,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "number"
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -4959,7 +5024,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "boolean"
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -4971,9 +5043,16 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string",
-                        "format": "date",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -4985,7 +5064,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -5016,7 +5102,8 @@
                   }
                 ]
               }
-            }
+            },
+            "x-nestjs_zod-has-null": true
           }
         },
         "required": ["questionId", "rows"]
@@ -5205,25 +5292,25 @@
             "items": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                  "$ref": "#/components/schemas/AttachmentReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/BooleanReplyDto"
+                  "$ref": "#/components/schemas/BooleanReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/DateReplyDto"
+                  "$ref": "#/components/schemas/DateReplyViewDto"
                 },
                 {
                   "$ref": "#/components/schemas/ListReplyDto"
                 },
                 {
-                  "$ref": "#/components/schemas/NumberReplyDto"
+                  "$ref": "#/components/schemas/NumberReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/StringReplyDto"
+                  "$ref": "#/components/schemas/StringReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/TableReplyDto"
+                  "$ref": "#/components/schemas/TableReplyViewDto"
                 }
               ]
             }
@@ -5505,40 +5592,280 @@
               "$ref": "#/components/schemas/QuestionGroupDto"
             }
           },
+          "submission": {
+            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+          },
           "replies": {
             "type": "array",
             "items": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/BooleanReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/DateReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/ListReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/NumberReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/StringReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "answer": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["id", "answer"]
+                      }
+                    }
+                  },
+                  "required": ["questionId", "values"]
                 },
                 {
-                  "$ref": "#/components/schemas/TableReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "date",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "values": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "answer": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["id", "answer"]
+                                  }
+                                }
+                              },
+                              "required": ["questionId", "values"]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "required": ["questionId", "rows"]
                 }
               ]
             },
-            "description": "Draft replies for the questionnaire"
-          },
-          "submission": {
-            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+            "x-nestjs_zod-has-null": true
           }
         },
-        "required": ["canSubmit", "groups", "submission"]
+        "required": ["canSubmit", "groups", "submission", "replies"]
       },
       "AllergyClinicalStatus": {
         "type": "string",
@@ -5622,7 +5949,7 @@
       },
       "UserVisibleAppointmentStatuses": {
         "type": "string",
-        "enum": ["booked", "cancelled", "fulfilled", "arrived", "checked-in"]
+        "enum": ["BOOKED", "CANCELLED", "FULFILLED", "ARRIVED", "CHECKED_IN"]
       },
       "AppointmentLocationBaseDto": {
         "type": "object",
@@ -5650,7 +5977,22 @@
             "description": "Geographic longitude of the location"
           }
         },
-        "required": ["name", "address"]
+        "required": ["name"]
+      },
+      "AssigneeDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER"],
+            "description": "Assignee type. PERSON assignees are surfaced under practitioners, not here."
+          },
+          "name": {
+            "type": "string",
+            "description": "The assignee display name"
+          }
+        },
+        "required": ["type", "name"]
       },
       "AppointmentBaseDto": {
         "type": "object",
@@ -5671,6 +6013,11 @@
             "type": "string",
             "description": "The status of the appointment"
           },
+          "modality": {
+            "type": "string",
+            "enum": ["IN_PERSON", "VIDEO"],
+            "description": "Whether the appointment is in person or over video"
+          },
           "patientInstruction": {
             "type": "string",
             "description": "Patient-facing instructions",
@@ -5689,6 +6036,13 @@
             "items": {
               "type": "string"
             }
+          },
+          "assignees": {
+            "description": "Non-person assignees (role, room, equipment, service, other). PERSON assignees appear under practitioners.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssigneeDto"
+            }
           }
         },
         "required": [
@@ -5696,7 +6050,9 @@
           "startTime",
           "description",
           "status",
-          "practitioners"
+          "modality",
+          "practitioners",
+          "assignees"
         ]
       },
       "OpeningHoursSlotDto": {
@@ -5745,6 +6101,21 @@
             }
           }
         }
+      },
+      "LocationLinkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["WEBSITE"],
+            "description": "The type of link"
+          },
+          "url": {
+            "type": "string",
+            "description": "The link URL"
+          }
+        },
+        "required": ["type", "url"]
       },
       "AppointmentLocationDto": {
         "type": "object",
@@ -5809,6 +6180,13 @@
             "type": "string",
             "description": "The link to the location"
           },
+          "links": {
+            "description": "Typed links associated with the location",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationLinkDto"
+            }
+          },
           "latitude": {
             "type": "number",
             "description": "The latitude of the location"
@@ -5818,7 +6196,27 @@
             "description": "The longitude of the location"
           }
         },
-        "required": ["name", "address"]
+        "required": ["name"]
+      },
+      "AppointmentLinkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PATIENT_INSTRUCTIONS",
+              "PREPARATION",
+              "ORGANIZATION_INFO",
+              "VIDEO_CALL"
+            ],
+            "description": "The type of link"
+          },
+          "url": {
+            "type": "string",
+            "description": "The link URL"
+          }
+        },
+        "required": ["type", "url"]
       },
       "AppointmentDetailDto": {
         "type": "object",
@@ -5844,6 +6242,11 @@
             "type": "string",
             "description": "The status of the appointment"
           },
+          "modality": {
+            "type": "string",
+            "enum": ["IN_PERSON", "VIDEO"],
+            "description": "Whether the appointment is in person or over video"
+          },
           "description": {
             "type": "string",
             "description": "The brief description of the appointment"
@@ -5855,10 +6258,24 @@
           "location": {
             "$ref": "#/components/schemas/AppointmentLocationDto"
           },
+          "links": {
+            "description": "Typed links associated with the appointment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentLinkDto"
+            }
+          },
           "practitioners": {
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "assignees": {
+            "description": "Non-person assignees (role, room, equipment, service, other). PERSON assignees appear under practitioners.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssigneeDto"
             }
           }
         },
@@ -5868,8 +6285,10 @@
           "endTime",
           "duration",
           "status",
+          "modality",
           "description",
-          "practitioners"
+          "practitioners",
+          "assignees"
         ]
       },
       "ConsentCountryDto": {
