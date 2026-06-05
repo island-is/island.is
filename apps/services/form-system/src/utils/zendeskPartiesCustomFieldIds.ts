@@ -5,12 +5,12 @@ export type Instance = keyof typeof fieldMappings
 const fieldMappings = {
   haskoliislands: {
     name: 51015877611291,
-    email: 1016152728859,
+    email: 51016152728859,
     address: 51015867401371,
     nationalId: 51015855616795,
     postalCode: 51015920921755,
     phoneNumber: 51016234676763,
-    municipality: 51015920921755,
+    municipality: 51015942835227,
   },
   heilsa: {
     name: 51216152741531,
