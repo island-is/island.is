@@ -304,9 +304,7 @@ export class BankTransferService {
       mappedStatus,
     })
 
-    // Only active-PENDING cancels emit `payment_cancelled`. Finalize-on-failure
-    // cases were already emitted by finalizeFromBlikkResult; cached terminal-failed
-    // rows already emitted on the original verify/refresh that finalized them.
+    // Only active-PENDING cancels emit `payment_cancelled`.
     if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
@@ -343,8 +341,8 @@ export class BankTransferService {
     const isExpired = isRowExpired(row)
     let mapped = mapBlikkStatusToBankTransferStatus(row.lastKnownStatus)
 
-    // Fresh PENDING → ask Blikk so SSR after SCA redirect lands on the final state immediately.
-    if (mapped === BankTransferStatus.PENDING && !isExpired) {
+    // PENDING → ask Blikk for the authoritative state.
+    if (mapped === BankTransferStatus.PENDING) {
       const refreshed = await this.refreshFromBlikkOrWarn(row)
 
       if (refreshed) {
@@ -371,6 +369,8 @@ export class BankTransferService {
       return null
     }
 
+    // Still PENDING (or Blikk unreachable) and past TTL → abandoned; discard so the flow returns to
+    // UNPAID. The Blikk refresh above is what guards against discarding a settled-but-uncallbacked row.
     if (isExpired) {
       void this.softDeleteRow(row.id)
       return null
