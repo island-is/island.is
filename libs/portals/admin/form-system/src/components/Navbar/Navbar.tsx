@@ -32,13 +32,74 @@ import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
 
 export const Navbar = () => {
-  const { control, controlDispatch, inSettings, openComponents } = useContext(
-    ControlContext,
-  ) as IControlContext
+  const {
+    control,
+    controlDispatch,
+    inSettings,
+    openComponents,
+    setOpenComponents,
+  } = useContext(ControlContext) as IControlContext
 
   const { formatMessage } = useIntl()
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
+
+  const inputSections = useMemo(
+    () =>
+      sections?.filter(
+        (section): section is FormSystemSection =>
+          section !== null &&
+          section !== undefined &&
+          section.sectionType === SectionTypes.INPUT,
+      ) ?? [],
+    [sections],
+  )
+
+  const inputScreens = useMemo(
+    () =>
+      screens?.filter(
+        (screen): screen is FormSystemScreen =>
+          screen !== null &&
+          screen !== undefined &&
+          inputSections.some((section) => section.id === screen.sectionId),
+      ) ?? [],
+    [screens, inputSections],
+  )
+
+  const inputSectionIds = useMemo(
+    () =>
+      inputSections
+        .map((section) => section.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputSections],
+  )
+
+  const inputScreenIds = useMemo(
+    () =>
+      inputScreens
+        .map((screen) => screen.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputScreens],
+  )
+
+  const allNavbarItemsOpen =
+    inputSectionIds.length > 0 &&
+    inputSectionIds.every((id) => openComponents.sections.includes(id)) &&
+    inputScreenIds.every((id) => openComponents.screens.includes(id))
+
+  const toggleAllNavbarItems = () => {
+    setOpenComponents(
+      allNavbarItemsOpen
+        ? {
+            sections: [],
+            screens: [],
+          }
+        : {
+            sections: inputSectionIds,
+            screens: inputScreenIds,
+          },
+    )
+  }
 
   const sectionIds = useMemo(
     () =>
@@ -213,6 +274,23 @@ export const Navbar = () => {
     }
   }
 
+  const renderToggleAllButton = () => (
+    <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
+      <Button
+        icon={allNavbarItemsOpen ? 'chevronUp' : 'chevronDown'}
+        iconType="filled"
+        circle
+        inline
+        variant="ghost"
+        size="small"
+        onClick={toggleAllNavbarItems}
+        disabled={inputSectionIds.length === 0}
+        title={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+        aria-label={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+      />
+    </Box>
+  )
+
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
@@ -290,39 +368,34 @@ export const Navbar = () => {
   }
 
   const renderInputSections = () => {
-    return sections
-      ?.filter(
-        (s): s is FormSystemSection =>
-          s !== null && s !== undefined && s.sectionType === SectionTypes.INPUT,
+    return inputSections.map((section, index) => {
+      const sectionIsOpen = openComponents.sections.includes(section.id)
+
+      return (
+        <Box key={section.id}>
+          <NavComponent
+            type="Section"
+            data={section}
+            active={
+              activeItem.data?.id === section.id ||
+              isPendingDropTarget(section.id)
+            }
+            index={index + 1}
+            focusComponent={focusComponent}
+          />
+
+          <SortableContext items={screenIdsBySection.get(section.id) ?? []}>
+            <AnimateHeight
+              duration={isDraggingNavbarItem ? 0 : 150}
+              height={sectionIsOpen ? 'auto' : 0}
+              easing="ease-in-out"
+            >
+              {renderScreensForSection(section)}
+            </AnimateHeight>
+          </SortableContext>
+        </Box>
       )
-      .map((section, index) => {
-        const sectionIsOpen = openComponents.sections.includes(section.id)
-
-        return (
-          <Box key={section.id}>
-            <NavComponent
-              type="Section"
-              data={section}
-              active={
-                activeItem.data?.id === section.id ||
-                isPendingDropTarget(section.id)
-              }
-              index={index + 1}
-              focusComponent={focusComponent}
-            />
-
-            <SortableContext items={screenIdsBySection.get(section.id) ?? []}>
-              <AnimateHeight
-                duration={isDraggingNavbarItem ? 0 : 150}
-                height={sectionIsOpen ? 'auto' : 0}
-                easing="ease-in-out"
-              >
-                {renderScreensForSection(section)}
-              </AnimateHeight>
-            </SortableContext>
-          </Box>
-        )
-      })
+    })
   }
 
   const renderSettingsView = () => (
@@ -360,6 +433,8 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
+      {renderToggleAllButton()}
+
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
           sensors={isReadOnly ? [] : sensors}
