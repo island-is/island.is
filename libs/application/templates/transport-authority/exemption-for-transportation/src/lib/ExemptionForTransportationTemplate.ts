@@ -120,7 +120,11 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [NationalRegistryV3UserApi, UserProfileApi, ExemptionRulesApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                ExemptionRulesApi,
+              ],
               delete: true,
             },
           ],
