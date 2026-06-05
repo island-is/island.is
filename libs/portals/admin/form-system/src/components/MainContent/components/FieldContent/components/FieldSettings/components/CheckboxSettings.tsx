@@ -38,6 +38,11 @@ export const CheckboxSettings = () => {
             checked={fieldSettings?.isLarge ?? false}
             label={formatMessage(m.largeCheckbox)}
             disabled={isReadOnly || hasDescriptionText}
+            tooltip={
+              hasDescriptionText
+                ? 'Ómögulegt að afvelja þar sem undirtexti er í notkun'
+                : ''
+            }
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_FIELD_SETTINGS',
@@ -68,6 +73,11 @@ export const CheckboxSettings = () => {
               checked={fieldSettings?.hasDescription ?? false}
               label={formatMessage(m.hasSublabel)}
               disabled={isReadOnly || hasDescriptionText}
+              tooltip={
+                hasDescriptionText
+                  ? 'Ómögulegt að afvelja þar sem undirtexti er í notkun'
+                  : ''
+              }
               onChange={(e) =>
                 controlDispatch({
                   type: 'SET_FIELD_SETTINGS',
