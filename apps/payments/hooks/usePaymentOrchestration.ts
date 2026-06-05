@@ -195,7 +195,5 @@ export const usePaymentOrchestration = ({
     verificationStatusLoading: cardPayment.verificationStatusLoading,
     supportsApplePay: applePayPayment.supportsApplePay ?? false,
     initiateApplePay: applePayPayment.initiateApplePay,
-    bankTransferLastAttemptAt: bankTransferPayment.lastAttemptAt,
-    bankTransferExpiresAt: bankTransferPayment.expiresAt,
   }
 }

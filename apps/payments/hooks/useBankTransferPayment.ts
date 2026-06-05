@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
+import { useRouter } from 'next/router'
 
 import { PaymentsCreateBankTransferLocale } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
@@ -22,12 +23,9 @@ export const useBankTransferPayment = ({
   onPaymentError,
 }: UseBankTransferPaymentProps) => {
   const { lang } = useLocale()
+  const router = useRouter()
   const [createBankTransferMutation, { loading: createBankTransferLoading }] =
     useCreateBankTransferMutation()
-  // Bump after a successful create — used as the polling hook's `trigger` for back-channel SCA.
-  const [lastAttemptAt, setLastAttemptAt] = useState<number>(0)
-  // Latest expiry from create — feeds the polling hook's hard timeout.
-  const [expiresAt, setExpiresAt] = useState<Date | undefined>(undefined)
 
   const processBankTransferPayment = useCallback(async () => {
     if (!paymentFlowId) {
@@ -44,17 +42,18 @@ export const useBankTransferPayment = ({
           },
         },
       })
-      setLastAttemptAt(Date.now())
-      setExpiresAt(response.data?.paymentsCreateBankTransfer.expiresAt)
 
       const scaRedirectUrl =
         response.data?.paymentsCreateBankTransfer.scaRedirectUrl
 
-      // Interactive SCA → redirect. Empty URL = back-channel SCA, stay on the page.
+      // Interactive SCA → redirect.
       if (scaRedirectUrl) {
         window.location.assign(scaRedirectUrl)
         return
       }
+
+      // No SCA redirect URL → reload so SSR lands on the dedicated waiting screen.
+      router.reload()
     } catch (e: unknown) {
       onPaymentError({
         code: (e instanceof Error
@@ -62,12 +61,10 @@ export const useBankTransferPayment = ({
           : CardErrorCode.UnknownCardError) as CardErrorCode,
       })
     }
-  }, [paymentFlowId, lang, createBankTransferMutation, onPaymentError])
+  }, [paymentFlowId, lang, createBankTransferMutation, onPaymentError, router])
 
   return {
     processBankTransferPayment,
     isBankTransferPaymentProcessing: createBankTransferLoading,
-    lastAttemptAt,
-    expiresAt,
   }
 }

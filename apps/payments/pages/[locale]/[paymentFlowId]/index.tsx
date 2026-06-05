@@ -267,8 +267,6 @@ function PaymentPage({
     handleVerificationCancelledByModal,
     supportsApplePay,
     initiateApplePay,
-    bankTransferLastAttemptAt,
-    bankTransferExpiresAt: bankTransferExpiresAtFromCreate,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
@@ -277,20 +275,13 @@ function PaymentPage({
 
   const router = useRouter()
 
-  const bankTransferExpiresAt =
-    bankTransferExpiresAtFromCreate ??
-    paymentFlow?.bankTransferExpiresAt ??
-    undefined
-
-  const { isPolling: isBankTransferPolling } = useBankTransferStatusPolling({
+  // Bank-transfer polling runs only on the dedicated waiting screen (reached via SSR after submit).
+  useBankTransferStatusPolling({
     paymentFlowId: paymentFlow?.id,
     enabled:
       paymentFlow?.paymentStatus ===
-        PaymentsGetFlowPaymentStatus.bank_transfer_pending ||
-      (paymentFlow?.paymentStatus === PaymentsGetFlowPaymentStatus.unpaid &&
-        bankTransferLastAttemptAt > 0),
-    trigger: bankTransferLastAttemptAt,
-    expiresAt: bankTransferExpiresAt,
+      PaymentsGetFlowPaymentStatus.bank_transfer_pending,
+    expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
     onSuccess: () => router.reload(),
     onFailure: () => router.reload(),
   })
@@ -410,8 +401,12 @@ function PaymentPage({
         bodySlot={
           <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
             <AlertMessage
-              type="default"
-              message={formatMessage(bankTransfer.waiting)}
+              type="warning"
+              message={formatMessage(
+                bankTransferScaRedirectUrl
+                  ? bankTransfer.waiting
+                  : bankTransfer.finishInBankApp,
+              )}
             />
             {bankTransferScaRedirectUrl && (
               <Button
@@ -530,22 +525,13 @@ function PaymentPage({
                     />
                   )}
                   {selectedPaymentMethod === 'bank_transfer' && (
-                    <BankTransferPayment isWaiting={isBankTransferPolling} />
+                    <BankTransferPayment />
                   )}
                   <Button
                     type="submit"
-                    loading={
-                      overallIsSubmitting ||
-                      (selectedPaymentMethod === 'bank_transfer' &&
-                        isBankTransferPolling)
-                    }
+                    loading={overallIsSubmitting}
                     fluid
-                    disabled={
-                      overallIsSubmitting ||
-                      isCardPaymentInvalid ||
-                      (selectedPaymentMethod === 'bank_transfer' &&
-                        isBankTransferPolling)
-                    }
+                    disabled={overallIsSubmitting || isCardPaymentInvalid}
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)

@@ -28,6 +28,12 @@ export const bankTransfer = defineMessages({
     description:
       'Single status string shown while the user completes SCA and we poll for terminal status',
   },
+  finishInBankApp: {
+    id: 'payments:bankTransfer.finishInBankApp',
+    defaultMessage: 'Kláraðu greiðsluna í bankaappinu þínu',
+    description:
+      'Waiting-screen status when there is no SCA redirect (back-channel) — payer finishes the payment in their bank app. EN: "Finish the payment with your bank app"',
+  },
   continuePayment: {
     id: 'payments:bankTransfer.continuePayment',
     defaultMessage: 'Halda áfram með greiðslu',
