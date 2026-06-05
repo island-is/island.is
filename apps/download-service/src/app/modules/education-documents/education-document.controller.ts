@@ -13,9 +13,18 @@ import {
 } from '@island.is/clients/university-careers'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { AuditService } from '@island.is/nest/audit'
-import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Header,
+  Inject,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { unmaskString } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -26,6 +35,7 @@ export class EducationController {
     private readonly universitiesApi: UniversityCareersClientService,
     private readonly primarySchoolService: PrimarySchoolClientService,
     private readonly auditService: AuditService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Post('/graduation/:university/:file')
@@ -95,35 +105,45 @@ export class EducationController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const blob = await this.primarySchoolService.getAssignmentResultPdf(
-      user,
-      studentId,
-      assignmentResultId,
-    )
+    try {
+      const blob = await this.primarySchoolService.getAssignmentResultPdf(
+        user,
+        studentId,
+        assignmentResultId,
+      )
 
-    if (blob) {
-      this.auditService.audit({
-        action: 'getPrimarySchoolAssignmentResultPdf',
-        auth: user,
-        resources: `${studentId}/${assignmentResultId}`,
+      if (blob) {
+        this.auditService.audit({
+          action: 'getPrimarySchoolAssignmentResultPdf',
+          auth: user,
+          resources: `${studentId}/${assignmentResultId}`,
+        })
+
+        const contentArrayBuffer = await blob.arrayBuffer()
+        const buffer = Buffer.from(contentArrayBuffer)
+
+        res.header('Content-length', buffer.length.toString())
+        res.header(
+          'Content-Disposition',
+          `attachment; filename="${user.nationalId}-namsmat-${assignmentResultId}.pdf"`,
+        )
+        res.header('Content-Type', 'application/pdf')
+        res.header('Pragma', 'no-cache')
+        res.header(
+          'Cache-Control',
+          'no-cache, no-store, max-age=0, must-revalidate',
+        )
+        return res.status(200).end(buffer)
+      }
+      return res.status(404).end()
+    } catch (error) {
+      this.logger.error('Failed to get primary school assignment result PDF', {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        studentId,
+        assignmentResultId,
       })
-
-      const contentArrayBuffer = await blob.arrayBuffer()
-      const buffer = Buffer.from(contentArrayBuffer)
-
-      res.header('Content-length', buffer.length.toString())
-      res.header(
-        'Content-Disposition',
-        `attachment; filename="${user.nationalId}-namsmat-${assignmentResultId}.pdf"`,
-      )
-      res.header('Content-Type', 'application/pdf')
-      res.header('Pragma', 'no-cache')
-      res.header(
-        'Cache-Control',
-        'no-cache, no-store, max-age=0, must-revalidate',
-      )
-      return res.status(200).end(buffer)
+      return res.status(500).end()
     }
-    return res.status(404).end()
   }
 }
