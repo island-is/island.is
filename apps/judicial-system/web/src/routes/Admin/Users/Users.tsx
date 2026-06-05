@@ -89,7 +89,7 @@ export const Users = () => {
                 router.push(ADMIN_MESSAGE_SUSPENSION_ROUTE)
               }}
             >
-              Frestun skilaboða
+              Biðröð
             </Button>
           )}
           <Button
