@@ -9,7 +9,7 @@ import { error } from '../lib/messages'
 
 export {
   UserProfileApi,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
 } from '@island.is/application/types'
 
 export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -73,7 +73,7 @@ export const NationalRegistryBirthplaceApi = defineTemplateApi({
 export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
   action: 'getSpouse',
   externalDataId: 'spouseDetails',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const NationalRegistryParentsApi = defineTemplateApi({

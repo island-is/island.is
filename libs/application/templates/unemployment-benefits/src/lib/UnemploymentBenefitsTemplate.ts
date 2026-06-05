@@ -9,7 +9,7 @@ import {
   FormModes,
   ApplicationConfigurations,
   NationalRegistryV3UserApi,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../shared/constants'
@@ -74,7 +74,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 NationalRegistryV3UserApi,
-                ChildrenCustodyInformationApi,
+                ChildrenCustodyInformationApiV3,
                 UnemploymentApi,
               ],
               delete: true,

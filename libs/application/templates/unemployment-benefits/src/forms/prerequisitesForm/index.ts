@@ -9,7 +9,7 @@ import { DefaultEvents } from '@island.is/application/types'
 import {
   FormModes,
   NationalRegistryV3UserApi,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
 } from '@island.is/application/types'
 import { UnemploymentApi, UserProfileApi } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
@@ -36,7 +36,7 @@ export const Prerequisites = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
