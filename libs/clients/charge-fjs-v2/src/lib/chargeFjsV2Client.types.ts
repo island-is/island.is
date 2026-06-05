@@ -1,3 +1,9 @@
+import { PayInfoPaymentMeansEnum } from '../../gen/fetch'
+
+// Single source of truth for payment means (Kreditkort / Debetkort / Milli) is the generated model,
+// which tracks the FJS OpenAPI spec. Re-exported so consumers keep importing it from this client.
+export { PayInfoPaymentMeansEnum }
+
 export interface Charge {
   systemID: string
   performingOrgID: string
@@ -36,9 +42,9 @@ interface ChargeItem {
 interface PayInfo {
   /**
    * Reference for the payment. For card payments this is the acquirer reference (RRN); for a bank
-   * transfer it carries the provider payment id so FJS can reconcile against the provider.
+   * transfer it carries the provider payment id so FJS can reconcile against the provider. Required.
    */
-  RRN?: string
+  RRN: string
   /** Card-only — present only when `paymentMeans` is a card type. */
   cardType?: string
   paymentMeans: PayInfoPaymentMeansEnum
@@ -73,17 +79,6 @@ export interface CatalogItem {
   paymentOptions?: string[]
 }
 
-export enum PayInfoPaymentMeansEnum {
-  Kreditkort = 'Kreditkort',
-  Debetkort = 'Debetkort',
-  /**
-   * Bank transfer. Requires the FJS backend to (1) accept this `paymentMeans` value on a paid charge and
-   * (2) treat the card-only `payInfo` fields (`cardType`/`authCode`/`PAN`/`RRN`) as optional for it.
-   * The generated client (`gen/fetch/models/PayInfo.ts`) must be regenerated once FJS ships the matching
-   * OpenAPI change. Exact string is pending FJS confirmation.
-   */
-  Millifaersla = 'Millifærsla',
-}
 export interface PayeeInfo {
   nationalId: string
   name: string

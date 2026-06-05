@@ -1,5 +1,3 @@
-import { z } from 'zod'
-
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 
@@ -59,18 +57,3 @@ export interface BankTransferStatusOverlay {
   // Row TTL; drives the FE polling hard timeout.
   bankTransferExpiresAt?: Date
 }
-
-export const blikkCreatePaymentResponseSchema = z.object({
-  id: z.string(),
-  status: z.string(),
-  scaRedirectUrl: z.string().optional(),
-  message: z.string().optional(),
-  partnerRedirectUrl: z.string().optional(),
-})
-
-export const blikkGetPaymentResponseSchema = z.object({
-  id: z.string(),
-  status: z.string(),
-  scaRedirectUrl: z.string().optional(),
-  message: z.string().optional(),
-})

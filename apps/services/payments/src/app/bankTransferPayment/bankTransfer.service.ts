@@ -1,5 +1,4 @@
 import { v4 as uuid } from 'uuid'
-import { z } from 'zod'
 
 import {
   BadRequestException,
@@ -13,6 +12,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Charge } from '@island.is/clients/charge-fjs-v2'
+import {
+  BlikkClientError,
+  BlikkClientService,
+  CreateBlikkPaymentRequest,
+} from '@island.is/clients/blikk'
 import {
   BankTransferErrorCode,
   FjsErrorCode,
@@ -30,8 +34,6 @@ import {
   BankTransferStatus,
   BankTransferStatusOverlay,
   CreateBankTransferPaymentInput,
-  blikkCreatePaymentResponseSchema,
-  blikkGetPaymentResponseSchema,
 } from './bankTransfer.types'
 import { BankTransferModuleConfig } from './bankTransfer.config'
 import {
@@ -55,8 +57,6 @@ import {
   toBlikkItem,
 } from './bankTransfer.utils'
 
-const REQUEST_TIMEOUT_MS = 10000
-
 /** Service for the bank-transfer payment method (Blikk is the v1 provider). */
 @Injectable()
 export class BankTransferService {
@@ -76,6 +76,7 @@ export class BankTransferService {
     private readonly paymentFlowConfig: ConfigType<
       typeof PaymentFlowModuleConfig
     >,
+    private readonly blikkClient: BlikkClientService,
   ) {}
 
   /** Initiates a new bank-transfer attempt with Blikk and persists the row. */
@@ -448,29 +449,46 @@ export class BankTransferService {
       where: { paymentFlowId, isDeleted: false },
     })
 
-    if (existing) {
+    // Fulfillment and FJS charge already exist — skip.
+    if (existing?.fjsChargeId) {
       this.logger.info(
-        `[${paymentFlowId}] Bank transfer already fulfilled — skipping FJS charge`,
+        `[${paymentFlowId}] Bank transfer already fulfilled and charged — skipping FJS charge`,
+        { fulfillmentId: existing.id, fjsChargeId: existing.fjsChargeId },
       )
       return
     }
 
-    try {
-      await this.paymentFulfillmentModel.create({
-        paymentFlowId,
-        paymentMethod: 'bank_transfer',
-        confirmationRefId,
-      })
-    } catch (error) {
-      if ((error as Error)?.name === 'SequelizeUniqueConstraintError') {
+    // Fulfillment does not exist — create it.
+    if (!existing) {
+      try {
+        await this.paymentFulfillmentModel.create({
+          paymentFlowId,
+          paymentMethod: 'bank_transfer',
+          confirmationRefId,
+        })
+      } catch (error) {
+        if ((error as Error)?.name !== 'SequelizeUniqueConstraintError') {
+          throw error
+        }
         this.logger.info(
-          `[${paymentFlowId}] Bank transfer fulfillment already claimed — skipping FJS charge`,
+          `[${paymentFlowId}] Bank transfer fulfillment already claimed — ensuring FJS charge`,
         )
-        return
       }
-      throw error
+    } else {
+      this.logger.info(
+        `[${paymentFlowId}] Bank transfer fulfillment exists without an FJS charge — re-attempting`,
+        { fulfillmentId: existing.id },
+      )
     }
 
+    this.logger.info(`[${paymentFlowId}] Creating bank transfer FJS charge`, {
+      confirmationRefId,
+      paymentMeans: chargePayload.payInfo?.paymentMeans,
+      rrn: chargePayload.payInfo?.RRN,
+      payableAmount: chargePayload.payInfo?.payableAmount,
+    })
+
+    // A fulfillment without an FJS charge must re-attempt the charge; createFjsCharge is idempotent.
     try {
       await retry(
         () =>
@@ -484,11 +502,18 @@ export class BankTransferService {
             error.message !== FjsErrorCode.AlreadyCreatedCharge,
         },
       )
+      this.logger.info(
+        `[${paymentFlowId}] Bank transfer FJS charge created and linked`,
+      )
     } catch (error) {
       // Fulfillment is committed; we don't un-pay. Missing FJS charge needs manual reconciliation.
       this.logger.error(
         `[${paymentFlowId}] CRITICAL: bank transfer settled but FJS charge failed after retries — manual reconciliation required`,
-        { error: (error as Error)?.message },
+        {
+          errorName: (error as Error)?.name,
+          error: (error as Error)?.message,
+          stack: (error as Error)?.stack,
+        },
       )
     }
   }
@@ -496,7 +521,7 @@ export class BankTransferService {
   async createBankTransferPayment(
     input: CreateBankTransferPaymentInput,
   ): Promise<BankTransferPaymentResult> {
-    const body = {
+    const body: CreateBlikkPaymentRequest = {
       amount: input.amount,
       currency: input.currency,
       sourceReferenceId: input.correlationId,
@@ -507,32 +532,31 @@ export class BankTransferService {
       items: input.items?.map(toBlikkItem),
     }
 
-    const data = await this.request(
-      'POST',
-      '/ecom/v3/payments',
-      blikkCreatePaymentResponseSchema,
-      BankTransferErrorCode.FailedToCreateBankTransfer,
-      input.paymentFlowId,
-      body,
-    )
-
-    const result = this.toResult(data)
-
-    return result
+    try {
+      return this.toResult(await this.blikkClient.createPayment(body))
+    } catch (e) {
+      if (e instanceof BlikkClientError) {
+        throw new BadRequestException(
+          BankTransferErrorCode.FailedToCreateBankTransfer,
+        )
+      }
+      throw e
+    }
   }
 
   async getPayment(
     providerPaymentId: string,
   ): Promise<BankTransferPaymentResult> {
-    const data = await this.request(
-      'GET',
-      `/ecom/v3/payments/${encodeURIComponent(providerPaymentId)}`,
-      blikkGetPaymentResponseSchema,
-      BankTransferErrorCode.FailedToFetchBankTransfer,
-      providerPaymentId,
-    )
-
-    return this.toResult(data)
+    try {
+      return this.toResult(await this.blikkClient.getPayment(providerPaymentId))
+    } catch (e) {
+      if (e instanceof BlikkClientError) {
+        throw new BadRequestException(
+          BankTransferErrorCode.FailedToFetchBankTransfer,
+        )
+      }
+      throw e
+    }
   }
 
   /**
@@ -724,66 +748,35 @@ export class BankTransferService {
   }
 
   /**
-   * DELETE Blikk payment. Blikk only cancels payments still in DRAFT; a payment the user has already
-   * taken to the bank (past DRAFT) returns a non-2xx and is NOT cancelled.
+   * Cancels the Blikk payment. Blikk only cancels payments still in DRAFT; a payment the user has
+   * already taken to the bank (past DRAFT) yields a non-2xx, surfaced as a `BlikkClientError`. We
+   * tolerate a 404 (nothing live to orphan) but otherwise refuse to soft-delete so the still-live
+   * payment stays trackable by verify/webhook/TTL.
    */
   private async cancelBlikkPayment(
     providerPaymentId: string,
     logPrefix: string,
   ): Promise<void> {
-    const url = `${this.config.baseUrl}/ecom/v3/payments/${encodeURIComponent(
-      providerPaymentId,
-    )}`
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
-
-    let response: Response
     try {
-      response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'API-Key': this.config.apiKey,
-        },
-        signal: controller.signal,
+      await this.blikkClient.cancelPayment(providerPaymentId)
+      this.logger.info(`${logPrefix}Blikk cancel succeeded`, {
+        providerPaymentId,
       })
     } catch (e) {
-      // Network/timeout: we don't know whether the payment is live — fail safe (don't soft-delete).
-      this.logger.warn(`${logPrefix}Blikk cancel request failed`, {
+      if (e instanceof BlikkClientError && e.status === 404) {
+        this.logger.warn(`${logPrefix}Blikk cancel target not found (404)`, {
+          providerPaymentId,
+        })
+        return
+      }
+      this.logger.warn(`${logPrefix}Blikk cancel refused — payment is live`, {
         providerPaymentId,
-        error: (e as Error)?.message,
+        status: e instanceof BlikkClientError ? e.status : undefined,
       })
       throw new BadRequestException(
         BankTransferErrorCode.BankTransferAlreadyInProgress,
       )
-    } finally {
-      clearTimeout(timeout)
     }
-
-    if (response.ok) {
-      this.logger.info(`${logPrefix}Blikk cancel succeeded`, {
-        providerPaymentId,
-      })
-      return
-    }
-
-    if (response.status === 404) {
-      this.logger.warn(`${logPrefix}Blikk cancel target not found (404)`, {
-        providerPaymentId,
-      })
-      return
-    }
-
-    // Any other non-2xx means Blikk refused to cancel (payment is past DRAFT / live). Refuse to
-    // soft-delete so the still-live payment stays trackable by verify/webhook/TTL.
-    this.logger.warn(`${logPrefix}Blikk cancel returned non-2xx`, {
-      providerPaymentId,
-      status: response.status,
-      statusText: response.statusText,
-    })
-    throw new BadRequestException(
-      BankTransferErrorCode.BankTransferAlreadyInProgress,
-    )
   }
 
   /** Builds the FJS charge payload for a settled bank transfer. */
@@ -829,76 +822,5 @@ export class BankTransferService {
       scaRedirectUrl: data.scaRedirectUrl || undefined,
       message: data.message || undefined,
     }
-  }
-
-  private async request<T>(
-    method: 'GET' | 'POST',
-    path: string,
-    schema: z.ZodType<T>,
-    errorCode: BankTransferErrorCode,
-    logRef: string,
-    body?: unknown,
-  ): Promise<T> {
-    const logPrefix = logRef ? `[${logRef}] ` : ''
-    const url = `${this.config.baseUrl}${path}`
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
-
-    let response: Response
-    try {
-      response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'API-Key': this.config.apiKey,
-        },
-        body: body === undefined ? undefined : JSON.stringify(body),
-        signal: controller.signal,
-      })
-    } catch (e) {
-      this.logger.error(`${logPrefix}Bank transfer request failed`, {
-        method,
-        path,
-        error: e?.message,
-        timestamp: new Date().toISOString(),
-      })
-      throw new BadRequestException(errorCode)
-    } finally {
-      clearTimeout(timeout)
-    }
-
-    let responseBody: unknown
-    try {
-      responseBody = await response.json()
-    } catch {
-      responseBody = undefined
-    }
-
-    if (!response.ok) {
-      this.logger.error(
-        `${logPrefix}Bank transfer returned an error response`,
-        {
-          method,
-          path,
-          status: response.status,
-          statusText: response.statusText,
-          responseBody,
-        },
-      )
-      throw new BadRequestException(errorCode)
-    }
-
-    const parsed = schema.safeParse(responseBody)
-    if (!parsed.success) {
-      this.logger.error(`${logPrefix}Failed to parse bank transfer response`, {
-        method,
-        path,
-        parseError: parsed.error,
-        timestamp: new Date().toISOString(),
-      })
-      throw new BadRequestException(errorCode)
-    }
-
-    return parsed.data
   }
 }

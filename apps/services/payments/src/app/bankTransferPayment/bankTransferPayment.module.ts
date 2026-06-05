@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { BlikkClientModule } from '@island.is/clients/blikk'
 
 import { PaymentFlowModule } from '../paymentFlow/paymentFlow.module'
 import { BankTransferModuleConfig } from './bankTransfer.config'
@@ -15,6 +16,7 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
   imports: [
     SequelizeModule.forFeature([BankTransferPayment]),
     ConfigModule.forRoot({ load: [BankTransferModuleConfig] }),
+    BlikkClientModule,
     FeatureFlagModule,
     forwardRef(() => PaymentFlowModule),
   ],
