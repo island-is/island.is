@@ -1,8 +1,11 @@
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 import { createTestingMessageSuspensionModule } from './createTestingMessageSuspensionModule'
 
-import { MessageSuspension, MessageSuspensionRepositoryService } from '../../repository'
+import {
+  MessageSuspension,
+  MessageSuspensionRepositoryService,
+} from '../../repository'
 import { MessageSuspensionController } from '../messageSuspension.controller'
 
 interface Then {
@@ -18,10 +21,8 @@ describe('MessageSuspensionController - Get all', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageSuspensionRepositoryService,
-      messageSuspensionController,
-    } = await createTestingMessageSuspensionModule()
+    const { messageSuspensionRepositoryService, messageSuspensionController } =
+      await createTestingMessageSuspensionModule()
 
     mockRepository = messageSuspensionRepositoryService
     controller = messageSuspensionController

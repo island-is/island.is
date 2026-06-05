@@ -1,14 +1,6 @@
-import { MessageType } from './message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
-// Categories of messages that can be suspended together. Suspension is toggled
-// per category, so all message types mapped to the same category are suspended
-// and resumed as a unit.
-export enum MessageSuspensionCategory {
-  COURT = 'COURT',
-  COURT_OF_APPEALS = 'COURT_OF_APPEALS',
-  POLICE = 'POLICE',
-  NATIONAL_COMMISSIONERS_OFFICE = 'NATIONAL_COMMISSIONERS_OFFICE',
-}
+import { MessageType } from './message'
 
 // Explicit mapping from message type to suspension category. We deliberately do
 // not derive this from message type name prefixes at runtime: the prefixes

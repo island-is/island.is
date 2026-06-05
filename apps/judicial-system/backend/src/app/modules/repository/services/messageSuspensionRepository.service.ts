@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 import { MessageSuspension } from '../models/messageSuspension.model'
 

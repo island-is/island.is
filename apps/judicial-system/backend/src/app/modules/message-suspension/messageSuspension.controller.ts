@@ -19,8 +19,10 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  MessageSuspensionCategory,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { adminRule } from '../../guards'
 import { MessageSuspension } from '../repository'

@@ -11,11 +11,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import type { Message, SuspensionDecision } from '@island.is/judicial-system/message'
-import {
-  getMessageSuspensionCategory,
-  MessageSuspensionCategory,
+import type {
+  Message,
+  SuspensionDecision,
 } from '@island.is/judicial-system/message'
+import { getMessageSuspensionCategory } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 
@@ -31,7 +32,10 @@ export class SuspensionSettingsService
 {
   // Last known suspension settings, keyed by category. Empty until the first
   // successful refresh, which means we fail open (handle everything) on startup.
-  private settings = new Map<MessageSuspensionCategory, MessageSuspensionSetting>()
+  private settings = new Map<
+    MessageSuspensionCategory,
+    MessageSuspensionSetting
+  >()
   private timer?: NodeJS.Timeout
 
   constructor(

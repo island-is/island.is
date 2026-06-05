@@ -70,6 +70,8 @@ export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
 
+export { MessageSuspensionCategory } from './lib/messageSuspension'
+
 export {
   CaseFileState,
   CaseFileCategory,

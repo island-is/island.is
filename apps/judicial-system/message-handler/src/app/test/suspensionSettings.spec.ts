@@ -2,11 +2,8 @@ import fetch from 'node-fetch'
 
 import type { Logger } from '@island.is/logging'
 
-import {
-  Message,
-  MessageSuspensionCategory,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../app.config'
 import { SuspensionSettingsService } from '../suspensionSettings.service'

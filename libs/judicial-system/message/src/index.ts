@@ -5,7 +5,6 @@ export { MessageService } from './lib/message.service'
 export { MessageMiddleware, addMessagesToQueue } from './lib/message.middleware'
 export { messageModuleConfig } from './lib/message.config'
 export {
-  MessageSuspensionCategory,
   messageTypeToSuspensionCategory,
   getMessageSuspensionCategory,
   type SuspensionDecision,

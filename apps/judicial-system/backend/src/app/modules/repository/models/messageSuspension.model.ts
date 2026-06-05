@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 @Table({
   tableName: 'message_suspension',

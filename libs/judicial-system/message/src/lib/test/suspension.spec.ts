@@ -1,7 +1,8 @@
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
+
 import { MessageType } from '../message'
 import {
   getMessageSuspensionCategory,
-  MessageSuspensionCategory,
   messageTypeToSuspensionCategory,
 } from '../suspension'
 

@@ -1,5 +1,7 @@
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  MessageSuspensionCategory,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingMessageSuspensionModule } from './createTestingMessageSuspensionModule'
 

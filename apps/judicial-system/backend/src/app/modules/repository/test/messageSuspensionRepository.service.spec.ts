@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageSuspensionCategory } from '@island.is/judicial-system/message'
+import { MessageSuspensionCategory } from '@island.is/judicial-system/types'
 
 import { MessageSuspension } from '../models/messageSuspension.model'
 import { MessageSuspensionRepositoryService } from '../services/messageSuspensionRepository.service'
@@ -61,7 +61,10 @@ describe('MessageSuspensionRepositoryService', () => {
 
       expect(model.update).toHaveBeenCalledWith(
         { suspended: true, modifiedBy: '1234567890' },
-        { where: { category: MessageSuspensionCategory.POLICE }, returning: true },
+        {
+          where: { category: MessageSuspensionCategory.POLICE },
+          returning: true,
+        },
       )
       expect(result).toBe(updated)
     })
