@@ -368,6 +368,26 @@ export const UserForm: FC<Props> = ({
               />
             </Box>
           )}
+        {/* Only the super admin may grant the message suspension capability,
+            and it is only meaningful for local admins. */}
+        {admin?.role === UserRole.ADMIN &&
+          user.role === UserRole.LOCAL_ADMIN && (
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canManageMessageSuspension"
+                label="Notandi getur stjórnað frestun skilaboða"
+                checked={Boolean(user.canManageMessageSuspension)}
+                onChange={({ target }) =>
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    canManageMessageSuspension: target.checked,
+                  }))
+                }
+                large
+                filled
+              />
+            </Box>
+          )}
         <Box marginBottom={2}>
           <Input
             name="title"

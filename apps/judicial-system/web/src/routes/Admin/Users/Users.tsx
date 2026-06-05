@@ -13,6 +13,7 @@ import {
 import {
   ADMIN_CHANGE_USER_ROUTE,
   ADMIN_CREATE_USER_ROUTE,
+  ADMIN_MESSAGE_SUSPENSION_ROUTE,
   ADMIN_STATISTICS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -26,7 +27,10 @@ import {
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { userRoleToString } from '../userRoleToString'
@@ -75,15 +79,29 @@ export const Users = () => {
         >
           Nýr notandi
         </Button>
-        <Button
-          variant="ghost"
-          icon="calculator"
-          onClick={() => {
-            router.push(ADMIN_STATISTICS_ROUTE)
-          }}
-        >
-          Tölfræði
-        </Button>
+        <Box display="flex" columnGap={2}>
+          {(user?.role === UserRole.ADMIN ||
+            user?.canManageMessageSuspension) && (
+            <Button
+              variant="ghost"
+              icon="settings"
+              onClick={() => {
+                router.push(ADMIN_MESSAGE_SUSPENSION_ROUTE)
+              }}
+            >
+              Frestun skilaboða
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            icon="calculator"
+            onClick={() => {
+              router.push(ADMIN_STATISTICS_ROUTE)
+            }}
+          >
+            Tölfræði
+          </Button>
+        </Box>
       </Box>
 
       <Box
