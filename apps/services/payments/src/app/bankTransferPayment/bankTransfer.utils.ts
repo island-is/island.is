@@ -77,7 +77,11 @@ export const rowLogPrefix = (
     'paymentFlowId' | 'sourceReferenceId' | 'providerPaymentId'
   >,
 ): string =>
-  createLogPrefix(row.paymentFlowId, row.sourceReferenceId, row.providerPaymentId)
+  createLogPrefix(
+    row.paymentFlowId,
+    row.sourceReferenceId,
+    row.providerPaymentId,
+  )
 
 /** True for ERROR / REJECTED / CANCELLED (distinct from `isTerminalBankTransferStatus` which includes SUCCESS). */
 export const isBankTransferFailureStatus = (

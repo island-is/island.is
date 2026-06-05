@@ -1,9 +1,6 @@
 import type { ConfigType } from '@island.is/nest/config'
 import type { Logger } from '@island.is/logging'
-import {
-  EnhancedFetchAPI,
-  FetchError,
-} from '@island.is/clients/middlewares'
+import { EnhancedFetchAPI, FetchError } from '@island.is/clients/middlewares'
 
 import { BlikkClientConfig } from './blikkClient.config'
 import { BlikkClientService } from './blikkClient.service'

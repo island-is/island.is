@@ -28,23 +28,25 @@ import {
 
 const resolved = <T>(v: T): never => v as never
 
-const mockBankTransferFulfillmentWithFjs: InferAttributes<PaymentFulfillment> = {
-  id: uuid(),
-  paymentFlowId: PAYMENT_FLOW_ID,
-  confirmationRefId: uuid(),
-  paymentMethod: 'bank_transfer',
-  fjsChargeId: 'fjs-charge-id',
-  isDeleted: false,
-  created: new Date(),
-  modified: new Date(),
-}
+const mockBankTransferFulfillmentWithFjs: InferAttributes<PaymentFulfillment> =
+  {
+    id: uuid(),
+    paymentFlowId: PAYMENT_FLOW_ID,
+    confirmationRefId: uuid(),
+    paymentMethod: 'bank_transfer',
+    fjsChargeId: 'fjs-charge-id',
+    isDeleted: false,
+    created: new Date(),
+    modified: new Date(),
+  }
 
-const mockBankTransferFulfillmentWithoutFjs: InferAttributes<PaymentFulfillment> = {
-  ...mockBankTransferFulfillmentWithFjs,
-  id: uuid(),
-  confirmationRefId: uuid(),
-  fjsChargeId: null,
-}
+const mockBankTransferFulfillmentWithoutFjs: InferAttributes<PaymentFulfillment> =
+  {
+    ...mockBankTransferFulfillmentWithFjs,
+    id: uuid(),
+    confirmationRefId: uuid(),
+    fjsChargeId: null,
+  }
 
 const SUCCESS_PROVIDER_PAYMENT_ID = 'blikk-payment-id'
 
@@ -148,7 +150,11 @@ describe('Bank Transfer Refund Saga', () => {
   describe('VALIDATE_REFUND', () => {
     it('returns needsFjsCreate=false when fjsChargeId is present', async () => {
       const { context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(context.stepResults.VALIDATE_REFUND).toEqual({
         needsFjsCreate: false,
@@ -162,7 +168,11 @@ describe('Bank Transfer Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga(
         mockBankTransferFulfillmentWithoutFjs,
       )
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(context.stepResults.VALIDATE_REFUND).toEqual({
         needsFjsCreate: true,
@@ -176,23 +186,30 @@ describe('Bank Transfer Refund Saga', () => {
         null,
       )
 
-      await expect(orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)).rejects.toThrow(
-        PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
-      )
+      await expect(
+        orchestrator.execute(
+          saga,
+          context,
+          BANK_TRANSFER_REFUND_SAGA_START_STEP,
+        ),
+      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
     })
   })
 
   describe('DELETE_BANK_TRANSFER_FULFILLMENT', () => {
     it('should call deletePaymentFulfillment', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(
         mockPaymentFlowService.deletePaymentFulfillment,
       ).toHaveBeenCalledWith({
         paymentFlowId: input.paymentFlowId,
-        confirmationRefId:
-          mockBankTransferFulfillmentWithFjs.confirmationRefId,
+        confirmationRefId: mockBankTransferFulfillmentWithFjs.confirmationRefId,
         correlationId: mockBankTransferFulfillmentWithFjs.id,
       })
     })
@@ -204,16 +221,24 @@ describe('Bank Transfer Refund Saga', () => {
 
       const { context, saga, orchestrator } = setupSaga()
 
-      await expect(orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)).rejects.toThrow(
-        PaymentServiceCode.CouldNotDeletePaymentFulfillment,
-      )
+      await expect(
+        orchestrator.execute(
+          saga,
+          context,
+          BANK_TRANSFER_REFUND_SAGA_START_STEP,
+        ),
+      ).rejects.toThrow(PaymentServiceCode.CouldNotDeletePaymentFulfillment)
     })
   })
 
   describe('ENSURE_FJS_CHARGE', () => {
     it('is skipped entirely when fjsChargeId is present', async () => {
       const { context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(mockPaymentFlowService.createFjsCharge).not.toHaveBeenCalled()
       expect(context.stepResults.ENSURE_FJS_CHARGE).toBeUndefined()
@@ -224,7 +249,11 @@ describe('Bank Transfer Refund Saga', () => {
       const { input, context, saga, orchestrator } = setupSaga(
         mockBankTransferFulfillmentWithoutFjs,
       )
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(mockPaymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
       const [paymentFlowId, payload] =
@@ -246,7 +275,11 @@ describe('Bank Transfer Refund Saga', () => {
   describe('DELETE_FJS_CHARGE', () => {
     it('should call deleteFjsCharge', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(mockPaymentFlowService.deleteFjsCharge).toHaveBeenCalledWith(
         input.paymentFlowId,
@@ -255,14 +288,19 @@ describe('Bank Transfer Refund Saga', () => {
 
     it('should log refund started with bank_transfer paymentMethod', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           paymentFlowId: input.paymentFlowId,
           paymentMethod: 'bank_transfer',
           reason: 'refund_started',
-          message: 'Bank transfer refund started because of fulfillment failure',
+          message:
+            'Bank transfer refund started because of fulfillment failure',
         }),
       )
     })
@@ -271,7 +309,11 @@ describe('Bank Transfer Refund Saga', () => {
   describe('LOG_REFUND_SUCCESS', () => {
     it('should call logPaymentFlowUpdate with refund_completed', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -293,7 +335,11 @@ describe('Bank Transfer Refund Saga', () => {
   describe('executes all steps in sequence', () => {
     it('skips ENSURE_FJS_CHARGE when the fulfillment already has an FJS charge', async () => {
       const { context, saga, orchestrator } = setupSaga()
-      const result = await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      const result = await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(result.success).toBe(true)
       expect(context.completedSteps).toEqual([
@@ -308,7 +354,11 @@ describe('Bank Transfer Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga(
         mockBankTransferFulfillmentWithoutFjs,
       )
-      const result = await orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)
+      const result = await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
 
       expect(result.success).toBe(true)
       expect(context.completedSteps).toEqual([
@@ -329,16 +379,19 @@ describe('Bank Transfer Refund Saga', () => {
 
       const { input, context, saga, orchestrator } = setupSaga()
 
-      await expect(orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)).rejects.toThrow(
-        'FJS delete failed',
-      )
+      await expect(
+        orchestrator.execute(
+          saga,
+          context,
+          BANK_TRANSFER_REFUND_SAGA_START_STEP,
+        ),
+      ).rejects.toThrow('FJS delete failed')
 
       expect(
         mockPaymentFlowService.restorePaymentFulfillment,
       ).toHaveBeenCalledWith({
         paymentFlowId: input.paymentFlowId,
-        confirmationRefId:
-          mockBankTransferFulfillmentWithFjs.confirmationRefId,
+        confirmationRefId: mockBankTransferFulfillmentWithFjs.confirmationRefId,
       })
     })
   })
@@ -356,9 +409,13 @@ describe('Bank Transfer Refund Saga', () => {
 
       const { context, saga, orchestrator } = setupSaga()
 
-      await expect(orchestrator.execute(saga, context, BANK_TRANSFER_REFUND_SAGA_START_STEP)).rejects.toThrow(
-        'Log failed',
-      )
+      await expect(
+        orchestrator.execute(
+          saga,
+          context,
+          BANK_TRANSFER_REFUND_SAGA_START_STEP,
+        ),
+      ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
     })
