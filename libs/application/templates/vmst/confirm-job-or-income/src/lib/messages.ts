@@ -323,7 +323,7 @@ export const application = defineMessages({
   /* Completed form */
   completedFormAlertTitle: {
     id: 'vmst.cjoi.application:completedFormAlertTitle',
-    defaultMessage: 'Breytingar þínar hafa verið vistaðar',
+    defaultMessage: 'Tilkynning um tekjur hefur verið móttekin',
     description: 'Title for alert when form is completed',
   },
 })
