@@ -1,5 +1,5 @@
 import type { ApolloError } from '@apollo/client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { PaymentsBankTransferStatus } from '@island.is/api/schema'
 import {
@@ -18,8 +18,6 @@ interface UseBankTransferStatusPollingProps {
   paymentFlowId: string | undefined
   // Gate the loop`.
   enabled: boolean
-  // Bump to restart polling
-  trigger?: unknown
   // Bank transfer payment `expires_at` (matches the TTL we shared with Blikk). Drives the hard timeout
   expiresAt?: Date | string | null
   onSuccess: () => void
@@ -53,13 +51,11 @@ const computeHardTimeoutMs = (
 export const useBankTransferStatusPolling = ({
   paymentFlowId,
   enabled,
-  trigger,
   expiresAt,
   onSuccess,
   onFailure,
 }: UseBankTransferStatusPollingProps) => {
   const [verifyBankTransferMutation] = useVerifyBankTransferMutation()
-  const [isPolling, setIsPolling] = useState(false)
 
   // Latest-value refs so callback identity changes don't restart the effect.
   const onSuccessRef = useRef(onSuccess)
@@ -73,7 +69,6 @@ export const useBankTransferStatusPolling = ({
 
   useEffect(() => {
     if (!enabled || !paymentFlowId) {
-      setIsPolling(false)
       return
     }
 
@@ -83,16 +78,12 @@ export const useBankTransferStatusPolling = ({
     const startedAt = Date.now()
     const hardTimeoutMs = computeHardTimeoutMs(expiresAt)
 
-    setIsPolling(true)
-
     const stop = () => {
       cancelled = true
 
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
-
-      setIsPolling(false)
     }
 
     const poll = async () => {
@@ -141,7 +132,7 @@ export const useBankTransferStatusPolling = ({
         }
         const problemDetail = findProblemInApolloError(e as ApolloError)?.detail
         if (problemDetail === BankTransferErrorCode.BankTransferNotFound) {
-          // No active attempt — exit silently. A subsequent `trigger` change restarts the loop.
+          // No active attempt — exit silently.
           stop()
           return
         }
@@ -159,9 +150,6 @@ export const useBankTransferStatusPolling = ({
         clearTimeout(timeoutId)
       }
     }
-    // `trigger` is in deps so callers can restart polling explicitly; `expiresAt` is in deps so
-    // a post-submit value updates the timeout when it arrives.
-  }, [paymentFlowId, enabled, trigger, expiresAt, verifyBankTransferMutation])
-
-  return { isPolling }
+    // `expiresAt` is in deps so a value arriving after mount updates the hard timeout.
+  }, [paymentFlowId, enabled, expiresAt, verifyBankTransferMutation])
 }
