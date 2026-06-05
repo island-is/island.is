@@ -54,6 +54,16 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     }
   }
 
+  async getEqualityReportTemplateHtml({ auth }: TemplateApiModuleActionProps) {
+    return this.directorateOfEqualityService.getEqualityReportTemplateHtml(auth)
+  }
+
+  async getEqualityReportTemplateDocx({ auth }: TemplateApiModuleActionProps) {
+    const blob = await this.directorateOfEqualityService.getEqualityReportTemplateDocx(auth)
+    const arrayBuffer = await blob.arrayBuffer()
+    return { base64: Buffer.from(arrayBuffer).toString('base64') }
+  }
+
   async submitEqualityReport({ auth, application }: TemplateApiModuleActionProps) {
     // TODO: map application.answers to SubmitEqualityReportDto once form fields are built
     const body = application.answers as unknown as SubmitEqualityReportDto

@@ -47,7 +47,28 @@ const subsidiaries = z.object({
     .optional(),
 })
 
-const information = z.object({})
+const decodeEditorHtml = (base64: string) => {
+  try {
+    return atob(base64).replace(/<[^>]*>/g, '').trim()
+  } catch {
+    return ''
+  }
+}
+
+const information = z.object({
+  checkbox: z
+    .array(z.string())
+    .nullish()
+    .refine((v) => v == null || v.includes('agree'), {
+      params: messages.errors.required,
+    }),
+  customField: z
+    .string()
+    .refine((v) => decodeEditorHtml(v).length > 0, {
+      params: messages.errors.required,
+    })
+    .optional(),
+})
 
 const goalsAndActions = z.object({})
 
