@@ -703,6 +703,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
+  reorderIndictmentCounts(
+    caseId: string,
+    body: unknown,
+  ): Promise<IndictmentCount[]> {
+    return this.patch(`case/${caseId}/indictmentCounts/reorder`, body)
+  }
+
   createCourtSession(
     caseId: string,
     createCourtSession: unknown,

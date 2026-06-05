@@ -9,7 +9,12 @@ query getAppointments(
       title
       date
       duration
+      modality
       practitioners
+      assignees {
+        type
+        name
+      }
       location {
         __typename
         name

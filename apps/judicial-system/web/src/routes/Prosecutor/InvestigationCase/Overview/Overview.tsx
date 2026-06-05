@@ -132,7 +132,7 @@ export const Overview = () => {
   }
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
