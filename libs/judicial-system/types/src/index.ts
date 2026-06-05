@@ -180,6 +180,7 @@ export {
   offenseSubstances,
   isTrafficViolationIndictmentCount,
   getIndictmentCountCompare,
+  sortIndictmentCounts,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
