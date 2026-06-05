@@ -147,6 +147,7 @@ local hook state.
 3. **Waiting screen** (`paymentStatus === bank_transfer_pending`). A dedicated page-card with a
    waiting alert and a **Cancel** button. The FE polls `verify` in the background and reloads on a
    terminal result. The alert depends on whether a redirect URL is present:
+
    - **Interactive** (`bankTransferScaRedirectUrl` present): `default` alert + a **Continue payment**
      button that re-opens the SCA URL (for a payer who bounced).
    - **Back-channel** (no redirect URL): `warning` alert "Finish the payment with your bank app",
@@ -154,6 +155,7 @@ local hook state.
 
    This screen is reached via **SSR**: returning from an interactive SCA redirect, or — for
    back-channel — the `router.reload()` the FE issues right after a redirect-less `create`.
+
 4. **Error screen** (`paymentError` set to a bank-transfer code). Title/message come from
    [`paymentErrorToTitleAndMessage`](../../../../../../apps/payments/utils/error/error.ts). The
    primary action ("Start again" / Back) runs `onErrorBack` → cancels the failed row and reloads
@@ -235,6 +237,14 @@ discarded. Two paths guard against it:
 - [`handleExistingActiveBankTransferRow`](./bankTransfer.service.ts) does the same when a payer
   re-runs `create` on a flow with a stale row: it re-checks Blikk and, on SUCCESS, finalizes and
   throws `PaymentFlowAlreadyPaid` rather than starting a second payment.
+
+**Persist failure after provider create.** In `create`, the Blikk payment is created before the
+local row is inserted. If that insert throws (e.g. the one-active-per-flow unique race on a
+concurrent double-submit), the provider payment is left as an orphaned **DRAFT**. This is benign and
+needs no reconciliation: the request throws before returning, so the payer never receives the
+`scaRedirectUrl` and the payment **cannot settle** (no money moves, no double-charge), and it
+**auto-expires** via the `expiresAt` TTL we sent Blikk. _Optional monitoring:_ alert on Blikk DRAFT
+payments with no matching `bank_transfer_payment` row that outlive the TTL.
 
 ## Cancel semantics
 
