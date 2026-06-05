@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import {
+  AppState,
   View,
   Image,
   Linking,
@@ -15,6 +16,10 @@ import { Button, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 
 const Text = styled.View<{ isSmallDevice: boolean }>`
@@ -58,6 +63,25 @@ export default function UpdateAppScreen() {
     }
     const sub = BackHandler.addEventListener('hardwareBackPress', () => true)
     return () => sub.remove()
+  }, [closable])
+
+  // Suppress the app lock — its dismissAll would pop this wall and let the
+  // user bypass the required update (version check only runs on home tab
+  // mount). Refresh on each foreground to outlast the 15-min cap.
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    suppressLockScreen()
+    const sub = AppState.addEventListener('change', (next) => {
+      if (next === 'active') {
+        suppressLockScreen()
+      }
+    })
+    return () => {
+      sub.remove()
+      clearLockScreenSuppression()
+    }
   }, [closable])
 
   return (
