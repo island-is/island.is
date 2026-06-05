@@ -3,7 +3,7 @@ import {
   authenticateAsync,
   AuthenticationType,
 } from 'expo-local-authentication'
-import { useRouter, useSegments } from 'expo-router'
+import { useGlobalSearchParams, useRouter, useSegments } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -104,19 +104,32 @@ function useShouldShowLock() {
 export function AppLock() {
   const router = useRouter()
   const segments = useSegments()
+  const params = useGlobalSearchParams<{ closable?: string }>()
   const shouldShow = useShouldShowLock()
   const inModal = segments.includes('(modals)' as never)
+  // The forced-update wall (update-app modal with closable=false) MUST stay
+  // up — the version check in (tabs)/index/index.tsx only runs once on mount,
+  // so dismissing the wall would let the user bypass a required update.
+  const onUnclosableUpdate =
+    segments.includes('update-app' as never) && params.closable === 'false'
+
   const [renderable, setRenderable] = useState(shouldShow)
   const opacity = useSharedValue(shouldShow ? 1 : 0)
 
   // Dismiss any stack-presented modal so the lock overlay isn't visually
   // covered by a native formSheet on iOS. Scoped to (modals)/* so regular
-  // stack pushes (e.g. inbox document) aren't popped.
+  // stack pushes (e.g. inbox document) aren't popped, and skipped for the
+  // forced-update wall (see above).
   useEffect(() => {
-    if (shouldShow && inModal && router.canDismiss()) {
+    if (
+      shouldShow &&
+      inModal &&
+      !onUnclosableUpdate &&
+      router.canDismiss()
+    ) {
       router.dismissAll()
     }
-  }, [shouldShow, inModal, router])
+  }, [shouldShow, inModal, onUnclosableUpdate, router])
 
   // Instant show; fade out on unlock. Re-lock mid-fade snaps back to 1.
   useEffect(() => {
