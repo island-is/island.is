@@ -20,7 +20,9 @@ interface BankTransferPaymentProps {
  * {@link useBankTransferPayment}; the waiting state covers both the return-from-SCA window and
  * the back-channel-SCA case where the user stays on the page.
  */
-export const BankTransferPayment = ({ isWaiting }: BankTransferPaymentProps) => {
+export const BankTransferPayment = ({
+  isWaiting,
+}: BankTransferPaymentProps) => {
   const { formatMessage } = useLocale()
 
   return (

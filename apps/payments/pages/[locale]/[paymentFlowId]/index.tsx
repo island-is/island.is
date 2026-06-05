@@ -5,7 +5,13 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useMemo, useState } from 'react'
 
 import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
-import { AlertMessage, Box, Button, LinkV2, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LinkV2,
+  toast,
+} from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'

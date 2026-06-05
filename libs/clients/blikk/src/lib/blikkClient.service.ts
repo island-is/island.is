@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ZodType } from 'zod'
 
-import {
-  EnhancedFetchAPI,
-  FetchError,
-} from '@island.is/clients/middlewares'
+import { EnhancedFetchAPI, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'

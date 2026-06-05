@@ -1002,10 +1002,11 @@ export class PaymentFlowService {
       )
 
       if (hasPayInfo) {
-        const [affectedFulfillments] = await this.paymentFulfillmentModel.update(
-          { fjsChargeId },
-          { where: { paymentFlowId, isDeleted: false }, transaction },
-        )
+        const [affectedFulfillments] =
+          await this.paymentFulfillmentModel.update(
+            { fjsChargeId },
+            { where: { paymentFlowId, isDeleted: false }, transaction },
+          )
         this.logger.info(
           `[${paymentFlowId}] Linked FJS charge to fulfillment`,
           { fjsChargeId, affectedFulfillments },
