@@ -49,4 +49,5 @@ export { createSubpoenaServiceCertificate } from './generatedPdfs/subpoenaServic
 export { createRulingSentToPrisonAdminPdf } from './generatedPdfs/rulingSentToPrisonAdminPdf'
 export { createFineSentToPrisonAdminPdf } from './generatedPdfs/fineSentToPrisonAdminPdf'
 export { getCaseFileHash } from './confirmation/getCaseFileHash'
+export type { Confirmation } from './pdfHelpers/pdfHelpers'
 export { createVerdictServiceCertificate } from './generatedPdfs/verdictServiceCertificatePdf'
