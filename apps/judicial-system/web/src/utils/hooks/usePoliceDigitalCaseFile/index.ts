@@ -8,8 +8,11 @@ import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCas
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
 const usePoliceDigitalCaseFile = () => {
-  const { workingCase, refreshCase } = useContext(FormContext)
-  const { id: caseId, origin: caseOrigin } = workingCase
+  const { workingCase, isLoadingWorkingCase, refreshCase } =
+    useContext(FormContext)
+  const { id: caseId, origin: caseOrigin, parentCase, splitCase } = workingCase
+  const effectiveCaseId = parentCase?.id ?? splitCase?.id ?? caseId
+
   const handleCompleted = useCallback(
     (completedData: {
       policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
@@ -27,8 +30,8 @@ const usePoliceDigitalCaseFile = () => {
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId } },
-    skip: caseOrigin !== CaseOrigin.LOKE,
+    variables: { input: { caseId: effectiveCaseId } },
+    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: handleCompleted,
@@ -50,19 +53,19 @@ const usePoliceDigitalCaseFile = () => {
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
       window.open(
-        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
+        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
         '_blank',
         'noopener',
       )
     },
-    [caseId],
+    [effectiveCaseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId, fileId } },
+          variables: { input: { caseId: effectiveCaseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -75,7 +78,7 @@ const usePoliceDigitalCaseFile = () => {
         return false
       }
     },
-    [caseId, deleteMutation, refetch],
+    [effectiveCaseId, deleteMutation, refetch],
   )
 
   return {
