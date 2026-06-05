@@ -124,6 +124,6 @@ export class EducationController {
       )
       return res.status(200).end(buffer)
     }
-    return res.end()
+    return res.status(404).end()
   }
 }

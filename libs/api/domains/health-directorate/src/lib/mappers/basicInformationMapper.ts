@@ -3,6 +3,9 @@ import {
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
+  AppointmentAssigneeTypeEnum,
+  AppointmentLinkTypeEnum,
+  AppointmentModalityEnum,
   AppointmentStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -40,6 +43,55 @@ export const toAppointmentStatusEnum = (
   Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
     ? (status as AppointmentStatusEnum)
     : undefined
+
+export const toAppointmentModalityEnum = (
+  modality?: string,
+): AppointmentModalityEnum | undefined => {
+  switch (modality) {
+    case 'IN_PERSON':
+      return AppointmentModalityEnum.IN_PERSON
+    case 'VIDEO':
+      return AppointmentModalityEnum.VIDEO
+    default:
+      return undefined
+  }
+}
+
+export const toAppointmentAssigneeTypeEnum = (
+  type: string,
+): AppointmentAssigneeTypeEnum | undefined => {
+  switch (type) {
+    case 'SERVICE':
+      return AppointmentAssigneeTypeEnum.SERVICE
+    case 'ROLE':
+      return AppointmentAssigneeTypeEnum.ROLE
+    case 'ROOM':
+      return AppointmentAssigneeTypeEnum.ROOM
+    case 'EQUIPMENT':
+      return AppointmentAssigneeTypeEnum.EQUIPMENT
+    case 'OTHER':
+      return AppointmentAssigneeTypeEnum.OTHER
+    default:
+      return undefined
+  }
+}
+
+export const toAppointmentLinkTypeEnum = (
+  type: string,
+): AppointmentLinkTypeEnum | undefined => {
+  switch (type) {
+    case 'PATIENT_INSTRUCTIONS':
+      return AppointmentLinkTypeEnum.PATIENT_INSTRUCTIONS
+    case 'PREPARATION':
+      return AppointmentLinkTypeEnum.PREPARATION
+    case 'ORGANIZATION_INFO':
+      return AppointmentLinkTypeEnum.ORGANIZATION_INFO
+    case 'VIDEO_CALL':
+      return AppointmentLinkTypeEnum.VIDEO_CALL
+    default:
+      return undefined
+  }
+}
 
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
