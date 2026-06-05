@@ -55,9 +55,14 @@ async function main(testContext = null) {
 
   const changedFiles = new Set()
 
-  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/*.yaml`
-
+  const globPattern = _MANIFEST_PATHS.map((path) => `${path}/**/*.yaml`)
   const files = await glob(globPattern)
+
+  if (files && files.length > 0) {
+    console.log('we got some files')
+  } else {
+    console.log('we got no files')
+  }
 
   for (const file of files) {
     const textContent = readFileSync(file, 'utf8')
