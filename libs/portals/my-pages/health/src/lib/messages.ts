@@ -2525,6 +2525,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
   },
+  renewalSendTo: {
+    defaultMessage: 'Sendist til',
+    id: 'sp.health:renewal-send-to',
+  },
   renewalRequestSent: {
     defaultMessage:
       'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',

@@ -27,6 +27,7 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   NoRenewalTargets = 'noRenewalTargets',
   InvalidRenewalTarget = 'invalidRenewalTarget',
   RecipientExcludesAtc = 'recipientExcludesAtc',
+  SpecialistOnlyPrescription = 'specialistOnlyPrescription',
   Unknown = 'unknown',
 }
 
