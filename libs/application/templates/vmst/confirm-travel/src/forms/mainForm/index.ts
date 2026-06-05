@@ -83,14 +83,15 @@ export const MainForm = buildForm({
               application.externalData,
               'eligibilityData.data.maxDateTo',
             )
-            const maxDays =
+            const maxDaysRaw =
               getValueViaPath<string>(
                 application.externalData,
                 'eligibilityData.data.maxDaysPerRequest',
               ) || '30'
+            const maxDays = parseInt(maxDaysRaw, 10) || 30
 
             const date = new Date(fromDate)
-            date.setDate(date.getDate() + parseInt(maxDays, 10) - 1)
+            date.setDate(date.getDate() + maxDays - 1)
 
             if (maxDateTo && date > new Date(maxDateTo)) {
               return new Date(maxDateTo)
