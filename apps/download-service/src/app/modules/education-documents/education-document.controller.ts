@@ -140,7 +140,6 @@ export class EducationController {
       this.logger.error('Failed to get primary school assignment result PDF', {
         errorMessage: error.message,
         errorStack: error.stack,
-        studentId,
         assignmentResultId,
       })
       return res.status(500).end()
