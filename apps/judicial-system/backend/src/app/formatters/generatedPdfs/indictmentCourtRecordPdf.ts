@@ -27,7 +27,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
-  addRichText,
+  // addRichText,
   Confirmation,
   drawConfirmation,
   setLineGap,
@@ -317,10 +317,12 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    addRichText(
-      doc,
-      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
-    )
+    // TODO: uncomment when TinyMCE feature flag is lifted
+    // addRichText(
+    //   doc,
+    //   courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+    // )
+    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
