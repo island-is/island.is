@@ -202,7 +202,6 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
               applicantId,
               galdurExternalDomainRequestsIncomeCreateTRPaymentRequest: {
                 typeId: entry.socialPaymentType,
-                pensionFundId: entry.pensionFundId || undefined,
                 estimatedIncome: entry.amountPerMonth
                   ? Number(entry.amountPerMonth)
                   : undefined,
@@ -246,10 +245,16 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       if (e instanceof TemplateApiError) {
         throw e
       }
+
+      const message =
+        e instanceof Error && 'body' in e && (e as any).body?.message
+          ? (e as any).body.message
+          : undefined
+
       throw new TemplateApiError(
         {
           title: errorMessages.cannotApplyErrorTitle,
-          summary: errorMessages.submitError,
+          summary: message ?? errorMessages.submitError,
         },
         500,
       )

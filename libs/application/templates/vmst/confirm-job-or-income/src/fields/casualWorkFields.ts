@@ -26,7 +26,7 @@ export const casualWorkFields = [
     formTitle: (index, application) => {
       const items =
         getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 1 ? `Tilfallandi vinna ${index + 1}` : ''
+      return items.length > 0 ? `Tilfallandi vinna ${index + 1}` : ''
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,
@@ -71,6 +71,7 @@ export const casualWorkFields = [
         type: 'number',
         currency: true,
         required: true,
+        min: 0,
       },
     },
   }),

@@ -14,10 +14,6 @@ export const completedForm = buildForm({
       alertTitle: applicationMessages.completedFormAlertTitle,
       alertMessage: '',
       accordion: false,
-      descriptionFieldTitle:
-        applicationMessages.completedFormDescriptionFieldTitle,
-      descriptionFieldDescription:
-        applicationMessages.completedFormDescriptionFieldDescription,
     }),
   ],
 })

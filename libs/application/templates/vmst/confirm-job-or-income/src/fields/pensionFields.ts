@@ -62,6 +62,7 @@ export const pensionFields = [
         type: 'number',
         currency: true,
         required: true,
+        min: 0,
       },
     },
   }),

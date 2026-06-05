@@ -326,17 +326,6 @@ export const application = defineMessages({
     defaultMessage: 'Breytingar þínar hafa verið vistaðar',
     description: 'Title for alert when form is completed',
   },
-  completedFormDescriptionFieldTitle: {
-    id: 'vmst.cjoi.application:completedFormDescriptionFieldTitle',
-    defaultMessage: 'Er eitthvað óljóst?',
-    description: 'Title for description field when form is completed',
-  },
-  completedFormDescriptionFieldDescription: {
-    id: 'vmst.cjoi.application:completedFormDescriptionFieldDescription#markdown',
-    defaultMessage:
-      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar',
-    description: 'Description for description field when form is completed',
-  },
 })
 
 export const errorMessages = defineMessages({

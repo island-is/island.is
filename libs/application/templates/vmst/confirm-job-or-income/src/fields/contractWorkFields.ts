@@ -27,7 +27,7 @@ export const contractWorkFields = [
     formTitle: (index, application) => {
       const items =
         getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 1 ? `Vaktavinna ${index + 1}` : ''
+      return items.length > 0 ? `Vaktavinna ${index + 1}` : ''
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

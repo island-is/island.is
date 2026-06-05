@@ -23,6 +23,7 @@ const registerIncomeEntrySchema = z.object({
   amountPerMonth: z.string().min(1).optional(),
   paymentFrequency: z.string().min(1).optional(),
   // Pension fields
+  pensionType: z.string().min(1).optional(),
   pensionFund: z.string().min(1).optional(),
   // Social insurance fields
   socialPaymentType: z.string().min(1).optional(),

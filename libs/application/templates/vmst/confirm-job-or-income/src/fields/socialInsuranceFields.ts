@@ -19,7 +19,7 @@ export const socialInsuranceFields = [
     formTitle: (index, application) => {
       const items =
         getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 1 ? `Tekjur frá Tryggingastofnun ${index + 1}` : ''
+      return items.length > 0 ? `Tekjur frá Tryggingastofnun ${index + 1}` : ''
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

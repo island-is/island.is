@@ -19,7 +19,7 @@ export const capitalIncomeFields = [
     formTitle: (index, application) => {
       const items =
         getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 1 ? `Fjármagnstekjur ${index + 1}` : ''
+      return items.length > 0 ? `Fjármagnstekjur ${index + 1}` : ''
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,
@@ -47,6 +47,7 @@ export const capitalIncomeFields = [
         type: 'number',
         currency: true,
         required: true,
+        min: 0,
       },
       paymentFrequency: {
         component: 'radio',

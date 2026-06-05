@@ -27,7 +27,7 @@ export const partTimeFields = [
     formTitle: (index, application) => {
       const items =
         getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 1 ? `Hlutastarf ${index + 1}` : ''
+      return items.length > 0 ? `Hlutastarf ${index + 1}` : ''
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,
@@ -56,6 +56,8 @@ export const partTimeFields = [
         type: 'number',
         suffix: '%',
         required: true,
+        min: 0,
+        max: 100,
       },
       estimatedIncome: {
         component: 'input',
@@ -64,6 +66,7 @@ export const partTimeFields = [
         type: 'number',
         currency: true,
         required: true,
+        min: 0,
       },
     },
   }),
