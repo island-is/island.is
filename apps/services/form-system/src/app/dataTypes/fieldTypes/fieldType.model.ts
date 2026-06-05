@@ -166,6 +166,18 @@ export const FieldTypes: FieldType[] = [
     },
     isCommon: true,
   },
+  {
+    id: FieldTypesEnum.ASSETS,
+    name: {
+      is: 'Eignir',
+      en: 'Assets',
+    },
+    description: {
+      is: 'Notandi velur eign úr lista yfir ökutæki, fasteignir eða skip.',
+      en: 'The user selects an asset from vehicles, real estate, or ships.',
+    },
+    isCommon: true,
+  },
   // {
   //   id: FieldTypesEnum.NATIONAL_ID_ESTATE,
   //   name: { is: 'Kennitala dánarbús', en: 'National Id estate' },

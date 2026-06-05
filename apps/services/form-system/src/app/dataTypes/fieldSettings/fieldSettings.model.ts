@@ -134,6 +134,11 @@ export class FieldSettings {
   applicantType?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  assetType?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   hasDescription?: boolean

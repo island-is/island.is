@@ -10,6 +10,7 @@ import { NumberSettings } from './components/NumberSettings'
 import { PaymentFieldSettings } from './components/PaymentFieldSettings'
 import { TextFieldSettings } from './components/TextFieldSettings'
 import { FileUploadSettings } from './components/UploadSettings'
+import { AssetsSettings } from './components/AssetsSettings'
 
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)
@@ -36,6 +37,7 @@ export const FieldSettings = () => {
       {currentItem.fieldType === FieldTypesEnum.PAYMENT_QUANTITY && (
         <PaymentFieldSettings />
       )}
+      {currentItem.fieldType === FieldTypesEnum.ASSETS && <AssetsSettings />}
       {currentItem.fieldType === FieldTypesEnum.NATIONAL_ID && (
         <NationalIdSettings />
       )}

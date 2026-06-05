@@ -112,92 +112,97 @@ export class ApplicationsService {
 
     const nationalId = user.actor?.nationalId || user.nationalId
 
-    await this.sequelize.transaction(async (transaction) => {
-      const newApplication: Application = await this.applicationModel.create(
-        {
-          formId: form.id,
-          organizationId: form.organizationId,
-          isTest: isTest,
-          dependencies: form.dependencies,
-          status: ApplicationStatus.DRAFT,
-          nationalId,
-          draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.draftDaysToLive),
-        } as Application,
-        { transaction },
-      )
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        const newApplication: Application = await this.applicationModel.create(
+          {
+            formId: form.id,
+            organizationId: form.organizationId,
+            isTest: isTest,
+            dependencies: form.dependencies,
+            status: ApplicationStatus.DRAFT,
+            nationalId,
+            draftTotalSteps: form.draftTotalSteps,
+            pruneAt: calculatePruneAt(form.draftDaysToLive),
+          } as Application,
+          { transaction },
+        )
 
-      await this.applicationEventModel.create(
-        {
-          applicationId: newApplication.id,
-          eventType: ApplicationEvents.APPLICATION_CREATED,
-          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
-        } as ApplicationEvent,
-        { transaction },
-      )
+        await this.applicationEventModel.create(
+          {
+            applicationId: newApplication.id,
+            eventType: ApplicationEvents.APPLICATION_CREATED,
+            eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
+          } as ApplicationEvent,
+          { transaction },
+        )
 
-      await Promise.all(
-        form.sections.map((section) =>
-          Promise.all(
-            section.screens?.map((screen) =>
-              Promise.all(
-                screen.fields?.map(async (field) => {
-                  if (
-                    field.fieldType === FieldTypesEnum.APPLICANT &&
-                    field.fieldSettings?.applicantType &&
-                    !loginTypes.includes(field.fieldSettings.applicantType)
-                  ) {
-                    return
-                  }
-                  const valueJson =
-                    ValueTypeFactory.getClass(
-                      field.fieldType,
-                      new ValueType(),
-                    ) ?? {}
-                  if (field.fieldType === FieldTypesEnum.APPLICANT) {
-                    const type = field.fieldSettings?.applicantType
-                    if (type === ApplicantTypesEnum.INDIVIDUAL) {
-                      valueJson['nationalId'] = nationalId
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+        await Promise.all(
+          form.sections.map((section) =>
+            Promise.all(
+              section.screens?.map((screen) =>
+                Promise.all(
+                  screen.fields?.map(async (field) => {
+                    if (
+                      field.fieldType === FieldTypesEnum.APPLICANT &&
+                      field.fieldSettings?.applicantType &&
+                      !loginTypes.includes(field.fieldSettings.applicantType)
                     ) {
-                      valueJson['nationalId'] = user.actor?.nationalId || ''
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type === ApplicantTypesEnum.LEGAL_ENTITY ||
-                      type ===
-                        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
-                    ) {
-                      valueJson['nationalId'] = user.nationalId
-                      valueJson['applicantType'] = type
+                      return
                     }
-                  }
-                  return this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId: newApplication.id,
-                      json: valueJson,
-                    } as Value,
-                    { transaction },
-                  )
-                }) || [],
-              ),
-            ) || [],
+                    const valueJson =
+                      ValueTypeFactory.getClass(
+                        field.fieldType,
+                        new ValueType(),
+                      ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                      const type = field.fieldSettings?.applicantType
+                      if (type === ApplicantTypesEnum.INDIVIDUAL) {
+                        valueJson['nationalId'] = nationalId
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+                      ) {
+                        valueJson['nationalId'] = user.actor?.nationalId || ''
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type === ApplicantTypesEnum.LEGAL_ENTITY ||
+                        type ===
+                          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
+                      ) {
+                        valueJson['nationalId'] = user.nationalId
+                        valueJson['applicantType'] = type
+                      }
+                    }
+                    return this.valueModel.create(
+                      {
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId: newApplication.id,
+                        json: valueJson,
+                      } as Value,
+                      { transaction },
+                    )
+                  }) || [],
+                ),
+              ) || [],
+            ),
           ),
-        ),
-      )
+        )
 
-      newApplicationId = newApplication.id
-    })
+        newApplicationId = newApplication.id
+      })
+    } catch (error) {
+      this.logger.error('Error creating application', error)
+    }
+
     const applicationDto = await this.getApplication(newApplicationId, '', null)
 
     return applicationDto
