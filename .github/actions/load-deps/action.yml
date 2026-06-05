@@ -39,12 +39,14 @@ runs:
           --outputsFile=/dev/null
 
     - name: Cache generated files
-      uses: actions/cache@v4
+      uses: runs-on/cache@v5
       id: restore-codegen-cache
       with:
         path: |
           ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
         key: generated-files-${{ hashFiles(steps.prepare.outputs.INPUTS_LIST_FILE) }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: shared-islandis-github-actions-cache
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'

@@ -2,17 +2,17 @@ import { defineMessages } from 'react-intl'
 
 export const prereq = defineMessages({
   title: {
-    id: 'vmst.vsd.prereq:title',
+    id: 'vmst.vsd.application:prereq.title',
     defaultMessage: 'Vinnumálastofnun',
     description: 'Prerequisite service provider title',
   },
   subtitle: {
-    id: 'vmst.vsd.prereq:subtitle',
+    id: 'vmst.vsd.application:prereq.subtitle',
     defaultMessage: 'Gögn sótt til Vinnumálastofnunar',
     description: 'Prerequisite service provider subtitle',
   },
   checkbox: {
-    id: 'vmst.vsd.prereq:checkbox',
+    id: 'vmst.vsd.application:prereq.checkbox',
     defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
     description: 'Prerequisite checkbox text',
   },
@@ -20,33 +20,33 @@ export const prereq = defineMessages({
 
 export const uploadDocuments = defineMessages({
   title: {
-    id: 'vmst.vsd.uploadDocuments:title',
+    id: 'vmst.vsd.application:uploadDocuments.title',
     defaultMessage: 'Skila gögnum',
     description: 'Upload documents title',
   },
   multiFieldDescription: {
-    id: 'vmst.vsd.uploadDocuments:multiFieldDescription',
+    id: 'vmst.vsd.application:uploadDocuments.multiFieldDescription',
     defaultMessage:
       'Vinsamlegast skilaðu þeim gögnum sem vantar upp á hér að neðan. Hægt er að hlaða upp einu í einu en þú getur bætt við línu ef þú ætlar að skila fleiri gögnum í einu.',
     description: 'Upload documents description',
   },
   sectionStepTitle: {
-    id: 'vmst.vsd.uploadDocuments:sectionStepTitle',
+    id: 'vmst.vsd.application:uploadDocuments.sectionStepTitle',
     defaultMessage: 'Hlaða upp gögnum',
     description: 'Upload documents section step title',
   },
   typeLabel: {
-    id: 'vmst.vsd.uploadDocuments:typeLabel',
+    id: 'vmst.vsd.application:uploadDocuments.typeLabel',
     defaultMessage: 'Tegund gagna',
     description: 'Label for document type select',
   },
   fileLabel: {
-    id: 'vmst.vsd.uploadDocuments:fileLabel',
+    id: 'vmst.vsd.application:uploadDocuments.fileLabel',
     defaultMessage: 'Skjal',
     description: 'Label for file upload',
   },
   commentLabel: {
-    id: 'vmst.vsd.uploadDocuments:commentLabel',
+    id: 'vmst.vsd.application:uploadDocuments.commentLabel',
     defaultMessage: 'Athugasemd',
     description: 'Label for comment input',
   },
@@ -142,23 +142,23 @@ export const application = defineMessages({
 
 export const errorMessages = defineMessages({
   eligibilityErrorTitle: {
-    id: 'vmst.vsd.error:eligibilityErrorTitle',
+    id: 'vmst.vsd.application:error.eligibilityErrorTitle',
     defaultMessage: 'Ekki er hægt að skila gögnum',
     description: 'Error title when user is not eligible to submit documents',
   },
   cannotApplyErrorSummary: {
-    id: 'vmst.vsd.error:cannotApplyErrorSummary',
+    id: 'vmst.vsd.application:error.cannotApplyErrorSummary',
     defaultMessage:
       'Samkvæmt sóttum gögnum er ekki hægt að skila inn gögnum á þessari stundu.',
     description: 'Error summary when user is not eligible to submit documents',
   },
   documentsMinError: {
-    id: 'vmst.vsd.error:documentsMinError',
+    id: 'vmst.vsd.application:error.documentsMinError',
     defaultMessage: 'Þú þarft að skila að minnsta kosti einu skjali',
     description: 'Error message when no documents are submitted',
   },
   documentsMaxError: {
-    id: 'vmst.vsd.error:documentsMaxError',
+    id: 'vmst.vsd.application:error.documentsMaxError',
     defaultMessage: 'Þú getur ekki skilað fleiri en {max} skjölum',
     description: 'Error message when too many documents are submitted',
   },
