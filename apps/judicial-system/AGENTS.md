@@ -5,13 +5,14 @@
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or
 shared types in `@island.is/judicial-system/types`.
 
-| Project | Command | Output |
-|---|---|---|
+| Project | Command                                                      | Output                                          |
+| ------- | ------------------------------------------------------------ | ----------------------------------------------- |
 | backend | `yarn nx run judicial-system-backend:codegen/backend-schema` | `apps/judicial-system/backend/src/openapi.yaml` |
-| api | `yarn nx run judicial-system-api:codegen/backend-schema` | `apps/judicial-system/api/src/api.graphql` |
-| web | `yarn nx run judicial-system-web:codegen/frontend-client` | generated GraphQL client/types |
+| api     | `yarn nx run judicial-system-api:codegen/backend-schema`     | `apps/judicial-system/api/src/api.graphql`      |
+| web     | `yarn nx run judicial-system-web:codegen/frontend-client`    | generated GraphQL client/types                  |
 
 Notes:
+
 - **message-handler has no codegen target** — nothing to run there.
 - `digital-mailbox-api` and `xrd-api` also expose `codegen/backend-schema` if you
   touch their controllers.
