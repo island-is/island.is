@@ -199,13 +199,23 @@ export const IndictmentCountsList: FC<Props> = ({
         <SectionHeading title="Ákæruliðir" marginBottom={0} />
         {orderedCounts.length > 0 && (
           <Box display="flex" columnGap={2} alignItems="center">
-            <Button variant="text" size="small" onClick={handleToggleExpandAll}>
+            <Button
+              variant="text"
+              size="small"
+              onClick={(event) => {
+                handleToggleExpandAll()
+                event.currentTarget.blur()
+              }}
+            >
               {allExpanded ? 'Loka öllum' : 'Opna alla'}
             </Button>
             <Button
               variant="text"
               size="small"
-              onClick={handleChronologicalSort}
+              onClick={(event) => {
+                handleChronologicalSort()
+                event.currentTarget.blur()
+              }}
             >
               Raða ákæruliðum í tímaröð
             </Button>
