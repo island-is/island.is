@@ -110,9 +110,17 @@ export default function RootLayout() {
   }, [fontsError])
 
   useEffect(() => {
-    if (fontsLoaded && appReady) {
+    if (!fontsLoaded || !appReady) return
+    // On cold-start-with-lock, the lock route hides the splash itself so the
+    // tabs never flash through. Fallback timeout covers the case where the
+    // lock decides not to mount (suppression, dev override).
+    const willLock = authStore.getState().lockScreenActivatedAt !== undefined
+    if (!willLock) {
       SplashScreen.hideAsync()
+      return
     }
+    const id = setTimeout(() => SplashScreen.hideAsync(), 1000)
+    return () => clearTimeout(id)
   }, [fontsLoaded, appReady])
 
   if (!fontsLoaded || !appReady || !apolloClient) {
