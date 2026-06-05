@@ -1,14 +1,8 @@
-type FeatureFlagRecord = Record<string, boolean | string | number>
+import type { IConfigCatClient } from 'configcat-js'
 
-let flagCache: FeatureFlagRecord = {}
+// Mutable reference to the ConfigCat client, set by FeatureFlagProvider on mount.
+export let featureFlagClient: IConfigCatClient | null = null
 
-export function setFeatureFlagCache(flags: FeatureFlagRecord) {
-  flagCache = flags
-}
-
-export function getFeatureFlagValue<T extends boolean | string | number>(
-  key: string,
-  defaultValue: T,
-): T {
-  return (flagCache[key] as T) ?? defaultValue
+export function setFeatureFlagClient(client: IConfigCatClient | null) {
+  featureFlagClient = client
 }

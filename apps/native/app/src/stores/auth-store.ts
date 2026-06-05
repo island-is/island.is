@@ -17,13 +17,14 @@ import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
-import { getFeatureFlagValue } from '../lib/feature-flag-client'
+import { featureFlagClient } from '../lib/feature-flag-client'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
+import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 import { setAuthStoreRef } from './auth-store-ref'
 import { create, useStore } from 'zustand'
@@ -101,7 +102,11 @@ export async function prefetchAuthConfig() {
 
 const clearPasskey = async (userNationalId?: string) => {
   // Clear passkey if exists
-  const isPasskeyEnabled = getFeatureFlagValue('isPasskeyEnabled', false)
+  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
+    'isPasskeyEnabled',
+    false,
+    userNationalId ? ({ identifier: userNationalId } as User) : undefined,
+  )
 
   if (isPasskeyEnabled) {
     preferencesStore.setState({

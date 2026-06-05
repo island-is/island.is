@@ -10,6 +10,7 @@ export interface EnvironmentConfig {
   idsIssuer: string
   apiUrl: string
   baseUrl: string
+  configCat: string | null
   datadog: string | null
 }
 

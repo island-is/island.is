@@ -5,6 +5,7 @@ export const environments = {
     idsIssuer: 'https://innskra.island.is',
     apiUrl: 'https://island.is/api',
     baseUrl: 'https://island.is',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   staging: {
@@ -13,6 +14,7 @@ export const environments = {
     idsIssuer: 'https://identity-server.staging01.devland.is/',
     apiUrl: 'https://beta.staging01.devland.is/api',
     baseUrl: 'https://beta.staging01.devland.is',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   dev: {
@@ -21,6 +23,7 @@ export const environments = {
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'https://beta.dev01.devland.is/api',
     baseUrl: 'https://beta.dev01.devland.is',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
   local: {
@@ -29,6 +32,7 @@ export const environments = {
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
     baseUrl: 'http://localhost:4200',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
   mock: {
@@ -37,6 +41,7 @@ export const environments = {
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
     baseUrl: 'http://localhost:4200',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
 }
