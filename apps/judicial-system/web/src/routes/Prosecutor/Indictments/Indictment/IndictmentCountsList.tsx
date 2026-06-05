@@ -4,7 +4,6 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -46,15 +45,42 @@ interface Props {
   ) => void
 }
 
-const hasOrderChanged = (
-  current: TIndictmentCount[],
-  previous: TIndictmentCount[],
-) => {
-  if (current.length !== previous.length) {
-    return true
-  }
+const applyDisplayOrder = (
+  counts: TIndictmentCount[],
+  order: TIndictmentCount[],
+): TIndictmentCount[] => {
+  const countsById = new Map(counts.map((count) => [count.id, count]))
 
-  return current.some((count, index) => count.id !== previous[index]?.id)
+  return order.map((item, index) => ({
+    ...(countsById.get(item.id) ?? item),
+    displayOrder: index,
+  }))
+}
+
+const revertToSavedOrder = (
+  counts: TIndictmentCount[],
+  saved: TIndictmentCount[],
+): TIndictmentCount[] => {
+  const countsById = new Map(counts.map((count) => [count.id, count]))
+  const restored = saved.reduce<TIndictmentCount[]>((acc, item) => {
+    const count = countsById.get(item.id)
+
+    if (!count) {
+      return acc
+    }
+
+    return [...acc, { ...count, displayOrder: acc.length }]
+  }, [])
+
+  const restoredIds = new Set(restored.map((count) => count.id))
+  const added = counts
+    .filter((count) => !restoredIds.has(count.id))
+    .map((count, index) => ({
+      ...count,
+      displayOrder: restored.length + index,
+    }))
+
+  return [...restored, ...added]
 }
 
 export const IndictmentCountsList: FC<Props> = ({
@@ -66,27 +92,21 @@ export const IndictmentCountsList: FC<Props> = ({
 }) => {
   const { reorderIndictmentCounts } = useIndictmentCounts()
 
-  const sorted = useMemo(
-    () => sortIndictmentCounts(workingCase.indictmentCounts ?? []),
-    [workingCase.indictmentCounts],
+  const orderedCounts = sortIndictmentCounts(workingCase.indictmentCounts ?? [])
+  const savedOrderRef = useRef(orderedCounts)
+
+  const handleReorder = useCallback(
+    (newOrder: TIndictmentCount[]) => {
+      setWorkingCase((prev) => ({
+        ...prev,
+        indictmentCounts: applyDisplayOrder(
+          prev.indictmentCounts ?? [],
+          newOrder,
+        ),
+      }))
+    },
+    [setWorkingCase],
   )
-
-  const [reorderableCounts, setReorderableCounts] =
-    useState<TIndictmentCount[]>(sorted)
-
-  const reorderableCountsRef = useRef(reorderableCounts)
-  const lastPersistedOrderRef = useRef(sorted)
-
-  useEffect(() => {
-    setReorderableCounts(sorted)
-    lastPersistedOrderRef.current = sorted
-    reorderableCountsRef.current = sorted
-  }, [sorted])
-
-  const handleReorder = useCallback((newOrder: TIndictmentCount[]) => {
-    reorderableCountsRef.current = newOrder
-    setReorderableCounts(newOrder)
-  }, [])
 
   const persistOrder = useCallback(
     async (counts: TIndictmentCount[]) => {
@@ -94,64 +114,53 @@ export const IndictmentCountsList: FC<Props> = ({
       const result = await reorderIndictmentCounts(workingCase.id, updates)
 
       if (!result) {
-        setReorderableCounts(sorted)
-        lastPersistedOrderRef.current = sorted
-        reorderableCountsRef.current = sorted
+        setWorkingCase((prev) => ({
+          ...prev,
+          indictmentCounts: revertToSavedOrder(
+            prev.indictmentCounts ?? [],
+            savedOrderRef.current,
+          ),
+        }))
         return
       }
 
-      setWorkingCase((prev) => ({
-        ...prev,
-        indictmentCounts: sortIndictmentCounts(
-          prev.indictmentCounts?.map((c) => {
-            const update = updates.find((u) => u.id === c.id)
-            return update ? { ...c, displayOrder: update.displayOrder } : c
-          }) ?? [],
-        ),
-      }))
-
-      lastPersistedOrderRef.current = counts
+      savedOrderRef.current = counts
     },
-    [reorderIndictmentCounts, setWorkingCase, sorted, workingCase.id],
+    [reorderIndictmentCounts, setWorkingCase, workingCase.id],
   )
 
   const handleDragEnd = useCallback(() => {
-    const current = reorderableCountsRef.current
-
-    if (!hasOrderChanged(current, lastPersistedOrderRef.current)) {
-      return
-    }
-
-    persistOrder(current)
-  }, [persistOrder])
+    persistOrder(orderedCounts)
+  }, [orderedCounts, persistOrder])
 
   const handleChronologicalSort = useCallback(() => {
-    const chron = [...reorderableCountsRef.current].sort(
+    const chron = [...orderedCounts].sort(
       getIndictmentCountCompare(workingCase.crimeScenes),
     )
 
-    setReorderableCounts(chron)
-    reorderableCountsRef.current = chron
+    handleReorder(chron)
     persistOrder(chron)
-  }, [persistOrder, workingCase.crimeScenes])
+  }, [handleReorder, orderedCounts, persistOrder, workingCase.crimeScenes])
 
-  const canDelete = reorderableCounts.length > 1
+  const canDelete = orderedCounts.length > 1
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set())
 
   useEffect(() => {
-    const validIds = new Set(reorderableCounts.map((count) => count.id))
+    const validIds = new Set(
+      (workingCase.indictmentCounts ?? []).map((count) => count.id),
+    )
 
     setExpandedIds((previous) => {
       const next = new Set([...previous].filter((id) => validIds.has(id)))
 
       return next.size === previous.size ? previous : next
     })
-  }, [reorderableCounts])
+  }, [workingCase.indictmentCounts])
 
   const allExpanded =
-    reorderableCounts.length > 0 &&
-    reorderableCounts.every((count) => expandedIds.has(count.id))
+    orderedCounts.length > 0 &&
+    orderedCounts.every((count) => expandedIds.has(count.id))
 
   const handleToggleExpandAll = useCallback(() => {
     if (allExpanded) {
@@ -159,8 +168,8 @@ export const IndictmentCountsList: FC<Props> = ({
       return
     }
 
-    setExpandedIds(new Set(reorderableCounts.map((count) => count.id)))
-  }, [allExpanded, reorderableCounts])
+    setExpandedIds(new Set(orderedCounts.map((count) => count.id)))
+  }, [allExpanded, orderedCounts])
 
   const handleAccordionToggle = useCallback(
     (indictmentCountId: string, expanded: boolean) => {
@@ -188,7 +197,7 @@ export const IndictmentCountsList: FC<Props> = ({
         marginBottom={3}
       >
         <SectionHeading title="Ákæruliðir" marginBottom={0} />
-        {reorderableCounts.length > 0 && (
+        {orderedCounts.length > 0 && (
           <Box display="flex" columnGap={2} alignItems="center">
             <Button variant="text" size="small" onClick={handleToggleExpandAll}>
               {allExpanded ? 'Loka öllum' : 'Opna alla'}
@@ -203,17 +212,13 @@ export const IndictmentCountsList: FC<Props> = ({
           </Box>
         )}
       </Box>
-      <Reorder.Group
-        axis="y"
-        values={reorderableCounts}
-        onReorder={handleReorder}
-      >
+      <Reorder.Group axis="y" values={orderedCounts} onReorder={handleReorder}>
         <Accordion
           singleExpand={false}
           dividerOnTop={false}
           dividerOnBottom={true}
         >
-          {reorderableCounts.map((indictmentCount, index) => (
+          {orderedCounts.map((indictmentCount, index) => (
             <IndictmentCountAccordionItem
               key={indictmentCount.id}
               index={index}
