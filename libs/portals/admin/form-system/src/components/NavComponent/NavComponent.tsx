@@ -49,6 +49,7 @@ export const NavComponent = ({
       : activeItem?.data?.id ?? ''
 
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
+  const itemName = data?.name?.is ?? data?.name?.en ?? ''
   const isPaymentField =
     type === 'Field' &&
     (data as FormSystemField).fieldType === FieldTypesEnum.PAYMENT
@@ -199,6 +200,7 @@ export const NavComponent = ({
   }
   return (
     <Box
+      title={itemName}
       className={cn({
         [styles.navComponent.step]:
           (type === 'Section' || isPaymentFieldWithSectionStyle) &&
