@@ -372,7 +372,12 @@ export class BankTransferService {
     // Still PENDING (or Blikk unreachable) and past TTL → abandoned; discard so the flow returns to
     // UNPAID. The Blikk refresh above is what guards against discarding a settled-but-uncallbacked row.
     if (isExpired) {
-      void this.softDeleteRow(row.id)
+      void this.softDeleteRow(row.id).catch((error) => {
+        this.logger.warn(
+          `[${row.paymentFlowId}] Failed to soft-delete expired bank transfer row`,
+          { error: (error as Error)?.message },
+        )
+      })
       return null
     }
 
