@@ -45,6 +45,7 @@ export enum Features {
   isDeregisterUnemploymentBenefitsEnabled = 'isDeregisterUnemploymentBenefitsEnabled',
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
+  isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -163,6 +164,12 @@ export enum Features {
   shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
+
+  // Should user-notification worker check deceased status via national registry
+  isUserNotificationDeceasedCheckEnabled = 'isUserNotificationDeceasedCheckEnabled',
+
+  // Should user-notification worker check inactive company status via company registry
+  isUserNotificationInactiveCompanyCheckEnabled = 'isUserNotificationInactiveCompanyCheckEnabled',
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',

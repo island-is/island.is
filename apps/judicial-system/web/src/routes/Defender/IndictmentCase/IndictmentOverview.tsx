@@ -268,6 +268,7 @@ const IndictmentOverview: FC = () => {
               )}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}
+              forceDisplayAdditionalFiles={canAddFiles}
             />
             {canAddFiles && (
               <Box display="flex" justifyContent="flexEnd">
