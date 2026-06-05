@@ -234,7 +234,7 @@ describe('Bank Transfer Refund Saga', () => {
         expect.objectContaining({
           RRN: SUCCESS_PROVIDER_PAYMENT_ID,
           payableAmount: 1000,
-          paymentMeans: PayInfoPaymentMeansEnum.Millifaersla,
+          paymentMeans: PayInfoPaymentMeansEnum.Milli,
         }),
       )
       expect(context.stepResults.ENSURE_FJS_CHARGE).toEqual({

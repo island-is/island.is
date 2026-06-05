@@ -21,7 +21,6 @@ interface PaymentMethodOption {
 }
 
 // Render order is the order the user sees the buttons in. Card → invoice → bank transfer keeps the
-// historic ordering for flows that have always had card + invoice, with the new option appended.
 const PAYMENT_METHOD_OPTIONS: readonly PaymentMethodOption[] = [
   { method: 'card', title: card.paymentMethodTitle },
   { method: 'invoice', title: invoice.paymentMethodTitle },

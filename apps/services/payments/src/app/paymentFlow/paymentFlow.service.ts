@@ -917,6 +917,12 @@ export class PaymentFlowService {
         !!chargePayload.payInfo,
       )
 
+      this.logger.info(`[${paymentFlowId}] FJS charge created`, {
+        receptionId: charge.receptionID,
+        fjsChargeId: newCharge.id,
+        status: newCharge.status,
+      })
+
       return newCharge
     } catch (e) {
       if (isNetworkError(e)) {
@@ -925,8 +931,17 @@ export class PaymentFlowService {
 
       const code = mapFjsErrorToCode(e, true)
       if (code === FjsErrorCode.AlreadyCreatedCharge) {
+        // The charge already exists in FJS (idempotency key requestID == paymentFlowId) but a prior
+        // attempt failed to persist/link it locally. Reconcile instead of failing.
+        const reconciled = await this.reconcileExistingFjsCharge(
+          paymentFlowId,
+          chargePayload,
+        )
+        if (reconciled) {
+          return reconciled
+        }
         this.logger.error(
-          `[${paymentFlowId}] CRITICAL: FJS charge already exists but flow/fulfillment not updated. Manual reconciliation required.`,
+          `[${paymentFlowId}] CRITICAL: FJS reports the charge exists but it could not be found to reconcile. Manual reconciliation required.`,
           e,
         )
       } else {
@@ -937,6 +952,41 @@ export class PaymentFlowService {
       }
       throw new BadRequestException(mapFjsErrorToCode(e))
     }
+  }
+
+  /**
+   * Links a charge that already exists in FJS (an `AlreadyCreatedCharge` from a partially-completed
+   * prior attempt) to our DB by adopting the already-persisted local `fjs_charge` row — which carries
+   * the real FJS reception id — and linking the fulfillment + flow.
+   *
+   * If no local row exists we cannot reconcile: the FJS reception id is assigned by the create/delete
+   * responses and is NOT returned by the status endpoint, so it is unrecoverable here. Rather than
+   * fabricate a bogus value we return `null` and let the caller surface it for manual reconciliation.
+   */
+  private async reconcileExistingFjsCharge(
+    paymentFlowId: string,
+    chargePayload: Charge,
+  ): Promise<FjsCharge | null> {
+    const charge = await this.fjsChargeModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    if (!charge) {
+      return null
+    }
+
+    await this.updateFlowAndFulfillmentWithFjsCharge(
+      paymentFlowId,
+      charge.receptionId,
+      charge.id,
+      !!chargePayload.payInfo,
+    )
+
+    this.logger.info(`[${paymentFlowId}] Reconciled pre-existing FJS charge`, {
+      fjsChargeId: charge.id,
+    })
+
+    return charge
   }
 
   private async updateFlowAndFulfillmentWithFjsCharge(
@@ -952,9 +1002,13 @@ export class PaymentFlowService {
       )
 
       if (hasPayInfo) {
-        await this.paymentFulfillmentModel.update(
+        const [affectedFulfillments] = await this.paymentFulfillmentModel.update(
           { fjsChargeId },
           { where: { paymentFlowId, isDeleted: false }, transaction },
+        )
+        this.logger.info(
+          `[${paymentFlowId}] Linked FJS charge to fulfillment`,
+          { fjsChargeId, affectedFulfillments },
         )
       }
     })

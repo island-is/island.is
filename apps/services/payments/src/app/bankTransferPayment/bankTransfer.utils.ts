@@ -2,6 +2,7 @@ import {
   Charge,
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
+import { BlikkItem } from '@island.is/clients/blikk'
 
 import {
   BankTransferFailureReason,
@@ -47,15 +48,6 @@ export const mapBlikkStatusToBankTransferStatus = (
     default:
       return BankTransferStatus.PENDING
   }
-}
-
-/** Blikk line item shape. */
-export interface BlikkItem {
-  name: string
-  quantity: number
-  unitPrice: string
-  description?: string
-  sku?: string
 }
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
@@ -132,6 +124,6 @@ export const generateBankTransferChargeFJSPayload = ({
     payInfo: {
       RRN: providerPaymentId,
       payableAmount: totalPrice,
-      paymentMeans: PayInfoPaymentMeansEnum.Millifaersla,
+      paymentMeans: PayInfoPaymentMeansEnum.Milli,
     },
   })

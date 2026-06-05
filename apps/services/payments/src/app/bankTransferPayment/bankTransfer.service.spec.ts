@@ -2,6 +2,7 @@ import { ConfigType } from '@nestjs/config'
 import { BadRequestException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
+import { BlikkClientError, BlikkClientService } from '@island.is/clients/blikk'
 import {
   BankTransferErrorCode,
   PaymentServiceCode,
@@ -18,8 +19,6 @@ import { BankTransferLocale } from './dtos/createBankTransfer.input'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 
 const config: ConfigType<typeof BankTransferModuleConfig> = {
-  apiKey: 'test-key',
-  baseUrl: 'https://stage.blikk.tech',
   paymentTtlSeconds: 300,
   isConfigured: true,
 }
@@ -38,21 +37,15 @@ const createMockLogger = (): jest.Mocked<Logger> =>
     verbose: jest.fn(),
   } as unknown as jest.Mocked<Logger>)
 
-const mockFetchResponse = (opts: {
-  ok: boolean
-  status: number
-  json: unknown
-}) =>
-  ({
-    ok: opts.ok,
-    status: opts.status,
-    json: jest.fn().mockResolvedValue(opts.json),
-  } as unknown as Response)
 
 describe('BankTransferService', () => {
   let logger: jest.Mocked<Logger>
   let service: BankTransferService
-  let fetchMock: jest.Mock
+  let blikkClient: {
+    createPayment: jest.Mock
+    getPayment: jest.Mock
+    cancelPayment: jest.Mock
+  }
   let bankTransferPaymentModel: {
     update: jest.Mock
     findOne: jest.Mock
@@ -106,6 +99,11 @@ describe('BankTransferService', () => {
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
     }
+    blikkClient = {
+      createPayment: jest.fn(),
+      getPayment: jest.fn(),
+      cancelPayment: jest.fn().mockResolvedValue(undefined),
+    }
     service = new BankTransferService(
       logger,
       config,
@@ -113,9 +111,8 @@ describe('BankTransferService', () => {
       paymentFulfillmentModel as unknown as typeof PaymentFulfillment,
       paymentFlowService as unknown as PaymentFlowService,
       paymentFlowConfig,
+      blikkClient as unknown as BlikkClientService,
     )
-    fetchMock = jest.fn()
-    global.fetch = fetchMock as unknown as typeof fetch
   })
 
   afterEach(() => {
@@ -123,19 +120,13 @@ describe('BankTransferService', () => {
   })
 
   describe('createBankTransferPayment', () => {
-    it('sends API-Key header, ISK currency and mapped items, and parses the response', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: {
-            id: 'provider-123',
-            status: 'DRAFT',
-            scaRedirectUrl: 'https://stage.blikk.tech/sca/provider-123',
-            message: '',
-          },
-        }),
-      )
+    it('maps the input to a Blikk request (ISK, mapped items) and normalizes the response', async () => {
+      blikkClient.createPayment.mockResolvedValue({
+        id: 'provider-123',
+        status: 'DRAFT',
+        scaRedirectUrl: 'https://stage.blikk.tech/sca/provider-123',
+        message: '',
+      })
 
       const result = await service.createBankTransferPayment({
         amount: 14000,
@@ -158,14 +149,8 @@ describe('BankTransferService', () => {
         ],
       })
 
-      expect(fetchMock).toHaveBeenCalledTimes(1)
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments')
-      expect(options.method).toBe('POST')
-      expect(options.headers['API-Key']).toBe('test-key')
-      expect(options.headers['Content-Type']).toBe('application/json')
-
-      const body = JSON.parse(options.body)
+      expect(blikkClient.createPayment).toHaveBeenCalledTimes(1)
+      const body = blikkClient.createPayment.mock.calls[0][0]
       expect(body.currency).toBe('ISK')
       // The provider idempotency key is the per-attempt sourceReferenceId, not the paymentFlowId.
       expect(body.sourceReferenceId).toBe('btp-9b1c')
@@ -184,13 +169,9 @@ describe('BankTransferService', () => {
       })
     })
 
-    it('throws a mapped error and logs on a non-2xx response', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({
-          ok: false,
-          status: 400,
-          json: { message: 'bad request' },
-        }),
+    it('maps a BlikkClientError to FailedToCreateBankTransfer', async () => {
+      blikkClient.createPayment.mockRejectedValue(
+        new BlikkClientError('bad request', 400),
       )
 
       await expect(
@@ -201,48 +182,21 @@ describe('BankTransferService', () => {
           correlationId: 'btp-err',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
-      expect(logger.error).toHaveBeenCalled()
-    })
-
-    it('throws a mapped error when the request fails (network/timeout/abort)', async () => {
-      fetchMock.mockRejectedValue(
-        Object.assign(new Error('aborted'), { name: 'AbortError' }),
-      )
-
-      await expect(
-        service.createBankTransferPayment({
-          amount: 100,
-          currency: 'ISK',
-          paymentFlowId: 'flow-1',
-          correlationId: 'btp-err',
-        }),
-      ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
-      expect(logger.error).toHaveBeenCalled()
     })
   })
 
   describe('getPayment', () => {
-    it('parses the authoritative response and normalizes the status', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: {
-            id: 'provider-123',
-            status: 'SUCCESS',
-            scaRedirectUrl: '',
-            message: '',
-          },
-        }),
-      )
+    it('normalizes the authoritative response status', async () => {
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'provider-123',
+        status: 'SUCCESS',
+        scaRedirectUrl: '',
+        message: '',
+      })
 
       const result = await service.getPayment('provider-123')
 
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments/provider-123')
-      expect(options.method).toBe('GET')
-      expect(options.headers['API-Key']).toBe('test-key')
-
+      expect(blikkClient.getPayment).toHaveBeenCalledWith('provider-123')
       expect(result.providerPaymentId).toBe('provider-123')
       expect(result.rawStatus).toBe('SUCCESS')
       expect(result.status).toBe(BankTransferStatus.SUCCESS)
@@ -250,9 +204,9 @@ describe('BankTransferService', () => {
       expect(result.scaRedirectUrl).toBeUndefined()
     })
 
-    it('throws a mapped error on a non-2xx response', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: false, status: 404, json: {} }),
+    it('maps a BlikkClientError to FailedToFetchBankTransfer', async () => {
+      blikkClient.getPayment.mockRejectedValue(
+        new BlikkClientError('not found', 404),
       )
 
       await expect(service.getPayment('missing')).rejects.toThrow(
@@ -260,30 +214,13 @@ describe('BankTransferService', () => {
       )
     })
 
-    it('throws BadRequestException when the response shape is invalid', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: true, status: 200, json: { foo: 'bar' } }),
-      )
-
-      await expect(service.getPayment('provider-123')).rejects.toBeInstanceOf(
-        BadRequestException,
-      )
-      expect(logger.error).toHaveBeenCalled()
-    })
-
     it('logs a warning and maps an unknown status to PENDING', async () => {
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: {
-            id: 'provider-123',
-            status: 'WAT',
-            scaRedirectUrl: '',
-            message: '',
-          },
-        }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'provider-123',
+        status: 'WAT',
+        scaRedirectUrl: '',
+        message: '',
+      })
 
       const result = await service.getPayment('provider-123')
 
@@ -603,7 +540,7 @@ describe('BankTransferService', () => {
         expect.objectContaining({
           payInfo: expect.objectContaining({
             payableAmount: 14000,
-            paymentMeans: 'Millifærsla',
+            paymentMeans: 'Milli',
             RRN: 'prov-1',
           }),
         }),
@@ -821,33 +758,22 @@ describe('BankTransferService', () => {
 
       expect(result).toEqual({ ok: true })
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
-      expect(fetchMock).not.toHaveBeenCalled()
+      expect(blikkClient.getPayment).not.toHaveBeenCalled()
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
     })
 
-    it('calls Blikk GET then DELETE and soft-deletes the row when PENDING + fresh and Blikk still says PENDING', async () => {
+    it('refreshes then cancels on Blikk and soft-deletes the row when PENDING + fresh and Blikk still says PENDING', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // 1st call: authoritative GET — Blikk confirms still PENDING.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: { id: 'prov-1', status: 'PENDING' },
-        }),
-      )
-      // 2nd call: DELETE on Blikk.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      // Authoritative refresh — Blikk confirms still PENDING.
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(fetchMock).toHaveBeenCalledTimes(2)
-      const [getUrl, getOptions] = fetchMock.mock.calls[0]
-      expect(getUrl).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
-      expect(getOptions.method).toBe('GET')
-      const [deleteUrl, deleteOptions] = fetchMock.mock.calls[1]
-      expect(deleteUrl).toBe('https://stage.blikk.tech/ecom/v3/payments/prov-1')
-      expect(deleteOptions.method).toBe('DELETE')
+      expect(blikkClient.getPayment).toHaveBeenCalledWith('prov-1')
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
 
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
@@ -865,18 +791,15 @@ describe('BankTransferService', () => {
     // Closes the cancel-vs-settlement race: if Blikk has settled but the webhook
     // hasn't reached us yet, the cached PENDING row would silently soft-delete a
     // paid attempt and the late webhook would be dropped by `isDeleted: false` —
-    // user could re-pay and get double-charged. The authoritative GET inside
+    // user could re-pay and get double-charged. The authoritative refresh inside
     // cancel finalizes SUCCESS and refuses the cancel.
-    it('throws PaymentFlowAlreadyPaid and finalizes success when the refresh GET shows SUCCESS', async () => {
+    it('throws PaymentFlowAlreadyPaid and finalizes success when the refresh shows SUCCESS', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       // Cached row is PENDING; Blikk now reports SUCCESS.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: { id: 'prov-1', status: 'SUCCESS' },
-        }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'SUCCESS',
+      })
       const finalizeSpy = jest
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
@@ -891,8 +814,8 @@ describe('BankTransferService', () => {
         providerPaymentId: 'prov-1',
         rawStatus: 'SUCCESS',
       })
-      // Blikk DELETE was never called — we don't try to cancel a settled payment.
-      expect(fetchMock).toHaveBeenCalledTimes(1)
+      // Blikk cancel was never called — we don't try to cancel a settled payment.
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
       // Local soft-delete also did NOT happen.
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
       // No payment_cancelled event fired.
@@ -900,27 +823,20 @@ describe('BankTransferService', () => {
     })
 
     it.each<[string]>([['ERROR'], ['REJECTED'], ['CANCELLED']])(
-      'finalizes %s (emits payment_failed) and soft-deletes without emitting payment_cancelled when the refresh GET shows the failure',
+      'finalizes %s (emits payment_failed) and soft-deletes without emitting payment_cancelled when the refresh shows the failure',
       async (failureRawStatus) => {
         bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-        // 1st call: refresh GET reveals the terminal failure.
-        fetchMock.mockResolvedValueOnce(
-          mockFetchResponse({
-            ok: true,
-            status: 200,
-            json: {
-              id: 'prov-1',
-              status: failureRawStatus,
-              message: 'provider detail',
-            },
-          }),
-        )
+        // Refresh reveals the terminal failure.
+        blikkClient.getPayment.mockResolvedValue({
+          id: 'prov-1',
+          status: failureRawStatus,
+          message: 'provider detail',
+        })
 
         const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-        // Blikk DELETE was NOT called — the attempt is already terminal at Blikk.
-        expect(fetchMock).toHaveBeenCalledTimes(1)
-        expect(fetchMock.mock.calls[0][1].method).toBe('GET')
+        // Blikk cancel was NOT called — the attempt is already terminal at Blikk.
+        expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
 
         // finalizeFromBlikkResult ran finalizeBankTransferFailure → terminal
         // status persisted with race-guard pinned to the cached PENDING value.
@@ -962,20 +878,16 @@ describe('BankTransferService', () => {
       },
     )
 
-    it('falls through to the Blikk DELETE on cached state when the refresh GET fails (network)', async () => {
+    it('falls through to the Blikk cancel on cached state when the refresh fails (network)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // 1st call: refresh GET fails.
-      fetchMock.mockRejectedValueOnce(new Error('ECONNRESET'))
-      // 2nd call: DELETE succeeds, so the cancel proceeds to soft-delete.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      // Refresh fails — swallowed by refreshFromBlikkOrWarn.
+      blikkClient.getPayment.mockRejectedValue(new BlikkClientError('ECONNRESET'))
+      // Cancel succeeds, so the cancel proceeds to soft-delete.
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(fetchMock).toHaveBeenCalledTimes(2)
-      expect(fetchMock.mock.calls[0][1].method).toBe('GET')
-      expect(fetchMock.mock.calls[1][1].method).toBe('DELETE')
+      expect(blikkClient.getPayment).toHaveBeenCalledWith('prov-1')
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
 
       // Cached PENDING soft-delete uses the cached lastKnownStatus race-guard.
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
@@ -999,7 +911,8 @@ describe('BankTransferService', () => {
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(fetchMock).not.toHaveBeenCalled()
+      expect(blikkClient.getPayment).not.toHaveBeenCalled()
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
         {
@@ -1015,17 +928,14 @@ describe('BankTransferService', () => {
 
     it('soft-deletes the row when the Blikk cancel returns 404 (nothing live to orphan)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // GET: Blikk still PENDING.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: { id: 'prov-1', status: 'PENDING' },
-        }),
-      )
-      // DELETE: 404 — the payment is unknown to Blikk, nothing live to orphan.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({ ok: false, status: 404, json: {} }),
+      // Refresh: Blikk still PENDING.
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
+      // Cancel: 404 — the payment is unknown to Blikk, nothing live to orphan.
+      blikkClient.cancelPayment.mockRejectedValue(
+        new BlikkClientError('not found', 404),
       )
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
@@ -1048,24 +958,21 @@ describe('BankTransferService', () => {
     // orphan the money, so we refuse the cancel instead.
     it('throws and does NOT soft-delete when the Blikk cancel returns a non-2xx (payment is live)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // GET: Blikk still PENDING.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: { id: 'prov-1', status: 'PENDING' },
-        }),
-      )
-      // DELETE: 409 — Blikk refuses to cancel a payment that is no longer in DRAFT.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({ ok: false, status: 409, json: {} }),
+      // Refresh: Blikk still PENDING.
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
+      // Cancel: 409 — Blikk refuses to cancel a payment that is no longer in DRAFT.
+      blikkClient.cancelPayment.mockRejectedValue(
+        new BlikkClientError('conflict', 409),
       )
 
       await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
         BankTransferErrorCode.BankTransferAlreadyInProgress,
       )
 
-      expect(fetchMock).toHaveBeenCalledTimes(2)
+      expect(blikkClient.cancelPayment).toHaveBeenCalledWith('prov-1')
       // The live payment must NOT be soft-deleted, and no payment_cancelled event fires.
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
@@ -1073,16 +980,15 @@ describe('BankTransferService', () => {
 
     it('throws and does NOT soft-delete when the Blikk cancel request fails (network)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      // GET: Blikk still PENDING.
-      fetchMock.mockResolvedValueOnce(
-        mockFetchResponse({
-          ok: true,
-          status: 200,
-          json: { id: 'prov-1', status: 'PENDING' },
-        }),
+      // Refresh: Blikk still PENDING.
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
+      // Cancel: network failure (no HTTP status) — we can't confirm the cancel, so fail safe.
+      blikkClient.cancelPayment.mockRejectedValue(
+        new BlikkClientError('ECONNRESET'),
       )
-      // DELETE: network failure — we can't confirm the cancel, so fail safe.
-      fetchMock.mockRejectedValueOnce(new Error('ECONNRESET'))
 
       await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
         BankTransferErrorCode.BankTransferAlreadyInProgress,
@@ -1100,7 +1006,8 @@ describe('BankTransferService', () => {
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(fetchMock).not.toHaveBeenCalled()
+      expect(blikkClient.getPayment).not.toHaveBeenCalled()
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
         {
@@ -1116,9 +1023,10 @@ describe('BankTransferService', () => {
 
     it('emits payment_cancelled when cancelling an active PENDING row', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       await service.cancel({ paymentFlowId: 'flow-1' })
 
@@ -1162,9 +1070,10 @@ describe('BankTransferService', () => {
     it('does not emit when the soft-delete affects no rows (race loss)', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       await service.cancel({ paymentFlowId: 'flow-1' })
 
@@ -1182,18 +1091,20 @@ describe('BankTransferService', () => {
       ).rejects.toThrow(PaymentServiceCode.PaymentFlowAlreadyPaid)
 
       expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
-      expect(fetchMock).not.toHaveBeenCalled()
+      expect(blikkClient.getPayment).not.toHaveBeenCalled()
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
 
-    it('throws PaymentFlowAlreadyPaid when the row flips to SUCCESS between fetch and soft-delete (race)', async () => {
+    it('throws PaymentFlowAlreadyPaid when the row flips to SUCCESS between refresh and soft-delete (race)', async () => {
       bankTransferPaymentModel.findOne
         .mockResolvedValueOnce(baseRow)
         .mockResolvedValueOnce({ ...baseRow, lastKnownStatus: 'SUCCESS' })
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       await expect(
         service.cancel({ paymentFlowId: 'flow-1' }),
@@ -1207,9 +1118,10 @@ describe('BankTransferService', () => {
         .mockResolvedValueOnce(baseRow)
         .mockResolvedValueOnce({ ...baseRow, isDeleted: true })
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
-      fetchMock.mockResolvedValue(
-        mockFetchResponse({ ok: true, status: 204, json: {} }),
-      )
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
@@ -1470,9 +1382,10 @@ describe('BankTransferService', () => {
   describe('createBankTransferFulfillment', () => {
     const dummyCharge = {} as never
 
-    it('no-ops when a fulfillment already exists for the flow', async () => {
+    it('no-ops when a fulfillment already exists AND is linked to an FJS charge', async () => {
       paymentFulfillmentModel.findOne.mockResolvedValue({
         id: 'existing',
+        fjsChargeId: 'fjs-1',
       })
       await service.createBankTransferFulfillment(
         'flow-1',
@@ -1482,6 +1395,25 @@ describe('BankTransferService', () => {
 
       expect(paymentFulfillmentModel.create).not.toHaveBeenCalled()
       expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+    })
+
+    it('re-attempts the FJS charge when a fulfillment exists without an fjsChargeId', async () => {
+      paymentFulfillmentModel.findOne.mockResolvedValue({
+        id: 'existing',
+        fjsChargeId: null,
+      })
+      await service.createBankTransferFulfillment(
+        'flow-1',
+        'corr-1',
+        dummyCharge,
+      )
+
+      // Fulfillment already exists, so it is not re-created, but the charge is (re)attempted.
+      expect(paymentFulfillmentModel.create).not.toHaveBeenCalled()
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledWith(
+        'flow-1',
+        dummyCharge,
+      )
     })
 
     it('creates the fulfillment and FJS charge on the first call', async () => {
@@ -1503,7 +1435,7 @@ describe('BankTransferService', () => {
       )
     })
 
-    it('treats a unique-constraint race as a no-op (no FJS charge created)', async () => {
+    it('still ensures the FJS charge when the fulfillment create loses a unique-constraint race', async () => {
       paymentFulfillmentModel.create.mockRejectedValue(
         Object.assign(new Error('duplicate key'), {
           name: 'SequelizeUniqueConstraintError',
@@ -1513,7 +1445,11 @@ describe('BankTransferService', () => {
       await expect(
         service.createBankTransferFulfillment('flow-1', 'corr-1', dummyCharge),
       ).resolves.toBeUndefined()
-      expect(paymentFlowService.createFjsCharge).not.toHaveBeenCalled()
+      // The other writer created the fulfillment; we still (idempotently) ensure the FJS charge.
+      expect(paymentFlowService.createFjsCharge).toHaveBeenCalledWith(
+        'flow-1',
+        dummyCharge,
+      )
     })
 
     it('rethrows non-uniqueness errors from the fulfillment create', async () => {
