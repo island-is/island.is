@@ -65,9 +65,13 @@ const AnswerQuestionnaire: FC = () => {
   const initialAnswers = useMemo(() => {
     if (!questionnaire?.draftAnswers?.length) return undefined
 
+    // Build maps from originalId (or id) → compound question.id and → label
+    const originalIdToCompoundId: { [key: string]: string } = {}
     const questionLabels: { [key: string]: string } = {}
     questionnaire.sections?.forEach((section) => {
       section.questions?.forEach((q) => {
+        const key = q.originalId ?? q.id
+        originalIdToCompoundId[key] = q.id
         questionLabels[q.id] = q.label
       })
     })
@@ -78,11 +82,16 @@ const AnswerQuestionnaire: FC = () => {
           return acc
         }
 
+        // Map originalId back to compound question.id so answers align with
+        // the key-space GenericQuestionnaire uses internally
+        const compoundId =
+          originalIdToCompoundId[draft.questionId] ?? draft.questionId
+
         return {
           ...acc,
-          [draft.questionId]: {
-            questionId: draft.questionId,
-            question: questionLabels[draft.questionId] ?? '',
+          [compoundId]: {
+            questionId: compoundId,
+            question: questionLabels[compoundId] ?? '',
             type: draft.type,
             answers: draft.answers.map((a) => ({
               label: a.label ?? undefined,
@@ -120,8 +129,20 @@ const AnswerQuestionnaire: FC = () => {
       return
     }
 
+    // For EL questionnaires, answers are keyed by compound question.id
+    // (e.g. "group_1__3143") but the backend expects originalId ("3143").
+    // Build a lookup so we send the correct entryId.
+    const idToOriginalId: { [key: string]: string } = {}
+    data?.questionnairesDetail?.sections?.forEach((section) => {
+      section.questions?.forEach((q) => {
+        if (q.originalId) {
+          idToOriginalId[q.id] = q.originalId
+        }
+      })
+    })
+
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
-      entryId: questionId,
+      entryId: idToOriginalId[questionId] ?? questionId,
       type: answer.type,
       answers: answer.answers.map((a) => ({
         label: a.label,
