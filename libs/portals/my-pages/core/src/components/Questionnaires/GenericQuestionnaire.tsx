@@ -104,31 +104,12 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
     }
   }, [questionnaire.sections, calculateFormulaCallback, initialAnswers])
 
-  // Build a derived answers map keyed by originalId for visibility condition lookups.
-  // EL visibilityConditions reference question.originalId (e.g. "5770") but answers are
-  // stored keyed by the full compound question.id (e.g. "group_1__5770").
-  // LSH questions have no originalId (id is already the raw id), so fall back to q.id.
-  const originalIdAnswers = useMemo(() => {
-    const allQuestions =
-      questionnaire.sections?.flatMap((s) => s.questions ?? []) ?? []
-    return allQuestions.reduce<{ [key: string]: QuestionAnswer }>((acc, q) => {
-      const key = q.originalId ?? q.id
-      if (answers[q.id]) {
-        acc[key] = answers[q.id]
-      }
-      return acc
-    }, {})
-  }, [answers, questionnaire.sections])
-
   // Process sections into visible questions with section-aware filtering
   const processedSections = useMemo(() => {
     if (!questionnaire.sections?.length) return []
 
     return questionnaire.sections
-      .filter((section) => {
-        // First check if the section itself is visible based on its conditions
-        return isSectionVisible(section, originalIdAnswers)
-      })
+      .filter((section) => isSectionVisible(section, answers))
       .map((section) => {
         if (!section.questions?.length) return { ...section, questions: [] }
 
@@ -141,18 +122,17 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
           ) {
             return isQuestionVisibleWithStructuredConditions(
               question.visibilityConditions,
-              originalIdAnswers,
+              answers,
             )
           }
 
-          // Questions without visibility conditions are visible by default
           return true
         })
 
         return { ...section, questions: filteredQuestions }
       })
       .filter((section) => section.questions?.length > 0)
-  }, [questionnaire.sections, originalIdAnswers])
+  }, [questionnaire.sections, answers])
 
   // Get all visible questions for backwards compatibility
   const visibleQuestions = useMemo(() => {
