@@ -18,8 +18,6 @@ export const mapItemToQuestion = (
   const answerType = mapAnswerOptionType(item.type, item)
   const triggerDeps = mapTriggers(allQuestions, triggers, item.id)
 
-  const uniqueId = item.id
-
   // Handle options based on question type
   let options: Array<{ label: string; value: string; id: string }> | undefined
 
@@ -39,7 +37,7 @@ export const mapItemToQuestion = (
   }
 
   const answerOptions = {
-    id: uniqueId,
+    id: item.id,
     type: answerType,
     label: undefined,
     options,
@@ -78,7 +76,7 @@ export const mapItemToQuestion = (
   }
 
   return {
-    id: uniqueId,
+    id: item.id,
     sectionId: groupId,
     label: item.label,
     htmlLabel: item.htmlLabel,
