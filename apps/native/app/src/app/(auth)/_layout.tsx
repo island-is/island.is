@@ -193,9 +193,9 @@ export default function AuthLayout() {
         name="app-lock"
         options={{
           headerShown: false,
-          presentation: 'transparentModal',
+          presentation: 'fullScreenModal',
           gestureEnabled: false,
-          animation: 'fade',
+          animation: 'none',
         }}
       />
     </Stack>
