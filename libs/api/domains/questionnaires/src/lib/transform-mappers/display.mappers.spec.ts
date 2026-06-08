@@ -467,9 +467,7 @@ describe('display mappers', () => {
       const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
 
       const section = mapped.sections?.[0]
-      const dependentQuestion = section?.questions?.find(
-        (q) => q.id === 'q2',
-      )
+      const dependentQuestion = section?.questions?.find((q) => q.id === 'q2')
 
       // q2 should depend on q1 via triggers
       expect(dependentQuestion?.dependsOn).toEqual(['q1'])
