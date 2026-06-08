@@ -17,9 +17,17 @@ export const capitalIncomeFields = [
     condition: isCapitalIncome,
     formTitleNumbering: 'none',
     formTitle: (index, application) => {
-      const items =
-        getValueViaPath<unknown[]>(application.answers, 'registerIncome') ?? []
-      return items.length > 0 ? `Fjármagnstekjur ${index + 1}` : ''
+      const items = getValueViaPath<Array<unknown>>(
+        application.answers,
+        'registerIncome',
+      )
+      if (!items || items.length <= 1) {
+        return ''
+      }
+      return {
+        ...m.application.capitalIncomeHeading,
+        values: { index: index + 1 },
+      }
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

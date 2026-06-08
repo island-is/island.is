@@ -43,7 +43,7 @@ export const MainForm = buildForm({
               id: 'typeOfIncome',
               title: m.application.incomeTypeTitle,
               required: true,
-              setOnChange: async () => [{ key: 'registerIncome', value: [{}] }],
+              clearOnChange: ['registerIncome'],
               options: [
                 {
                   value: 'casualWork',

@@ -235,27 +235,35 @@ export const FieldsRepeaterFormField = ({
               {Array.from({ length: numberOfItems }).map((_i, i) => {
                 if (!shouldShowItem(i)) return null
 
+                const resolvedTitle = formTitle
+                  ? typeof formTitle === 'function'
+                    ? formTitle(i, updatedApplication)
+                    : formTitle
+                  : ''
+                const formattedTitle = resolvedTitle
+                  ? formatTextWithLocale(
+                      resolvedTitle,
+                      application,
+                      locale as Locale,
+                      formatMessage,
+                    )
+                  : ''
+
                 return (
                   <Fragment key={i}>
-                    <Box
-                      marginTop={i === 0 ? 0 : 4}
-                      marginLeft={2}
-                      width="full"
-                    >
-                      <Text variant={formTitleVariant}>
-                        {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
-                        {formTitle &&
-                          formatTextWithLocale(
-                            typeof formTitle === 'function'
-                              ? formTitle(i, updatedApplication)
-                              : formTitle,
-                            application,
-                            locale as Locale,
-                            formatMessage,
-                          )}
-                        {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
-                      </Text>
-                    </Box>
+                    {formattedTitle ? (
+                      <Box
+                        marginTop={i === 0 ? 0 : 4}
+                        marginLeft={2}
+                        width="full"
+                      >
+                        <Text variant={formTitleVariant}>
+                          {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
+                          {formattedTitle}
+                          {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
+                        </Text>
+                      </Box>
+                    ) : null}
                     <GridColumn span="1/1">{repeaterFields(i)}</GridColumn>
                   </Fragment>
                 )

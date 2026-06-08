@@ -16,9 +16,39 @@ export const pensionFields = [
     id: 'registerIncome',
     condition: isPension,
     formTitleNumbering: 'none',
+    formTitle: (index, application) => {
+      const items = getValueViaPath<Array<unknown>>(
+        application.answers,
+        'registerIncome',
+      )
+      if (!items || items.length <= 1) {
+        return ''
+      }
+      return {
+        ...m.application.pensionHeading,
+        values: { index: index + 1 },
+      }
+    },
     addItemButtonText: m.application.addLine,
     minRows: 1,
     fields: {
+      pensionFund: {
+        component: 'select',
+        label: m.application.pensionFund,
+        required: true,
+        options: (application) => {
+          const pensionFunds =
+            getValueViaPath<Array<{ id?: string; name?: string }>>(
+              application.externalData,
+              'pensionFunds.data',
+            ) ?? []
+
+          return pensionFunds.map((fund) => ({
+            label: fund.name ?? '',
+            value: fund.id ?? '',
+          }))
+        },
+      },
       pensionType: {
         component: 'select',
         label: m.application.paymentType,
@@ -37,29 +67,11 @@ export const pensionFields = [
           }))
         },
       },
-      pensionFund: {
-        component: 'select',
-        label: m.application.pensionFund,
-        width: 'half',
-        required: true,
-        options: (application) => {
-          const pensionFunds =
-            getValueViaPath<Array<{ id?: string; name?: string }>>(
-              application.externalData,
-              'pensionFunds.data',
-            ) ?? []
-
-          return pensionFunds.map((fund) => ({
-            label: fund.name ?? '',
-            value: fund.id ?? '',
-          }))
-        },
-      },
       amountPerMonth: {
         component: 'input',
         label: m.application.pensionAmountPerMonth,
-        width: 'half',
         type: 'number',
+        width: 'half',
         currency: true,
         required: true,
         min: 0,

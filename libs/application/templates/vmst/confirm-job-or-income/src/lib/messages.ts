@@ -74,6 +74,38 @@ export const application = defineMessages({
     description: 'Income type option: social insurance income',
   },
 
+  // Repeater headings
+  casualWorkHeading: {
+    id: 'vmst.cjoi.application:casualWorkHeading',
+    defaultMessage: 'Tilfallandi vinna {index}',
+    description: 'Repeater heading for casual work',
+  },
+  partTimeHeading: {
+    id: 'vmst.cjoi.application:partTimeHeading',
+    defaultMessage: 'Hlutastarf {index}',
+    description: 'Repeater heading for part-time work',
+  },
+  contractWorkHeading: {
+    id: 'vmst.cjoi.application:contractWorkHeading',
+    defaultMessage: 'Vaktavinna {index}',
+    description: 'Repeater heading for contract work',
+  },
+  capitalIncomeHeading: {
+    id: 'vmst.cjoi.application:capitalIncomeHeading',
+    defaultMessage: 'Fjármagnstekjur {index}',
+    description: 'Repeater heading for capital income',
+  },
+  socialInsuranceHeading: {
+    id: 'vmst.cjoi.application:socialInsuranceHeading',
+    defaultMessage: 'Tekjur frá Tryggingastofnun {index}',
+    description: 'Repeater heading for social insurance income',
+  },
+  pensionHeading: {
+    id: 'vmst.cjoi.application:pensionHeading',
+    defaultMessage: 'Greiðslur úr lífeyrissjóði {index}',
+    description: 'Repeater heading for pension payments',
+  },
+
   // Casual work descriptions
   casualWorkDescription: {
     id: 'vmst.cjoi.application:casualWorkDescription',
