@@ -177,9 +177,13 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
 
-    // Persist sent:true even on partial failure so re-entry does not re-send
-    // to parties that already received the copy.
-    return { sent: true, recipients: recipients.length - failed }
+    // Persist sent:true on partial success so re-entry does not re-send to
+    // parties that already received the copy. Only mark sent:false when every
+    // send failed, leaving the door open to retry.
+    return {
+      sent: failed < recipients.length,
+      recipients: recipients.length - failed,
+    }
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
