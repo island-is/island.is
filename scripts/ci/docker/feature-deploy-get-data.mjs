@@ -47,10 +47,9 @@ async function main(testContext = null) {
 
   core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
-  //comment out to deploy ids feature
   const _MANIFEST_PATHS = [
     'charts/features/deployments',
-    'charts/features/ids-deployments',
+    'charts/ids-features/deployments',
   ]
 
   const changedFiles = new Set()
@@ -76,7 +75,7 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      if (file.includes('ids-deployments')) {
+      if (file.includes('ids-features/deployments')) {
         // Hard code image tag for ids for testing purposes
         content.image.tag = 'main_20260522_VBHs2N1jBfMDePuv'
         fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
