@@ -299,14 +299,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:spouse-no-usage',
     defaultMessage: 'Engin nýting',
   },
-  spouseTaxCreditUsingSummaryTitle: {
-    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-title',
-    defaultMessage: 'Maki nýtir persónuafslátt',
-  },
-  spouseTaxCreditUsingSummaryBody: {
-    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-body',
-    defaultMessage: 'Maki hefur leyfi til að nýta persónuafsláttinn þinn.',
-  },
   youAreUsingSpouseTaxCreditTitle: {
     id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
     defaultMessage: 'Þú nýtir persónuafslátt maka',
@@ -327,5 +319,30 @@ export const m = defineMessages({
   nationalIdWithValue: {
     id: 'sp.social-insurance-maintenance:national-id-with-value',
     defaultMessage: 'Kennitala: {value}',
+  },
+  spouseInfoNotFound: {
+    id: 'sp.social-insurance-maintenance:spouse-info-not-found',
+    defaultMessage: 'Engar upplýsingar fundust um maka',
+  },
+  spouseTaxCreditUnknownError: {
+    id: 'sp.social-insurance-maintenance:spouse-tax-credit-unknown-error',
+    defaultMessage:
+      'Ekki er hægt að framkvæma umbeðna breytingu. Vinsamlegast hafðu samband við þjónustuver TR ef þú vilt breyta skattkorti maka.',
+  },
+  grantSpouseNotAllowedDeceased: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-not-allowed-deceased',
+    defaultMessage:
+      'Ekki er hægt að veita maka leyfi til að nota persónuafslátt þar sem maki er skráður látinn.',
+  },
+  // Shown when the deceased spouse tax card cannot be applied — two specific
+  // blocking reasons with distinct user-facing explanations.
+  deceasedSpouseNotRegistered: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-not-registered-deceased',
+    defaultMessage: 'Maki ekki skráður látinn samkvæmt kerfum TR',
+  },
+  deceasedSpouseDateOfDeathOutOfRange: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-date-of-death-not-within-valid-range',
+    defaultMessage:
+      'Til þess að nýta persónuafslátt látins maka þá má andlátsdagsetningin ekki vera eldri en 8 mánuðir frá deginum í dag',
   },
 })
