@@ -223,7 +223,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           filter={(option) =>
             option.label
               .toLowerCase()
-              .includes(inputState.searchInput.toLowerCase())
+              .includes(inputState.searchInput.replace('´', '').toLowerCase())
           }
           size="large"
           placeholder={formatMessage(
