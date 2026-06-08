@@ -7,13 +7,13 @@ import {
 
 export { UserProfileApi } from '@island.is/application/types'
 
-export interface NationalRegistryUserApiParameters {
+export interface NationalRegistryV3UserApiParameters {
   legalDomicileIceland?: boolean
 }
-export const NationalRegistryUserApi =
-  defineTemplateApi<NationalRegistryUserApiParameters>({
+export const NationalRegistryV3UserApi =
+  defineTemplateApi<NationalRegistryV3UserApiParameters>({
     action: 'nationalRegistry',
-    namespace: 'NationalRegistry',
+    namespace: 'NationalRegistryV3',
     params: {
       legalDomicileIceland: true,
     },
@@ -59,5 +59,5 @@ export const NewestDriversCardApi = defineTemplateApi({
 export const NationalRegistryBirthplaceApi = defineTemplateApi({
   action: 'getBirthplace',
   externalDataId: 'nationalRegistryBirthplace',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })

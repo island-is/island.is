@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { and } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
@@ -19,15 +21,21 @@ import { AliveStatusService, NameInfo } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationProviderService } from './delegation-provider.service'
+import { DelegationScopeService } from './delegation-scope.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import { DelegationsIndexService } from './delegations-index.service'
-import { validateDistrictCommissionersDelegations } from './utils/delegations'
+import {
+  getDelegationNoActorWhereClause,
+  validateDistrictCommissionersDelegations,
+} from './utils/delegations'
 import { DelegationRecordDTO } from './dto/delegation-index.dto'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 
 type ClientDelegationInfo = Pick<
@@ -39,6 +47,18 @@ export type ApiScopeInfo = Pick<
   ApiScope,
   'name' | 'supportedDelegationTypes' | 'isAccessControlled'
 >
+
+/**
+ * Discriminated result for DELETE /scopes. Controllers translate the
+ * variant into an HTTP status and decide whether to audit:
+ *  - notFound: delegation didn't exist or wasn't the caller's → 204, skip audit
+ *  - updated:  scopes were removed but the delegation still has scopes → 200, audit "deleteScopes"
+ *  - destroyed: the last scope was removed and the row was deleted → 204, audit "destroy"
+ */
+export type DeleteScopesResult =
+  | { kind: 'notFound' }
+  | { kind: 'updated'; delegation: DelegationDTO }
+  | { kind: 'destroyed'; delegationId: string }
 
 interface FindAvailableInput {
   user: User
@@ -60,13 +80,17 @@ export class DelegationsIncomingService {
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
+    @InjectModel(Delegation)
+    private delegationModel: typeof Delegation,
     private incomingDelegationsCompanyService: IncomingDelegationsCompanyService,
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
+    private delegationScopeService: DelegationScopeService,
     private aliveStatusService: AliveStatusService,
+    private sequelize: Sequelize,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryV3FeatureService: NationalRegistryV3FeatureService,
@@ -321,6 +345,104 @@ export class DelegationsIncomingService {
     })
 
     return [...mergedDelegationMap.values()]
+  }
+
+  async deleteScopes(
+    user: User,
+    delegationId: string,
+    scopeNames: string[],
+  ): Promise<DeleteScopesResult> {
+    if (scopeNames.length === 0) {
+      throw new BadRequestException('scopeNames must not be empty.')
+    }
+
+    const txResult = await this.sequelize.transaction(async (transaction) => {
+      const currentDelegation = await this.delegationModel.findOne({
+        where: and(
+          { id: delegationId, toNationalId: user.nationalId },
+          getDelegationNoActorWhereClause(user),
+        ),
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+      if (!currentDelegation) {
+        return { kind: 'notFound' as const }
+      }
+
+      const existingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+
+      const existingScopeNames = new Set(existingScopes.map((s) => s.scopeName))
+      const unknownScopes = scopeNames.filter((s) => !existingScopeNames.has(s))
+      if (unknownScopes.length > 0) {
+        throw new BadRequestException(
+          'One or more scopes are not part of this delegation.',
+        )
+      }
+
+      await this.delegationScopeService.deleteByName(
+        delegationId,
+        scopeNames,
+        transaction,
+      )
+
+      const remainingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
+
+      if (remainingScopes.length === 0) {
+        // No scopes remain — destroy the row so it doesn't linger as an
+        // empty record that grants nothing.
+        await this.delegationModel.destroy({
+          where: { id: delegationId },
+          transaction,
+        })
+        return { kind: 'destroyed' as const }
+      }
+
+      const refreshed = await this.delegationModel.findOne({
+        where: and(
+          { id: delegationId, toNationalId: user.nationalId },
+          getDelegationNoActorWhereClause(user),
+        ),
+        include: [
+          {
+            model: DelegationScope,
+            required: false,
+            include: [
+              {
+                attributes: ['displayName'],
+                model: ApiScope,
+              },
+            ],
+          },
+        ],
+        transaction,
+      })
+      if (!refreshed) {
+        return { kind: 'notFound' as const }
+      }
+
+      return { kind: 'updated' as const, delegation: refreshed.toDTO() }
+    })
+
+    if (txResult.kind === 'notFound') {
+      return { kind: 'notFound' }
+    }
+
+    // Reindex after commit so we never reindex changes that might roll back.
+    void this.delegationsIndexService.indexDelegations(user)
+
+    if (txResult.kind === 'destroyed') {
+      return { kind: 'destroyed', delegationId }
+    }
+
+    return { kind: 'updated', delegation: txResult.delegation }
   }
 
   async verifyDelegationAtProvider(

@@ -9,7 +9,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
       vacancies {
         id
         fieldOfWork
-        jobCategory
         title
         intro
         applicationDeadlineFrom

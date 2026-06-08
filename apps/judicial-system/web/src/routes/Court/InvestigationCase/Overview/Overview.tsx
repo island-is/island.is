@@ -72,7 +72,6 @@ const Overview = () => {
     prosecutor,
     caseType,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = useCallback(
@@ -137,14 +136,10 @@ const Overview = () => {
                   id: 'defendants-section',
                   items: [defendants({ caseType: workingCase.type })],
                 },
-                ...(showItem(victims)
-                  ? [
-                      {
-                        id: 'victims-section',
-                        items: [victims],
-                      },
-                    ]
-                  : []),
+                {
+                  id: 'victims-section',
+                  items: [victims],
+                },
                 {
                   id: 'case-info-section',
                   items: [

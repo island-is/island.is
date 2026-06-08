@@ -16,4 +16,7 @@ export class VmstApplicationsApplicantAttachment {
 
   @Field()
   created!: string
+
+  @Field(() => String, { nullable: true })
+  downloadServiceUrl?: string | null
 }

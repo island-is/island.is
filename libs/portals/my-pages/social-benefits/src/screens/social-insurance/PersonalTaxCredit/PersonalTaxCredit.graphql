@@ -42,6 +42,11 @@ query getPersonalTaxCreditSpouseInfo {
     nationalId
     name
     isDeceased
+    deceasedMonthsAndYears {
+      year
+      months
+    }
+    deceasedReasonNotAllowedCode
   }
 }
 

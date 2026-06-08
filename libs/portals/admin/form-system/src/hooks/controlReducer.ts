@@ -125,6 +125,12 @@ type DndActions =
         update: (updatedForm: FormSystemForm) => void
       }
     }
+  | {
+      type: 'SET_FORM'
+      payload: {
+        form: FormSystemForm
+      }
+    }
 
 type ChangeActions =
   | {
@@ -1730,6 +1736,12 @@ export const controlReducer = (
       }
       update(updatedForm)
       return { ...state, form: updatedForm }
+    }
+    case 'SET_FORM': {
+      return {
+        ...state,
+        form: action.payload.form,
+      }
     }
     case 'SET_COMPLETED_TITLE': {
       const { lang, newValue } = action.payload

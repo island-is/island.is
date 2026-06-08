@@ -110,24 +110,6 @@ export const MaritalStatusSubSection = buildSubSection({
             return spouseDetails?.name
           },
         }),
-        buildTextField({
-          id: 'maritalStatus.citizenship',
-          title: information.labels.maritalStatus.spouseCitizenship,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            return spouseDetails?.citizenship?.name
-              ? spouseDetails?.citizenship?.name
-              : ''
-          },
-        }),
       ],
     }),
   ],
