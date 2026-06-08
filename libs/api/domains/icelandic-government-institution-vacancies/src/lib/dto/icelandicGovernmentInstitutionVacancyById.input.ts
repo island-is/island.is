@@ -11,4 +11,7 @@ export class IcelandicGovernmentInstitutionVacancyByIdInput {
 
   @Field(() => Boolean, { nullable: true })
   useNewApiOverride?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  useOldApiOverride?: boolean
 }
