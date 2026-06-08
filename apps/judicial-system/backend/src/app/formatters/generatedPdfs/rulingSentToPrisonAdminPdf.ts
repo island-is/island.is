@@ -10,14 +10,14 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-import { Case, DefendantEventLog } from '../modules/repository'
+import { Case, DefendantEventLog } from '../../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
   addMediumCenteredText,
   addNormalPlusText,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 export const createRulingSentToPrisonAdminPdf = (
   theCase: Case,

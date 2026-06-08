@@ -23,7 +23,6 @@ describe('InfoCard', () => {
                     values: [
                       <DefendantInfo
                         defendant={{ id: 'def_id', defenderName: 'Joe' }}
-                        workingCaseId="case_id"
                       />,
                     ],
                   },
@@ -59,7 +58,6 @@ describe('InfoCard', () => {
                           defenderName: 'Joe',
                           defenderPhoneNumber: '555-5555',
                         }}
-                        workingCaseId="case_id"
                       />,
                     ],
                   },
@@ -103,7 +101,6 @@ describe('InfoCard', () => {
                               defenderEmail: 'joe@joe.is',
                               defenderPhoneNumber: '455-5544',
                             }}
-                            workingCaseId="case_id"
                           />,
                         ],
                       },
@@ -140,12 +137,7 @@ describe('InfoCard', () => {
                   {
                     id: 'itm_id',
                     title: 'Titill',
-                    values: [
-                      <DefendantInfo
-                        defendant={{ id: 'def_id' }}
-                        workingCaseId="case_id"
-                      />,
-                    ],
+                    values: [<DefendantInfo defendant={{ id: 'def_id' }} />],
                   },
                 ],
               },

@@ -1,6 +1,6 @@
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { Alignment, PdfDocument } from './pdf'
+import { Alignment, PdfDocument } from '../pdfHelpers/pdf'
 
 interface DigitalCaseFileMetadata {
   name: string

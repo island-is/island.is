@@ -102,7 +102,6 @@ const useInfoCardItems = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    workingCaseId={workingCase.id}
                     courtId={workingCase.court?.id}
                     defender={{
                       name: workingCase.defenderName,
