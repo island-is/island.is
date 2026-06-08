@@ -16,8 +16,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -201,6 +203,7 @@ export class ApplicationsService {
       })
     } catch (error) {
       this.logger.error('Error creating application', error)
+      throw error
     }
 
     const applicationDto = await this.getApplication(newApplicationId, '', null)
@@ -545,13 +548,21 @@ export class ApplicationsService {
 
       return responseDto
     } catch (error) {
+      if (error instanceof HttpException) {
+        this.logger.warn(
+          `getApplication failed with ${error.getStatus()} for application '${applicationId}'`,
+        )
+        throw error
+      }
+
       this.logger.error(
-        `Error getting application with id '${applicationId}'`,
+        `Unexpected error getting application '${applicationId}'`,
         error,
       )
+      throw new InternalServerErrorException(
+        `Unexpected error while getting application '${applicationId}'`,
+      )
     }
-
-    return new ApplicationResponseDto()
   }
 
   async findAllBySlugAndUser(
