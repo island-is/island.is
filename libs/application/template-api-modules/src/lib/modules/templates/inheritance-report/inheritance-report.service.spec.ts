@@ -27,6 +27,7 @@ const mockSyslumennService = {
 
 const mockSharedTemplateApiService = {
   sendEmail: jest.fn(),
+  sendEmailWithAttachment: jest.fn(),
 }
 
 describe('InheritanceReportService', () => {
@@ -60,11 +61,8 @@ describe('InheritanceReportService', () => {
     jest.clearAllMocks()
   })
 
-  describe('approveByAssignee', () => {
-    it('marks the acting heir as approved in application answers', async () => {
-      const heirNationalId = '0101302209'
-      const otherHeirNationalId = '0101302399'
-
+  describe('sendApplicationCopyToParties', () => {
+    it('does nothing when the applicant did not opt in', async () => {
       const application = createApplication({
         typeId: ApplicationTypes.INHERITANCE_REPORT,
         answers: {
@@ -73,20 +71,10 @@ describe('InheritanceReportService', () => {
               {
                 name: 'Heir A',
                 relation: 'child',
-                nationalId: heirNationalId,
+                nationalId: '0101302209',
                 initial: false,
                 enabled: true,
-                taxFreeInheritance: '0',
-                inheritance: '0',
-                taxableInheritance: '0',
-                inheritanceTax: '0',
-              },
-              {
-                name: 'Heir B',
-                relation: 'child',
-                nationalId: otherHeirNationalId,
-                initial: false,
-                enabled: true,
+                email: 'heir@example.com',
                 taxFreeInheritance: '0',
                 inheritance: '0',
                 taxableInheritance: '0',
@@ -98,35 +86,48 @@ describe('InheritanceReportService', () => {
       })
 
       const auth = createCurrentUser({
-        nationalId: heirNationalId,
+        nationalId: '0101301234',
         scope: ['@island.is/applications:write'],
       })
 
-      await service.approveByAssignee({
+      const result = await service.sendApplicationCopyToParties({
         application,
         auth,
         currentUserLocale: 'is',
       } as any)
 
-      const heirs = (application.answers as any)?.heirs?.data
-      expect(heirs).toHaveLength(2)
-      expect(heirs[0].approved).toBe(true)
-      expect(typeof heirs[0].approvedDate).toBe('string')
-      expect(heirs[1].approved).toBeUndefined()
+      expect(result).toEqual({ sent: false, recipients: 0 })
+      expect(
+        mockSharedTemplateApiService.sendEmailWithAttachment,
+      ).not.toHaveBeenCalled()
     })
 
-    it('throws when acting user is not in heirs list', async () => {
+    it('emails a copy to parties with an email when opted in', async () => {
       const application = createApplication({
         typeId: ApplicationTypes.INHERITANCE_REPORT,
+        applicant: '0101301234',
         answers: {
+          // Matches the YES constant ('yes') the schema validates to.
+          sendCopyToParties: ['yes'],
+          total: 0,
+          debtsTotal: 0,
+          netTotal: 0,
+          netPropertyForExchange: 0,
+          applicant: {
+            nationalId: '0101301234',
+            email: 'applicant@example.com',
+            phone: '5551234',
+            relation: 'child',
+          },
           heirs: {
             data: [
               {
                 name: 'Heir A',
                 relation: 'child',
-                nationalId: '0101302399',
+                nationalId: '0101302209',
                 initial: false,
                 enabled: true,
+                email: 'heir@example.com',
                 taxFreeInheritance: '0',
                 inheritance: '0',
                 taxableInheritance: '0',
@@ -138,17 +139,20 @@ describe('InheritanceReportService', () => {
       })
 
       const auth = createCurrentUser({
-        nationalId: '0101302209',
+        nationalId: '0101301234',
         scope: ['@island.is/applications:write'],
       })
 
-      await expect(
-        service.approveByAssignee({
-          application,
-          auth,
-          currentUserLocale: 'is',
-        } as any),
-      ).rejects.toBeTruthy()
+      const result = await service.sendApplicationCopyToParties({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result).toEqual({ sent: true, recipients: 1 })
+      expect(
+        mockSharedTemplateApiService.sendEmailWithAttachment,
+      ).toHaveBeenCalledTimes(1)
     })
   })
 
