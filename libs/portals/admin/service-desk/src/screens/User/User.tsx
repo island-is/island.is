@@ -60,6 +60,9 @@ const User = () => {
     id: string
     email: string | null
   } | null>(null)
+  const [isDeletePhoneModalVisible, setIsDeletePhoneModalVisible] =
+    useState(false)
+  const [phoneToDelete, setPhoneToDelete] = useState<string | null>(null)
 
   const {
     data: notifications,
@@ -115,6 +118,16 @@ const User = () => {
       })
       setEmailToDelete(null)
       revalidate()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleDeletePhone = async () => {
+    setIsDeletePhoneModalVisible(false)
+    try {
+      await handleUpdateProfile({ mobilePhoneNumber: '' })
+      setPhoneToDelete(null)
     } catch (e) {
       console.error(e)
     }
@@ -367,9 +380,8 @@ const User = () => {
                 heading={formatMessage(m.phone)}
                 text={user.mobilePhoneNumber ?? ''}
                 cta={
-                  !user.mobilePhoneNumber || user.mobilePhoneNumberVerified
-                    ? undefined
-                    : {
+                  user.mobilePhoneNumber
+                    ? {
                         label: formatMessage(coreMessages.buttonDestroy),
                         buttonType: {
                           variant: 'text',
@@ -377,9 +389,12 @@ const User = () => {
                         },
                         size: 'small',
                         icon: 'trash',
-                        onClick: () =>
-                          handleUpdateProfile({ mobilePhoneNumber: '' }),
+                        onClick: () => {
+                          setPhoneToDelete(user.mobilePhoneNumber ?? null)
+                          setIsDeletePhoneModalVisible(true)
+                        },
                       }
+                    : undefined
                 }
                 tag={{
                   label: formatMessage(
@@ -464,13 +479,11 @@ const User = () => {
               {(() => {
                 const otherEmails = user.emails?.filter((e) => !e.primary) ?? []
 
-                if (!user.emails || user.emails.length <= 1) {
+                if (!user.emails || otherEmails.length === 0) {
                   return null
                 }
 
-                return user.emails &&
-                  user.emails.length > 1 &&
-                  otherEmails.length > 0 ? (
+                return user.emails && otherEmails.length > 0 ? (
                   <Box
                     borderColor="blue200"
                     borderWidth="standard"
@@ -687,6 +700,21 @@ const User = () => {
         title={formatMessage(m.deleteEmailConfirmTitle)}
         message={formatMessage(m.deleteEmailConfirmMessage, {
           email: emailToDelete?.email ?? '',
+        })}
+        confirmMessage={formatMessage(coreMessages.buttonDestroy)}
+      />
+      <ConfirmModal
+        isVisible={isDeletePhoneModalVisible}
+        onConfirm={handleDeletePhone}
+        onVisibilityChange={(visibility) => {
+          setIsDeletePhoneModalVisible(visibility)
+          if (!visibility) {
+            setPhoneToDelete(null)
+          }
+        }}
+        title={formatMessage(m.deletePhoneConfirmTitle)}
+        message={formatMessage(m.deletePhoneConfirmMessage, {
+          phone: phoneToDelete ?? '',
         })}
         confirmMessage={formatMessage(coreMessages.buttonDestroy)}
       />
