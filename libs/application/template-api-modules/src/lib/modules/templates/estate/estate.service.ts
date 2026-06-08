@@ -122,7 +122,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     )
     const fileContent = pdfBuffer.toString('binary')
 
-    await Promise.all(
+    const results = await Promise.allSettled(
       recipients.map((member) =>
         this.sharedTemplateAPIService.sendEmailWithAttachment(
           (props, attachment, recipientEmail) => {
@@ -170,7 +170,16 @@ export class EstateTemplateService extends BaseTemplateApiService {
       ),
     )
 
-    return { sent: true, recipients: recipients.length }
+    const failed = results.filter((r) => r.status === 'rejected').length
+    if (failed > 0) {
+      this.logger.error(
+        `[estate]: Failed to email application copy to ${failed}/${recipients.length} parties`,
+      )
+    }
+
+    // Persist sent:true even on partial failure so re-entry does not re-send
+    // to parties that already received the copy.
+    return { sent: true, recipients: recipients.length - failed }
   }
 
   async estateProvider({

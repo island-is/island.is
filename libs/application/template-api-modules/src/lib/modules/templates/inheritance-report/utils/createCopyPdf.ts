@@ -42,20 +42,16 @@ export const transformInheritanceReportToPDFStream = async (
   doc.fontSize(fontSizes.title).text(title, { align: 'center' })
   moveDownBy(3, doc)
 
+  // Prepaid-inheritance applications store the applicant under
+  // `prePaidApplicant`; estate-inheritance applications use `applicant`.
+  // Fall back so the copy PDF isn't blank for prepaid parties.
+  const applicant = answers?.applicant ?? answers?.prePaidApplicant
   doc.fontSize(fontSizes.subtitle).text('Umsækjandi')
   doc.fontSize(fontSizes.text)
-  fieldWithValue(
-    doc,
-    'Kennitala',
-    answers?.applicant?.nationalId ?? 'Kennitölu vantar',
-  )
-  fieldWithValue(doc, 'Netfang', answers?.applicant?.email ?? 'Netfang vantar')
-  fieldWithValue(
-    doc,
-    'Símanúmer',
-    answers?.applicant?.phone ?? 'Símanúmer vantar',
-  )
-  fieldWithValue(doc, 'Tengsl', answers?.applicant?.relation ?? 'Tengsl vantar')
+  fieldWithValue(doc, 'Kennitala', applicant?.nationalId ?? 'Kennitölu vantar')
+  fieldWithValue(doc, 'Netfang', applicant?.email ?? 'Netfang vantar')
+  fieldWithValue(doc, 'Símanúmer', applicant?.phone ?? 'Símanúmer vantar')
+  fieldWithValue(doc, 'Tengsl', applicant?.relation ?? 'Tengsl vantar')
   moveDownBy(2, doc)
 
   const heirs = answers?.heirs?.data ?? []

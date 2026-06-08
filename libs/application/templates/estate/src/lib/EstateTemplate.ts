@@ -49,8 +49,17 @@ const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   const externalData = context.application.externalData as EstateExternalData
-  const signatories = externalData?.getSignatories?.data?.signatories || []
-  return signatories.length > 0 && signatories.every((s) => s.signed)
+  const signatoriesResult = externalData?.getSignatories?.data
+  // Only allow completion once the signatory list has been fetched
+  // successfully. A successful fetch with no signatories (estate types that
+  // require no co-signing at syslumenn, e.g. official division / no assets)
+  // is a valid completion case — every() is vacuously true — so those
+  // applications don't get stuck in signing until they are pruned. A failed
+  // fetch (success falsy) keeps the application in signing so it retries.
+  if (!signatoriesResult?.success) {
+    return false
+  }
+  return (signatoriesResult.signatories ?? []).every((s) => s.signed)
 }
 
 const EstateTemplate: ApplicationTemplate<

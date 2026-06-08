@@ -1976,22 +1976,6 @@ export const m = defineMessages({
     defaultMessage: 'Í bið',
     description: 'Pending status',
   },
-  inReviewActionsInfoTitle: {
-    id: 'ir.application:inReview.actions.infoTitle',
-    defaultMessage: 'Næstu skref',
-    description: 'Next steps title',
-  },
-  inReviewActionsInfoDescription: {
-    id: 'ir.application:inReview.actions.infoDescription',
-    defaultMessage:
-      'Þegar allir erfingjar hafa undirritað birtist hnappur hér að neðan til að ljúka umsókn. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
-    description: 'Next steps description',
-  },
-  inReviewActionsBackToEdit: {
-    id: 'ir.application:inReview.actions.backToEdit',
-    defaultMessage: 'Breyta gögnum',
-    description: 'Back to edit button',
-  },
   inReviewActionsComplete: {
     id: 'ir.application:inReview.actions.complete',
     defaultMessage: 'Ljúka umsókn',

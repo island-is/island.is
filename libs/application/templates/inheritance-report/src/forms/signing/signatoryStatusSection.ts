@@ -14,12 +14,23 @@ import { InheritanceSignatory } from '@island.is/clients/syslumenn'
 const allSignatoriesSigned = (
   externalData: Record<string, unknown>,
 ): boolean => {
+  // Only show the finish button once signatories have been fetched
+  // successfully. A successful fetch with no signatories is a valid
+  // completion case (every() is vacuously true); a failed fetch keeps the
+  // read-only status view.
+  const fetchSucceeded = getValueViaPath<boolean>(
+    externalData,
+    'getSignatories.data.success',
+  )
+  if (!fetchSucceeded) {
+    return false
+  }
   const signatories =
     getValueViaPath<InheritanceSignatory[]>(
       externalData,
       'getSignatories.data.signatories',
     ) ?? []
-  return signatories.length > 0 && signatories.every((s) => s.signed)
+  return signatories.every((s) => s.signed)
 }
 
 export const signatoryStatusSection = buildSection({
