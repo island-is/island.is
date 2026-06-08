@@ -42,10 +42,6 @@ export const delegationsModule: PortalModule = {
     const useNewRoutes = await featureFlagClient.getValue(
       Features.useNewDelegationSystem,
       false,
-      {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      },
     )
 
     const hasAccess = delegationScopes.some((scope) =>
