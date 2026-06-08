@@ -33,10 +33,7 @@ const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { digitalCaseFiles } = usePoliceDigitalCaseFile(
-    workingCase.id,
-    workingCase.origin,
-  )
+  const { digitalCaseFiles } = usePoliceDigitalCaseFile()
 
   const caseFiles = useMemo(() => {
     return new Map<string, TCaseFile[]>(

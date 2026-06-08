@@ -864,42 +864,35 @@ export class VerdictsClientService {
       ])
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
+    const courtOfAppealMap = new Map<string, { id: string; label: string }>()
+    const districtCourtMap = new Map<string, { id: string; label: string }>()
 
-    const courtOfAppealSet = new Set<string>()
-    const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!courtOfAppealSet.has(scheduleType.label)) {
-            courtOfAppealSet.add(scheduleType.label)
-            courtOfAppealItems.push(item)
-          }
+          courtOfAppealMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
-    const supremeCourtItems: Array<{ id: string; label: string }> = []
-
-    const districtCourtSet = new Set<string>()
-    const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!districtCourtSet.has(scheduleType.label)) {
-            districtCourtSet.add(scheduleType.label)
-            districtCourtItems.push(item)
-          }
+          districtCourtMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
+    const courtOfAppealItems = Array.from(courtOfAppealMap.values())
     courtOfAppealItems.sort(sortAlpha('label'))
+
+    const districtCourtItems = Array.from(districtCourtMap.values())
     districtCourtItems.sort(sortAlpha('label'))
 
     const allItems = Array.from(mapOfAll.values())
@@ -910,7 +903,7 @@ export class VerdictsClientService {
         items: courtOfAppealItems,
       },
       supremeCourt: {
-        items: supremeCourtItems,
+        items: [],
       },
       districtCourt: {
         items: districtCourtItems,

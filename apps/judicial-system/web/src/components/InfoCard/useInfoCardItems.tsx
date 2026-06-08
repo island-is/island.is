@@ -49,10 +49,6 @@ const useInfoCardItems = () => {
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
 
-  // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) =>
-    isNonEmptyArray(item.values) && !!item.values[0]
-
   const defendants = ({
     caseType,
     displayAppealExpirationInfo,
@@ -102,7 +98,6 @@ const useInfoCardItems = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    workingCaseId={workingCase.id}
                     courtId={workingCase.court?.id}
                     defender={{
                       name: workingCase.defenderName,
@@ -504,7 +499,6 @@ const useInfoCardItems = () => {
   }
 
   return {
-    showItem,
     defendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,

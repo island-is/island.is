@@ -15,9 +15,6 @@ const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
   return Array.isArray(paymentData) && paymentData.length > 0
 }
 
-const isReviewEnabled = (externalData: Record<string, unknown>): boolean =>
-  getValueViaPath(externalData, 'checkReviewFlag.data.reviewEnabled') === true
-
 export const payment = buildSection({
   id: 'paymentSection',
   title: m.paymentTitle,
@@ -26,11 +23,7 @@ export const payment = buildSection({
     const supportsPayment =
       selectedEstate === EstateTypes.divisionOfEstateByHeirs ||
       selectedEstate === EstateTypes.permitForUndividedEstate
-    return (
-      supportsPayment &&
-      isPaymentEnabled(externalData) &&
-      !isReviewEnabled(externalData)
-    )
+    return supportsPayment && isPaymentEnabled(externalData)
   },
   children: [
     buildMultiField({

@@ -109,8 +109,8 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.inReviewNameLabel)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.inReviewNationalIdLabel)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.signingNameLabel)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.signingNationalIdLabel)}</T.HeadData>
             <T.HeadData>{formatMessage(m.signingStatusLabel)}</T.HeadData>
           </T.Row>
         </T.Head>

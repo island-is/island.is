@@ -283,10 +283,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`cases/statistics/export-csv?${searchParams}`)
   }
 
-  getConnectedCases(caseId: string): Promise<Case[]> {
-    return this.get(`case/${caseId}/connectedCases`)
-  }
-
   getCandidateMergeCases(caseId: string): Promise<Case[]> {
     return this.get(`case/${caseId}/candidateMergeCases`)
   }

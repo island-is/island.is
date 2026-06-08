@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
 
 import {
   CaseType,
@@ -20,6 +21,7 @@ import { Case, EventLog } from '../../../repository'
 import { InstitutionContactRepositoryService } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
+import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
 
@@ -60,6 +62,7 @@ describe('InternalNotificationController - Send indictment reopened notification
 
   let mockEmailService: EmailService
   let mockInstitutionContactRepositoryService: InstitutionContactRepositoryService
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -67,11 +70,13 @@ describe('InternalNotificationController - Send indictment reopened notification
       emailService,
       internalNotificationController,
       institutionContactRepositoryService,
+      notificationConfig,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockInstitutionContactRepositoryService =
       institutionContactRepositoryService
+    mockConfig = notificationConfig
 
     givenWhenThen = async (theCase: Case) => {
       const then = {} as Then
@@ -178,7 +183,7 @@ describe('InternalNotificationController - Send indictment reopened notification
           to: [
             {
               name: 'Fangelsismálastofnun',
-              address: 'jl+d+prisonAdmin@kolibri.is',
+              address: mockConfig.email.prisonAdminEmail,
             },
           ],
           subject: prosecutorSubject,
@@ -279,7 +284,7 @@ describe('InternalNotificationController - Send indictment reopened notification
           to: [
             {
               name: 'Fangelsismálastofnun',
-              address: 'jl+d+prisonAdmin@kolibri.is',
+              address: mockConfig.email.prisonAdminEmail,
             },
           ],
           subject: prosecutorSubject,
