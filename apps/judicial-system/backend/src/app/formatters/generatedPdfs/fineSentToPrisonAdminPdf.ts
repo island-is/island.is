@@ -6,14 +6,14 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
-import { Case, DefendantEventLog } from '../modules/repository'
+import { Case, DefendantEventLog } from '../../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
   addMediumCenteredText,
   addNormalPlusText,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 export const createFineSentToPrisonAdminPdf = (
   theCase: Case,
