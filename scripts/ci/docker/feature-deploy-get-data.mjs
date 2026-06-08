@@ -100,9 +100,11 @@ async function main(testContext = null) {
   }
 
   if (changedFiles.size > 0) {
-    const bootstrapChart = await glob(
-      `${_MANIFEST_PATHS}/**/values.bootstrap.yaml`,
+    const bootstrapChartPaths = _MANIFEST_PATHS.map(
+      (path) => `${path}/**/values.bootstrap.yaml`,
     )
+
+    const bootstrapChart = await glob(bootstrapChartPaths)
 
     for (const file of bootstrapChart) {
       changedFiles.add(file)
