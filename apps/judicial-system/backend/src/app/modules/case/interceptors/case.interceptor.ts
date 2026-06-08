@@ -697,9 +697,7 @@ const transformCase = (
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
-  constructor(
-    private readonly caseRepositoryService: CaseRepositoryService,
-  ) {}
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
 
   private async findRootAncestorId(
     caseId: string,
@@ -728,17 +726,17 @@ export class CaseInterceptor implements NestInterceptor {
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(
-      switchMap((theCase: Case) =>
-        from(
-          this.findRootAncestorId(theCase.id, theCase.parentCaseId),
-        ).pipe(
-          map((originalAncestorId) =>
-            transformCase(theCase, user, originalAncestorId),
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.findRootAncestorId(theCase.id, theCase.parentCaseId)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
           ),
         ),
-      ),
-    )
+      )
   }
 }
 
