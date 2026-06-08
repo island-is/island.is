@@ -165,6 +165,8 @@ export class WorkerService {
       totalPrice: cardPaymentDetails.totalPrice,
       systemId: environment.chargeFjs.systemId,
       merchantReferenceData: cardPaymentDetails.merchantReferenceData,
+      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
+      correlationId: cardPaymentDetails.id,
     })
 
     const newCharge = await retry(

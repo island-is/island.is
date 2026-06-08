@@ -539,6 +539,8 @@ describe('BankTransferService', () => {
             payableAmount: 14000,
             paymentMeans: 'Milli',
             RRN: 'prov-1',
+            // Per-attempt correlationId is threaded into the FJS payInfo.
+            correlationId: 'btp-1',
           }),
         }),
       )

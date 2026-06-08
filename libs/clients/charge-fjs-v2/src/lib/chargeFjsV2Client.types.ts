@@ -39,21 +39,35 @@ interface ChargeItem {
   reference: string
 }
 
-interface PayInfo {
+interface PayInfoBase {
   /**
    * Reference for the payment. For card payments this is the acquirer reference (RRN); for a bank
    * transfer it carries the provider payment id so FJS can reconcile against the provider. Required.
    */
   RRN: string
-  /** Card-only — present only when `paymentMeans` is a card type. */
-  cardType?: string
-  paymentMeans: PayInfoPaymentMeansEnum
-  /** Card-only — present only when `paymentMeans` is a card type. */
-  authCode?: string
-  /** Card-only — present only when `paymentMeans` is a card type. */
-  PAN?: string
   payableAmount: number
+  /** Internal per-attempt id, threaded through for FJS↔our-system reconciliation. */
+  correlationId?: string
 }
+
+/** Card payments (Kreditkort / Debetkort) carry the card-only fields. */
+interface CardPayInfo extends PayInfoBase {
+  paymentMeans:
+    | PayInfoPaymentMeansEnum.Kreditkort
+    | PayInfoPaymentMeansEnum.Debetkort
+  cardType: string
+  authCode: string
+  PAN: string
+}
+
+/** Bank transfer (Milli) — no card fields. */
+interface BankTransferPayInfo extends PayInfoBase {
+  paymentMeans: PayInfoPaymentMeansEnum.Milli
+}
+
+// Discriminated on `paymentMeans` so card charges must carry the card fields and a bank transfer
+// cannot set them. FJS keeps every field optional; this is a stricter authoring contract on our side.
+type PayInfo = CardPayInfo | BankTransferPayInfo
 
 export interface ExtraData {
   name: string

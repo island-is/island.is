@@ -136,6 +136,8 @@ export const createBankTransferRefundSaga = (
         totalPrice,
         systemId: environment.chargeFjs.systemId,
         providerPaymentId: validation.providerPaymentId,
+        // The fulfillment's confirmationRefId is the bank-transfer correlationId.
+        correlationId: ctx.paymentFulfillment.confirmationRefId,
       })
 
       await paymentFlowService.createFjsCharge(ctx.paymentFlowId, chargePayload)
