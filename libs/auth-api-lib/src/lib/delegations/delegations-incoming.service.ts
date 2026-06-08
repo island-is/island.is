@@ -6,7 +6,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { NoContentException } from '@island.is/nest/problem'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -48,6 +47,18 @@ export type ApiScopeInfo = Pick<
   ApiScope,
   'name' | 'supportedDelegationTypes' | 'isAccessControlled'
 >
+
+/**
+ * Discriminated result for DELETE /scopes. Controllers translate the
+ * variant into an HTTP status and decide whether to audit:
+ *  - notFound: delegation didn't exist or wasn't the caller's → 204, skip audit
+ *  - updated:  scopes were removed but the delegation still has scopes → 200, audit "deleteScopes"
+ *  - destroyed: the last scope was removed and the row was deleted → 204, audit "destroy"
+ */
+export type DeleteScopesResult =
+  | { kind: 'notFound' }
+  | { kind: 'updated'; delegation: DelegationDTO }
+  | { kind: 'destroyed'; delegationId: string }
 
 interface FindAvailableInput {
   user: User
@@ -340,12 +351,12 @@ export class DelegationsIncomingService {
     user: User,
     delegationId: string,
     scopeNames: string[],
-  ): Promise<DelegationDTO> {
+  ): Promise<DeleteScopesResult> {
     if (scopeNames.length === 0) {
       throw new BadRequestException('scopeNames must not be empty.')
     }
 
-    const result = await this.sequelize.transaction(async (transaction) => {
+    const txResult = await this.sequelize.transaction(async (transaction) => {
       const currentDelegation = await this.delegationModel.findOne({
         where: and(
           { id: delegationId, toNationalId: user.nationalId },
@@ -355,7 +366,7 @@ export class DelegationsIncomingService {
         lock: transaction.LOCK.UPDATE,
       })
       if (!currentDelegation) {
-        return null
+        return { kind: 'notFound' as const }
       }
 
       const existingScopes =
@@ -391,7 +402,7 @@ export class DelegationsIncomingService {
           where: { id: delegationId },
           transaction,
         })
-        return null
+        return { kind: 'destroyed' as const }
       }
 
       const refreshed = await this.delegationModel.findOne({
@@ -414,19 +425,24 @@ export class DelegationsIncomingService {
         transaction,
       })
       if (!refreshed) {
-        return null
+        return { kind: 'notFound' as const }
       }
 
-      return refreshed.toDTO()
+      return { kind: 'updated' as const, delegation: refreshed.toDTO() }
     })
 
-    void this.delegationsIndexService.indexDelegations(user)
-
-    if (!result) {
-      throw new NoContentException()
+    if (txResult.kind === 'notFound') {
+      return { kind: 'notFound' }
     }
 
-    return result
+    // Reindex after commit so we never reindex changes that might roll back.
+    void this.delegationsIndexService.indexDelegations(user)
+
+    if (txResult.kind === 'destroyed') {
+      return { kind: 'destroyed', delegationId }
+    }
+
+    return { kind: 'updated', delegation: txResult.delegation }
   }
 
   async verifyDelegationAtProvider(

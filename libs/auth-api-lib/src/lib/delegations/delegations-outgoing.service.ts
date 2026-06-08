@@ -45,6 +45,22 @@ import { DelegationDelegationType } from './models/delegation-delegation-type.mo
 import { AuthDelegationType } from '@island.is/shared/types'
 
 /**
+ * Discriminated result for the PATCH endpoint. Controllers translate the
+ * variant into an HTTP status and decide whether to audit:
+ *  - notFound: delegation didn't exist or wasn't the caller's → 204, skip audit
+ *  - updated:  scopes changed but the delegation still has scopes → 200, audit "update"
+ *  - destroyed: the patch removed the last scope and the row was deleted → 204, audit "destroy"
+ */
+export type PatchDelegationResult =
+  | { kind: 'notFound' }
+  | {
+      kind: 'updated'
+      delegation: DelegationDTO
+      hadExistingScopes: boolean
+    }
+  | { kind: 'destroyed'; toNationalId: string }
+
+/**
  * Service class for outgoing delegations.
  * This class supports domain based delegations.
  */
@@ -353,14 +369,14 @@ export class DelegationsOutgoingService {
     user: User,
     delegationId: string,
     patchedDelegation: PatchDelegationDTO,
-  ): Promise<DelegationDTO> {
+  ): Promise<PatchDelegationResult> {
     if (!validateScopesPeriod(patchedDelegation.updateScopes)) {
       throw new BadRequestException(
         'If scope validTo property is provided it must be in the future',
       )
     }
 
-    const result = await this.sequelize.transaction(async (transaction) => {
+    const txResult = await this.sequelize.transaction(async (transaction) => {
       const currentDelegation = await this.delegationModel.findOne({
         where: {
           [Op.and]: [
@@ -372,7 +388,7 @@ export class DelegationsOutgoingService {
         lock: transaction.LOCK.UPDATE,
       })
       if (!currentDelegation) {
-        return null
+        return { kind: 'notFound' as const }
       }
 
       const existingScopes =
@@ -428,7 +444,8 @@ export class DelegationsOutgoingService {
         )
 
       if (remainingScopes.length === 0) {
-        // No scopes remain — delete the delegation
+        // No scopes remain — delete the delegation row so it doesn't linger
+        // as an empty record that grants nothing.
         await this.delegationModel.destroy({
           where: { id: delegationId },
           transaction,
@@ -440,30 +457,36 @@ export class DelegationsOutgoingService {
       }
 
       return {
-        kind: 'updated' as const,
+        kind: 'survived' as const,
         toNationalId: currentDelegation.toNationalId,
         hadExistingScopes: existingScopes.length > 0,
       }
     })
 
-    if (!result) {
-      throw new NoContentException()
+    if (txResult.kind === 'notFound') {
+      return { kind: 'notFound' }
     }
 
     // Reindex after commit so we never reindex changes that might roll back.
     void this.delegationIndexService.indexCustomDelegations(
-      result.toNationalId,
+      txResult.toNationalId,
       user,
     )
 
-    if (result.kind === 'destroyed') {
-      // No delegation to return — controller maps NoContentException to 204.
-      throw new NoContentException()
+    if (txResult.kind === 'destroyed') {
+      return {
+        kind: 'destroyed',
+        toNationalId: txResult.toNationalId,
+      }
     }
 
     const delegation = await this.findById(user, delegationId)
-    void this.notifyDelegationUpdate(user, delegation, result.hadExistingScopes)
-    return delegation
+    void this.notifyDelegationUpdate(user, delegation, txResult.hadExistingScopes)
+    return {
+      kind: 'updated',
+      delegation,
+      hadExistingScopes: txResult.hadExistingScopes,
+    }
   }
 
   async delete(user: User, delegationId: string): Promise<void> {
