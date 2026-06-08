@@ -13,6 +13,8 @@ import {
   PostgresInfoForEnv,
   RedisInfo,
   RedisInfoForEnv,
+  ScheduledJobConfig,
+  ScheduledJobConfigForEnv,
   ServiceDefinition,
   ServiceDefinitionForEnv,
   ValueType,
@@ -132,6 +134,19 @@ export function prepareServiceForEnv(
       serviceDef.extraAttributes,
     )
     result.extraAttributes = envs
+    addToErrors(errors)
+  }
+
+  // scheduled job config
+  if (serviceDef.scheduledJob) {
+    const { errors, config } = resolveScheduledJobConfig(
+      service,
+      env,
+      serviceDef.scheduledJob,
+    )
+    if (config) {
+      result.scheduledJob = config
+    }
     addToErrors(errors)
   }
 
@@ -311,6 +326,45 @@ function getEnvRedis(
 ): RedisInfoForEnv {
   return {
     host: redis.host?.[localFromDev(env.type)],
+  }
+}
+
+function resolveScheduledJobConfig(
+  service: ServiceDefinition,
+  env: EnvironmentConfig,
+  config: ScheduledJobConfig,
+): { errors: string[]; config?: ScheduledJobConfigForEnv } {
+  const { schedule, ...rest } = config
+  const envType = localFromDev(env.type)
+
+  let resolvedSchedule: string | undefined
+
+  if (typeof schedule === 'string') {
+    resolvedSchedule = schedule
+  } else if (typeof schedule === 'object') {
+    const envSchedule = schedule[envType]
+    if (envSchedule === MissingSetting || envSchedule === undefined) {
+      return {
+        errors: [
+          `Missing schedule for service ${service.name} in env ${env.type}`,
+        ],
+      }
+    }
+    resolvedSchedule = envSchedule
+  } else {
+    return {
+      errors: [
+        `Missing schedule for service ${service.name} in env ${env.type}`,
+      ],
+    }
+  }
+
+  return {
+    errors: [],
+    config: {
+      ...rest,
+      schedule: resolvedSchedule,
+    },
   }
 }
 
