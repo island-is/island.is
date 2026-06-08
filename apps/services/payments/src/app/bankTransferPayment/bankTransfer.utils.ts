@@ -114,12 +114,14 @@ export const generateBankTransferChargeFJSPayload = ({
   totalPrice,
   systemId,
   providerPaymentId,
+  correlationId,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
   totalPrice: number
   systemId: string
   providerPaymentId: string
+  correlationId: string
 }): Charge =>
   generateChargeFJSPayload({
     paymentFlow,
@@ -129,5 +131,6 @@ export const generateBankTransferChargeFJSPayload = ({
       RRN: providerPaymentId,
       payableAmount: totalPrice,
       paymentMeans: PayInfoPaymentMeansEnum.Milli,
+      correlationId,
     },
   })

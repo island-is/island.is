@@ -422,6 +422,7 @@ export class BankTransferService {
     const chargePayload = await this.buildFjsChargePayload(
       paymentFlowId,
       providerPaymentId,
+      correlationId,
     )
 
     await this.createBankTransferFulfillment(
@@ -788,6 +789,7 @@ export class BankTransferService {
   private async buildFjsChargePayload(
     paymentFlowId: string,
     providerPaymentId: string,
+    correlationId: string,
   ): Promise<Charge> {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
       paymentFlowId,
@@ -804,6 +806,7 @@ export class BankTransferService {
       totalPrice,
       systemId: environment.chargeFjs.systemId,
       providerPaymentId,
+      correlationId,
     })
   }
 
