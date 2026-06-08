@@ -318,7 +318,6 @@
     "styled-components": "5.3.6",
     "supertest": "4.0.2",
     "swagger-ui-express": "4.3.0",
-    "swr": "1.2.0",
     "testcontainers": "7.23.2",
     "tinymce": "5.10.9",
     "to-querystring": "1.1.1",

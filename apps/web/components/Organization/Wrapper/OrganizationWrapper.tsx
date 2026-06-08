@@ -227,6 +227,8 @@ export const OrganizationHeader: React.FC<
     isSubpage,
   }
 
+  if (organizationPage.theme === 'landing_page') return null
+
   return <DefaultHeader {...defaultProps} />
 }
 

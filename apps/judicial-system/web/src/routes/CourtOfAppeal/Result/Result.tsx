@@ -50,7 +50,7 @@ const Result = () => {
   const { appealBanner } = useAppealCaseBanner()
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const {
     defendants,

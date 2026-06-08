@@ -33,6 +33,7 @@ import {
 } from '../case'
 import { CurrentDefendant, SplitDefendantExistsGuard } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
+import { DefenderSubpoenaAccessGuard } from './guards/defenderSubpoenaAccess.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
 
@@ -47,6 +48,7 @@ import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   SplitDefendantExistsGuard,
+  DefenderSubpoenaAccessGuard,
   SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {
