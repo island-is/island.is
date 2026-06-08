@@ -96,17 +96,10 @@ export const webSitemapImportSetup =
       })
       .command('node')
       .args('main.cjs', '--job', 'web-sitemap')
-<<<<<<< HEAD
-      .extraAttributes({
-        dev: { schedule: '0 0 * * *' },
-        staging: { schedule: '0 0 * * 0' },
-        prod: { schedule: '0 */3 * * *' },
-=======
       .schedule({
         dev: '0 3 */2 * *',
         staging: '0 4 * * 0',
         prod: '0 0 * * *',
->>>>>>> af7a6e7a30 (feat(infra): add scheduledJob() DSL builder for CronJob services (#22412))
       })
 
 export const cmsCleanupSetup =
