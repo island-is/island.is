@@ -1,4 +1,14 @@
-import { Box, Icon, Inline, Stack, Text } from '@island.is/island-ui/core'
+import { useRef, useState } from 'react'
+import { useClickAway } from 'react-use'
+
+import {
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 
 import * as styles from './ProductCategoryModal.css'
 
@@ -9,79 +19,103 @@ interface Option {
 }
 
 interface ProductCategoryModalProps {
-  modalTitle: string
-  isVisible: boolean
-  onClose: () => void
+  title: string
   options: { label: string; value: string; hasChildren: boolean }[]
   onOptionSelect: (option: Option) => void
   topComponent?: React.ReactNode
 }
 
 export const ProductCategoryModal = ({
-  modalTitle,
-  isVisible,
-  onClose,
+  title,
   options,
   onOptionSelect,
   topComponent,
 }: ProductCategoryModalProps) => {
-  if (!isVisible) return null
+  const [isVisible, setIsVisible] = useState(false)
+
+  const categoryDropdownRef = useRef<HTMLDivElement>(null)
+  useClickAway(categoryDropdownRef, () => setIsVisible(false))
 
   return (
-    <Box
-      className={styles.dropdown}
-      padding={2}
-      paddingLeft={3}
-      paddingRight={1}
-    >
-      <Stack space={topComponent ? 2 : 3}>
-        <Inline alignY="center" space={2} justifyContent="spaceBetween">
-          <Text variant="h4">{modalTitle}</Text>
-          <Box
-            tabIndex={0}
-            role="button"
-            cursor="pointer"
-            onKeyDown={(ev) => {
-              if (ev.key === 'Enter' || ev.key === ' ') {
-                ev.preventDefault()
-                onClose()
-              }
-            }}
-            onClick={onClose}
-          >
-            <Icon icon="close" color="blue400" size="large" />
-          </Box>
-        </Inline>
-
-        <Box paddingRight={4}>
-          <Stack space={2}>
-            {topComponent}
-            <Box>
-              {options.map((option, index) => (
-                <Box
-                  key={option.value}
-                  borderBottomWidth={
-                    index < options.length - 1 ? 'standard' : undefined
+    <div ref={categoryDropdownRef} style={{ position: 'relative' }}>
+      {!isVisible && (
+        <Button
+          icon="filter"
+          size="small"
+          variant="utility"
+          onClick={() => setIsVisible((v) => !v)}
+        >
+          {title}
+        </Button>
+      )}
+      {isVisible && (
+        <Box
+          className={styles.dropdown}
+          padding={2}
+          paddingLeft={3}
+          paddingRight={1}
+        >
+          <Stack space={topComponent ? 2 : 3}>
+            <Inline alignY="center" space={2} justifyContent="spaceBetween">
+              <Text variant="h4">{title}</Text>
+              <Box
+                tabIndex={0}
+                role="button"
+                cursor="pointer"
+                onKeyDown={(ev) => {
+                  if (
+                    ev.key === 'Enter' ||
+                    ev.key === ' ' ||
+                    ev.key === 'Escape'
+                  ) {
+                    ev.preventDefault()
+                    setIsVisible(false)
                   }
-                  borderColor="blue200"
-                  display="flex"
-                  className={styles.option}
-                  paddingX={1}
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  cursor="pointer"
-                  onClick={() => onOptionSelect(option)}
-                >
-                  <Text>{option.label}</Text>
-                  {option.hasChildren && (
-                    <Icon icon="chevronForward" color="blue400" size="medium" />
-                  )}
+                }}
+                onClick={() => setIsVisible(false)}
+              >
+                <Icon icon="close" color="blue400" size="large" />
+              </Box>
+            </Inline>
+
+            <Box paddingRight={4}>
+              <Stack space={2}>
+                {topComponent}
+                <Box>
+                  {options.map((option, index) => (
+                    <Box
+                      key={option.value}
+                      borderBottomWidth={
+                        index < options.length - 1 ? 'standard' : undefined
+                      }
+                      borderColor="blue200"
+                      display="flex"
+                      className={styles.option}
+                      paddingX={1}
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      cursor="pointer"
+                      onClick={() => {
+                        onOptionSelect(option)
+                        if (!option.hasChildren) setIsVisible(false)
+                      }}
+                    >
+                      <Text>{option.label}</Text>
+                      {option.hasChildren && (
+                        <Icon
+                          icon="chevronForward"
+                          color="blue400"
+                          size="medium"
+                        />
+                      )}
+                    </Box>
+                  ))}
                 </Box>
-              ))}
+              </Stack>
             </Box>
           </Stack>
         </Box>
-      </Stack>
-    </Box>
+      )}
+    </div>
   )
 }

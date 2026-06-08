@@ -15,26 +15,29 @@ export class CustomsCalculatorStatus {
 
 @ObjectType()
 export class CustomsCalculatorProductCategory {
-  @Field(() => [String], { nullable: true })
-  parentCategoryLabels?: string[]
+  // @Field(() => [String], { nullable: true })
+  // parentCategoryLabels?: string[]
 
-  @Field({ nullable: true })
-  tariffNumber?: string
+  @Field(() => String)
+  parentLabel!: string
 
-  @Field({ nullable: true })
-  label?: string
+  @Field(() => String)
+  tariffNumber!: string
 
-  @Field({ nullable: true })
-  description?: string
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  description!: string
 
   @CacheField(() => [CustomsCalculatorProductCategory])
-  childCategories?: CustomsCalculatorProductCategory[]
+  children!: CustomsCalculatorProductCategory[]
 }
 
 @ObjectType()
 export class CustomsCalculatorProductCategoriesResponse {
-  @Field(() => [CustomsCalculatorProductCategory], { nullable: true })
-  categories?: CustomsCalculatorProductCategory[]
+  @Field(() => [CustomsCalculatorProductCategory])
+  categories!: CustomsCalculatorProductCategory[]
 }
 
 @ObjectType()

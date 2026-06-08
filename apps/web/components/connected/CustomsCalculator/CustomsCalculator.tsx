@@ -1,7 +1,6 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useClickAway, useDebounce } from 'react-use'
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 import {
   AsyncSearch,
@@ -20,15 +19,10 @@ import {
   ConnectedComponent,
   CustomsCalculatorProductCategoriesQuery,
 } from '@island.is/web/graphql/schema'
-import {
-  CALCULATE_CUSTOMS,
-  GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
-  GET_CUSTOMS_CALCULATOR_UNITS,
-} from '@island.is/web/screens/queries/CustomsCalculator'
+import { GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES } from '@island.is/web/screens/queries/CustomsCalculator'
 
 import { ProductCategoryModal } from './ProductCategoryModal'
 import { translation as translationStrings } from './translation.strings'
-import { extractFilterCategories } from './utils'
 import * as styles from './CustomsCalculator.css'
 
 interface CustomsCalculatorProps {
@@ -107,49 +101,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     priceWithShipping: '',
   })
 
-  const [getUnits, unitsState] = useLazyQuery<UnitsQueryResult>(
-    GET_CUSTOMS_CALCULATOR_UNITS,
-  )
   const productCategoriesResponse =
     useQuery<CustomsCalculatorProductCategoriesQuery>(
       GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
     )
-  const [calculate, calculationState] =
-    useMutation<CalculateMutationResult>(CALCULATE_CUSTOMS)
-
-  const filterCategories = useMemo(() => {
-    return (
-      extractFilterCategories(
-        productCategoriesResponse.data?.customsCalculatorProductCategories
-          ?.categories ?? [],
-      ) ?? []
-    )
-  }, [productCategoriesResponse.data?.customsCalculatorProductCategories])
-
-  useDebounce(
-    () => {
-      getUnits({
-        variables: {
-          tariffNumber: inputState.tariffNumber,
-          referenceDate: new Date().toISOString(),
-        },
-      })
-    },
-    500,
-    [inputState.tariffNumber],
-  )
-
-  const runCalculation = () => {
-    calculate({
-      variables: {
-        input: {
-          ...DEFAULT_INPUT,
-          tariffNumber: inputState.tariffNumber,
-          referenceDate: new Date().toISOString(),
-        },
-      },
-    })
-  }
 
   const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
     const tariffNumbers = slice.configJson?.tariffNumberShortcuts ?? []
@@ -158,7 +113,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       const label =
         productCategoriesResponse.data?.customsCalculatorProductCategories?.categories?.find(
           (category) => category.tariffNumber === tariffNumber,
-        )?.category
+        )?.label
       if (label) shortcuts.push({ label, value: tariffNumber })
     }
     return shortcuts
@@ -168,59 +123,39 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       ?.categories,
   ])
 
-  const [isProductCategoryModalVisible, setIsProductCategoryModalVisible] =
-    useState(false)
-
-  const categoryDropdownRef = useRef<HTMLDivElement>(null)
-  useClickAway(categoryDropdownRef, () =>
-    setIsProductCategoryModalVisible(false),
-  )
-
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   const categoryOptions = useMemo(() => {
-    const options = [
-      {
-        label: 'A',
-        value: 'A',
-        hasChildren: true,
-        children: [
-          {
-            label: 'A1',
-            value: 'A1',
-            hasChildren: false,
-          },
-          {
-            label: 'A2',
-            value: 'A2',
-            hasChildren: false,
-          },
-          {
-            label: 'A3',
-            value: 'A3',
-            hasChildren: false,
-          },
-        ],
-      },
-      {
-        label: 'B',
-        value: 'B',
-        hasChildren: false,
-      },
-      {
-        label: 'C',
-        value: 'C',
-        hasChildren: true,
-      },
-    ]
+    const categories =
+      productCategoriesResponse.data?.customsCalculatorProductCategories
+        ?.categories ?? []
 
-    if (!selectedCategory) return options
+    if (selectedCategory) {
+      const stack = [...categories]
+      while (stack.length > 0) {
+        const category = stack.pop()
+        if (!category) continue
+        if (category.label === selectedCategory)
+          return category.children.map((child) => ({
+            label: child.label,
+            value: child.label,
+            hasChildren: child.children.length > 0,
+          }))
 
-    return (
-      options.find((option) => option.value === selectedCategory)?.children ??
-      []
-    )
-  }, [selectedCategory])
+        stack.push(...category.children)
+      }
+    }
+
+    return categories.map((category) => ({
+      label: category.label,
+      value: category.label,
+      hasChildren: category.children.length > 0,
+    }))
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.categories,
+    selectedCategory,
+  ])
 
   return (
     <Stack space={3}>
@@ -270,26 +205,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         <Text variant="small">{}</Text>
       </Stack>
 
-      <div ref={categoryDropdownRef} style={{ position: 'relative' }}>
-        <Button
-          icon="filter"
-          size="small"
-          variant="utility"
-          onClick={() => setIsProductCategoryModalVisible((v) => !v)}
-        >
-          {formatMessage(translationStrings.searchForCategory)}
-        </Button>
-
-        <ProductCategoryModal
-          modalTitle={formatMessage(translationStrings.searchForCategory)}
-          isVisible={isProductCategoryModalVisible}
-          onClose={() => setIsProductCategoryModalVisible(false)}
-          onOptionSelect={(option) => {
-            setSelectedCategory(option.value)
-            if (!option.hasChildren) setIsProductCategoryModalVisible(false)
-          }}
-          options={categoryOptions}
-          topComponent={
+      <ProductCategoryModal
+        title={formatMessage(translationStrings.searchForCategory)}
+        onOptionSelect={(option) => {
+          setSelectedCategory(option.value)
+        }}
+        options={categoryOptions}
+        topComponent={
+          selectedCategory && (
             <Box
               background="purple100"
               paddingX={1}
@@ -303,11 +226,11 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               onClick={() => setSelectedCategory(null)}
             >
               <Icon icon="chevronBack" color="blue400" size="medium" />
-              <Text variant="h5">Matvæli</Text>
+              <Text variant="h5">{selectedCategory}</Text>
             </Box>
-          }
-        />
-      </div>
+          )
+        }
+      />
 
       <Inline space={1}>
         <Box className={styles.currencySelect}>
@@ -338,11 +261,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       </Inline>
 
       <Box className={styles.buttonContainer}>
-        <Button
-          fluid={true}
-          onClick={runCalculation}
-          loading={calculationState.loading}
-        >
+        <Button fluid={true}>
           {formatMessage(translationStrings.runCalculation)}
         </Button>
       </Box>
