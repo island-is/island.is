@@ -4,6 +4,7 @@ import {
   m as coreMessages,
   PortalModule,
   PortalRoute,
+  PortalType,
 } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
@@ -30,7 +31,9 @@ const ServiceCategories = lazy(() =>
 )
 const Faq = lazy(() => import('./screens/Faq/Faq'))
 
-export const delegationsModule: PortalModule = {
+export const createDelegationsModule = (
+  portalType: PortalType,
+): PortalModule => ({
   name: coreMessages.accessControl,
 
   enabled({ userInfo }) {
@@ -39,10 +42,16 @@ export const delegationsModule: PortalModule = {
   async routes(props) {
     const { userInfo, featureFlagClient } = props
 
-    const useNewRoutes = await featureFlagClient.getValue(
-      Features.useNewDelegationSystem,
-      false,
-    )
+    const useNewRoutes =
+      portalType === 'my-pages' &&
+      (await featureFlagClient.getValue(
+        Features.useNewDelegationSystem,
+        false,
+        {
+          id: userInfo.profile.nationalId,
+          attributes: {},
+        },
+      ))
 
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
@@ -144,4 +153,4 @@ export const delegationsModule: PortalModule = {
 
     return useNewRoutes ? [...newRoutes, ...oldRoutes] : oldRoutes
   },
-}
+})

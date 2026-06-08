@@ -3,6 +3,7 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { Message } from '../message'
 import { messageModuleConfig } from '../message.config'
+import { SuspensionDecision } from '../suspension'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 const config = messageModuleConfig()
@@ -13,6 +14,7 @@ interface Then {
 
 type GivenWhenThen = (
   callback: (message: Message) => Promise<boolean>,
+  shouldSuspend?: (message: Message) => SuspensionDecision,
 ) => Promise<Then>
 
 describe('MessageService - Receive messages from queue', () => {
@@ -31,11 +33,15 @@ describe('MessageService - Receive messages from queue', () => {
 
     givenWhenThen = async (
       callback: (message: Message) => Promise<boolean>,
+      shouldSuspend?: (message: Message) => SuspensionDecision,
     ) => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.receiveMessagesFromQueue(callback)
+        then.result = await messageService.receiveMessagesFromQueue(
+          callback,
+          shouldSuspend,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -155,6 +161,106 @@ describe('MessageService - Receive messages from queue', () => {
         MessageBody: JSON.stringify(message),
       })
       expect(mockSqs.send).toHaveBeenCalledWith({
+        QueueUrl: mockQueueUrl,
+        ReceiptHandle: receiptHandle,
+      })
+    })
+  })
+
+  describe('message received from queue while its category is suspended', () => {
+    const message = {
+      caseId: uuid(),
+      numberOfRetries: 2,
+    } as Message
+    const receiptHandle = uuid()
+    const callback = jest.fn()
+    const shouldSuspend = jest
+      .fn()
+      .mockReturnValueOnce({ suspend: true, delaySeconds: 600 })
+
+    beforeEach(async () => {
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+        { MessageId: uuid() },
+      ])
+
+      await givenWhenThen(callback, shouldSuspend)
+    })
+
+    it('should re-queue the message without handling it or consuming a retry', () => {
+      expect(callback).not.toHaveBeenCalled()
+      // Re-queued with the configured delay and the body unchanged, so
+      // numberOfRetries is preserved
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
+        QueueUrl: mockQueueUrl,
+        DelaySeconds: 600,
+        MessageBody: JSON.stringify(message),
+      })
+      expect(mockSqs.send).toHaveBeenNthCalledWith(4, {
+        QueueUrl: mockQueueUrl,
+        ReceiptHandle: receiptHandle,
+      })
+    })
+  })
+
+  describe('message suspended with a delay longer than the maximum', () => {
+    const message = { caseId: uuid() } as Message
+    const receiptHandle = uuid()
+    const callback = jest.fn()
+    const shouldSuspend = jest
+      .fn()
+      .mockReturnValueOnce({ suspend: true, delaySeconds: 1200 })
+
+    beforeEach(async () => {
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+        { MessageId: uuid() },
+      ])
+
+      await givenWhenThen(callback, shouldSuspend)
+    })
+
+    it('should clamp the re-queue delay to 900 seconds', () => {
+      expect(callback).not.toHaveBeenCalled()
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
+        QueueUrl: mockQueueUrl,
+        DelaySeconds: 900,
+        MessageBody: JSON.stringify(message),
+      })
+    })
+  })
+
+  describe('message received from queue while not suspended', () => {
+    const message = { caseId: uuid() } as Message
+    const receiptHandle = uuid()
+    const callback = jest.fn().mockResolvedValueOnce(true)
+    const shouldSuspend = jest
+      .fn()
+      .mockReturnValueOnce({ suspend: false, delaySeconds: 0 })
+
+    beforeEach(async () => {
+      setMocks([
+        {
+          Messages: [
+            { ReceiptHandle: receiptHandle, Body: JSON.stringify(message) },
+          ],
+        },
+      ])
+
+      await givenWhenThen(callback, shouldSuspend)
+    })
+
+    it('should handle the message normally', () => {
+      expect(callback).toHaveBeenCalledWith(message)
+      expect(mockSqs.send).toHaveBeenNthCalledWith(3, {
         QueueUrl: mockQueueUrl,
         ReceiptHandle: receiptHandle,
       })

@@ -53,6 +53,7 @@ import {
 } from '../file'
 import { DeleteResponse, IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
+import { MessageSuspension } from '../message-suspension'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
@@ -207,6 +208,17 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   updateUser(userId: string, updateUser: unknown): Promise<User> {
     return this.put(`user/${userId}`, updateUser)
+  }
+
+  getMessageSuspensions(): Promise<MessageSuspension[]> {
+    return this.get('message-suspension')
+  }
+
+  updateMessageSuspension(
+    category: string,
+    updateMessageSuspension: unknown,
+  ): Promise<MessageSuspension> {
+    return this.patch(`message-suspension/${category}`, updateMessageSuspension)
   }
 
   getCases(): Promise<CaseListEntry[]> {

@@ -26,7 +26,7 @@ async function main() {
   const nsGrantsToAdd = new Set()
   const directory = `charts/features/deployments/${featureName}`
 
-  const files = await glob(`${directory}/**/values.yaml`)
+  const files = await glob(`${directory}/**/values.{yaml,cronjob.yaml}`)
 
   for (const file of files) {
     const textContent = readFileSync(file, 'utf8')
