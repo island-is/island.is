@@ -551,6 +551,23 @@ export class DefendantService {
       return { delivered: true }
     }
 
+    this.courtService
+      .updateRequestCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        theCase.defenderName,
+        theCase.defenderEmail,
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
+          { reason },
+        )
+      })
+
     return this.courtService
       .updateCaseWithDefendant(
         user,
