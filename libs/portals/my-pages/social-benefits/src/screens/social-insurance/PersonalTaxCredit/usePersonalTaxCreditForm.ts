@@ -147,7 +147,7 @@ export const usePersonalTaxCreditForm = () => {
     savingAll: taxCardAllowance.loading,
     canSubmitAll:
       (personalAction !== null || spouseAction !== null) &&
-      personalForm.formState.isValid &&
-      spouseForm.formState.isValid,
+      (personalAction === null || personalForm.formState.isValid) &&
+      (spouseAction === null || spouseForm.formState.isValid),
   }
 }
