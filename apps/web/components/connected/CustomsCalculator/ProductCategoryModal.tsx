@@ -119,11 +119,13 @@ export const ProductCategoryModal = ({
                   >
                     <Text>{option.label}</Text>
                     {option.hasChildren && (
-                      <Icon
-                        icon="chevronForward"
-                        color="blue400"
-                        size="medium"
-                      />
+                      <div>
+                        <Icon
+                          icon="chevronForward"
+                          color="blue400"
+                          size="medium"
+                        />
+                      </div>
                     )}
                   </Box>
                 ))}
