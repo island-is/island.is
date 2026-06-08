@@ -20,6 +20,10 @@ export const messages = {
       id: 'equalityReport.application:errors.invalidNonNegativeNumber',
       defaultMessage: 'Talan verður að vera 0 eða hærri',
     },
+    duplicateSubsidiary: {
+      id: 'equalityReport.application:errors.duplicateSubsidiary',
+      defaultMessage: 'Þetta dótturfélag er þegar á listanum',
+    },
   }),
 
   general: defineMessages({

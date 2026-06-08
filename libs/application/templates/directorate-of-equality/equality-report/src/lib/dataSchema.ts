@@ -44,7 +44,21 @@ const subsidiaries = z.object({
         }),
       }),
     )
-    .optional(),
+    .superRefine((items, ctx) => {
+      const seen = new Set<string>()
+      items.forEach((item, i) => {
+        const id = item.nationalIdWithName?.nationalId
+        if (id && seen.has(id)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [i, 'nationalIdWithName', 'nationalId'],
+            params: messages.errors.duplicateSubsidiary,
+          })
+        } else if (id) {
+          seen.add(id)
+        }
+      })
+    })
 })
 
 const information = z.object({})
