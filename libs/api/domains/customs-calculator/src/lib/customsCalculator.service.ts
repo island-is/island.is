@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import sanitizeHtml from 'sanitize-html'
 import { sortAlpha } from '@island.is/shared/utils'
 import { CustomsCalculatorClientService } from '@island.is/clients-rsk-customs-calculator'
 import {
@@ -17,6 +18,7 @@ export class CustomsCalculatorService {
       await this.customsCalculatorClient.getProductCategories()
     ).map((category) => ({
       ...category,
+      description: sanitizeHtml(category.description ?? ''),
       id: crypto.randomUUID(),
     }))
 
@@ -52,16 +54,16 @@ export class CustomsCalculatorService {
 
     for (const bottomLevelCategory of bottomLevelCategories) {
       let currentLabel = bottomLevelCategory.parentLabels[0]
-      while (currentLabel) {
+      while (currentLabel)
         for (const category of allCategories) {
           if (category.id === bottomLevelCategory.id) continue
           if (category.label === currentLabel) {
             currentLabel = category.parentLabel
-            bottomLevelCategory.parentLabels.unshift(currentLabel)
+            if (currentLabel)
+              bottomLevelCategory.parentLabels.unshift(currentLabel)
             break
           }
         }
-      }
     }
 
     return {

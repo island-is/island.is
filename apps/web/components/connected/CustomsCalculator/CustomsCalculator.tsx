@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client'
 
 import {
   AsyncSearch,
+  AsyncSearchOption,
   Box,
   Button,
   Icon,
@@ -161,11 +162,48 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     selectedCategory,
   ])
 
-  const searchOptions = useMemo(() => {
-    const options: { label: string; value: string }[] = []
+  const searchOptions = useMemo<AsyncSearchOption[]>(() => {
+    const options: AsyncSearchOption[] = []
     for (const category of productCategoriesResponse.data
       ?.customsCalculatorProductCategories?.bottomLevel ?? []) {
-      options.push({ label: category.label, value: category.id })
+      options.push({
+        label: category.label,
+        value: category.id,
+        component: () => (
+          <Box
+            className={styles.categoryOption}
+            cursor="pointer"
+            paddingY={2}
+            paddingX={2}
+          >
+            <Stack space={1}>
+              {category.parentLabels.length > 0 && (
+                <Box display="flex" alignItems="center" flexWrap="wrap">
+                  {category.parentLabels.map((parentLabel, index) => (
+                    <Box key={index} display="flex" alignItems="center">
+                      <Text variant="small" color="blue600">
+                        {parentLabel}
+                      </Text>
+                      {index < category.parentLabels.length - 1 && (
+                        <Icon
+                          icon="chevronForward"
+                          color="blue600"
+                          size="small"
+                          ariaHidden={true}
+                          className={styles.chevronForward}
+                        />
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              )}
+              <Text variant="h5" color="blue600">
+                {category.label}
+              </Text>
+            </Stack>
+          </Box>
+        ),
+      })
     }
     return options
   }, [
@@ -254,7 +292,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               setSelectedBottomLevelCategory(bottomLevelCategory)
           }}
         />
-        <Text variant="small">{selectedBottomLevelCategory?.description}</Text>
+        <Text variant="small">
+          <span
+            className={styles.description}
+            dangerouslySetInnerHTML={{
+              __html: selectedBottomLevelCategory?.description ?? '',
+            }}
+          />
+        </Text>
       </Stack>
 
       <CategoryModal
