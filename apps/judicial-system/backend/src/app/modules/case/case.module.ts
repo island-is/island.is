@@ -20,9 +20,9 @@ import {
   VerdictModule,
   VictimModule,
 } from '..'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
