@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseState,
   CaseDecision,
@@ -377,14 +376,10 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
     return false
   }
 
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
   // Check case defender assignment
   return (
     theCase.defenderNationalId &&
-    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+    theCase.defenderNationalId === user.nationalId
   )
 }
 

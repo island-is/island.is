@@ -12,7 +12,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -637,7 +636,7 @@ export class LimitedAccessCaseService {
     return this.caseRepositoryService
       .findOne({
         where: {
-          defenderNationalId: normalizeAndFormatNationalId(nationalId),
+          defenderNationalId: nationalId.replace(/-/g, ''),
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
