@@ -163,7 +163,10 @@ export default function QuestionnairesScreen() {
       <StackScreen networkStatus={networkStatus} />
       <FlatList
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl
+            refreshing={loading && !isInitialLoading}
+            onRefresh={refetch}
+          />
         }
         style={{
           paddingHorizontal: theme.spacing[2],
