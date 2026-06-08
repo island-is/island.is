@@ -323,11 +323,22 @@ const EstateTemplate: ApplicationTemplate<
             pendingAction: (application) => {
               const externalData =
                 application.externalData as EstateExternalData
-              const signatories =
-                externalData?.getSignatories?.data?.signatories || []
+              const signatoriesResult = externalData?.getSignatories?.data
+              const signatories = signatoriesResult?.signatories ?? []
 
-              // No signatories tracked for this case/type: show a neutral
-              // "submitted" confirmation instead of a misleading pending state.
+              // Signatory list not yet fetched successfully (submission still
+              // processing or a transient syslumenn failure): show a pending
+              // "still working" state rather than a misleading confirmation.
+              if (!signatoriesResult?.success) {
+                return {
+                  title: m.signingPendingTitle,
+                  content: m.signingPendingDescription,
+                  displayStatus: 'info',
+                }
+              }
+
+              // Fetched successfully with no signatories for this case/type:
+              // nothing to sign at syslumenn, show a neutral confirmation.
               if (signatories.length === 0) {
                 return {
                   title: m.applicationSubmittedTitle,
