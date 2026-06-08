@@ -481,7 +481,11 @@ export class DelegationsOutgoingService {
     }
 
     const delegation = await this.findById(user, delegationId)
-    void this.notifyDelegationUpdate(user, delegation, txResult.hadExistingScopes)
+    void this.notifyDelegationUpdate(
+      user,
+      delegation,
+      txResult.hadExistingScopes,
+    )
     return {
       kind: 'updated',
       delegation,
