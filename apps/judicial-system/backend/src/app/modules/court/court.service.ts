@@ -53,6 +53,7 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
   REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
 
@@ -561,6 +562,51 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentCaseWithSpokespersonInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    civilClaimantNationalId?: string,
+    civilClaimantName?: string,
+    spokespersonNationalId?: string,
+    spokespersonIsLawyer?: boolean,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - ${
+        spokespersonIsLawyer
+          ? 'lögmaður brotaþola'
+          : 'réttargæslumaður brotaþola'
+      }`
+      const content = JSON.stringify({
+        civilClaimantNationalId,
+        civilClaimantName,
+        spokespersonNationalId,
+        spokespersonIsLawyer,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_SPOKESPERSON_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with spokesperson info',
         {
           caseId,
           actor: user.name,
