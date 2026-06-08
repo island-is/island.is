@@ -58,11 +58,11 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<ApplicationResponse> {
-    this.logger.debug('creating application with slug:', input.slug)
+    this.logger.info('creating application with slug:', input.slug)
     const response = await this.applicationsApiWithAuth(
       auth,
     ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
-    this.logger.debug('create application response:', response)
+    this.logger.info('create application response:', response)
     return response as ApplicationResponse
   }
 
@@ -70,7 +70,7 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationInput,
   ): Promise<ApplicationResponse> {
-    this.logger.debug(
+    this.logger.info(
       'getting application with id:',
       input.id,
       'and slug:',
@@ -81,7 +81,7 @@ export class ApplicationsService {
         input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
-    this.logger.debug('get application response:', response)
+    this.logger.info('get application response:', response)
 
     return response as ApplicationResponse
   }
@@ -90,7 +90,7 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationsInput,
   ): Promise<ApplicationResponse> {
-    this.logger.debug('getting all applications with slug:', input.slug)
+    this.logger.info('getting all applications with slug:', input.slug)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerFindAllBySlugAndUser(
         input as ApplicationsControllerFindAllBySlugAndUserRequest,
@@ -98,7 +98,7 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to get applications'),
       )
-    this.logger.debug('get all applications response:', response)
+    this.logger.info('get all applications response:', response)
     return response as ApplicationResponse
   }
 
