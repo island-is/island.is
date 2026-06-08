@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
+
 import {
   PersonalTaxCreditApi,
   TrWebApiServicesCommonClientsModelsGetTaxBracketReturn,
@@ -32,6 +33,16 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     this.personalTaxCreditWriteApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
+
+  private extractErrorCode(error: unknown): string | null {
+    if (error instanceof FetchError) {
+      const errorBody = (error.problem ?? error.body) as
+        | { detail?: string }
+        | undefined
+      return errorBody?.detail ?? null
+    }
+    return null
+  }
 
   async getTaxAllowanceActions(
     user: User,
@@ -77,6 +88,16 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
       .catch(handle404)
+      .catch((e) => {
+        if (!(e instanceof FetchError)) throw e
+        const code = this.extractErrorCode(e)
+        if (!code) throw e
+        return {
+          canApply: false,
+          reasonNotAllowed: code,
+          allowedYearMonths: [],
+        } as TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpousalTaxCardUsageYearMonthResult
+      })
   }
 
   async setTaxCardAllowance(
@@ -126,7 +147,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
         input,
     })
     if (result.success === false) {
-      throw new Error('SpouseTaxCard update failed')
+      throw new Error('spouse tax card update failed')
     }
   }
 
@@ -141,7 +162,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
         input,
     })
     if (result.success === false) {
-      throw new Error('SpouseTaxCardDueToDeath update failed')
+      throw new Error('spouse tax card due to death update failed')
     }
   }
 
