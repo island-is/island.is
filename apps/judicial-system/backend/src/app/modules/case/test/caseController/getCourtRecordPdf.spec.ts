@@ -22,7 +22,7 @@ import {
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../repository'
 
-jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/courtRecordPdf')
 jest.mock('../../../../formatters/indictmentCourtRecordPdf')
 
 interface Then {
