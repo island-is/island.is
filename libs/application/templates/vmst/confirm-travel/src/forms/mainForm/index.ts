@@ -9,6 +9,8 @@ import {
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { mainForm } from '../../lib/messages'
+import { MAX_DAYS_FALLBACK } from '@/utils/constants'
+import { dateToMaxDate } from '@/utils/dateUtils'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -71,33 +73,7 @@ export const MainForm = buildForm({
             )
             return fromDate ? new Date(fromDate) : undefined
           },
-          maxDate: (application) => {
-            const fromDate = getValueViaPath<string>(
-              application.answers,
-              'date.from',
-            )
-            if (!fromDate) {
-              return undefined
-            }
-            const maxDateTo = getValueViaPath<string>(
-              application.externalData,
-              'eligibilityData.data.maxDateTo',
-            )
-            const maxDaysRaw =
-              getValueViaPath<string>(
-                application.externalData,
-                'eligibilityData.data.maxDaysPerRequest',
-              ) || '30'
-            const maxDays = parseInt(maxDaysRaw, 10) || 30
-
-            const date = new Date(fromDate)
-            date.setDate(date.getDate() + maxDays - 1)
-
-            if (maxDateTo && date > new Date(maxDateTo)) {
-              return new Date(maxDateTo)
-            }
-            return date
-          },
+          maxDate: (application) => dateToMaxDate(application),
         }),
         buildSubmitField({
           id: 'submit',
