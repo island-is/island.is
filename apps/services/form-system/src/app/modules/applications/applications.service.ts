@@ -114,6 +114,8 @@ export class ApplicationsService {
 
     const nationalId = user.actor?.nationalId || user.nationalId
 
+    console.log('Creating application for user with nationalId:', nationalId)
+
     try {
       await this.sequelize.transaction(async (transaction) => {
         const newApplication: Application = await this.applicationModel.create(
@@ -206,7 +208,11 @@ export class ApplicationsService {
       throw error
     }
 
+    console.log('got this far with applicationId:', newApplicationId)
+
     const applicationDto = await this.getApplication(newApplicationId, '', null)
+
+    console.log('getting applicationDto')
 
     return applicationDto
   }
