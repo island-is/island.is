@@ -2509,6 +2509,18 @@ export const messages = defineMessages({
     defaultMessage: 'Endurnýjun ekki í boði',
     id: 'sp.health:prescription-blocked-specialist-only-prescription',
   },
+  prescriptionBlockedNoRenewalTargets: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-no-renewal-targets',
+  },
+  prescriptionBlockedInvalidRenewalTarget: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-invalid-renewal-target',
+  },
+  prescriptionBlockedRecipientExcludesAtc: {
+    defaultMessage: 'Endurnýjun ekki í boði vegna',
+    id: 'sp.health:prescription-blocked-recipient-excludes-atc',
+  },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
@@ -2528,6 +2540,11 @@ export const messages = defineMessages({
   renewalSendTo: {
     defaultMessage: 'Sendist til',
     id: 'sp.health:renewal-send-to',
+  },
+  renewalNoTarget: {
+    defaultMessage:
+      'Ekki tókst að finna stofnun til að senda endurnýjunarbeiðni til. Vinsamlegast hafið samband við heilsugæslu.',
+    id: 'sp.health:renewal-no-target',
   },
   renewalRequestSent: {
     defaultMessage:

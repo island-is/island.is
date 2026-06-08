@@ -77,6 +77,28 @@ export const mapBlockedStatus = (
         ),
         showReason: true,
       }
+    case HealthDirectoratePrescriptionRenewalBlockedReason.NoRenewalTargets:
+      return {
+        status: formatMessage(messages.notAvailable),
+        description: formatMessage(messages.prescriptionBlockedNoRenewalTargets),
+        showReason: true,
+      }
+    case HealthDirectoratePrescriptionRenewalBlockedReason.InvalidRenewalTarget:
+      return {
+        status: formatMessage(messages.notAvailable),
+        description: formatMessage(
+          messages.prescriptionBlockedInvalidRenewalTarget,
+        ),
+        showReason: true,
+      }
+    case HealthDirectoratePrescriptionRenewalBlockedReason.RecipientExcludesAtc:
+      return {
+        status: formatMessage(messages.notAvailable),
+        description: formatMessage(
+          messages.prescriptionBlockedRecipientExcludesAtc,
+        ),
+        showReason: true,
+      }
     case HealthDirectoratePrescriptionRenewalBlockedReason.Unknown:
       return {
         status: formatMessage(messages.notAvailable),

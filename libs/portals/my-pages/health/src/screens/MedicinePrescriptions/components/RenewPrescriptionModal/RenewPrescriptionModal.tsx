@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -53,8 +54,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     setModalVisible(isVisible)
   }, [isVisible])
 
-  const [fetchTargets, { data: targetsData }] =
-    useGetPrescriptionRenewalTargetsLazyQuery()
+  const [fetchTargets, { data: targetsData, loading: targetsLoading, called: targetsCalled }] =
+    useGetPrescriptionRenewalTargetsLazyQuery({ fetchPolicy: 'network-only' })
 
   useEffect(() => {
     if (isVisible && activePrescription.id) {
@@ -192,6 +193,14 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             />
           </Box>
         )}
+        {!targetsLoading && targetsCalled && targetOptions.length === 0 && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              message={formatMessage(messages.renewalNoTarget)}
+            />
+          </Box>
+        )}
         <Text variant="small" fontWeight="medium" marginBottom={1}>
           {formatMessage(messages.medicineInformation)}
         </Text>
@@ -238,7 +247,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                     size="small"
                     type="submit"
                     loading={loading}
-                    disabled={loading}
+                    disabled={loading || (!targetsLoading && targetsCalled && targetOptions.length === 0)}
                     onClick={() => submitForm()}
                   >
                     {formatMessage(messages.renew)}
