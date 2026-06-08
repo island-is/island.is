@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -41,4 +41,9 @@ export class CreateUserInput {
   @Allow()
   @Field(() => Boolean)
   readonly canConfirmIndictment!: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly canManageMessageSuspension?: boolean
 }
