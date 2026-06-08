@@ -30,43 +30,6 @@ interface CustomsCalculatorProps {
   slice: ConnectedComponent
 }
 
-interface CalculateMutationResult {
-  customsCalculatorCalculate: unknown
-}
-
-interface UnitsQueryResult {
-  customsCalculatorUnits: unknown
-}
-
-interface ProductCategory {
-  parentCategory?: string | null
-  category?: string | null
-  tariffNumber?: string | null
-  description?: string | null
-}
-
-const DEFAULT_INPUT = {
-  tariffNumber: '85167100',
-  customsCode: 'A',
-  referenceDate: '2026-02-27T00:00:00Z',
-  currencyCode: 'ISK',
-  productPrice: '175000',
-  plasticPackagingKg: '0',
-  cardboardPackagingKg: '0',
-  unitCount: '1',
-  netWeightKg: '21',
-  liters: '0',
-  percentage: '0',
-  netNetWeightKg: '0',
-  sugar: '0',
-  sweetener: '0',
-  nedcEmission: '-1',
-  nedcWeightedEmission: '-1',
-  wltpEmission: '-1',
-  wltpWeightedEmission: '-1',
-  curbWeight: '0',
-}
-
 const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const { formatMessage } = useIntl()
 
@@ -107,18 +70,19 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     )
 
   const shortcuts = useMemo<{ label: string; value: string }[]>(() => {
-    const tariffNumbers = slice.configJson?.tariffNumberShortcuts ?? []
+    const labels = slice.configJson?.productCategoryShortcutLabels ?? []
     const shortcuts: { label: string; value: string }[] = []
-    for (const tariffNumber of tariffNumbers) {
-      const label =
+    for (const label of labels) {
+      const category =
         productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-          (category) => category.tariffNumber === tariffNumber,
-        )?.label
-      if (label) shortcuts.push({ label, value: tariffNumber })
+          (category) => category.label === label,
+        )
+      if (category)
+        shortcuts.push({ label: category.label, value: category.id })
     }
     return shortcuts
   }, [
-    slice.configJson?.tariffNumberShortcuts,
+    slice.configJson?.productCategoryShortcutLabels,
     productCategoriesResponse.data?.customsCalculatorProductCategories
       ?.bottomLevel,
   ])
@@ -406,32 +370,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           {formatMessage(translationStrings.runCalculation)}
         </Button>
       </Box>
-
-      {/* {Boolean(unitsState.data?.customsCalculatorUnits) && (
-        <Box>
-          <Text variant="h5" marginBottom={1}>
-            {formatMessage(translationStrings.unitsResponse)}
-          </Text>
-          <pre>
-            {JSON.stringify(unitsState.data?.customsCalculatorUnits, null, 2)}
-          </pre>
-        </Box>
-      )}
-
-      {Boolean(calculationState.data?.customsCalculatorCalculate) && (
-        <Box>
-          <Text variant="h5" marginBottom={1}>
-            {formatMessage(translationStrings.calculationResponse)}
-          </Text>
-          <pre>
-            {JSON.stringify(
-              calculationState.data?.customsCalculatorCalculate,
-              null,
-              2,
-            )}
-          </pre>
-        </Box>
-      )} */}
     </Stack>
   )
 }
