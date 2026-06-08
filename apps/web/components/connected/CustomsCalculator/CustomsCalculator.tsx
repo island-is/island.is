@@ -21,7 +21,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES } from '@island.is/web/screens/queries/CustomsCalculator'
 
-import { ProductCategoryModal } from './ProductCategoryModal'
+import { CategoryModal } from './CategoryModal'
 import { translation as translationStrings } from './translation.strings'
 import * as styles from './CustomsCalculator.css'
 
@@ -96,7 +96,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
   const [inputState, setInputState] = useState({
     searchInput: '',
-    tariffNumber: '',
     currency: currencyOptions?.[0],
     priceWithShipping: '',
   })
@@ -127,9 +126,8 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     current: null as {
       label: string
       value: string
-      hasChildren: boolean
     } | null,
-    breadcrumbs: [] as { label: string; value: string; hasChildren: true }[],
+    breadcrumbs: [] as { label: string; value: string }[],
   })
 
   const categoryOptions = useMemo(() => {
@@ -175,6 +173,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       ?.bottomLevel,
   ])
 
+  const [selectedBottomLevelCategory, setSelectedBottomLevelCategory] =
+    useState<{
+      label: string
+      id: string
+      tariffNumber: string
+      description: string
+    } | null>(null)
+
   return (
     <Stack space={3}>
       {shortcuts.length > 0 && (
@@ -186,9 +192,16 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             {shortcuts.map((shortcut) => (
               <Tag
                 key={shortcut.value}
-                onClick={() =>
-                  setInputState({ ...inputState, tariffNumber: shortcut.value })
-                }
+                onClick={() => {
+                  setInputState({ ...inputState, searchInput: shortcut.label })
+                  const bottomLevelCategory =
+                    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                      (category) => category.id === shortcut.value,
+                    )
+                  if (bottomLevelCategory)
+                    setSelectedBottomLevelCategory(bottomLevelCategory)
+                  else setSelectedBottomLevelCategory(null)
+                }}
               >
                 {shortcut.label}
               </Tag>
@@ -215,26 +228,55 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           )}
           colored={true}
           inputValue={inputState.searchInput}
-          onInputValueChange={(value) =>
+          onInputValueChange={(value) => {
             setInputState({ ...inputState, searchInput: value })
-          }
-          onChange={(option) =>
+            if (!value) setSelectedBottomLevelCategory(null)
+            else {
+              const bottomLevelCategory =
+                productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                  (category) => category.label === value,
+                )
+              if (bottomLevelCategory)
+                setSelectedBottomLevelCategory(bottomLevelCategory)
+              else setSelectedBottomLevelCategory(null)
+            }
+          }}
+          onChange={(option) => {
             setInputState({
               ...inputState,
-              tariffNumber: option?.value ?? '',
+              searchInput: option?.label ?? '',
             })
-          }
+            const bottomLevelCategory =
+              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                (category) => category.id === option?.value,
+              )
+            if (bottomLevelCategory)
+              setSelectedBottomLevelCategory(bottomLevelCategory)
+          }}
         />
-        <Text variant="small">{}</Text>
+        <Text variant="small">{selectedBottomLevelCategory?.description}</Text>
       </Stack>
 
-      <ProductCategoryModal
+      <CategoryModal
         title={formatMessage(translationStrings.searchForCategory)}
         onOptionSelect={(option) => {
+          if (!option.hasChildren) {
+            const bottomLevelCategory =
+              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                (category) => category.id === option.value,
+              )
+            if (bottomLevelCategory) {
+              setSelectedBottomLevelCategory(bottomLevelCategory)
+              setInputState({
+                ...inputState,
+                searchInput: bottomLevelCategory.label,
+              })
+            }
+            return
+          }
           setSelectedCategory((prev) => {
             const updatedBreadcrumbs = [...prev.breadcrumbs]
-            if (prev.current)
-              updatedBreadcrumbs.push({ ...prev.current, hasChildren: true })
+            if (prev.current) updatedBreadcrumbs.push(prev.current)
             return {
               current: option,
               breadcrumbs: updatedBreadcrumbs,
@@ -314,7 +356,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       </Inline>
 
       <Box className={styles.buttonContainer}>
-        <Button fluid={true}>
+        <Button fluid={true} disabled={!selectedBottomLevelCategory}>
           {formatMessage(translationStrings.runCalculation)}
         </Button>
       </Box>

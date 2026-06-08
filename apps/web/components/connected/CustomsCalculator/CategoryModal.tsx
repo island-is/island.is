@@ -10,7 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from './ProductCategoryModal.css'
+import * as styles from './CategoryModal.css'
 
 interface Option {
   label: string
@@ -18,19 +18,19 @@ interface Option {
   hasChildren: boolean
 }
 
-interface ProductCategoryModalProps {
+interface CategoryModalProps {
   title: string
   options: { label: string; value: string; hasChildren: boolean }[]
   onOptionSelect: (option: Option) => void
   topComponent?: React.ReactNode
 }
 
-export const ProductCategoryModal = ({
+export const CategoryModal = ({
   title,
   options,
   onOptionSelect,
   topComponent,
-}: ProductCategoryModalProps) => {
+}: CategoryModalProps) => {
   const [isVisible, setIsVisible] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
