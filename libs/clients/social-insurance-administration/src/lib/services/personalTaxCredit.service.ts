@@ -89,6 +89,8 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
       .catch(handle404)
       .catch((e) => {
+        // We need to be able to extract and return the reasonNotAllowed code
+        // for the frontend to display the correct error message
         if (!(e instanceof FetchError)) throw e
         const code = this.extractErrorCode(e)
         if (!code) throw e
