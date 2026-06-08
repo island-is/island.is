@@ -585,6 +585,7 @@ export class DrivingLicenseApi {
     contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
+    sendPlasticToPerson?: boolean
     healthDeclarationModel: v5.ModelsHealthDeclarationModel
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
@@ -600,6 +601,7 @@ export class DrivingLicenseApi {
         contentList: params.contentList,
         photoBiometricsId: params.photoBiometricsId,
         signatureBiometricsId: params.signatureBiometricsId,
+        sendPlasticToPerson: params.sendPlasticToPerson,
         healthDeclarationModel: params.healthDeclarationModel,
       },
     })
