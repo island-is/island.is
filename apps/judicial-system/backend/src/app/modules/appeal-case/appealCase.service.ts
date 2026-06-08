@@ -322,6 +322,37 @@ export class AppealCaseService {
     })
   }
 
+  // The ids of the appeal roles (assistant + judges) currently assigned.
+  private getAssignedAppealUserIds(appealRoles: {
+    appealAssistantId?: string
+    appealJudge1Id?: string
+    appealJudge2Id?: string
+    appealJudge3Id?: string
+  }): string[] {
+    return [
+      appealRoles.appealAssistantId,
+      appealRoles.appealJudge1Id,
+      appealRoles.appealJudge2Id,
+      appealRoles.appealJudge3Id,
+    ].filter((id): id is string => Boolean(id))
+  }
+
+  private addMessagesForAppealJudgesAssignedToQueue(
+    theCase: Case,
+    user: User,
+    userIds: string[],
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+        userIds,
+      },
+    })
+  }
+
   async create(
     theCase: Case,
     user: User,
@@ -507,6 +538,29 @@ export class AppealCaseService {
     ) {
       // Queue messages for assigned roles
       this.addMessagesForAssignedAppealRolesToQueue(theCase, user)
+    }
+
+    // Notify any users that are newly assigned to an appeal role, i.e. users
+    // that were not already assigned to one of the roles before this update.
+    const previouslyAssignedUserIds = this.getAssignedAppealUserIds(appealCase)
+    const newlyAssignedUserIds = [
+      ...new Set(
+        this.getAssignedAppealUserIds({
+          appealAssistantId:
+            update.appealAssistantId ?? appealCase.appealAssistantId,
+          appealJudge1Id: update.appealJudge1Id ?? appealCase.appealJudge1Id,
+          appealJudge2Id: update.appealJudge2Id ?? appealCase.appealJudge2Id,
+          appealJudge3Id: update.appealJudge3Id ?? appealCase.appealJudge3Id,
+        }).filter((id) => !previouslyAssignedUserIds.includes(id)),
+      ),
+    ]
+
+    if (newlyAssignedUserIds.length > 0) {
+      this.addMessagesForAppealJudgesAssignedToQueue(
+        theCase,
+        user,
+        newlyAssignedUserIds,
+      )
     }
 
     return updatedAppealCase
