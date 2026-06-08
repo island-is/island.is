@@ -12,10 +12,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  capitalize,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,

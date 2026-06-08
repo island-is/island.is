@@ -378,8 +378,7 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
 
   // Check case defender assignment
   return (
-    theCase.defenderNationalId &&
-    theCase.defenderNationalId === user.nationalId
+    theCase.defenderNationalId && theCase.defenderNationalId === user.nationalId
   )
 }
 
