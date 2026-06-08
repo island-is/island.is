@@ -13,7 +13,7 @@ export class CustomsCalculatorService {
     const flatCategories =
       await this.customsCalculatorClient.getProductCategories()
 
-    const hierarchicalCategories: CustomsCalculatorProductCategoriesResponse['categories'][number][] =
+    const hierarchicalCategories: CustomsCalculatorProductCategoriesResponse['topLevel'][number][] =
       flatCategories.map((category) => ({
         ...category,
         children: [],
@@ -29,10 +29,15 @@ export class CustomsCalculatorService {
       a.children.sort(sortAlpha('label'))
     }
 
+    hierarchicalCategories.sort(sortAlpha('label'))
+
     return {
-      categories: hierarchicalCategories
-        .filter((category) => !category.parentLabel?.trim())
-        .sort(sortAlpha('label')),
+      topLevel: hierarchicalCategories.filter(
+        (category) => !category.parentLabel,
+      ),
+      bottomLevel: hierarchicalCategories.filter(
+        (category) => !!category.tariffNumber && category.tariffNumber !== '#',
+      ),
     }
   }
 

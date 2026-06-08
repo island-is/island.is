@@ -22,10 +22,10 @@ export class CustomsCalculatorClientService {
       (payload?.Response?.Voruflokkar ?? [])
         .filter((item) => Boolean(item.Voruflokkur) && Boolean(item.Tollnumer))
         .map((item) => ({
-          parentLabel: String(item.Yfirflokkur ?? ''),
-          label: String(item.Voruflokkur ?? ''),
-          tariffNumber: String(item.Tollnumer ?? ''),
-          description: String(item.Lysing ?? ''),
+          parentLabel: String(item.Yfirflokkur ?? '').trim(),
+          label: String(item.Voruflokkur ?? '').trim(),
+          tariffNumber: String(item.Tollnumer ?? '').trim(),
+          description: String(item.Lysing ?? '').trim(),
         })) ?? []
     )
   }

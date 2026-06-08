@@ -111,7 +111,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     const shortcuts: { label: string; value: string }[] = []
     for (const tariffNumber of tariffNumbers) {
       const label =
-        productCategoriesResponse.data?.customsCalculatorProductCategories?.categories?.find(
+        productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
           (category) => category.tariffNumber === tariffNumber,
         )?.label
       if (label) shortcuts.push({ label, value: tariffNumber })
@@ -120,28 +120,30 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   }, [
     slice.configJson?.tariffNumberShortcuts,
     productCategoriesResponse.data?.customsCalculatorProductCategories
-      ?.categories,
+      ?.bottomLevel,
   ])
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState({
+    current: null as string | null,
+    breadcrumbs: [] as string[],
+  })
 
   const categoryOptions = useMemo(() => {
     const categories =
       productCategoriesResponse.data?.customsCalculatorProductCategories
-        ?.categories ?? []
+        ?.topLevel ?? []
 
-    if (selectedCategory) {
+    if (selectedCategory.current) {
       const stack = [...categories]
       while (stack.length > 0) {
         const category = stack.pop()
         if (!category) continue
-        if (category.label === selectedCategory)
+        if (category.label === selectedCategory.current)
           return category.children.map((child) => ({
             label: child.label,
             value: child.label,
             hasChildren: child.children.length > 0,
           }))
-
         stack.push(...category.children)
       }
     }
@@ -153,7 +155,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     }))
   }, [
     productCategoriesResponse.data?.customsCalculatorProductCategories
-      ?.categories,
+      ?.topLevel,
     selectedCategory,
   ])
 
@@ -208,11 +210,18 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       <ProductCategoryModal
         title={formatMessage(translationStrings.searchForCategory)}
         onOptionSelect={(option) => {
-          setSelectedCategory(option.value)
+          setSelectedCategory((prev) => {
+            const updatedBreadcrumbs = [...prev.breadcrumbs]
+            if (prev.current) updatedBreadcrumbs.push(prev.current)
+            return {
+              current: option.value,
+              breadcrumbs: updatedBreadcrumbs,
+            }
+          })
         }}
         options={categoryOptions}
         topComponent={
-          selectedCategory && (
+          selectedCategory.current && (
             <Box
               background="purple100"
               paddingX={1}
@@ -223,10 +232,32 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               columnGap={1}
               role="button"
               cursor="pointer"
-              onClick={() => setSelectedCategory(null)}
+              onClick={() =>
+                setSelectedCategory((prev) => {
+                  if (prev.breadcrumbs.length > 0)
+                    return {
+                      current: prev.breadcrumbs[prev.breadcrumbs.length - 1],
+                      breadcrumbs: prev.breadcrumbs.slice(0, -1),
+                    }
+                  return { current: null, breadcrumbs: [] }
+                })
+              }
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  ev.preventDefault()
+                  setSelectedCategory((prev) => {
+                    if (prev.breadcrumbs.length > 0)
+                      return {
+                        current: prev.breadcrumbs[prev.breadcrumbs.length - 1],
+                        breadcrumbs: prev.breadcrumbs.slice(0, -1),
+                      }
+                    return { current: null, breadcrumbs: [] }
+                  })
+                }
+              }}
             >
               <Icon icon="chevronBack" color="blue400" size="medium" />
-              <Text variant="h5">{selectedCategory}</Text>
+              <Text variant="h5">{selectedCategory.current}</Text>
             </Box>
           )
         }

@@ -14,7 +14,7 @@ export class CustomsCalculatorStatus {
 }
 
 @ObjectType()
-export class CustomsCalculatorProductCategory {
+export class CustomsCalculatorHierarchicalProductCategory {
   // @Field(() => [String], { nullable: true })
   // parentCategoryLabels?: string[]
 
@@ -30,14 +30,17 @@ export class CustomsCalculatorProductCategory {
   @Field(() => String)
   description!: string
 
-  @CacheField(() => [CustomsCalculatorProductCategory])
-  children!: CustomsCalculatorProductCategory[]
+  @CacheField(() => [CustomsCalculatorHierarchicalProductCategory])
+  children!: CustomsCalculatorHierarchicalProductCategory[]
 }
 
 @ObjectType()
 export class CustomsCalculatorProductCategoriesResponse {
-  @Field(() => [CustomsCalculatorProductCategory])
-  categories!: CustomsCalculatorProductCategory[]
+  @Field(() => [CustomsCalculatorHierarchicalProductCategory])
+  topLevel!: CustomsCalculatorHierarchicalProductCategory[]
+
+  @Field(() => [CustomsCalculatorHierarchicalProductCategory])
+  bottomLevel!: CustomsCalculatorHierarchicalProductCategory[]
 }
 
 @ObjectType()
