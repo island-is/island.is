@@ -80,7 +80,9 @@ export const mapBlockedStatus = (
     case HealthDirectoratePrescriptionRenewalBlockedReason.NoRenewalTargets:
       return {
         status: formatMessage(messages.notAvailable),
-        description: formatMessage(messages.prescriptionBlockedNoRenewalTargets),
+        description: formatMessage(
+          messages.prescriptionBlockedNoRenewalTargets,
+        ),
         showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.InvalidRenewalTarget:

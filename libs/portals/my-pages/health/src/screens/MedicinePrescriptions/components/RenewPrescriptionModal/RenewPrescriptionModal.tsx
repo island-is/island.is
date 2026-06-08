@@ -54,8 +54,10 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     setModalVisible(isVisible)
   }, [isVisible])
 
-  const [fetchTargets, { data: targetsData, loading: targetsLoading, called: targetsCalled }] =
-    useGetPrescriptionRenewalTargetsLazyQuery({ fetchPolicy: 'network-only' })
+  const [
+    fetchTargets,
+    { data: targetsData, loading: targetsLoading, called: targetsCalled },
+  ] = useGetPrescriptionRenewalTargetsLazyQuery({ fetchPolicy: 'network-only' })
 
   useEffect(() => {
     if (isVisible && activePrescription.id) {
@@ -247,7 +249,12 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                     size="small"
                     type="submit"
                     loading={loading}
-                    disabled={loading || (!targetsLoading && targetsCalled && targetOptions.length === 0)}
+                    disabled={
+                      loading ||
+                      (!targetsLoading &&
+                        targetsCalled &&
+                        targetOptions.length === 0)
+                    }
                     onClick={() => submitForm()}
                   >
                     {formatMessage(messages.renew)}
