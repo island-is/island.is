@@ -8,7 +8,6 @@ import {
   districtCourtAbbreviation,
   formatDate,
   formatDOB,
-  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
@@ -20,11 +19,11 @@ import {
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
-import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
@@ -45,7 +44,6 @@ interface Defender {
 
 interface DefendantInfoProps {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
@@ -59,54 +57,15 @@ interface DefendantInfoProps {
 
 const ConnectedCasesInfo = ({
   defendant,
-  workingCaseId,
   courtId,
 }: {
   defendant: Defendant
-  workingCaseId: string
   courtId?: string
 }) => {
-  const { data: connectedCasesData } = useConnectedCasesQuery({
-    variables: { input: { id: workingCaseId } },
-  })
-
-  const connectedCases = connectedCasesData?.connectedCases
-    ?.filter((connectedCase) =>
-      connectedCase.defendants?.some((d) =>
-        defendant.noNationalId
-          ? defendant.nationalId === d.nationalId && defendant.name === d.name
-          : d.nationalId &&
-            normalizeAndFormatNationalId(defendant.nationalId).includes(
-              d.nationalId,
-            ),
-      ),
-    )
-    .map((connectedCase) => {
-      const hasCourtAccess = courtId === connectedCase.court?.id
-      const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
-
-      return hasCourtAccess ? (
-        <LinkV2
-          href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
-          className={link}
-          key={key}
-        >
-          <Text as="span" whiteSpace="pre">
-            {connectedCase.courtCaseNumber}
-          </Text>
-        </LinkV2>
-      ) : (
-        <Text as="span" whiteSpace="pre" key={key}>
-          {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
-            connectedCase.court?.name,
-          )})`}
-        </Text>
-      )
-    })
+  const connectedCases = defendant.connectedCases
 
   return (
-    connectedCases &&
-    connectedCases.length > 0 && (
+    isNonEmptyArray(connectedCases) && (
       <Box display="flex" flexWrap="wrap">
         <Box
           display="inlineFlex"
@@ -117,14 +76,34 @@ const ConnectedCasesInfo = ({
           <Icon icon="warning" size="medium" color="blue400" type="outline" />
           <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
         </Box>
-        {connectedCases.map((connectedCase, i) => (
-          <Box component="span" key={i}>
-            {connectedCase}
-            {i < connectedCases.length - 1 && (
-              <Text as="span" whiteSpace="pre">{`, `}</Text>
-            )}
-          </Box>
-        ))}
+        {connectedCases.map((connectedCase, i) => {
+          const hasCourtAccess = courtId === connectedCase.court?.id
+          const key = `${defendant.id}-${connectedCase.id}`
+
+          return (
+            <Box component="span" key={key}>
+              {hasCourtAccess ? (
+                <LinkV2
+                  href={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
+                  className={link}
+                >
+                  <Text as="span" whiteSpace="pre">
+                    {connectedCase.courtCaseNumber}
+                  </Text>
+                </LinkV2>
+              ) : (
+                <Text as="span" whiteSpace="pre">
+                  {`${
+                    connectedCase.courtCaseNumber
+                  } (${districtCourtAbbreviation(connectedCase.court?.name)})`}
+                </Text>
+              )}
+              {i < connectedCases.length - 1 && (
+                <Text as="span" whiteSpace="pre">{`, `}</Text>
+              )}
+            </Box>
+          )
+        })}
       </Box>
     )
   )
@@ -133,7 +112,6 @@ const ConnectedCasesInfo = ({
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
-    workingCaseId,
     courtId,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
@@ -248,11 +226,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}`}</Text>
         )}
         {displayOpenCaseReference && (
-          <ConnectedCasesInfo
-            defendant={defendant}
-            workingCaseId={workingCaseId}
-            courtId={courtId}
-          />
+          <ConnectedCasesInfo defendant={defendant} courtId={courtId} />
         )}
       </div>
       {defendantTagConfig && defendant.verdict ? (

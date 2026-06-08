@@ -121,6 +121,14 @@ query Case($input: CaseQueryInput!) {
         isAcquittedByPublicProsecutionOffice
         defendantHasRequestedAppeal
       }
+      connectedCases {
+        id
+        courtCaseNumber
+        court {
+          id
+          name
+        }
+      }
     }
     defenderName
     defenderNationalId
@@ -294,6 +302,7 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created

@@ -213,6 +213,9 @@ export class SubpoenaController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('defendant/:defendantId/subpoena/:subpoenaId/serviceCertificate')
   // Strictly speaking, only district court users need access to

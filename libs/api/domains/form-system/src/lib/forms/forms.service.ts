@@ -77,6 +77,13 @@ export class FormsService {
     return response as FormResponse
   }
 
+  async getJsonSample(auth: User, input: GetFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerGetJsonSample(input as FormsControllerFindOneRequest)
+    return response as FormResponse
+  }
+
   async getAllForms(auth: User, input: GetFormsInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth).formsControllerFindAll(
       input as FormsControllerFindAllRequest,

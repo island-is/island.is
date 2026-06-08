@@ -283,10 +283,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`cases/statistics/export-csv?${searchParams}`)
   }
 
-  getConnectedCases(caseId: string): Promise<Case[]> {
-    return this.get(`case/${caseId}/connectedCases`)
-  }
-
   getCandidateMergeCases(caseId: string): Promise<Case[]> {
     return this.get(`case/${caseId}/candidateMergeCases`)
   }
@@ -689,6 +685,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     indictmentCountId: string,
   ): Promise<DeleteResponse> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  reorderIndictmentCounts(
+    caseId: string,
+    body: unknown,
+  ): Promise<IndictmentCount[]> {
+    return this.patch(`case/${caseId}/indictmentCounts/reorder`, body)
   }
 
   createCourtSession(

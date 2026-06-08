@@ -43,8 +43,19 @@ const GenericTable = <Cell,>({
   useMemo(() => {
     if (sortConfig) {
       rows.sort((a, b) => {
-        const aValue = a.cells[sortConfig.column]
-        const bValue = b.cells[sortConfig.column]
+        const aCells = a.cells
+        const bCells = b.cells
+
+        if (
+          aCells.length <= sortConfig.column ||
+          bCells.length <= sortConfig.column
+        ) {
+          // Should not happen, but if it does, don't sort and keep the original order
+          return 0
+        }
+
+        const aValue = aCells[sortConfig.column]
+        const bValue = bCells[sortConfig.column]
 
         if (sortConfig.direction === 'ascending') {
           return columns[sortConfig.column].compare(aValue, bValue)

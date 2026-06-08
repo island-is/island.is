@@ -68,6 +68,20 @@ export class FormsController {
     return await this.formsService.findAll(user, nationalId)
   }
 
+  @ApiOperation({ summary: 'Get JSON sample by form id' })
+  @ApiOkResponse({
+    type: FormResponseDto,
+    description: 'Get JSON sample by form id',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Get('jsonSample/:id')
+  async getJsonSample(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.getJsonSample(user, id)
+  }
+
   @ApiOperation({ summary: 'Get form by id' })
   @ApiOkResponse({
     type: FormResponseDto,
