@@ -490,5 +490,53 @@ export const messages = {
       id: 'equalityReport.application:overview.intro',
       defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir.',
     },
+    submitButton: {
+      id: 'equalityReport.application:overview.submitButton',
+      defaultMessage: 'Senda inn',
+    },
+    companyInfo: {
+      id: 'equalityReport.application:overview.companyInfo',
+      defaultMessage: 'Upplýsingar um fyrirtæki',
+    },
+    chiefExecutive: {
+      id: 'equalityReport.application:overview.chiefExecutive',
+      defaultMessage: 'Æðsti stjórnandi',
+    },
+    contactPerson: {
+      id: 'equalityReport.application:overview.contactPerson',
+      defaultMessage: 'Tengiliður',
+    },
+    employeeCount: {
+      id: 'equalityReport.application:overview.employeeCount',
+      defaultMessage: 'Fjöldi starfsmanna',
+    },
+    subsidiaries: {
+      id: 'equalityReport.application:overview.subsidiaries',
+      defaultMessage: 'Dótturfyrirtæki',
+    },
+    equalityPlan: {
+      id: 'equalityReport.application:overview.equalityPlan',
+      defaultMessage: 'Jafnréttisáætlun',
+    },
+    women: {
+      id: 'equalityReport.application:overview.women',
+      defaultMessage: 'Konur',
+    },
+    men: {
+      id: 'equalityReport.application:overview.men',
+      defaultMessage: 'Karlar',
+    },
+    nonBinary: {
+      id: 'equalityReport.application:overview.nonBinary',
+      defaultMessage: 'Hlutlægt kyn',
+    },
+    hasSubsidiaries: {
+      id: 'equalityReport.application:overview.hasSubsidiaries',
+      defaultMessage: 'Inniheldur dótturfyrirtæki',
+    },
+    noSubsidiaries: {
+      id: 'equalityReport.application:overview.noSubsidiaries',
+      defaultMessage: 'Nei',
+    },
   }),
 }
