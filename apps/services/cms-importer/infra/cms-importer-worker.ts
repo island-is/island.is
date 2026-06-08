@@ -25,8 +25,8 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
     })
 
 export const energyFundImportSetup =
-  (): ServiceBuilder<'cms-importer-energy-fund-import'> =>
-    service('cms-importer-energy-fund-import')
+  (): ScheduledJobBuilder<'cms-importer-energy-fund-import'> =>
+    scheduledJob('cms-importer-energy-fund-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
       .env({
@@ -41,11 +41,16 @@ export const energyFundImportSetup =
           '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       })
       .command('node')
+      .schedule({
+        dev: '0 8 * * 1',
+        staging: '0 8 * * 1',
+        prod: '0 8 * * 1',
+      })
       .args('main.cjs')
 
 export const fsreBuildingsImportSetup =
-  (): ServiceBuilder<'cms-importer-fsre-buildings-import'> =>
-    service('cms-importer-fsre-buildings-import')
+  (): ScheduledJobBuilder<'cms-importer-fsre-buildings-import'> =>
+    scheduledJob('cms-importer-fsre-buildings-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
       .env({
@@ -60,6 +65,11 @@ export const fsreBuildingsImportSetup =
           '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       })
       .command('node')
+      .schedule({
+        dev: '0 8 * * 1',
+        staging: '0 8 * * 1',
+        prod: '0 8 * * 1',
+      })
       .args('main.cjs')
 
 export const webSitemapImportSetup =
