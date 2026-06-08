@@ -24,11 +24,11 @@ import { CivilClaimantNotificationService } from './services/civilClaimantNotifi
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
 import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
 import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { NotificationService } from './services/notification.service'
+import { NotificationDispatchService } from './services/notificationDispatch.service'
 import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
 import { NotificationController } from './notification.controller'
-import { NotificationService } from './notification.service'
-import { NotificationDispatchService } from './notificationDispatch.service'
 
 @Module({
   imports: [

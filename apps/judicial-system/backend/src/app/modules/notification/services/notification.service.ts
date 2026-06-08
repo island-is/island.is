@@ -10,10 +10,10 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { EventService } from '../event'
-import { type Case } from '../repository'
-import { UserInitiatedNotificationType } from './dto/notification.dto'
-import { SendNotificationResponse } from './models/sendNotification.response'
+import { EventService } from '../../event'
+import { type Case } from '../../repository'
+import { UserInitiatedNotificationType } from '../dto/notification.dto'
+import { SendNotificationResponse } from '../models/sendNotification.response'
 
 @Injectable()
 export class NotificationService {
