@@ -44,7 +44,6 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     courtCaseNumber,
     splitCases,
     splitCase,
-    showItem,
   } = useInfoCardItems()
 
   const excludedDefendants =
@@ -73,13 +72,13 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
-            ...(showItem(indictmentCreated) ? [indictmentCreated] : []),
+            indictmentCreated,
             prosecutor(workingCase.type, onProsecutorClick),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),
             court,
-            ...(showItem(courtCaseNumber) ? [courtCaseNumber] : []),
+            courtCaseNumber,
             offenses,
           ],
           columns: 2,
