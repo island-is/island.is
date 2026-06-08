@@ -1,10 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import {
-  CaseType,
-  TrackedNotificationType,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -30,13 +26,7 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCase: { appealCaseNumber, appealRulingDecision },
-    notifications: [
-      {
-        type: TrackedNotificationType.APPEAL_COMPLETED,
-        created: appealRulingDate,
-      },
-    ],
+    appealCase: { appealCaseNumber, appealRulingDecision, appealRulingDate },
   } as Case
 
   let mockCourtService: CourtService
