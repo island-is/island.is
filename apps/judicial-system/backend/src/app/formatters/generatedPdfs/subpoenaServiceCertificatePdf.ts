@@ -17,8 +17,8 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { serviceCertificate as strings } from '../messages'
-import { Case, Defendant, Subpoena } from '../modules/repository'
+import { serviceCertificate as strings } from '../../messages'
+import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -26,7 +26,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 const getSubpoenaType = (subpoenaType?: SubpoenaType): string => {
   switch (subpoenaType) {

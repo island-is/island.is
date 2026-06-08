@@ -16,9 +16,9 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core, request as m } from '../messages'
-import { Case, EventLog } from '../modules/repository'
-import { formatLegalProvisions } from './formatters'
+import { core, request as m } from '../../messages'
+import { Case, EventLog } from '../../modules/repository'
+import { formatLegalProvisions } from '../formatters'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -33,7 +33,7 @@ import {
   addPoliceStar,
   setLineGap,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 const constructRestrictionRequestPdf = (
   theCase: Case,

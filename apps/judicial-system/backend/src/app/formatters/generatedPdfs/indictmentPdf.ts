@@ -6,9 +6,9 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import { sortIndictmentCounts } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../factories'
-import { indictment } from '../messages'
-import { Case, CaseString } from '../modules/repository'
+import { nowFactory } from '../../factories'
+import { indictment } from '../../messages'
+import { Case, CaseString } from '../../modules/repository'
 import {
   addEmptyLines,
   addGiganticHeading,
@@ -20,7 +20,7 @@ import {
   drawConfirmation,
   formatActor,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 // Credit: https://stackoverflow.com/a/41358305
 const roman = (num: number) => {
