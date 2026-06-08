@@ -9,7 +9,6 @@ import {
 import { FormModes } from '@island.is/application/types'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { mainForm } from '../../lib/messages'
-import { MAX_DAYS_FALLBACK } from '@/utils/constants'
 import { dateToMaxDate } from '@/utils/dateUtils'
 
 export const MainForm = buildForm({
