@@ -32,7 +32,7 @@ yarn feature-env \
   --dockertag "$DOCKER_TAG" \
   --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
 
-IDS_FEATURE_DIR="${GIT_ROOT}/charts/features/ids-deployments"
+IDS_FEATURE_DIR="${GIT_ROOT}/charts/ids-features/deployments"
 mkdir -p "$IDS_FEATURE_DIR/$FEATURE_NAME"
 
 yarn feature-env \
@@ -42,7 +42,7 @@ yarn feature-env \
   --chart identity-server \
   --feature "$FEATURE_NAME" \
   --images "*" \
-  --writeDest "${GIT_ROOT}/charts/features/ids-deployments/${FEATURE_NAME}"
+  --writeDest "${GIT_ROOT}/charts/ids-features/deployments/${FEATURE_NAME}"
 
 # yarn feature-env \
 #   cleanup \
