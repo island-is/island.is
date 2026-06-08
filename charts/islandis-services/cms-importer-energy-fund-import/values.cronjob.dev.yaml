@@ -16,7 +16,7 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
-name: 'cms-importer-fsre-buildings-import'
+name: 'cms-importer-energy-fund-import'
 args:
   - 'main.cjs'
 command:
@@ -64,6 +64,7 @@ resources:
   requests:
     cpu: '100m'
     memory: '128Mi'
+schedule: '0 8 * * 1'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
