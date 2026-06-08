@@ -107,7 +107,8 @@ describe('InheritanceReportService', () => {
         typeId: ApplicationTypes.INHERITANCE_REPORT,
         applicant: '0101301234',
         answers: {
-          sendCopyToParties: ['Yes'],
+          // Matches the YES constant ('yes') the schema validates to.
+          sendCopyToParties: ['yes'],
           total: 0,
           debtsTotal: 0,
           netTotal: 0,
