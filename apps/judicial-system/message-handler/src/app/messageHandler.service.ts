@@ -12,6 +12,7 @@ import {
 
 import { appModuleConfig } from './app.config'
 import { InternalDeliveryService } from './internalDelivery.service'
+import { SuspensionSettingsService } from './suspensionSettings.service'
 
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {
@@ -21,6 +22,7 @@ export class MessageHandlerService implements OnModuleDestroy {
   constructor(
     private readonly messageService: MessageService,
     private readonly internalDeliveryService: InternalDeliveryService,
+    private readonly suspensionSettingsService: SuspensionSettingsService,
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -61,9 +63,13 @@ export class MessageHandlerService implements OnModuleDestroy {
       this.logger.debug('Checking for messages')
 
       await this.messageService
-        .receiveMessagesFromQueue(async (message: Message) => {
-          return await this.handleMessage(message)
-        })
+        .receiveMessagesFromQueue(
+          async (message: Message) => {
+            return await this.handleMessage(message)
+          },
+          (message: Message) =>
+            this.suspensionSettingsService.shouldSuspend(message),
+        )
         .catch(async (error) => {
           this.logger.error('Error handling message', { error })
 

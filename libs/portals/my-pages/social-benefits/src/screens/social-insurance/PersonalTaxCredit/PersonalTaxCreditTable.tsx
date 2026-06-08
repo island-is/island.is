@@ -133,17 +133,13 @@ export const PersonalTaxCreditTable = ({
                   <Button
                     variant="text"
                     size="small"
-                    icon={row.getIsExpanded() ? 'close' : 'pencil'}
+                    icon="pencil"
                     iconType="outline"
                     aria-expanded={row.getIsExpanded()}
                     aria-controls={`${tableId}-expanded-${row.id}`}
                     onClick={() => row.toggleExpanded()}
                   >
-                    {formatMessage(
-                      row.getIsExpanded()
-                        ? coreMessages.buttonCancel
-                        : coreMessages.buttonEdit,
-                    )}
+                    {formatMessage(coreMessages.buttonEdit)}
                   </Button>
                 ) : null,
             }),
@@ -175,7 +171,7 @@ export const PersonalTaxCreditTable = ({
                 scope={header.id === 'actions' ? undefined : 'col'}
                 aria-hidden={header.id === 'actions' ? true : undefined}
                 box={{ background: 'blue100' }}
-                text={{ variant: 'medium' }}
+                text={{ variant: 'medium', fontWeight: 'semiBold' }}
               >
                 {flexRender(
                   header.column.columnDef.header,

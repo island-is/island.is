@@ -7,6 +7,7 @@ export const minimalScrollbar = style({
   height: 'calc(100vh - 200px)',
   overflowY: 'auto',
   scrollbarWidth: 'thin',
+  scrollbarGutter: 'stable',
   scrollbarColor: 'rgba(0,0,0,0.2) transparent',
   '@media': {
     [MOBILE]: {

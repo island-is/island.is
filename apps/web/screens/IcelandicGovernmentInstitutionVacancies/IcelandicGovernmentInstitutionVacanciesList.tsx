@@ -95,11 +95,18 @@ interface IcelandicGovernmentInstitutionVacanciesListProps {
   namespace: Record<string, string>
   fetchErrorOccurred?: boolean | null
   useNewApiOverride?: boolean
+  useOldApiOverride?: boolean
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
   IcelandicGovernmentInstitutionVacanciesListProps
-> = ({ vacancies, namespace, fetchErrorOccurred, useNewApiOverride }) => {
+> = ({
+  vacancies,
+  namespace,
+  fetchErrorOccurred,
+  useNewApiOverride,
+  useOldApiOverride,
+}) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -156,14 +163,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
-      // The new API populates the "Störf" filter from the jobCategory field
-      const fieldOfWorkValue = useNewApiOverride
-        ? vacancy.jobCategory
-        : vacancy.fieldOfWork
       shouldBeShown = Boolean(
         shouldBeShown &&
-          fieldOfWorkValue &&
-          parameters.fieldOfWork.includes(fieldOfWorkValue),
+          vacancy.fieldOfWork &&
+          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
       )
     }
 
@@ -190,12 +193,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   })
 
   const fieldOfWorkOptions = useMemo(
-    () =>
-      mapVacanciesField(
-        vacancies,
-        useNewApiOverride ? 'jobCategory' : 'fieldOfWork',
-      ),
-    [vacancies, useNewApiOverride],
+    () => mapVacanciesField(vacancies, 'fieldOfWork'),
+    [vacancies],
   )
 
   const locationOptions = useMemo(
@@ -337,7 +336,9 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           label: n('viewDetails', 'Skoða nánar'),
           href: `${
             linkResolver('vacancydetails', [vacancy.id?.toString() || '']).href
-          }${useNewApiOverride ? '?api=new' : ''}`,
+          }${
+            useNewApiOverride ? '?api=new' : useOldApiOverride ? '?api=old' : ''
+          }`,
         },
         tags,
         detailLines,
@@ -832,6 +833,7 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   query,
 }) => {
   const useNewApiOverride = query?.api === 'new' ? true : undefined
+  const useOldApiOverride = query?.api === 'old' ? true : undefined
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -857,6 +859,7 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     variables: {
       input: {
         ...(useNewApiOverride && { useNewApiOverride }),
+        ...(useOldApiOverride && { useOldApiOverride }),
       },
     },
   })
@@ -869,6 +872,7 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     namespace,
     fetchErrorOccurred,
     useNewApiOverride,
+    useOldApiOverride,
   }
 }
 

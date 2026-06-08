@@ -114,7 +114,7 @@ describe('sortVacancyList', () => {
 })
 
 describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
-  it('should map jobCategory (starfssvid) separately from fieldOfWork (job title)', async () => {
+  it('should map jobCategory into fieldOfWork to match the old X-Road API', async () => {
     const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
       {
         vacancyID: '1',
@@ -125,11 +125,13 @@ describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
     ])
 
     expect(result).toHaveLength(1)
-    expect(result[0].fieldOfWork).toBe('Hjúkrunarfræðingur')
-    expect(result[0].jobCategory).toBe('Heilbrigðisþjónusta')
+    // fieldOfWork carries the category (the card eyebrow), consistent with the
+    // old API. The job title is not surfaced as a separate field.
+    expect(result[0].fieldOfWork).toBe('Heilbrigðisþjónusta')
+    expect(result[0].title).toBe('Hjúkrunarfræðingur óskast')
   })
 
-  it('should leave jobCategory undefined when the API omits it', async () => {
+  it('should leave fieldOfWork undefined when the API omits jobCategory', async () => {
     const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
       {
         vacancyID: '1',
@@ -138,6 +140,6 @@ describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
       },
     ])
 
-    expect(result[0].jobCategory).toBeUndefined()
+    expect(result[0].fieldOfWork).toBeUndefined()
   })
 })
