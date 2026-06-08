@@ -1953,6 +1953,10 @@ export const messages = defineMessages({
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
   },
+  appointmentsOverviewTitle: {
+    id: 'sp.health:appointments-overview-title',
+    defaultMessage: 'Yfirlit tímabókana',
+  },
   appointmentsIntro: {
     defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
     id: 'sp.health:appointments-intro',

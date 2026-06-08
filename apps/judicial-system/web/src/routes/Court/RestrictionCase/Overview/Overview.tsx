@@ -65,7 +65,7 @@ export const JudgeOverview = () => {
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
   const {
     defendants,
     policeCaseNumbers,

@@ -100,6 +100,7 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.appointments,
       searchHide: false,
+      breadcrumbHide: true,
       path: HealthPaths.HealthAppointments,
       searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
       children: [
