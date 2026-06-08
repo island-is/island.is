@@ -187,6 +187,7 @@ export const PermissionAccessControl = () => {
         'isAccessControlled',
         'grantToAuthenticatedUser',
         'automaticDelegationGrant',
+        'userNationalIds',
       ])}
       customValidation={customValidation}
     >
