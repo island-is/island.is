@@ -77,7 +77,7 @@ export const mapItemToQuestion = (
 
   return {
     id: item.id,
-    sectionId: groupId,
+    sectionId: groupId ?? '',
     label: item.label,
     htmlLabel: item.htmlLabel,
     sublabel: item.hint,

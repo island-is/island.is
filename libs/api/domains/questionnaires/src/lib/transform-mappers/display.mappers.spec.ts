@@ -361,8 +361,8 @@ describe('display mappers', () => {
       expect(section?.questions).toHaveLength(1)
 
       const question = section?.questions?.[0]
-      expect(question?.id).toBe('group-1__bool-q1')
-      expect(question?.originalId).toBe('bool-q1')
+      expect(question?.id).toBe('bool-q1')
+      expect(question?.sectionId).toBe('group-1')
       expect(question?.label).toBe('Are you OK?')
       expect(question?.answerOptions.type).toBe(AnswerOptionType.radio)
 
@@ -468,10 +468,10 @@ describe('display mappers', () => {
 
       const section = mapped.sections?.[0]
       const dependentQuestion = section?.questions?.find(
-        (q) => q.id === 'group-1__q2',
+        (q) => q.id === 'q2',
       )
 
-      // q2 should depend on q1 via triggers (dependsOn uses original IDs, not namespaced)
+      // q2 should depend on q1 via triggers
       expect(dependentQuestion?.dependsOn).toEqual(['q1'])
       expect(dependentQuestion?.visibilityConditions).toBeDefined()
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('q1')
