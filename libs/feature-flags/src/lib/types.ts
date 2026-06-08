@@ -4,7 +4,7 @@ import type {
   IAutoPollOptions,
   IConfigCatClient,
   PollingMode,
-} from 'configcat-common'
+} from '@configcat/sdk'
 import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
@@ -19,6 +19,9 @@ export interface FeatureFlagClient {
     defaultValue: T,
     user?: FeatureFlagUser,
   ) => Promise<SettingTypeOf<T>>
+  getAllValues: (
+    user?: FeatureFlagUser,
+  ) => Promise<Record<string, boolean | string | number>>
 }
 
 export interface FeatureFlagClientProps {

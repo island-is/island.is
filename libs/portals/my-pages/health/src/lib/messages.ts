@@ -72,14 +72,6 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
-  dateAndTime: {
-    id: 'sp.health:date-and-time',
-    defaultMessage: 'Dagsetning og tími',
-  },
-  clockShortArg: {
-    id: 'sp.health:clock-short',
-    defaultMessage: 'kl. {arg}',
-  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -1882,12 +1874,17 @@ export const messages = defineMessages({
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
   },
+  appointmentsOverviewTitle: {
+    id: 'sp.health:appointments-overview-title',
+    defaultMessage: 'Yfirlit tímabókana',
+  },
   appointmentsIntro: {
     defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
     id: 'sp.health:appointments-intro',
   },
   appointmentsDetailIntro: {
-    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
@@ -2463,10 +2460,6 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-at-simple',
     defaultMessage: 'Tími hjá',
   },
-  locationAddress: {
-    id: 'sp.health:location-address',
-    defaultMessage: 'Staðsetning',
-  },
   instructions: {
     id: 'sp.health:instructions',
     defaultMessage: 'Leiðbeiningar',
@@ -2602,10 +2595,6 @@ export const messages = defineMessages({
     defaultMessage: 'Opna kort',
     id: 'sp.health:see-on-maps',
   },
-  duration: {
-    defaultMessage: 'Tímalengd',
-    id: 'sp.health:duration',
-  },
   argWithMinutes: {
     defaultMessage: '{arg} mínútur',
     id: 'sp.health:arg-with-minutes',
@@ -2617,5 +2606,45 @@ export const messages = defineMessages({
   openingHours: {
     id: 'sp.health:opening-hours',
     defaultMessage: 'Opnunartímar',
+  },
+  appointmentMoreInfo: {
+    id: 'sp.health:appointment-more-info',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  appointmentModalityInPerson: {
+    id: 'sp.health:appointment-modality-in-person',
+    defaultMessage: 'Viðtal á staðnum',
+  },
+  appointmentModalityVideo: {
+    id: 'sp.health:appointment-modality-video',
+    defaultMessage: 'Fjarfundur',
+  },
+  appointmentAssignees: {
+    id: 'sp.health:appointment-assignees',
+    defaultMessage: 'Úthlutað til',
+  },
+  appointmentVideoCallLink: {
+    id: 'sp.health:appointment-video-call-link',
+    defaultMessage: 'Opna fjarfund',
+  },
+  appointmentPreparation: {
+    id: 'sp.health:appointment-preparation',
+    defaultMessage: 'Undirbúningur',
+  },
+  appointmentLocationRoom: {
+    id: 'sp.health:appointment-location-room',
+    defaultMessage: 'Herbergi',
+  },
+  appointmentLocationFloor: {
+    id: 'sp.health:appointment-location-floor',
+    defaultMessage: 'Hæð',
+  },
+  appointmentLocationWing: {
+    id: 'sp.health:appointment-location-wing',
+    defaultMessage: 'Álma',
+  },
+  appointmentLocationDepartment: {
+    id: 'sp.health:appointment-location-department',
+    defaultMessage: 'Deild',
   },
 })

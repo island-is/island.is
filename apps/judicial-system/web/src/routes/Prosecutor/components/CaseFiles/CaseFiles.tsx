@@ -8,7 +8,12 @@ import {
   InputFileUpload,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -263,14 +268,14 @@ export const CaseFiles = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${
             isRestrictionCase(workingCase.type)
-              ? constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE
-              : constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE
+              ? PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE
+              : PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE
           }/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               isRestrictionCase(workingCase.type)
-                ? constants.RESTRICTION_CASE_OVERVIEW_ROUTE
-                : constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+                ? PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE
+                : PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
             )
           }
           nextIsDisabled={!stepIsValid}

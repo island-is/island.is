@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useRef } from 'react'
+import {
+  FC,
+  ForwardedRef,
+  forwardRef,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,9 +14,15 @@ import {
   AccordionItem,
   Box,
   Button,
+  Icon,
   RadioButton,
+  Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -31,6 +44,7 @@ import {
   DefendantPlea,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isCivilClaimantDefendantSelectionValid } from '@island.is/judicial-system-web/src/utils/civilClaimantUtils'
 import {
   useCase,
   useCivilClaimants,
@@ -48,6 +62,119 @@ import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
 interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+
+interface CivilClaimantAccordionLabelProps {
+  label: string
+  showDefendantSelectionWarning: boolean
+  defendantSelectionWarningText: string
+}
+
+const CivilClaimantAccordionLabel = forwardRef(
+  (
+    props: CivilClaimantAccordionLabelProps,
+    ref: ForwardedRef<HTMLDivElement>,
+  ) => {
+    const {
+      label,
+      showDefendantSelectionWarning,
+      defendantSelectionWarningText,
+    } = props
+
+    return (
+      <Box ref={ref} display="flex" alignItems="flexEnd" columnGap={1}>
+        <Text variant="h4">{label}</Text>
+        {showDefendantSelectionWarning && (
+          <Tooltip
+            placement="top"
+            as="span"
+            text={defendantSelectionWarningText}
+          >
+            <span>
+              <Icon icon="warning" type="filled" color="yellow600" />
+            </span>
+          </Tooltip>
+        )}
+      </Box>
+    )
+  },
+)
+
+type CivilClaimantFieldsProps = Parameters<typeof CivilClaimantFields>[0]
+
+interface CivilClaimantAccordionItemProps extends CivilClaimantFieldsProps {
+  label: string
+  defendantSelectionWarningText: string
+}
+
+const CivilClaimantAccordionItem: FC<CivilClaimantAccordionItemProps> = (
+  props,
+) => {
+  const {
+    civilClaimant,
+    civilClaimantIndex,
+    label,
+    defendantSelectionWarningText,
+    defendants,
+    caseId,
+    removeCivilClaimantById,
+    policeCaseNumbers,
+    uploadFiles,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+    handleUpload,
+    handleRetry,
+    handleRemove,
+    onOpenFile,
+  } = props
+  const accordionLabelRef = useRef<HTMLDivElement>(null)
+  const showDefendantSelectionWarning = !isCivilClaimantDefendantSelectionValid(
+    civilClaimant,
+    defendants,
+  )
+
+  return (
+    <Box
+      component="div"
+      onMouseOver={() =>
+        accordionLabelRef.current?.style.setProperty('z-index', '50')
+      }
+      onMouseOut={() =>
+        accordionLabelRef.current?.style.setProperty('z-index', null)
+      }
+    >
+      <AccordionItem
+        id={`civilClaimant-${civilClaimant.id}`}
+        label={
+          <CivilClaimantAccordionLabel
+            ref={accordionLabelRef}
+            label={label}
+            showDefendantSelectionWarning={showDefendantSelectionWarning}
+            defendantSelectionWarningText={defendantSelectionWarningText}
+          />
+        }
+        startExpanded
+      >
+        <CivilClaimantFields
+          caseId={caseId}
+          civilClaimant={civilClaimant}
+          civilClaimantIndex={civilClaimantIndex}
+          removeCivilClaimantById={removeCivilClaimantById}
+          policeCaseNumbers={policeCaseNumbers}
+          defendants={defendants}
+          uploadFiles={uploadFiles}
+          addUploadFiles={addUploadFiles}
+          updateUploadFile={updateUploadFile}
+          removeUploadFile={removeUploadFile}
+          handleUpload={handleUpload}
+          handleRetry={handleRetry}
+          handleRemove={handleRemove}
+          onOpenFile={onOpenFile}
+        />
+      </AccordionItem>
+    </Box>
+  )
+}
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -335,29 +462,25 @@ const Processing: FC = () => {
           <Box component="section" marginBottom={10}>
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
-                <AccordionItem
+                <CivilClaimantAccordionItem
                   key={civilClaimant.id}
-                  id={`civilClaimant-${civilClaimant.id}`}
+                  civilClaimant={civilClaimant}
+                  civilClaimantIndex={index}
                   label={`${formatMessage(strings.civilClaimant)} ${index + 1}`}
-                  startExpanded
-                >
-                  <CivilClaimantFields
-                    caseId={workingCase.id}
-                    civilClaimant={civilClaimant}
-                    civilClaimantIndex={index}
-                    removeCivilClaimantById={removeCivilClaimantById}
-                    policeCaseNumbers={workingCase.policeCaseNumbers ?? []}
-                    defendants={workingCase.defendants ?? []}
-                    uploadFiles={uploadFiles}
-                    addUploadFiles={addUploadFiles}
-                    updateUploadFile={updateUploadFile}
-                    removeUploadFile={removeUploadFile}
-                    handleUpload={handleUpload}
-                    handleRetry={handleRetry}
-                    handleRemove={handleRemove}
-                    onOpenFile={onOpenFile}
-                  />
-                </AccordionItem>
+                  defendantSelectionWarningText="Veldu að minnsta kosti einn ákærða"
+                  caseId={workingCase.id}
+                  defendants={workingCase.defendants ?? []}
+                  removeCivilClaimantById={removeCivilClaimantById}
+                  policeCaseNumbers={workingCase.policeCaseNumbers ?? []}
+                  uploadFiles={uploadFiles}
+                  addUploadFiles={addUploadFiles}
+                  updateUploadFile={updateUploadFile}
+                  removeUploadFile={removeUploadFile}
+                  handleUpload={handleUpload}
+                  handleRetry={handleRetry}
+                  handleRemove={handleRemove}
+                  onOpenFile={onOpenFile}
+                />
               ))}
             </Accordion>
             <Box
@@ -380,9 +503,9 @@ const Processing: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
-          nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>

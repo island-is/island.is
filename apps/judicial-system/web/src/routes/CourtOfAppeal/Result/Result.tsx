@@ -39,7 +39,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult = () => {
+const Result = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<modalTypes>('none')
@@ -50,7 +50,7 @@ const CourtOfAppealResult = () => {
   const { appealBanner } = useAppealCaseBanner()
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const {
     defendants,
@@ -73,7 +73,7 @@ const CourtOfAppealResult = () => {
 
   return (
     <>
-      {workingCase.hasBeenAppealed && appealBanner}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -95,18 +95,6 @@ const CourtOfAppealResult = () => {
                   : undefined
               }
             />
-            {targetAppealCase?.appealRulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(strings.rulingModifiedTitle)}
-                message={
-                  <MarkdownWrapper
-                    markdown={targetAppealCase.appealRulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
             {isIndictment ? (
               <InfoCardClosedIndictment />
             ) : (
@@ -214,4 +202,4 @@ const CourtOfAppealResult = () => {
   )
 }
 
-export default CourtOfAppealResult
+export default Result

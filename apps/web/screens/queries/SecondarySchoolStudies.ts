@@ -52,7 +52,6 @@ export const GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY = gql`
           description
         }
       }
-      isReferenceProgramme
     }
   }
 `
@@ -81,7 +80,6 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_FILTER_OPTIONS_QUERY = gql`
         name
         description
       }
-      isReferenceProgrammeFilterOption
     }
   }
 `
@@ -141,7 +139,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY = gql`
         coreSubjectGroups {
           title
           subjects {
-            id
+            subjectId
             name
             level1
             level2
@@ -155,7 +153,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY = gql`
           packages {
             title
             subjects {
-              id
+              subjectId
               name
               level1
               level2
@@ -168,7 +166,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY = gql`
         subjectChoiceGroups {
           requiredCredits
           subjects {
-            id
+            subjectId
             name
             level1
             level2
@@ -188,6 +186,7 @@ export const GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY = gql`
           description
         }
       }
+      isReferenceProgramme
     }
   }
 `

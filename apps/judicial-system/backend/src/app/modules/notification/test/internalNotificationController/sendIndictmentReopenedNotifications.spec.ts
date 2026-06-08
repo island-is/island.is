@@ -47,7 +47,7 @@ describe('InternalNotificationController - Send indictment reopened notification
 
   const prosecutorSubject = `Mál ${courtCaseNumber} enduropnað`
   const bodyText = `${courtName} hefur enduropnað mál ${courtCaseNumber}.<br /><br />Fyrri lyktum hefur verið eytt og málið verður afgreitt á ný.`
-  const prosecutorHtml = `${bodyText}<br /><br /><a href="http://localhost:4200/akaera/stadfesta/${caseId}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+  const prosecutorHtml = `${bodyText}<br /><br /><a href="http://localhost:4200/akaera/yfirlit/${caseId}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
   const defenderHtml = `${bodyText}<br /><br /><a href="http://localhost:4200/verjandi/akaera/${caseId}">Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
   const baseCase = {

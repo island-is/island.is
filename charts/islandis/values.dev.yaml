@@ -402,6 +402,7 @@ api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
     XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis'
@@ -1192,7 +1193,6 @@ application-system-form:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2045,7 +2045,6 @@ form-system-web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2541,7 +2540,6 @@ payments:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2626,7 +2624,6 @@ portals-admin:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2986,7 +2983,6 @@ service-portal:
       memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false

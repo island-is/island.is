@@ -20,6 +20,7 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { buildPaymentState } from '@island.is/application/utils'
+import { PaymentForm } from '@island.is/application/ui-forms'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import {
@@ -54,10 +55,6 @@ const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 const isReviewEnabled = (context: ApplicationContext) => {
   const externalData = context.application.externalData as EstateExternalData
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
-}
-
-const areAllPartiesApproved = (context: ApplicationContext) => {
-  return allPartiesHaveApproved(context.application.answers)
 }
 
 const EstateTemplate: ApplicationTemplate<
@@ -217,6 +214,18 @@ const EstateTemplate: ApplicationTemplate<
                 MockableSyslumadurPaymentCatalogApi,
               ],
             },
+            {
+              // Assignees keep visibility after rejecting (assignees are not
+              // cleared on REJECT) and estate members always map to ASSIGNEE
+              // while review is enabled. Without a form for this role the
+              // form shell renders an infinite loader.
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.assigneeStatusForm),
+                ),
+              read: 'all',
+            },
           ],
           actionCard: {
             historyLogs: [
@@ -258,6 +267,12 @@ const EstateTemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.6,
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.notifyAssignees,
+            shouldPersistToExternalData: true,
+            externalDataId: 'notifyAssignees',
+            throwOnError: false,
+          }),
           onExit: defineTemplateApi({
             action: ApiActions.approveByAssignee,
             shouldPersistToExternalData: false,
@@ -388,13 +403,14 @@ const EstateTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.draft,
           },
+          // SUBMIT sends the application to signing. The applicant can do this
+          // directly without waiting for all estate members to approve; the
+          // irreversibility is acknowledged on the pre-signature screen.
           [DefaultEvents.SUBMIT]: {
             target: States.signing,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
-            cond: areAllPartiesApproved,
           },
           [DefaultEvents.APPROVE]: {
             target: States.inReview,
@@ -404,9 +420,44 @@ const EstateTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.payment]: buildPaymentState({
+      [States.payment]: buildPaymentState<EstateEvent>({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
+        // mapUserToRole never returns the default 'applicant' role once an
+        // estate type has been selected, so the payment state needs explicit
+        // roles for the estate-specific applicant roles. Assignees also keep
+        // visibility while the applicant pays and get a read-only status form.
+        roles: [
+          ...[
+            Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+            Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: async () => PaymentForm,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: 'Panta',
+                type: 'primary' as const,
+              },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary' as const,
+              },
+            ],
+            write: 'all' as const,
+            delete: true,
+          })),
+          {
+            id: Roles.ASSIGNEE,
+            formLoader: () =>
+              import('../forms/InReview').then((val) =>
+                Promise.resolve(val.assigneeStatusForm),
+              ),
+            read: 'all' as const,
+          },
+        ],
         submitTarget: [
           {
             target: States.signing,
@@ -632,6 +683,16 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              // Estate members map to ASSIGNEE while review is enabled and
+              // can open a completed application, e.g. from My Pages.
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
           ],
         },
       },
@@ -650,11 +711,11 @@ const EstateTemplate: ApplicationTemplate<
         return context
       }),
       clearAssignees: assign((context, event) => {
-        // Only clear assignees when going back to draft (EDIT or REJECT events)
+        // Only clear assignees when the applicant chooses to edit.
+        // A rejection also returns to draft, but assignees must keep visibility
+        // so they can see the application status after acting on it.
         // Keep assignees when progressing forward (SUBMIT/PAYMENT) or staying in review (APPROVE)
-        const shouldClearAssignees =
-          event.type === DefaultEvents.EDIT ||
-          event.type === DefaultEvents.REJECT
+        const shouldClearAssignees = event.type === DefaultEvents.EDIT
 
         if (!shouldClearAssignees) {
           return context

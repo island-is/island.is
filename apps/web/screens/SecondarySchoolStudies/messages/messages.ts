@@ -120,18 +120,6 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.haefnisþrep',
       defaultMessage: 'Hæfniþrep',
     },
-    isReferenceProgramme: {
-      id: 'web.secondarySchoolStudies:filters.isReferenceProgramme',
-      defaultMessage: 'Viðmiðunarbraut',
-    },
-    yes: {
-      id: 'web.secondarySchoolStudies:filters.yes',
-      defaultMessage: 'Já',
-    },
-    no: {
-      id: 'web.secondarySchoolStudies:filters.no',
-      defaultMessage: 'Nei',
-    },
   }),
   home: defineMessages({
     title: {
@@ -185,6 +173,10 @@ export const m = {
     identifierCode: {
       id: 'web.secondarySchoolStudies:details.identifierCode',
       defaultMessage: 'Auðkenni',
+    },
+    referenceProgramme: {
+      id: 'web.secondarySchoolStudies:details.referenceProgramme',
+      defaultMessage: 'Viðmiðunarbraut',
     },
     credits: {
       id: 'web.secondarySchoolStudies:details.credits',
