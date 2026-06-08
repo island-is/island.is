@@ -39,7 +39,7 @@ export const useTaxCardAllowance = () => {
     switch (myTaxCredit.action) {
       case 'register': {
         const { year, month, percentage } = myTaxCredit
-        if (year == null || month == null) break
+        if (year == null || month == null || !percentage) break
         try {
           const res = await register({
             variables: {
@@ -53,6 +53,7 @@ export const useTaxCardAllowance = () => {
         break
       }
       case 'update': {
+        if (!myTaxCredit.percentage) break
         try {
           const res = await update({
             variables: {
