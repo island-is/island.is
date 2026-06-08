@@ -169,8 +169,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       options.push({
         label: category.label,
         value: category.id,
-        component: () => (
+        component: ({ active }) => (
           <Box
+            background={active ? 'blue100' : undefined}
             className={styles.categoryOption}
             cursor="pointer"
             paddingY={2}
