@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { View, Image, SafeAreaView, Linking } from 'react-native'
 import styled from 'styled-components/native'
@@ -8,6 +8,10 @@ import { Button, Typography, NavigationBarSheet } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 
 const Text = styled.View`
@@ -39,6 +43,17 @@ export default function UpdateAppScreen() {
   }>()
   const closable = closableParam !== 'false'
   const intl = useIntl()
+
+  // Suppress the app lock if screen is not closable — its router.back on unlock
+  // could pop this wall and let the user bypass the required update (version
+  // check only runs on home tab mount).
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    suppressLockScreen()
+    return () => clearLockScreenSuppression()
+  }, [closable])
 
   return (
     <View style={{ flex: 1 }}>
