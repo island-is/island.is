@@ -385,6 +385,7 @@ export const transformDefendants = ({
         defendant.eventLogs,
       ),
       indictmentCancelledOrDismissedState,
+      connectedCases: defendant.connectedCases ?? [],
     }
   })
 }
