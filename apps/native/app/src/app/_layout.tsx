@@ -129,7 +129,7 @@ export default function RootLayout() {
     // presentViewController — wait a beat so the modal is actually on
     // screen, otherwise the tab paints briefly when the splash drops.
     const hideAfterPresent = () => {
-      deferredId = setTimeout(hide, 250)
+      deferredId = setTimeout(hide, 100)
     }
 
     if (authStore.getState().lockScreenComponentId) {
