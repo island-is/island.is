@@ -34,7 +34,9 @@ export const ProductCategoryModal = ({
   const [isVisible, setIsVisible] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  useClickAway(containerRef, () => setIsVisible(false))
+  useClickAway(containerRef, (ev) => {
+    if (ev.type !== 'touchstart') setIsVisible(false)
+  })
 
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -112,8 +114,7 @@ export const ProductCategoryModal = ({
                     onClick={() => {
                       onOptionSelect(option)
                       if (!option.hasChildren) setIsVisible(false)
-                      if (dropdownRef.current)
-                        dropdownRef.current.scrollTop = 0
+                      if (dropdownRef.current) dropdownRef.current.scrollTop = 0
                     }}
                   >
                     <Text>{option.label}</Text>
