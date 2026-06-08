@@ -70,7 +70,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   const selectedOption =
     selectedTarget !== null
       ? targetOptions.find(
-          (o) => o.value === `${selectedTarget.groupId}:${selectedTarget.nodeId}`,
+          (o) =>
+            o.value === `${selectedTarget.groupId}:${selectedTarget.nodeId}`,
         ) ?? null
       : targetOptions[0] ?? null
 
@@ -114,14 +115,20 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       return
     }
 
-    const active = selectedTarget ?? (targets[0] ? { nodeId: targets[0].nodeId, groupId: targets[0].groupId } : null)
+    const active =
+      selectedTarget ??
+      (targets[0]
+        ? { nodeId: targets[0].nodeId, groupId: targets[0].groupId }
+        : null)
 
     try {
       const data = await postRenewal({
         variables: {
           input: {
             id: activePrescription.id,
-            ...(active ? { nodeId: active.nodeId, groupId: active.groupId } : {}),
+            ...(active
+              ? { nodeId: active.nodeId, groupId: active.groupId }
+              : {}),
           },
         },
       })
