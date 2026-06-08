@@ -1,5 +1,5 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   FieldBaseProps,
 } from '@island.is/application/types'
 import { FC } from 'react'
@@ -15,7 +15,7 @@ import { formatDate } from '../../utils'
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   route: Routes
-  child: ApplicantChildCustodyInformation
+  child: ApplicantChildCustodyInformationV3
 }
 
 export const ChildrenPassportReview: FC<Props> = ({

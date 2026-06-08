@@ -15,9 +15,9 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../factories'
-import { courtRecord } from '../messages'
-import { Case } from '../modules/repository'
+import { nowFactory } from '../../factories'
+import { courtRecord } from '../../messages'
+import { Case } from '../../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -29,7 +29,7 @@ import {
   addNormalText,
   setLineGap,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 export const formatCourtEndDate = (
   formatMessage: FormatMessage,

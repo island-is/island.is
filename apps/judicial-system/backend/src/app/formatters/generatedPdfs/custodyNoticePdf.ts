@@ -11,9 +11,9 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { custodyNotice } from '../messages'
-import { Case } from '../modules/repository'
-import { formatCustodyRestrictions } from './formatters'
+import { custodyNotice } from '../../messages'
+import { Case } from '../../modules/repository'
+import { formatCustodyRestrictions } from '../formatters'
 import {
   addEmptyLines,
   addFooter,
@@ -23,7 +23,7 @@ import {
   addNormalText,
   setLineGap,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 const constructCustodyNoticePdf = (
   theCase: Case,

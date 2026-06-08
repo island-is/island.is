@@ -13,9 +13,9 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../factories/date.factory'
-import { subpoena as strings } from '../messages'
-import { Case, Defendant, Subpoena } from '../modules/repository'
+import { nowFactory } from '../../factories/date.factory'
+import { subpoena as strings } from '../../messages'
+import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,
   addFooter,
@@ -27,7 +27,7 @@ import {
   drawConfirmation,
   formatActor,
   setTitle,
-} from './pdfHelpers'
+} from '../pdfHelpers'
 
 export const createSubpoena = (
   theCase: Case,
