@@ -4,7 +4,6 @@ import {
   AuthenticationType,
 } from 'expo-local-authentication'
 import { useRouter } from 'expo-router'
-import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AppState, BackHandler, Image, SafeAreaView, View } from 'react-native'
@@ -172,12 +171,6 @@ export default function AppLockScreen() {
     loginAttempt(code)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
-
-  // Hide splash once we're mounted (root _layout defers until this fires
-  // and adds its own delay so iOS finishes presentViewController first).
-  useEffect(() => {
-    SplashScreen.hideAsync().catch(() => {})
-  }, [])
 
   // Swallow Android hardware back.
   useEffect(() => {
