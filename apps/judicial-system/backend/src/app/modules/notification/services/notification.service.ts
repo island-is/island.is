@@ -69,10 +69,10 @@ export class NotificationService {
         }
         break
       case UserInitiatedNotificationType.HEADS_UP:
-      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED as string:
-      case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED as string:
+      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED:
+      case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
-      case UserInitiatedNotificationType.RULING_ORDER_ADDED as string:
+      case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:

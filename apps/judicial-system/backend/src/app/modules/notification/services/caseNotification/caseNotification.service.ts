@@ -3408,10 +3408,7 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendIndictmentAppealCompletedResultNotifications(
     theCase: Case,
   ): Promise<Recipient[]> {
-    const isReopened = this.hasSentNotification(
-      TrackedNotificationType.APPEAL_COMPLETED,
-      theCase.notifications,
-    )
+    const isReopened = Boolean(theCase.appealCase?.appealRulingModifiedHistory)
     const promises: Promise<Recipient>[] = []
 
     const subject = this.formatMessage(
@@ -3522,10 +3519,7 @@ export class CaseNotificationService extends BaseNotificationService {
       return this.sendIndictmentAppealCompletedResultNotifications(theCase)
     }
 
-    const isReopened = this.hasSentNotification(
-      TrackedNotificationType.APPEAL_COMPLETED,
-      theCase.notifications,
-    )
+    const isReopened = Boolean(theCase.appealCase?.appealRulingModifiedHistory)
     const promises = []
 
     const subject = this.formatMessage(
@@ -3749,11 +3743,6 @@ export class CaseNotificationService extends BaseNotificationService {
   private async sendAppealCompletedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    /**
-     * If anyone has received the APPEAL_COMPLETED notification before,
-     * we know that the case is being reopened.
-     */
-
     let recipients: Recipient[] = []
     if (
       theCase.appealCase?.appealRulingDecision ===
@@ -4132,7 +4121,7 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendRulingOrderAddedNotifications(theCase)
       case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
-      case IndictmentCaseNotificationType.INDICTMENT_REOPENED as string:
+      case IndictmentCaseNotificationType.INDICTMENT_REOPENED:
         return this.sendIndictmentReopenedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
