@@ -124,8 +124,12 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   ])
 
   const [selectedCategory, setSelectedCategory] = useState({
-    current: null as string | null,
-    breadcrumbs: [] as string[],
+    current: null as {
+      label: string
+      value: string
+      hasChildren: boolean
+    } | null,
+    breadcrumbs: [] as { label: string; value: string; hasChildren: true }[],
   })
 
   const categoryOptions = useMemo(() => {
@@ -133,15 +137,15 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       productCategoriesResponse.data?.customsCalculatorProductCategories
         ?.topLevel ?? []
 
-    if (selectedCategory.current) {
+    if (selectedCategory.current?.value) {
       const stack = [...categories]
       while (stack.length > 0) {
         const category = stack.pop()
         if (!category) continue
-        if (category.label === selectedCategory.current)
+        if (category.id === selectedCategory.current.value)
           return category.children.map((child) => ({
             label: child.label,
-            value: child.label,
+            value: child.id,
             hasChildren: child.children.length > 0,
           }))
         stack.push(...category.children)
@@ -150,13 +154,25 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
     return categories.map((category) => ({
       label: category.label,
-      value: category.label,
+      value: category.id,
       hasChildren: category.children.length > 0,
     }))
   }, [
     productCategoriesResponse.data?.customsCalculatorProductCategories
       ?.topLevel,
     selectedCategory,
+  ])
+
+  const searchOptions = useMemo(() => {
+    const options: { label: string; value: string }[] = []
+    for (const category of productCategoriesResponse.data
+      ?.customsCalculatorProductCategories?.bottomLevel ?? []) {
+      options.push({ label: category.label, value: category.id })
+    }
+    return options
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.bottomLevel,
   ])
 
   return (
@@ -187,7 +203,12 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         </Text>
 
         <AsyncSearch
-          options={[{ label: 'test', value: 'test' }]}
+          options={searchOptions}
+          filter={(option) =>
+            option.label
+              .toLowerCase()
+              .includes(inputState.searchInput.toLowerCase())
+          }
           size="large"
           placeholder={formatMessage(
             translationStrings.productSearchInputPlaceholder,
@@ -212,16 +233,17 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         onOptionSelect={(option) => {
           setSelectedCategory((prev) => {
             const updatedBreadcrumbs = [...prev.breadcrumbs]
-            if (prev.current) updatedBreadcrumbs.push(prev.current)
+            if (prev.current)
+              updatedBreadcrumbs.push({ ...prev.current, hasChildren: true })
             return {
-              current: option.value,
+              current: option,
               breadcrumbs: updatedBreadcrumbs,
             }
           })
         }}
         options={categoryOptions}
         topComponent={
-          selectedCategory.current && (
+          !!selectedCategory.current?.label && (
             <Box
               background="purple100"
               paddingX={1}
@@ -257,7 +279,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               }}
             >
               <Icon icon="chevronBack" color="blue400" size="medium" />
-              <Text variant="h5">{selectedCategory.current}</Text>
+              <Text variant="h5">{selectedCategory.current.label}</Text>
             </Box>
           )
         }

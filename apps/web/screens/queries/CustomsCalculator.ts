@@ -4,34 +4,30 @@ export const GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES = gql`
   query CustomsCalculatorProductCategories {
     customsCalculatorProductCategories {
       bottomLevel {
-        parentLabel
+        id
+        parentLabels
         tariffNumber
         label
         description
       }
       topLevel {
-        parentLabel
-        tariffNumber
+        id
         label
         description
         children {
-          parentLabel
-          tariffNumber
+          id
           label
           description
           children {
-            parentLabel
-            tariffNumber
+            id
             label
             description
             children {
-              parentLabel
-              tariffNumber
+              id
               label
               description
               children {
-                parentLabel
-                tariffNumber
+                id
                 label
                 description
               }

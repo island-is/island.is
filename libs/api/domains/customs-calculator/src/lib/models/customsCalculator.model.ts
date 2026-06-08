@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
@@ -13,13 +13,31 @@ export class CustomsCalculatorStatus {
   message?: string
 }
 
-@ObjectType()
-export class CustomsCalculatorHierarchicalProductCategory {
-  // @Field(() => [String], { nullable: true })
-  // parentCategoryLabels?: string[]
+@ObjectType('CustomsCalculatorTopLevelProductCategory')
+export class TopLevelProductCategory {
+  @Field(() => ID)
+  id!: string
 
   @Field(() => String)
   parentLabel!: string
+
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  description!: string
+
+  @CacheField(() => [TopLevelProductCategory])
+  children!: TopLevelProductCategory[]
+}
+
+@ObjectType('CustomsCalculatorBottomLevelProductCategory')
+export class BottomLevelProductCategory {
+  @Field(() => [String])
+  parentLabels!: string[]
+
+  @Field(() => ID)
+  id!: string
 
   @Field(() => String)
   tariffNumber!: string
@@ -29,18 +47,15 @@ export class CustomsCalculatorHierarchicalProductCategory {
 
   @Field(() => String)
   description!: string
-
-  @CacheField(() => [CustomsCalculatorHierarchicalProductCategory])
-  children!: CustomsCalculatorHierarchicalProductCategory[]
 }
 
 @ObjectType()
 export class CustomsCalculatorProductCategoriesResponse {
-  @Field(() => [CustomsCalculatorHierarchicalProductCategory])
-  topLevel!: CustomsCalculatorHierarchicalProductCategory[]
+  @Field(() => [TopLevelProductCategory])
+  topLevel!: TopLevelProductCategory[]
 
-  @Field(() => [CustomsCalculatorHierarchicalProductCategory])
-  bottomLevel!: CustomsCalculatorHierarchicalProductCategory[]
+  @Field(() => [BottomLevelProductCategory])
+  bottomLevel!: BottomLevelProductCategory[]
 }
 
 @ObjectType()

@@ -10,10 +10,20 @@ export const dropdown = style({
   zIndex: 100,
   maxHeight: 400,
   maxWidth: 629,
-  overflowY: 'auto',
+  overflowY: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
   backgroundColor: theme.color.white,
   boxShadow: theme.shadows.strong,
   borderRadius: theme.border.radius.large,
+})
+
+export const scrollableContent = style({
+  flex: 1,
+  minHeight: 0,
+  overflowY: 'auto',
+  WebkitOverflowScrolling: 'touch',
+  overscrollBehavior: 'contain',
 })
 
 export const option = style({

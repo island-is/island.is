@@ -6,6 +6,10 @@ import {
   CustomsCalculatorUnitsResponse,
 } from './models/customsCalculator.model'
 import { CustomsCalculatorService } from './customsCalculator.service'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
+
+const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
 @Resolver()
 export class CustomsCalculatorResolver {
@@ -13,6 +17,7 @@ export class CustomsCalculatorResolver {
     private readonly customsCalculatorService: CustomsCalculatorService,
   ) {}
 
+  @CacheControl(defaultCache)
   @Query(() => CustomsCalculatorProductCategoriesResponse, {
     name: 'customsCalculatorProductCategories',
   })

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { sortAlpha } from '@island.is/shared/utils'
 import { CustomsCalculatorClientService } from '@island.is/clients-rsk-customs-calculator'
-import { CustomsCalculatorProductCategoriesResponse } from './models/customsCalculator.model'
+import {
+  BottomLevelProductCategory,
+  CustomsCalculatorProductCategoriesResponse,
+} from './models/customsCalculator.model'
 
 @Injectable()
 export class CustomsCalculatorService {
@@ -10,34 +13,60 @@ export class CustomsCalculatorService {
   ) {}
 
   async getProductCategories(): Promise<CustomsCalculatorProductCategoriesResponse> {
-    const flatCategories =
+    const allCategories = (
       await this.customsCalculatorClient.getProductCategories()
+    ).map((category) => ({
+      ...category,
+      id: crypto.randomUUID(),
+    }))
 
-    const hierarchicalCategories: CustomsCalculatorProductCategoriesResponse['topLevel'][number][] =
-      flatCategories.map((category) => ({
+    let topLevelCategories: CustomsCalculatorProductCategoriesResponse['topLevel'][number][] =
+      allCategories.map((category) => ({
         ...category,
         children: [],
       }))
 
-    for (let i = 0; i < hierarchicalCategories.length; i++) {
-      const a = hierarchicalCategories[i]
-      for (let j = 0; j < hierarchicalCategories.length; j++) {
+    for (let i = 0; i < topLevelCategories.length; i++) {
+      const a = topLevelCategories[i]
+      for (let j = 0; j < topLevelCategories.length; j++) {
         if (i === j) continue
-        const b = hierarchicalCategories[j]
+        const b = topLevelCategories[j]
         if (a.label === b.parentLabel) a.children.push(b)
       }
       a.children.sort(sortAlpha('label'))
     }
 
-    hierarchicalCategories.sort(sortAlpha('label'))
+    topLevelCategories.sort(sortAlpha('label'))
+    topLevelCategories = topLevelCategories.filter(
+      (category) => !category.parentLabel,
+    )
+
+    const bottomLevelCategories: BottomLevelProductCategory[] = allCategories
+      .filter(
+        (category) => !!category.tariffNumber && category.tariffNumber !== '#',
+      )
+      .map((category) => ({
+        ...category,
+        parentLabels: [category.parentLabel],
+      }))
+
+    for (const bottomLevelCategory of bottomLevelCategories) {
+      let currentLabel = bottomLevelCategory.parentLabels[0]
+      while (currentLabel) {
+        for (const category of allCategories) {
+          if (category.id === bottomLevelCategory.id) continue
+          if (category.label === currentLabel) {
+            currentLabel = category.parentLabel
+            bottomLevelCategory.parentLabels.unshift(currentLabel)
+            break
+          }
+        }
+      }
+    }
 
     return {
-      topLevel: hierarchicalCategories.filter(
-        (category) => !category.parentLabel,
-      ),
-      bottomLevel: hierarchicalCategories.filter(
-        (category) => !!category.tariffNumber && category.tariffNumber !== '#',
-      ),
+      topLevel: topLevelCategories,
+      bottomLevel: bottomLevelCategories,
     }
   }
 

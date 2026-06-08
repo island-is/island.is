@@ -56,9 +56,8 @@ export const ProductCategoryModal = ({
           padding={2}
           paddingLeft={3}
           paddingRight={1}
-          ref={dropdownRef}
         >
-          <Stack space={topComponent ? 2 : 3}>
+          <Box marginBottom={topComponent ? 2 : 3}>
             <Inline alignY="center" space={2} justifyContent="spaceBetween">
               <Text variant="h4">{title}</Text>
               <Box
@@ -76,56 +75,60 @@ export const ProductCategoryModal = ({
                 <Icon icon="close" color="blue400" size="large" />
               </Box>
             </Inline>
+          </Box>
 
-            <Box paddingRight={4}>
-              <Stack space={2}>
-                {topComponent}
-                <Box>
-                  {options.map((option, index) => (
-                    <Box
-                      key={option.value}
-                      borderBottomWidth={
-                        index < options.length - 1 ? 'standard' : undefined
-                      }
-                      borderColor="blue200"
-                      display="flex"
-                      className={styles.option}
-                      paddingX={1}
-                      justifyContent="spaceBetween"
-                      alignItems="center"
-                      cursor="pointer"
-                      tabIndex={0}
-                      role="button"
-                      onKeyDown={(ev) => {
-                        if (ev.key === 'Enter' || ev.key === ' ') {
-                          ev.preventDefault()
-                          onOptionSelect(option)
-                          if (!option.hasChildren) setIsVisible(false)
-                          if (dropdownRef.current)
-                            dropdownRef.current.scrollTop = 0
-                        }
-                      }}
-                      onClick={() => {
+          <Box
+            className={styles.scrollableContent}
+            paddingRight={4}
+            ref={dropdownRef}
+          >
+            <Stack space={2}>
+              {topComponent}
+              <Box>
+                {options.map((option, index) => (
+                  <Box
+                    key={option.value}
+                    borderBottomWidth={
+                      index < options.length - 1 ? 'standard' : undefined
+                    }
+                    borderColor="blue200"
+                    display="flex"
+                    className={styles.option}
+                    paddingX={1}
+                    justifyContent="spaceBetween"
+                    alignItems="center"
+                    cursor="pointer"
+                    tabIndex={0}
+                    role="button"
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault()
                         onOptionSelect(option)
                         if (!option.hasChildren) setIsVisible(false)
                         if (dropdownRef.current)
                           dropdownRef.current.scrollTop = 0
-                      }}
-                    >
-                      <Text>{option.label}</Text>
-                      {option.hasChildren && (
-                        <Icon
-                          icon="chevronForward"
-                          color="blue400"
-                          size="medium"
-                        />
-                      )}
-                    </Box>
-                  ))}
-                </Box>
-              </Stack>
-            </Box>
-          </Stack>
+                      }
+                    }}
+                    onClick={() => {
+                      onOptionSelect(option)
+                      if (!option.hasChildren) setIsVisible(false)
+                      if (dropdownRef.current)
+                        dropdownRef.current.scrollTop = 0
+                    }}
+                  >
+                    <Text>{option.label}</Text>
+                    {option.hasChildren && (
+                      <Icon
+                        icon="chevronForward"
+                        color="blue400"
+                        size="medium"
+                      />
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            </Stack>
+          </Box>
         </Box>
       )}
     </div>
