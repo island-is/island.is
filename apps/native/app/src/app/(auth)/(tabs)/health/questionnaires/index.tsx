@@ -199,6 +199,7 @@ export default function QuestionnairesScreen() {
                     height={112}
                     style={{
                       borderRadius: 8,
+                      marginBottom: theme.spacing[2],
                     }}
                   />
                 ))
