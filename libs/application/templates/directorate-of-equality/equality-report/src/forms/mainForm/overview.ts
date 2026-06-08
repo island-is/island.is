@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -14,14 +15,19 @@ export const overviewSection = buildSection({
       title: messages.overview.title,
       description: messages.overview.intro,
       children: [
+        buildCustomField({
+          id: 'overview.display',
+          title: '',
+          component: 'Overview',
+        }),
         buildSubmitField({
           id: 'submit',
-          title: messages.overview.title,
+          title: messages.overview.submitButton,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: messages.overview.title,
+              name: messages.overview.submitButton,
               type: 'primary',
             },
           ],

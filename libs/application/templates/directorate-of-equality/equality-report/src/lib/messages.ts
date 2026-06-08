@@ -24,6 +24,10 @@ export const messages = {
       id: 'equalityReport.application:errors.duplicateSubsidiary',
       defaultMessage: 'Þetta dótturfélag er þegar á listanum',
     },
+    editorMinLength: {
+      id: 'equalityReport.application:errors.editorMinLength',
+      defaultMessage: 'Texti verður að vera að minnsta kosti 200 stafir',
+    },
   }),
 
   general: defineMessages({
@@ -135,7 +139,8 @@ export const messages = {
       },
       intro: {
         id: 'equalityReport.application:prerequisites.activeEqualityReport.intro',
-        defaultMessage: 'Við sækjum upplýsingar um þína stöðu hjá Jafnréttisstofu.',
+        defaultMessage:
+          'Við sækjum upplýsingar um þína stöðu hjá Jafnréttisstofu.',
       },
     }),
     nationalRegistry: defineMessages({
@@ -392,6 +397,58 @@ export const messages = {
         id: 'equalityReport.application:equalityReport.information.intro',
         defaultMessage: equalityReportIntro,
       },
+      detailLink: {
+        id: 'equalityReport.application:equalityReport.information.detailLink',
+        defaultMessage: 'https://island.is/s/jafnrettisstofa/jafnrettisaaetlun',
+      },
+      detailLinkLabel: {
+        id: 'equalityReport.application:equalityReport.information.detailLinkLabel',
+        defaultMessage: 'Nánari upplýsingar um kröfu um jafnréttisáætlun',
+      },
+      listTitle: {
+        id: 'equalityReport.application:equalityReport.information.listTitle',
+        defaultMessage: 'Markmið og lagalegar aðgerðir jafnréttisáætlunar',
+      },
+      list: {
+        id: 'equalityReport.application:equalityReport.information.list#markdown',
+        defaultMessage:
+          '* Launajafnrétti\n\n* Jafnlaunastaðfesting eða jafnlaunavottun\n\n* Laus störf, starfsþjálfun, endurmenntun og símenntun\n\n* Samræming fjölskyldu- og atvinnulífs\n\n* Kynbundið ofbeldi, kynbundin áreitni og kynferðisleg áreitni (fyrirbyggjandi aðgerðir)',
+      },
+      checkboxLabel: {
+        id: 'equalityReport.application:equalityReport.information.checkboxLabel',
+        defaultMessage:
+          'Ég staðfesti að ég muni framfylgja markmiðum jafnréttisáætlunar',
+      },
+      editorTitle: {
+        id: 'equalityReport.application:equalityReport.information.editorTitle',
+        defaultMessage: 'Innihald efnis',
+      },
+      editorFetchTemplate: {
+        id: 'equalityReport.application:equalityReport.information.editorFetchTemplate',
+        defaultMessage: 'Sækja sniðmát',
+      },
+      editorFetchTemplateDoc: {
+        id: 'equalityReport.application:equalityReport.information.editorFetchTemplateDoc',
+        defaultMessage: 'Hlaða niður sniðmáti (.docx)',
+      },
+      editorFetchTemplateFill: {
+        id: 'equalityReport.application:equalityReport.information.editorFetchTemplateFill',
+        defaultMessage: 'Fá sniðmát í ritil',
+      },
+      editorUploadFile: {
+        id: 'equalityReport.application:equalityReport.information.editorUploadFile',
+        defaultMessage: 'Hlaða upp skjali',
+      },
+      editorUnsupportedFile: {
+        id: 'equalityReport.application:equalityReport.information.editorUnsupportedFile',
+        defaultMessage:
+          'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .txt eða .docx skrá.',
+      },
+      editorUploadError: {
+        id: 'equalityReport.application:equalityReport.information.editorUploadError',
+        defaultMessage:
+          'Villa kom upp við lestur skráar. Vinsamlegast reynið aftur.',
+      },
     }),
     previousEqualityPlan: defineMessages({
       sectionTitle: {
@@ -436,6 +493,54 @@ export const messages = {
     intro: {
       id: 'equalityReport.application:overview.intro',
       defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir.',
+    },
+    submitButton: {
+      id: 'equalityReport.application:overview.submitButton',
+      defaultMessage: 'Senda inn',
+    },
+    companyInfo: {
+      id: 'equalityReport.application:overview.companyInfo',
+      defaultMessage: 'Upplýsingar um fyrirtæki',
+    },
+    chiefExecutive: {
+      id: 'equalityReport.application:overview.chiefExecutive',
+      defaultMessage: 'Æðsti stjórnandi',
+    },
+    contactPerson: {
+      id: 'equalityReport.application:overview.contactPerson',
+      defaultMessage: 'Tengiliður',
+    },
+    employeeCount: {
+      id: 'equalityReport.application:overview.employeeCount',
+      defaultMessage: 'Fjöldi starfsmanna',
+    },
+    subsidiaries: {
+      id: 'equalityReport.application:overview.subsidiaries',
+      defaultMessage: 'Dótturfyrirtæki',
+    },
+    equalityPlan: {
+      id: 'equalityReport.application:overview.equalityPlan',
+      defaultMessage: 'Jafnréttisáætlun',
+    },
+    women: {
+      id: 'equalityReport.application:overview.women',
+      defaultMessage: 'Konur',
+    },
+    men: {
+      id: 'equalityReport.application:overview.men',
+      defaultMessage: 'Karlar',
+    },
+    nonBinary: {
+      id: 'equalityReport.application:overview.nonBinary',
+      defaultMessage: 'Hlutlægt kyn',
+    },
+    hasSubsidiaries: {
+      id: 'equalityReport.application:overview.hasSubsidiaries',
+      defaultMessage: 'Inniheldur dótturfyrirtæki',
+    },
+    noSubsidiaries: {
+      id: 'equalityReport.application:overview.noSubsidiaries',
+      defaultMessage: 'Nei',
     },
   }),
 }
