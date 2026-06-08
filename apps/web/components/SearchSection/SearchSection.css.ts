@@ -9,7 +9,7 @@ export const mediaItem = style({
   ...themeUtils.responsiveStyle({
     md: {
       height: '100%',
-      maxHeight: 500,
+      maxHeight: 484,
       objectFit: 'contain',
     },
   }),
@@ -21,7 +21,7 @@ export const minHeight = style({
   minHeight: 'initial',
   ...themeUtils.responsiveStyle({
     md: {
-      minHeight: 500,
+      minHeight: 484,
     },
   }),
 })
