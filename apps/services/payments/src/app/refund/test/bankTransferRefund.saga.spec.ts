@@ -265,7 +265,8 @@ describe('Bank Transfer Refund Saga', () => {
           payableAmount: 1000,
           paymentMeans: PayInfoPaymentMeansEnum.Milli,
           // correlationId is the fulfillment's confirmationRefId.
-          correlationId: mockBankTransferFulfillmentWithoutFjs.confirmationRefId,
+          correlationId:
+            mockBankTransferFulfillmentWithoutFjs.confirmationRefId,
         }),
       )
       expect(context.stepResults.ENSURE_FJS_CHARGE).toEqual({
