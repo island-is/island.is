@@ -119,24 +119,34 @@ export default function RootLayout() {
     }
 
     let cancelled = false
+    let deferredId: ReturnType<typeof setTimeout> | undefined
     const hide = () => {
       if (cancelled) return
       cancelled = true
       SplashScreen.hideAsync().catch(() => {})
     }
+    // componentId is set at React-commit time, before iOS finishes
+    // presentViewController — wait a beat so the modal is actually on
+    // screen, otherwise the tab paints briefly when the splash drops.
+    const hideAfterPresent = () => {
+      deferredId = setTimeout(hide, 150)
+    }
 
     if (authStore.getState().lockScreenComponentId) {
-      hide()
-      return
+      hideAfterPresent()
+      return () => {
+        if (deferredId) clearTimeout(deferredId)
+      }
     }
 
     const unsub = authStore.subscribe((state) => {
-      if (state.lockScreenComponentId) hide()
+      if (state.lockScreenComponentId) hideAfterPresent()
     })
     const timeoutId = setTimeout(hide, 2000)
 
     return () => {
       clearTimeout(timeoutId)
+      if (deferredId) clearTimeout(deferredId)
       unsub()
     }
   }, [fontsLoaded, appReady])
