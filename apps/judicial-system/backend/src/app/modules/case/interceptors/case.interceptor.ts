@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -38,6 +39,7 @@ import {
   AppealEventLog,
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   Defendant,
@@ -502,6 +504,7 @@ const getDefenceUserDefendants = (
 const transformCase = (
   theCase: Case,
   user: User | undefined,
+  originalAncestorId?: string,
 ): Record<string, unknown> => {
   const isDefence = isDefenceUser(user)
   const {
@@ -688,17 +691,54 @@ const transformCase = (
     splitCases:
       theCase.splitCases &&
       theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(
+    private readonly caseRepositoryService: CaseRepositoryService,
+  ) {}
+
+  private async findRootAncestorId(
+    caseId: string,
+    parentCaseId: string | null | undefined,
+  ): Promise<string> {
+    let currentId = parentCaseId
+    let rootId = parentCaseId ? parentCaseId : caseId
+
+    while (currentId) {
+      const nextParentCaseId =
+        await this.caseRepositoryService.findParentCaseId(currentId)
+
+      if (!nextParentCaseId) {
+        rootId = currentId
+        break
+      }
+
+      currentId = nextParentCaseId
+    }
+
+    return rootId
+  }
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next.handle().pipe(
+      switchMap((theCase: Case) =>
+        from(
+          this.findRootAncestorId(theCase.id, theCase.parentCaseId),
+        ).pipe(
+          map((originalAncestorId) =>
+            transformCase(theCase, user, originalAncestorId),
+          ),
+        ),
+      ),
+    )
   }
 }
 

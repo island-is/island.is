@@ -189,6 +189,13 @@ export class CaseRepositoryService {
     }
   }
 
+  async findParentCaseId(id: string): Promise<string | null | undefined> {
+    const result = await this.caseModel.findByPk(id, {
+      attributes: ['parentCaseId'],
+    })
+    return result?.parentCaseId
+  }
+
   async findOne(options?: FindOneOptions): Promise<Case | null> {
     try {
       this.logger.debug('Finding case with conditions:', {

@@ -10,8 +10,13 @@ import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generat
 const usePoliceDigitalCaseFile = () => {
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
-  const { id: caseId, origin: caseOrigin, parentCase, splitCase } = workingCase
-  const effectiveCaseId = parentCase?.id ?? splitCase?.id ?? caseId
+  const {
+    id: caseId,
+    origin: caseOrigin,
+    originalAncestorId,
+    splitCase,
+  } = workingCase
+  const effectiveCaseId = originalAncestorId ?? splitCase?.id ?? caseId
 
   const handleCompleted = useCallback(
     (completedData: {
