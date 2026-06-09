@@ -68,6 +68,7 @@ export const PermissionApplications = () => {
     () =>
       (scopeClientsData?.authAdminScopeClients ?? []).map((c) => ({
         clientId: c.clientId,
+        tenantId: c.tenantId,
         clientType: c.clientType,
         displayName: c.displayName,
       })),

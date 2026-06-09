@@ -395,6 +395,7 @@ export class ScopeService extends MultiEnvironmentService {
 
     return (clients ?? []).map((client) => ({
       clientId: client.clientId,
+      tenantId: client.tenantId,
       clientType: client.clientType,
       displayName: client.displayName,
     }))
@@ -511,8 +512,7 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Updates the client access list for a scope by patching each affected
-   * client to add or remove the scope from its allowed scopes.
+   * Updates the client access list for a scope
    */
   async updateScopeClients(
     user: User,
@@ -524,76 +524,49 @@ export class ScopeService extends MultiEnvironmentService {
     const addedSet = new Set(addedClientIds)
     const dedupedRemovedIds = removedClientIds.filter((id) => !addedSet.has(id))
 
-    const operations: Array<{ clientId: string; op: 'add' | 'remove' }> = [
-      ...addedClientIds.map((clientId) => ({ clientId, op: 'add' as const })),
-      ...dedupedRemovedIds.map((clientId) => ({
-        clientId,
-        op: 'remove' as const,
-      })),
-    ]
-
     const successfulEnvironments: Environment[] = []
     const failures: EnvironmentFailure[] = []
 
-    for (const environment of targetEnvironments) {
-      if (operations.length === 0) {
-        successfulEnvironments.push(environment)
-        continue
+    const settledPromises = await Promise.allSettled(
+      targetEnvironments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meScopeClientsControllerUpdateScopeClientsRaw({
+            tenantId,
+            scopeName,
+            updateScopeClientsDto: {
+              addedClientIds: Array.from(addedSet),
+              removedClientIds: dedupedRemovedIds,
+            },
+          }),
+        ),
+      ),
+    )
+
+    settledPromises.forEach((result, index) => {
+      const environment = targetEnvironments[index]
+
+      if (result.status === 'rejected') {
+        const message =
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason ?? 'Unknown error')
+        this.logger.error(
+          `Failed to update scope clients for ${scopeName} in environment ${environment}`,
+          result.reason,
+        )
+        failures.push({ environment, message })
+        return
       }
 
       if (!this.isEnvironmentConfigured(environment)) {
         const message = `Failed to update scope clients for ${scopeName}: environment ${environment} not configured`
         this.logger.error(message)
         failures.push({ environment, message })
-        continue
+        return
       }
 
-      const settled = await Promise.allSettled(
-        operations.map(({ clientId, op }) =>
-          this.makeRequest(user, environment, (api) =>
-            api.meClientsControllerUpdateRaw({
-              tenantId,
-              clientId,
-              adminPatchClientDto: {
-                addedScopes: op === 'add' ? [scopeName] : undefined,
-                removedScopes: op === 'remove' ? [scopeName] : undefined,
-              },
-            }),
-          ),
-        ),
-      )
-
-      const errors = settled
-        .map((result, index) => {
-          const { clientId, op } = operations[index]
-          const label = op === 'add' ? 'Add' : 'Remove'
-
-          if (result.status === 'rejected') {
-            const message =
-              result.reason instanceof Error
-                ? result.reason.message
-                : String(result.reason ?? 'Unknown error')
-            return `${label} ${clientId}: ${message}`
-          }
-
-          if (!result.value) {
-            return `${label} ${clientId}: no response (client not found)`
-          }
-
-          return null
-        })
-        .filter((m): m is string => m !== null)
-
-      if (errors.length === 0) {
-        successfulEnvironments.push(environment)
-      } else {
-        const message = `Failed to update scope clients for ${scopeName}: ${errors.join(
-          '; ',
-        )}`
-        this.logger.error(`${message} in environment ${environment}`)
-        failures.push({ environment, message })
-      }
-    }
+      successfulEnvironments.push(environment)
+    })
 
     return {
       ...(successfulEnvironments.length > 0 && {

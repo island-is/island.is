@@ -10,6 +10,12 @@ export class AdminScopeClientDto {
   clientId!: string
 
   @ApiProperty({
+    description: 'Id of the tenant the client belongs to.',
+    example: '@island.is',
+  })
+  tenantId!: string
+
+  @ApiProperty({
     description: 'The type of the client',
     example: 'web',
   })

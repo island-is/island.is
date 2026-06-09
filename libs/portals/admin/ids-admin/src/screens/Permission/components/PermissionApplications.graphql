@@ -1,6 +1,7 @@
 query GetScopeClients($input: ScopeClientsInput!) {
   authAdminScopeClients(input: $input) {
     clientId
+    tenantId
     clientType
     displayName {
       value
