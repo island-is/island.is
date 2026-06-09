@@ -24,9 +24,9 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
-import { InstitutionService } from '../institution'
-import { Case } from '../repository'
-import { DeliverResponse } from './models/deliver.response'
+import { InstitutionService } from '../../institution'
+import { Case } from '../../repository'
+import { DeliverResponse } from '../models/deliver.response'
 
 @Injectable()
 export class NotificationDispatchService {
