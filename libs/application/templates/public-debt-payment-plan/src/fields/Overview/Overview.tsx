@@ -210,6 +210,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           </GridRow>
         </ReviewGroup>
       )}
+      {/* TODO: CHECK IF TO USE ACCORDION CARD INSTEAD */}
       <Box
         border="standard"
         padding={4}
@@ -219,7 +220,6 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
       >
         <AccordionItem
           id="payment-plan-overview-table"
-          labelVariant="h3"
           label={formatMessage(overview.accordionItemLabel)}
           visibleContent={
             <>
