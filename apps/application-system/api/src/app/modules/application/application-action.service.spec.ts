@@ -14,6 +14,7 @@ import {
   TemplateApi,
   defineTemplateApi,
 } from '@island.is/application/types'
+import type { User } from '@island.is/auth-nest-tools'
 
 describe('ApplicationActionService', () => {
   const application = createApplication()
@@ -48,6 +49,17 @@ describe('ApplicationActionService', () => {
       updateApplicationState: jest
         .fn()
         .mockResolvedValue({ updatedApplication: {} }),
+      cancelScheduledNotifications: jest.fn().mockResolvedValue({}),
+      createScheduledNotifications: jest.fn().mockResolvedValue({}),
+      withApplicationLock: jest.fn(
+        (
+          _id: string,
+          callback: (
+            lockedApplication: unknown,
+            transaction: unknown,
+          ) => unknown,
+        ) => callback({ ...application, toJSON: () => application }, {}),
+      ),
     }
 
     mockHistoryService = {
@@ -113,6 +125,7 @@ describe('ApplicationActionService', () => {
         expect.anything(),
         expect.anything(),
         expect.anything(),
+        undefined,
       )
     })
 
@@ -134,6 +147,7 @@ describe('ApplicationActionService', () => {
         expect.anything(),
         expect.anything(),
         expect.anything(),
+        undefined,
       )
     })
 
@@ -155,6 +169,7 @@ describe('ApplicationActionService', () => {
         expect.anything(),
         expect.anything(),
         expect.anything(),
+        undefined,
       )
     })
 
@@ -191,6 +206,18 @@ describe('ApplicationActionService', () => {
   })
 
   describe('changeState', () => {
+    beforeEach(() => {
+      mockApplicationService.withApplicationLock.mockImplementation(
+        (
+          _id: string,
+          callback: (
+            lockedApplication: unknown,
+            transaction: unknown,
+          ) => unknown,
+        ) => callback({ ...application, toJSON: () => application }, {}),
+      )
+    })
+
     it('should return error if application update fails', async () => {
       mockApplicationService.updateApplicationState.mockRejectedValueOnce(
         new Error('Update failed'),
@@ -210,6 +237,113 @@ describe('ApplicationActionService', () => {
         application: result.application,
         error: 'Could not update application',
       })
+    })
+
+    it('should merge transition updates into the locked application', async () => {
+      const staleApplication = {
+        ...createApplication(),
+        id: 'application-id',
+        answers: {
+          stale: 'answer',
+        },
+        assignees: ['stale-assignee'],
+      }
+      const lockedApplication = {
+        ...staleApplication,
+        answers: {
+          locked: 'answer',
+        },
+        assignees: ['locked-assignee'],
+      }
+
+      mockApplicationService.withApplicationLock.mockImplementationOnce(
+        (
+          _id: string,
+          callback: (
+            lockedApplication: unknown,
+            transaction: unknown,
+          ) => unknown,
+        ) =>
+          callback(
+            { ...lockedApplication, toJSON: () => lockedApplication },
+            {},
+          ),
+      )
+
+      await service.changeState(
+        staleApplication,
+        createApplicationTemplate(),
+        'SUBMIT',
+        {} as User,
+        'en',
+        {
+          answers: {
+            submitted: 'answer',
+          },
+          assignees: ['submitted-assignee'],
+        },
+      )
+
+      expect(
+        mockApplicationService.updateApplicationState,
+      ).toHaveBeenCalledWith(
+        'application-id',
+        expect.any(String),
+        {
+          locked: 'answer',
+          submitted: 'answer',
+        },
+        ['locked-assignee', 'submitted-assignee'],
+        expect.anything(),
+        expect.anything(),
+        {},
+      )
+    })
+
+    it('should not run transition actions when locked application is already in another state', async () => {
+      const staleApplication = {
+        ...createApplication(),
+        id: 'application-id',
+        state: 'payment',
+      }
+      const lockedApplication = {
+        ...staleApplication,
+        state: 'done',
+      }
+
+      mockApplicationService.withApplicationLock.mockImplementationOnce(
+        (
+          _id: string,
+          callback: (
+            lockedApplication: unknown,
+            transaction: unknown,
+          ) => unknown,
+        ) =>
+          callback(
+            { ...lockedApplication, toJSON: () => lockedApplication },
+            {},
+          ),
+      )
+
+      const result = await service.changeState(
+        staleApplication,
+        createApplicationTemplate(),
+        'SUBMIT',
+        {} as User,
+        'en',
+      )
+
+      expect(result).toEqual({
+        hasChanged: false,
+        hasError: false,
+        application: lockedApplication,
+      })
+      expect(mockApplicationService.clearNonces).not.toHaveBeenCalled()
+      expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
+      expect(
+        mockApplicationService.updateApplicationState,
+      ).not.toHaveBeenCalled()
+      expect(mockHistoryService.saveStateTransition).not.toHaveBeenCalled()
     })
   })
 })

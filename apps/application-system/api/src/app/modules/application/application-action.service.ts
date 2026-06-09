@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/template-loader'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  mergeAnswers,
+} from '@island.is/application/core'
 import {
   ApplicationWithAttachments as BaseApplication,
   TemplateApi,
@@ -23,6 +26,19 @@ import {
 import { StateChangeResult, TemplateAPIModuleActionResult } from './types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Transaction } from 'sequelize'
+
+type StateChangeApplicationUpdates = Partial<
+  Pick<BaseApplication, 'answers' | 'assignees' | 'attachments'>
+>
+
+type StateChangeApplicationUpdateResolver = (
+  application: BaseApplication,
+  transaction: Transaction,
+) =>
+  | StateChangeApplicationUpdates
+  | Promise<StateChangeApplicationUpdates | undefined>
+  | undefined
 
 @Injectable()
 export class ApplicationActionService {
@@ -41,6 +57,7 @@ export class ApplicationActionService {
     apis: TemplateApi | TemplateApi[],
     locale: Locale,
     event: string,
+    transaction?: Transaction,
   ): Promise<TemplateAPIModuleActionResult> {
     if (!Array.isArray(apis)) {
       apis = [apis]
@@ -73,6 +90,7 @@ export class ApplicationActionService {
       auth,
       locale,
       intl.formatMessage,
+      transaction,
     )
 
     for (const api of apis) {
@@ -110,11 +128,95 @@ export class ApplicationActionService {
     event: string,
     auth: User,
     locale: Locale,
+    applicationUpdates?:
+      | StateChangeApplicationUpdates
+      | StateChangeApplicationUpdateResolver,
+  ): Promise<StateChangeResult> {
+    return this.applicationService.withApplicationLock(
+      application.id,
+      async (lockedApplication, transaction) => {
+        const currentApplication = lockedApplication.toJSON() as BaseApplication
+
+        if (currentApplication.state !== application.state) {
+          this.logger.info(
+            `Application ${application.id} state changed from ${application.state} to ${currentApplication.state} before ${event} could be processed`,
+          )
+
+          return {
+            hasChanged: false,
+            hasError: false,
+            application: currentApplication,
+          }
+        }
+
+        const resolvedApplicationUpdates =
+          typeof applicationUpdates === 'function'
+            ? await applicationUpdates(currentApplication, transaction)
+            : applicationUpdates
+
+        return this.changeLockedApplicationState(
+          this.mergeApplicationUpdates(
+            currentApplication,
+            resolvedApplicationUpdates,
+          ),
+          template,
+          event,
+          auth,
+          locale,
+          transaction,
+        )
+      },
+    )
+  }
+
+  private mergeApplicationUpdates(
+    application: BaseApplication,
+    applicationUpdates?: StateChangeApplicationUpdates,
+  ): BaseApplication {
+    if (!applicationUpdates) {
+      return application
+    }
+
+    return {
+      ...application,
+      answers:
+        applicationUpdates.answers !== undefined
+          ? mergeAnswers(application.answers, applicationUpdates.answers)
+          : application.answers,
+      assignees:
+        applicationUpdates.assignees !== undefined
+          ? Array.from(
+              new Set([
+                ...application.assignees,
+                ...applicationUpdates.assignees,
+              ]),
+            )
+          : application.assignees,
+      attachments:
+        applicationUpdates.attachments !== undefined
+          ? {
+              ...application.attachments,
+              ...applicationUpdates.attachments,
+            }
+          : application.attachments,
+    }
+  }
+
+  private async changeLockedApplicationState(
+    application: BaseApplication,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    event: string,
+    auth: User,
+    locale: Locale,
+    transaction: Transaction,
   ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     let updatedApplication: BaseApplication = application
-    await this.applicationService.clearNonces(updatedApplication.id)
+    await this.applicationService.clearNonces(
+      updatedApplication.id,
+      transaction,
+    )
     if (onExitStateAction) {
       const {
         hasError,
@@ -127,6 +229,7 @@ export class ApplicationActionService {
         onExitStateAction,
         locale,
         event,
+        transaction,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -176,6 +279,7 @@ export class ApplicationActionService {
         onEnterStateAction,
         locale,
         event,
+        transaction,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -202,17 +306,18 @@ export class ApplicationActionService {
         updatedApplication.assignees,
         status,
         getApplicationLifecycle(updatedApplication, template),
+        transaction,
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
 
-      // Wait for both promises in parallel, no fail fast
-      await Promise.allSettled([
+      await Promise.all([
         this.historyService.saveStateTransition(
           application.id,
           newState,
           auth,
           event,
+          transaction,
         ),
         handleScheduledNotifications(
           // Clean up old and create new scheduled notifications
@@ -220,6 +325,7 @@ export class ApplicationActionService {
           updatedApplication,
           template,
           newState,
+          transaction,
         ),
       ])
     } catch (e) {

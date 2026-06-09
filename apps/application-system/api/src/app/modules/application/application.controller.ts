@@ -557,22 +557,18 @@ export class ApplicationController {
 
     const assignees = [user.nationalId]
 
-    const mergedApplication: BaseApplication = {
-      ...(existingApplication.toJSON() as BaseApplication),
-      assignees,
-    }
-
     const {
       hasChanged,
       hasError,
       error,
       application: updatedApplication,
     } = await this.applicationActionService.changeState(
-      mergedApplication,
+      existingApplication.toJSON() as BaseApplication,
       template,
       DefaultEvents.ASSIGN,
       user,
       locale,
+      { assignees },
     )
 
     if (hasError) {
@@ -784,32 +780,7 @@ export class ApplicationController {
         existingApplication as BaseApplication,
       )
       const intl = await this.intlService.useIntl(namespaces, locale)
-
-      const permittedAnswers =
-        await this.validationService.validateIncomingAnswers(
-          existingApplication as BaseApplication,
-          newAnswers,
-          user.nationalId,
-          false,
-          intl.formatMessage,
-        )
-
-      await this.validationService.validateApplicationSchema(
-        existingApplication as BaseApplication,
-        permittedAnswers,
-        intl.formatMessage,
-        user,
-      )
-
-      const mergedAnswers = mergeAnswers(
-        existingApplication.answers,
-        permittedAnswers,
-      )
-
-      const mergedApplication: BaseApplication = {
-        ...(existingApplication.toJSON() as BaseApplication),
-        answers: mergedAnswers,
-      }
+      let permittedAnswerFields = Object.keys(newAnswers)
 
       const {
         hasChanged,
@@ -817,11 +788,32 @@ export class ApplicationController {
         error,
         application: updatedApplication,
       } = await this.applicationActionService.changeState(
-        mergedApplication,
+        existingApplication.toJSON() as BaseApplication,
         template,
         updateApplicationStateDto.event,
         user,
         locale,
+        async (currentApplication) => {
+          const permittedAnswers =
+            await this.validationService.validateIncomingAnswers(
+              currentApplication,
+              newAnswers,
+              user.nationalId,
+              false,
+              intl.formatMessage,
+            )
+
+          await this.validationService.validateApplicationSchema(
+            currentApplication,
+            permittedAnswers,
+            intl.formatMessage,
+            user,
+          )
+
+          permittedAnswerFields = Object.keys(permittedAnswers)
+
+          return { answers: permittedAnswers }
+        },
       )
 
       this.auditService.audit({
@@ -832,7 +824,7 @@ export class ApplicationController {
           event: updateApplicationStateDto.event,
           before: existingApplication.state,
           after: updatedApplication.state,
-          fields: Object.keys(permittedAnswers),
+          fields: permittedAnswerFields,
         },
       })
 
@@ -847,7 +839,7 @@ export class ApplicationController {
         return updatedApplication
       }
 
-      return existingApplication
+      return updatedApplication
     })
   }
 

@@ -21,6 +21,125 @@ import cn from 'classnames'
 
 const divWithSmallText = cn(getTextStyles({ variant: 'small' }))
 
+const SUBMISSION_RESERVATION_TTL = 15 * 60 * 1000
+
+const getSubmissionReservationKey = (
+  applicationId: string,
+  event: DefaultEvents,
+) => `application-payment-pending-submit:${applicationId}:${event}`
+
+type SubmissionReservation = {
+  ts: number
+  token: string
+}
+
+const getSubmissionReservation = (
+  key: string,
+): SubmissionReservation | undefined => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  try {
+    const reservation = window.localStorage.getItem(key)
+
+    if (!reservation) {
+      return
+    }
+
+    const reservedAt = Number(reservation)
+
+    if (Number.isFinite(reservedAt)) {
+      return { ts: reservedAt, token: '' }
+    }
+
+    const parsedReservation = JSON.parse(reservation) as SubmissionReservation
+
+    if (
+      !Number.isFinite(parsedReservation.ts) ||
+      typeof parsedReservation.token !== 'string'
+    ) {
+      return
+    }
+
+    return parsedReservation
+  } catch {
+    return
+  }
+}
+
+const isActiveSubmissionReservation = (
+  reservation?: SubmissionReservation,
+): boolean =>
+  !!reservation &&
+  Number.isFinite(reservation.ts) &&
+  Number(Date.now()) - reservation.ts < SUBMISSION_RESERVATION_TTL
+
+const createSubmissionReservationToken = () =>
+  `${Number(Date.now())}-${Math.random().toString(36).slice(2)}`
+
+const reserveSubmission = (key: string, force = false): boolean => {
+  if (typeof window === 'undefined') {
+    return true
+  }
+
+  try {
+    if (
+      !force &&
+      isActiveSubmissionReservation(getSubmissionReservation(key))
+    ) {
+      return false
+    }
+
+    const reservation = {
+      ts: Number(Date.now()),
+      token: createSubmissionReservationToken(),
+    }
+
+    window.localStorage.setItem(key, JSON.stringify(reservation))
+
+    const storedReservation = getSubmissionReservation(key)
+
+    return (
+      storedReservation?.token === reservation.token &&
+      isActiveSubmissionReservation(storedReservation)
+    )
+  } catch {
+    return true
+  }
+}
+
+const claimSubmissionReservation = (
+  key: string,
+  refetch: FieldBaseProps['refetch'],
+): boolean => {
+  if (reserveSubmission(key)) {
+    return true
+  }
+
+  if (
+    !isActiveSubmissionReservation(getSubmissionReservation(key)) &&
+    reserveSubmission(key, true)
+  ) {
+    return true
+  }
+
+  refetch?.()
+  return false
+}
+
+const clearSubmissionReservation = (key: string) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  try {
+    window.localStorage.removeItem(key)
+  } catch {
+    // Ignore browsers that disallow storage access.
+  }
+}
+
 export interface PaymentPendingProps {
   application: Application
   targetEvent: DefaultEvents
@@ -34,7 +153,7 @@ export const PaymentPending: FC<
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
   const isInvoice = getRedirectStatus() === 'invoice'
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
@@ -45,12 +164,11 @@ export const PaymentPending: FC<
     event: targetEvent,
   })
 
-  const [submitCancelApplication, { error: submitCancelError }] =
-    useSubmitApplication({
-      application,
-      refetch,
-      event: DefaultEvents.ABORT,
-    })
+  const [submitCancelApplication] = useSubmitApplication({
+    application,
+    refetch,
+    event: DefaultEvents.ABORT,
+  })
   const hasSubmitted = useRef(false)
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
@@ -63,12 +181,32 @@ export const PaymentPending: FC<
 
     if (hasSubmitted.current) return
     if (getRedirectStatus() === 'cancelled') {
+      const reservationKey = getSubmissionReservationKey(
+        application.id,
+        DefaultEvents.ABORT,
+      )
+
+      if (!claimSubmissionReservation(reservationKey, refetch)) {
+        return
+      }
+
       stopPolling()
-      submitCancelApplication().then(() => {
-        removeCancelledFromURL()
-      })
       hasSubmitted.current = true
+      submitCancelApplication()
+        .then(() => {
+          removeCancelledFromURL()
+        })
+        .catch(() => {
+          hasSubmitted.current = false
+          clearSubmissionReservation(reservationKey)
+        })
+      return
     }
+
+    const reservationKey = getSubmissionReservationKey(
+      application.id,
+      targetEvent,
+    )
 
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
@@ -76,10 +214,21 @@ export const PaymentPending: FC<
       }
       return
     }
+
+    if (!claimSubmissionReservation(reservationKey, refetch)) {
+      return
+    }
+
     stopPolling()
-    submitApplication()
     hasSubmitted.current = true
+    submitApplication().catch(() => {
+      hasSubmitted.current = false
+      clearSubmissionReservation(reservationKey)
+    })
   }, [
+    application.id,
+    targetEvent,
+    refetch,
     submitCancelApplication,
     submitApplication,
     paymentStatus,

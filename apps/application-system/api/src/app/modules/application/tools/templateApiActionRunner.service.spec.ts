@@ -224,7 +224,12 @@ describe('TemplateApi Action runner', () => {
 
     expect(result).toEqual(application)
     expect(result.externalData).toHaveProperty('testAction')
-    expect(applicationServiceSpy).toHaveBeenCalledWith(application.id, {}, {})
+    expect(applicationServiceSpy).toHaveBeenCalledWith(
+      application.id,
+      {},
+      {},
+      undefined,
+    )
   })
 
   it('should run actions in correct order', async () => {
