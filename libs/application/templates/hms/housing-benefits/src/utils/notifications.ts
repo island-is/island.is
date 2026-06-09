@@ -19,7 +19,8 @@ export const PRUNE_REMINDER_DAYS_BEFORE = 7
 const LOCAL_SCHEDULED_NOTIFICATION_TEST_DELAY_MS = 60 * 1000
 
 const getScheduledNotificationTestDelayMs = (): number | undefined => {
-  const fromEnv = process.env.HOUSING_BENEFITS_SCHEDULED_NOTIFICATION_TEST_DELAY_MS
+  const fromEnv =
+    process.env.HOUSING_BENEFITS_SCHEDULED_NOTIFICATION_TEST_DELAY_MS
   if (fromEnv) {
     const parsed = Number(fromEnv)
     if (Number.isFinite(parsed) && parsed > 0) {
@@ -46,7 +47,9 @@ type NotificationApplication = {
  * Address for HNIPP templates — required by Contentful for PRUNE.REMINDER.
  * Falls back to national registry when the rental contract has no property yet.
  */
-const getNotificationAddress = (application: NotificationApplication): string => {
+const getNotificationAddress = (
+  application: NotificationApplication,
+): string => {
   const { rentalAddress } = getApplicationCardRentalSummary(
     application as Application,
   )
@@ -61,7 +64,10 @@ const getNotificationAddress = (application: NotificationApplication): string =>
   }>(application.externalData, 'nationalRegistry.data.address')
 
   if (registryAddress) {
-    const postalLocality = [registryAddress.postalCode, registryAddress.locality]
+    const postalLocality = [
+      registryAddress.postalCode,
+      registryAddress.locality,
+    ]
       .filter(Boolean)
       .join(' ')
     const formatted = [registryAddress.streetAddress, postalLocality]
