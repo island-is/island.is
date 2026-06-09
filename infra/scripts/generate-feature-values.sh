@@ -36,13 +36,21 @@ IDS_FEATURE_DIR="${GIT_ROOT}/charts/ids-features/deployments"
 mkdir -p "$IDS_FEATURE_DIR/$FEATURE_NAME"
 
 yarn feature-env \
+  jobs \
+  --feature "$FEATURE_NAME" \
+  --images "*" \
+  --chart identity-server \
+  --jobImage "${ECR_REPO}:${DOCKER_TAG}" \
+  --writeDest "${IDS_FEATURE_DIR}/${FEATURE_NAME}"
+
+yarn feature-env \
   values \
   --skipAppName true \
   --disableNsGrants true \
   --chart identity-server \
   --feature "$FEATURE_NAME" \
   --images "*" \
-  --writeDest "${GIT_ROOT}/charts/ids-features/deployments/${FEATURE_NAME}"
+  --writeDest "${IDS_FEATURE_DIR}/${FEATURE_NAME}"
 
 # yarn feature-env \
 #   cleanup \
