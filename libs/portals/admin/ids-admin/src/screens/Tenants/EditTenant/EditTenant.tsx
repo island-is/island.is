@@ -10,9 +10,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
-import { EnvironmentHeader } from '../../../components/EnvironmentHeader/EnvironmentHeader'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { StickyLayout } from '../../../components/StickyLayout/StickyLayout'
+import { TenantEnvironmentHeader } from '../../../components/TenantEnvironmentHeader/TenantEnvironmentHeader'
 import { EnvironmentProvider } from '../../../context/EnvironmentContext'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { m } from '../../../lib/messages'
@@ -24,8 +24,13 @@ import { useTenant } from './TenantContext'
 export const EditTenant = () => {
   const { formatMessage, locale } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
-  const { tenant, selectedEnvironment, onEnvironmentChange, actionData } =
-    useTenant()
+  const {
+    tenant,
+    selectedEnvironment,
+    onEnvironmentChange,
+    actionData,
+    configuredEnvironments,
+  } = useTenant()
 
   const displayName = getTranslatedValue(
     selectedEnvironment.displayName,
@@ -48,10 +53,11 @@ export const EditTenant = () => {
     >
       <StickyLayout
         header={
-          <EnvironmentHeader
+          <TenantEnvironmentHeader
             title={displayName || tenant.id || formatMessage(m.editTenant)}
             selectedEnvironment={selectedEnvironment.environment}
             availableEnvironments={tenant.availableEnvironments}
+            configuredEnvironments={configuredEnvironments}
             onChange={onEnvironmentChange}
           />
         }

@@ -407,7 +407,7 @@ export const m = defineMessages({
   corsDescription: {
     id: 'ap.ids-admin:cors-description',
     defaultMessage:
-      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com) Query strings and hash information are ignored Organization URL placeholders are supported',
+      'List additional origins allowed to make cross-origin resource sharing (CORS) requests. Allowed callback URLs are already included in this list. Use wildcards (*) at the subdomain level (e.g. https://*.contoso.com). Query strings and hash information are ignored Organization URL placeholders are supported',
   },
   translations: {
     id: 'ap.ids-admin:translations',
@@ -632,6 +632,14 @@ export const m = defineMessages({
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
+  },
+  copyFailure: {
+    id: 'ap.ids-admin:copy-failure',
+    defaultMessage: 'Could not copy to clipboard',
+  },
+  rowActionsAriaLabel: {
+    id: 'ap.ids-admin:row-actions-aria-label',
+    defaultMessage: 'Row actions',
   },
   permissions: {
     id: 'ap.ids-admin:permissions',
@@ -1097,6 +1105,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:api-scope-users',
     defaultMessage: 'API Scope Users',
   },
+  authorizedUsers: {
+    id: 'ap.ids-admin:authorized-users',
+    defaultMessage: 'Authorized users',
+  },
   apiScopeUsersDescription: {
     id: 'ap.ids-admin:api-scope-users-description',
     defaultMessage: 'Manage users who have access to API scopes.',
@@ -1293,10 +1305,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-types-no-results',
     defaultMessage: 'No grant types found',
   },
-  grantTypesArchived: {
-    id: 'ap.ids-admin:grant-types-archived',
-    defaultMessage: 'Archived',
-  },
   grantTypesErrorNameRequired: {
     id: 'ap.ids-admin:grant-types-error-name-required',
     defaultMessage: 'Name is required',
@@ -1357,6 +1365,23 @@ export const m = defineMessages({
   grantTypesPartialFailure: {
     id: 'ap.ids-admin:grant-types-partial-failure',
     defaultMessage: 'Operation failed on: {environments}',
+  },
+  grantTypesAlreadyArchivedTag: {
+    id: 'ap.ids-admin:grant-types-already-archived-tag',
+    defaultMessage: 'Archived',
+  },
+  grantTypesAlreadyActiveTag: {
+    id: 'ap.ids-admin:grant-types-already-active-tag',
+    defaultMessage: 'Active',
+  },
+  grantTypesEditArchivedEnvBannerTitle: {
+    id: 'ap.ids-admin:grant-types-edit-archived-env-banner-title',
+    defaultMessage: 'Archived environment',
+  },
+  grantTypesEditArchivedEnvBannerMessage: {
+    id: 'ap.ids-admin:grant-types-edit-archived-env-banner-message',
+    defaultMessage:
+      'You are viewing an archived environment. Edits will apply to the archived record.',
   },
   idpProviders: {
     id: 'ap.ids-admin:idp-providers',
@@ -1838,5 +1863,141 @@ export const m = defineMessages({
   deletedTagDescription: {
     id: 'ap.ids-admin:deleted-tag-description',
     defaultMessage: 'Þetta merki er ekki lengur til í Contentful',
+  },
+  userIdentities: {
+    id: 'ap.ids-admin:user-identities',
+    defaultMessage: 'User Management',
+  },
+  userIdentitiesIntro: {
+    id: 'ap.ids-admin:user-identities-intro',
+    defaultMessage:
+      'Look up a user identity by national ID or subject ID, view its claims, and manage its active status per environment.',
+  },
+  userIdentitiesSearchPlaceholder: {
+    id: 'ap.ids-admin:user-identities-search-placeholder',
+    defaultMessage: 'Search by national ID or subject ID',
+  },
+  userIdentitiesEmptyState: {
+    id: 'ap.ids-admin:user-identities-empty-state',
+    defaultMessage:
+      'Enter a national ID or a subject ID to search for a user identity.',
+  },
+  userIdentitiesNotFound: {
+    id: 'ap.ids-admin:user-identities-not-found',
+    defaultMessage: 'No user identities matched your search.',
+  },
+  userIdentitiesSubjectId: {
+    id: 'ap.ids-admin:user-identities-subject-id',
+    defaultMessage: 'Subject ID',
+  },
+  userIdentitiesName: {
+    id: 'ap.ids-admin:user-identities-name',
+    defaultMessage: 'Name',
+  },
+  userIdentitiesProviderName: {
+    id: 'ap.ids-admin:user-identities-provider-name',
+    defaultMessage: 'Provider name',
+  },
+  userIdentitiesProviderSubjectId: {
+    id: 'ap.ids-admin:user-identities-provider-subject-id',
+    defaultMessage: 'Provider subject ID',
+  },
+  userIdentitiesEnvironments: {
+    id: 'ap.ids-admin:user-identities-environments',
+    defaultMessage: 'Environments',
+  },
+  userIdentitiesClaims: {
+    id: 'ap.ids-admin:user-identities-claims',
+    defaultMessage: 'Claims',
+  },
+  userIdentitiesViewClaims: {
+    id: 'ap.ids-admin:user-identities-view-claims',
+    defaultMessage: 'Claims',
+  },
+  userIdentitiesClaimsTitle: {
+    id: 'ap.ids-admin:user-identities-claims-title',
+    defaultMessage: 'Claims',
+  },
+  userIdentitiesClaimsType: {
+    id: 'ap.ids-admin:user-identities-claims-type',
+    defaultMessage: 'Type',
+  },
+  userIdentitiesClaimsValue: {
+    id: 'ap.ids-admin:user-identities-claims-value',
+    defaultMessage: 'Value',
+  },
+  userIdentitiesClaimsEmpty: {
+    id: 'ap.ids-admin:user-identities-claims-empty',
+    defaultMessage: 'No claims found for this user identity.',
+  },
+  userIdentitiesDeactivate: {
+    id: 'ap.ids-admin:user-identities-deactivate',
+    defaultMessage: 'Deactivate',
+  },
+  userIdentitiesReactivate: {
+    id: 'ap.ids-admin:user-identities-reactivate',
+    defaultMessage: 'Reactivate',
+  },
+  userIdentitiesActiveTag: {
+    id: 'ap.ids-admin:user-identities-active-tag',
+    defaultMessage: 'Deactivated',
+  },
+  userIdentitiesDeactivateConfirmTitle: {
+    id: 'ap.ids-admin:user-identities-deactivate-confirm-title',
+    defaultMessage: 'Deactivate user identity',
+  },
+  userIdentitiesDeactivateConfirmMessage: {
+    id: 'ap.ids-admin:user-identities-deactivate-confirm-message',
+    defaultMessage:
+      'Are you sure you want to deactivate this user identity in the selected environments?',
+  },
+  userIdentitiesDeactivateSelectEnvironments: {
+    id: 'ap.ids-admin:user-identities-deactivate-select-environments',
+    defaultMessage: 'Select environments to deactivate in',
+  },
+  userIdentitiesDeactivateEnvironmentRequired: {
+    id: 'ap.ids-admin:user-identities-deactivate-environment-required',
+    defaultMessage: 'Select at least one environment to deactivate in',
+  },
+  userIdentitiesReactivateConfirmTitle: {
+    id: 'ap.ids-admin:user-identities-reactivate-confirm-title',
+    defaultMessage: 'Reactivate user identity',
+  },
+  userIdentitiesReactivateConfirmMessage: {
+    id: 'ap.ids-admin:user-identities-reactivate-confirm-message',
+    defaultMessage:
+      'Are you sure you want to reactivate this user identity in the selected environments?',
+  },
+  userIdentitiesReactivateSelectEnvironments: {
+    id: 'ap.ids-admin:user-identities-reactivate-select-environments',
+    defaultMessage: 'Select environments to reactivate in',
+  },
+  userIdentitiesReactivateEnvironmentRequired: {
+    id: 'ap.ids-admin:user-identities-reactivate-environment-required',
+    defaultMessage: 'Select at least one environment to reactivate in',
+  },
+  userIdentitiesDeactivateSuccess: {
+    id: 'ap.ids-admin:user-identities-deactivate-success',
+    defaultMessage: 'User identity deactivated successfully',
+  },
+  userIdentitiesReactivateSuccess: {
+    id: 'ap.ids-admin:user-identities-reactivate-success',
+    defaultMessage: 'User identity reactivated successfully',
+  },
+  userIdentitiesError: {
+    id: 'ap.ids-admin:user-identities-error',
+    defaultMessage: 'An error occurred',
+  },
+  userIdentitiesPartialFailure: {
+    id: 'ap.ids-admin:user-identities-partial-failure',
+    defaultMessage: 'Operation failed on: {environments}',
+  },
+  userIdentitiesAlreadyDeactivatedTag: {
+    id: 'ap.ids-admin:user-identities-already-deactivated-tag',
+    defaultMessage: 'Deactivated',
+  },
+  userIdentitiesAlreadyActiveTag: {
+    id: 'ap.ids-admin:user-identities-already-active-tag',
+    defaultMessage: 'Active',
   },
 })
