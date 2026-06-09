@@ -38,12 +38,34 @@ export const updateActiveItemFn = async (
   const [updateSection] = sectionMutation
   const [updateScreen] = screenMutation
   const [updateField] = fieldMutation
+
+  let didRedirectToLogin = false
+
+  const redirectToBffLogin = () => {
+    if (didRedirectToLogin) return
+    // avoid loops if we somehow are already on a BFF route
+    if (window.location.pathname.startsWith('/stjornbord/bff/')) return
+
+    didRedirectToLogin = true
+    const target = encodeURIComponent(window.location.href)
+    window.location.href = `/stjornbord/bff/login?target_link_uri=${target}`
+  }
+
+  const getHttpStatusFromApolloError = (err: any): number | undefined => {
+    return (
+      err?.networkError?.statusCode ??
+      err?.networkError?.response?.status ??
+      err?.networkError?.status ??
+      err?.statusCode
+    )
+  }
+
   try {
     if (type === 'Section') {
       const { id, name, waitingText } = currentActiveItem
         ? (currentActiveItem.data as FormSystemSection)
         : (activeItem.data as FormSystemSection)
-      updateSection({
+      await updateSection({
         variables: {
           input: {
             id,
@@ -58,7 +80,7 @@ export const updateActiveItemFn = async (
       const { id, name, multiMax, isMulti, shouldValidate } = currentActiveItem
         ? (currentActiveItem.data as FormSystemScreen)
         : (activeItem.data as FormSystemScreen)
-      updateScreen({
+      await updateScreen({
         variables: {
           input: {
             id,
@@ -84,7 +106,7 @@ export const updateActiveItemFn = async (
       } = currentActiveItem
         ? (currentActiveItem.data as FormSystemField)
         : (activeItem.data as FormSystemField)
-      updateField({
+      await updateField({
         variables: {
           input: {
             id: id,
@@ -102,6 +124,11 @@ export const updateActiveItemFn = async (
       })
     }
   } catch (e) {
+    const status = getHttpStatusFromApolloError(e)
+    if (status === 401 || status === 403) {
+      redirectToBffLogin()
+      return
+    }
     if (e.GraphQLError) {
       console.error('GraphQL errors:', e.graphQLErrors)
     }
