@@ -1,12 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HomeApi } from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import {
   mapRentalAgreementDto,
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
-import { INACTIVE_AGREEMENT_STATUSES } from './constants'
+import {
+  AGREEMENT_STATUS_ORDER,
+  INACTIVE_AGREEMENT_STATUSES,
+} from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
@@ -27,11 +31,17 @@ export class HmsRentalAgreementService {
     user: User,
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
-    const res = await this.apiWithAuth(user).contractKtKtGet({
-      kt: user.nationalId,
-    })
+    const res = await this.apiWithAuth(user).contractGet()
 
-    const data = res.map(mapRentalAgreementDto).filter(isDefined)
+    const data = res
+      .map(mapRentalAgreementDto)
+      .filter(isDefined)
+      .sort(
+        (a, b) =>
+          AGREEMENT_STATUS_ORDER.indexOf(a.status) -
+          AGREEMENT_STATUS_ORDER.indexOf(b.status),
+      )
+
     if (hideInactiveAgreements) {
       return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
     }
@@ -40,51 +50,37 @@ export class HmsRentalAgreementService {
 
   async getRentalAgreement(
     user: User,
-    id: number,
+    id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const agreements = await this.getRentalAgreements(user)
-    const agreementToReturn: RentalAgreementDto | undefined = agreements.find(
-      (agreement) => agreement.id === id,
-    )
+    const res = await this.apiWithAuth(user)
+      .contractContractIdGet({ contractId: id })
+      .catch(handle404)
 
-    if (!agreementToReturn) {
-      this.logger.warn('Rental agreement not found', {
-        id,
-      })
-      return
+    if (!res?.contractId) {
+      this.logger.warn('Rental agreement not found', { id })
+      return undefined
     }
 
-    return agreementToReturn
+    return mapRentalAgreementDto(res) ?? undefined
   }
 
   async getRentalAgreementPdf(
     user: User,
-    id: number,
-  ): Promise<Array<ContractDocumentItemDto> | undefined> {
-    const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
-      kt: user.nationalId,
-    })
+    contractId: number,
+    documentId: number,
+  ): Promise<ContractDocumentItemDto | undefined> {
+    const res = await this.apiWithAuth(user)
+      .contractContractIdDocumentDocumentIdGet({ contractId, documentId })
+      .catch(handle404)
 
-    if (!res || res.length === 0) {
-      this.logger.warn('No rental agreements found', {
-        id,
+    if (!res) {
+      this.logger.warn('No rental agreement document found', {
+        contractId,
+        documentId,
       })
       return undefined
     }
 
-    const data = res?.find((res) => res.contract?.contractId === id)
-
-    if (!data) {
-      this.logger.warn('Rental agreement pdf not found', {
-        id,
-      })
-      return undefined
-    }
-
-    const pdfs = data.documents
-      ?.map(mapContractDocumentItemDto)
-      .filter(isDefined)
-
-    return pdfs
+    return mapContractDocumentItemDto(res) ?? undefined
   }
 }

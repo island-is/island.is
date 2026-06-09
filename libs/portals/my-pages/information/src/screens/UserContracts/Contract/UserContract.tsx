@@ -1,4 +1,4 @@
-import { Box, Button, Tag } from '@island.is/island-ui/core'
+import { Box, DropdownMenu, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroWrapper,
@@ -8,6 +8,7 @@ import {
   InfoLineStack,
   InfoLine,
   formSubmit,
+  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -15,12 +16,10 @@ import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { useParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
-import {
-  HmsRentalAgreement,
-  HmsRentalAgreementStatusType,
-} from '@island.is/api/schema'
+import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import { isDefined } from '@island.is/shared/utils'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
@@ -34,8 +33,7 @@ const UserContract = () => {
     },
   })
 
-  const contract: HmsRentalAgreement | undefined =
-    data?.hmsRentalAgreement ?? undefined
+  const contract = data?.hmsRentalAgreement ?? undefined
 
   const address = useMemo(() => {
     if (data?.hmsRentalAgreement?.contractProperty) {
@@ -54,6 +52,8 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const documents = contract?.documents ?? []
+
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
@@ -64,21 +64,25 @@ const UserContract = () => {
       }}
       buttonGroup={{
         actions: [
-          <Button
-            key="download-button"
-            title={formatMessage(cm.downloadAsPdf)}
+          <DropdownMenu
+            key="download-menu"
+            menuLabel={formatMessage(cm.downloadFilesMenu)}
+            title={formatMessage(cm.downloadFiles)}
             icon="download"
             iconType="outline"
-            disabled={
-              !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
-            }
-            onClick={() =>
-              formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
-            }
-            variant="utility"
-          >
-            {formatMessage(cm.downloadAsPdf)}
-          </Button>,
+            disabled={!!error || loading || documents.length === 0}
+            items={documents
+              .map(({ name, downloadUrl }) => {
+                if (downloadUrl) {
+                  return {
+                    title: name,
+                    onClick: () => formSubmit(downloadUrl),
+                  }
+                }
+                return null
+              })
+              .filter(isDefined)}
+          />,
           ...(contract?.status === HmsRentalAgreementStatusType.VALID
             ? [
                 <LinkButton
@@ -142,6 +146,13 @@ const UserContract = () => {
                   : undefined
               }
             />
+            {contract?.terminationDate && (
+              <InfoLine
+                loading={loading}
+                label={cm.terminationDate}
+                content={formatDate(contract.terminationDate)}
+              />
+            )}
             <InfoLine
               loading={loading}
               label={cm.status}

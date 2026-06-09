@@ -17,6 +17,7 @@ query UserContract($id: ID!) {
     signatureDate
     dateFrom
     dateTo
+    terminationDate
     landlords {
       ...Party
     }
@@ -31,6 +32,10 @@ query UserContract($id: ID!) {
       municipality
       postalCode
     }
-    downloadUrl
+    documents {
+      id
+      name
+      downloadUrl
+    }
   }
 }

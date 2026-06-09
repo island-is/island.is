@@ -45,9 +45,9 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
       indexIntervalM: 104,
       contractProperty: [
         {
-          floor: 1,
+          floor: '1',
           areaM2: 78.3,
-          apartment: 1,
+          apartment: '1',
           noOfRooms: 3,
           postalCode: 105,
           propertyId: 2011202,
@@ -143,9 +143,9 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
       indexIntervalM: 104,
       contractProperty: [
         {
-          floor: 1,
+          floor: '1',
           areaM2: 78.3,
-          apartment: 1,
+          apartment: '1',
           noOfRooms: 3,
           postalCode: 105,
           propertyId: 2011202,
@@ -242,9 +242,9 @@ export const mockGetRentalAgreements = (): Array<Contract> => {
       indexIntervalM: 104,
       contractProperty: [
         {
-          floor: 1,
+          floor: '1',
           areaM2: 78.3,
-          apartment: 1,
+          apartment: '1',
           noOfRooms: 3,
           postalCode: 105,
           propertyId: 2011202,

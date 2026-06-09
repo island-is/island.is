@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
+import { ContractDocument } from './contractDocument.model'
 
 export enum AgreementStatusType {
   VALID = 'valid',
@@ -74,6 +75,9 @@ export class RentalAgreement {
   @Field(() => ContractProperty, { nullable: true })
   contractProperty?: ContractProperty
 
-  @Field({ nullable: true })
-  downloadUrl?: string
+  @Field({ nullable: true, description: 'ISO8601' })
+  terminationDate?: string
+
+  @Field(() => [ContractDocument], { nullable: true })
+  documents?: ContractDocument[]
 }
