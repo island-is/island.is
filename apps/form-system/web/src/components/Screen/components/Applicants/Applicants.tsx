@@ -30,6 +30,8 @@ export const Applicants = ({ applicantField }: Props) => {
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY ||
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
   const nationalId = applicantField.values?.[0]?.json?.nationalId ?? ''
+  const fetchEmailFromMyPages =
+    applicantField.fieldSettings?.fetchEmailFromMyPages === true
 
   const hasEmail =
     getValue(applicantField, 'email') &&
@@ -87,7 +89,7 @@ export const Applicants = ({ applicantField }: Props) => {
         payload: { id: applicantField.id, value: mobilePhoneNumber },
       })
     }
-    if (email && !currentHasEmail) {
+    if (fetchEmailFromMyPages && email && !currentHasEmail) {
       dispatch({
         type: 'SET_EMAIL',
         payload: { id: applicantField.id, value: email },
@@ -101,6 +103,7 @@ export const Applicants = ({ applicantField }: Props) => {
     userProfileError,
     applicantField,
     dispatch,
+    fetchEmailFromMyPages,
   ])
 
   useQuery(IDENTITY_QUERY, {

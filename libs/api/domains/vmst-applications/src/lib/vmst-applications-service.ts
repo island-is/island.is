@@ -1,24 +1,35 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
 } from '@island.is/clients/vmst-unemployment'
+import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
+  VmstApplicationsApplicantAttachment,
+  VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
+import { maskString } from '@island.is/shared/utils'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class VMSTApplicationsService {
   constructor(
     private readonly vmstUnemploymentService: VmstUnemploymentClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   async validateBankInformation(
@@ -110,8 +121,33 @@ export class VMSTApplicationsService {
     return await this.vmstUnemploymentService.resolveApplicant(auth)
   }
 
-  async getApplicationsOverview(applicantId: string) {
-    return this.vmstUnemploymentService.getApplicationsOverview(applicantId)
+  async getApplicationsOverview(
+    applicantId: string,
+  ): Promise<VmstApplicationsOverview> {
+    const result = await this.vmstUnemploymentService.getApplicationsOverview(
+      applicantId,
+    )
+    return {
+      unemploymentApplication: result.unemploymentApplication ?? undefined,
+      activationGrant: result.activationGrant ?? undefined,
+    }
+  }
+
+  async getApplicationsOverviewForUser(
+    auth: User,
+  ): Promise<VmstApplicationsOverview> {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      return this.getApplicationsOverview(applicantId)
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return {
+          unemploymentApplication: { isVisible: false },
+          activationGrant: { isVisible: false },
+        }
+      }
+      throw e
+    }
   }
 
   async getApplicantOverview(
@@ -138,7 +174,45 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
   }
 
+  async getApplicantAttachments(
+    applicantId: string,
+    nationalId: string,
+  ): Promise<VmstApplicationsApplicantAttachment[]> {
+    const items = await this.vmstUnemploymentService.getApplicantAttachments(
+      applicantId,
+    )
+
+    return Promise.all(
+      items.flatMap((item) => {
+        if (!item.id || !item.name || !item.contentType || !item.created) {
+          return []
+        }
+
+        const { id, typeId, name, contentType, created } = item
+
+        return [
+          maskString(id, nationalId).then((maskedId) => ({
+            id,
+            typeId: typeId ?? null,
+            name,
+            contentType,
+            created,
+            downloadServiceUrl: maskedId
+              ? `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${maskedId}`
+              : null,
+          })),
+        ]
+      }),
+    )
+  }
+
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {
     return this.vmstUnemploymentService.getAttachmentTypes()
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    return this.vmstUnemploymentService.getAttachment(attachmentId)
   }
 }

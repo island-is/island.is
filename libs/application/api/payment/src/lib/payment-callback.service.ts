@@ -1,9 +1,9 @@
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { ApiClientCallback } from '@island.is/api/domains/payment'
-import { PaymentService } from './payment.service'
+import { PaymentMethod, PaymentService } from './payment.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import addMonths from 'date-fns/addMonths'
-import { addWorkDays } from './utils'
+import { addWorkDays, createDailyCompletionNotifications } from './utils'
 import {
   NotificationConfig,
   NotificationType,
@@ -46,6 +46,10 @@ export class PaymentCallbackService {
               ...application,
               pruneAt: twoWorkingDaysFromNow,
             },
+          )
+          await this.paymentService.setPaymentMethod(
+            callback.paymentFlowMetadata.applicationId,
+            PaymentMethod.INVOICE,
           )
           await this.applicationService.createScheduledNotifications(
             application.id,
@@ -115,6 +119,30 @@ export class PaymentCallbackService {
             pruneAt: oneMonthFromNow,
           },
         )
+
+        if (
+          callback.details?.reason === 'payment_completed' &&
+          callback.details?.message === 'Invoice payment completed'
+        ) {
+          // Clear up any existing payment reminders since we haven't state transitioned yet
+          await this.applicationService.cancelScheduledNotifications(
+            application.id,
+          )
+          const applicationLink = await this.paymentService.getApplicationUrl(
+            application.id,
+          )
+
+          const notifications = createDailyCompletionNotifications(
+            applicationLink,
+            new Date(),
+            oneMonthFromNow,
+          )
+          await this.applicationService.createScheduledNotifications(
+            application.id,
+            application.state,
+            notifications,
+          )
+        }
       }
     }
   }

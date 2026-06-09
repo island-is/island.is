@@ -25,10 +25,6 @@ export const restrictionsModule: PortalModule = {
     const useNewRoute = await featureFlagClient.getValue(
       Features.useNewDelegationSystem,
       false,
-      {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      },
     )
 
     if (useNewRoute) {

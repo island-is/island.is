@@ -52,7 +52,6 @@ interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
-  lockScreenComponentId: string | undefined
   lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
   cognitoDismissCount: number
@@ -142,7 +141,6 @@ export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
-  lockScreenComponentId: undefined,
   lockScreenSuppressedUntil: undefined,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
@@ -297,6 +295,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        lockScreenActivatedAt: undefined,
       }),
       true,
     )

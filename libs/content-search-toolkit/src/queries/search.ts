@@ -90,28 +90,34 @@ export const searchQuery = (
       case 'default':
       default:
         should.push({
-          multi_match: {
-            fields: [
-              'title^100', // note boosting ..
-              'content',
-            ],
-            query: queryString,
-            fuzziness: 1,
-            operator: 'and',
-            type: 'best_fields',
-          },
-        })
-        should.push({
-          nested: {
-            path: 'tags',
-            query: {
-              bool: {
-                must: [
-                  { term: { 'tags.type': 'keyword' } },
-                  { match: { 'tags.value': queryString } },
-                ],
+          bool: {
+            should: [
+              {
+                multi_match: {
+                  fields: [
+                    'title^100', // note boosting ..
+                    'content',
+                  ],
+                  query: queryString,
+                  fuzziness: 1,
+                  operator: 'and',
+                  type: 'best_fields',
+                },
               },
-            },
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        { term: { 'tags.type': 'keyword' } },
+                        { match: { 'tags.value': queryString } },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
           },
         })
         break

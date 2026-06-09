@@ -18,11 +18,12 @@ import {
   TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import { Case, Notification, Recipient } from '../../../repository'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './subpoenaNotification.strings'
 
 @Injectable()
@@ -36,11 +37,13 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
+    courtService: CourtService,
   ) {
     super(
       notificationModel,
       emailService,
       intlService,
+      courtService,
       config,
       eventService,
       logger,

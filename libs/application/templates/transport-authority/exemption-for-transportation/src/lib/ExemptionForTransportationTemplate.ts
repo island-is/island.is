@@ -26,7 +26,7 @@ import { application as applicationMessage, overview } from './messages'
 import { Features } from '@island.is/feature-flags'
 import {
   ExemptionRulesApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../dataProviders'
 import { ExemptionType } from '../shared'
@@ -120,7 +120,11 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi, ExemptionRulesApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                ExemptionRulesApi,
+              ],
               delete: true,
             },
           ],

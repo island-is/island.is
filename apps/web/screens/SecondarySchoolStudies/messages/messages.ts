@@ -174,6 +174,10 @@ export const m = {
       id: 'web.secondarySchoolStudies:details.identifierCode',
       defaultMessage: 'Auðkenni',
     },
+    referenceProgramme: {
+      id: 'web.secondarySchoolStudies:details.referenceProgramme',
+      defaultMessage: 'Viðmiðunarbraut',
+    },
     credits: {
       id: 'web.secondarySchoolStudies:details.credits',
       defaultMessage: 'einingar',

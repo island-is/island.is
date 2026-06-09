@@ -22,6 +22,5 @@ export class PrimarySchoolAssessment {
   @Field(() => [PrimarySchoolAssessmentResult], { nullable: true })
   resultHistory?: PrimarySchoolAssessmentResult[]
 
-  // Internal — threads studentId through to the field resolver, not exposed in GraphQL
   studentId?: string
 }

@@ -4,10 +4,10 @@ import router from 'next/router'
 
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import {
-  APPEAL_ROUTE,
-  DEFENDER_APPEAL_ROUTE,
-  DEFENDER_STATEMENT_ROUTE,
-  STATEMENT_ROUTE,
+  DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
+  DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
+  PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -26,16 +26,12 @@ import {
   AppealCaseState,
   AppealCaseTransition,
   InstitutionType,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  getAppealActorText,
-  getCurrentUserStatementDate,
-  hasSentNotification,
-} from '../../utils'
+import { getAppealActorText, getCurrentUserStatementDate } from '../../utils'
 import useAppealCase from '../useAppealCase'
 import useAppealCaseModals from '../useAppealCaseModals'
+import useTargetAppealCaseByAppealCaseId from '../useTargetAppealCaseByAppealCaseId'
 import * as styles from './useAppealCaseBanner.css'
 
 const renderLinkButton = (text: string, href: string) => (
@@ -81,11 +77,16 @@ const useAppealCaseBanner = () => {
   const { workingCase, isLoadingWorkingCase, setWorkingCase, refreshCase } =
     useContext(FormContext)
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  // Resolves to the case-level appeal by default, or to the ruling-order
+  // appeal selected by `?appealCaseId=…` on COA detail pages.
+  const appealCase = useTargetAppealCaseByAppealCaseId()
 
-  const appealRoute = isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
+  const appealRoute = isDefenceUser(user)
+    ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+    : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
   const statementRoute = isDefenceUser(user)
-    ? DEFENDER_STATEMENT_ROUTE
-    : STATEMENT_ROUTE
+    ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+    : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
 
   const {
     appealCaseModals,
@@ -100,7 +101,7 @@ const useAppealCaseBanner = () => {
   const handleReceivedTransition = async () => {
     const success = await transitionAppealCase(
       workingCase.id,
-      workingCase.appealCase?.id ?? '',
+      appealCase?.id ?? '',
       AppealCaseTransition.RECEIVE_APPEAL,
       setWorkingCase,
     )
@@ -118,7 +119,6 @@ const useAppealCaseBanner = () => {
   let child: ReactElement | null = null
 
   const {
-    appealCase,
     hasBeenAppealed,
     canBeAppealed,
     appealDeadline,
@@ -128,6 +128,7 @@ const useAppealCaseBanner = () => {
   const {
     appealState,
     appealReceivedByCourtDate,
+    appealRulingDate,
     appealRulingDecision,
     statementDeadline,
     isStatementDeadlineExpired,
@@ -145,11 +146,6 @@ const useAppealCaseBanner = () => {
 
   const hasCurrentUserSentStatement = Boolean(currentUserStatementDate)
 
-  const appealCompletedDate = hasSentNotification(
-    TrackedNotificationType.APPEAL_COMPLETED,
-    workingCase.notifications,
-  ).date
-
   // WITHDRAWN APPEAL BANNER IS HANDLED HERE:
   if (appealState === AppealCaseState.WITHDRAWN) {
     title = 'Úrskurður kærður'
@@ -162,7 +158,7 @@ const useAppealCaseBanner = () => {
     isSharedWithProsecutor
   ) {
     if (appealState === AppealCaseState.COMPLETED) {
-      title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
+      title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
       title = 'Úrskurður kærður'
@@ -207,13 +203,13 @@ const useAppealCaseBanner = () => {
         renderLinkButton(
           'Senda greinargerð',
           isDefenceUser(user)
-            ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-            : `${STATEMENT_ROUTE}/${workingCase.id}`,
+            ? `${DEFENDER_APPEAL_CASE_STATEMENT_ROUTE}/${workingCase.id}`
+            : `${PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE}/${workingCase.id}`,
         )
       )
     }
   } else if (appealState === AppealCaseState.COMPLETED) {
-    title = `Niðurstaða Landsréttar ${formatDate(appealCompletedDate, 'PPP')}`
+    title = `Niðurstaða Landsréttar ${formatDate(appealRulingDate, 'PPP')}`
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }
   // When case has been appealed by prosecutor or defender
@@ -229,7 +225,9 @@ const useAppealCaseBanner = () => {
         renderLinkButton(
           'Senda greinargerð',
           `${
-            isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+            isDefenceUser(user)
+              ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+              : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
           }/${workingCase.id}`,
         )
       )
@@ -267,9 +265,11 @@ const useAppealCaseBanner = () => {
     ) : (
       renderLinkButton(
         'Senda inn kæru',
-        `${isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
-          workingCase.id
-        }`,
+        `${
+          isDefenceUser(user)
+            ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+            : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
+        }/${workingCase.id}`,
       )
     )
   }

@@ -85,7 +85,10 @@ const appealCaseStateMachine: Map<AppealCaseTransition, AppealCaseRule> =
 
           return {
             caseUpdate,
-            appealCaseUpdate: { appealState: AppealCaseState.COMPLETED },
+            appealCaseUpdate: {
+              appealState: AppealCaseState.COMPLETED,
+              appealRulingDate: nowFactory(),
+            },
           }
         },
       },

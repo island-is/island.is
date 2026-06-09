@@ -49,26 +49,36 @@ export const updateFormFn = async (
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
             useValidate: newForm.useValidate,
-            usePopulate: newForm.usePopulate,
             submissionServiceUrl: newForm.submissionServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
-            completedSectionInfo: {
+            sectionInfo: {
               title: {
-                is: newForm.completedSectionInfo?.title?.is ?? '',
-                en: newForm.completedSectionInfo?.title?.en ?? '',
+                is: newForm.sectionInfo?.title?.is ?? '',
+                en: newForm.sectionInfo?.title?.en ?? '',
               },
               confirmationHeader: {
-                is: newForm.completedSectionInfo?.confirmationHeader?.is ?? '',
-                en: newForm.completedSectionInfo?.confirmationHeader?.en ?? '',
+                is: newForm.sectionInfo?.confirmationHeader?.is ?? '',
+                en: newForm.sectionInfo?.confirmationHeader?.en ?? '',
               },
               confirmationText: {
-                is: newForm.completedSectionInfo?.confirmationText?.is ?? '',
-                en: newForm.completedSectionInfo?.confirmationText?.en ?? '',
+                is: newForm.sectionInfo?.confirmationText?.is ?? '',
+                en: newForm.sectionInfo?.confirmationText?.en ?? '',
               },
               additionalInfo:
-                newForm.completedSectionInfo?.additionalInfo?.map((info) => ({
+                newForm.sectionInfo?.additionalInfo?.map((info) => ({
                   is: info?.is ?? '',
                   en: info?.en ?? '',
+                })) ?? [],
+              additionalPremises:
+                newForm.sectionInfo?.additionalPremises?.map((premise) => ({
+                  title: {
+                    is: premise?.title?.is ?? '',
+                    en: premise?.title?.en ?? '',
+                  },
+                  description: {
+                    is: premise?.description?.is ?? '',
+                    en: premise?.description?.en ?? '',
+                  },
                 })) ?? [],
             },
             dependencies: newForm.dependencies ?? [],

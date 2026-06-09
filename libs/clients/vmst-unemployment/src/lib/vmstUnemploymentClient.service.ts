@@ -28,12 +28,16 @@ import {
   GaldurExternalDomainRequestsWithdrawOverviewResponse,
   GaldurExternalDomainRequestsApplicantCreateForeignStayRequest,
   GaldurExternalDomainModelsAttachmentAttachmentRequestDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentDTO,
+  GaldurExternalDomainModelsAttachmentAttachmentListItem,
   GaldurXRoadAPIModelsAvailableActions,
   ApplicantUpdateApplicantRequest,
   ApplicantGetApplicantInfoRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
   GaldurXRoadAPIModelsJobSearchConfirmationJobSearchConfirmationEligibilityResponse,
+  ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
+  GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
   IncomeApi,
   IncomeCreateIrregularJobRequest,
@@ -327,6 +331,7 @@ export class VmstUnemploymentClientService {
         ssn: auth.nationalId,
       },
     })
+
     if (!response?.applicantId) {
       throw new Error('Failed to fetch applicant Id')
     }
@@ -415,6 +420,19 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  async getApplicantAttachments(
+    applicantId: string,
+  ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetApplicantAttachments({
+      applicantId,
+    })
+  }
+
   async submitJobSearchConfirmation(
     auth: User,
     request: GaldurXRoadAPIModelsJobSearchConfirmationCreateJobSearchConfirmationRequest,
@@ -472,6 +490,29 @@ export class VmstUnemploymentClientService {
     return await api.applicantGetForeignTravelEligibility({
       id: applicantId,
     })
+  }
+
+  async checkCreateAttachmentEligibility(auth: User): Promise<
+    GaldurXRoadAPIModelsApplicantCreateAttachmentEligibilityResponse & {
+      applicantId: string
+    }
+  > {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    const result = await api.applicantGetCreateAttachmentEligibility({
+      id: applicantId,
+    })
+
+    return { ...result, applicantId }
   }
 
   async submitTravelConfirmation(
@@ -601,5 +642,31 @@ export class VmstUnemploymentClientService {
       'clients-vmst-unemployment',
     )
     return await api.pensionFundsGetPensionFunds()
+  }
+
+  async createApplicantRequestedAttachments(
+    requestParameters: ApplicantCreateApplicantRequestedAttachmentRequest,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.applicantCreateApplicantRequestedAttachment(
+      requestParameters,
+    )
+  }
+
+  async getAttachment(
+    attachmentId: string,
+  ): Promise<GaldurExternalDomainModelsAttachmentAttachmentDTO> {
+    const api = await this.createApiClient(
+      AttachmentApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.attachmentGetAttachment({
+      id: attachmentId,
+      includeData: true,
+    })
   }
 }

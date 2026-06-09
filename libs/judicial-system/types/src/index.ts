@@ -43,6 +43,7 @@ export {
 export type { Institution } from './lib/institution'
 
 export {
+  UmbrellaNotificationType,
   RequestCaseNotificationType,
   IndictmentCaseNotificationType,
   AppealCaseNotificationType,
@@ -68,6 +69,8 @@ export {
 export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
+
+export { MessageSuspensionCategory } from './lib/messageSuspension'
 
 export {
   CaseFileState,
@@ -179,6 +182,7 @@ export {
   offenseSubstances,
   isTrafficViolationIndictmentCount,
   getIndictmentCountCompare,
+  sortIndictmentCounts,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
