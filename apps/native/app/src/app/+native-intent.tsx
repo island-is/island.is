@@ -19,10 +19,27 @@ export function consumePendingDeepLink(): void {
   pendingDeepLink = null
   if (!path) return
   // findRoute only covers universal-link paths (/minarsidur/...). Widgets and
-  // custom-scheme URLs come through as the native route already, so fall back
-  // to the raw path when there's no mapping.
-  const target = findRoute(path) ?? path
-  router.navigate(target as Parameters<typeof router.navigate>[0])
+  // custom-scheme URLs come through as the native route already.
+  const mapped = findRoute(path)
+  if (mapped) {
+    router.navigate(mapped as Parameters<typeof router.navigate>[0])
+    return
+  }
+  // Strip the scheme before navigating — passing a full URL to router.navigate
+  // forwards to Linking.openURL on Android, which re-delivers the intent and
+  // loops endlessly. For custom-scheme URLs the "host" is actually the first
+  // path segment (e.g. is.island.app.dev://wallet/X → /wallet/X), so prepend it.
+  let pathname = path
+  if (path.includes('://')) {
+    try {
+      const url = new URL(path)
+      const host = url.host ? `/${url.host}` : ''
+      pathname = `${host}${url.pathname}${url.search}` || '/'
+    } catch {
+      // keep raw path on parse failure
+    }
+  }
+  router.navigate(pathname as Parameters<typeof router.navigate>[0])
 }
 
 export function clearPendingDeepLink(): void {
