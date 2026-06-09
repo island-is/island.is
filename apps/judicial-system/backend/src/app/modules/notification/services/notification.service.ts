@@ -72,7 +72,6 @@ export class NotificationService {
       case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED:
       case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
-      case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:

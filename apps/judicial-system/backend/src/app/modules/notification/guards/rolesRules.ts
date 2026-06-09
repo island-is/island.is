@@ -1,7 +1,6 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseNotificationType,
-  IndictmentCaseNotificationType,
   RequestCaseNotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -35,10 +34,7 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    RequestCaseNotificationType.COURT_DATE,
-    IndictmentCaseNotificationType.RULING_ORDER_ADDED,
-  ],
+  dtoFieldValues: [RequestCaseNotificationType.COURT_DATE],
 }
 
 // Allows district court registrars to send notifications
