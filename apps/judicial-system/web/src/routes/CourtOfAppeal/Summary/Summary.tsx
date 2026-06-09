@@ -26,7 +26,6 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
@@ -35,7 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   appendAppealCaseIdQuery,
-  hasSentNotification,
+  isReopenedCOACase,
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -78,12 +77,7 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      hasSentNotification(
-        TrackedNotificationType.APPEAL_COMPLETED,
-        workingCase.notifications,
-      ).hasSent
-    ) {
+    if (isReopenedCOACase(targetAppealCase)) {
       setVisibleModal('AppealRulingModified')
     } else {
       await handleComplete()

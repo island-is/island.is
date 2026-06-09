@@ -132,14 +132,16 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     input: IcelandicGovernmentInstitutionVacanciesInput,
     user?: FeatureFlagUser,
   ) {
-    // Check override, then feature flag, to determine which client to use
+    // Check overrides, then feature flag, to determine which client to use.
+    // An explicit old-API override always wins, forcing the X-Road API.
     const useNewApi =
-      input.useNewApiOverride === true ||
-      (await this.featureFlagClient.getValue(
-        Features.useNewVacancyApi,
-        false,
-        user,
-      ))
+      input.useOldApiOverride !== true &&
+      (input.useNewApiOverride === true ||
+        (await this.featureFlagClient.getValue(
+          Features.useNewVacancyApi,
+          false,
+          user,
+        )))
 
     let errorOccurred = false
     let mappedVacancies
@@ -203,6 +205,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         await mapIcelandicGovernmentInstitutionVacanciesFromElfur(vacancies)
     } else {
       // Use old X-Road API
+      if (input.useOldApiOverride) {
+        this.logger.info('Using X-Road API via override for vacancy list')
+      }
       let vacancies: DefaultApiVacanciesListItem[] = []
 
       try {
@@ -351,15 +356,18 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     language?: VacancyLanguageEnum,
     user?: FeatureFlagUser,
     useNewApiOverride?: boolean,
+    useOldApiOverride?: boolean,
   ) {
-    // Check override, then feature flag, to determine which client to use
+    // Check overrides, then feature flag, to determine which client to use.
+    // An explicit old-API override always wins, forcing the X-Road API.
     const useNewApi =
-      useNewApiOverride === true ||
-      (await this.featureFlagClient.getValue(
-        Features.useNewVacancyApi,
-        false,
-        user,
-      ))
+      useOldApiOverride !== true &&
+      (useNewApiOverride === true ||
+        (await this.featureFlagClient.getValue(
+          Features.useNewVacancyApi,
+          false,
+          user,
+        )))
 
     let vacancy
 
@@ -407,6 +415,11 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       }
     } else {
       // Use old X-Road API
+      if (useOldApiOverride) {
+        this.logger.info('Using X-Road API via override for vacancy detail', {
+          vacancyId: id,
+        })
+      }
       const numericId = Number(id)
       if (isNaN(numericId)) {
         return { vacancy: null }
@@ -495,17 +508,21 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         input.language,
         featureFlagUser,
         input.useNewApiOverride,
+        input.useOldApiOverride,
       )
     }
 
-    // If no prefix is present then we determine what service to call depending on the feature flag and id format
+    // If no prefix is present then we determine what service to call depending
+    // on the overrides, feature flag and id format. An explicit old-API
+    // override always wins, forcing the X-Road API.
     const useNewApi =
-      input.useNewApiOverride === true ||
-      (await this.featureFlagClient.getValue(
-        Features.useNewVacancyApi,
-        false,
-        featureFlagUser,
-      ))
+      input.useOldApiOverride !== true &&
+      (input.useNewApiOverride === true ||
+        (await this.featureFlagClient.getValue(
+          Features.useNewVacancyApi,
+          false,
+          featureFlagUser,
+        )))
 
     if (useNewApi) {
       // New API: first try CMS, then external service
@@ -516,6 +533,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           input.language,
           featureFlagUser,
           input.useNewApiOverride,
+          input.useOldApiOverride,
         )
       }
       return vacancyFromCms
@@ -530,6 +548,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         input.language,
         featureFlagUser,
         input.useNewApiOverride,
+        input.useOldApiOverride,
       )
     }
   }

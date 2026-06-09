@@ -17,6 +17,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { Message } from './message'
 import { messageModuleConfig } from './message.config'
+import { SuspensionDecision } from './suspension'
 
 @Injectable()
 export class MessageService {
@@ -150,6 +151,7 @@ export class MessageService {
   private async handleMessage(
     callback: (message: Message) => Promise<boolean>,
     sqsMessage: SqsMessage,
+    shouldSuspend?: (message: Message) => SuspensionDecision,
   ): Promise<void> {
     const message: Message = JSON.parse(sqsMessage.Body ?? '')
 
@@ -158,6 +160,25 @@ export class MessageService {
     if (message.nextRetry && message.nextRetry > now) {
       return this.retryMessage(
         Math.min(Math.round((message.nextRetry - now) / 1000), 900),
+        sqsMessage.Body,
+        sqsMessage.ReceiptHandle,
+      )
+    }
+
+    // If handling of this message's category is currently suspended, re-queue it
+    // unchanged - without invoking the handler and without incrementing the retry
+    // count - so it is picked up again unchanged once the suspension is lifted.
+    // The maximum SQS delay is 900 seconds; longer delays simply re-check sooner,
+    // which also keeps resumption responsive once a category is un-suspended.
+    const suspension = shouldSuspend?.(message)
+    if (suspension?.suspend) {
+      this.logger.info('Suspending message', {
+        type: message.type,
+        delaySeconds: suspension.delaySeconds,
+      })
+
+      return this.retryMessage(
+        Math.min(suspension.delaySeconds, 900),
         sqsMessage.Body,
         sqsMessage.ReceiptHandle,
       )
@@ -243,6 +264,7 @@ export class MessageService {
 
   async receiveMessagesFromQueue(
     callback: (message: Message) => Promise<boolean>,
+    shouldSuspend?: (message: Message) => SuspensionDecision,
   ): Promise<void> {
     return this.sqs
       .send(
@@ -255,7 +277,7 @@ export class MessageService {
       .then(async (data) => {
         if (data.Messages && data.Messages.length > 0) {
           for (const message of data.Messages) {
-            await this.handleMessage(callback, message)
+            await this.handleMessage(callback, message, shouldSuspend)
           }
         }
       })
