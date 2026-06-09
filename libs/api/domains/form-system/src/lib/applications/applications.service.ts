@@ -58,11 +58,9 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<ApplicationResponse> {
-    this.logger.info('creating application with slug:', input.slug)
     const response = await this.applicationsApiWithAuth(
       auth,
     ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
-    this.logger.info('create application response:', response)
     return response as ApplicationResponse
   }
 
@@ -70,18 +68,11 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationInput,
   ): Promise<ApplicationResponse> {
-    this.logger.info(
-      'getting application with id:',
-      input.id,
-      'and slug:',
-      input.slug,
-    )
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerGetApplication(
         input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
-    this.logger.info('get application response:', response)
 
     return response as ApplicationResponse
   }
@@ -90,7 +81,6 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationsInput,
   ): Promise<ApplicationResponse> {
-    this.logger.info('getting all applications with slug:', input.slug)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerFindAllBySlugAndUser(
         input as ApplicationsControllerFindAllBySlugAndUserRequest,
@@ -98,7 +88,6 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to get applications'),
       )
-    this.logger.info('get all applications response:', response)
     return response as ApplicationResponse
   }
 
