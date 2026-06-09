@@ -515,6 +515,11 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
       MATILDA_API_KEY: '/k8s/api/LANDSPITALI_MATILDA_API_KEY',
       MATILDA_DISTRIBUTOR_ID: '/k8s/api/LANDSPITALI_MATILDA_DISTRIBUTOR_ID',
+      // TODO: Rename and place these values into AWS Param Store
+      TOLLUR_ALMENNT_BASE_URL: '/k8s/api/TOLLUR_ALMENNT_BASE_URL',
+      TOLLUR_ALMENNT_USERNAME: '/k8s/api/TOLLUR_ALMENNT_USERNAME',
+      TOLLUR_ALMENNT_PASSWORD: '/k8s/api/TOLLUR_ALMENNT_PASSWORD',
+      TOLLUR_ALMENNT_API_KEY: '/k8s/api/TOLLUR_ALMENNT_API_KEY',
     })
     .xroad(
       AdrAndMachine,
