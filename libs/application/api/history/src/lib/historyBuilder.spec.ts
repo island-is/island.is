@@ -11,7 +11,10 @@ import { Test } from '@nestjs/testing'
 import { HistoryBuilder } from './historyBuilder'
 import { History } from './history.model'
 import { IdentityClientService } from '@island.is/clients/identity'
-import { ApplicationTemplateHelper, coreHistoryMessages } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -56,14 +59,18 @@ const makeEntry = (overrides: Partial<History> = {}): History =>
   } as unknown as History)
 
 const makeApplication = (answersOverrides = {}): Application =>
-  ({ answers: { buyer: { nationalId: '1234567890' }, ...answersOverrides } } as unknown as Application)
+  ({
+    answers: { buyer: { nationalId: '1234567890' }, ...answersOverrides },
+  } as unknown as Application)
 
 const SUBJECT_NATIONAL_ID = '1111111119'
 const ACTOR_NATIONAL_ID = '2222222229'
 
 describe('HistoryBuilder', () => {
   let builder: HistoryBuilder
-  let identityService: jest.Mocked<Pick<IdentityClientService, 'tryToGetNameFromNationalId'>>
+  let identityService: jest.Mocked<
+    Pick<IdentityClientService, 'tryToGetNameFromNationalId'>
+  >
   let templateHelper: jest.Mocked<Pick<TemplateHelper, 'getHistoryLog'>>
 
   beforeEach(async () => {
@@ -128,24 +135,30 @@ describe('HistoryBuilder', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].date).toEqual(exitTimestamp)
-    expect(result[0].log).toBe(coreHistoryMessages.paymentStarted.defaultMessage)
+    expect(result[0].log).toBe(
+      coreHistoryMessages.paymentStarted.defaultMessage,
+    )
     expect(result[0].subLog).toBeUndefined()
   })
 
   // --- Dynamic logMessage function (mirrors REVIEW → APPROVE/REJECT in TransferOfVehicleOwnership) ---
 
   it('calls a logMessage function with the application and subjectNationalId', async () => {
-    const logMessageFn = jest.fn().mockReturnValue(coreHistoryMessages.applicationApprovedBy)
+    const logMessageFn = jest
+      .fn()
+      .mockReturnValue(coreHistoryMessages.applicationApprovedBy)
     templateHelper.getHistoryLog.mockReturnValue({
       onEvent: 'APPROVE',
       logMessage: logMessageFn,
     })
 
-    await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-    })])
+    await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+      }),
+    ])
 
     expect(logMessageFn).toHaveBeenCalledWith(
       expect.objectContaining({ answers: expect.anything() }),
@@ -159,9 +172,13 @@ describe('HistoryBuilder', () => {
       logMessage: () => coreHistoryMessages.applicationApprovedBy,
     })
 
-    const result = await build([makeEntry({ stateKey: 'review', exitEvent: 'APPROVE' })])
+    const result = await build([
+      makeEntry({ stateKey: 'review', exitEvent: 'APPROVE' }),
+    ])
 
-    expect(result[0].log).toBe(coreHistoryMessages.applicationApprovedBy.defaultMessage)
+    expect(result[0].log).toBe(
+      coreHistoryMessages.applicationApprovedBy.defaultMessage,
+    )
   })
 
   // --- includeSubjectAndActor ---
@@ -173,7 +190,9 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: false,
     })
 
-    await build([makeEntry({ exitEventSubjectNationalId: SUBJECT_NATIONAL_ID })])
+    await build([
+      makeEntry({ exitEventSubjectNationalId: SUBJECT_NATIONAL_ID }),
+    ])
 
     expect(identityService.tryToGetNameFromNationalId).not.toHaveBeenCalled()
   })
@@ -186,13 +205,17 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: true,
     })
 
-    const result = await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-    })])
+    const result = await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+      }),
+    ])
 
-    expect(identityService.tryToGetNameFromNationalId).toHaveBeenCalledWith(SUBJECT_NATIONAL_ID)
+    expect(identityService.tryToGetNameFromNationalId).toHaveBeenCalledWith(
+      SUBJECT_NATIONAL_ID,
+    )
     expect(result[0].subLog).toContain('Jón Jónsson')
   })
 
@@ -204,18 +227,20 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: true,
     })
 
-    const result = await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-    })])
+    const result = await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+      }),
+    ])
 
     expect(result[0].subLog).toContain(SUBJECT_NATIONAL_ID)
   })
 
   it('includes both subject and actor in subLog when they are different people', async () => {
     identityService.tryToGetNameFromNationalId
-      .mockResolvedValueOnce('Jón Jónsson')   // subject
+      .mockResolvedValueOnce('Jón Jónsson') // subject
       .mockResolvedValueOnce('María Sigurðardóttir') // actor
     templateHelper.getHistoryLog.mockReturnValue({
       onEvent: 'APPROVE',
@@ -223,12 +248,14 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: true,
     })
 
-    const result = await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-      exitEventActorNationalId: ACTOR_NATIONAL_ID,
-    })])
+    const result = await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+        exitEventActorNationalId: ACTOR_NATIONAL_ID,
+      }),
+    ])
 
     expect(result[0].subLog).toContain('Jón Jónsson')
     expect(result[0].subLog).toContain('María Sigurðardóttir')
@@ -242,16 +269,21 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: true,
     })
 
-    const result = await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-      exitEventActorNationalId: SUBJECT_NATIONAL_ID, // same person
-    })])
+    const result = await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+        exitEventActorNationalId: SUBJECT_NATIONAL_ID, // same person
+      }),
+    ])
 
     // byReviewer format — name appears once, not twice
     expect(result[0].subLog).toBe(
-      coreHistoryMessages.byReviewer.defaultMessage.replace('{subject}', 'Jón Jónsson'),
+      coreHistoryMessages.byReviewer.defaultMessage.replace(
+        '{subject}',
+        'Jón Jónsson',
+      ),
     )
   })
 
@@ -264,7 +296,13 @@ describe('HistoryBuilder', () => {
     })
 
     await builder.buildApplicationHistory(
-      [makeEntry({ stateKey: 'review', exitEvent: 'APPROVE', exitEventSubjectNationalId: SUBJECT_NATIONAL_ID })],
+      [
+        makeEntry({
+          stateKey: 'review',
+          exitEvent: 'APPROVE',
+          exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+        }),
+      ],
       formatMessage,
       templateHelper as unknown as TemplateHelper,
       makeApplication(),
@@ -273,7 +311,11 @@ describe('HistoryBuilder', () => {
       true,
     )
 
-    expect(includeSubjectAndActorFn).toHaveBeenCalledWith('buyer', '3333333339', true)
+    expect(includeSubjectAndActorFn).toHaveBeenCalledWith(
+      'buyer',
+      '3333333339',
+      true,
+    )
   })
 
   it('does not set subLog when the includeSubjectAndActor function returns false', async () => {
@@ -283,11 +325,13 @@ describe('HistoryBuilder', () => {
       includeSubjectAndActor: () => false,
     })
 
-    const result = await build([makeEntry({
-      stateKey: 'review',
-      exitEvent: 'APPROVE',
-      exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
-    })])
+    const result = await build([
+      makeEntry({
+        stateKey: 'review',
+        exitEvent: 'APPROVE',
+        exitEventSubjectNationalId: SUBJECT_NATIONAL_ID,
+      }),
+    ])
 
     expect(identityService.tryToGetNameFromNationalId).not.toHaveBeenCalled()
     expect(result[0].subLog).toBeUndefined()
