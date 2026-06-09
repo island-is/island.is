@@ -4,10 +4,10 @@ import {
   CardLoader,
   formatNationalId,
   IntroWrapper,
-  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
+import * as styles from './PaymentTypes.css'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
 import {
@@ -40,26 +40,32 @@ const PaymentTypes = () => {
   const pageLoading = paymentTypesLoading || childBenefitsLoading
   const bothSectionsFailed = Boolean(paymentTypesError && childBenefitsError)
 
-  const buttonGroup = [
-    <LinkButton
-      key="calculate-my-rights"
-      to={formatMessage(m.calculateMyRightsLink)}
-      text={formatMessage(m.calculateMyRights)}
-      icon="open"
-      variant="utility"
-    />,
-  ]
-
   return (
     <IntroWrapper
       title={formatMessage(m.paymentTypesOverview)}
-      intro={formatMessage(m.paymentTypesOverviewDescription)}
+      introComponent={
+        <Text>
+          {formatMessage(m.paymentTypesOverviewIntro, {
+            href: (str: React.ReactNode) => (
+              <span>
+                <a
+                  href={formatMessage(m.calculateMyRightsLink)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.link}
+                >
+                  {str}
+                </a>
+              </span>
+            ),
+          })}
+        </Text>
+      }
       desktopContentSpan="10/12"
       serviceProvider={{
         slug: TRYGGINGASTOFNUN_SLUG,
         tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
       }}
-      buttonGroup={{ actions: buttonGroup }}
     >
       {pageLoading ? (
         <CardLoader />
