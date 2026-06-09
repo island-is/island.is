@@ -128,7 +128,7 @@ export const createWrappedFetchWithLogging = (
               success: false,
             },
           })
-          return reject(requestBody)
+          return reject(responseBody)
         }
 
         return resolve(response)
