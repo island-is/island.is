@@ -110,6 +110,38 @@ describe('InternalCivilClaimantController - Deliver indictment spokesperson to c
     expect(then.error).toBeUndefined()
   })
 
+  it('should deliver legal guardian spokesperson information to court', async () => {
+    const legalGuardianCivilClaimant = {
+      ...civilClaimant,
+      spokespersonIsLawyer: false,
+      spokespersonName: 'Réttargæslumaður Réttargæslumanns',
+    } as CivilClaimant
+
+    const then = await givenWhenThen(
+      caseId,
+      civilClaimantId,
+      theCase,
+      legalGuardianCivilClaimant,
+      { user },
+    )
+
+    expect(
+      mockCourtService.updateIndictmentCaseWithSpokespersonInfo,
+    ).toHaveBeenCalledWith(
+      user,
+      caseId,
+      courtName,
+      courtCaseNumber,
+      legalGuardianCivilClaimant.nationalId,
+      legalGuardianCivilClaimant.name,
+      legalGuardianCivilClaimant.spokespersonNationalId,
+      false,
+    )
+
+    expect(then.result).toEqual({ delivered: true })
+    expect(then.error).toBeUndefined()
+  })
+
   it('should return delivered false if court service fails', async () => {
     mockCourtService.updateIndictmentCaseWithSpokespersonInfo.mockRejectedValueOnce(
       new Error('Court service error'),

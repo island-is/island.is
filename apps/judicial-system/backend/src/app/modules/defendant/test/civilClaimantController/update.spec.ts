@@ -20,6 +20,7 @@ type GivenWhenThen = (
   theCase: Case,
   civilClaimantId: string,
   updateData: UpdateCivilClaimantDto,
+  civilClaimant?: CivilClaimant,
 ) => Promise<Then>
 
 describe('CivilClaimantController - Update', () => {
@@ -44,6 +45,7 @@ describe('CivilClaimantController - Update', () => {
       theCase: Case,
       civilClaimantId: string,
       updateData: UpdateCivilClaimantDto,
+      civilClaimant = { id: civilClaimantId } as CivilClaimant,
     ) => {
       const then = {} as Then
 
@@ -53,7 +55,7 @@ describe('CivilClaimantController - Update', () => {
           civilClaimantId,
           theCase,
           user as User,
-          { id: civilClaimantId } as CivilClaimant,
+          civilClaimant,
           updateData,
         )
         .then((result) => (then.result = result))
@@ -139,6 +141,34 @@ describe('CivilClaimantController - Update', () => {
 
     it('should return the updated civil claimant', () => {
       expect(then.result).toBe(updatedCivilClaimant)
+    })
+  })
+
+  describe('civil claimant spokesperson already confirmed', () => {
+    const civilClaimantUpdate = { isSpokespersonConfirmed: true }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(
+        theCase,
+        civilClaimantId,
+        civilClaimantUpdate,
+        {
+          id: civilClaimantId,
+          isSpokespersonConfirmed: true,
+        } as CivilClaimant,
+      )
+    })
+
+    it('should not queue delivery or notification messages', () => {
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
