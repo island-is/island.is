@@ -51,7 +51,7 @@ const PaymentTypes = () => {
                 <a
                   href={formatMessage(m.calculateMyRightsLink)}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className={styles.link}
                 >
                   {str}
