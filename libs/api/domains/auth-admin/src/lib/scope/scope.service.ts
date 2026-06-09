@@ -541,6 +541,13 @@ export class ScopeService extends MultiEnvironmentService {
         continue
       }
 
+      if (!this.isEnvironmentConfigured(environment)) {
+        const message = `Failed to update scope clients for ${scopeName}: environment ${environment} not configured`
+        this.logger.error(message)
+        failures.push({ environment, message })
+        continue
+      }
+
       const settled = await Promise.allSettled(
         operations.map(({ clientId, op }) =>
           this.makeRequest(user, environment, (api) =>
@@ -559,13 +566,20 @@ export class ScopeService extends MultiEnvironmentService {
       const errors = settled
         .map((result, index) => {
           const { clientId, op } = operations[index]
+          const label = op === 'add' ? 'Add' : 'Remove'
+
           if (result.status === 'rejected') {
             const message =
               result.reason instanceof Error
                 ? result.reason.message
                 : String(result.reason ?? 'Unknown error')
-            return `${op === 'add' ? 'Add' : 'Remove'} ${clientId}: ${message}`
+            return `${label} ${clientId}: ${message}`
           }
+
+          if (!result.value) {
+            return `${label} ${clientId}: no response (client not found)`
+          }
+
           return null
         })
         .filter((m): m is string => m !== null)
