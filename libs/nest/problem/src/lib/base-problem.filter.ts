@@ -32,10 +32,15 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   catch(error: Error, host: ArgumentsHost) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
 
+    const applicationId = this.getApplicationIdIfExists(host)
+    const contextLogger = applicationId
+      ? this.logger.child({ applicationId })
+      : this.logger
+
     if (problem.status && problem.status >= 500) {
-      this.logger.error(error)
+      contextLogger.error(error)
     } else if (this.options.logAllErrors) {
-      this.logger.info(error)
+      contextLogger.info(error)
     }
 
     if ((host.getType() as string) === 'graphql') {
@@ -79,6 +84,19 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
       response.setHeader('Content-Type', 'application/problem+json')
       response.json(problem)
     }
+  }
+
+  private getApplicationIdIfExists(host: ArgumentsHost): string | undefined {
+    const ctx = host.switchToHttp()
+    const request = ctx.getRequest<Request>()
+    const applicationId = request?.url?.split('/').pop()
+
+    return applicationId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        applicationId,
+      )
+      ? applicationId
+      : undefined
   }
 
   abstract getProblem(error: Error): Problem
