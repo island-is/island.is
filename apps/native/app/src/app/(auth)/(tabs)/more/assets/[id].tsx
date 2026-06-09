@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 
-import { Divider, Input, InputRow, NavigationBarSheet } from '@/ui'
+import { Divider, Input, InputRow, NavigationBarSheet, Problem } from '@/ui'
 import { useGetAssetQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../components/stack-screen'
@@ -14,8 +14,11 @@ export default function AssetsDetailScreen() {
   }>()
   const intl = useIntl()
 
+  const isValidId = !!id && /^F?\d+$/.test(id)
+
   const { data, loading, networkStatus } = useGetAssetQuery({
     variables: { input: { assetId: id } },
+    skip: !isValidId,
   })
 
   const isLoading = loading && !data
@@ -31,124 +34,128 @@ export default function AssetsDetailScreen() {
         }}
         closeable
       />
-      <View>
-        <InputRow>
-          <Input
-            loading={isLoading}
-            label={intl.formatMessage({
-              id: 'assetsDetail.propertyNumber',
-            })}
-            value={id}
-            size="big"
-            noBorder
-            isCompact
-          />
-        </InputRow>
-        <InputRow>
-          <Input
-            loading={isLoading}
-            label={intl.formatMessage(
-              { id: 'assetsDetail.activeAppraisal' },
-              { activeYear: appraisal?.activeYear },
-            )}
-            value={
-              appraisal?.activeAppraisal
-                ? `${intl.formatNumber(appraisal.activeAppraisal)} kr.`
-                : '-'
-            }
-            size="big"
-            noBorder
-            isCompact
-          />
-          <Input
-            loading={isLoading}
-            label={intl.formatMessage(
-              { id: 'assetsDetail.plannedAppraisal' },
-              { plannedYear: appraisal?.plannedYear },
-            )}
-            value={
-              appraisal?.plannedAppraisal
-                ? `${intl.formatNumber(appraisal.plannedAppraisal)} kr.`
-                : '-'
-            }
-            size="big"
-            noBorder
-            isCompact
-          />
-        </InputRow>
+      {!isValidId ? (
+        <Problem withContainer />
+      ) : (
+        <View>
+          <InputRow>
+            <Input
+              loading={isLoading}
+              label={intl.formatMessage({
+                id: 'assetsDetail.propertyNumber',
+              })}
+              value={id}
+              size="big"
+              noBorder
+              isCompact
+            />
+          </InputRow>
+          <InputRow>
+            <Input
+              loading={isLoading}
+              label={intl.formatMessage(
+                { id: 'assetsDetail.activeAppraisal' },
+                { activeYear: appraisal?.activeYear },
+              )}
+              value={
+                appraisal?.activeAppraisal
+                  ? `${intl.formatNumber(appraisal.activeAppraisal)} kr.`
+                  : '-'
+              }
+              size="big"
+              noBorder
+              isCompact
+            />
+            <Input
+              loading={isLoading}
+              label={intl.formatMessage(
+                { id: 'assetsDetail.plannedAppraisal' },
+                { plannedYear: appraisal?.plannedYear },
+              )}
+              value={
+                appraisal?.plannedAppraisal
+                  ? `${intl.formatNumber(appraisal.plannedAppraisal)} kr.`
+                  : '-'
+              }
+              size="big"
+              noBorder
+              isCompact
+            />
+          </InputRow>
 
-        <Divider spacing={2} style={{ marginHorizontal: 16 }} />
+          <Divider spacing={2} style={{ marginHorizontal: 16 }} />
 
-        {(unitsOfUse?.unitsOfUse ?? []).map((unit, index) => (
-          <View key={`${unit?.propertyNumber}-${index}`}>
-            <InputRow>
-              <Input
-                loading={isLoading}
-                label={intl.formatMessage({
-                  id: 'assetsDetail.explanation',
-                })}
-                value={unit?.explanation}
-                noBorder
-                isCompact
-              />
-              <Input
-                loading={isLoading}
-                label={intl.formatMessage({
-                  id: 'assetsDetail.displaySize',
-                })}
-                value={`${unit?.displaySize} m²`}
-                noBorder
-                isCompact
-              />
-            </InputRow>
-
-            <InputRow>
-              <Input
-                loading={isLoading}
-                label={intl.formatMessage({
-                  id: 'assetsDetail.municipality',
-                })}
-                value={unit?.address?.municipality}
-                noBorder
-                isCompact
-              />
-              <Input
-                loading={isLoading}
-                label={intl.formatMessage({
-                  id: 'assetsDetail.postNumber',
-                })}
-                value={String(unit?.address?.postNumber ?? '-')}
-                noBorder
-                isCompact
-              />
-            </InputRow>
-
-            <InputRow>
-              {unit?.buildYearDisplay ? (
+          {(unitsOfUse?.unitsOfUse ?? []).map((unit, index) => (
+            <View key={`${unit?.propertyNumber}-${index}`}>
+              <InputRow>
                 <Input
                   loading={isLoading}
                   label={intl.formatMessage({
-                    id: 'assetsDetail.buildYearDisplay',
+                    id: 'assetsDetail.explanation',
                   })}
-                  value={unit?.buildYearDisplay}
+                  value={unit?.explanation}
                   noBorder
                   isCompact
                 />
-              ) : null}
-              <Input
-                loading={isLoading}
-                label={intl.formatMessage({ id: 'assetsDetail.marking' })}
-                value={unit?.marking}
-                noBorder
-                isCompact
-              />
-            </InputRow>
-            {index + 1 < (unitsOfUse?.unitsOfUse ?? []).length && (
-              <Divider spacing={2} style={{ marginHorizontal: 16 }} />
-            )}
-          </View>
-        ))}
-      </View>
+                <Input
+                  loading={isLoading}
+                  label={intl.formatMessage({
+                    id: 'assetsDetail.displaySize',
+                  })}
+                  value={`${unit?.displaySize} m²`}
+                  noBorder
+                  isCompact
+                />
+              </InputRow>
+
+              <InputRow>
+                <Input
+                  loading={isLoading}
+                  label={intl.formatMessage({
+                    id: 'assetsDetail.municipality',
+                  })}
+                  value={unit?.address?.municipality}
+                  noBorder
+                  isCompact
+                />
+                <Input
+                  loading={isLoading}
+                  label={intl.formatMessage({
+                    id: 'assetsDetail.postNumber',
+                  })}
+                  value={String(unit?.address?.postNumber ?? '-')}
+                  noBorder
+                  isCompact
+                />
+              </InputRow>
+
+              <InputRow>
+                {unit?.buildYearDisplay ? (
+                  <Input
+                    loading={isLoading}
+                    label={intl.formatMessage({
+                      id: 'assetsDetail.buildYearDisplay',
+                    })}
+                    value={unit?.buildYearDisplay}
+                    noBorder
+                    isCompact
+                  />
+                ) : null}
+                <Input
+                  loading={isLoading}
+                  label={intl.formatMessage({ id: 'assetsDetail.marking' })}
+                  value={unit?.marking}
+                  noBorder
+                  isCompact
+                />
+              </InputRow>
+              {index + 1 < (unitsOfUse?.unitsOfUse ?? []).length && (
+                <Divider spacing={2} style={{ marginHorizontal: 16 }} />
+              )}
+            </View>
+          ))}
+        </View>
+      )}
     </ScrollView>
   )
 }
