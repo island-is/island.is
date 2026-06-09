@@ -24,7 +24,6 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { nationalIdTransformer } from '../../transformers'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { IndictmentCountService } from '../indictment-count/indictmentCount.service'
@@ -1340,7 +1340,8 @@ export class PoliceService {
           return {
             serviceStatus: serviceStatus,
             deliveredToDefenderNationalId:
-              response.defenderNationalId ?? undefined,
+              nationalIdTransformer({ value: response.defenderNationalId }) ??
+              undefined,
             comment: response.comment ?? undefined,
             servedBy: response.servedBy ?? undefined,
             serviceDate: legalPaperServiceDate ?? servedAt,
@@ -1414,8 +1415,7 @@ export class PoliceService {
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
-    const normalizedNationalId =
-      normalizeAndFormatNationalId(defendantNationalId)[0]
+    const normalizedNationalId = defendantNationalId ?? ''
 
     const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
