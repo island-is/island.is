@@ -46,6 +46,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
@@ -165,6 +166,12 @@ export enum Features {
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
+  // Should user-notification worker check deceased status via national registry
+  isUserNotificationDeceasedCheckEnabled = 'isUserNotificationDeceasedCheckEnabled',
+
+  // Should user-notification worker check inactive company status via company registry
+  isUserNotificationInactiveCompanyCheckEnabled = 'isUserNotificationInactiveCompanyCheckEnabled',
+
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 
@@ -190,6 +197,8 @@ export enum Features {
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
+  // Primary school PDF viewer modal
+  isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
   // University micro-credentials (örnám)

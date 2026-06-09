@@ -1,14 +1,20 @@
 import { Defendant } from '../../repository'
-import { getDefenderVisiblePoliceCaseNumbers } from './caseFileCategory'
+import {
+  getConfirmedDefendantsForDefender,
+  getDefenderVisiblePoliceCaseNumbers,
+  isConfirmedDefenderOfSpecificDefendant,
+} from './caseFileCategory'
 
 const makeDefendant = (
   overrides: Partial<{
+    id: string
     defenderNationalId: string
     isDefenderChoiceConfirmed: boolean
     policeCaseNumbers: string[]
   }> = {},
 ): Defendant =>
   ({
+    id: overrides.id ?? 'defendant-id',
     defenderNationalId: overrides.defenderNationalId ?? null,
     isDefenderChoiceConfirmed: overrides.isDefenderChoiceConfirmed ?? false,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
@@ -185,5 +191,120 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
     )
 
     expect(result).toEqual(['007-2026-1'])
+  })
+})
+
+describe('getConfirmedDefendantsForDefender', () => {
+  it('should return only defendants where user is confirmed defender', () => {
+    const confirmedDefendant = makeDefendant({
+      id: 'defendant-1',
+      defenderNationalId: '1234567890',
+      isDefenderChoiceConfirmed: true,
+    })
+    const unconfirmedDefendant = makeDefendant({
+      id: 'defendant-2',
+      defenderNationalId: '1234567890',
+      isDefenderChoiceConfirmed: false,
+    })
+    const otherDefenderDefendant = makeDefendant({
+      id: 'defendant-3',
+      defenderNationalId: '0987654321',
+      isDefenderChoiceConfirmed: true,
+    })
+
+    const result = getConfirmedDefendantsForDefender('1234567890', [
+      confirmedDefendant,
+      unconfirmedDefendant,
+      otherDefenderDefendant,
+    ])
+
+    expect(result).toEqual([confirmedDefendant])
+  })
+
+  it('should return multiple defendants when defender represents multiple defendants', () => {
+    const defendant1 = makeDefendant({
+      id: 'defendant-1',
+      defenderNationalId: '1234567890',
+      isDefenderChoiceConfirmed: true,
+    })
+    const defendant2 = makeDefendant({
+      id: 'defendant-2',
+      defenderNationalId: '1234567890',
+      isDefenderChoiceConfirmed: true,
+    })
+
+    const result = getConfirmedDefendantsForDefender('1234567890', [
+      defendant1,
+      defendant2,
+    ])
+
+    expect(result).toEqual([defendant1, defendant2])
+  })
+
+  it('should return empty array when defendants is undefined', () => {
+    const result = getConfirmedDefendantsForDefender('1234567890', undefined)
+
+    expect(result).toEqual([])
+  })
+
+  it('should return empty array when no defendants match', () => {
+    const defendants = [
+      makeDefendant({
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+      }),
+    ]
+
+    const result = getConfirmedDefendantsForDefender('1234567890', defendants)
+
+    expect(result).toEqual([])
+  })
+})
+
+describe('isConfirmedDefenderOfSpecificDefendant', () => {
+  it('should return true when user is confirmed defender of the specific defendant', () => {
+    const defendants = [
+      makeDefendant({
+        id: 'defendant-1',
+        defenderNationalId: '1234567890',
+        isDefenderChoiceConfirmed: true,
+      }),
+      makeDefendant({
+        id: 'defendant-2',
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+      }),
+    ]
+
+    const result = isConfirmedDefenderOfSpecificDefendant(
+      '1234567890',
+      'defendant-1',
+      defendants,
+    )
+
+    expect(result).toBe(true)
+  })
+
+  it('should return false when user is not confirmed defender of the specific defendant', () => {
+    const defendants = [
+      makeDefendant({
+        id: 'defendant-1',
+        defenderNationalId: '1234567890',
+        isDefenderChoiceConfirmed: true,
+      }),
+      makeDefendant({
+        id: 'defendant-2',
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+      }),
+    ]
+
+    const result = isConfirmedDefenderOfSpecificDefendant(
+      '1234567890',
+      'defendant-2',
+      defendants,
+    )
+
+    expect(result).toBe(false)
   })
 })

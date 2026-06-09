@@ -609,4 +609,131 @@ describe('DrivingLicenseSubmissionService', () => {
       })
     })
   })
+
+  describe('BE branch', () => {
+    let service: DrivingLicenseSubmissionService
+    let applyForBELicense: jest.Mock
+
+    const baseAnswers = {
+      applicationFor: 'BE',
+      email: 'mock@email.com',
+      phone: '9999999',
+    }
+
+    beforeEach(async () => {
+      applyForBELicense = jest.fn(async () => ({
+        success: true,
+        errorMessage: null,
+      }))
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            isGlobal: true,
+            load: [emailModuleConfig],
+          }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { applyForBELicense },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('forwards sendPlasticToPerson: true when the delivery method is post (home delivery)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          delivery: { deliveryMethod: 'post', jurisdiction: '37' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual({ success: true })
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input).toMatchObject({
+        jurisdiction: 37,
+        sendPlasticToPerson: true,
+      })
+    })
+
+    it('forwards sendPlasticToPerson: false when the delivery method is district (pickup)', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+          delivery: { deliveryMethod: 'district', jurisdiction: '37' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.sendPlasticToPerson).toBe(false)
+    })
+
+    it('defaults sendPlasticToPerson to false (pickup) when no delivery method is set', async () => {
+      const user = createCurrentUser()
+      const application = createApplication({
+        answers: {
+          ...baseAnswers,
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      await service.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(applyForBELicense).toHaveBeenCalledTimes(1)
+      const [, , input] = applyForBELicense.mock.calls[0]
+      expect(input.sendPlasticToPerson).toBe(false)
+    })
+  })
 })

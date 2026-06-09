@@ -5141,6 +5141,11 @@
             "description": "If person chooses signature from þjóðskrá, then this is\r\na placeholder for that biometric id",
             "nullable": true
           },
+          "sendPlasticToPerson": {
+            "type": "boolean",
+            "description": "Person requests plastic to be sent to them",
+            "nullable": true
+          },
           "healthDeclarationModel": {
             "$ref": "#/components/schemas/Models.HealthDeclarationModel"
           }

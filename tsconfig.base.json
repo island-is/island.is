@@ -104,6 +104,9 @@
       "@island.is/api/domains/farmers": [
         "libs/api/domains/farmers/src/index.ts"
       ],
+      "@island.is/api/domains/feature-flags": [
+        "libs/api/domains/feature-flags/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -703,6 +706,9 @@
       ],
       "@island.is/application/templates/vmst/edit-unemployment-information": [
         "libs/application/templates/vmst/edit-unemployment-information/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/submit-documents": [
+        "libs/application/templates/vmst/submit-documents/src/index.ts"
       ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
@@ -1591,7 +1597,6 @@
       "my-pages": [
         "libs/api/domains/my-pages/src/index.ts"
       ],
-
     },
     "resolveJsonModule": true
   }

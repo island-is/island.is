@@ -268,7 +268,9 @@ export const SubmissionUrls = () => {
               <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
                 <code>
                   Zendesk instance:{' '}
-                  {form.organizationZendeskInstance?.zendeskInstance}
+                  {form.organizationZendeskInstance?.zendeskInstance
+                    ? form.organizationZendeskInstance.zendeskInstance
+                    : 'digitaliceland'}
                   .zendesk.com
                 </code>
               </Text>

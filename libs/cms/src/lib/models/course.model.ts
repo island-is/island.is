@@ -196,6 +196,9 @@ class CourseSelectOption {
 
   @Field(() => String)
   title!: string
+
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string | null
 }
 
 @ObjectType()

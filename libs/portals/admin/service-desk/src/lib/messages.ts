@@ -199,6 +199,14 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:delete-email-confirm-message',
     defaultMessage: 'Ertu viss um að þú viljir eyða netfangi {email}?',
   },
+  deletePhoneConfirmTitle: {
+    id: 'admin-portal.service-desk:delete-phone-confirm-title',
+    defaultMessage: 'Eyða símanúmeri',
+  },
+  deletePhoneConfirmMessage: {
+    id: 'admin-portal.service-desk:delete-phone-confirm-message',
+    defaultMessage: 'Ertu viss um að þú viljir eyða símanúmerinu {phone}?',
+  },
   primary: {
     id: 'admin-portal.service-desk:primary',
     defaultMessage: 'Aðalnetfang',

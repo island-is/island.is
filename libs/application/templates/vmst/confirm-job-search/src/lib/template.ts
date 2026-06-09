@@ -8,7 +8,6 @@ import {
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
-  InstitutionTypes,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
@@ -29,9 +28,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CONFIRM_JOB_SEARCH,
-  name: am.institutionName,
+  name: am.name,
   codeOwner: CodeOwners.Origo,
-  institution: InstitutionTypes.VINNUMALASTOFNUN,
+  institution: am.institutionName,
   translationNamespaces: ApplicationConfigurations.ConfirmJobSearch.translation,
   featureFlag: Features.isConfirmJobSearchEnabled,
   dataSchema,

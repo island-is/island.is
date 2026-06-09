@@ -6,7 +6,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
+import { AppealCaseExistsGuard } from '../../../appeal-case'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
@@ -57,15 +57,15 @@ describe('InternalCaseController - Deliver conclusion to court of appeals guards
     })
   })
 
-  describe('CaseCompletedGuard', () => {
+  describe('AppealCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have CaseCompletedGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseCompletedGuard)
+    it('should have AppealCaseExistsGuard as guard 3', () => {
+      expect(guard).toBeInstanceOf(AppealCaseExistsGuard)
     })
   })
 })

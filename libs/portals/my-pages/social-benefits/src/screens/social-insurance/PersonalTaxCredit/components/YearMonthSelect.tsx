@@ -15,6 +15,7 @@ interface Props {
   yearName: string
   monthName: string
   yearRequired?: boolean
+  monthRequired?: boolean
   backgroundColor?: 'blue' | 'white'
 }
 
@@ -28,6 +29,7 @@ export const YearMonthSelect: FC<Props> = ({
   yearName,
   monthName,
   yearRequired,
+  monthRequired,
   backgroundColor = 'blue',
 }) => {
   const { formatMessage } = useLocale()
@@ -65,6 +67,7 @@ export const YearMonthSelect: FC<Props> = ({
               : null
           }
           onChange={(opt) => onMonthChange(opt ? Number(opt.value) : null)}
+          required={monthRequired}
           isDisabled={selectedYear == null}
         />
       </Column>

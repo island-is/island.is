@@ -1,4 +1,144 @@
-import { validate } from './validate'
+import {
+  Case,
+  IndictmentCount,
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import {
+  getIndictmentCountWarningMessage,
+  isIndictmentCountComplete,
+  validate,
+} from './validate'
+
+const POLICE_CASE_NUMBER = '012-3456-7890'
+
+const createWorkingCase = (
+  indictmentSubtypes: Record<string, IndictmentSubtype[]>,
+): Case =>
+  ({
+    indictmentSubtypes,
+  } as Case)
+
+describe('isIndictmentCountComplete', () => {
+  test('returns true for a complete non-traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns false for an incomplete non-traffic count missing incidentDescription', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
+  })
+
+  test('returns true for a complete traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      vehicleRegistrationNumber: 'ABC123',
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns false for an incomplete traffic count missing vehicleRegistrationNumber', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
+  })
+})
+
+describe('getIndictmentCountWarningMessage', () => {
+  test('returns first missing field for non-traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar atvikalýsingu',
+    )
+  })
+
+  test('returns legal arguments when incident description is filled', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar heimfærslu',
+    )
+  })
+
+  test('returns first missing field for traffic count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      lawsBroken: [[1]],
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+      offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
+    } as IndictmentCount
+
+    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
+      'Vantar skráningarnúmer ökutækis',
+    )
+  })
+
+  test('returns undefined for a complete count', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(
+      getIndictmentCountWarningMessage(indictmentCount, workingCase),
+    ).toBeUndefined()
+  })
+})
 
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {

@@ -67,7 +67,7 @@ const AppointmentsOverview = () => {
 
   return (
     <IntroWrapper
-      title={messages.appointments}
+      title={messages.appointmentsOverviewTitle}
       intro={messages.appointmentsIntro}
       serviceProvider={{
         slug: HEALTH_DIRECTORATE_SLUG,

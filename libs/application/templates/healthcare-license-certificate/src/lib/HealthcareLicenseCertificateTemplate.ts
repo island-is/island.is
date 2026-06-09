@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -79,7 +79,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,

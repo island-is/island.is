@@ -43,6 +43,10 @@ export class IndictmentCount extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
+  @ApiProperty({ type: Number })
+  displayOrder!: number
+
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   policeCaseNumber?: string
