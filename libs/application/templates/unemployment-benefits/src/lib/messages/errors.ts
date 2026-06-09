@@ -64,6 +64,12 @@ export const serviceErrors = defineMessages({
     defaultMessage: 'Þessi dálkur er skilyrtur',
     description: 'Error message when validation fails',
   },
+  languageError: {
+    id: 'vmst.ub.application:languageError',
+    defaultMessage:
+      'Vinsamlegast fylltu út bæði tungumál og færni, eða fjarlægðu línuna',
+    description: 'Error message when language validation fails',
+  },
   acknowledgementError: {
     id: 'vmst.ub.application:acknowledgementError',
     defaultMessage: 'Vantar samþykki',

@@ -170,15 +170,8 @@ export const m = defineMessages({
   },
   personalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
-    defaultMessage: 'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
-  },
-  personalTaxCreditNotRegistered: {
-    id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
-    defaultMessage: 'Þú ert ekki með skráðan persónuafslátt hjá TR.',
-  },
-  myPersonalTaxCredit: {
-    id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
-    defaultMessage: 'Persónuafslátturinn minn',
+    defaultMessage:
+      'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026. Bankareikningurinn sem greitt er inn á má nálgast undir “Mínar upplýsingar”.',
   },
   registerPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
@@ -201,24 +194,9 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
     defaultMessage: 'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
   },
-  spouseDeceasedInfo: {
-    id: 'sp.social-insurance-maintenance:spouse-deceased-info',
-    defaultMessage:
-      'Ath. skattkort vegna andláts maka má vera skráð frá og með 1. næsta mánaðar eftir andlát og verður nýtt næstu 8 mánuði á eftir.',
-  },
   grantSpouseTaxCredit: {
     id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
     defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
-  },
-  grantSpouseTaxCreditInfo: {
-    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit-info',
-    defaultMessage:
-      'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
-  },
-  taxBracketInfoMarkdown: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-information#markdown',
-    defaultMessage:
-      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n* 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n* 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n* 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
   },
   taxCardTypePersonalTaxAllowance: {
     id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
@@ -301,10 +279,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:name',
     defaultMessage: 'Nafn',
   },
-  nationalId: {
-    id: 'sp.social-insurance-maintenance:national-id',
-    defaultMessage: 'Kennitala',
-  },
   calculateMyRights: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights',
     defaultMessage: 'Reikna mín réttindi',
@@ -316,5 +290,59 @@ export const m = defineMessages({
   noPaymentTypesFound: {
     id: 'sp.social-insurance-maintenance:no-payment-types-found',
     defaultMessage: 'Engar greiðslutegundir fundust.',
+  },
+  myTaxCreditUsage: {
+    id: 'sp.social-insurance-maintenance:my-tax-credit-usage',
+    defaultMessage: 'Nýting persónuafsláttar',
+  },
+  spouseNoUsage: {
+    id: 'sp.social-insurance-maintenance:spouse-no-usage',
+    defaultMessage: 'Engin nýting',
+  },
+  youAreUsingSpouseTaxCreditTitle: {
+    id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
+    defaultMessage: 'Þú nýtir persónuafslátt maka',
+  },
+  spousePersonalTaxCreditDescription: {
+    id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit-description',
+    defaultMessage:
+      'Þú getur leyft maka þínum að nota skattkortið þitt, allt að 100% af persónuafslætti. Ekki má nota skattkort beggja samtímis. Einnig má nýta skattkort látins maka í allt að 9 mánuði.',
+  },
+  taxCardTypeSpouseUsing: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-using',
+    defaultMessage: 'Skattkort í nýtingu maka',
+  },
+  percentagePlaceholder: {
+    id: 'sp.social-insurance-maintenance:percentage-placeholder',
+    defaultMessage: '100%',
+  },
+  nationalIdWithValue: {
+    id: 'sp.social-insurance-maintenance:national-id-with-value',
+    defaultMessage: 'Kennitala: {value}',
+  },
+  spouseInfoNotFound: {
+    id: 'sp.social-insurance-maintenance:spouse-info-not-found',
+    defaultMessage: 'Engar upplýsingar fundust um maka',
+  },
+  spouseTaxCreditUnknownError: {
+    id: 'sp.social-insurance-maintenance:spouse-tax-credit-unknown-error',
+    defaultMessage:
+      'Ekki er hægt að framkvæma umbeðna breytingu. Vinsamlegast hafðu samband við þjónustuver TR ef þú vilt breyta skattkorti maka.',
+  },
+  grantSpouseNotAllowedDeceased: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-not-allowed-deceased',
+    defaultMessage:
+      'Ekki er hægt að veita maka leyfi til að nota persónuafslátt þar sem maki er skráður látinn.',
+  },
+  // Shown when the deceased spouse tax card cannot be applied — two specific
+  // blocking reasons with distinct user-facing explanations.
+  deceasedSpouseNotRegistered: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-not-registered-deceased',
+    defaultMessage: 'Maki ekki skráður látinn samkvæmt kerfum TR',
+  },
+  deceasedSpouseDateOfDeathOutOfRange: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-date-of-death-not-within-valid-range',
+    defaultMessage:
+      'Til þess að nýta persónuafslátt látins maka þá má andlátsdagsetningin ekki vera eldri en 8 mánuðir frá deginum í dag',
   },
 })

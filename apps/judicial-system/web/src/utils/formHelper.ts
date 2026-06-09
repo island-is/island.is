@@ -1,7 +1,56 @@
 import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  CASE_TABLE_GROUPS_ROUTE,
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+  COURT_OF_APPEAL_RULING_ROUTE,
+  COURT_OF_APPEAL_SUMMARY_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
+  PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
+  PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
+  PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+  PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+  PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   AppealCase,
   Case,
@@ -154,70 +203,80 @@ export const hasDateChanged = (
 }
 
 export type stepValidationsType = {
-  [constants.CASE_TABLE_GROUPS_ROUTE]: () => boolean
-  [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
-  [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
+  [CASE_TABLE_GROUPS_ROUTE]: () => boolean
+  [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => boolean
-  [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => boolean
-  [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
+  [PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (
+  [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE]: () => boolean
+  [PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE]: () => boolean
+  [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => boolean
-  [constants.INDICTMENTS_DEFENDANT_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => boolean
-  [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
-  [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+  [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => boolean
-  [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
+  [PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
-  [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => boolean
-  [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+  [PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => boolean
-  [constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
+  [PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => boolean
+  [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE]: () => boolean
+  [PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
+  [PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE]: () => boolean
+  [PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
-  [constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => boolean
-  [constants.INDICTMENTS_OVERVIEW_ROUTE]: () => boolean
-  [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+  [DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
     theCase: Case,
   ) => boolean
-  [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
-  [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
-  [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
-  [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
-  [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
-  [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
-  [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
-  [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE]: (
+    theCase: Case,
+  ) => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+    theCase: Case,
+  ) => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
+    theCase: Case,
+  ) => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (
+    theCase: Case,
+  ) => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => boolean
+  [PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE]: () => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+    theCase: Case,
+  ) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE]: () => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE]: () => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
+  [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
+  [COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
 // COA step validations operate on the appeal-case row identified by the
@@ -230,93 +289,95 @@ export const stepValidations = (
   appealCase?: AppealCase | null,
 ): stepValidationsType => {
   return {
-    [constants.CASE_TABLE_GROUPS_ROUTE]: () => true,
-    [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
+    [CASE_TABLE_GROUPS_ROUTE]: () => true,
+    [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
-    [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
-    [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
-    [constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (theCase: Case) =>
-      validations.isHearingArrangementsStepValidRC(theCase),
-    [constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
+      theCase: Case,
+    ) => validations.isHearingArrangementsStepValidRC(theCase),
+    [PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
       validations.isPoliceDemandsStepValidRC(theCase),
-    [constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
       validations.isPoliceReportStepValidRC(theCase),
-    [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => true,
-    [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => true,
-    [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE]: () => true,
+    [PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE]: () => true,
+    [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) =>
       validations.isRegistrationStepValid(
         theCase,
         theCase.type,
         theCase.policeCaseNumbers,
       ),
-    [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
+    [PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
       theCase: Case,
     ) => validations.isHearingArrangementsStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
       validations.isPoliceDemandsStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
       validations.isPoliceReportStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => true,
-    [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => true,
-    [constants.INDICTMENTS_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => true,
+    [PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => true,
+    [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidIndictments(theCase),
-    [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => true,
-    [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
-    [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE]: () => true,
+    [PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE]: () => true,
+    [PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE]: () => true,
+    [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
-    [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (theCase: Case) =>
       validations.isIndictmentStepValid(theCase),
-    [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
-    [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+    [DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE]: () => true,
+    [DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
-    [constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => true,
-    [constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
+    [DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => true,
+    [DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
       theCase: Case,
     ) => validations.isCourtHearingArrangemenstStepValidRC(theCase),
-    [constants.RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) =>
       validations.isRulingValidRC(theCase),
-    [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
       validations.isCourtRecordStepValidRC(theCase),
-    [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => true,
-    [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+    [DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => true,
+    [DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
-    [constants.INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => true,
-    [constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
+    [DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => true,
+    [DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
       theCase: Case,
     ) => validations.isCourtHearingArrangementsStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) =>
       validations.isRulingValidIC(theCase),
-    [constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
       validations.isCourtRecordStepValidIC(theCase),
-    [constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => true,
-    [constants.INDICTMENTS_OVERVIEW_ROUTE]: () => true,
-    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (theCase: Case) =>
-      validations.isReceptionAndAssignmentStepValid(theCase),
-    [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => true,
+    [PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE]: () => true,
+    [DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
+      theCase: Case,
+    ) => validations.isReceptionAndAssignmentStepValid(theCase),
+    [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (theCase: Case) =>
       validations.isSubpoenaStepValid(theCase),
-    [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
-    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
-    [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE]: () => true,
+    [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (theCase: Case) =>
       validations.isConclusionStepValid(theCase),
-    [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
-    [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
-    [constants.COURT_OF_APPEAL_CASE_ROUTE]: () =>
+    [DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE]: () => true,
+    [COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
+    [COURT_OF_APPEAL_CASE_ROUTE]: () =>
       validations.isCourtOfAppealCaseStepValid(appealCase),
-    [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
+    [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealRulingStepValid(theCase, appealCase),
-    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: () =>
+    [COURT_OF_APPEAL_SUMMARY_ROUTE]: () =>
       appealCase?.appealState === 'COMPLETED',
-    [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
+    [COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
 

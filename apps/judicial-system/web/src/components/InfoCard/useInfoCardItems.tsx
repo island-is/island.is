@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ROUTE_HANDLER_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
@@ -45,10 +48,6 @@ const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
-
-  // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) =>
-    isNonEmptyArray(item.values) && !!item.values[0]
 
   const defendants = ({
     caseType,
@@ -99,7 +98,6 @@ const useInfoCardItems = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    workingCaseId={workingCase.id}
                     courtId={workingCase.court?.id}
                     defender={{
                       name: workingCase.defenderName,
@@ -253,10 +251,7 @@ const useInfoCardItems = () => {
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
-      )} eftir kl. ${formatDate(
-        workingCase.requestedCourtDate,
-        constants.TIME_FORMAT,
-      )}`,
+      )} eftir kl. ${formatDate(workingCase.requestedCourtDate, TIME_FORMAT)}`,
     ],
   }
 
@@ -329,9 +324,7 @@ const useInfoCardItems = () => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent
-                  href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-                >
+                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
                   {splitCase.courtCaseNumber}
                 </LinkComponent>
               </div>
@@ -350,7 +343,7 @@ const useInfoCardItems = () => {
             workingCase.splitCase.courtCaseNumber
           ) : (
             <LinkComponent
-              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              href={`${ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
               key={workingCase.splitCase.id}
             >
               {workingCase.splitCase.courtCaseNumber}
@@ -435,14 +428,11 @@ const useInfoCardItems = () => {
       workingCase.parentCase
         ? `${capitalize(
             formatDate(workingCase.parentCase.validToDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(
-            workingCase.parentCase.validToDate,
-            constants.TIME_FORMAT,
-          )}`
+          )} kl. ${formatDate(workingCase.parentCase.validToDate, TIME_FORMAT)}`
         : workingCase.arrestDate
         ? `${capitalize(
             formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(workingCase.arrestDate, constants.TIME_FORMAT)}`
+          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
         : 'Var ekki skráður',
     ],
   }
@@ -509,7 +499,6 @@ const useInfoCardItems = () => {
   }
 
   return {
-    showItem,
     defendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,

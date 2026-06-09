@@ -43,8 +43,8 @@ import { CivilClaimantNotificationService } from './services/civilClaimantNotifi
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
 import { IndictmentCaseNotificationService } from './services/indictmentCaseNotification/indictmentCaseNotification.service'
 import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { NotificationDispatchService } from './services/notificationDispatch.service'
 import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
-import { NotificationDispatchService } from './notificationDispatch.service'
 
 @Controller('api/internal')
 @ApiTags('internal notifications')
@@ -194,6 +194,7 @@ export class InternalNotificationController {
       notificationDto.type,
       civilClaimant,
       theCase,
+      notificationDto.user,
     )
   }
 

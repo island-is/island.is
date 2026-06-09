@@ -5,7 +5,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -29,6 +28,7 @@ import {
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  UpdateDefendant,
 } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
@@ -207,7 +207,7 @@ export class DefendantService {
   async updateDatabaseDefendant(
     caseId: string,
     defendantId: string,
-    update: UpdateDefendantDto,
+    update: UpdateDefendant,
     transaction: Transaction,
   ) {
     return this.defendantRepositoryService.update(caseId, defendantId, update, {
@@ -526,7 +526,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
+      where: { defenderNationalId: nationalId },
       order: [['created', 'DESC']],
     })
   }

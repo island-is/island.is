@@ -150,4 +150,13 @@ describe('ApplicationService', () => {
       expect(order).toEqual([['modified', 'DESC']])
     })
   })
+  describe('findAllDueToBePruned', () => {
+    it('should only fetch applications where userDeleted is false', async () => {
+      await service.findAllDueToBePruned()
+
+      expect(findAllSpy).toHaveBeenCalledTimes(1)
+      const where = findAllSpy.mock.calls[0][0].where
+      expect(where[Op.and].userDeleted).toEqual({ [Op.eq]: false })
+    })
+  })
 })

@@ -44,6 +44,7 @@ export const createTestingIndictmentCountModule = async () => {
           update: jest.fn(),
           destroy: jest.fn(),
           findByPk: jest.fn(),
+          max: jest.fn(),
         },
       },
       {

@@ -11,7 +11,7 @@ import { externalData } from '../lib/messages'
 import {
   ApplicationPeriodApi,
   NationalRegistryCustodiansApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   SchoolsApi,
   StudentInfoApi,
   UserProfileApiWithValidation,
@@ -48,7 +48,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

@@ -1,3 +1,4 @@
+import './tanstack-table'
 import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import {
@@ -6,6 +7,7 @@ import {
   OnChangeFn,
   Row,
   SortingState,
+  TableMeta,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -48,6 +50,7 @@ interface TableProps<TData extends object> {
   defaultSorting?: SortingState
   /** Screen-reader-only caption describing the table. Auto-included when the table has sortable columns. */
   srCaption?: string
+  meta?: TableMeta<TData>
 }
 
 export const Table = <TData extends object>({
@@ -64,6 +67,7 @@ export const Table = <TData extends object>({
   onSortingChange,
   defaultSorting,
   srCaption,
+  meta,
 }: TableProps<TData>) => {
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
@@ -114,6 +118,7 @@ export const Table = <TData extends object>({
     getExpandedRowModel: getExpandedRowModel(),
     ...(getRowId ? { getRowId } : {}),
     ...(manualSorting ? { manualSorting: true } : {}),
+    ...(meta ? { meta } : {}),
   })
 
   if (error) {
@@ -160,23 +165,38 @@ export const Table = <TData extends object>({
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                <Text
-                  variant="h4"
-                  as="h2"
-                  color="blue400"
-                  id={
-                    mobileTitleKey
-                      ? `${tableId}-row-title-${row.id}`
-                      : undefined
-                  }
-                >
-                  {titleCell
-                    ? flexRender(
-                        titleCell.column.columnDef.cell,
-                        titleCell.getContext(),
-                      )
-                    : null}
-                </Text>
+                {titleCell?.column.columnDef.meta?.type === 'interactive' ? (
+                  <Box
+                    id={
+                      mobileTitleKey
+                        ? `${tableId}-row-title-${row.id}`
+                        : undefined
+                    }
+                  >
+                    {flexRender(
+                      titleCell.column.columnDef.cell,
+                      titleCell.getContext(),
+                    )}
+                  </Box>
+                ) : (
+                  <Text
+                    variant="h4"
+                    as="h2"
+                    color="blue400"
+                    id={
+                      mobileTitleKey
+                        ? `${tableId}-row-title-${row.id}`
+                        : undefined
+                    }
+                  >
+                    {titleCell
+                      ? flexRender(
+                          titleCell.column.columnDef.cell,
+                          titleCell.getContext(),
+                        )
+                      : null}
+                  </Text>
+                )}
                 {renderExpandedRow && (
                   <Box marginLeft={1}>
                     <Button
@@ -210,6 +230,17 @@ export const Table = <TData extends object>({
                   const header = headerGroup?.headers.find(
                     (h) => h.column.id === cell.column.id,
                   )
+                  const cellMeta = cell.column.columnDef.meta
+                  if (cellMeta?.span === 2) {
+                    return (
+                      <Box key={cell.id} marginBottom={1}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Box>
+                    )
+                  }
                   return (
                     <Box
                       key={cell.id}
@@ -218,7 +249,7 @@ export const Table = <TData extends object>({
                       marginBottom={1}
                     >
                       <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
+                        <Text fontWeight="semiBold">
                           {header
                             ? flexRender(
                                 header.column.columnDef.header,
@@ -228,12 +259,19 @@ export const Table = <TData extends object>({
                         </Text>
                       </Box>
                       <Box width="half">
-                        <Text variant="default">
-                          {flexRender(
+                        {cellMeta?.type === 'interactive' ? (
+                          flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
-                          )}
-                        </Text>
+                          )
+                        ) : (
+                          <Text>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Text>
+                        )}
                       </Box>
                     </Box>
                   )
@@ -299,7 +337,12 @@ export const Table = <TData extends object>({
                       : 'none'
                     : undefined
                 }
-                style={{ fontSize: '16px' }}
+                style={{
+                  fontSize: '16px',
+                  ...(header.column.columnDef.meta?.align && {
+                    textAlign: header.column.columnDef.meta.align,
+                  }),
+                }}
               >
                 {header.column.getCanSort() ? (
                   <FocusableBox
@@ -425,19 +468,36 @@ export const Table = <TData extends object>({
                           isExpanded || isCollapsing ? undefined : 'standard',
                       }}
                     >
-                      <Text
-                        variant="medium"
-                        id={
-                          mobileTitleKey && cell.column.id === mobileTitleKey
-                            ? `${tableId}-row-title-${row.id}`
-                            : undefined
-                        }
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </Text>
+                      {cell.column.columnDef.meta?.type === 'interactive' ? (
+                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
+                          <Box id={`${tableId}-row-title-${row.id}`}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Box>
+                        ) : (
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )
+                        )
+                      ) : (
+                        <Text
+                          variant="medium"
+                          id={
+                            mobileTitleKey && cell.column.id === mobileTitleKey
+                              ? `${tableId}-row-title-${row.id}`
+                              : undefined
+                          }
+                          textAlign={cell.column.columnDef.meta?.align}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </Text>
+                      )}
                     </T.Data>
                   ),
                 )}
@@ -453,6 +513,8 @@ export const Table = <TData extends object>({
                       position: 'relative',
                       background:
                         isExpanded || isCollapsing ? 'blue100' : undefined,
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? 'standard' : undefined,
                     }}
                   >
                     <AnimateHeight

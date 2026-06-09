@@ -159,8 +159,8 @@ export const m = defineMessages({
   },
   summaryScreen: {
     id: 'form.system:summary-screen',
-    defaultMessage: 'Yfirlit',
-    description: 'Summary',
+    defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
+    description: 'Display summary before submission',
   },
   payment: {
     id: 'form.system:payment',
@@ -566,6 +566,11 @@ export const m = defineMessages({
     defaultMessage: 'Krafist',
     description: 'Required',
   },
+  listFetchFailed: {
+    id: 'form.system:list-fetch-failed',
+    defaultMessage: 'Ekki tókst að hlaða lista',
+    description: 'Failed to load list',
+  },
   select: {
     id: 'form.system:select',
     defaultMessage: 'Veldu',
@@ -653,8 +658,8 @@ export const m = defineMessages({
   },
   getJson: {
     id: 'form.system:get-json',
-    defaultMessage: 'Sækja JSON',
-    description: 'Get JSON',
+    defaultMessage: 'Niðurhala JSON',
+    description: 'Download JSON',
   },
   address: {
     id: 'form.system:address',
@@ -1158,29 +1163,20 @@ export const m = defineMessages({
   },
   zendeskPrivate: {
     id: 'form.system:zendesk-private',
-    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
-    description: 'Applications should be marked as internal/private in Zendesk',
+    defaultMessage:
+      'Merkja umsóknirnar sem internal/private í Zendesk. Þá fer innihald umsókna ekki með í samskiptum við umsækjanda frá Zendesk.',
+    description:
+      'Mark applications as internal/private in Zendesk. This way, the content of the applications will not be included in communication with the applicant from Zendesk.',
   },
   useValidate: {
     id: 'form.system:use-validate',
     defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
     description: 'Use the service to validate the data',
   },
-  usePopulate: {
-    id: 'form.system:use-populate',
-    defaultMessage: 'Nota þjónustuna til að fylla út (e. populate) gögn',
-    description: 'Use the service to populate data',
-  },
   screenValidate: {
     id: 'form.system:screen-validate',
     defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
     description: 'Send the screen for validation',
-  },
-  screenPopulate: {
-    id: 'form.system:screen-populate',
-    defaultMessage:
-      'Senda skjá í sjálfvirka útfyllingu gagna (e. data population)',
-    description: 'Send the screen for automatic data population',
   },
   completedMessage: {
     id: 'form.system:completed-message',
@@ -1265,5 +1261,10 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  copyFieldHover: {
+    id: 'form.system:copy-field-hover',
+    defaultMessage: 'Afrita innslátt',
+    description: 'Copy field',
   },
 })

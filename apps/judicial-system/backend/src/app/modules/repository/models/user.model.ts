@@ -83,4 +83,12 @@ export class User extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: false })
   @ApiProperty({ type: Boolean })
   canConfirmIndictment!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({ type: Boolean })
+  canManageMessageSuspension!: boolean
 }

@@ -16,6 +16,7 @@ import {
   CaseState,
   CaseTableColumnKey,
   CaseType,
+  completedIndictmentCaseStates,
   courtSessionTypeNames,
   DefendantEventType,
   EventType,
@@ -276,7 +277,7 @@ const generateIndictmentRulingDecisionTag = (
     case CaseIndictmentRulingDecision.WITHDRAWAL:
       return createCell({ color: 'rose', text: 'Afturkallað' }, 'M')
     default:
-      return createCell({ color: 'darkerBlue', text: 'Lokið' }, 'N')
+      return createCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
   }
 }
 
@@ -299,6 +300,7 @@ const generateIndictmentCaseStateTag = (
       case IndictmentDecision.POSTPONING:
       case IndictmentDecision.SCHEDULING:
       case IndictmentDecision.COMPLETING:
+      case IndictmentDecision.COMPLETING_FOR_SOME:
         return generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
       case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
         return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
@@ -332,7 +334,7 @@ const generateIndictmentCaseStateTag = (
     case CaseState.CORRECTING:
       return generateIndictmentRulingDecisionTag(c, user)
     case CaseState.WAITING_FOR_CANCELLATION:
-      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
+      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'M')
     default:
       return generateCell({ color: 'white', text: 'Óþekkt' }, 'N') // Should not happen
   }
@@ -1093,7 +1095,9 @@ const indictmentRulingDecision: CaseTableCellGenerator<
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
-    generateIndictmentRulingDecisionTag(c, user),
+    completedIndictmentCaseStates.includes(c.state)
+      ? generateIndictmentRulingDecisionTag(c, user)
+      : generateCell(),
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagGroupValue> = {

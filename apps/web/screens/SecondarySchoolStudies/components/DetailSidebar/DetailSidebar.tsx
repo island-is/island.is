@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { SecondarySchoolProgrammeByIdQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolSimple } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../../messages/messages'
@@ -11,7 +11,7 @@ import { getSchoolData } from '../../utils/schoolDataMap'
 import * as styles from './DetailSidebar.css'
 
 interface DetailSidebarProps {
-  schools?: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']['schools']
+  schools?: Array<SecondarySchoolSimple> | null
   locale: string
 }
 

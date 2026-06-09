@@ -1,7 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
-  ConversationAttachmentRequestDto,
+  ConversationDetailDto,
   ConversationMessageDto,
   ConversationStatusFilter,
   CreateConversationRequestDto,
@@ -10,7 +10,6 @@ import {
   HealthDirectorateHealthService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
-  UserVisibleAppointmentStatuses,
   VaccinationDto,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -25,8 +24,8 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
-import { HealthDirectorateCreateMessageInput } from './dto/createHealthMessage.input'
-import { HealthDirectorateReplyToMessageInput } from './dto/replyToHealthMessage.input'
+import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
+import { HealthDirectorateReplyToConversationInput } from './dto/replyToHealthConversation.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -35,10 +34,15 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  toAppointmentAssigneeTypeEnum,
+  toAppointmentLinkTypeEnum,
+  toAppointmentModalityEnum,
   toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
   mapVaccinationStatus,
+  toConversationDirectionEnum,
+  toConversationStatusFilter,
 } from './mappers/basicInformationMapper'
 import {
   mapDelegationStatus,
@@ -50,7 +54,10 @@ import {
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
-import { PermitStatusEnum } from './models/enums'
+import {
+  HealthConversationStatusFilterEnum,
+  PermitStatusEnum,
+} from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
   MedicineHistory,
@@ -68,18 +75,19 @@ import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import { HealthDirectorateHealthMessage } from './models/healthMessage.model'
-import { HealthDirectorateHealthMessageAttachment } from './models/healthMessageAttachment.model'
-import { HealthDirectorateHealthMessageDetail } from './models/healthMessageDetail.model'
-import { HealthDirectorateHealthMessageEntry } from './models/healthMessageEntry.model'
-import { HealthDirectorateHealthMessageType } from './models/healthMessageType.model'
-import { HealthDirectorateHealthMessagingRecipient } from './models/healthMessagingRecipient.model'
+import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
+import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
+import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
+import { HealthDirectorateHealthConversationEntry } from './models/healthConversationEntry.model'
+import { HealthDirectorateHealthConversationType } from './models/healthConversationType.model'
+import { HealthDirectorateHealthConversationRecipient } from './models/healthConversationRecipient.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -354,9 +362,31 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    await this.healthApi.postRenewalPrescription(auth, input.id)
+    await this.healthApi.postRenewalPrescription(auth, input.id, {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+    })
 
     return null
+  }
+
+  /* Renewal targets */
+  async getPrescriptionRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<PrescriptionRenewalTarget[] | null> {
+    const data = await this.healthApi.getRenewalTargets(auth, id)
+
+    if (!data) {
+      return null
+    }
+
+    return data.map((item) => ({
+      groupId: item.groupId,
+      nodeId: item.nodeId,
+      name: item.name,
+      description: item.description,
+    }))
   }
 
   /* Prescription Documents */
@@ -598,6 +628,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       duration: item.duration,
       location: item.location
         ? {
@@ -611,6 +642,13 @@ export class HealthDirectorateService {
         : undefined,
       instruction: item.patientInstruction,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
     }))
     return { data: appointments }
   }
@@ -630,6 +668,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       instruction: item.patientInstruction,
       duration: item.duration,
       location: item.location
@@ -637,8 +676,13 @@ export class HealthDirectorateService {
             name: item.location.name,
             organization: item.location.organization,
             address: item.location.address,
+            department: item.location.department,
+            wing: item.location.wing,
+            floor: item.location.floor,
+            room: item.location.room,
             directions: item.location.directions,
             link: item.location.link,
+            locationLinks: item.location.links,
             city: item.location.city,
             postalCode: item.location.postalCode,
             country: item.location.country,
@@ -649,47 +693,83 @@ export class HealthDirectorateService {
           }
         : undefined,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
+      links: item.links
+        ?.map((l) => {
+          const type = toAppointmentLinkTypeEnum(l.type)
+          return type ? { type, url: l.url } : null
+        })
+        .filter(isDefined),
     }
   }
 
-  /* Health Messages */
+  /* Health Conversations */
 
-  private mapMessageAttachment(
+  private mapConversationAttachment(
     a: ConversationAttachmentDto,
     conversationId: string,
     messageId: string,
-  ): HealthDirectorateHealthMessageAttachment {
+  ): HealthDirectorateHealthConversationAttachment {
     return {
-      id: a.id,
+      id: String(a.id),
       fileName: a.fileName,
       description: a.description,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/messages/${conversationId}/${messageId}/${a.id}`,
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/health/conversations/${conversationId}/${messageId}/${a.id}`,
     }
   }
 
-  private mapMessageEntry(
+  private mapConversationEntry(
     m: ConversationMessageDto,
     conversationId: string,
-  ): HealthDirectorateHealthMessageEntry {
+  ): HealthDirectorateHealthConversationEntry {
     return {
       id: m.id,
-      direction:
-        m.direction as HealthDirectorateHealthMessageEntry['direction'],
+      direction: toConversationDirectionEnum(m.direction),
       messageSentAt: m.messageSentAt,
       messageTextContent: m.messageTextContent,
       senderGroupName: m.senderGroupName,
       attachments: m.attachments.map((a) =>
-        this.mapMessageAttachment(a, conversationId, m.id),
+        this.mapConversationAttachment(a, conversationId, m.id),
       ),
     }
   }
 
-  async getHealthMessages(
+  private mapConversationDetail(
+    c: ConversationDetailDto,
+  ): HealthDirectorateHealthConversationDetail {
+    return {
+      id: c.id,
+      title: c.title,
+      status: c.status,
+      startDate: c.conversationStartDate,
+      messageCount: c.messageCount,
+      lastMessageSentAt: c.lastMessageSentAt,
+      lastSenderGroupName: c.lastSenderGroupName,
+      hasAttachment: c.hasAttachment,
+      isStarred: c.isStarred,
+      isArchived: c.isArchived,
+      patientCanReply: c.patientCanReply,
+      isRead: !c.unread,
+      messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
+    }
+  }
+
+  async getHealthConversations(
     auth: Auth,
-    status?: ConversationStatusFilter,
+    status?: HealthConversationStatusFilterEnum,
     starred?: boolean,
-  ): Promise<HealthDirectorateHealthMessage[] | null> {
-    const items = await this.healthApi.getConversations(auth, status, starred)
+  ): Promise<HealthDirectorateHealthConversation[] | null> {
+    const items = await this.healthApi.getConversations(
+      auth,
+      status ? toConversationStatusFilter(status) : undefined,
+      starred,
+    )
     if (!items) return null
 
     return items.map((c) => ({
@@ -706,139 +786,83 @@ export class HealthDirectorateService {
     }))
   }
 
-  async getHealthMessage(
+  async getHealthConversation(
     auth: Auth,
     id: string,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
     const c = await this.healthApi.getConversation(auth, id)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
-  async createHealthMessage(
+  async createHealthConversation(
     auth: Auth,
-    input: HealthDirectorateCreateMessageInput,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+    input: HealthDirectorateCreateConversationInput,
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
     const body: CreateConversationRequestDto = {
       nodeId: input.nodeId,
       groupId: input.groupId,
       patientInitiatedTypeCode: input.patientInitiatedTypeCode,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
-      attachments: input.attachments?.map((a) => ({
-        fileName: a.fileName,
-        description: a.description,
-        contentType:
-          a.contentType as ConversationAttachmentRequestDto['contentType'],
-        contentBase64: a.contentBase64,
-      })),
     }
 
     const c = await this.healthApi.createConversation(auth, body)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
-  async replyToHealthMessage(
+  async replyToHealthConversation(
     auth: Auth,
     id: string,
-    input: HealthDirectorateReplyToMessageInput,
-  ): Promise<HealthDirectorateHealthMessageDetail | null> {
+    input: HealthDirectorateReplyToConversationInput,
+  ): Promise<HealthDirectorateHealthConversationDetail | null> {
     const body: CreateReplyRequestDto = {
       messageTextContent: input.messageTextContent,
-      attachments: input.attachments?.map((a) => ({
-        fileName: a.fileName,
-        description: a.description,
-        contentType:
-          a.contentType as ConversationAttachmentRequestDto['contentType'],
-        contentBase64: a.contentBase64,
-      })),
     }
 
     const c = await this.healthApi.replyToConversation(auth, id, body)
     if (!c) return null
 
-    return {
-      id: c.id,
-      title: c.title,
-      status: c.status,
-      startDate: c.conversationStartDate,
-      messageCount: c.messageCount,
-      lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
-      hasAttachment: c.hasAttachment,
-      isStarred: c.isStarred,
-      isArchived: c.isArchived,
-      patientCanReply: c.patientCanReply,
-      isRead: !c.unread,
-      messages: c.messages.map((m) => this.mapMessageEntry(m, c.id)),
-    }
+    return this.mapConversationDetail(c)
   }
 
-  async markHealthMessageAsRead(auth: Auth, id: string): Promise<boolean> {
+  async markHealthConversationAsRead(auth: Auth, id: string): Promise<boolean> {
     await this.healthApi.markConversationAsRead(auth, id)
     return true
   }
 
-  async archiveHealthMessage(auth: Auth, id: string): Promise<boolean> {
+  async archiveHealthConversation(auth: Auth, id: string): Promise<boolean> {
     await this.healthApi.archiveConversation(auth, id)
     return true
   }
 
-  async unarchiveHealthMessage(auth: Auth, id: string): Promise<boolean> {
+  async unarchiveHealthConversation(auth: Auth, id: string): Promise<boolean> {
     await this.healthApi.unarchiveConversation(auth, id)
     return true
   }
 
-  async starHealthMessage(auth: Auth, id: string): Promise<boolean> {
+  async starHealthConversation(auth: Auth, id: string): Promise<boolean> {
     await this.healthApi.starConversation(auth, id)
     return true
   }
 
-  async unstarHealthMessage(auth: Auth, id: string): Promise<boolean> {
+  async unstarHealthConversation(auth: Auth, id: string): Promise<boolean> {
     await this.healthApi.unstarConversation(auth, id)
     return true
   }
 
-  async getHealthMessagingRecipients(
+  async getHealthConversationRecipients(
     auth: Auth,
     locale: Locale = 'is',
-  ): Promise<HealthDirectorateHealthMessagingRecipient[] | null> {
+  ): Promise<HealthDirectorateHealthConversationRecipient[] | null> {
     const items = await this.healthApi.getMessagingRecipients(auth, locale)
     if (!items) return null
 
     return items.map(
-      (r): HealthDirectorateHealthMessagingRecipient => ({
+      (r): HealthDirectorateHealthConversationRecipient => ({
         nodeId: r.nodeId,
         groupId: r.groupId,
         name: r.name,
@@ -848,7 +872,7 @@ export class HealthDirectorateService {
         isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
         patientReplyWindowDays: r.patientReplyWindowDays,
         allowedMessageTypes: r.allowedConversationTypes.map(
-          (t): HealthDirectorateHealthMessageType => ({
+          (t): HealthDirectorateHealthConversationType => ({
             patientInitiatedTypeCode: t.patientInitiatedTypeCode,
             title: t.title,
             description: t.description,

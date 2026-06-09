@@ -72,14 +72,6 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
-  dateAndTime: {
-    id: 'sp.health:date-and-time',
-    defaultMessage: 'Dagsetning og tími',
-  },
-  clockShortArg: {
-    id: 'sp.health:clock-short',
-    defaultMessage: 'kl. {arg}',
-  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -1878,82 +1870,82 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
-  healthMessagesIntro: {
+  healthConversationsIntro: {
     defaultMessage:
       'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
     id: 'sp.health:health-messages-intro',
   },
-  healthMessagesSearchPlaceholder: {
+  healthConversationsSearchPlaceholder: {
     defaultMessage: 'Sía eftir leitarorði',
     id: 'sp.health:health-messages-search-placeholder',
   },
-  healthMessagesCreate: {
+  healthConversationsCreate: {
     defaultMessage: 'Ný skilaboð',
     id: 'sp.health:health-messages-create',
   },
-  healthMessagesFilterStarred: {
+  healthConversationsFilterStarred: {
     defaultMessage: 'Stjörnumerkt',
     id: 'sp.health:health-messages-filter-starred',
   },
-  healthMessagesFilterArchived: {
+  healthConversationsFilterArchived: {
     defaultMessage: 'Geymsla',
     id: 'sp.health:health-messages-filter-archived',
   },
-  healthMessagesNewTitle: {
+  healthConversationsNewTitle: {
     defaultMessage: 'Hafa samband',
     id: 'sp.health:health-messages-new-title',
   },
-  healthMessagesNewIntro: {
+  healthConversationsNewIntro: {
     defaultMessage:
       'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-messages-new-intro',
   },
-  healthMessagesNewSelectService: {
+  healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
     id: 'sp.health:health-messages-new-select-service',
   },
-  healthMessagesNewSelectServicePlaceholder: {
+  healthConversationsNewSelectServicePlaceholder: {
     defaultMessage: 'Veldu þjónustu úr fellilistanum',
     id: 'sp.health:health-messages-new-select-service-placeholder',
   },
-  healthMessagesNewBodyPlaceholder: {
+  healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
   },
-  healthMessagesNewTermsAccept: {
+  healthConversationsNewTermsAccept: {
     defaultMessage: 'Ég samþykki',
     id: 'sp.health:health-messages-new-terms-accept',
   },
-  healthMessagesNewTermsLinkText: {
+  healthConversationsNewTermsLinkText: {
     defaultMessage: 'skilmála',
     id: 'sp.health:health-messages-new-terms-link-text',
   },
-  healthMessageNotFound: {
+  healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
   },
-  healthMessageTo: {
+  healthConversationTo: {
     defaultMessage: 'Til: {arg}',
     id: 'sp.health:health-message-to',
   },
-  healthMessageSend: {
+  healthConversationSend: {
     defaultMessage: 'Senda skilaboð',
     id: 'sp.health:health-message-send',
   },
-  healthMessageCloseReply: {
+  healthConversationCloseReply: {
     defaultMessage: 'Loka svarglugga',
     id: 'sp.health:health-message-close-reply',
   },
-  healthMessageSentTitle: {
+  healthConversationSentTitle: {
     defaultMessage: 'Skilaboð móttekin',
     id: 'sp.health:health-message-sent-title',
   },
-  healthMessageSentText: {
+  healthConversationSentText: {
     defaultMessage:
       'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
     id: 'sp.health:health-message-sent-text',
   },
-  healthMessagesNoRecipient: {
+  healthConversationsNoRecipient: {
     defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
     id: 'sp.health:health-messages-no-recipient',
   },
@@ -1961,12 +1953,17 @@ export const messages = defineMessages({
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
   },
+  appointmentsOverviewTitle: {
+    id: 'sp.health:appointments-overview-title',
+    defaultMessage: 'Yfirlit tímabókana',
+  },
   appointmentsIntro: {
     defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
     id: 'sp.health:appointments-intro',
   },
   appointmentsDetailIntro: {
-    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um bókaða tímann þinn. Þú getur bætt honum við dagatalið þitt, breytt bókuninni eða afbókað tíma ef þörf krefur.',
     id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
@@ -2542,10 +2539,6 @@ export const messages = defineMessages({
     id: 'sp.health:appointment-at-simple',
     defaultMessage: 'Tími hjá',
   },
-  locationAddress: {
-    id: 'sp.health:location-address',
-    defaultMessage: 'Staðsetning',
-  },
   instructions: {
     id: 'sp.health:instructions',
     defaultMessage: 'Leiðbeiningar',
@@ -2599,6 +2592,18 @@ export const messages = defineMessages({
     defaultMessage: 'Endurnýjun ekki í boði',
     id: 'sp.health:prescription-blocked-specialist-only-prescription',
   },
+  prescriptionBlockedNoRenewalTargets: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-no-renewal-targets',
+  },
+  prescriptionBlockedInvalidRenewalTarget: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-invalid-renewal-target',
+  },
+  prescriptionBlockedRecipientExcludesAtc: {
+    defaultMessage: 'Endurnýjun ekki í boði vegna',
+    id: 'sp.health:prescription-blocked-recipient-excludes-atc',
+  },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
@@ -2614,6 +2619,15 @@ export const messages = defineMessages({
   renewalStatusRejected: {
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
+  },
+  renewalSendTo: {
+    defaultMessage: 'Sendist til',
+    id: 'sp.health:renewal-send-to',
+  },
+  renewalNoTarget: {
+    defaultMessage:
+      'Ekki tókst að finna stofnun til að senda endurnýjunarbeiðni til. Vinsamlegast hafið samband við heilsugæslu.',
+    id: 'sp.health:renewal-no-target',
   },
   renewalRequestSent: {
     defaultMessage:
@@ -2681,10 +2695,6 @@ export const messages = defineMessages({
     defaultMessage: 'Opna kort',
     id: 'sp.health:see-on-maps',
   },
-  duration: {
-    defaultMessage: 'Tímalengd',
-    id: 'sp.health:duration',
-  },
   argWithMinutes: {
     defaultMessage: '{arg} mínútur',
     id: 'sp.health:arg-with-minutes',
@@ -2732,5 +2742,45 @@ export const messages = defineMessages({
   contactBookTimeDesc: {
     id: 'sp.health:contact-book-time-desc',
     defaultMessage: 'Hægt er að bóka tíma fyrir ákveðnar þjónustur hér.',
+  },
+  appointmentMoreInfo: {
+    id: 'sp.health:appointment-more-info',
+    defaultMessage: 'Nánari upplýsingar',
+  },
+  appointmentModalityInPerson: {
+    id: 'sp.health:appointment-modality-in-person',
+    defaultMessage: 'Viðtal á staðnum',
+  },
+  appointmentModalityVideo: {
+    id: 'sp.health:appointment-modality-video',
+    defaultMessage: 'Fjarfundur',
+  },
+  appointmentAssignees: {
+    id: 'sp.health:appointment-assignees',
+    defaultMessage: 'Úthlutað til',
+  },
+  appointmentVideoCallLink: {
+    id: 'sp.health:appointment-video-call-link',
+    defaultMessage: 'Opna fjarfund',
+  },
+  appointmentPreparation: {
+    id: 'sp.health:appointment-preparation',
+    defaultMessage: 'Undirbúningur',
+  },
+  appointmentLocationRoom: {
+    id: 'sp.health:appointment-location-room',
+    defaultMessage: 'Herbergi',
+  },
+  appointmentLocationFloor: {
+    id: 'sp.health:appointment-location-floor',
+    defaultMessage: 'Hæð',
+  },
+  appointmentLocationWing: {
+    id: 'sp.health:appointment-location-wing',
+    defaultMessage: 'Álma',
+  },
+  appointmentLocationDepartment: {
+    id: 'sp.health:appointment-location-department',
+    defaultMessage: 'Deild',
   },
 })

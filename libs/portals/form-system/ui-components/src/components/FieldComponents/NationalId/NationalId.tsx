@@ -11,13 +11,13 @@ import {
   GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
@@ -58,6 +58,8 @@ export const NationalId = ({
     defaultValue: getValue(item, 'nationalId', valueIndex) ?? '',
   }) as string
 
+  const showAddress = item.fieldSettings?.showAddress ?? false
+
   const nationalId = (watchedValue ?? '').trim()
   const normalizedId = nationalId.replace(/\D/g, '')
   const queryId = normalizedId ? normalizedId : undefined
@@ -87,6 +89,7 @@ export const NationalId = ({
     skip: !shouldQueryIndividual,
     onCompleted: (nameData) => {
       const newName = removeTypename(nameData?.identity?.name)
+
       if (newName) {
         setValue(nameField, newName, {
           shouldDirty: true,
@@ -99,6 +102,19 @@ export const NationalId = ({
           })
         }
         lastQueriedRef.current = queryId
+      }
+      if (showAddress && nameData?.identity?.address) {
+        if (dispatch) {
+          dispatch({
+            type: 'SET_ADDRESS',
+            payload: {
+              id: item.id,
+              address: nameData.identity.address.streetAddress,
+              postalCode: nameData.identity.address.postalCode,
+              municipality: nameData.identity.address.city,
+            },
+          })
+        }
       }
     },
   })
@@ -133,6 +149,15 @@ export const NationalId = ({
           type: 'SET_NAME',
           payload: { id: item.id, value: '', valueIndex },
         })
+        dispatch({
+          type: 'SET_ADDRESS',
+          payload: {
+            id: item.id,
+            address: '',
+            postalCode: '',
+            municipality: '',
+          },
+        })
       }
     }
   }, [isValidFormat, dispatch, item.id, valueIndex])
@@ -140,7 +165,7 @@ export const NationalId = ({
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['1/1', '1/1', '5/10']}>
           <Controller
             key={`${item.id}-${valueIndex}`}
             name={`${item.id}.${valueIndex}`}
@@ -216,6 +241,37 @@ export const NationalId = ({
           />
         </Column>
       </Row>
+      {item.fieldSettings?.showAddress && (
+        <Row>
+          <Column span={['1/1', '1/1', '4/10']}>
+            <Input
+              label={formatMessage(m.address)}
+              name="address"
+              backgroundColor="blue"
+              value={getValue(item, 'address', valueIndex) ?? ''}
+              readOnly
+            />
+          </Column>
+          <Column span={['1/1', '1/1', '2/10']}>
+            <Input
+              label={formatMessage(m.postalCode)}
+              name="postalCode"
+              backgroundColor="blue"
+              value={getValue(item, 'postalCode', valueIndex) ?? ''}
+              readOnly
+            />
+          </Column>
+          <Column span={['1/1', '1/1', '4/10']}>
+            <Input
+              label={formatMessage(m.city)}
+              name="municipality"
+              backgroundColor="blue"
+              value={getValue(item, 'municipality', valueIndex) ?? ''}
+              readOnly
+            />
+          </Column>
+        </Row>
+      )}
     </Stack>
   )
 }

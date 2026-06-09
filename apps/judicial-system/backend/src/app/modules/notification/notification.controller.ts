@@ -33,7 +33,7 @@ import {
   prosecutorNotificationRule,
 } from './guards/rolesRules'
 import { SendNotificationResponse } from './models/sendNotification.response'
-import { NotificationService } from './notification.service'
+import { NotificationService } from './services/notification.service'
 
 @Controller('api/case/:caseId/notification')
 @ApiTags('notifications')

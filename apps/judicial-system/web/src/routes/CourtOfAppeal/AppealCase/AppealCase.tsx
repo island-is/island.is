@@ -4,7 +4,10 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Select } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -108,7 +111,7 @@ const AppealCase: FC = () => {
   }
 
   const previousUrl = appendAppealCaseIdQuery(
-    `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+    `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
     targetAppealCase?.id,
   )
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
@@ -119,10 +122,7 @@ const AppealCase: FC = () => {
         TrackedNotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
       ).hasSent ||
-      isReopenedCOACase(
-        targetAppealCase?.appealState,
-        workingCase.notifications,
-      )
+      isReopenedCOACase(targetAppealCase)
     ) {
       router.push(
         appendAppealCaseIdQuery(
@@ -237,7 +237,7 @@ const AppealCase: FC = () => {
             previousUrl={previousUrl}
             nextButtonIcon="arrowForward"
             onNextButtonClick={() => {
-              handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
+              handleNavigationTo(COURT_OF_APPEAL_RULING_ROUTE)
             }}
             nextButtonText={formatMessage(strings.nextButtonText)}
             nextIsDisabled={!isCourtOfAppealCaseStepValid(targetAppealCase)}

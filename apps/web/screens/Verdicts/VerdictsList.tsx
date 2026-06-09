@@ -1171,7 +1171,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateFromLabel)}: ${format(
           queryState[QueryParam.DATE_FROM],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_FROM, null)
@@ -1184,7 +1184,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
       tags.push({
         label: `${formatMessage(m.listPage.dateToLabel)}: ${format(
           queryState[QueryParam.DATE_TO],
-          'P',
+          'dd.MM.yyyy',
         )}`,
         onClick: () => {
           updateQueryState(QueryParam.DATE_TO, null)

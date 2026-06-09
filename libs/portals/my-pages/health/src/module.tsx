@@ -140,16 +140,16 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
-const HealthMessages = lazy(() =>
-  import('./screens/HealthMessages/HealthMessages'),
+const HealthConversations = lazy(() =>
+  import('./screens/HealthConversations/HealthConversations'),
 )
 
-const NewHealthMessage = lazy(() =>
-  import('./screens/HealthMessages/NewHealthMessage'),
+const NewHealthConversation = lazy(() =>
+  import('./screens/HealthConversations/NewHealthConversation'),
 )
 
-const HealthMessageDetail = lazy(() =>
-  import('./screens/HealthMessages/HealthMessageDetail'),
+const HealthConversationDetail = lazy(() =>
+  import('./screens/HealthConversations/HealthConversationDetail'),
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
@@ -633,30 +633,24 @@ export const healthModule: PortalModule = {
     },
     {
       name: m.messages,
-      path: HealthPaths.HealthMessages,
+      path: HealthPaths.HealthConversations,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <HealthMessages />,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversations />,
     },
     {
-      name: hm.healthMessagesNewTitle,
-      path: HealthPaths.HealthMessagesNew,
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthConversationsNew,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <NewHealthMessage />,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <NewHealthConversation />,
     },
     {
       name: m.messages,
-      path: HealthPaths.HealthMessagesDetail,
+      path: HealthPaths.HealthConversationsDetail,
       key: 'HealthMessages',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <HealthMessageDetail />,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversationDetail />,
     },
   ],
 }

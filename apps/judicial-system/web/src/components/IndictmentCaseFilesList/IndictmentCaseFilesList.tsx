@@ -98,6 +98,7 @@ interface Props {
   workingCase: Case
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
+  forceDisplayAdditionalFiles?: boolean
   connectedCaseParentId?: string
 }
 
@@ -199,6 +200,7 @@ const useFilteredCaseFiles = (
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
+      defendantRulings: filterByCategories(CaseFileCategory.DEFENDANT_RULING),
       rulingOrders: filterByCategories(
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ),
@@ -237,6 +239,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
         isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+      canViewDefendantRulings: !isDefenceUser(user),
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -280,6 +283,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
   displayHeading = true,
+  forceDisplayAdditionalFiles = false,
   connectedCaseParentId,
 }) => {
   const { formatMessage } = useIntl()
@@ -317,14 +321,33 @@ const IndictmentCaseFilesList: FC<Props> = ({
     [workingCase],
   )
 
-  const showSubpoenaPdf = displayGeneratedPDFs && allSubpoenas.length > 0
+  const visibleSubpoenas = useMemo(() => {
+    if (!isDefenceUser(user)) {
+      return allSubpoenas
+    }
+
+    const normalizedUserNationalId = normalizeAndFormatNationalId(
+      user?.nationalId ?? '',
+    )
+
+    return allSubpoenas.filter(
+      ({ defendant }) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizedUserNationalId.includes(defendant.defenderNationalId),
+    )
+  }, [allSubpoenas, user])
+
+  const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
   const filteredFiles = useFilteredCaseFiles(
     workingCase.caseFiles,
     workingCase.splitCases,
   )
   const permissions = useFilePermissions(workingCase, user)
-  const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+  const showFiles =
+    forceDisplayAdditionalFiles ||
+    Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
@@ -370,7 +393,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     )
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const showDigitalCaseFilesSection =
     (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
@@ -476,7 +499,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               heading="h4"
               variant="h4"
             />
-            {allSubpoenas.map(({ defendant, subpoena, caseId }) => {
+            {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
                 strings.subpoenaButtonText,
                 {
@@ -608,6 +631,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
+              (permissions.canViewDefendantRulings &&
+                filteredFiles.defendantRulings.length > 0) ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
               <div>
@@ -620,7 +645,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {hideCourtRecord ? (
                   <AlertMessage
                     type="info"
-                    message="Hægt er að nálgast þingbók hjá héraðsdómi"
+                    message="Hægt er að nálgast þingbók og dómsúrlausn hjá héraðsdómi"
                   />
                 ) : (
                   <>
@@ -643,6 +668,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 {permissions.canViewRulings && (
                   <RenderFiles
                     caseFiles={filteredFiles.rulings}
+                    onOpenFile={onOpen}
+                  />
+                )}
+                {permissions.canViewDefendantRulings && (
+                  <RenderFiles
+                    caseFiles={filteredFiles.defendantRulings}
                     onOpenFile={onOpen}
                   />
                 )}
@@ -734,25 +765,23 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            {filteredFiles.uploadedCaseFiles.length > 0 && (
-              <Box>
-                <SectionHeading
-                  title={formatMessage(strings.uploadedCaseFiles)}
-                  marginBottom={3}
-                  heading="h4"
-                  variant="h4"
-                />
-                <CaseFileTable
-                  caseFiles={filteredFiles.uploadedCaseFiles}
-                  onOpenFile={onOpen}
-                  canRejectFiles={
-                    isDistrictCourtUser(user) &&
-                    !connectedCaseParentId &&
-                    workingCase.state !== CaseState.CORRECTING
-                  }
-                />
-              </Box>
-            )}
+            <Box>
+              <SectionHeading
+                title={formatMessage(strings.uploadedCaseFiles)}
+                marginBottom={3}
+                heading="h4"
+                variant="h4"
+              />
+              <CaseFileTable
+                caseFiles={filteredFiles.uploadedCaseFiles}
+                onOpenFile={onOpen}
+                canRejectFiles={
+                  isDistrictCourtUser(user) &&
+                  !connectedCaseParentId &&
+                  workingCase.state !== CaseState.CORRECTING
+                }
+              />
+            </Box>
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

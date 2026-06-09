@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
+
 import {
   PersonalTaxCreditApi,
   TrWebApiServicesCommonClientsModelsGetTaxBracketReturn,
@@ -32,6 +33,16 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     this.personalTaxCreditWriteApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
+
+  private extractErrorCode(error: unknown): string | null {
+    if (error instanceof FetchError) {
+      const errorBody = (error.problem ?? error.body) as
+        | { detail?: string }
+        | undefined
+      return errorBody?.detail ?? null
+    }
+    return null
+  }
 
   async getTaxAllowanceActions(
     user: User,
@@ -77,6 +88,18 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
       .catch(handle404)
+      .catch((e) => {
+        // We need to be able to extract and return the reasonNotAllowed code
+        // for the frontend to display the correct error message
+        if (!(e instanceof FetchError)) throw e
+        const code = this.extractErrorCode(e)
+        if (!code) throw e
+        return {
+          canApply: false,
+          reasonNotAllowed: code,
+          allowedYearMonths: [],
+        } as TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpousalTaxCardUsageYearMonthResult
+      })
   }
 
   async setTaxCardAllowance(
@@ -119,24 +142,30 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     user: User,
     input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditSpouseTaxCardPost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput:
         input,
     })
+    if (result.success === false) {
+      throw new Error('spouse tax card update failed')
+    }
   }
 
   async setSpouseTaxCardDueToDeath(
     user: User,
     input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   ): Promise<void> {
-    await this.personalTaxCreditWriteApiWithAuth(
+    const result = await this.personalTaxCreditWriteApiWithAuth(
       user,
     ).apiProtectedV1PersonalTaxCreditSpouseTaxCardDueToDeathPost({
       trWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput:
         input,
     })
+    if (result.success === false) {
+      throw new Error('spouse tax card due to death update failed')
+    }
   }
 
   async getSpouseInfo(

@@ -443,6 +443,11 @@
             "description": "Grade level of the assignment",
             "nullable": true
           },
+          "batchNumber": {
+            "type": "integer",
+            "description": "The batch number of assignment ie, for reading ability batch number 1 is in september, 2 is in january and 3 is in may \nthey each have their own mapping so we need to include the batch number when creating the map",
+            "format": "int32"
+          },
           "scheduleStart": {
             "type": "string",
             "description": "Gets or sets the start date and time of the scheduled task.",

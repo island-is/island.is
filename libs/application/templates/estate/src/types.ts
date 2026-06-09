@@ -33,8 +33,6 @@ export interface EstateMember {
   phone?: string
   email?: string
   advocate?: Advocate
-  approved?: boolean
-  approvedDate?: string
 }
 
 export type GunsRepeaterProps = {
@@ -72,12 +70,6 @@ export interface EstateExternalData {
     data: {
       success: boolean
       signatories: InheritanceSignatory[]
-    }
-    date: string
-  }
-  checkReviewFlag?: {
-    data: {
-      reviewEnabled: boolean
     }
     date: string
   }

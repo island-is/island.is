@@ -5,10 +5,12 @@ import { Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
 import {
+  AppealCaseState,
   caseTables,
   CaseTableType,
   CaseType,
   getCaseTableGroups,
+  isCourtOfAppealsUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -143,6 +145,7 @@ export class CaseTableService {
   }
 
   async searchCases(query: string, user: User): Promise<SearchCasesResponse> {
+    const isCoaUser = isCourtOfAppealsUser(user)
     const safeQuery = this.sequelize.escape(`%${query}%`)
     const safeNormalizedQuery = this.sequelize.escape(
       query.toLowerCase().trim(),
@@ -214,8 +217,33 @@ export class CaseTableService {
           model: AppealCase,
           as: 'appealCase',
           required: false,
-          attributes: ['appealCaseNumber'],
+          attributes: isCoaUser
+            ? [
+                'id',
+                'appealCaseNumber',
+                'appealState',
+                'appealReceivedByCourtDate',
+              ]
+            : ['appealCaseNumber'],
         },
+        // COA users need ruling-order appeals to emit one row per appeal.
+        // `separate: true` avoids forcing `subQuery: true` under LIMIT.
+        ...(isCoaUser
+          ? [
+              {
+                model: AppealCase,
+                as: 'rulingOrderAppealCases',
+                required: false,
+                separate: true,
+                attributes: [
+                  'id',
+                  'appealCaseNumber',
+                  'appealState',
+                  'appealReceivedByCourtDate',
+                ],
+              },
+            ]
+          : []),
       ],
       where: {
         [Op.and]: [
@@ -230,9 +258,18 @@ export class CaseTableService {
                 )
               `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
-              {
-                '$appealCase.appeal_case_number$': { [Op.iLike]: `%${query}%` },
-              },
+              // Matches both case-level and ruling-order appeals — no
+              // `ruling_file_id` filter. EXISTS instead of a joined alias so
+              // the search query doesn't need to include the
+              // `rulingOrderAppealCases` HasMany (which would force
+              // `subQuery: true` under LIMIT and break the inner WHERE).
+              literal(`
+                EXISTS (
+                  SELECT 1 FROM "appeal_case" ac
+                  WHERE ac."case_id" = "Case"."id"
+                    AND ac."appeal_case_number" ILIKE ${safeQuery}
+                )
+              `),
               literal(`
                 EXISTS (
                   SELECT 1 FROM "defendant" d
@@ -269,6 +306,14 @@ export class CaseTableService {
       user,
     )
 
+    // Mirrors the appeal_state predicates in courtOfAppealsCasesAccessWhereOptions —
+    // only appeals visible to COA users should produce result rows.
+    const isQualifyingAppealForCoa = (a: AppealCase): boolean =>
+      a.appealState === AppealCaseState.RECEIVED ||
+      a.appealState === AppealCaseState.COMPLETED ||
+      (a.appealState === AppealCaseState.WITHDRAWN &&
+        Boolean(a.appealReceivedByCourtDate))
+
     const rows = cases.flatMap((c) => {
       const caseMatchedValue = (c.get('matchedValue') as string) ?? ''
       const caseMatchedField =
@@ -283,49 +328,88 @@ export class CaseTableService {
 
       const caseTableTypes = caseTableTypesMap.get(c.id) ?? []
 
-      if (defendants.length === 0) {
-        return [
-          {
-            caseId: c.id,
-            caseType,
-            matchedField: caseMatchedField,
-            matchedValue: caseMatchedValue,
-            policeCaseNumbers: c.policeCaseNumbers,
-            courtCaseNumber: c.courtCaseNumber ?? null,
-            appealCaseNumber: c.appealCase?.appealCaseNumber ?? null,
-            defendantNationalId: null,
-            defendantName: null,
-            caseTableTypes,
-          },
-        ]
+      // For COA users emit one row per qualifying appeal (case-level + each
+      // ruling-order). For other roles emit a single row carrying the
+      // case-level appeal number, with no appealCaseId.
+      type AppealCell = { id: string | null; appealCaseNumber: string | null }
+      const appealCases: AppealCell[] = isCoaUser
+        ? [
+            ...(c.appealCase && isQualifyingAppealForCoa(c.appealCase)
+              ? [
+                  {
+                    id: c.appealCase.id,
+                    appealCaseNumber: c.appealCase.appealCaseNumber ?? null,
+                  },
+                ]
+              : []),
+            ...(c.rulingOrderAppealCases ?? [])
+              .filter(isQualifyingAppealForCoa)
+              .map((a) => ({
+                id: a.id,
+                appealCaseNumber: a.appealCaseNumber ?? null,
+              })),
+          ]
+        : [
+            {
+              id: null,
+              appealCaseNumber: c.appealCase?.appealCaseNumber ?? null,
+            },
+          ]
+
+      // Per the access predicates a COA result case always has at least one
+      // qualifying appeal; guard anyway to avoid emitting null appealCaseId.
+      if (appealCases.length === 0) {
+        return []
       }
 
-      return defendants.map((d) => {
-        let matchedField = caseMatchedField
-        let matchedValue = caseMatchedValue
-        if (isDefendantLevelMatch) {
-          const defendantMatches =
-            (caseMatchedField === 'defendantName' &&
-              (d.name ?? '').toLowerCase().trim() === normalizedCaseMatch) ||
-            (caseMatchedField === 'defendantNationalId' &&
-              (d.nationalId ?? '').toLowerCase().trim() === normalizedCaseMatch)
-          if (!defendantMatches) {
-            matchedField = 'policeCaseNumbers'
-            matchedValue = ''
+      return appealCases.flatMap((a) => {
+        if (defendants.length === 0) {
+          return [
+            {
+              caseId: c.id,
+              appealCaseId: a.id,
+              caseType,
+              matchedField: caseMatchedField,
+              matchedValue: caseMatchedValue,
+              policeCaseNumbers: c.policeCaseNumbers,
+              courtCaseNumber: c.courtCaseNumber ?? null,
+              appealCaseNumber: a.appealCaseNumber,
+              defendantNationalId: null,
+              defendantName: null,
+              caseTableTypes,
+            },
+          ]
+        }
+
+        return defendants.map((d) => {
+          let matchedField = caseMatchedField
+          let matchedValue = caseMatchedValue
+          if (isDefendantLevelMatch) {
+            const defendantMatches =
+              (caseMatchedField === 'defendantName' &&
+                (d.name ?? '').toLowerCase().trim() === normalizedCaseMatch) ||
+              (caseMatchedField === 'defendantNationalId' &&
+                (d.nationalId ?? '').toLowerCase().trim() ===
+                  normalizedCaseMatch)
+            if (!defendantMatches) {
+              matchedField = 'policeCaseNumbers'
+              matchedValue = ''
+            }
           }
-        }
-        return {
-          caseId: c.id,
-          caseType,
-          matchedField,
-          matchedValue,
-          policeCaseNumbers: c.policeCaseNumbers,
-          courtCaseNumber: c.courtCaseNumber ?? null,
-          appealCaseNumber: c.appealCase?.appealCaseNumber ?? null,
-          defendantNationalId: d.nationalId ?? null,
-          defendantName: d.name ?? null,
-          caseTableTypes,
-        }
+          return {
+            caseId: c.id,
+            appealCaseId: a.id,
+            caseType,
+            matchedField,
+            matchedValue,
+            policeCaseNumbers: c.policeCaseNumbers,
+            courtCaseNumber: c.courtCaseNumber ?? null,
+            appealCaseNumber: a.appealCaseNumber,
+            defendantNationalId: d.nationalId ?? null,
+            defendantName: d.name ?? null,
+            caseTableTypes,
+          }
+        })
       })
     })
 

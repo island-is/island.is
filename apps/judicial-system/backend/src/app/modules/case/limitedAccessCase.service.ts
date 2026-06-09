@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { col, Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -12,7 +12,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -24,6 +23,7 @@ import {
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isRequestCase,
   stringTypes,
@@ -34,6 +34,7 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import {
   FileService,
+  getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
   getDefenderVisiblePoliceCaseNumbers,
@@ -271,7 +272,10 @@ export const include: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
@@ -334,6 +338,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -511,13 +516,21 @@ export const include: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
-            where: { created: { [Op.lt]: col('Case.created') } },
+            separate: true,
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },
@@ -620,10 +633,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    // nationalId comes from a raw @Query param, so normalize it once here and
+    // pass the dash-free value down to the lookups and the constructed user.
+    const normalizedNationalId = nationalId.replace(/-/g, '')
+
     return this.caseRepositoryService
       .findOne({
         where: {
-          defenderNationalId: normalizeAndFormatNationalId(nationalId),
+          defenderNationalId: normalizedNationalId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -633,7 +650,7 @@ export class LimitedAccessCaseService {
         if (theCase) {
           // The national id is associated with a defender in a request case
           return this.constructDefender(
-            nationalId,
+            normalizedNationalId,
             theCase.defenderName,
             theCase.defenderPhoneNumber,
             theCase.defenderEmail,
@@ -641,12 +658,12 @@ export class LimitedAccessCaseService {
         }
 
         return this.defendantService
-          .findLatestDefendantByDefenderNationalId(nationalId)
+          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
           .then((defendant) => {
             if (defendant) {
               // The national id is associated with a defender in an indictment case
               return this.constructDefender(
-                nationalId,
+                normalizedNationalId,
                 defendant.defenderName,
                 defendant.defenderPhoneNumber,
                 defendant.defenderEmail,
@@ -654,12 +671,12 @@ export class LimitedAccessCaseService {
             }
 
             return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
               .then((civilClaimant) => {
                 if (civilClaimant) {
                   // The national id is associated with a spokesperson for a civil claimant in an indictment case
                   return this.constructDefender(
-                    nationalId,
+                    normalizedNationalId,
                     civilClaimant.spokespersonName,
                     civilClaimant.spokespersonPhoneNumber,
                     civilClaimant.spokespersonEmail,
@@ -866,7 +883,12 @@ export class LimitedAccessCaseService {
         )
       })
 
-      theCase.defendants?.forEach((defendant) =>
+      const myDefendants = getConfirmedDefendantsForDefender(
+        user.nationalId,
+        theCase.defendants,
+      )
+
+      myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
@@ -883,12 +905,29 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      if (
+      const allMyDefendantsDismissed = Boolean(
+        getDefenceUserCutoffDate(
+          user.nationalId,
+          theCase.defendants,
+          theCase.civilClaimants,
+        ),
+      )
+
+      const shouldIncludeGeneratedCourtRecord =
         allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
         !theCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ) &&
+        !allMyDefendantsDismissed &&
+        hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
         )
-      ) {
+
+      if (shouldIncludeGeneratedCourtRecord) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCourtRecordPdfForIndictmentCase(

@@ -1,19 +1,13 @@
-import { Redirect, Stack, useRouter } from 'expo-router'
-import { useCallback, useEffect, useRef } from 'react'
-import { AppState, Keyboard } from 'react-native'
-
-import {
-  authStore,
-  isLockScreenSuppressed,
-  useAuthStore,
-} from '@/stores/auth-store'
-import { isOnboarded } from '@/utils/onboarding'
+import { Redirect, Stack } from 'expo-router'
+import { useEffect, useRef } from 'react'
+import { AppState, Keyboard, Platform } from 'react-native'
 import { useIntl } from 'react-intl'
+
+import { AppLock } from '@/components/app-lock/app-lock'
+import { authStore, useAuthStore } from '@/stores/auth-store'
+import { isOnboarded } from '@/utils/onboarding'
 import { config } from '../../config'
-import {
-  modalScreenOptions,
-  tabScreenOptions,
-} from '../../constants/screen-options'
+import { modalScreenOptions } from '../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
@@ -21,139 +15,135 @@ export const unstable_settings = {
 
 export default function AuthLayout() {
   const intl = useIntl()
-  const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const appStateRef = useRef(AppState.currentState)
-  const lockScreenShownRef = useRef(false)
 
-  const showLockScreen = useCallback(() => {
-    if (lockScreenShownRef.current) return
-    lockScreenShownRef.current = true
-    router.push('/app-lock')
-  }, [router])
-
-  // Reset ref when the lock screen clears its own state (PIN/biometric unlock)
+  // Stamp lockScreenActivatedAt on background. iOS also stamps on
+  // active→inactive (Face ID overlay, app-switcher peek); Android skips
+  // because 'inactive' there fires for non-backgrounding events.
   useEffect(() => {
-    return authStore.subscribe((state) => {
-      if (!state.lockScreenActivatedAt && !state.lockScreenComponentId) {
-        lockScreenShownRef.current = false
+    const sub = AppState.addEventListener('change', (next) => {
+      const prev = appStateRef.current
+      appStateRef.current = next
+
+      if (!isOnboarded() || config.isTestingApp) return
+
+      const wentToBackground = next === 'background' && prev !== 'background'
+      const wentInactiveIOS =
+        Platform.OS === 'ios' && prev === 'active' && next === 'inactive'
+
+      if (!wentToBackground && !wentInactiveIOS) return
+
+      Keyboard.dismiss()
+      if (authStore.getState().lockScreenActivatedAt === undefined) {
+        authStore.setState({ lockScreenActivatedAt: Date.now() })
       }
     })
+    return () => sub.remove()
   }, [])
-
-  // On mount: always show the lock screen if the user is onboarded.
-  // The lock screen itself decides whether to auto-dismiss (within timeout) or require unlock.
-  useEffect(() => {
-    if (isOnboarded() && !config.isTestingApp) {
-      showLockScreen()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Listen for app state changes to show/dismiss the lock screen
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      // Going to background: stamp the time and show lock immediately (covers app switcher)
-      if (
-        appStateRef.current === 'active' &&
-        (nextAppState === 'inactive' || nextAppState === 'background')
-      ) {
-        if (isOnboarded() && !isLockScreenSuppressed()) {
-          Keyboard.dismiss()
-          authStore.setState({ lockScreenActivatedAt: Date.now() })
-          showLockScreen()
-        }
-      }
-
-      appStateRef.current = nextAppState
-    })
-
-    return () => subscription.remove()
-  }, [showLockScreen])
 
   if (!authorizeResult) {
     return <Redirect href="/login" />
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="(modals)/personal-info"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'familyDetail.title' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/settings"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'setting.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-phone"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'edit.phone.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-confirm"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'edit.confirm.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-email"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'edit.email.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-bank-info"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'edit.bankinfo.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/notifications"
-        options={{
-          ...modalScreenOptions,
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/homescreen-options"
-        options={{
-          ...modalScreenOptions,
-          headerShown: false,
-          presentation: 'formSheet',
-          sheetAllowedDetents: 'fitToContents',
-          headerTitle: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/passkey"
-        options={{
-          ...modalScreenOptions,
-          headerTitle: '',
-        }}
-      />
-      <Stack.Screen
-        name="app-lock"
-        options={{
-          headerShown: false,
-          presentation: 'transparentModal',
-          gestureEnabled: false,
-          animation: 'fade',
-        }}
-      />
-    </Stack>
+    <>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(modals)/personal-info"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({ id: 'familyDetail.title' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/settings"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({ id: 'setting.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/edit-phone"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({ id: 'edit.phone.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/edit-confirm"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({ id: 'edit.confirm.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/edit-email"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({ id: 'edit.email.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/edit-bank-info"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: intl.formatMessage({
+              id: 'edit.bankinfo.screenTitle',
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/notifications"
+          options={{
+            ...modalScreenOptions,
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/homescreen-options"
+          options={{
+            ...modalScreenOptions,
+            headerShown: false,
+            presentation: 'formSheet',
+            sheetAllowedDetents: 'fitToContents',
+            headerTitle: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/passkey"
+          options={{
+            ...modalScreenOptions,
+            headerTitle: '',
+          }}
+        />
+        <Stack.Screen
+          name="(modals)/update-app"
+          options={({ route }) => {
+            const closable =
+              (route.params as { closable?: string } | undefined)?.closable !==
+              'false'
+            if (closable) {
+              return {
+                ...modalScreenOptions,
+                headerTitle: '',
+              }
+            }
+            return {
+              ...modalScreenOptions,
+              headerTitle: '',
+              headerShown: false,
+              gestureEnabled: false,
+              sheetGrabberVisible: false,
+              presentation: Platform.OS === 'ios' ? 'fullScreenModal' : 'modal',
+              unstable_headerRightItems: () => [],
+            }
+          }}
+        />
+      </Stack>
+      <AppLock />
+    </>
   )
 }

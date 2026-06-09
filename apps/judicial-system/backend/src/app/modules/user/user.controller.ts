@@ -40,6 +40,7 @@ import {
 import { User } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { localAdminManageUserRule } from './guards/rolesRules'
 import { CreateUserValidator } from './interceptors/createUser.validator'
 import { UpdateUserValidator } from './interceptors/updateUser.validator'
 import { UserInterceptor } from './interceptors/user.interceptor'
@@ -54,7 +55,7 @@ export class UserController {
   ) {}
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(localAdminRule, adminRule)
+  @RolesRules(localAdminManageUserRule, adminRule)
   @UseInterceptors(CreateUserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
@@ -65,7 +66,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(localAdminRule, adminRule)
+  @RolesRules(localAdminManageUserRule, adminRule)
   @UseInterceptors(UpdateUserValidator)
   @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
