@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 @InputType('PaymentsCreateBankTransferInput')
 export class CreateBankTransferInput {

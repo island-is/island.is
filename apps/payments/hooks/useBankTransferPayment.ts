@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { useLocale } from '@island.is/localization'
 import { CardErrorCode } from '@island.is/shared/constants'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 import { useCreateBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
