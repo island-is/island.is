@@ -6,6 +6,9 @@ import { CustomsGeneralCountryCurrency } from './models/customsGeneralCountryCur
 import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
 import { CustomsGeneralProcessingFee } from './models/customsGeneralProcessingFee.model'
+import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
+import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
+import { writeFileSync } from 'fs'
 
 @Injectable()
 export class CustomsGeneralService {
@@ -21,34 +24,23 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TollgengiResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
       rate: item.Gengi,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
-      tableId: item.GengistaflaId,
-      changedDate: item.BreyttDag,
-      system: item.Kerfi,
     }))
   }
 
-  async getAbendi(
-    dags: string,
-    kerfi: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  async getAbendi(dags: string, kerfi: string): Promise<CustomsGeneralEntry[]> {
     const result = await this.customsGeneralClientService.getAbendi({
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.AbendiResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
-      system: item.Kerfi,
     }))
   }
 
@@ -57,13 +49,10 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.BonnResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
-      system: item.Kerfi,
     }))
   }
 
@@ -72,14 +61,11 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.GjoldResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
-      system: item.Kerfi,
     }))
   }
 
@@ -88,7 +74,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.LeyfiResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -104,30 +90,29 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TollarResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
-      system: item.Kerfi,
+      name: item.Tollur,
     }))
   }
 
   async getUndanthagur(
     dags: string,
     kerfi: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralExemption[]> {
     const result = await this.customsGeneralClientService.getUndanthagur({
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.UndanthagurResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
+      lagaGrein: item.LagaGrein,
+      validFrom: item.DagsFra?.toISOString(),
+      validTo: item.DagsTil?.toISOString(),
       system: item.Kerfi,
     }))
   }
@@ -142,7 +127,7 @@ export class CustomsGeneralService {
       TollskrarnumerFra: tollskrarnumerFra,
       TollskrarnumerTil: tollskrarnumerTil,
     })
-    const list = result.data?.UrvinnslugjoldResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       tariffNumber: item.Tollskrarnumer,
       plRatio: item.PLhlutfall,
@@ -161,7 +146,7 @@ export class CustomsGeneralService {
         Dags: dags,
         Kerfi: kerfi,
       })
-    const list = result.data?.AfhendingarskilmalarResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -179,7 +164,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.FlutningsmatiResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -191,16 +176,17 @@ export class CustomsGeneralService {
 
   async getGeymslustadur(
     dags: string,
-    kerfi: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralStorageLocation[]> {
     const result = await this.customsGeneralClientService.getGeymslustadur({
       Dags: dags,
-      Kerfi: kerfi,
+      Kerfi: 'I',
     })
-    const list = result.data?.GeymslustadurResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
+      kennitala: item.Kennitala,
       code: item.Kodi,
-      description: item.Lysing,
+      companyName: item.Nafn,
+      location: item.Stadsetning,
       validFrom: item.DagsFra,
       validTo: item.DagsTil,
       system: item.Kerfi,
@@ -215,7 +201,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.KostnadurResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -234,7 +220,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.MagntalaResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -252,7 +238,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.MarkadssvaediResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -270,7 +256,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TegundAfgreidsluResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       description: item.StuttLysing,
@@ -288,7 +274,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TegundVidskiptaResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.TegundVidskiptaSkyrslaKodi,
       name: item.tegundVidskiptaSkyrslaHeiti,
@@ -302,7 +288,7 @@ export class CustomsGeneralService {
     const result = await this.customsGeneralClientService.getLandMynt({
       Dags: dags,
     })
-    const list = result.data?.LandMyntResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       countryCode: item.LandKodi,
       countryName: item.LandHeiti,
@@ -323,7 +309,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TollmedferdResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -333,12 +319,15 @@ export class CustomsGeneralService {
     }))
   }
 
-  async getUmbudir(dags: string, kerfi: string): Promise<CustomsGeneralEntry[]> {
+  async getUmbudir(
+    dags: string,
+    kerfi: string,
+  ): Promise<CustomsGeneralEntry[]> {
     const result = await this.customsGeneralClientService.getUmbudir({
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.UmbudirResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -352,7 +341,7 @@ export class CustomsGeneralService {
     const result = await this.customsGeneralClientService.getUppruni({
       Dags: dags,
     })
-    const list = result.data?.UppruniResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       name: item.Heiti,
       description: item.Lysing,
@@ -369,7 +358,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.ValykillResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -387,7 +376,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.VidbotarskjolResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -402,7 +391,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.VillurResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
@@ -420,7 +409,7 @@ export class CustomsGeneralService {
       Dags: dags,
       Kerfi: kerfi,
     })
-    const list = result.data?.TollskrarLyklarResponse?.Listi ?? []
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       version: item.Utgafa,
       description: item.Lysing,
@@ -431,14 +420,11 @@ export class CustomsGeneralService {
     }))
   }
 
-  async getAkvordunarstadir(
-    landakodi: string,
-  ): Promise<CustomsGeneralDetermination[]> {
-    const result =
-      await this.customsGeneralClientService.getAkvordunarstadir({
-        Landakodi: landakodi,
-      })
-    const list = result.data?.AkvordunarstadurResponse?.Listi ?? []
+  async getAkvordunarstadir(): Promise<CustomsGeneralDetermination[]> {
+    const result = await this.customsGeneralClientService.getAkvordunarstadir({
+      Landakodi: 'IS',
+    })
+    const list = result.data?.Listi ?? []
     return list.map((item) => ({
       countryCode: item.Landakodi,
       location: item.Stadur,

@@ -13,11 +13,11 @@ export const CustomsGeneralClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load: (env) => ({
     baseUrl: env.required(
-      'TOLLUR_ALMENNT_BASE_URL',
-      'https://apptorg.hysing.is/gateway/tollur-almennt/v1',
+      'SKATTUR_TOLLUR_ALMENNT_BASE_URL',
+      'https://skatt-test.hysing.is/gateway/tollur-almennt/v1',
     ),
-    username: env.required('TOLLUR_ALMENNT_USERNAME'),
-    password: env.required('TOLLUR_ALMENNT_PASSWORD'),
-    apiKey: env.required('TOLLUR_ALMENNT_API_KEY'),
+    username: env.required('SKATTUR_TOLLUR_ALMENNT_USERNAME'),
+    password: env.required('SKATTUR_TOLLUR_ALMENNT_PASSWORD'),
+    apiKey: env.required('SKATTUR_TOLLUR_ALMENNT_API_KEY'),
   }),
 })

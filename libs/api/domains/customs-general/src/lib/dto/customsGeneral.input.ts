@@ -28,8 +28,8 @@ export class CustomsGeneralUrvinnslugjoldInput {
 }
 
 @InputType()
-export class CustomsGeneralAkvordunarInput {
+export class CustomsGeneralDagsInput {
   @Field(() => String)
   @IsString()
-  landakodi!: string
+  dags!: string
 }

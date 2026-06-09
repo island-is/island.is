@@ -3,7 +3,7 @@ import { CustomsGeneralService } from './customsGeneral.service'
 import {
   CustomsGeneralInput,
   CustomsGeneralUrvinnslugjoldInput,
-  CustomsGeneralAkvordunarInput,
+  CustomsGeneralDagsInput,
 } from './dto/customsGeneral.input'
 import { CustomsGeneralEntry } from './models/customsGeneralEntry.model'
 import { CustomsGeneralExchangeRate } from './models/customsGeneralExchangeRate.model'
@@ -11,6 +11,8 @@ import { CustomsGeneralCountryCurrency } from './models/customsGeneralCountryCur
 import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
 import { CustomsGeneralProcessingFee } from './models/customsGeneralProcessingFee.model'
+import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
+import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
 
 @Resolver()
 export class CustomsGeneralResolver {
@@ -58,10 +60,10 @@ export class CustomsGeneralResolver {
     return this.customsGeneralService.getTollar(input.dags, input.kerfi)
   }
 
-  @Query(() => [CustomsGeneralEntry])
+  @Query(() => [CustomsGeneralExemption])
   async customsGeneralUndanthagur(
     @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralExemption[]> {
     return this.customsGeneralService.getUndanthagur(input.dags, input.kerfi)
   }
 
@@ -93,11 +95,11 @@ export class CustomsGeneralResolver {
     return this.customsGeneralService.getFlutningsmati(input.dags, input.kerfi)
   }
 
-  @Query(() => [CustomsGeneralEntry])
+  @Query(() => [CustomsGeneralStorageLocation])
   async customsGeneralGeymslustadur(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getGeymslustadur(input.dags, input.kerfi)
+    @Args('input') input: CustomsGeneralDagsInput,
+  ): Promise<CustomsGeneralStorageLocation[]> {
+    return this.customsGeneralService.getGeymslustadur(input.dags)
   }
 
   @Query(() => [CustomsGeneralEntry])
@@ -143,7 +145,7 @@ export class CustomsGeneralResolver {
 
   @Query(() => [CustomsGeneralCountryCurrency])
   async customsGeneralLandMynt(
-    @Args('input') input: CustomsGeneralInput,
+    @Args('input') input: CustomsGeneralDagsInput,
   ): Promise<CustomsGeneralCountryCurrency[]> {
     return this.customsGeneralService.getLandMynt(input.dags)
   }
@@ -164,7 +166,7 @@ export class CustomsGeneralResolver {
 
   @Query(() => [CustomsGeneralEntry])
   async customsGeneralUppruni(
-    @Args('input') input: CustomsGeneralInput,
+    @Args('input') input: CustomsGeneralDagsInput,
   ): Promise<CustomsGeneralEntry[]> {
     return this.customsGeneralService.getUppruni(input.dags)
   }
@@ -201,9 +203,9 @@ export class CustomsGeneralResolver {
   }
 
   @Query(() => [CustomsGeneralDetermination])
-  async customsGeneralAkvordunarstadir(
-    @Args('input') input: CustomsGeneralAkvordunarInput,
-  ): Promise<CustomsGeneralDetermination[]> {
-    return this.customsGeneralService.getAkvordunarstadir(input.landakodi)
+  async customsGeneralAkvordunarstadir(): Promise<
+    CustomsGeneralDetermination[]
+  > {
+    return this.customsGeneralService.getAkvordunarstadir()
   }
 }

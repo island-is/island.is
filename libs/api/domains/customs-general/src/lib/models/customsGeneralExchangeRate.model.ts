@@ -8,21 +8,6 @@ export class CustomsGeneralExchangeRate {
   @Field(() => String, { nullable: true })
   name?: string
 
-  @Field(() => String)
-  rate!: string
-
-  @Field(() => Date)
-  validFrom!: Date
-
-  @Field(() => Date)
-  validTo!: Date
-
-  @Field(() => String)
-  tableId!: string
-
-  @Field(() => Date)
-  changedDate!: Date
-
-  @Field(() => String)
-  system!: string
+  @Field(() => String, { nullable: true })
+  rate?: string
 }

@@ -1,28 +1,25 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class CustomsGeneralCountryCurrency {
+export class CustomsGeneralStorageLocation {
   @Field(() => String, { nullable: true })
-  countryCode?: string
-
-  @Field(() => String, { nullable: true })
-  countryName?: string
-
-  @Field(() => Date, { nullable: true })
-  countryValidFrom?: Date
-
-  @Field(() => Date, { nullable: true })
-  countryValidTo?: Date
+  kennitala?: string
 
   @Field(() => String, { nullable: true })
-  currencyCode?: string
+  code?: string
 
   @Field(() => String, { nullable: true })
-  currencyName?: string
+  companyName?: string
+
+  @Field(() => String, { nullable: true })
+  location?: string
 
   @Field(() => Date, { nullable: true })
-  currencyValidFrom?: Date
+  validFrom?: Date
 
   @Field(() => Date, { nullable: true })
-  currencyValidTo?: Date
+  validTo?: Date
+
+  @Field(() => String, { nullable: true })
+  system?: string
 }

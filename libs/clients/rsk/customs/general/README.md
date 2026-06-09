@@ -7,7 +7,7 @@ NestJS client for the Tollur Almennt API from Skatturinn (RSK), providing refere
 The client is generated from `src/clientConfig.json` using `@hey-api/openapi-ts`. To regenerate:
 
 ```bash
-nx run clients-rsk-customs-general:codegen/backend-client
+yarn nx run clients-rsk-customs-general:codegen/backend-client
 ```
 
 ## Running unit tests
