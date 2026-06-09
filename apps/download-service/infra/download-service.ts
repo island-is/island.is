@@ -11,6 +11,7 @@ import {
   RentalService,
   UniversityCareers,
   Vehicles,
+  VMSTUnemployment,
   WorkMachines,
 } from '../../../infra/src/dsl/xroad'
 
@@ -78,6 +79,7 @@ export const serviceSetup = (services: {
       DistrictCommissionersLicenses,
       RentalService,
       MmsPrimarySchool,
+      VMSTUnemployment,
     )
     .ingress({
       primary: {

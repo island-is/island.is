@@ -68,7 +68,10 @@ const FooterConfigField = () => {
               key={color}
               id={color}
               value={color}
-              isChecked={selectedTextColor === color}
+              isChecked={
+                selectedTextColor === color ||
+                (!selectedTextColor && color === 'dark400')
+              }
               onChange={() => {
                 updateState('textColor', color)
               }}
@@ -79,7 +82,7 @@ const FooterConfigField = () => {
         </Stack>
       </Stack>
       <Stack flexDirection="column" alignItems="flex-start" spacing="none">
-        <FormControl.Label>Background Color</FormControl.Label>
+        <FormControl.Label>Background Color (e.g. #FFFFFF)</FormControl.Label>
         <Stack
           paddingLeft="spacingL"
           flexDirection="column"

@@ -125,17 +125,6 @@ export const completedForm = defineMessages({
     defaultMessage: 'Tilkynning um dvöl erlendis hefur verið móttekin',
     description: 'completed form alert title',
   },
-  descriptionFieldTitle: {
-    id: 'vmst.ct.application:completedForm.descriptionFieldTitle',
-    defaultMessage: 'Er eitthvað óljóst?',
-    description: 'completed form description field title',
-  },
-  descriptionFieldDescription: {
-    id: 'vmst.ct.application:completedForm.descriptionFieldDescription#markdown',
-    defaultMessage:
-      'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnuna',
-    description: 'completed form description field description',
-  },
   bottomButtonMessage: {
     id: 'vmst.ct.application:completedForm.bottomButtonMessage',
     defaultMessage:

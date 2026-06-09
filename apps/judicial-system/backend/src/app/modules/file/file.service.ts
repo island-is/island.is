@@ -34,7 +34,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
-import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
+import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'

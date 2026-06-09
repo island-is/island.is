@@ -20,13 +20,13 @@ export interface PreferencesStore {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
-  graphicWidgetEnabled: boolean
   inboxWidgetEnabled: boolean
   applicationsWidgetEnabled: boolean
   licensesWidgetEnabled: boolean
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
   appointmentsWidgetEnabled: boolean
+  notificationsWidgetEnabled: boolean
   widgetsInitialised: boolean
   skippedSoftUpdate: boolean
   lastUsedPasskey: number
@@ -63,13 +63,13 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
-  graphicWidgetEnabled: true,
   inboxWidgetEnabled: true,
   applicationsWidgetEnabled: true,
   licensesWidgetEnabled: true,
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
   appointmentsWidgetEnabled: true,
+  notificationsWidgetEnabled: true,
   widgetsInitialised: false,
   skippedSoftUpdate: false,
   lastUsedPasskey: 0,

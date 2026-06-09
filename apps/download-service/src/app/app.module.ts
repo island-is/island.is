@@ -74,6 +74,11 @@ import {
   PrimarySchoolClientModule,
 } from '@island.is/clients/mms/primary-school'
 import { RentalAgreementsController } from './modules/rental-agreements/rental-agreements.controller'
+import { VmstAttachmentController } from './modules/vmst-attachments/vmst-attachment.controller'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
 @Module({
   controllers: [
     DocumentController,
@@ -86,6 +91,7 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
     WorkMachinesController,
     OccupationalLicensesController,
     RentalAgreementsController,
+    VmstAttachmentController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -103,6 +109,7 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
     FeatureFlagModule,
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
+    VmstUnemploymentClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -126,6 +133,7 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
         FeatureFlagConfig,
         HmsRentalAgreementClientConfig,
         PrimarySchoolClientConfig,
+        VmstUnemploymentClientConfig,
       ],
     }),
   ],

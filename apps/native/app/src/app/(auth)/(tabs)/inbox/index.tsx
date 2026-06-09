@@ -198,6 +198,7 @@ export default function InboxScreen() {
 
   const [selectState, setSelectedState] = useState(false)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [selectAllMode, setSelectAllMode] = useState(false)
 
   const res = useListDocumentsQuery({
     variables: {
@@ -218,6 +219,24 @@ export default function InboxScreen() {
   const availableCategories = useMemo(() => {
     return res.data?.documentsV2?.categories ?? []
   }, [res.data])
+
+  // Remember sender/category names across query refetches so the active filter
+  // tags keep showing the name (never the ID) while the next response loads
+  // after a filter is removed.
+  const filterNamesRef = useRef({
+    senders: new Map<string, string>(),
+    categories: new Map<string, string>(),
+  })
+  for (const sender of availableSenders) {
+    if (sender.id && sender.name) {
+      filterNamesRef.current.senders.set(sender.id, sender.name.trim())
+    }
+  }
+  for (const category of availableCategories) {
+    if (category.id && category.name) {
+      filterNamesRef.current.categories.set(category.id, category.name)
+    }
+  }
 
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
@@ -258,7 +277,17 @@ export default function InboxScreen() {
   const resetSelectState = () => {
     setSelectedItems([])
     setSelectedState(false)
+    setSelectAllMode(false)
   }
+
+  // Wrap the selectedItems setter passed to individual rows so any manual
+  // toggle disables select-all mode (the user is taking over control).
+  const handleItemSelectionChange = useCallback<
+    React.Dispatch<React.SetStateAction<string[]>>
+  >((updater) => {
+    setSelectAllMode(false)
+    setSelectedItems(updater)
+  }, [])
 
   const onRefresh = useCallback(async () => {
     try {
@@ -280,6 +309,13 @@ export default function InboxScreen() {
 
   const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = query.length > 2
+
+  // While select-all mode is on, keep selectedItems in sync with every loaded
+  // document so newly loaded items are also selected by default.
+  useEffect(() => {
+    if (!selectAllMode) return
+    setSelectedItems(items.map((item) => item.id))
+  }, [items, selectAllMode])
 
   const loadMore = async () => {
     if (res.loading || loadingMore) {
@@ -399,7 +435,7 @@ export default function InboxScreen() {
           item={document}
           selectable={selectState}
           selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
+          setSelectedItems={handleItemSelectionChange}
           setSelectedState={setSelectedState}
           listParams={{
             ...filters,
@@ -413,7 +449,7 @@ export default function InboxScreen() {
       filters,
       selectState,
       selectedItems,
-      setSelectedItems,
+      handleItemSelectionChange,
       availableCategories,
       isFeature2WayMailboxEnabled,
     ],
@@ -562,12 +598,15 @@ export default function InboxScreen() {
                     fontFamily: fontByWeight('400'),
                   },
                   onPress() {
-                    allDocumentsSelected
-                      ? setSelectedItems([])
-                      : setSelectedItems(
-                          res.data?.documentsV2?.data.map((doc) => doc.id) ??
-                            [],
-                        )
+                    if (allDocumentsSelected) {
+                      setSelectAllMode(false)
+                      setSelectedItems([])
+                    } else {
+                      setSelectAllMode(true)
+                      setSelectedItems(
+                        res.data?.documentsV2?.data.map((doc) => doc.id) ?? [],
+                      )
+                    }
                   },
                 },
               ]
@@ -733,13 +772,16 @@ export default function InboxScreen() {
                 )}
                 {!!senderNationalId.length &&
                   senderNationalId.map((senderId) => {
-                    const name = availableSenders.find(
-                      (sender) => sender.id === senderId,
-                    )
+                    const name =
+                      filterNamesRef.current.senders.get(senderId) ??
+                      availableSenders
+                        .find((sender) => sender.id === senderId)
+                        ?.name?.trim() ??
+                      senderId
                     return (
                       <Tag
                         key={senderId}
-                        title={name?.name?.trim() ?? senderId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({
@@ -753,13 +795,16 @@ export default function InboxScreen() {
                   })}
                 {!!categoryIds.length &&
                   categoryIds.map((categoryId) => {
-                    const name = availableCategories.find(
-                      (category) => category.id === categoryId,
-                    )
+                    const name =
+                      filterNamesRef.current.categories.get(categoryId) ??
+                      availableCategories.find(
+                        (category) => category.id === categoryId,
+                      )?.name ??
+                      categoryId
                     return (
                       <Tag
                         key={categoryId}
-                        title={name?.name ?? categoryId}
+                        title={name}
                         closable
                         onClose={() =>
                           inboxFilterStore.setState((state) => ({

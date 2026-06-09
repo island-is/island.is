@@ -59,22 +59,28 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
     activePath.serviceProviderTooltip
 
   const isMobile = width < theme.breakpoints.md
+  const hasMoreThan2Items = items.length > 2
+
+  // If it's mobile and there are more than 2 items, we show a select instead of the tab bar
+  const showSelect = isMobile && hasMoreThan2Items
 
   return (
     <>
-      <TabBar
-        aria-label={label}
-        tabs={items?.map((item, index) => {
-          const active = item.path === activePath.path
-          return {
-            id: `tab-item-${index}`,
-            active: active,
-            onClick: () => tabChangeHandler(item.path),
-            name: formatMessage(item.name),
-          }
-        })}
-      />
-      {activePath.path && isMobile && (
+      {!showSelect && (
+        <TabBar
+          aria-label={label}
+          tabs={items?.map((item, index) => {
+            const active = item.path === activePath.path
+            return {
+              id: `tab-item-${index}`,
+              active: active,
+              onClick: () => tabChangeHandler(item.path),
+              name: formatMessage(item.name),
+            }
+          })}
+        />
+      )}
+      {activePath.path && showSelect && (
         <Box className={styles.select}>
           <Select
             size="xs"
@@ -118,7 +124,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                       }) ?? []
                     }
                   />
-                  {activePath.children && activePath.name && isMobile && (
+                  {activePath.children && activePath.name && showSelect && (
                     <Box className={styles.select}>
                       <Select
                         size="sm"
@@ -156,7 +162,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             )}
             {activePath?.displayServiceProviderLogo &&
               serviceProvider &&
-              !isMobile && (
+              !showSelect && (
                 <TabNavigationInstitutionPanel
                   serviceProvider={serviceProvider}
                   tooltipText={tooltipText}

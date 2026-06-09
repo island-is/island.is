@@ -11,7 +11,6 @@ import { client } from '@island.is/portals/my-pages/graphql'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { environment } from '../environments'
 import { modules } from '../lib/modules'
 import { createRoutes } from '../lib/routes'
 import * as styles from './App.css'
@@ -31,7 +30,7 @@ export const App = () => (
           mockedInitialState={mockedInitialState}
         >
           <ApplicationErrorBoundary>
-            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+            <FeatureFlagProvider>
               <PortalRouter
                 modules={modules}
                 createRoutes={createRoutes}
