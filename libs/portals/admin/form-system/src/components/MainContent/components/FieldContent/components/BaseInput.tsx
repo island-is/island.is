@@ -62,12 +62,6 @@ export const BaseInput = () => {
       return true
     }
     if (
-      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
-      currentItem.fieldSettings?.hasDescription
-    ) {
-      return true
-    }
-    if (
       currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
       currentItem.fieldSettings?.hasDescription
     ) {

@@ -56,7 +56,12 @@ export const sectionApplicationFor = (
               )
 
               if (fakeData?.useFakeData === 'yes') {
-                currentLicense = fakeData.currentLicense ?? null
+                // 'none' must stay falsy — it is a string, so it would
+                // otherwise read as "has a license" and disable B-temp.
+                currentLicense =
+                  fakeData.currentLicense && fakeData.currentLicense !== 'none'
+                    ? fakeData.currentLicense
+                    : null
                 categories =
                   fakeData.currentLicense === 'temp'
                     ? [{ nr: 'B', validToCode: 8 }]

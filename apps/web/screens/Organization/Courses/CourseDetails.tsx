@@ -114,6 +114,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       JSON.stringify({
         courseId: course.id,
         courseInstanceId: instance.id,
+        courseListPageId: course.courseListPageId,
       }),
     )
 
@@ -173,12 +174,15 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
         </Text>
         <Box>{webRichText(course.description)}</Box>
         <Stack space={3}>
-          <Text variant="h2" as="h2">
-            {n(
-              'courseInstancesLabel',
-              activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
-            )}
-          </Text>
+          {(course.instances.length > 0 ||
+            course.showPlaceholderTextIfNoCourseInstances) && (
+            <Text variant="h2" as="h2">
+              {n(
+                'courseInstancesLabel',
+                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+              )}
+            </Text>
+          )}
           {course.instances.length === 0 &&
             course.showPlaceholderTextIfNoCourseInstances && (
               <Text>

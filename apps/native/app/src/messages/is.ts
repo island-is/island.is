@@ -198,7 +198,7 @@ export const is = {
   'homeOptions.heading.title': 'Stilla heimaskjá',
   'homeOptions.heading.subtitle':
     'Hér er hægt að stilla hvað birtist á heimaskjá.',
-  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.notifications': 'Nýjustu tilkynningar',
   'homeOptions.inbox': 'Nýjast í pósthólfinu',
   'homeOptions.licenses': 'Skírteini',
   'homeOptions.applications': 'Umsóknir',

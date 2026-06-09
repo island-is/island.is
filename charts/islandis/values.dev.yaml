@@ -368,7 +368,7 @@ api:
     MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -402,6 +402,7 @@ api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
     XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis'
@@ -746,7 +747,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -1024,7 +1025,7 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -1192,7 +1193,6 @@ application-system-form:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1306,6 +1306,7 @@ cms-importer-energy-fund-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1360,6 +1361,7 @@ cms-importer-fsre-buildings-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1418,7 +1420,7 @@ cms-importer-web-sitemap:
     requests:
       cpu: '100m'
       memory: '128Mi'
-  schedule: '0 0 * * *'
+  schedule: '0 3 */2 * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1743,6 +1745,7 @@ download-service:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1850,6 +1853,8 @@ download-service:
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
     XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+    XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1879,7 +1884,7 @@ endorsement-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -2045,7 +2050,6 @@ form-system-web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2541,7 +2545,6 @@ payments:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2626,7 +2629,6 @@ portals-admin:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2648,7 +2650,7 @@ regulations-admin-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -2986,7 +2988,6 @@ service-portal:
       memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -3010,7 +3011,7 @@ service-portal-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -3430,7 +3431,7 @@ services-form-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -3546,6 +3547,7 @@ services-form-system-api:
     FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
     FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
     FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
+    HASKOLI_ISLANDS_API_KEY: '/k8s/form-system/HASKOLI_ISLANDS_API_KEY'
     HEILSA_API_KEY: '/k8s/form-system/HEILSA_API_KEY'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NTI_PASSWORD: '/k8s/form-system/NTI_PASSWORD'
@@ -4683,7 +4685,7 @@ user-notification:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -4834,7 +4836,7 @@ user-notification-birthday-worker:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
@@ -5044,7 +5046,7 @@ user-notification-worker:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '8f4c5411-9caf-40a1-8764-bbe05fd6de50'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'

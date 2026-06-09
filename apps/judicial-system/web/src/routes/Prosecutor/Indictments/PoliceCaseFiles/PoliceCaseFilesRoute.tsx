@@ -4,7 +4,10 @@ import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -88,7 +91,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       digitalCaseFilesLoading,
       digitalCaseFilesError,
       deletePoliceDigitalCaseFile,
-    } = usePoliceDigitalCaseFile(caseId, caseOrigin)
+    } = usePoliceDigitalCaseFile()
 
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
@@ -311,9 +314,9 @@ const PoliceCaseFilesRoute = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

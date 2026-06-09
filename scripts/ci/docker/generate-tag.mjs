@@ -1,105 +1,92 @@
 // @ts-check
 import github from '@actions/github'
 import core from '@actions/core'
-import { getReleaseVersion, isMainBranch, isReleaseBranch } from './const.mjs'
+import {
+  isMainBranch,
+  isPreReleaseBranch,
+  isReleaseBranch,
+  isReleaseLikeBranch,
+} from './const.mjs'
 import { isFeatureDeployment, isMainModule } from './utils.mjs'
 
 if (isMainModule(import.meta.url)) {
-  main().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+  main()
 }
 
-export async function main(
-  testContext = github.context,
-  randomTag = createRandomString(16),
-) {
-  const outputs = getOutputs(testContext, randomTag)
-  core.setOutput('SHOULD_RUN_BUILD', JSON.stringify(outputs.shouldRun))
+export function main(context = github.context) {
+  const output = getOutput(context, createRandomString(16))
 
-  if (!outputs.shouldRun) {
+  core.setOutput('SHOULD_RUN_BUILD', JSON.stringify(output.shouldRun))
+  if (!output.shouldRun) {
     process.exit(0)
   }
 
-  core.setOutput('ARTIFACT_NAME', outputs.artifactName)
-  core.setOutput('DOCKER_TAG', outputs.tagName)
-  core.setOutput('HELM_VALUES_BRANCH', outputs.helmValuesBranch)
-  core.setOutput('DEPLOY_JUDICIAL', outputs.deployJudicial)
-  core.setOutput('GIT_BRANCH', outputs.targetBranch)
-  core.setOutput('GIT_SHA', outputs.sha)
-  console.info(`Artifact name: ${outputs.artifactName}`)
-  console.info(`Docker tag: ${outputs.tagName}`)
-  console.info(`Git branch: ${outputs.targetBranch}`)
-  console.info(`Git SHA: ${outputs.sha}`)
-  console.info(`Helm values branch: ${outputs.helmValuesBranch}`)
+  core.setOutput('ARTIFACT_NAME', output.artifactName)
+  core.setOutput('DOCKER_TAG', output.tagName)
+  core.setOutput('HELM_VALUES_BRANCH', output.helmValuesBranch)
+  core.setOutput('DEPLOY_JUDICIAL', output.deployJudicial)
+  core.setOutput('GIT_BRANCH', output.targetBranch)
+  core.setOutput('GIT_SHA', output.sha)
+  console.info(`Artifact name: ${output.artifactName}`)
+  console.info(`Docker tag: ${output.tagName}`)
+  console.info(`Git branch: ${output.targetBranch}`)
+  console.info(`Git SHA: ${output.sha}`)
+  console.info(`Helm values branch: ${output.helmValuesBranch}`)
 }
 
-export function getOutputs(
-  context = github.context,
-  randomTag = createRandomString(16),
-) {
-  const sha = getSha(context)
+export function getOutput(context, randomTag) {
+  const eventName = context.eventName
+  const sha = context.payload?.pull_request?.head.sha || context.sha
   const shortSha = sha.slice(0, 7)
   const targetBranch = getTargetBranch(context)
-  const run = shouldRun(context, targetBranch)
+  const shouldRunBuild = shouldRun(context, targetBranch)
 
-  if (!run) {
+  if (!shouldRunBuild) {
     return {
       shouldRun: false,
-      targetBranch,
-      sha,
     }
   }
 
   const typeOfDeployment = getTypeOfDeployment(targetBranch)
-  const artifactName = getArtifactname(context, typeOfDeployment)
-  const tagName = getTagname(
-    context,
-    typeOfDeployment,
-    targetBranch,
-    shortSha,
-    randomTag,
-  )
 
   return {
     shouldRun: true,
-    artifactName,
-    tagName,
-    helmValuesBranch: typeOfDeployment.dev ? 'main' : 'release',
+    artifactName: getArtifactname(context, typeOfDeployment),
     deployJudicial: targetBranch === 'main',
-    targetBranch,
+    helmValuesBranch: typeOfDeployment.dev ? 'main' : 'release',
     sha,
+    tagName: getTagname(context, typeOfDeployment, shortSha, randomTag),
+    targetBranch,
   }
 }
 
 export function shouldRun(context, targetBranch = getTargetBranch(context)) {
-  const eventName = context.eventName
-
-  if (eventName === 'workflow_dispatch') {
+  if (context.eventName === 'workflow_dispatch') {
     return true
   }
-  if (eventName === 'merge_group') {
+  if (context.eventName === 'merge_group') {
     return isTargetBranchCompatible(targetBranch)
   }
   if (isFeatureDeployment(context)) {
     return isTargetBranchCompatible(targetBranch)
   }
+  if (context.eventName === 'push') {
+    return isPreReleaseBranch(targetBranch)
+  }
   return false
 }
 
 export function isTargetBranchCompatible(targetBranch) {
-  return isMainBranch(targetBranch) || isReleaseBranch(targetBranch)
+  return (
+    isMainBranch(targetBranch) ||
+    isReleaseBranch(targetBranch) ||
+    isPreReleaseBranch(targetBranch)
+  )
 }
 
-export function getTagname(
-  context,
-  typeOfDeployment,
-  targetBranch,
-  shortSha,
-  randomTag,
-) {
+export function getTagname(context, typeOfDeployment, shortSha, randomTag) {
   const eventName = context.eventName
+  const targetBranch = getTargetBranch(context)
 
   if (eventName === 'pull_request' && context.payload.pull_request?.number) {
     return `pr-${shortSha}-${randomTag}`
@@ -110,7 +97,7 @@ export function getTagname(
       return `dev_${shortSha}_${randomTag}`
     }
     if (typeOfDeployment.prod) {
-      const version = getReleaseVersion(targetBranch)
+      const version = targetBranch.replace('release/', '')
       return `release_${version}_${shortSha}_${randomTag}`
     }
     throw new Error(`Unable to determine artifact name for merge_group event`)
@@ -177,6 +164,15 @@ export function getTypeOfDeployment(targetBranch) {
       prod: true,
     }
   }
+  if (isPreReleaseBranch(targetBranch)) {
+    return {
+      dev: true,
+      prod: false,
+    }
+  }
+  if (isReleaseLikeBranch(targetBranch)) {
+    throw new Error(`Unsupported branch: ${targetBranch}`)
+  }
   return {
     dev: true,
     prod: false,
@@ -184,29 +180,26 @@ export function getTypeOfDeployment(targetBranch) {
 }
 
 export function getTargetBranch(context = github.context) {
-  const eventName = context.eventName
-
-  if (eventName === 'pull_request' && context.payload?.pull_request?.base.ref) {
+  if (
+    context.eventName === 'pull_request' &&
+    context.payload?.pull_request?.base.ref
+  ) {
     return context.payload.pull_request.base.ref.replace('refs/heads/', '')
   }
-  if (eventName === 'merge_group') {
+  if (context.eventName === 'merge_group') {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
-  if (eventName === 'workflow_dispatch') {
+  if (context.eventName === 'workflow_dispatch') {
     return context.ref.replace('refs/heads/', '')
   }
 
-  if (eventName === 'push') {
+  if (context.eventName === 'push') {
     return context.ref.replace('refs/heads/', '')
   }
 
   throw new Error(
-    `Unable to determine target branch for event type: ${eventName}`,
+    `Unable to determine target branch for event type: ${context.eventName}`,
   )
-}
-
-function getSha(context) {
-  return context.payload?.pull_request?.head.sha || context.sha
 }
 
 function createRandomString(length) {

@@ -21,7 +21,10 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
     super(ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS)
   }
 
-  async getSupportData({ auth }: TemplateApiModuleActionProps) {
+  async getSupportData({
+    auth,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     const resolvedApplicantId =
       await this.vmstUnemploymentClientService.resolveApplicant(auth)
 
@@ -47,7 +50,10 @@ export class DeRegisterUnemploymentBenefitsService extends BaseTemplateApiServic
       throw new TemplateApiError(
         {
           title: errorMsgs.cannotApplyErrorTitle,
-          summary: canWithdraw.reason || errorMsgs.cannotApplyErrorSummary,
+          summary:
+            (currentUserLocale === 'is'
+              ? canWithdraw.reason
+              : canWithdraw.reasonEN) || errorMsgs.cannotApplyErrorSummary,
         },
         400,
       )

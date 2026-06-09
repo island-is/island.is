@@ -385,6 +385,7 @@ export const transformDefendants = ({
         defendant.eventLogs,
       ),
       indictmentCancelledOrDismissedState,
+      connectedCases: defendant.connectedCases ?? [],
     }
   })
 }
@@ -621,14 +622,32 @@ const transformCase = (
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.INDICTMENT_REVIEWED,
-      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
-    ),
-    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      theCase.eventLogs,
-    ),
+    indictmentReviewedDate: (() => {
+      const reviewedDate = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.INDICTMENT_REVIEWED,
+        theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+      )
+      if (!reviewedDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > reviewedDate
+        ? undefined
+        : reviewedDate
+    })(),
+    indictmentSentToPublicProsecutorDate: (() => {
+      const sentDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      )
+      if (!sentDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > sentDate ? undefined : sentDate
+    })(),
     defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
       EventType.APPEAL_RESULT_ACCESSED,
       theCase.eventLogs,

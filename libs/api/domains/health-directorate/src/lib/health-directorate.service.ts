@@ -25,6 +25,9 @@ import { PermitInput } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  toAppointmentAssigneeTypeEnum,
+  toAppointmentLinkTypeEnum,
+  toAppointmentModalityEnum,
   toAppointmentStatusEnum,
   mapStatusIdToColor,
   mapReferralStatusValueToStatus,
@@ -58,6 +61,7 @@ import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { PrescriptionRenewalTarget } from './models/renewalTarget.model'
 import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
@@ -334,9 +338,31 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    await this.healthApi.postRenewalPrescription(auth, input.id)
+    await this.healthApi.postRenewalPrescription(auth, input.id, {
+      nodeId: input.nodeId,
+      groupId: input.groupId,
+    })
 
     return null
+  }
+
+  /* Renewal targets */
+  async getPrescriptionRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<PrescriptionRenewalTarget[] | null> {
+    const data = await this.healthApi.getRenewalTargets(auth, id)
+
+    if (!data) {
+      return null
+    }
+
+    return data.map((item) => ({
+      groupId: item.groupId,
+      nodeId: item.nodeId,
+      name: item.name,
+      description: item.description,
+    }))
   }
 
   /* Prescription Documents */
@@ -576,6 +602,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       duration: item.duration,
       location: item.location
         ? {
@@ -589,6 +616,13 @@ export class HealthDirectorateService {
         : undefined,
       instruction: item.patientInstruction,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
     }))
     return { data: appointments }
   }
@@ -608,6 +642,7 @@ export class HealthDirectorateService {
       date: item.startTime,
       title: item.description,
       status: toAppointmentStatusEnum(item.status),
+      modality: toAppointmentModalityEnum(item.modality),
       instruction: item.patientInstruction,
       duration: item.duration,
       location: item.location
@@ -615,8 +650,13 @@ export class HealthDirectorateService {
             name: item.location.name,
             organization: item.location.organization,
             address: item.location.address,
+            department: item.location.department,
+            wing: item.location.wing,
+            floor: item.location.floor,
+            room: item.location.room,
             directions: item.location.directions,
             link: item.location.link,
+            locationLinks: item.location.links,
             city: item.location.city,
             postalCode: item.location.postalCode,
             country: item.location.country,
@@ -627,6 +667,19 @@ export class HealthDirectorateService {
           }
         : undefined,
       practitioners: item.practitioners ?? [],
+      assignees:
+        item.assignees
+          ?.map((a) => {
+            const type = toAppointmentAssigneeTypeEnum(a.type)
+            return type ? { type, name: a.name } : null
+          })
+          .filter(isDefined) ?? [],
+      links: item.links
+        ?.map((l) => {
+          const type = toAppointmentLinkTypeEnum(l.type)
+          return type ? { type, url: l.url } : null
+        })
+        .filter(isDefined),
     }
   }
 }

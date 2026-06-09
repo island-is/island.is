@@ -10,6 +10,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
+import { Case } from '../../case'
 import { Subpoena } from '../../subpoena'
 import { Verdict } from '../../verdict'
 
@@ -148,4 +149,7 @@ export class Defendant {
 
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
+
+  @Field(() => [Case], { nullable: true })
+  readonly connectedCases?: Case[]
 }

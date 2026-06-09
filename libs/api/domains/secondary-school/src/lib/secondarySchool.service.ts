@@ -5,7 +5,6 @@ import {
   SecondarySchoolProgrammeSimple,
   SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeDetail,
-  SecondarySchoolIsReferenceProgramme,
 } from './graphql/models'
 import {
   SecondarySchoolClient,
@@ -33,28 +32,45 @@ export class SecondarySchoolApi {
   }
 
   async getProgrammeFilterOptions(): Promise<SecondarySchoolProgrammeFilterOptions> {
-    const options = await this.secondarySchoolPublicClient.getFilterOptions()
-
-    const mapIsReferenceProgramme = (
-      value: string,
-    ): SecondarySchoolIsReferenceProgramme | null => {
-      if (value === 'Já') return SecondarySchoolIsReferenceProgramme.YES
-      if (value === 'Nei') return SecondarySchoolIsReferenceProgramme.NO
-      return null
-    }
-
-    return {
-      ...options,
-      isReferenceProgrammeFilterOption:
-        options.isReferenceProgrammeFilterOption
-          ?.map(mapIsReferenceProgramme)
-          .filter(
-            (v): v is SecondarySchoolIsReferenceProgramme => v !== null,
-          ) ?? null,
-    }
+    return this.secondarySchoolPublicClient.getFilterOptions()
   }
 
   async getProgrammeById(id: string): Promise<SecondarySchoolProgrammeDetail> {
-    return this.secondarySchoolPublicClient.getProgrammeById(id)
+    const programme = await this.secondarySchoolPublicClient.getProgrammeById(
+      id,
+    )
+
+    const mapSubjects = (subjects?: { id?: string | null }[] | null) =>
+      subjects?.map(({ id: subjectId, ...rest }) => ({
+        ...rest,
+        subjectId,
+      }))
+
+    return {
+      ...programme,
+      programmeStructure: programme.programmeStructure
+        ? {
+            coreSubjectGroups:
+              programme.programmeStructure.coreSubjectGroups?.map((g) => ({
+                ...g,
+                subjects: mapSubjects(g.subjects),
+              })),
+            packageChoices: programme.programmeStructure.packageChoices?.map(
+              (c) => ({
+                ...c,
+                packages: c.packages?.map((p) => ({
+                  ...p,
+                  subjects: mapSubjects(p.subjects),
+                })),
+              }),
+            ),
+            subjectChoiceGroups:
+              programme.programmeStructure.subjectChoiceGroups?.map((g) => ({
+                ...g,
+                subjects: mapSubjects(g.subjects),
+              })),
+          }
+        : undefined,
+    }
   }
 }

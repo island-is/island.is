@@ -33,6 +33,11 @@ import {
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
 
+export enum PaymentMethod {
+  CARD = 'card',
+  INVOICE = 'invoice',
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -67,6 +72,16 @@ export class PaymentService {
     return this.paymentModel.findOne({
       where: {
         application_id: applicationId,
+      },
+    })
+  }
+
+  async findPaymentsByApplicationIds(
+    applicationIds: string[],
+  ): Promise<Payment[]> {
+    return this.paymentModel.findAll({
+      where: {
+        application_id: { [Op.in]: applicationIds },
       },
     })
   }
@@ -193,8 +208,8 @@ export class PaymentService {
       | 'fulfilled'
       | 'amount'
       | 'definition'
-      | 'expires_at'
       | 'request_id'
+      | 'payment_method'
     > = {
       application_id: applicationId,
       fulfilled: false,
@@ -212,7 +227,7 @@ export class PaymentService {
           quantity: chargeItem.quantity,
         })),
       },
-      expires_at: new Date(),
+      payment_method: PaymentMethod.CARD,
       request_id: '', // request_id is not set here, it is set once the requestId has been returned by the payment system
       // the requestId is the ID of the created charge in FJS which must be used when deleting a charge
     }
@@ -550,5 +565,16 @@ export class PaymentService {
       cancelUrl: `${baseUrlString}?cancelled`,
       invoiceUrl: `${baseUrlString}?invoice`,
     }
+  }
+
+  async setPaymentMethod(applicationId: string, paymentMethod: PaymentMethod) {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    payment.payment_method = paymentMethod.toString()
+    await payment.save()
   }
 }

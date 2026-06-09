@@ -19,7 +19,7 @@ import { ApiActions } from '../shared'
 import { DrivingLicenseBookUpdateInstructorSchema } from './dataSchema'
 import { application } from './messages'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   CurrentInstructorApi,
   TeachersApi,
@@ -83,7 +83,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 CurrentInstructorApi,
                 TeachersApi,

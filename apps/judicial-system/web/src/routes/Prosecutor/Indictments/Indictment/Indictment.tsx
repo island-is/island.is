@@ -1,20 +1,19 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import {
-  getIndictmentCountCompare,
-  isTrafficViolationIndictmentCount,
-} from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -50,7 +49,7 @@ import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/ut
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/PoliceCaseList/PoliceCaseInfo/policeCaseInfo.generated'
-import { IndictmentCount } from './IndictmentCount'
+import { IndictmentCountsList } from './IndictmentCountsList'
 import { strings } from './Indictment.strings'
 import * as styles from './Indictment.css'
 
@@ -477,15 +476,6 @@ const Indictment = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const indictmentCounts = useMemo(() => {
-    const indictmentCounts = workingCase.indictmentCounts ?? []
-
-    // We don't want to mutate the original array, so we create a copy
-    return [...indictmentCounts].sort(
-      getIndictmentCountCompare(workingCase.crimeScenes),
-    )
-  }, [workingCase.indictmentCounts, workingCase.crimeScenes])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -526,34 +516,13 @@ const Indictment = () => {
               rows={10}
             />
           </Box>
-          <AnimatePresence>
-            {indictmentCounts.map((indictmentCount, index) => (
-              <motion.div
-                key={indictmentCount.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-              >
-                <Box component="section">
-                  <SectionHeading
-                    title={formatMessage(strings.indictmentCountHeading, {
-                      count: index + 1,
-                    })}
-                  />
-                  <IndictmentCount
-                    indictmentCount={indictmentCount}
-                    workingCase={workingCase}
-                    onDelete={
-                      index > 0 ? handleDeleteIndictmentCount : undefined
-                    }
-                    onChange={handleUpdateIndictmentCount}
-                    setWorkingCase={setWorkingCase}
-                    updateIndictmentCountState={updateIndictmentCountState}
-                  />
-                </Box>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          <IndictmentCountsList
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            handleUpdateIndictmentCount={handleUpdateIndictmentCount}
+            handleDeleteIndictmentCount={handleDeleteIndictmentCount}
+            updateIndictmentCountState={updateIndictmentCountState}
+          />
           <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="ghost"
@@ -644,9 +613,9 @@ const Indictment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
+            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}
