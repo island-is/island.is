@@ -147,7 +147,7 @@ describe('canDefenceUserViewCivilClaimCaseFile', () => {
           {
             id: defendantId,
             isDefenderChoiceConfirmed: true,
-            defenderNationalId: '123456-7890',
+            defenderNationalId: '1234567890',
             policeCaseNumbers: ['007-2024'],
           } as Defendant,
         ],

@@ -19,8 +19,7 @@ import {
   useGetPaymentsOverviewQuery,
 } from './HealthOverview.generated'
 
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
@@ -35,22 +34,10 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const [showAppointments, setShowAppointments] = useState(false)
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isServicePortalHealthAppointmentsPageEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setShowAppointments(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { value: showAppointments } = useFeatureFlag(
+    Features.isServicePortalHealthAppointmentsPageEnabled,
+    false,
+  )
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {

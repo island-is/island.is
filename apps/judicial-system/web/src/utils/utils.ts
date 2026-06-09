@@ -122,13 +122,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: AppealCaseState | null,
-  notifications?: Notification[] | null,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return (
-    appealState !== AppealCaseState.COMPLETED &&
-    hasSentNotification(TrackedNotificationType.APPEAL_COMPLETED, notifications)
-      .hasSent
+    appealCase?.appealState !== AppealCaseState.COMPLETED &&
+    Boolean(appealCase?.appealRulingDate)
   )
 }
 
