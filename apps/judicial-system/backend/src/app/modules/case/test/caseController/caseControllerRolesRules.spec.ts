@@ -73,14 +73,6 @@ describe('CaseController - Get by id rules', () => {
   ])
 })
 
-describe('CaseController - Get connected cases rules', () => {
-  verifyRolesRules(CaseController, 'getConnectedCases', [
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  ])
-})
-
 describe('CaseController - Get candidate Merge cases rules', () => {
   verifyRolesRules(CaseController, 'getCandidateMergeCases', [
     districtCourtJudgeRule,

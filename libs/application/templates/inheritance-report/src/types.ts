@@ -296,8 +296,6 @@ export interface EstateMember {
   inheritanceTax?: string
   taxableInheritance?: string
   taxFreeInheritance?: string
-  approved?: boolean
-  approvedDate?: string
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
@@ -346,12 +344,6 @@ export interface InheritanceReportExternalData {
     data: {
       success: boolean
       signatories: InheritanceSignatory[]
-    }
-    date: string
-  }
-  checkReviewFlag?: {
-    data: {
-      reviewEnabled: boolean
     }
     date: string
   }

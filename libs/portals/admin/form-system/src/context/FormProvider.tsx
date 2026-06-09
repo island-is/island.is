@@ -119,9 +119,12 @@ export const FormProvider: React.FC<{
   )
 
   const updateDragAndDrop = useCallback(
-    () =>
+    (updatedForm?: FormSystemForm) =>
       updateDnd(
-        control,
+        {
+          ...control,
+          form: updatedForm ?? control.form,
+        },
         updateSectionDisplayOrder,
         updateScreenDisplayOrder,
         updateFieldDisplayOrder,

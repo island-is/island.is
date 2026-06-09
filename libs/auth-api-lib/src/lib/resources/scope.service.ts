@@ -170,12 +170,16 @@ export class ScopeService {
       lang,
     )
 
+    // default to OUTGOING so access-control filters
+    // run when the caller doesn't specify a direction.
+    const resolvedDirection = direction ?? DelegationDirection.OUTGOING
+
     // Fetch all scopes with their category associations, excluding
     // admin scopes which are not relevant.
     const allScopes = await this.delegationResourcesService.findScopesInternal({
       user,
       language: lang,
-      direction,
+      direction: resolvedDirection,
       attributes: [
         'name',
         'displayName',
@@ -292,13 +296,17 @@ export class ScopeService {
     lang: string,
     direction?: DelegationDirection,
   ): Promise<ScopeTagDTO[]> {
+    // default to OUTGOING so access-control filters
+    // run when the caller doesn't specify a direction.
+    const resolvedDirection = direction ?? DelegationDirection.OUTGOING
+
     // Fetch tags and scopes in parallel
     const [cmsTags, scopes] = await Promise.all([
       this.cmsContentfulService.getDelegationScopeTags(lang),
       this.delegationResourcesService.findScopesInternal({
         user,
         language: lang,
-        direction,
+        direction: resolvedDirection,
         attributes: [
           'name',
           'displayName',

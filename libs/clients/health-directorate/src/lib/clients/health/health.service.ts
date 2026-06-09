@@ -38,6 +38,7 @@ import {
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
   mePrescriptionControllerGetPrescriptionsV1,
+  mePrescriptionControllerGetRenewalTargetsV1,
   mePrescriptionControllerRenewPrescriptionV1,
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
@@ -67,6 +68,8 @@ import {
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
+  RenewPrescriptionRequestDto,
+  RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
@@ -152,15 +155,35 @@ export class HealthDirectorateHealthService {
   }
 
   /* Endurnýjun lyfseðils */
-  public async postRenewalPrescription(auth: Auth, id: string) {
+  public async postRenewalPrescription(
+    auth: Auth,
+    id: string,
+    body?: RenewPrescriptionRequestDto,
+  ) {
     return await withAuthContext(auth, () =>
       data(
         mePrescriptionControllerRenewPrescriptionV1({
           path: { id },
-          body: {},
+          body: body ?? {},
         }),
       ),
     )
+  }
+
+  /* Endurnýjunarviðtakendur lyfseðils */
+  public async getRenewalTargets(
+    auth: Auth,
+    id: string,
+  ): Promise<Array<RenewalTargetDto> | null> {
+    const targets = await withAuthContext(auth, () =>
+      data(
+        mePrescriptionControllerGetRenewalTargetsV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return targets ?? null
   }
 
   /* Fylgiseðill */

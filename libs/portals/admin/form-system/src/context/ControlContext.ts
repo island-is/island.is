@@ -14,7 +14,6 @@ import { Dispatch, SetStateAction, createContext } from 'react'
 import { ControlAction, ControlState } from '../hooks/controlReducer'
 import {
   ActiveItem,
-  ItemType,
   NavbarSelectStatus,
   OpenComponents,
 } from '../lib/utils/interfaces'
@@ -36,7 +35,7 @@ export interface IControlContext {
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
   focus: string
   setFocus: Dispatch<string>
-  updateDnD: (type: ItemType) => void
+  updateDnD: (updatedForm?: FormSystemForm) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
   setInListBuilder: Dispatch<SetStateAction<boolean>>
@@ -68,7 +67,7 @@ export const ControlContext = createContext<IControlContext>({
   setFocus: function (_value: string): void {
     throw new Error('Function not implemented.')
   },
-  updateDnD: function (_type: ItemType): void {
+  updateDnD: function (_updatedForm?: FormSystemForm): void {
     throw new Error('Function not implemented.')
   },
   setSubmissionUrls: function (_value: React.SetStateAction<string[]>): void {

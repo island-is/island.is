@@ -8,7 +8,6 @@ export {
   EstateApi,
   EstateOnEntryApi,
   GetSignatoriesApi,
-  CheckReviewFlagApi,
 } from './EstateNoticeProvider'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({

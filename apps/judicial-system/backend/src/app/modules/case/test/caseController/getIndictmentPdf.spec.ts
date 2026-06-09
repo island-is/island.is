@@ -16,7 +16,7 @@ import { createIndictment } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case, Defendant } from '../../../repository'
 
-jest.mock('../../../../formatters/indictmentPdf')
+jest.mock('../../../../formatters/generatedPdfs/indictmentPdf')
 
 interface Then {
   error: Error

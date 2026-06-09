@@ -48,6 +48,7 @@ import {
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isDistrictCourtUser,
   isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
@@ -372,28 +373,35 @@ export class CaseController {
   @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case by id' })
-  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
-    this.logger.debug(`Getting case ${caseId} by id`)
-
-    return theCase
-  }
-
-  @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @RolesRules(
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @UseInterceptors(CasesInterceptor)
-  @Get('case/:caseId/connectedCases')
-  @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
-  getConnectedCases(
+  async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<Case[]> {
-    this.logger.debug(`Getting connected cases for case ${caseId}`)
+    @CurrentHttpUser() user: User,
+  ): Promise<Case> {
+    this.logger.debug(`Getting case ${caseId} by id`)
 
-    return this.caseService.getConnectedIndictmentCases(theCase)
+    if (
+      isDistrictCourtUser(user) &&
+      isIndictmentCase(theCase.type) &&
+      theCase.defendants?.length
+    ) {
+      const connectedCases = await this.caseService.getConnectedIndictmentCases(
+        theCase,
+      )
+
+      for (const defendant of theCase.defendants) {
+        defendant.connectedCases = connectedCases.filter((cc) =>
+          cc.defendants?.some((d) =>
+            defendant.noNationalId
+              ? d.nationalId === defendant.nationalId &&
+                d.name === defendant.name
+              : d.nationalId === defendant.nationalId,
+          ),
+        )
+      }
+    }
+
+    return theCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
