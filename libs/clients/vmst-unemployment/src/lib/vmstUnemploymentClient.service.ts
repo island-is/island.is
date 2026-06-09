@@ -616,6 +616,7 @@ export class VmstUnemploymentClientService {
   async getIncomeTypes(options?: {
     onlyTrTypes?: boolean
     onlyPensionTypes?: boolean
+    onlyCapitalTypes?: boolean
   }): Promise<Array<GaldurExternalDomainModelsIncomeIncomeTypeDTO>> {
     const api = await this.createApiClient(
       IncomeSupportDataApi,

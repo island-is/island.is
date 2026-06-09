@@ -42,7 +42,7 @@ export const capitalIncomeFields = [
 
           return incomeTypes.map((type) => ({
             label: type.name ?? '',
-            value: type.name ?? '',
+            value: type.id ?? '',
           }))
         },
       },

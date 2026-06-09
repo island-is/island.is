@@ -63,21 +63,17 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
   }
 
   async getIncomeTypes() {
-    const [trTypes, pensionTypes, allTypes] = await Promise.all([
+    const [trTypes, pensionTypes, capitalIncomeTypes] = await Promise.all([
       this.vmstUnemploymentClientService.getIncomeTypes({
         onlyTrTypes: true,
       }),
       this.vmstUnemploymentClientService.getIncomeTypes({
         onlyPensionTypes: true,
       }),
-      this.vmstUnemploymentClientService.getIncomeTypes(),
+      this.vmstUnemploymentClientService.getIncomeTypes({
+        onlyCapitalTypes: true,
+      }),
     ])
-
-    const trTypeIds = new Set(trTypes.map((t) => t.id))
-    const pensionTypeIds = new Set(pensionTypes.map((t) => t.id))
-    const capitalIncomeTypes = allTypes.filter(
-      (t) => !trTypeIds.has(t.id) && !pensionTypeIds.has(t.id),
-    )
 
     return { trTypes, pensionTypes, capitalIncomeTypes }
   }
@@ -202,7 +198,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
                 applicantId,
                 galdurExternalDomainRequestsIncomeCreateCapitalIncomePaymentRequest:
                   {
-                    description: entry.paymentType,
+                    incomeTypeId: entry.paymentType,
                     estimatedIncome: entry.amountPerMonth
                       ? Number(entry.amountPerMonth)
                       : undefined,
