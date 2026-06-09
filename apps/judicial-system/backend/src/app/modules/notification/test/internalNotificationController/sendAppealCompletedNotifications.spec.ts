@@ -31,7 +31,7 @@ interface Then {
 type GivenWhenThen = (
   defenderNationalId?: string,
   appealRulingDecision?: AppealCaseRulingDecision,
-  notifications?: { type: AppealCaseNotificationType }[],
+  appealRulingModifiedHistory?: string,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -69,7 +69,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     givenWhenThen = async (
       defenderNationalId?: string,
       appealRulingDecision?: AppealCaseRulingDecision,
-      notifications?: { type: AppealCaseNotificationType }[],
+      appealRulingModifiedHistory?: string,
     ) => {
       const then = {} as Then
 
@@ -93,11 +93,11 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderEmail: defender.email,
             courtCaseNumber,
             courtId: courtId,
-            notifications,
             appealCase: {
               appealCaseNumber,
               appealRulingDecision:
                 appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+              appealRulingModifiedHistory,
             },
           } as Case,
           {
@@ -192,9 +192,11 @@ describe('InternalNotificationController - Send appeal completed notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(uuid(), AppealCaseRulingDecision.CHANGED, [
-        { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-      ])
+      then = await givenWhenThen(
+        uuid(),
+        AppealCaseRulingDecision.CHANGED,
+        'Leiðrétting á úrskurði',
+      )
     })
 
     it('should send resent email but not sms to prosecutor', () => {
