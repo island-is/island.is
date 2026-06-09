@@ -47,7 +47,9 @@ export const casualWorkFields = [
         label: m.application.monthFrom,
         width: 'half',
         required: true,
-        clearOnChange: (index: number) => [`registerCasualWork[${index}].monthTo`],
+        clearOnChange: (index: number) => [
+          `registerCasualWork[${index}].monthTo`,
+        ],
         minDate: () => {
           const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)

@@ -45,7 +45,9 @@ export const contractWorkFields = [
         label: m.application.jobStart,
         width: 'half',
         required: true,
-        clearOnChange: (index: number) => [`registerContractWork[${index}].workEnds`],
+        clearOnChange: (index: number) => [
+          `registerContractWork[${index}].workEnds`,
+        ],
         minDate: () => {
           const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)
