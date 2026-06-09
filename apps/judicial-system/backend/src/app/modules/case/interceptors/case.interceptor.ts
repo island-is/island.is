@@ -7,7 +7,6 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   AppealEventType,
   CaseAppealDecision,
@@ -460,9 +459,7 @@ const getDefenceUserDefendants = (
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
       defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(user.nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === user.nationalId,
   )
 
   if (!myDefendants?.length) {

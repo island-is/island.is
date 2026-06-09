@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseState,
@@ -90,10 +89,7 @@ export const getDefenceUserCutoffDate = (
   const myDefendants = defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === nationalId,
   )
 
   if (!myDefendants?.length) {
@@ -364,11 +360,7 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   const myDefendants = (defendants ?? []).filter(
     (d) =>
-      d.isDefenderChoiceConfirmed &&
-      d.defenderNationalId &&
-      normalizeAndFormatNationalId(userNationalId).includes(
-        d.defenderNationalId,
-      ),
+      d.isDefenderChoiceConfirmed && d.defenderNationalId === userNationalId,
   )
 
   const assignedToMe = new Set(
@@ -387,10 +379,7 @@ export const getConfirmedDefendantsForDefender = (
   return (defendants ?? []).filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(userNationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === userNationalId,
   )
 }
 
