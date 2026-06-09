@@ -1,27 +1,32 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
-import { Configuration } from '../../gen/fetch'
+import { client } from '../../gen/fetch/client.gen'
 import { CustomsCalculatorClientConfig } from './customsCalculatorClient.config'
 
-export const CustomsCalculatorApiConfiguration = {
-  provide: Configuration,
+export const CUSTOMS_CALCULATOR_CLIENT = 'CUSTOMS_CALCULATOR_CLIENT'
+
+export const CustomsCalculatorApiConfig = {
+  provide: CUSTOMS_CALCULATOR_CLIENT,
   useFactory: (config: ConfigType<typeof CustomsCalculatorClientConfig>) => {
     const authorization = `Basic ${Buffer.from(
       `${config.username}:${config.password}`,
     ).toString('base64')}`
 
-    return new Configuration({
-      fetchApi: createEnhancedFetch({
+    client.setConfig({
+      baseUrl: config.baseUrl,
+      headers: {
+        Accept: 'application/json',
+        Authorization: authorization,
+        'X-Gateway-APIKey': config.apiKey,
+      },
+      fetch: createEnhancedFetch({
         name: 'clients-rsk-customs-calculator',
         organizationSlug: 'skatturinn',
         timeout: 20000,
       }),
-      basePath: config.basePath,
-      headers: {
-        Authorization: authorization,
-        'X-Gateway-APIKey': config.apiKey,
-      },
     })
+
+    return client
   },
   inject: [CustomsCalculatorClientConfig.KEY],
 }

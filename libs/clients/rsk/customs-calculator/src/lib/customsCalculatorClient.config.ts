@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
-  basePath: z.string().url(),
+  baseUrl: z.string(),
   username: z.string(),
   password: z.string(),
   apiKey: z.string(),
@@ -13,7 +13,7 @@ export const CustomsCalculatorClientConfig = defineConfig({
   name: 'CustomsCalculatorClientConfig',
   schema,
   load: (env) => ({
-    basePath: env.required(
+    baseUrl: env.required(
       'SKATTUR_TOLLUR_REIKNIVEL_BASE_PATH',
       'https://skatt-test.hysing.is/gateway/tollur-reiknivel/v1',
     ),

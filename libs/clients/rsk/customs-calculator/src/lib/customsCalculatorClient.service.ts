@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common'
-import { DefaultApi } from '../../gen/fetch'
-import { writeFileSync } from 'fs'
+import { Inject, Injectable } from '@nestjs/common'
+import {
+  getReiknivelVoruflokkar,
+  getReiknivelEiningar,
+} from '../../gen/fetch'
+import type { Client } from '../../gen/fetch/client.gen'
+import { CUSTOMS_CALCULATOR_CLIENT } from './customsCalculator.apiConfig'
 
 @Injectable()
 export class CustomsCalculatorClientService {
-  constructor(private readonly customsCalculatorApi: DefaultApi) {}
+  constructor(
+    @Inject(CUSTOMS_CALCULATOR_CLIENT) private readonly client: Client,
+  ) {}
 
   async getProductCategories() {
-    const payload =
-      (await this.customsCalculatorApi.getReiknivelVoruflokkar()) as {
+    const { data: payload } = (await getReiknivelVoruflokkar({
+      client: this.client,
+    })) as {
+      data?: {
         Response?: {
           Voruflokkar?: {
             Yfirflokkur?: string
@@ -18,6 +26,7 @@ export class CustomsCalculatorClientService {
           }[]
         }
       }
+    }
 
     return (
       (payload?.Response?.Voruflokkar ?? [])
@@ -32,40 +41,21 @@ export class CustomsCalculatorClientService {
   }
 
   async getProductCategoryUnits(tariffNumber: string, referenceDate: string) {
-    const payload = (await this.customsCalculatorApi.getReiknivelEiningar({
-      vidmDags: referenceDate,
-      tollskrarnumer: tariffNumber,
+    const { data: payload } = (await getReiknivelEiningar({
+      query: {
+        vidmDags: referenceDate,
+        tollskrarnumer: tariffNumber,
+      },
+      client: this.client,
     })) as {
-      Response?: {
-        Einingar?: string
-        Villur?: string
+      data?: {
+        Response?: {
+          Einingar?: string
+          Villur?: string
+        }
       }
     }
-    writeFileSync(
-      'responses.json',
-      JSON.stringify({ payload, tariffNumber, referenceDate }, null, 2),
-    )
 
     return payload?.Response?.Einingar
   }
-
-  // async getUnits(tariffNumber: string, referenceDate: string) {
-  //   const payload = (await this.customsCalculatorApi.getReiknivelEiningar({
-  //     tollskrarnumer: tariffNumber,
-  //     vidmDags: referenceDate,
-  //   })) as {
-  //     Response?: {
-  //       Einingar?: string
-  //       Villur?: string
-  //     }
-  //   }
-  //   const data = (payload['Response'] ?? {}) as Record<string, unknown>
-  //   const unitsRaw = this.toNullableString(data['Einingar'])
-
-  //   return {
-  //     status: this.mapStatus(payload),
-  //     units: unitsRaw ? unitsRaw.split(',').map((unit) => unit.trim()) : [],
-  //     errors: this.toNullableString(data['Villur']),
-  //   }
-  // }
 }
