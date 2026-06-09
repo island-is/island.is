@@ -696,28 +696,6 @@ const transformCase = (
 export class CaseInterceptor implements NestInterceptor {
   constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
 
-  private async findRootAncestorId(
-    caseId: string,
-    parentCaseId: string | null | undefined,
-  ): Promise<string> {
-    let currentId = parentCaseId
-    let rootId = parentCaseId ? parentCaseId : caseId
-
-    while (currentId) {
-      const nextParentCaseId =
-        await this.caseRepositoryService.findParentCaseId(currentId)
-
-      if (!nextParentCaseId) {
-        rootId = currentId
-        break
-      }
-
-      currentId = nextParentCaseId
-    }
-
-    return rootId
-  }
-
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
@@ -727,7 +705,9 @@ export class CaseInterceptor implements NestInterceptor {
       .handle()
       .pipe(
         switchMap((theCase: Case) =>
-          from(this.findRootAncestorId(theCase.id, theCase.parentCaseId)).pipe(
+          from(
+            this.caseRepositoryService.findOriginalAncestorId(theCase),
+          ).pipe(
             map((originalAncestorId) =>
               transformCase(theCase, user, originalAncestorId),
             ),
