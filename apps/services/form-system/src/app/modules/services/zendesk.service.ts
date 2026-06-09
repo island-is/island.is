@@ -538,7 +538,9 @@ export class ZendeskService {
   ): CustomField[] {
     const customFields: CustomField[] = []
 
-    const subject = applicationDto.formName?.is ?? 'No subject'
+    const subject = applicationDto.formName?.is
+      ? applicationDto.formName.is
+      : 'No subject'
     const mappedSubject = mapToCustomFields(zendeskInstance, {
       subject: subject,
     })
