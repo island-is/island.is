@@ -30,7 +30,7 @@ export const exportedApis = [
         // headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
         headers: { 'X-Tenant-Identifier': 'reykjavik' },
         // basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-        basePath: 'https://app-veita-api-test.azurewebsites.net/applications',
+        basePath: 'https://app-veita-api-test.azurewebsites.net',
       }),
     )
   },
