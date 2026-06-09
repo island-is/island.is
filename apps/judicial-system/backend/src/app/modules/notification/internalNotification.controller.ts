@@ -96,7 +96,8 @@ export class InternalNotificationController {
   @UseGuards(CaseHasExistedGuard, AppealCaseExistsGuard)
   @ApiCreatedResponse({
     type: DeliverResponse,
-    description: 'Sends an appeal case notification for an existing appeal case',
+    description:
+      'Sends an appeal case notification for an existing appeal case',
   })
   sendAppealCaseNotification(
     @Param('caseId') caseId: string,
