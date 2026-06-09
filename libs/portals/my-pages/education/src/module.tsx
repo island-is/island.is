@@ -5,7 +5,10 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
-import { primarySchoolGateLoader } from './screens/PrimarySchool/PrimarySchool/PrimarySchoolGate.loader'
+import {
+  primarySchoolGateLoader,
+  educationAssessmentGateLoader,
+} from './screens/PrimarySchool/PrimarySchool/PrimarySchoolGate.loader'
 
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
@@ -95,6 +98,7 @@ export const educationModule: PortalModule = {
       name: 'Námsmat',
       path: EducationPaths.EducationAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: educationAssessmentGateLoader({ userInfo, ...rest }),
       element: <EducationCareer />,
     },
 

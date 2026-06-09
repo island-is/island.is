@@ -110,6 +110,8 @@ test.describe.serial('Indictment tests', () => {
 
     // Indictment
 
+    await page.getByRole('button', { name: 'Opna alla' }).click()
+
     await page.getByPlaceholder('AB123').fill('AB123')
 
     await Promise.all([

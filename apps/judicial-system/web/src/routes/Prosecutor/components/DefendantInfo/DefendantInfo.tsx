@@ -19,7 +19,6 @@ import InputName from '@island.is/judicial-system-web/src/components/Inputs/Inpu
 import InputNationalId from '@island.is/judicial-system-web/src/components/Inputs/InputNationalId'
 import {
   Case,
-  CaseOrigin,
   Defendant,
   Gender,
   UpdateDefendantInput,
@@ -36,18 +35,6 @@ import {
   isBusiness,
   mapStringToGender,
 } from '@island.is/judicial-system-web/src/utils/utils'
-
-/**
- * Skip national registry lookup for police system synced defendants.
- */
-const skipNationalRegistryForPoliceSystemDefendant = (
-  origin: CaseOrigin | null | undefined,
-  caseId: string | null | undefined,
-  defendant: Defendant,
-) =>
-  origin === CaseOrigin.LOKE &&
-  Boolean(caseId) &&
-  (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim()))
 
 interface Props {
   defendant: Defendant
@@ -71,14 +58,23 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const skipNationalRegistry = skipNationalRegistryForPoliceSystemDefendant(
-    workingCase.origin,
-    workingCase.id,
-    defendant,
-  )
+
+  // Tracks whether the user has actively edited the national id this session.
+  // On load/refresh this is false, so an existing defendant's name/address are
+  // preserved (and manual corrections are never overwritten). When the user
+  // changes the national id we re-run the lookup to fill the new person's data.
+  // Note: typing the original id back also re-triggers a lookup, which is an
+  // acceptable trade-off for avoiding fragile baseline-id tracking across loads.
+  const [hasUserEditedNationalId, setHasUserEditedNationalId] = useState(false)
+
   const { personData, businessData, error, notFound } = useNationalRegistry(
     defendant.nationalId,
-    { skip: skipNationalRegistry },
+    {
+      skip:
+        Boolean(workingCase.id) &&
+        !hasUserEditedNationalId &&
+        (Boolean(defendant.name?.trim()) || Boolean(defendant.address?.trim())),
+    },
   )
 
   const genderOptions: ReactSelectOption[] = [
@@ -193,7 +189,8 @@ const DefendantInfo: FC<Props> = (props) => {
               nationalId: value || null,
             })
           }
-          onChange={(value) =>
+          onChange={(value) => {
+            setHasUserEditedNationalId(true)
             updateDefendantState(
               {
                 caseId: workingCase.id,
@@ -202,7 +199,7 @@ const DefendantInfo: FC<Props> = (props) => {
               },
               setWorkingCase,
             )
-          }
+          }}
           required={!defendant.noNationalId}
         />
         {defendant.nationalId?.length === 11 && notFound && (

@@ -499,9 +499,16 @@ globalStyle(
 )
 
 globalStyle(
+  `${root}.island-ui-datepicker.${medium} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
+  {
+    top: '6px',
+  },
+)
+
+globalStyle(
   `${root}.island-ui-datepicker.${extraSmall} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
   {
-    top: '7px',
+    top: '25px',
   },
 )
 
@@ -604,6 +611,13 @@ globalStyle(
     top: '0',
     borderRadius: '8px',
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached}.${extraSmall} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
+  {
+    top: '23px',
   },
 )
 

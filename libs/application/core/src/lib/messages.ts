@@ -526,6 +526,12 @@ export const coreErrorMessages = defineMessages({
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
   },
+  paymentSubmitFailedDescriptionMarkdown: {
+    id: 'application.system:core.payment.paymentSubmitFailedDescription#markdown',
+    defaultMessage:
+      '* **Greiðsla tókst** en ekki tókst að senda umsókn inn til afgreiðslu. \n\n* Þú getur reynt aftur að senda inn umsókn með smella á **Reyna aftur**. \n\n* Þú getur hætt við að senda umsóknina inn í bili og fengið endurgreitt með því að smella á **Hætta við greiðslu og vista umsókn**. Finna má vistaðar umsóknir á [Mínum síðum](https://island.is/minarsidur/umsoknir)',
+    description: 'Message indicating submission after payment failed',
+  },
   applicationSubmitFailed: {
     id: 'application.system:core.application.SubmitFailed',
     defaultMessage: 'Sending umsóknar mistókst',
@@ -538,7 +544,7 @@ export const coreErrorMessages = defineMessages({
   },
   paymentSubmitRefundExitButtonCaption: {
     id: 'application.system:core.payment.exitCaption',
-    defaultMessage: 'Hætta við greiðslu og fara aftur í umsókn',
+    defaultMessage: 'Hætta við greiðslu og vista umsókn',
     description: 'Caption for the refund payment and exit button',
   },
   paymentStatusError: {

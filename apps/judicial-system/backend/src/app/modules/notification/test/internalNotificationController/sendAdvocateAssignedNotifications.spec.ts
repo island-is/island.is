@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_REQUEST_CASE_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   DateType,
@@ -116,7 +116,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: `Yfirlit máls ${theCase.courtCaseNumber}`,
         text: expect.anything(),
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig sem verjanda/talsmann sakbornings í máli ${theCase.courtCaseNumber}.<br /><br />Þú getur nálgast yfirlit málsins á <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig sem verjanda/talsmann sakbornings í máli ${theCase.courtCaseNumber}.<br /><br />Þú getur nálgast yfirlit málsins á <a href="${mockConfig.clientUrl}${DEFENDER_REQUEST_CASE_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })

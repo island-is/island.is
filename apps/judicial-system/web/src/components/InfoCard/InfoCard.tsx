@@ -26,13 +26,22 @@ interface Props {
 const InfoCard: FC<Props> = (props) => {
   const { sections } = props
 
+  const visibleSections = sections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter(
+        (item) => item.values.length > 0 && !!item.values[0],
+      ),
+    }))
+    .filter((section) => section.items.length > 0)
+
   return (
     <BlueBox className={grid({ gap: 3 })}>
-      {sections.map((section, index) => (
+      {visibleSections.map((section, index) => (
         <Box
           className={cn(styles.grid, {
             [styles.twoCols]: section.columns === 2,
-            [styles.renderDividerFull]: index !== sections.length - 1,
+            [styles.renderDividerFull]: index !== visibleSections.length - 1,
           })}
           key={section.id}
         >

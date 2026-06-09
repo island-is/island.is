@@ -1,17 +1,34 @@
 import { ApplicationService } from '@island.is/application/api/core'
 import { createApplication } from '@island.is/application/testing'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  ApplicationStatus,
+  ApplicationTypes,
+  ExternalData,
+} from '@island.is/application/types'
 import { S3Service } from '@island.is/nest/aws'
 import { setup } from '../../../../../../test/setup'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
 import { ApplicationLifecycleModule } from '../application-lifecycle.module'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import addMonths from 'date-fns/addMonths'
+import { createDailyCompletionNotifications } from '@island.is/application/api/payment'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Test } from '@nestjs/testing'
+import { FileService } from '@island.is/application/api/files'
+import { NotificationsApi } from '@island.is/clients/user-notification'
+import { HistoryService } from '@island.is/application/api/history'
 
 let lifeCycleService: ApplicationLifeCycleService
 let s3Service: S3Service
 
 jest.mock('@island.is/application/template-loader')
+
+jest.mock('@island.is/application/api/payment', () => ({
+  ...jest.requireActual('@island.is/application/api/payment'),
+  createDailyCompletionNotifications: jest.fn(),
+}))
 
 beforeEach(() => {
   ;(getApplicationTemplateByTypeId as jest.Mock).mockResolvedValue({
@@ -89,11 +106,11 @@ export const createPostPruneApplications = () => [
 ]
 
 class ApplicationServiceMock {
-  findAllDueToBePruned(): Application[] {
+  findAllDueToBePruned(): ApplicationWithAttachments[] {
     return createApplications()
   }
 
-  findAllDueToBePostPruned(): Application[] {
+  findAllDueToBePostPruned(): ApplicationWithAttachments[] {
     return createPostPruneApplications()
   }
 
@@ -119,13 +136,8 @@ class ApplicationServiceMock {
     id: string,
     application: Partial<
       Pick<
-        Application,
-        | 'attachments'
-        | 'answers'
-        | 'externalData'
-        | 'pruned'
-        | 'postPruneAt'
-        | 'postPruned'
+        ApplicationWithAttachments,
+        'attachments' | 'answers' | 'externalData' | 'status'
       >
     >,
   ) {
@@ -135,8 +147,14 @@ class ApplicationServiceMock {
 
 class ApplicationChargeServiceMock {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async deleteCharge(application: Pick<Application, 'id'>) {
+  async deleteCharge(application: Pick<ApplicationWithAttachments, 'id'>) {
     // do nothing
+  }
+  async getInvoicePaymentApplicationIds() {
+    return new Set<string>()
+  }
+  async getApplicationLink() {
+    return 'https://example.is/umsoknir/test/app-id'
   }
 }
 
@@ -161,7 +179,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
     //PREPARE
     const deleteObjectSpy = jest
       .spyOn(s3Service, 'deleteObject')
-      .mockResolvedValue()
+      .mockResolvedValue(true)
 
     //ACT
     await lifeCycleService.run()
@@ -184,7 +202,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
       .mockImplementationOnce(() => {
         throw new Error('Error')
       })
-      .mockResolvedValueOnce()
+      .mockResolvedValueOnce(true)
 
     //ACT
     await lifeCycleService.run()
@@ -247,7 +265,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
     //ASSERT
     expect(result[1].application.answers).toEqual({ keepThis: 'admin' })
     expect(result[1].application.externalData).toEqual({})
-    expect(result[1].application.postPruneAt).toBeInstanceOf(Date)
   })
 
   it('should handle post-pruning', async () => {
@@ -259,5 +276,250 @@ describe('ApplicationLifecycleService Unit tests', () => {
     expect(postPruned[0].application.answers).toEqual({})
     expect(postPruned[0].application.externalData).toEqual({})
     expect(postPruned[0].postPruned).toEqual(true)
+  })
+
+  describe('filterInvoicesFromPruning', () => {
+    let service: ApplicationLifeCycleService
+    let applicationService: {
+      cancelScheduledNotifications: jest.Mock
+      createScheduledNotifications: jest.Mock
+      update: jest.Mock
+    }
+    let applicationChargeService: {
+      getInvoicePaymentApplicationIds: jest.Mock
+      getApplicationLink: jest.Mock
+    }
+    let mockLogger: { info: jest.Mock; error: jest.Mock; child: jest.Mock }
+
+    const createPruningEntry = (
+      overrides: Partial<
+        ApplicationWithAttachments & {
+          id: string
+          status: ApplicationStatus
+          createChargeStatus: 'success' | 'failure' | undefined
+          state: string
+        }
+      > = {},
+    ) => ({
+      pruned: true,
+      failedAttachments: {},
+      application: {
+        id: overrides.id ?? 'app-id',
+        state: overrides.state ?? 'draft',
+        status: overrides.status ?? ApplicationStatus.IN_PROGRESS,
+        typeId: overrides.typeId ?? ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
+        applicant: overrides.applicant ?? 'user123',
+        applicantActors: overrides.applicantActors ?? ['user345', 'user678'],
+        assignees: overrides.assignees ?? ['user345'],
+        modified: new Date(),
+        created: new Date(),
+        answers: overrides.answers ?? {},
+        attachments: {},
+        externalData: overrides.createChargeStatus
+          ? {
+              createCharge: {
+                status: overrides.createChargeStatus,
+                data: {},
+                date: new Date(),
+              },
+            }
+          : ({} as ExternalData),
+      } as ApplicationWithAttachments,
+    })
+
+    beforeEach(async () => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2026-01-15T12:00:00.000Z'))
+
+      mockLogger = {
+        info: jest.fn(),
+        error: jest.fn(),
+        child: jest.fn().mockReturnThis(),
+      }
+
+      applicationService = {
+        cancelScheduledNotifications: jest.fn(),
+        createScheduledNotifications: jest.fn(),
+        update: jest.fn().mockImplementation((_id, app) =>
+          Promise.resolve({
+            numberOfAffectedRows: 1,
+            updatedApplication: app,
+          }),
+        ),
+      }
+
+      applicationChargeService = {
+        getInvoicePaymentApplicationIds: jest.fn().mockResolvedValue(new Set()),
+        getApplicationLink: jest
+          .fn()
+          .mockResolvedValue('https://island.is/umsoknir/test/app-id'),
+      }
+      ;(createDailyCompletionNotifications as jest.Mock).mockReturnValue([
+        {
+          template: 'completion-reminder',
+          schedule_time: new Date(),
+          args: [],
+        },
+      ])
+
+      const module = await Test.createTestingModule({
+        providers: [
+          ApplicationLifeCycleService,
+          { provide: LOGGER_PROVIDER, useValue: mockLogger },
+          { provide: ApplicationService, useValue: applicationService },
+          { provide: FileService, useValue: {} },
+          {
+            provide: ApplicationChargeService,
+            useValue: applicationChargeService,
+          },
+          { provide: NotificationsApi, useValue: {} },
+          { provide: HistoryService, useValue: {} },
+        ],
+      }).compile()
+
+      service = module.get(ApplicationLifeCycleService)
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+      jest.clearAllMocks()
+    })
+
+    it('should keep completed applications with successful charge in the prune queue', async () => {
+      const entry = createPruningEntry({
+        status: ApplicationStatus.COMPLETED,
+        createChargeStatus: 'success',
+      })
+      service['processingApplications'] = [entry]
+
+      await service['filterInvoicesFromPruning']()
+
+      expect(service['processingApplications']).toEqual([entry])
+      expect(
+        applicationChargeService.getInvoicePaymentApplicationIds,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should keep incomplete applications without successful charge in the prune queue', async () => {
+      const entry = createPruningEntry({ createChargeStatus: undefined })
+      service['processingApplications'] = [entry]
+
+      await service['filterInvoicesFromPruning']()
+
+      expect(service['processingApplications']).toEqual([entry])
+      expect(
+        applicationChargeService.getInvoicePaymentApplicationIds,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should keep incomplete applications with charge but no invoice payment in the prune queue', async () => {
+      const entry = createPruningEntry({
+        id: 'no-invoice-app',
+        createChargeStatus: 'success',
+      })
+      service['processingApplications'] = [entry]
+
+      await service['filterInvoicesFromPruning']()
+
+      expect(
+        applicationChargeService.getInvoicePaymentApplicationIds,
+      ).toHaveBeenCalledWith(['no-invoice-app'])
+      expect(service['processingApplications']).toEqual([entry])
+      expect(
+        applicationService.createScheduledNotifications,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should extend prune date and schedule notifications for incomplete invoice applications', async () => {
+      const entry = createPruningEntry({
+        id: 'invoice-app',
+        createChargeStatus: 'success',
+        state: 'paymentPending',
+      })
+      service['processingApplications'] = [entry]
+
+      applicationChargeService.getInvoicePaymentApplicationIds.mockResolvedValue(
+        new Set(['invoice-app']),
+      )
+
+      await service['filterInvoicesFromPruning']()
+
+      expect(service['processingApplications']).toEqual([])
+
+      const expectedPruneAt = addMonths(new Date('2026-01-15T12:00:00.000Z'), 1)
+
+      expect(applicationChargeService.getApplicationLink).toHaveBeenCalledWith(
+        entry.application,
+      )
+      expect(createDailyCompletionNotifications).toHaveBeenCalledWith(
+        'https://island.is/umsoknir/test/app-id',
+        new Date('2026-01-15T12:00:00.000Z'),
+        expectedPruneAt,
+      )
+      expect(
+        applicationService.cancelScheduledNotifications,
+      ).toHaveBeenCalledWith('invoice-app')
+      expect(
+        applicationService.createScheduledNotifications,
+      ).toHaveBeenCalledWith('invoice-app', 'paymentPending', [
+        {
+          template: 'completion-reminder',
+          schedule_time: expect.any(Date),
+          args: [],
+        },
+      ])
+      expect(applicationService.update).toHaveBeenCalledWith('invoice-app', {
+        pruneAt: expectedPruneAt,
+      })
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Found 1 applications with invoice payments to be extended.',
+      )
+    })
+
+    it('should handle a mixed batch correctly', async () => {
+      const completedWithCharge = createPruningEntry({
+        id: 'completed',
+        status: ApplicationStatus.COMPLETED,
+        createChargeStatus: 'success',
+      })
+      const incompleteNoInvoice = createPruningEntry({
+        id: 'card-app',
+        createChargeStatus: 'success',
+      })
+      const incompleteWithInvoice = createPruningEntry({
+        id: 'invoice-app',
+        createChargeStatus: 'success',
+      })
+      const normalApp = createPruningEntry({ id: 'normal-app' })
+
+      service['processingApplications'] = [
+        completedWithCharge,
+        incompleteNoInvoice,
+        incompleteWithInvoice,
+        normalApp,
+      ]
+
+      applicationChargeService.getInvoicePaymentApplicationIds.mockResolvedValue(
+        new Set(['invoice-app']),
+      )
+
+      await service['filterInvoicesFromPruning']()
+
+      expect(service['processingApplications']).toEqual([
+        completedWithCharge,
+        normalApp,
+        incompleteNoInvoice,
+      ])
+      expect(
+        applicationChargeService.getInvoicePaymentApplicationIds,
+      ).toHaveBeenCalledWith(['card-app', 'invoice-app'])
+      expect(applicationService.update).toHaveBeenCalledTimes(1)
+      expect(applicationService.update).toHaveBeenCalledWith(
+        'invoice-app',
+        expect.objectContaining({
+          pruneAt: addMonths(new Date('2026-01-15T12:00:00.000Z'), 1),
+        }),
+      )
+    })
   })
 })
