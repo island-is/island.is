@@ -110,6 +110,7 @@ const AddRulingOrder: FC = () => {
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
+          editableFileAttributs={['fileName']}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>

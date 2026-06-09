@@ -5,7 +5,10 @@ import { useIntl } from 'react-intl'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import { TUploadFile } from '../../utils/hooks'
-import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
+import EditableCaseFile, {
+  EditableFields,
+  editableFields,
+} from '../EditableCaseFile/EditableCaseFile'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
@@ -21,6 +24,11 @@ interface Props {
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
   isBottomComponent?: boolean
+  /**
+   * Which fields of an uploaded file can be edited. Defaults to all editable
+   * fields (file name and display date).
+   */
+  editableFileAttributs?: readonly EditableFields[]
 }
 
 const UploadFiles: FC<Props> = (props) => {
@@ -32,6 +40,7 @@ const UploadFiles: FC<Props> = (props) => {
     onRename,
     setEditCount,
     isBottomComponent,
+    editableFileAttributs = editableFields,
   } = props
   const { formatMessage } = useIntl()
 
@@ -99,7 +108,7 @@ const UploadFiles: FC<Props> = (props) => {
             caseFile={{
               ...file,
               id: file.id ?? '',
-              canEdit: file.percent === 0 ? ['fileName', 'displayDate'] : [],
+              canEdit: file.percent === 0 ? editableFileAttributs : [],
               canOpen: true,
             }}
             onOpen={() => file.previewUrl && window.open(file.previewUrl)}
