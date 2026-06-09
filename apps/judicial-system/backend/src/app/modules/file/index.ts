@@ -9,3 +9,4 @@ export {
   isConfirmedDefenderOfSpecificDefendant,
 } from './guards/caseFileCategory'
 export { canDefenceUserViewCivilClaimCaseFile } from './guards/civilClaimFileVisibility'
+export { districtCourtJudgeConfirmRulingOrderRule } from './guards/rolesRules'
