@@ -10,13 +10,11 @@ import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generat
 const usePoliceDigitalCaseFile = () => {
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
-  const {
-    id: caseId,
-    origin: caseOrigin,
-    originalAncestorId,
-    splitCase,
-  } = workingCase
-  const effectiveCaseId = originalAncestorId ?? splitCase?.id ?? caseId
+  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
+  // originalAncestorId is resolved server-side (split case id for indictments,
+  // the extension's original ancestor for request cases). Fall back to caseId
+  // only to satisfy the nullable GraphQL type — the backend always sets it.
+  const effectiveCaseId = originalAncestorId ?? caseId
 
   const handleCompleted = useCallback(
     (completedData: {
