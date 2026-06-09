@@ -188,7 +188,7 @@ export const UserIdentitiesTable = ({
                         return (
                           <Tag
                             key={env}
-                            variant={isDeactivated ? 'red' : 'blue'}
+                            variant={isDeactivated ? 'disabled' : 'blue'}
                             outlined
                             disabled
                           >
