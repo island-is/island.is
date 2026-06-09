@@ -112,6 +112,10 @@ const AppealFiles = () => {
     sendNotification(
       workingCase.id,
       TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+      undefined,
+      targetAppealCase?.id
+        ? { appealCaseId: targetAppealCase.id }
+        : undefined,
     )
 
     refreshCase()
@@ -123,6 +127,7 @@ const AppealFiles = () => {
     updateUploadFile,
     sendNotification,
     workingCase.id,
+    targetAppealCase?.id,
     refreshCase,
   ])
 
