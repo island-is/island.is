@@ -98,13 +98,24 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
 
     const { answers } = application
     const typeOfIncome = getValueViaPath<string>(answers, 'typeOfIncome')
+
+    const fieldIdMap: Record<string, string> = {
+      casualWork: 'registerCasualWork',
+      partTime: 'registerPartTime',
+      contractWork: 'registerContractWork',
+      capitalIncome: 'registerCapitalIncome',
+      socialInsurance: 'registerSocialInsurance',
+      pension: 'registerPension',
+    }
+
+    const fieldId = typeOfIncome ? fieldIdMap[typeOfIncome] : undefined
     const entries = getValueViaPath<
       Array<
         Record<string, string> & {
           company?: { nationalId: string; name: string }
         }
       >
-    >(answers, 'registerIncome')
+    >(answers, fieldId ?? '')
 
     if (!entries || entries.length === 0) {
       throw new TemplateApiError(
@@ -246,6 +257,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
         throw e
       }
 
+      // TODO remove error message parsing when vmst-unemployment client returns proper error codes and messages
       const message =
         e instanceof Error && 'body' in e && (e as any).body?.message
           ? (e as any).body.message

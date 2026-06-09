@@ -20,13 +20,13 @@ export const casualWorkFields = [
     condition: isCasualWork,
   }),
   buildFieldsRepeaterField({
-    id: 'registerIncome',
+    id: 'registerCasualWork',
     condition: isCasualWork,
     formTitleNumbering: 'suffix',
     formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
-        'registerIncome',
+        'registerCasualWork',
       )
       if (!items || items.length <= 1) {
         return ''
@@ -47,7 +47,7 @@ export const casualWorkFields = [
         label: m.application.monthFrom,
         width: 'half',
         required: true,
-        clearOnChange: (index: number) => [`registerIncome[${index}].monthTo`],
+        clearOnChange: (index: number) => [`registerCasualWork[${index}].monthTo`],
         minDate: () => {
           const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)

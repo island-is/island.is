@@ -13,13 +13,13 @@ export const socialInsuranceFields = [
     condition: isSocialInsurance,
   }),
   buildFieldsRepeaterField({
-    id: 'registerIncome',
+    id: 'registerSocialInsurance',
     condition: isSocialInsurance,
     formTitleNumbering: 'suffix',
     formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
-        'registerIncome',
+        'registerSocialInsurance',
       )
       if (!items || items.length <= 1) {
         return ''

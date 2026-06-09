@@ -8006,6 +8006,10 @@
           "reason": {
             "type": "string",
             "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -8065,6 +8069,10 @@
             "type": "boolean"
           },
           "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
             "type": "string",
             "nullable": true
           }
@@ -8164,6 +8172,9 @@
             "items": {
               "$ref": "#/components/schemas/Galdur_XRoad_API_Models_OverviewItem"
             }
+          },
+          "jobSearchConfirmationStatus": {
+            "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmationStatusDTO"
           }
         }
       },
@@ -8182,6 +8193,18 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmationStatusDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "hasConfirmed": {
+            "type": "boolean"
+          }
+        }
+      },
       "Galdur_External_Domain_Requests_WithdrawOverviewResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -8190,6 +8213,10 @@
             "type": "boolean"
           },
           "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
             "type": "string",
             "nullable": true
           },
@@ -9221,6 +9248,12 @@
             "type": "string",
             "description": "Auðkenni fyrir skilmála staðfestingar umsækjanda",
             "format": "guid",
+            "nullable": true
+          },
+          "applicationPayloadHash": {
+            "type": "string",
+            "description": "SHA256 hash af payload-i umsóknarinnar, notað til að greina duplicate umsóknir",
+            "format": "byte",
             "nullable": true
           }
         }

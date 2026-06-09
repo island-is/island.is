@@ -1,37 +1,60 @@
 import { z } from 'zod'
 
-const registerIncomeEntrySchema = z.object({
-  // Casual work / Part-time company lookup
+const casualWorkEntrySchema = z.object({
   company: z
     .object({
       nationalId: z.string().optional(),
       name: z.string().optional(),
     })
     .optional(),
-  // Casual work fields
-  monthFrom: z.string().min(1).optional(),
-  monthTo: z.string().min(1).optional(),
-  estimatedIncome: z.string().min(1).optional(),
-  // Part-time fields
-  jobStart: z.string().min(1).optional(),
-  workPercentage: z.string().min(1).optional(),
-  // Contract work fields
-  contractJobStart: z.string().min(1).optional(),
-  workEnds: z.string().min(1).optional(),
-  // Capital income fields
-  paymentType: z.string().min(1).optional(),
-  amountPerMonth: z.string().min(1).optional(),
-  paymentFrequency: z.string().min(1).optional(),
-  // Pension fields
-  pensionType: z.string().min(1).optional(),
-  pensionFund: z.string().min(1).optional(),
-  // Social insurance fields
-  socialPaymentType: z.string().min(1).optional(),
+  monthFrom: z.string().min(1),
+  monthTo: z.string().min(1),
+  estimatedIncome: z.string().min(1),
+})
+
+const partTimeEntrySchema = z.object({
+  company: z
+    .object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    })
+    .optional(),
+  jobStart: z.string().min(1),
+  workPercentage: z.string().min(1),
+  estimatedIncome: z.string().min(1),
+})
+
+const contractWorkEntrySchema = z.object({
+  contractJobStart: z.string().min(1),
+  workEnds: z.string().min(1),
+})
+
+const capitalIncomeEntrySchema = z.object({
+  paymentType: z.string().min(1),
+  amountPerMonth: z.string().min(1),
+  paymentFrequency: z.string().min(1),
+})
+
+const socialInsuranceEntrySchema = z.object({
+  socialPaymentType: z.string().min(1),
+  amountPerMonth: z.string().min(1),
+  paymentFrequency: z.string().min(1),
+})
+
+const pensionEntrySchema = z.object({
+  pensionFund: z.string().min(1),
+  pensionType: z.string().min(1),
+  amountPerMonth: z.string().min(1),
 })
 
 export const dataSchema = z.object({
   typeOfIncome: z.string().min(1),
-  registerIncome: z.array(registerIncomeEntrySchema).min(1),
+  registerCasualWork: z.array(casualWorkEntrySchema).optional(),
+  registerPartTime: z.array(partTimeEntrySchema).optional(),
+  registerContractWork: z.array(contractWorkEntrySchema).optional(),
+  registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
+  registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
+  registerPension: z.array(pensionEntrySchema).optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

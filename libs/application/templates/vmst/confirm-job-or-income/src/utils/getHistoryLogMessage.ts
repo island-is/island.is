@@ -5,19 +5,19 @@ import { application as applicationMessages } from '../lib/messages'
 export const getHistoryLogMessage = (application: Application) => {
   const monthFrom = getValueViaPath<string>(
     application.answers,
-    'registerIncome[0].monthFrom',
+    'registerCasualWork[0].monthFrom',
   )
   const monthTo = getValueViaPath<string>(
     application.answers,
-    'registerIncome[0].monthTo',
+    'registerCasualWork[0].monthTo',
   )
   const contractJobStart = getValueViaPath<string>(
     application.answers,
-    'registerIncome[0].contractJobStart',
+    'registerContractWork[0].contractJobStart',
   )
   const workEnds = getValueViaPath<string>(
     application.answers,
-    'registerIncome[0].workEnds',
+    'registerContractWork[0].workEnds',
   )
 
   const dateFrom = monthFrom || contractJobStart

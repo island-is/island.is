@@ -21,13 +21,13 @@ export const partTimeFields = [
     condition: isPartTime,
   }),
   buildFieldsRepeaterField({
-    id: 'registerIncome',
+    id: 'registerPartTime',
     condition: isPartTime,
     formTitleNumbering: 'suffix',
     formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
-        'registerIncome',
+        'registerPartTime',
       )
       if (!items || items.length <= 1) {
         return ''

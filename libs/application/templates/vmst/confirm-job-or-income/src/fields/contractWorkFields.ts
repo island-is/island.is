@@ -21,13 +21,13 @@ export const contractWorkFields = [
     condition: isContractWork,
   }),
   buildFieldsRepeaterField({
-    id: 'registerIncome',
+    id: 'registerContractWork',
     condition: isContractWork,
     formTitleNumbering: 'suffix',
     formTitle: (index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
-        'registerIncome',
+        'registerContractWork',
       )
       if (!items || items.length <= 1) {
         return ''
@@ -45,7 +45,7 @@ export const contractWorkFields = [
         label: m.application.jobStart,
         width: 'half',
         required: true,
-        clearOnChange: (index: number) => [`registerIncome[${index}].workEnds`],
+        clearOnChange: (index: number) => [`registerContractWork[${index}].workEnds`],
         minDate: () => {
           const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)

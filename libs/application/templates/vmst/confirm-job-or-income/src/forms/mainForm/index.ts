@@ -43,7 +43,16 @@ export const MainForm = buildForm({
               id: 'typeOfIncome',
               title: m.application.incomeTypeTitle,
               required: true,
-              clearOnChange: ['registerIncome'],
+              setOnChange: async () => {
+                return [
+                  { key: 'registerCasualWork', value: undefined },
+                  { key: 'registerPartTime', value: undefined },
+                  { key: 'registerContractWork', value: undefined },
+                  { key: 'registerCapitalIncome', value: undefined },
+                  { key: 'registerSocialInsurance', value: undefined },
+                  { key: 'registerPension', value: undefined },
+                ]
+              },
               options: [
                 {
                   value: 'casualWork',
