@@ -22,6 +22,8 @@ export const GET_COURSE_BY_ID_QUERY = `
   }
 `
 
+export const HH_NATIONAL_ID = '5210050760'
+
 export const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
   '6pkONOn80xzGTGij6qtjai': 'namskeid-fyrir-almenning',
   '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',

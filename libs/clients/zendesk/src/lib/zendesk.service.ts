@@ -66,6 +66,12 @@ export interface ZendeskServiceOptions {
   subdomain: string
 }
 
+export type CustomObjectRecord = {
+  name: string
+  external_id?: string
+  custom_object_fields: Record<string, string | null | undefined>
+}
+
 export class ZendeskService {
   api: string
   params: object
@@ -268,5 +274,65 @@ export class ZendeskService {
     }
 
     return true
+  }
+
+  async getCustomObjectRecord(
+    objectKey: string,
+    externalId: string,
+  ): Promise<CustomObjectRecord | null> {
+    try {
+      const response = await axios.get(
+        `${this.api}/custom_objects/${objectKey}/records/${externalId}`,
+        this.params,
+      )
+      return response.data.custom_object_record
+    } catch (e) {
+      if (e.response?.status === 404) return null
+      const errMsg = 'Failed to get Zendesk custom object record'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+  }
+
+  async createCustomObjectRecord(
+    objectKey: string,
+    record: CustomObjectRecord,
+  ): Promise<void> {
+    try {
+      await axios.post(
+        `${this.api}/custom_objects/${objectKey}/records`,
+        JSON.stringify({ custom_object_record: record }),
+        this.params,
+      )
+    } catch (e) {
+      const errMsg = 'Failed to create Zendesk custom object record'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+  }
+
+  async bulkCreateCustomObjectRecords(
+    objectKey: string,
+    records: CustomObjectRecord[],
+  ): Promise<void> {
+    try {
+      await axios.post(
+        `${this.api}/custom_objects/${objectKey}/jobs`,
+        JSON.stringify({
+          job: {
+            action: 'create_many',
+            items: records.map((r) => ({ custom_object_record: r })),
+          },
+        }),
+        this.params,
+      )
+    } catch (e) {
+      const errMsg = 'Failed to bulk create Zendesk custom object records'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, { message: description })
+      throw new Error(`${errMsg}: ${description}`)
+    }
   }
 }
