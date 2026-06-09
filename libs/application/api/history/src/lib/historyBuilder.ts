@@ -30,18 +30,18 @@ export class HistoryBuilder {
     currentUserNationalId: string,
     isAdmin: boolean,
   ): Promise<HistoryResponseDto[] | []> {
-    const result = []
+    const result: HistoryResponseDto[] = []
 
     for (const entry of history) {
       const {
-        entryTimestamp,
         stateKey,
         exitEvent,
+        exitTimestamp,
         exitEventSubjectNationalId: subjectNationalId,
         exitEventActorNationalId: actorNationalId,
       } = entry
 
-      if (!exitEvent) continue
+      if (!exitEvent || !exitTimestamp) continue
 
       const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
@@ -95,7 +95,7 @@ export class HistoryBuilder {
 
         result.push(
           new HistoryResponseDto(
-            entryTimestamp,
+            exitTimestamp,
             message,
             formatMessage,
             subjectAndActorText,
