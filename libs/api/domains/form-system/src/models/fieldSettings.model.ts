@@ -128,4 +128,7 @@ export class FieldSettings {
 
   @Field(() => String, { nullable: true })
   dataSourceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  assetType?: string
 }

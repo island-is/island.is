@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
+import { AssetsSettings } from './components/AssetsSettings'
 import { CheckboxSettings } from './components/CheckboxSettings'
 import { ListSettings } from './components/ListSettings'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
@@ -36,6 +37,7 @@ export const FieldSettings = () => {
       {currentItem.fieldType === FieldTypesEnum.PAYMENT_QUANTITY && (
         <PaymentFieldSettings />
       )}
+      {currentItem.fieldType === FieldTypesEnum.ASSETS && <AssetsSettings />}
       {currentItem.fieldType === FieldTypesEnum.NATIONAL_ID && (
         <NationalIdSettings />
       )}

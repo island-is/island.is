@@ -1,6 +1,7 @@
 export * from './applicantTypes.enum'
 export * from './applicationEvents.enum'
 export * from './applicationStatus.enum'
+export * from './assetTypes.enum'
 export * from './certificationTypes.enum'
 export * from './fieldTypes.enum'
 export * from './formStatus.enum'

@@ -1,5 +1,6 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
+  Asset,
   Banknumber,
   Checkbox,
   CurrencyField,
@@ -46,6 +47,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
   [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
+  [FieldTypesEnum.ASSETS]: Asset,
 } as const
 
 export const Field = ({ field, valueIndex = 0 }: Props) => {
