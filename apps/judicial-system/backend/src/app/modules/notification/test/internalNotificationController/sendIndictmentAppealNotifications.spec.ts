@@ -20,7 +20,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -70,6 +70,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
 
   let mockEmailService: EmailService
@@ -91,9 +92,15 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
     givenWhenThen = async (user: User) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealedByNationalId: defender1NationalId,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -110,11 +117,9 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
             courtId: court.id,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealedByNationalId: defender1NationalId,
-              appealState: AppealCaseState.APPEALED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
             type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
@@ -294,6 +299,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -316,9 +322,15 @@ describe('InternalNotificationController - Send indictment appeal received by co
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate: receivedDate,
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -332,11 +344,9 @@ describe('InternalNotificationController - Send indictment appeal received by co
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealReceivedByCourtDate: receivedDate,
-              appealState: AppealCaseState.RECEIVED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
             type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT,
@@ -443,6 +453,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = 'L-123/2026'
 
@@ -460,9 +471,21 @@ describe('InternalNotificationController - Send indictment appeal statement noti
     givenWhenThen = async (user: User) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealAssistant: {
+          name: assistant.name,
+          email: assistant.email,
+        },
+        appealJudge1: { name: judge1.name, email: judge1.email },
+        appealJudge2: { name: judge2.name, email: judge2.email },
+        appealJudge3: { name: judge3.name, email: judge3.email },
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -472,17 +495,9 @@ describe('InternalNotificationController - Send indictment appeal statement noti
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealCaseNumber,
-              appealAssistant: {
-                name: assistant.name,
-                email: assistant.email,
-              },
-              appealJudge1: { name: judge1.name, email: judge1.email },
-              appealJudge2: { name: judge2.name, email: judge2.email },
-              appealJudge3: { name: judge3.name, email: judge3.email },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
             type: AppealCaseNotificationType.APPEAL_STATEMENT,
@@ -640,6 +655,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
   const { prosecutor, judge } = createTestUsers(['prosecutor', 'judge'])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
 
@@ -657,9 +673,16 @@ describe('InternalNotificationController - Send indictment appeal completed noti
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealState: AppealCaseState.COMPLETED,
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -670,12 +693,9 @@ describe('InternalNotificationController - Send indictment appeal completed noti
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealState: AppealCaseState.COMPLETED,
-              appealCaseNumber,
-              appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
             type: AppealCaseNotificationType.APPEAL_COMPLETED,
@@ -758,6 +778,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
   ])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
 
   let mockEmailService: EmailService
@@ -788,9 +809,15 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
               role: UserRole.DEFENDER,
             } as User)
 
+      const appealCase = {
+        appealedByNationalId: defender1NationalId,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -806,11 +833,9 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
             courtId: court.id,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealedByNationalId: defender1NationalId,
-              appealState: AppealCaseState.APPEALED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
             type: AppealCaseNotificationType.APPEAL_WITHDRAWN,
@@ -951,6 +976,7 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
   const { prosecutor } = createTestUsers(['prosecutor'])
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
 
@@ -968,9 +994,15 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
     givenWhenThen = async () => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.INDICTMENT,
@@ -980,11 +1012,9 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
             courtCaseNumber,
             defendants,
             civilClaimants,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: uuid() } as User,
             type: AppealCaseNotificationType.APPEAL_COMPLETED,
