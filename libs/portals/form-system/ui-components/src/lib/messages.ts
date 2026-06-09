@@ -1262,4 +1262,9 @@ export const m = defineMessages({
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
   },
+  copyFieldHover: {
+    id: 'form.system:copy-field-hover',
+    defaultMessage: 'Afrita innslátt',
+    description: 'Copy field',
+  },
 })
