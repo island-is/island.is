@@ -119,6 +119,22 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
   }
 
+  // The value rendered for the {courtCaseNumber} placeholder in notifications.
+  // For ruling-order appeals we identify the appeal by the appealed ruling
+  // order's user-generated file name instead of the district court case number.
+  private getCourtCaseNumber(
+    theCase: Case,
+    appealCase: AppealCase,
+  ): string | undefined {
+    if (appealCase.rulingFileId) {
+      return theCase.caseFiles?.find(
+        (file) => file.id === appealCase.rulingFileId,
+      )?.userGeneratedFilename
+    }
+
+    return theCase.courtCaseNumber
+  }
+
   private getIndictmentDefenceRecipients(
     theCase: Case,
     excludeNationalId?: string,
@@ -282,19 +298,19 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealedToCourtOfAppeals.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
     const html = this.formatMessage(strings.caseAppealedToCourtOfAppeals.body, {
       userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const smsText = this.formatMessage(
       strings.caseAppealedToCourtOfAppeals.text,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
 
@@ -353,7 +369,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           court: applyDativeCaseToCourtName(
             theCase.court?.name || 'héraðsdómi',
           ),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
         },
@@ -394,19 +410,19 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealedToCourtOfAppeals.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
     const html = this.formatMessage(strings.caseAppealedToCourtOfAppeals.body, {
       userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const smsText = this.formatMessage(
       strings.caseAppealedToCourtOfAppeals.text,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
 
@@ -466,7 +482,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealedToCourtOfAppeals.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
           },
@@ -498,7 +514,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
             court: applyDativeCaseToCourtName(
               theCase.court?.name || 'héraðsdómi',
             ),
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
           },
@@ -553,14 +569,14 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealReceivedByCourt.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
 
     const html = this.formatMessage(
       strings.caseAppealReceivedByCourt.courtOfAppealsBody,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -568,7 +584,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
 
     const smsText = this.formatMessage(strings.caseAppealReceivedByCourt.text, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
 
@@ -597,7 +613,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       strings.caseAppealReceivedByCourt.body,
       {
         userHasAccessToRVG: true,
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -624,7 +640,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           court: applyDativeCaseToCourtName(
             theCase.court?.name || 'héraðsdómi',
           ),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           statementDeadline: formatDate(statementDeadline, 'PPPp'),
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
@@ -664,14 +680,14 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealReceivedByCourt.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       },
     )
 
     const html = this.formatMessage(
       strings.caseAppealReceivedByCourt.courtOfAppealsBody,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -679,7 +695,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     )
 
     const smsText = this.formatMessage(strings.caseAppealReceivedByCourt.text, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
 
@@ -708,7 +724,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       strings.caseAppealReceivedByCourt.body,
       {
         userHasAccessToRVG: true,
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -734,7 +750,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealReceivedByCourt.body,
         {
           userHasAccessToRVG: Boolean(defenderUrl),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           statementDeadline: formatDate(statementDeadline, 'PPPp'),
           linkStart: `<a href="${defenderUrl}">`,
           linkEnd: '</a>',
@@ -772,7 +788,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     user: User,
   ): Promise<DeliverResponse> {
     const subject = this.formatMessage(strings.caseAppealStatement.subject, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
     })
 
@@ -784,7 +800,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealStatement.body,
         {
           userHasAccessToRVG: true,
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -841,7 +857,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealStatement.body,
         {
           userHasAccessToRVG: true,
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -870,7 +886,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealStatement.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -900,7 +916,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           strings.caseAppealStatement.body,
           {
             userHasAccessToRVG: Boolean(defenderUrl),
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -946,7 +962,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     }
 
     const subject = this.formatMessage(strings.caseAppealStatement.subject, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
     })
 
@@ -957,7 +973,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealStatement.body,
         {
           userHasAccessToRVG: true,
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -1014,7 +1030,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         strings.caseAppealStatement.body,
         {
           userHasAccessToRVG: true,
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -1042,7 +1058,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           court: applyDativeCaseToCourtName(
             theCase.court?.name || 'héraðsdómi',
           ),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
@@ -1094,7 +1110,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealCaseFilesUpdated.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
       },
     )
@@ -1102,7 +1118,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const courtOfAppealHtml = this.formatMessage(
       strings.caseAppealCaseFilesUpdated.body,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -1126,7 +1142,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       const prosecutorHtml = this.formatMessage(
         strings.caseAppealCaseFilesUpdated.body,
         {
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -1152,7 +1168,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         const defenderHtml = this.formatMessage(
           strings.caseAppealCaseFilesUpdated.body,
           {
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -1179,7 +1195,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         const defenderHtml = this.formatMessage(
           strings.caseAppealCaseFilesUpdated.body,
           {
-            courtCaseNumber: theCase.courtCaseNumber,
+            courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
             appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
             linkStart: `<a href="${defenderUrl}">`,
             linkEnd: '</a>',
@@ -1236,7 +1252,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const subject = this.formatMessage(
       strings.caseAppealCaseFilesUpdated.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
       },
     )
@@ -1244,7 +1260,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const courtOfAppealHtml = this.formatMessage(
       strings.caseAppealCaseFilesUpdated.body,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -1268,7 +1284,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       const prosecutorHtml = this.formatMessage(
         strings.caseAppealCaseFilesUpdated.body,
         {
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -1313,7 +1329,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         ? strings.caseAppealResent.subject
         : strings.caseAppealCompleted.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
       },
     )
@@ -1325,7 +1341,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         : strings.caseAppealCompleted.body,
       {
         userHasAccessToRVG: true,
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
         appealRulingDecision: getAppealResultTextByValue(
           appealCase.appealRulingDecision,
@@ -1351,7 +1367,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         : strings.caseAppealCompleted.body,
       {
         userHasAccessToRVG: true,
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
         appealRulingDecision: getAppealResultTextByValue(
           appealCase.appealRulingDecision,
@@ -1385,7 +1401,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           : strings.caseAppealCompleted.body,
         {
           userHasAccessToRVG: Boolean(defenderUrl),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
           appealRulingDecision: getAppealResultTextByValue(
             appealCase.appealRulingDecision,
@@ -1428,7 +1444,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         ? strings.caseAppealResent.subject
         : strings.caseAppealCompleted.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
       },
     )
@@ -1439,7 +1455,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         : strings.caseAppealCompleted.body,
       {
         userHasAccessToRVG: true,
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
         appealRulingDecision: getAppealResultTextByValue(
           appealCase.appealRulingDecision,
@@ -1510,7 +1526,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           court: applyDativeCaseToCourtName(
             theCase.court?.name || 'héraðsdómi',
           ),
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
           appealRulingDecision: getAppealResultTextByValue(
             appealCase.appealRulingDecision,
@@ -1533,7 +1549,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     if (!isReopened) {
       const smsText = this.formatMessage(strings.caseAppealCompleted.text, {
-        courtCaseNumber: theCase.courtCaseNumber,
+        courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
         appealCaseNumber: appealCase.appealCaseNumber,
         appealRulingDecision: getAppealResultTextByValue(
           appealCase.appealRulingDecision,
@@ -1553,10 +1569,10 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     const subject = this.formatMessage(strings.caseAppealDiscontinued.subject, {
       appealCaseNumber: appealCase.appealCaseNumber,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
     const html = this.formatMessage(strings.caseAppealDiscontinued.body, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       appealCaseNumber: appealCase.appealCaseNumber,
     })
 
@@ -1577,7 +1593,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       const defenderHtml = this.formatMessage(
         strings.caseAppealDiscontinued.body,
         {
-          courtCaseNumber: theCase.courtCaseNumber,
+          courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
           appealCaseNumber: appealCase.appealCaseNumber,
         },
       )
@@ -1611,10 +1627,10 @@ export class AppealCaseNotificationService extends BaseNotificationService {
 
     const subject = this.formatMessage(strings.caseAppealDiscontinued.subject, {
       appealCaseNumber: appealCase.appealCaseNumber,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
     const html = this.formatMessage(strings.caseAppealDiscontinued.body, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
       appealCaseNumber: appealCase.appealCaseNumber,
     })
 
@@ -1674,11 +1690,11 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const wasWithdrawnByProsecution = isProsecutionUser(user)
 
     const subject = this.formatMessage(strings.caseAppealWithdrawn.subject, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
     const html = this.formatMessage(strings.caseAppealWithdrawn.body, {
       withdrawnByProsecution: wasWithdrawnByProsecution ?? false,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
 
     // Notify district court judge
@@ -1855,11 +1871,11 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const wasWithdrawnByProsecution = isProsecutionUser(user)
 
     const subject = this.formatMessage(strings.caseAppealWithdrawn.subject, {
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
     const html = this.formatMessage(strings.caseAppealWithdrawn.body, {
       withdrawnByProsecution: wasWithdrawnByProsecution ?? false,
-      courtCaseNumber: theCase.courtCaseNumber,
+      courtCaseNumber: this.getCourtCaseNumber(theCase, appealCase),
     })
 
     const sendTo = this.getWithdrawnNotificationRecipients(

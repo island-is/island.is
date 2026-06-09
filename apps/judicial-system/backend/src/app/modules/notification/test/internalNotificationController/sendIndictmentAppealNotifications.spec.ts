@@ -1073,3 +1073,89 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
     })
   })
 })
+
+// ─── 7. Ruling-order appeals identify the case by the ruling order file name ─
+
+describe('InternalNotificationController - Ruling-order appeal uses the ruling order file name instead of the court case number', () => {
+  const { judge, court } = createTestUsers(['judge'])
+
+  const caseId = uuid()
+  const appealCaseId = uuid()
+  const courtCaseNumber = uuid()
+  const rulingFileId = uuid()
+  const rulingOrderFileName = 'Úrskurður 15-2026'
+
+  let mockEmailService: EmailService
+
+  type GivenWhenThen = () => Promise<Then>
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    process.env.COURTS_EMAILS = `{"${court.id}": "${court.email}"}`
+
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
+
+    mockEmailService = emailService
+
+    givenWhenThen = async () => {
+      const then = {} as Then
+
+      // A ruling-order appeal: the appeal case points at a specific ruling
+      // order file rather than being a case-level appeal.
+      const appealCase = {
+        appealState: AppealCaseState.APPEALED,
+        rulingFileId,
+      } as AppealCase
+
+      await internalNotificationController
+        .sendAppealCaseNotification(
+          caseId,
+          appealCaseId,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            judge: { name: judge.name, email: judge.email },
+            court: { name: 'Héraðsdómur Reykjavíkur' },
+            courtCaseNumber,
+            defendants,
+            civilClaimants,
+            caseFiles: [
+              { id: rulingFileId, userGeneratedFilename: rulingOrderFileName },
+            ],
+            rulingOrderAppealCases: [appealCase],
+          } as Case,
+          appealCase,
+          {
+            user: {
+              role: UserRole.PROSECUTOR,
+              institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+            } as User,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+          },
+        )
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+      return then
+    }
+  })
+
+  it('should render the ruling order file name in the subject, not the court case number', async () => {
+    await givenWhenThen()
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name: judge.name, address: judge.email }],
+        subject: `Kæra í máli ${rulingOrderFileName}`,
+      }),
+    )
+
+    // The district court case number must NOT appear for a ruling-order appeal
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: `Kæra í máli ${courtCaseNumber}`,
+      }),
+    )
+  })
+})
