@@ -93,7 +93,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, CaseExistsGuard, RolesGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
