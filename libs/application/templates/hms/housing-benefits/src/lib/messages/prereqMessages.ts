@@ -173,8 +173,7 @@ export const prereqMessages = defineMessages({
   devMockTaxVariantFiveYears: {
     id: 'hb.application:prereq.devMockTaxVariantFiveYears',
     defaultMessage: 'Framtali skilað síðustu 5 ár en ekki síðasta ár',
-    description:
-      'Tax mock: filed within last five years but not last year',
+    description: 'Tax mock: filed within last five years but not last year',
   },
   devMockTaxVariantRequired: {
     id: 'hb.application:prereq.devMockTaxVariantRequired',
