@@ -83,8 +83,6 @@ async function main(testContext = null) {
         content.image.tag = imageTag
         fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       }
-      content.image.tag = imageTag
-      fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
       changedFiles.add(file)
     } else if (file.includes('bootstrap-fd-job') && !changedFiles.has(file)) {
