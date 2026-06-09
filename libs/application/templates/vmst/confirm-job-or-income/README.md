@@ -39,21 +39,21 @@ The schema uses separate arrays for each income type. Only the array matching th
 
 ### `registerCasualWork[]`
 
-| Field             | Type                                   | Validation |
-| ----------------- | -------------------------------------- | ---------- |
-| `company`         | `{ nationalId: string, name: string }` | Optional   |
-| `monthFrom`       | `string`                               | Required   |
-| `monthTo`         | `string`                               | Required   |
-| `estimatedIncome` | `string`                               | Required   |
+| Field             | Type                                   | Validation                                    |
+| ----------------- | -------------------------------------- | --------------------------------------------- |
+| `company`         | `{ nationalId: string, name: string }` | Required (nationalId required, name optional) |
+| `monthFrom`       | `string`                               | Required                                      |
+| `monthTo`         | `string`                               | Required                                      |
+| `estimatedIncome` | `string`                               | Required                                      |
 
 ### `registerPartTime[]`
 
-| Field             | Type                                   | Validation |
-| ----------------- | -------------------------------------- | ---------- |
-| `company`         | `{ nationalId: string, name: string }` | Optional   |
-| `jobStart`        | `string`                               | Required   |
-| `workPercentage`  | `string`                               | Required   |
-| `estimatedIncome` | `string`                               | Required   |
+| Field             | Type                                   | Validation                                    |
+| ----------------- | -------------------------------------- | --------------------------------------------- |
+| `company`         | `{ nationalId: string, name: string }` | Required (nationalId required, name optional) |
+| `jobStart`        | `string`                               | Required                                      |
+| `workPercentage`  | `string`                               | Required                                      |
+| `estimatedIncome` | `string`                               | Required                                      |
 
 ### `registerContractWork[]`
 

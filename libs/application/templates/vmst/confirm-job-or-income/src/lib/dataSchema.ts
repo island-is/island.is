@@ -1,24 +1,20 @@
 import { z } from 'zod'
 
 const casualWorkEntrySchema = z.object({
-  company: z
-    .object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-    })
-    .optional(),
+  company: z.object({
+    nationalId: z.string().min(1),
+    name: z.string().optional(),
+  }),
   monthFrom: z.string().min(1),
   monthTo: z.string().min(1),
   estimatedIncome: z.string().min(1),
 })
 
 const partTimeEntrySchema = z.object({
-  company: z
-    .object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-    })
-    .optional(),
+  company: z.object({
+    nationalId: z.string().min(1),
+    name: z.string().optional(),
+  }),
   jobStart: z.string().min(1),
   workPercentage: z.string().min(1),
   estimatedIncome: z.string().min(1),
