@@ -170,6 +170,12 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Framtali ekki skilað',
     description: 'Tax mock: success with empty list',
   },
+  devMockTaxVariantFiveYears: {
+    id: 'hb.application:prereq.devMockTaxVariantFiveYears',
+    defaultMessage: 'Framtali skilað síðustu 5 ár en ekki síðasta ár',
+    description:
+      'Tax mock: filed within last five years but not last year',
+  },
   devMockTaxVariantRequired: {
     id: 'hb.application:prereq.devMockTaxVariantRequired',
     defaultMessage: 'Veldu hvernig skattgögn eiga að líta út.',

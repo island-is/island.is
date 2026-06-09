@@ -14,6 +14,7 @@ export type Events = {
 export enum States {
   PREREQUISITES = 'prerequisites',
   NO_RENTAL_AGREEMENT = 'noRentalAgreement',
+  TAX_RETURN_REQUIRED = 'taxReturnRequired',
   DRAFT = 'draft',
   ASSIGNEE_APPROVAL = 'assigneeApproval',
   APPLICANT_SUBMIT = 'applicantSubmit',

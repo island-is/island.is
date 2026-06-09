@@ -39,6 +39,7 @@ import {
   applyMockAssigneeNationalRegistryAddress,
   getAssigneePersonalTaxMockMode,
   getPersonalTaxMockMode,
+  PersonalTaxMockMode,
   shouldOverlayMockAssigneeNationalRegistryAddress,
   useMockRentalAgreements,
 } from './utils/mock'
@@ -397,21 +398,63 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Whether a tax return was filed for the given year.
+   *
+   * TODO: Replace the mock resolution with the real Tax (Skatturinn) endpoint, which takes
+   * (nationalId, year) and returns a boolean. The mock modes map as follows:
+   *  - 'sample' / 'none': filed for every year
+   *  - 'empty': never filed
+   *  - 'fiveYears': not filed for last year, filed for any earlier year
+   */
+  private async checkTaxReturnFiledForYear(
+    taxMockMode: PersonalTaxMockMode,
+    year: number,
+    lastYear: number,
+  ): Promise<boolean> {
+    switch (taxMockMode) {
+      case 'empty':
+        return false
+      case 'fiveYears':
+        return year < lastYear
+      default:
+        return true
+    }
+  }
+
   async getPersonalTaxReturn({ application }: TemplateApiModuleActionProps) {
     const lastYear = new Date().getFullYear() - 1
 
     const taxMockMode = getPersonalTaxMockMode(application)
 
-    // TODO: Replace with real API call once the endpoint exists
-    const taxReturnFiled = taxMockMode !== 'empty'
+    const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      taxMockMode,
+      lastYear,
+      lastYear,
+    )
+
+    if (handedInLastYear) {
+      return {
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      }
+    }
+
+    let handedInLastFiveYears = false
+    for (let year = lastYear - 1; year >= lastYear - 5; year--) {
+      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+        handedInLastFiveYears = true
+        break
+      }
+    }
 
     this.logger.debug(
-      `Mocking tax return status for ${lastYear}: filed=${taxReturnFiled}`,
+      `Tax return status: handedInLastYear=false, handedInLastFiveYears=${handedInLastFiveYears}`,
     )
 
     return {
-      year: lastYear,
-      taxReturnFiled,
+      handedInLastYear: false,
+      handedInLastFiveYears,
     }
   }
 
@@ -426,15 +469,30 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
-    const taxReturnFiled = taxMockMode !== 'empty'
-
-    this.logger.debug(
-      `Mocking assignee tax return status for ${lastYear}: filed=${taxReturnFiled}`,
+    const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      taxMockMode,
+      lastYear,
+      lastYear,
     )
 
+    if (handedInLastYear) {
+      return {
+        handedInLastYear: true,
+        handedInLastFiveYears: true,
+      }
+    }
+
+    let handedInLastFiveYears = false
+    for (let year = lastYear - 1; year >= lastYear - 5; year--) {
+      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+        handedInLastFiveYears = true
+        break
+      }
+    }
+
     return {
-      year: lastYear,
-      taxReturnFiled,
+      handedInLastYear: false,
+      handedInLastFiveYears,
     }
   }
 

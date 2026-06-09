@@ -55,6 +55,10 @@ export const mockDataSection = buildSection({
               value: 'emptySuccess',
               label: m.devMockTaxVariantEmpty,
             },
+            {
+              value: 'filedWithinFiveYears',
+              label: m.devMockTaxVariantFiveYears,
+            },
           ],
           marginBottom: 2,
           condition: (answers) =>

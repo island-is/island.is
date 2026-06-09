@@ -61,7 +61,11 @@ const householdMemberRowSchema = z
   })
   .passthrough() // TableRepeater adds isRemoved, isUnsaved, etc.
 
-const devMockTaxVariants = ['withSampleData', 'emptySuccess'] as const
+const devMockTaxVariants = [
+  'withSampleData',
+  'emptySuccess',
+  'filedWithinFiveYears',
+] as const
 
 const baseSchema = z
   .object({

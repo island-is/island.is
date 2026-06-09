@@ -324,24 +324,50 @@ export const isExemptionReason = (answers: FormValue, reason: string) =>
   isExemptionRequested(answers) &&
   getValueViaPath<string>(answers, 'exemptionReason') === reason
 
-/** Tax return provider returned success but the tax return was not filed. */
+type PersonalTaxReturnData = {
+  handedInLastYear?: boolean
+  handedInLastFiveYears?: boolean
+}
+
+const getPersonalTaxReturnData = (
+  externalData?: ExternalData,
+): PersonalTaxReturnData | undefined => {
+  const result = externalData?.getPersonalTaxReturn
+  if (!result || result.status !== 'success') return undefined
+  return result.data as PersonalTaxReturnData | undefined
+}
+
+/**
+ * Tax return was not filed for last year, so the applicant must declare assets manually.
+ * Only true for the "never filed" case (also covers people who just moved to the country).
+ */
 export const isTaxReturnNotFiled = (
   _answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
-  const result = externalData?.getPersonalTaxReturn
-  if (!result || result.status !== 'success') return false
-  const data = result.data as { taxReturnFiled?: boolean } | undefined
-  return data?.taxReturnFiled === false
+  const data = getPersonalTaxReturnData(externalData)
+  if (!data) return false
+  return data.handedInLastFiveYears === false
 }
 
-/** Tax return provider returned success and the tax return was filed. */
+/** Tax return was filed last year, so income can be pulled from it automatically. */
 export const isTaxReturnFiled = (
   _answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
-  const result = externalData?.getPersonalTaxReturn
-  if (!result || result.status !== 'success') return false
-  const data = result.data as { taxReturnFiled?: boolean } | undefined
-  return data?.taxReturnFiled !== false
+  const data = getPersonalTaxReturnData(externalData)
+  if (!data) return false
+  return data.handedInLastYear === true
+}
+
+/**
+ * Applicant filed a tax return within the last five years but not last year. They must
+ * file last year's return before applying, so we route them to a terminal info state.
+ */
+export const mustFileTaxReturnBeforeApplying = (
+  application: Application,
+): boolean => {
+  const data = getPersonalTaxReturnData(application.externalData)
+  if (!data) return false
+  return data.handedInLastFiveYears === true && data.handedInLastYear === false
 }

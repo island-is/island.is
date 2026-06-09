@@ -112,7 +112,13 @@ export const useMockRentalAgreements = (application: {
   return Array.isArray(rental) && rental.includes(YES)
 }
 
-export type PersonalTaxMockMode = 'none' | 'sample' | 'empty'
+export type PersonalTaxMockMode = 'none' | 'sample' | 'empty' | 'fiveYears'
+
+const mapTaxVariant = (variant: string | undefined): PersonalTaxMockMode => {
+  if (variant === 'emptySuccess') return 'empty'
+  if (variant === 'filedWithinFiveYears') return 'fiveYears'
+  return 'sample'
+}
 
 /** Real Skattur API unless legacy mock (sample) or new flow with tax mock + variant. */
 export const getPersonalTaxMockMode = (application: {
@@ -130,7 +136,7 @@ export const getPersonalTaxMockMode = (application: {
     answers ?? {},
     'devMockSettings.mockTaxReturnVariant',
   )
-  return variant === 'emptySuccess' ? 'empty' : 'sample'
+  return mapTaxVariant(variant)
 }
 
 /** Assignee variant: reads from `<nationalId>.assigneeDevMockSettings.*`. */
@@ -152,5 +158,5 @@ export const getAssigneePersonalTaxMockMode = (
     answers ?? {},
     `${prefix}.mockTaxReturnVariant`,
   )
-  return variant === 'emptySuccess' ? 'empty' : 'sample'
+  return mapTaxVariant(variant)
 }
