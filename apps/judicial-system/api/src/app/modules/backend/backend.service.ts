@@ -53,6 +53,7 @@ import {
 } from '../file'
 import { DeleteResponse, IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
+import { MessageSuspension } from '../message-suspension'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
@@ -209,6 +210,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.put(`user/${userId}`, updateUser)
   }
 
+  getMessageSuspensions(): Promise<MessageSuspension[]> {
+    return this.get('message-suspension')
+  }
+
+  updateMessageSuspension(
+    category: string,
+    updateMessageSuspension: unknown,
+  ): Promise<MessageSuspension> {
+    return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
   getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
@@ -281,10 +293,6 @@ export class BackendService extends DataSource<{ req: Request }> {
   ): Promise<SignedUrl> {
     const searchParams = this.serializeNestedObject(query)
     return this.get(`cases/statistics/export-csv?${searchParams}`)
-  }
-
-  getConnectedCases(caseId: string): Promise<Case[]> {
-    return this.get(`case/${caseId}/connectedCases`)
   }
 
   getCandidateMergeCases(caseId: string): Promise<Case[]> {

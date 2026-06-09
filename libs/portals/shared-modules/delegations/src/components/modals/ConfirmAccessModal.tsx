@@ -12,17 +12,22 @@ import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { AuthApiScope } from '@island.is/api/schema'
 
 export const ConfirmAccessModal = ({
   onClose,
   onConfirm,
   isVisible,
   loading,
+  removedScopes,
+  isEdit = false,
 }: {
   onClose: () => void
   onConfirm?: () => void
   isVisible: boolean
   loading?: boolean
+  removedScopes?: AuthApiScope[]
+  isEdit?: boolean
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.lg
@@ -75,7 +80,9 @@ export const ConfirmAccessModal = ({
     <Modal
       id="confirm-access-modal"
       label={formatMessage(coreMessages.codeConfirmation)}
-      title={formatMessage(m.confirmAccessModalTitle)}
+      title={formatMessage(
+        isEdit ? m.confirmEditAccessModalTitle : m.confirmAccessModalTitle,
+      )}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
@@ -120,7 +127,11 @@ export const ConfirmAccessModal = ({
           <Text variant="h5">
             {formatMessage(m.selectedScopesWithValidityPeriod)}:
           </Text>
-          <ScopesTable showDate editableDates={false} />
+          <ScopesTable
+            showDate
+            editableDates={false}
+            removedScopes={removedScopes}
+          />
         </Box>
       </Box>
 

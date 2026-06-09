@@ -587,6 +587,7 @@ export class DrivingLicenseService {
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
       signatureBiometricsId: input.signatureBiometricsId,
+      sendPlasticToPerson: input.sendPlasticToPerson,
       healthDeclarationModel: input.healthDeclarationModel,
     })
 

@@ -16,8 +16,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -201,6 +203,8 @@ export class ApplicationsService {
       })
     } catch (error) {
       this.logger.error('Error creating application', error)
+
+      throw error
     }
 
     const applicationDto = await this.getApplication(newApplicationId, '', null)
@@ -492,57 +496,74 @@ export class ApplicationsService {
     slug: string,
     user: User | null,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationModel.findOne({
-      where: { id: applicationId },
-      include: [
-        {
-          model: ApplicationEvent,
-          as: 'events',
-        },
-        {
-          model: Value,
-          as: 'values',
-        },
-      ],
-      order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
-    })
+    try {
+      const application = await this.applicationModel.findOne({
+        where: { id: applicationId },
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+          },
+          {
+            model: Value,
+            as: 'values',
+          },
+        ],
+        order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
+      })
 
-    if (!application) {
-      throw new NotFoundException(
-        `Application with id '${applicationId}' not found`,
+      if (!application) {
+        throw new NotFoundException(
+          `Application with id '${applicationId}' not found`,
+        )
+      }
+
+      const form = await this.getApplicationForm(
+        application.formId,
+        applicationId,
+        slug,
+      )
+
+      const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+      if (user) {
+        const loginTypes = await this.getLoginTypes(user)
+        if (
+          !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
+          !this.doesUserMatchApplication(application, user, loginTypes)
+        ) {
+          const responseDto = new ApplicationResponseDto()
+          responseDto.isLoginTypeAllowed = false
+          return responseDto
+        }
+      }
+
+      const applicationDto = this.applicationMapper.mapFormToApplicationDto(
+        form,
+        application,
+      )
+
+      applicationDto.organizationName = form.organizationDisplayName
+      const responseDto = new ApplicationResponseDto()
+      responseDto.application = applicationDto
+      responseDto.isLoginTypeAllowed = true
+
+      return responseDto
+    } catch (error) {
+      if (error instanceof HttpException) {
+        this.logger.warn(
+          `getApplication failed with ${error.getStatus()} for application '${applicationId}'`,
+        )
+        throw error
+      }
+
+      this.logger.error(
+        `Unexpected error getting application '${applicationId}'`,
+        error,
+      )
+      throw new InternalServerErrorException(
+        `Unexpected error while getting application '${applicationId}'`,
       )
     }
-
-    const form = await this.getApplicationForm(
-      application.formId,
-      applicationId,
-      slug,
-    )
-
-    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (
-        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-        !this.doesUserMatchApplication(application, user, loginTypes)
-      ) {
-        const responseDto = new ApplicationResponseDto()
-        responseDto.isLoginTypeAllowed = false
-        return responseDto
-      }
-    }
-
-    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
-      form,
-      application,
-    )
-
-    applicationDto.organizationName = form.organizationDisplayName
-    const responseDto = new ApplicationResponseDto()
-    responseDto.application = applicationDto
-    responseDto.isLoginTypeAllowed = true
-
-    return responseDto
   }
 
   async findAllBySlugAndUser(

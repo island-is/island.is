@@ -131,6 +131,7 @@ export class AppealCaseService {
 
     for (const caseFile of theCase.caseFiles ?? []) {
       if (
+        !caseFile.rulingFileId &&
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&
         caseFile.category &&
@@ -153,6 +154,46 @@ export class AppealCaseService {
     })
   }
 
+  private addMessagesForRulingOrderAppealedCaseToQueue(
+    theCase: Case,
+    appealCase: AppealCase,
+    user: User,
+  ): void {
+    let fileCategories: CaseFileCategory[]
+
+    if (isProsecutionUser(user)) {
+      fileCategories = [
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+      ]
+    } else if (isDefenceUser(user)) {
+      fileCategories = [
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+      ]
+    } else {
+      // Should never happen
+      fileCategories = []
+    }
+
+    for (const caseFile of theCase.caseFiles ?? []) {
+      if (
+        appealCase.rulingFileId === caseFile.rulingFileId &&
+        caseFile.state === CaseFileState.STORED_IN_RVG &&
+        caseFile.isKeyAccessible &&
+        caseFile.category &&
+        fileCategories.includes(caseFile.category)
+      ) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })
+      }
+    }
+  }
+
   private addMessagesForReceivedAppealCaseToQueue(
     theCase: Case,
     user: User,
@@ -167,10 +208,12 @@ export class AppealCaseService {
 
   private addMessagesForCompletedAppealCaseToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     for (const caseFile of theCase.caseFiles ?? []) {
       if (
+        appealCase.rulingFileId === caseFile.rulingFileId &&
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&
         caseFile.category &&
@@ -196,9 +239,7 @@ export class AppealCaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
-        // The APPEAL_COMPLETED notification must be handled before this message
-        nextRetry:
-          nowFactory().getTime() + this.config.robotMessageDelay * 1000,
+        elementId: appealCase.id,
       },
     )
 
@@ -257,7 +298,7 @@ export class AppealCaseService {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
-          elementId: caseFile.id,
+          elementId: [appealCase.id, caseFile.id],
         })
       }
     }
@@ -266,21 +307,24 @@ export class AppealCaseService {
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
     })
 
     if (this.allAppealRolesAssigned(appealCase)) {
-      this.addMessagesForAssignedAppealRolesToQueue(theCase, user)
+      this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
   }
 
   private addMessagesForAssignedAppealRolesToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
     })
   }
 
@@ -403,9 +447,17 @@ export class AppealCaseService {
       appealCaseData.appealedByNationalId = user.nationalId
     }
 
-    return this.appealCaseRepositoryService.create(theCase.id, appealCaseData, {
-      transaction,
-    })
+    const appealCase = await this.appealCaseRepositoryService.create(
+      theCase.id,
+      appealCaseData,
+      {
+        transaction,
+      },
+    )
+
+    this.addMessagesForRulingOrderAppealedCaseToQueue(theCase, appealCase, user)
+
+    return appealCase
   }
 
   async update(
@@ -460,7 +512,7 @@ export class AppealCaseService {
           update.appealJudge3Id !== appealCase.appealJudge3Id))
     ) {
       // Queue messages for assigned roles
-      this.addMessagesForAssignedAppealRolesToQueue(theCase, user)
+      this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
 
     return updatedAppealCase
@@ -547,7 +599,7 @@ export class AppealCaseService {
           this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
         }
       } else if (newAppealState === AppealCaseState.COMPLETED) {
-        this.addMessagesForCompletedAppealCaseToQueue(theCase, user)
+        this.addMessagesForCompletedAppealCaseToQueue(theCase, appealCase, user)
       } else if (newAppealState === AppealCaseState.WITHDRAWN) {
         this.addMessagesForAppealWithdrawnToQueue(theCase, user)
       }

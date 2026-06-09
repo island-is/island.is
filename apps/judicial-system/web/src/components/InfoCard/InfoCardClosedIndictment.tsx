@@ -24,7 +24,6 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { user } = useContext(UserContext)
 
   const {
-    showItem,
     defendants,
     cancelledAndDismissedDefendants,
     policeCaseNumbers,
@@ -83,7 +82,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(showItem(mergeCase) ? [mergeCase] : []),
+            mergeCase,
             court,
             prosecutor(workingCase.type),
             judge,
