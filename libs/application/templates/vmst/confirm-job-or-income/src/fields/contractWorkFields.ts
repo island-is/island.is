@@ -23,7 +23,7 @@ export const contractWorkFields = [
   buildFieldsRepeaterField({
     id: 'registerIncome',
     condition: isContractWork,
-    formTitleNumbering: 'none',
+    formTitleNumbering: 'suffix',
     formTitle: (index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,

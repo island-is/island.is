@@ -15,8 +15,8 @@ export const pensionFields = [
   buildFieldsRepeaterField({
     id: 'registerIncome',
     condition: isPension,
-    formTitleNumbering: 'none',
-    formTitle: (index, application) => {
+    formTitleNumbering: 'suffix',
+    formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
         'registerIncome',
@@ -24,10 +24,7 @@ export const pensionFields = [
       if (!items || items.length <= 1) {
         return ''
       }
-      return {
-        ...m.application.pensionHeading,
-        values: { index: index + 1 },
-      }
+      return m.application.pensionHeading
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

@@ -22,8 +22,8 @@ export const casualWorkFields = [
   buildFieldsRepeaterField({
     id: 'registerIncome',
     condition: isCasualWork,
-    formTitleNumbering: 'none',
-    formTitle: (index, application) => {
+    formTitleNumbering: 'suffix',
+    formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
         'registerIncome',
@@ -31,10 +31,7 @@ export const casualWorkFields = [
       if (!items || items.length <= 1) {
         return ''
       }
-      return {
-        ...m.application.casualWorkHeading,
-        values: { index: index + 1 },
-      }
+      return m.application.casualWorkHeading
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

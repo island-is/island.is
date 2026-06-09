@@ -15,8 +15,8 @@ export const capitalIncomeFields = [
   buildFieldsRepeaterField({
     id: 'registerIncome',
     condition: isCapitalIncome,
-    formTitleNumbering: 'none',
-    formTitle: (index, application) => {
+    formTitleNumbering: 'suffix',
+    formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
         'registerIncome',
@@ -24,10 +24,7 @@ export const capitalIncomeFields = [
       if (!items || items.length <= 1) {
         return ''
       }
-      return {
-        ...m.application.capitalIncomeHeading,
-        values: { index: index + 1 },
-      }
+      return m.application.capitalIncomeHeading
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,

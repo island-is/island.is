@@ -77,32 +77,32 @@ export const application = defineMessages({
   // Repeater headings
   casualWorkHeading: {
     id: 'vmst.cjoi.application:casualWorkHeading',
-    defaultMessage: 'Tilfallandi vinna {index}',
+    defaultMessage: 'Tilfallandi vinna',
     description: 'Repeater heading for casual work',
   },
   partTimeHeading: {
     id: 'vmst.cjoi.application:partTimeHeading',
-    defaultMessage: 'Hlutastarf {index}',
+    defaultMessage: 'Hlutastarf',
     description: 'Repeater heading for part-time work',
   },
   contractWorkHeading: {
     id: 'vmst.cjoi.application:contractWorkHeading',
-    defaultMessage: 'Vaktavinna {index}',
+    defaultMessage: 'Vaktavinna',
     description: 'Repeater heading for contract work',
   },
   capitalIncomeHeading: {
     id: 'vmst.cjoi.application:capitalIncomeHeading',
-    defaultMessage: 'Fjármagnstekjur {index}',
+    defaultMessage: 'Fjármagnstekjur',
     description: 'Repeater heading for capital income',
   },
   socialInsuranceHeading: {
     id: 'vmst.cjoi.application:socialInsuranceHeading',
-    defaultMessage: 'Tekjur frá Tryggingastofnun {index}',
+    defaultMessage: 'Tekjur frá Tryggingastofnun',
     description: 'Repeater heading for social insurance income',
   },
   pensionHeading: {
     id: 'vmst.cjoi.application:pensionHeading',
-    defaultMessage: 'Greiðslur úr lífeyrissjóði {index}',
+    defaultMessage: 'Greiðslur úr lífeyrissjóði',
     description: 'Repeater heading for pension payments',
   },
 

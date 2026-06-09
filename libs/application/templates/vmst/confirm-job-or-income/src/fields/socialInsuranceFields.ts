@@ -15,8 +15,8 @@ export const socialInsuranceFields = [
   buildFieldsRepeaterField({
     id: 'registerIncome',
     condition: isSocialInsurance,
-    formTitleNumbering: 'none',
-    formTitle: (index, application) => {
+    formTitleNumbering: 'suffix',
+    formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
         'registerIncome',
@@ -24,10 +24,7 @@ export const socialInsuranceFields = [
       if (!items || items.length <= 1) {
         return ''
       }
-      return {
-        ...m.application.socialInsuranceHeading,
-        values: { index: index + 1 },
-      }
+      return m.application.socialInsuranceHeading
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,
