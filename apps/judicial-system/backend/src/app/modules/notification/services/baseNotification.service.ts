@@ -17,13 +17,13 @@ import {
   formatArraignmentDateEmailNotification,
   formatCourtCalendarInvitation,
   stripHtmlTags,
-} from '../../formatters'
-import { notifications } from '../../messages'
-import { CourtService } from '../court'
-import { EventService } from '../event'
-import { Case, DateLog, Notification, Recipient } from '../repository'
-import { DeliverResponse } from './models/deliver.response'
-import { notificationModuleConfig } from './notification.config'
+} from '../../../formatters'
+import { notifications } from '../../../messages'
+import { CourtService } from '../../court'
+import { EventService } from '../../event'
+import { Case, DateLog, Notification, Recipient } from '../../repository'
+import { DeliverResponse } from '../models/deliver.response'
+import { notificationModuleConfig } from '../notification.config'
 
 interface Attachment {
   filename: string
