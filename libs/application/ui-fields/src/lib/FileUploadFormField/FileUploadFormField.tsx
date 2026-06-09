@@ -1,8 +1,14 @@
-import { formatText } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
-import { Box, UploadFileDeprecated } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
+import { Box, Text, UploadFileDeprecated } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
 import set from 'lodash/set'
@@ -19,6 +25,9 @@ export const FileUploadFormField = ({
 }: Props) => {
   const {
     id,
+    title,
+    titleVariant = 'h4',
+    description,
     introduction,
     uploadDescription,
     uploadHeader,
@@ -33,15 +42,17 @@ export const FileUploadFormField = ({
     marginTop,
     marginBottom,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const { watch } = useFormContext()
-  const currentValue = watch(id)
+  const resolvedId = resolveFieldId({ id }, application, user)
+  const currentValue = watch(resolvedId)
 
   const onFileRemoveWhenInAnswers = (fileToRemove: UploadFileDeprecated) => {
     const answers = structuredClone(application.answers)
     const updatedAnswers = set(
       answers,
-      id,
+      resolvedId,
       currentValue.filter(
         (x: UploadFileDeprecated) => x.key !== fileToRemove.key,
       ),
@@ -54,15 +65,39 @@ export const FileUploadFormField = ({
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
-      {introduction && (
-        <FieldDescription
-          description={formatText(introduction, application, formatMessage)}
-        />
+      {title && (
+        <Text variant={titleVariant} as={titleVariant} marginBottom={2}>
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
+        </Text>
       )}
+      {(() => {
+        const descSource = description ?? introduction
+        if (!descSource) return null
+        const formatted = formatTextWithLocale(
+          descSource,
+          application,
+          locale as Locale,
+          formatMessage,
+        )
+        return (
+          <FieldDescription
+            description={
+              Array.isArray(formatted)
+                ? formatted.join(' ')
+                : String(formatted ?? '')
+            }
+          />
+        )
+      })()}
 
       <Box paddingTop={2}>
         <FileUploadController
-          id={id}
+          id={resolvedId}
           application={application}
           error={error}
           header={

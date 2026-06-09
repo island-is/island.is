@@ -35,7 +35,7 @@ export class UserProfile {
   @Field(() => Date, {
     nullable: true,
     deprecationReason:
-      'needsNudge should be used to determine if profile needs nudge. v2 doesnt provide the modified value.',
+      "needsNudge should be used to determine if profile needs nudge. v2 doesn't provide the modified value.",
   })
   modified?: Date
 

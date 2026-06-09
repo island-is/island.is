@@ -3,10 +3,12 @@ import {
   coreErrorMessages,
   formatText,
   formatTextWithLocale,
+  resolveFieldId,
 } from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
+  FormText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -22,6 +24,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
@@ -80,27 +83,37 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const apolloClient = useApolloClient()
   const { formatMessage, lang: locale } = useLocale()
+  const user = useUserInfo()
   const [loadError, setLoadError] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+
+  const methods = useFormContext<TableRepeaterForm>()
+  const watchedAnswers = methods.watch() ?? application.answers
+  const watchedApplication = { ...application, answers: watchedAnswers }
+  const resolvedId = resolveFieldId({ id: data.id }, application, user)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
     ...rawItems[key],
   }))
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? buildDefaultTableHeader(tableItems)
-  const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
-
-  const methods = useFormContext<TableRepeaterForm>()
+  const tableHeader =
+    typeof table?.header === 'function'
+      ? table.header(watchedAnswers, application.externalData)
+      : table?.header ?? buildDefaultTableHeader(tableItems)
+  const tableRows =
+    typeof table?.rows === 'function'
+      ? table.rows(watchedAnswers, application.externalData)
+      : table?.rows ?? buildDefaultTableRows(tableItems)
   const { fields, append, remove, update } = useFieldArray({
     control: methods.control,
-    name: data.id,
+    name: resolvedId,
   })
 
   const values = useWatch({
     control: methods.control,
-    name: data.id,
+    name: resolvedId,
   })
   const customMappedValues = handleCustomMappedValues(tableItems, values)
 
@@ -109,7 +122,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   )
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
-  const staticData = getStaticTableData?.(application)
+  const staticData = getStaticTableData?.(watchedApplication)
 
   // Update other form values (if necessary) after saving a single row
   const updateFormAfterSavingRow = async () => {
@@ -135,12 +148,12 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const safeUpdate = (index: number, changes: Partial<TableRepeaterRow>) => {
-    const current = methods.getValues(`${data.id}.${index}`) || {}
+    const current = methods.getValues(`${resolvedId}.${index}`) || {}
     update(index, { ...current, ...changes })
   }
 
   const handleSaveItem = async (index: number) => {
-    const isValid = await methods.trigger(`${data.id}[${index}]`, {
+    const isValid = await methods.trigger(`${resolvedId}[${index}]`, {
       shouldFocus: true,
     })
 
@@ -182,26 +195,42 @@ export const TableRepeaterFormField: FC<Props> = ({
     displayIndex: number,
     application: Application,
   ) => {
-    item[key] = item[key] ?? ''
+    const rawValue = item[key]
+    item[key] = rawValue ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn
       ? formatFn(item[key], displayIndex, application)
       : item[key]
+    if (
+      formatted &&
+      typeof formatted === 'object' &&
+      'type' in formatted &&
+      formatted.type === 'checkmark'
+    ) {
+      return (
+        <Icon
+          icon="checkmarkCircle"
+          color="mint400"
+          type="filled"
+          size="small"
+        />
+      )
+    }
     return typeof formatted === 'string'
       ? formatted
       : Array.isArray(formatted)
       ? formatText(formatted, application, formatMessage).join(', ')
-      : formatText(formatted, application, formatMessage)
+      : formatText(formatted as FormText, application, formatMessage)
   }
 
   // If the list is empty and initActiveFieldIfEmpty=true,
   // start with one row opened in edit mode
   useEffect(() => {
-    const oldValues = methods.getValues(data.id) || []
+    const oldValues = methods.getValues(resolvedId) || []
     if (initActiveFieldIfEmpty && oldValues.length === 0) {
       // Using setObjectValue to handle nested ids
       const newValues = {}
-      setObjectWithNestedKey(newValues, data.id, [{ isUnsaved: true }])
+      setObjectWithNestedKey(newValues, resolvedId, [{ isUnsaved: true }])
       methods.reset({
         ...newValues,
       })
@@ -214,11 +243,11 @@ export const TableRepeaterFormField: FC<Props> = ({
   // only if no existing values are present and defaultValues is defined/non-empty
   useEffect(() => {
     const defaultValues = getDefaultValue(data, application, locale)
-    const oldValues = methods.getValues(data.id) || []
+    const oldValues = methods.getValues(resolvedId) || []
     if (defaultValues && oldValues.length === 0) {
       // Using setObjectValue to handle nested ids
       const newValues = {}
-      setObjectWithNestedKey(newValues, data.id, defaultValues)
+      setObjectWithNestedKey(newValues, resolvedId, defaultValues)
       const existingValues = methods.getValues()
       methods.reset({
         ...existingValues,
@@ -411,7 +440,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                     error={error}
                     errors={errors}
                     item={item}
-                    dataId={data.id}
+                    dataId={resolvedId}
                     activeIndex={activeIndex}
                     values={values}
                   />
