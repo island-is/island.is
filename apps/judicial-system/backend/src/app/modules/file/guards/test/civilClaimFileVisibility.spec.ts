@@ -155,7 +155,7 @@ describe('canDefenceUserViewCivilClaimCaseFile', () => {
     ).toBe(true)
   })
 
-  it('returns true when the requesting user is the claimant\'s own confirmed spokesperson', () => {
+  it("returns true when the requesting user is the claimant's own confirmed spokesperson", () => {
     expect(
       canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
         ...baseArgs,
@@ -173,7 +173,7 @@ describe('canDefenceUserViewCivilClaimCaseFile', () => {
     ).toBe(true)
   })
 
-  it('returns false when the user is the claimant\'s spokesperson but not confirmed', () => {
+  it("returns false when the user is the claimant's spokesperson but not confirmed", () => {
     expect(
       canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
         ...baseArgs,
