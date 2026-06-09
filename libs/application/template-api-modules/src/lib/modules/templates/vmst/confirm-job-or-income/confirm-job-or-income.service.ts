@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
@@ -6,10 +6,13 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { errorMessages } from '@island.is/application/templates/vmst/confirm-job-or-income'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { getValueViaPath } from '@island.is/application/core'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.CONFIRM_JOB_OR_INCOME)
@@ -26,6 +29,10 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       )
       applicantId = result.applicantId
     } catch (e) {
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error checking eligibility',
+        e,
+      )
       throw new TemplateApiError(
         {
           title: errorMessages.cannotApplyErrorTitle,
@@ -87,6 +94,10 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       )
       applicantId = result.applicantId
     } catch (e) {
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error getting applicant information',
+        e,
+      )
       throw new TemplateApiError(
         {
           title: errorMessages.cannotApplyErrorTitle,
@@ -253,20 +264,13 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           )
       }
     } catch (e) {
-      if (e instanceof TemplateApiError) {
-        throw e
-      }
-
-      // TODO remove error message parsing when vmst-unemployment client returns proper error codes and messages
-      const message =
-        e instanceof Error && 'body' in e && (e as any).body?.message
-          ? (e as any).body.message
-          : undefined
-
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error submitting job or income information',
+      )
       throw new TemplateApiError(
         {
           title: errorMessages.cannotApplyErrorTitle,
-          summary: message ?? errorMessages.submitError,
+          summary: errorMessages.submitError,
         },
         500,
       )
