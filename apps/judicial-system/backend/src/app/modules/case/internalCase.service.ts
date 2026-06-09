@@ -1513,11 +1513,16 @@ export class InternalCaseService {
 
   async deliverAppealToPolice(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     const delivered = await Promise.all(
       theCase.caseFiles
-        ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
+        ?.filter(
+          (file) =>
+            file.rulingFileId === appealCase.rulingFileId &&
+            file.category === CaseFileCategory.APPEAL_RULING,
+        )
         .map(async (caseFile) => {
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
@@ -1536,7 +1541,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver appeal for case ${theCase.id} to police`,
+          `Failed to deliver appeal ruling for appeal case ${appealCase.id} of case ${theCase.id} to police`,
           { reason },
         )
 
