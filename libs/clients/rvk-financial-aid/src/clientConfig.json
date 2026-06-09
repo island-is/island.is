@@ -7,9 +7,7 @@
   "paths": {
     "/applications": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "GetApplications",
         "parameters": [
           {
@@ -141,9 +139,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "CreateApplication",
         "parameters": [
           {
@@ -193,9 +189,7 @@
     },
     "/applications/{id}": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "GetApplicationDetail",
         "parameters": [
           {
@@ -235,9 +229,7 @@
     },
     "/applications/summary": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "GetApplicationSummary",
         "parameters": [
           {
@@ -268,9 +260,7 @@
     },
     "/applications/{id}/status": {
       "patch": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "UpdateStatus",
         "parameters": [
           {
@@ -329,9 +319,7 @@
     },
     "/applications/{id}/comments": {
       "post": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "CreateComment",
         "parameters": [
           {
@@ -390,9 +378,7 @@
     },
     "/applications/{id}/assignment": {
       "patch": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "Assign",
         "parameters": [
           {
@@ -449,9 +435,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "Unassign",
         "parameters": [
           {
@@ -491,9 +475,7 @@
     },
     "/applications/{id}/period": {
       "patch": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "operationId": "UpdateApplicationPeriod",
         "parameters": [
           {
@@ -541,9 +523,7 @@
     },
     "/applications/{applicationId}/documents": {
       "get": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "operationId": "GetDocumentList",
         "parameters": [
           {
@@ -581,9 +561,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "operationId": "UploadDocument",
         "parameters": [
           {
@@ -664,9 +642,7 @@
     },
     "/applications/{applicationId}/documents/batch": {
       "post": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "operationId": "UploadMultipleDocuments",
         "parameters": [
           {
@@ -728,9 +704,7 @@
     },
     "/applications/{applicationId}/documents/{id}/content": {
       "get": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "parameters": [
           {
             "name": "id",
@@ -778,9 +752,7 @@
     },
     "/applications/{applicationId}/documents/{id}/metadata": {
       "get": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "operationId": "GetDocumentData",
         "parameters": [
           {
@@ -829,9 +801,7 @@
     },
     "/applications/{applicationId}/documents/{id}": {
       "delete": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "operationId": "DeleteDocument",
         "parameters": [
           {
@@ -880,9 +850,7 @@
     },
     "/notifications/email": {
       "post": {
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "operationId": "SendMessage",
         "parameters": [
           {
@@ -932,9 +900,7 @@
     },
     "/settings": {
       "get": {
-        "tags": [
-          "Settings"
-        ],
+        "tags": ["Settings"],
         "operationId": "GetFinaidServiceSettings",
         "parameters": [
           {
@@ -970,9 +936,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Settings"
-        ],
+        "tags": ["Settings"],
         "operationId": "PatchFinaidServiceSettings",
         "parameters": [
           {
@@ -1024,9 +988,7 @@
   "components": {
     "schemas": {
       "ChildDto": {
-        "required": [
-          "kennitala"
-        ],
+        "required": ["kennitala"],
         "type": "object",
         "properties": {
           "id": {
@@ -1099,9 +1061,7 @@
         "additionalProperties": false
       },
       "CreateApplicationRequest": {
-        "required": [
-          "applicationSystemId"
-        ],
+        "required": ["applicationSystemId"],
         "type": "object",
         "properties": {
           "name": {
@@ -1399,9 +1359,7 @@
   },
   "security": [
     {
-      "oauth2": [
-        "api://veita-api.test.reykjavik.is/Veita.Employee.Access"
-      ]
+      "oauth2": ["api://veita-api.test.reykjavik.is/Veita.Employee.Access"]
     }
   ]
 }
