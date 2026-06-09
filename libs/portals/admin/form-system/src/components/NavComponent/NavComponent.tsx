@@ -47,7 +47,7 @@ export const NavComponent = ({
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
-
+  const name = data?.name?.is ?? ''
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
   const isPaymentField =
     type === 'Field' &&
@@ -243,6 +243,7 @@ export const NavComponent = ({
             minWidth={0}
             alignItems="center"
             justifyContent="center"
+            title={name}
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
@@ -295,6 +296,7 @@ export const NavComponent = ({
             minWidth={0}
             overflow="hidden"
             justifyContent="flexStart"
+            title={name}
           >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
