@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../repository'
@@ -37,9 +36,7 @@ export const canDefenceUserViewCivilClaimCaseFile = (
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderUserNationalId).includes(
-          defendant.defenderNationalId,
-        ) &&
+        defendant.defenderNationalId === defenderUserNationalId &&
         defendant.policeCaseNumbers?.some((pcn) =>
           claimant.policeCaseNumbers?.includes(pcn),
         ),
