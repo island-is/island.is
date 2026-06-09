@@ -44,9 +44,8 @@ export default function UpdateAppScreen() {
   const closable = closableParam !== 'false'
   const intl = useIntl()
 
-  // Suppress the app lock if screen is not closable — its router.back on unlock
-  // could pop this wall and let the user bypass the required update (version
-  // check only runs on home tab mount).
+  // Suppress the lock while the unclosable wall is up — otherwise the lock's
+  // router.back could pop this screen and bypass the required update.
   useEffect(() => {
     if (closable) {
       return

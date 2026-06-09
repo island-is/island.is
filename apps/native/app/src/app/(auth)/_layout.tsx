@@ -35,7 +35,9 @@ export default function AuthLayout() {
 
   // Cold-start: lock immediately, require auth (not grace).
   useEffect(() => {
-    if (!isOnboarded() || config.isTestingApp) return
+    if (!isOnboarded() || config.isTestingApp) {
+      return
+    }
     authStore.setState({
       lockScreenActivatedAt: COLD_START_ACTIVATED_AT(),
       biometricAutoPromptedForCurrentLock: false,
@@ -64,14 +66,13 @@ export default function AuthLayout() {
       const previousAppState = appStateRef.current
       appStateRef.current = nextAppState
 
-      if (!isOnboarded() || config.isTestingApp) return
+      if (!isOnboarded() || config.isTestingApp) {
+        return
+      }
       if (isLockScreenSuppressed()) return
 
       // → background: stamp grace clock (once per lock session).
-      if (
-        nextAppState === 'background' &&
-        previousAppState !== 'background'
-      ) {
+      if (nextAppState === 'background' && previousAppState !== 'background') {
         Keyboard.dismiss()
         if (authStore.getState().lockScreenActivatedAt === undefined) {
           authStore.setState({

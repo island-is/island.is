@@ -82,11 +82,10 @@ export default function AppLockScreen() {
   const biometricType = useBiometricType()
   const intl = useIntl()
 
-  // Clear state before router.back so the layout's defensive subscriber
-  // doesn't re-push during unmount. Defer the deep-link replay until after
-  // the back has settled — otherwise the navigate runs against the stack
-  // with app-lock still on top, pushing wallet/<id> above it, and the queued
-  // back pops the wallet instead, leaving the user re-stuck on the lock.
+  // Clear state before router.back so the layout's re-push subscriber
+  // doesn't fire during unmount. Defer the deep-link replay until back has
+  // settled — replaying with the lock still on top would push the link
+  // above it, then back would pop the link instead of the lock.
   const unlockApp = () => {
     authStore.setState({
       lockScreenActivatedAt: undefined,
@@ -189,12 +188,10 @@ export default function AppLockScreen() {
     }
   }, [])
 
-  // On mount and each → active: dismiss if transient/grace, else prompt.
-  //   activatedAt undefined        → transient mask, dismiss
-  //   activatedAt + timeout > now  → grace, unlock
-  //   else                         → auth required, biometric once per lock
+  // On mount and each → active: undefined → dismiss, within grace → unlock,
+  // else → require auth (biometric prompted once per lock).
   useEffect(() => {
-    const decide = () => {
+    const tryUnlockOrPrompt = () => {
       const { lockScreenActivatedAt, biometricAutoPromptedForCurrentLock } =
         authStore.getState()
       const { appLockTimeout } = preferencesStore.getState()
@@ -210,19 +207,21 @@ export default function AppLockScreen() {
         return
       }
 
-      if (biometricAutoPromptedForCurrentLock) return
+      if (biometricAutoPromptedForCurrentLock) {
+        return
+      }
       authStore.setState({ biometricAutoPromptedForCurrentLock: true })
       void authenticateWithBiometrics()
     }
 
     if (AppState.currentState === 'active') {
-      decide()
+      tryUnlockOrPrompt()
     }
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
         isPromptRef.current = false
-        decide()
+        tryUnlockOrPrompt()
       }
     })
 

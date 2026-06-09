@@ -105,10 +105,12 @@ export default function RootLayout() {
   }, [fontsError])
 
   useEffect(() => {
-    if (!fontsLoaded || !appReady) return
+    if (!fontsLoaded || !appReady) {
+      return
+    }
 
-    // Defer splash hide until the lock screen mounts (avoids tab flash).
-    // 2s timeout fallback so the splash never hangs.
+    // Defer splash hide until the lock mounts (avoids tab flash); 2s fallback
+    // so the splash never hangs.
     const { authorizeResult } = authStore.getState()
     const willPushLockScreen =
       !!authorizeResult && isOnboarded() && !config.isTestingApp
@@ -121,13 +123,15 @@ export default function RootLayout() {
     let cancelled = false
     let deferredId: ReturnType<typeof setTimeout> | undefined
     const hide = () => {
-      if (cancelled) return
+      if (cancelled) {
+        return
+      }
       cancelled = true
       SplashScreen.hideAsync().catch(() => {})
     }
     // componentId is set at React-commit time, before iOS finishes
-    // presentViewController — wait a beat so the modal is actually on
-    // screen, otherwise the tab paints briefly when the splash drops.
+    // presentViewController — wait a beat so the modal is on screen before
+    // the splash drops.
     const hideAfterPresent = () => {
       deferredId = setTimeout(hide, 100)
     }
@@ -135,18 +139,24 @@ export default function RootLayout() {
     if (authStore.getState().lockScreenComponentId) {
       hideAfterPresent()
       return () => {
-        if (deferredId) clearTimeout(deferredId)
+        if (deferredId) {
+          clearTimeout(deferredId)
+        }
       }
     }
 
     const unsub = authStore.subscribe((state) => {
-      if (state.lockScreenComponentId) hideAfterPresent()
+      if (state.lockScreenComponentId) {
+        hideAfterPresent()
+      }
     })
     const timeoutId = setTimeout(hide, 2000)
 
     return () => {
       clearTimeout(timeoutId)
-      if (deferredId) clearTimeout(deferredId)
+      if (deferredId) {
+        clearTimeout(deferredId)
+      }
       unsub()
     }
   }, [fontsLoaded, appReady])
