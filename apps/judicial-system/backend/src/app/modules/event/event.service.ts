@@ -65,6 +65,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
@@ -77,7 +78,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
+  [CaseTransition.REOPEN]: ':recycle: Mál enduropnað',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
@@ -135,9 +136,12 @@ export class EventService {
             ).join(', ')})`
           : ''
       } *${theCase.id}*`
+      const policeCaseNumbersText = theCase.policeCaseNumbers?.length
+        ? theCase.policeCaseNumbers.join(', ')
+        : 'LÖKE númer ekki skráð'
       const prosecutionText = `${
         theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
-      }*${theCase.policeCaseNumbers.join(', ')}*`
+      }*${policeCaseNumbersText}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''

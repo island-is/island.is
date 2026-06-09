@@ -14,6 +14,7 @@ import { Box } from '@island.is/island-ui/core'
 interface Props {
   field: FormSystemField
   valueIndex?: number
+  requiredMissing?: boolean
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -37,10 +38,15 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
 } as const
 
-export const Display = ({ field, valueIndex = 0 }: Props) => {
+export const Display = ({
+  field,
+  valueIndex = 0,
+  requiredMissing = false,
+}: Props) => {
   const fieldItems = {
     item: field,
     valueIndex,
+    requiredMissing,
   }
 
   const FieldComponent =

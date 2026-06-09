@@ -80,7 +80,7 @@ export const currentSituationSchema = z
     ) {
       data.currentSituationRepeater &&
         data.currentSituationRepeater.forEach((job, index) => {
-          if (!job.percentage) {
+          if (!job.percentage || Number(job.percentage) < 1) {
             ctx.addIssue({
               path: ['currentSituationRepeater', index, 'percentage'],
               code: z.ZodIssueCode.custom,

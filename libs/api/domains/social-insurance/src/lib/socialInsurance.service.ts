@@ -11,6 +11,8 @@ import {
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSetPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceEditPersonalTaxAllowanceInput,
   TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceDiscontinuePersonalTaxUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -20,6 +22,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
+import { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
 import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
@@ -28,6 +31,8 @@ import { IncomePlanEligbility } from './models/income/incomePlanEligibility.mode
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
+import { YearWithMonths } from './models/personalTaxCredit/taxCardMonthsAndYears.model'
+import { mapToTaxCardType } from './enums/taxCardType'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
@@ -38,7 +43,6 @@ import {
   mapPensionCalculationInput,
   toYearWithMonths,
 } from './utils'
-import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
@@ -264,9 +268,8 @@ export class SocialInsuranceService {
   async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
     const taxCardsResult = await this.personalTaxCreditClient.getTaxCards(user)
 
-    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
-      ? undefined
-      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+    const registrationMonthsAndYears =
+      await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
 
     const discontinuingMonthsAndYears =
       taxCardsResult?.canDiscontinuePersonalAllowance
@@ -276,13 +279,20 @@ export class SocialInsuranceService {
         : undefined
 
     return {
-      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
-        ...tc,
-        validFrom: tc.validFrom ?? undefined,
-        validTo: tc.validTo ?? undefined,
-        type: tc.taxCardType ?? undefined,
-        percentage: tc.percentage ?? 0,
-      })),
+      taxCards: taxCardsResult?.taxCards
+        ?.map((tc) => {
+          const type = mapToTaxCardType(tc.taxCardType)
+          if (!type || tc.percentage == null || !tc.validFrom) {
+            return null
+          }
+          return {
+            percentage: tc.percentage,
+            validFrom: tc.validFrom,
+            validTo: tc.validTo ?? undefined,
+            type,
+          }
+        })
+        .filter(isDefined),
       canEdit: taxCardsResult?.canEditPersonalAllowance ?? false,
       canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance ?? false,
       registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
@@ -348,17 +358,46 @@ export class SocialInsuranceService {
       .getSpouseInfo(user)
       .catch(handle404)
     if (!data?.nationalId) return null
+
+    let deceasedReasonNotAllowedCode: string | undefined
+    let deceasedMonthsAndYears: YearWithMonths[] | undefined = undefined
+
+    if (data.isDeceased) {
+      const deceasedData =
+        await this.personalTaxCreditClient.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
+          user,
+        )
+
+      if (deceasedData?.canApply === false) {
+        deceasedReasonNotAllowedCode =
+          deceasedData.reasonNotAllowed ?? undefined
+      }
+
+      deceasedMonthsAndYears = deceasedData?.allowedYearMonths
+        ? toYearWithMonths(deceasedData.allowedYearMonths) ?? undefined
+        : undefined
+    }
+
     return {
       nationalId: data.nationalId,
       name: data.name ?? undefined,
       isDeceased: data.isDeceased ?? undefined,
+      deceasedMonthsAndYears,
+      deceasedReasonNotAllowedCode,
     }
   }
 
-  async getTaxBracketAction(user: User): Promise<TaxBracketAction | null> {
-    const data = await this.personalTaxCreditClient
-      .getTaxBracketActions(user)
-      .catch(handle404)
-    return parseTaxBracketAction(data ?? undefined)
+  async setSpouseTaxCard(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCard(user, input)
+  }
+
+  async setSpouseTaxCardDueToDeath(
+    user: User,
+    input: TrWebContractsExternalDigitalIcelandPersonalTaxAllowanceSpouseTaxCardUsageDueToDeathInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }
 }

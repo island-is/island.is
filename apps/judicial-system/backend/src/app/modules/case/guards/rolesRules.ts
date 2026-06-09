@@ -104,6 +104,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'mergeCaseNumber',
   'isCompletedWithoutRuling',
   'defendantEventLogDecisions',
+  'reopenReason',
 ]
 
 // Allows prosecutors to update a specific set of fields
@@ -223,6 +224,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 
@@ -238,6 +240,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 
@@ -250,6 +253,7 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
     CaseTransition.RECEIVE,
     CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
+    CaseTransition.CORRECT,
   ],
 }
 

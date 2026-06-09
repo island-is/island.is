@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_SUMMARY_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -96,13 +99,13 @@ const WithdrawnAppealCase = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={appendAppealCaseIdQuery(
-            `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           )}
           onNextButtonClick={async () => {
             router.push(
               appendAppealCaseIdQuery(
-                `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+                `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
                 targetAppealCase?.id,
               ),
             )

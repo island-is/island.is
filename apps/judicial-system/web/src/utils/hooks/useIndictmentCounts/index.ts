@@ -11,6 +11,7 @@ import {
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
+import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
@@ -26,6 +27,7 @@ const useIndictmentCounts = () => {
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
   const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
+  const [reorderIndictmentCountsMutation] = useReorderIndictmentCountsMutation()
 
   const createIndictmentCount = useCallback(
     async (caseId: string) => {
@@ -84,6 +86,26 @@ const useIndictmentCounts = () => {
     [updateIndictmentCountMutation, formatMessage],
   )
 
+  const reorderIndictmentCounts = useCallback(
+    async (caseId: string, counts: { id: string; displayOrder: number }[]) => {
+      try {
+        const { data } = await reorderIndictmentCountsMutation({
+          variables: { input: { caseId, counts } },
+        })
+
+        if (!data) {
+          toast.error('Upp kom villa við að endurraða ákæruliðum')
+          return
+        }
+
+        return data?.reorderIndictmentCounts
+      } catch {
+        toast.error('Upp kom villa við að endurraða ákæruliðum')
+      }
+    },
+    [reorderIndictmentCountsMutation],
+  )
+
   const updateIndictmentCountState = useCallback(
     (
       indictmentCountId: string,
@@ -117,6 +139,7 @@ const useIndictmentCounts = () => {
     updateIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
+    reorderIndictmentCounts,
     updateIndictmentCountState,
   }
 }

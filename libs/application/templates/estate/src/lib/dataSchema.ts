@@ -756,4 +756,7 @@ export const estateSchema = z.object({
   confirmAction: z.array(z.enum([YES])).length(1),
   confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
+  // Optional: applicant chooses to email a copy of the application to the
+  // parties (málsaðilar). Only offered for the payment-bearing estate types.
+  sendCopyToParties: z.array(z.enum([YES])).optional(),
 })

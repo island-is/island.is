@@ -4,6 +4,8 @@ import {
   ServiceBuilder,
   json,
   ref,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
@@ -158,8 +160,8 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
 
 // worker setup
 export const serviceSetupForWorker =
-  (): ServiceBuilder<'services-payments-worker'> =>
-    service(workerName)
+  (): ScheduledJobBuilder<'services-payments-worker'> =>
+    scheduledJob(workerName)
       .namespace(namespace)
       .image(imageName)
       .serviceAccount(workerName)
@@ -170,8 +172,8 @@ export const serviceSetupForWorker =
       .xroad(Base, Client, ChargeFjsV2)
       .command('node')
       .args('main.cjs', '--job', 'worker')
-      .extraAttributes({
-        dev: { schedule: '*/5 * * * *' },
-        staging: { schedule: '*/5 * * * *' },
-        prod: { schedule: '*/5 * * * *' },
+      .schedule({
+        dev: '*/5 * * * *',
+        staging: '*/5 * * * *',
+        prod: '*/5 * * * *',
       })

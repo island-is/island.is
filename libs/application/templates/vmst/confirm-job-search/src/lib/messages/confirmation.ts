@@ -43,4 +43,9 @@ export const confirmation = defineMessages({
     defaultMessage: 'Fjarlægja',
     description: 'Tooltip on the remove button for each job entry row',
   },
+  nextButtonText: {
+    id: 'vmst.cjs.application:confirmation.nextButtonText',
+    defaultMessage: 'Staðfesta atvinnuleit',
+    description: 'Next button text',
+  },
 })

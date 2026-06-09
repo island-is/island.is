@@ -3,7 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -40,10 +45,10 @@ const ReceptionAndAssignment = () => {
     useContext(FormContext)
 
   const getNextRoute = isRestrictionCase(workingCase.type)
-    ? constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
+    ? DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE
     : isInvestigationCase(workingCase.type)
-    ? constants.INVESTIGATION_CASE_OVERVIEW_ROUTE
-    : constants.INDICTMENTS_SUBPOENA_ROUTE
+    ? DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE
+    : DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE
 
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const isIndictment = isIndictmentCase(workingCase.type)
@@ -136,7 +141,7 @@ const ReceptionAndAssignment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={
             isIndictment
-              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
+              ? `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`
               : getStandardUserDashboardRoute(user)
           }
           onNextButtonClick={() => handleNavigationTo(getNextRoute)}

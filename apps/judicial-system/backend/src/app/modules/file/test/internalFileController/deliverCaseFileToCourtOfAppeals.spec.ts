@@ -13,7 +13,7 @@ import { createTestingFileModule } from '../createTestingFileModule'
 import { nowFactory } from '../../../../factories'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtService } from '../../../court'
-import { Case, CaseFile } from '../../../repository'
+import { AppealCase, Case, CaseFile } from '../../../repository'
 import { fileModuleConfig } from '../../file.config'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -27,6 +27,7 @@ type GivenWhenThen = () => Promise<Then>
 describe('InternalFileController - Deliver case file to court of appeals', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const appealCaseId = uuid()
   const appealCaseNumber = uuid()
   const caseFileId = uuid()
   const key = uuid()
@@ -47,9 +48,12 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCase: { appealCaseNumber },
     caseFiles: [caseFile],
   } as Case
+  const appealCase = {
+    id: appealCaseId,
+    appealCaseNumber,
+  } as AppealCase
 
   let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
@@ -78,8 +82,10 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
       await internalFileController
         .deliverCaseFileToCourtOfAppeals(
           caseId,
+          appealCaseId,
           caseFileId,
           theCase,
+          appealCase,
           caseFile,
           { user },
         )

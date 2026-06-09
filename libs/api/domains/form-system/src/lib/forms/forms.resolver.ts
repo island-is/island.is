@@ -33,6 +33,8 @@ import {
   OrganizationTitleByNationalIdLoader,
   type OrganizationTitleEnByNationalIdDataLoader,
   OrganizationTitleEnByNationalIdLoader,
+  type OrganizationZendeskInstanceByNationalIdDataLoader,
+  OrganizationZendeskInstanceByNationalIdLoader,
   ShortTitle,
 } from '@island.is/cms'
 import { GetOrganizationAdminInput } from '../../dto/organization.input'
@@ -84,6 +86,16 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
     return this.formsService.getForm(user, id)
+  }
+
+  @Query(() => FormResponse, {
+    name: 'formSystemApplicationJsonSample',
+  })
+  async getJsonSample(
+    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.getJsonSample(user, id)
   }
 
   @Query(() => FormResponse, {
@@ -145,5 +157,19 @@ export class FormsResolver {
       throw new Error('organizationNationalId is undefined')
     }
     return organizationTitleLoader.load(form.organizationNationalId)
+  }
+
+  @Query(() => String, {
+    name: 'formSystemOrganizationZendeskInstance',
+    nullable: true,
+  })
+  async getOrganizationZendeskInstance(
+    @Args('input', { type: () => GetOrganizationAdminInput })
+    input: GetOrganizationAdminInput,
+    @Loader(OrganizationZendeskInstanceByNationalIdLoader)
+    organizationZendeskInstanceLoader: OrganizationZendeskInstanceByNationalIdDataLoader,
+    @CurrentUser() _user: User,
+  ): Promise<ShortTitle> {
+    return organizationZendeskInstanceLoader.load(input.nationalId)
   }
 }

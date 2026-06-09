@@ -2,8 +2,8 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    type
     modified
+    type
     splitCases {
       id
       created
@@ -14,7 +14,6 @@ query Case($input: CaseQueryInput!) {
         subpoenas {
           id
           created
-          modified
           serviceStatus
           serviceDate
           servedBy
@@ -121,6 +120,14 @@ query Case($input: CaseQueryInput!) {
         isDefaultJudgement
         isAcquittedByPublicProsecutionOffice
         defendantHasRequestedAppeal
+      }
+      connectedCases {
+        id
+        courtCaseNumber
+        court {
+          id
+          name
+        }
       }
     }
     defenderName
@@ -295,6 +302,7 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created
@@ -408,6 +416,7 @@ query Case($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -452,6 +461,7 @@ query Case($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -659,6 +669,7 @@ query Case($input: CaseQueryInput!) {
         isStatementDeadlineExpired
         appealCaseNumber
         appealReceivedByCourtDate
+        appealRulingDate
         prosecutorStatementDate
         defendantStatementDate
         defendantStatementDates {
@@ -727,6 +738,7 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     penalties
+    reopenReason
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate

@@ -1023,7 +1023,7 @@ export class ApplicationController {
     }
 
     this.logger.info(
-      `Running onDelete actions for application ${id} with template ${template.name}`,
+      `Running onDelete actions for application ${id} with template ${template.type}`,
     )
 
     let onDeleteActions = new ApplicationTemplateHelper(
@@ -1056,7 +1056,7 @@ export class ApplicationController {
 
         this.logger.debug(
           `Performing action ${api.action} on ${JSON.stringify(
-            template.name,
+            template.type,
           )} ended with ${result.status}`,
         )
 

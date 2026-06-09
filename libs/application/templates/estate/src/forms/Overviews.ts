@@ -21,6 +21,21 @@ const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
   return Array.isArray(paymentData) && paymentData.length > 0
 }
 
+// Optional checkbox offered for the payment-bearing estate types: email a copy
+// of the application to the parties (málsaðilar).
+const sendCopyToPartiesCheckbox = buildCheckboxField({
+  id: 'sendCopyToParties',
+  backgroundColor: 'blue',
+  marginTop: 'containerGutter',
+  defaultValue: [],
+  options: [
+    {
+      value: YES,
+      label: m.sendCopyToPartiesLabel,
+    },
+  ],
+})
+
 export const overview = buildSection({
   id: 'overviewEstateDivision',
   title: m.overviewTitle,
@@ -38,6 +53,7 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
+        sendCopyToPartiesCheckbox,
       ],
     }),
 
@@ -55,6 +71,7 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
+        sendCopyToPartiesCheckbox,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
           refetchApplicationAfterSubmit: true,
@@ -83,6 +100,7 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...overviewConfirmAction,
+        sendCopyToPartiesCheckbox,
       ],
     }),
 
@@ -100,6 +118,7 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...overviewConfirmAction,
+        sendCopyToPartiesCheckbox,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
           refetchApplicationAfterSubmit: true,

@@ -395,6 +395,7 @@ export class ApplicationService {
         'attachments',
         'typeId',
         'state',
+        'status',
         'applicant',
         'applicantActors',
         'answers',
@@ -409,6 +410,9 @@ export class ApplicationService {
             },
           },
           pruned: {
+            [Op.eq]: false,
+          },
+          userDeleted: {
             [Op.eq]: false,
           },
         },

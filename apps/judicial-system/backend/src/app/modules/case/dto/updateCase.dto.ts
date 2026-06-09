@@ -484,6 +484,11 @@ export class UpdateCaseDto {
   readonly penalties?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly reopenReason?: string
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateCaseDefendantEventLogDecisionDto)

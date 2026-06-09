@@ -31,9 +31,6 @@ export class UpdateSectionDtoInput {
 
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  shouldPopulate?: boolean
 }
 
 @InputType('FormSystemUpdateScreenInput')
@@ -103,9 +100,6 @@ export class ScreenInput {
 
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  shouldPopulate?: boolean
 
   @Field(() => ValidationErrorInput, { nullable: true })
   screenError?: ValidationErrorInput

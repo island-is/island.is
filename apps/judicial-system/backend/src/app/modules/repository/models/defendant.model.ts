@@ -12,7 +12,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   DefendantPlea,
   DefenderChoice,
@@ -40,10 +39,7 @@ export class Defendant extends Model {
     return defendants?.some(
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderNationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        defendant.defenderNationalId === defenderNationalId,
     )
   }
 
@@ -55,10 +51,7 @@ export class Defendant extends Model {
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.caseFilesSharedWithDefender &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderNationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        defendant.defenderNationalId === defenderNationalId,
     )
   }
 
@@ -74,10 +67,7 @@ export class Defendant extends Model {
     return (
       defendant.isDefenderChoiceConfirmed &&
       defendant.caseFilesSharedWithDefender &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(defenderNationalId).includes(
-        defendant.defenderNationalId,
-      )
+      defendant.defenderNationalId === defenderNationalId
     )
   }
 
@@ -277,4 +267,7 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  // Not persisted — computed on fetch and attached by the case controller
+  connectedCases?: Case[]
 }

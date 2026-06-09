@@ -55,18 +55,17 @@ const CaseTitleInfoAndTags: FC = () => {
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           ))}
-        {workingCase.hasBeenAppealed && (
+        {targetAppealCase && (
           <>
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {getAppealActorText(workingCase)}
+                {getAppealActorText(workingCase, targetAppealCase)}
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
-              workingCase.appealCase?.appealState ===
-                AppealCaseState.COMPLETED) ||
+              targetAppealCase.appealState === AppealCaseState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
-              workingCase.appealCase?.appealReceivedByCourtDate && (
+              targetAppealCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
                     {formatMessage(
@@ -75,7 +74,7 @@ const CaseTitleInfoAndTags: FC = () => {
                         : strings.appealReceivedAt,
                       {
                         appealReceived: formatDate(
-                          workingCase.appealCase?.appealReceivedByCourtDate,
+                          targetAppealCase.appealReceivedByCourtDate,
                           'PPPp',
                         ),
                       },

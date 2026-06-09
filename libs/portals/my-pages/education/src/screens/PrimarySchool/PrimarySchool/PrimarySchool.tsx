@@ -13,19 +13,6 @@ import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolStudentsQuery } from './PrimarySchool.generated'
 import { EducationPrimarySchoolContactType } from '@island.is/api/schema'
-import { MessageDescriptor } from 'react-intl'
-
-const contactTypeMessages: Record<
-  EducationPrimarySchoolContactType,
-  MessageDescriptor
-> = {
-  [EducationPrimarySchoolContactType.PARENT]: psm.contactTypeParent,
-  [EducationPrimarySchoolContactType.GUARDIAN]: psm.contactTypeGuardian,
-  [EducationPrimarySchoolContactType.EMERGENCY_CONTACT]:
-    psm.contactTypeEmergencyContact,
-  [EducationPrimarySchoolContactType.RELATIVE]: psm.contactTypeRelative,
-  [EducationPrimarySchoolContactType.SIBLING]: psm.contactTypeSibling,
-}
 
 export const PrimarySchool = () => {
   useNamespaces('sp.education-primary-school')
@@ -72,11 +59,9 @@ export const PrimarySchool = () => {
             }
             avatar
             tag={
-              student.contactType
+              student.contactType === EducationPrimarySchoolContactType.GUARDIAN
                 ? {
-                    label: formatMessage(
-                      contactTypeMessages[student.contactType],
-                    ),
+                    label: formatMessage(psm.child),
                     variant: 'purple',
                     outlined: true,
                   }

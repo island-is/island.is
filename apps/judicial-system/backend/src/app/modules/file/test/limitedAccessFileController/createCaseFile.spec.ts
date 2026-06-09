@@ -75,10 +75,11 @@ describe('limitedAccessFileController - Create case file', () => {
     'case file created for %s case',
     (type) => {
       const caseId = uuid()
+      const appealCaseId = uuid()
       const theCase = {
         id: caseId,
         type,
-        appealCase: { appealCaseNumber: uuid() },
+        appealCase: { id: appealCaseId, appealCaseNumber: uuid() },
       } as Case
       const uuId = uuid()
       const createCaseFile: CreateFileDto = {
@@ -126,7 +127,7 @@ describe('limitedAccessFileController - Create case file', () => {
             type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
             user,
             caseId,
-            elementId: fileId,
+            elementId: [appealCaseId, fileId],
           },
         ])
         expect(then.result).toBe(caseFile)
