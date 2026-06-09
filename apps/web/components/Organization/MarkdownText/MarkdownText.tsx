@@ -12,14 +12,12 @@ interface MarkdownTextProps {
   replaceNewLinesWithBreaks?: boolean
 }
 
-export const MarkdownText: React.FC<
-  React.PropsWithChildren<MarkdownTextProps>
-> = ({
+export const MarkdownText = ({
   children,
-  color = null,
+  color,
   variant = 'default',
   replaceNewLinesWithBreaks = true,
-}) => {
+}: MarkdownTextProps) => {
   const processedChildren = replaceNewLinesWithBreaks
     ? (children as string).replace(/\n/gi, '<br>')
     : children
