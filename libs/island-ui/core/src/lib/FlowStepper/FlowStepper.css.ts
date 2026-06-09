@@ -7,7 +7,6 @@ const belowSm = `screen and (max-width: ${theme.breakpoints.sm - 1}px)`
 export const flowStepper = style({
   boxShadow: '0px 4px 30px 0px rgba(0, 97, 255, 0.08)',
   borderRadius: 8,
-  overflow: 'hidden',
   width: '100%',
   contain: 'inline-size',
   '@media': {
@@ -24,6 +23,8 @@ export const flowStepper = style({
 })
 
 export const progressContainer = style({
+  borderTopLeftRadius: 8,
+  borderTopRightRadius: 8,
   borderBottom: `1px solid ${theme.color.blue200}`,
   overflow: 'auto',
   paddingTop: theme.spacing[3],
@@ -32,11 +33,12 @@ export const progressContainer = style({
   paddingRight: theme.spacing[4],
   '@media': {
     [belowMd]: {
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0,
       paddingTop: 20,
       paddingBottom: 20,
       paddingLeft: 24,
       paddingRight: 24,
-      // overflow: 'visible',
     },
   },
 })

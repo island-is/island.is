@@ -12,7 +12,7 @@ import { getRulingPdfAsBuffer } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../repository'
 
-jest.mock('../../../../formatters/rulingPdf')
+jest.mock('../../../../formatters/generatedPdfs/rulingPdf')
 
 interface Then {
   error: Error

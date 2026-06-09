@@ -17,8 +17,9 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 
+import { AppealCaseExistsGuard, CurrentAppealCase } from '../appeal-case'
 import { CaseExistsGuard, CurrentCase } from '../case'
-import { Case, CaseFile } from '../repository'
+import { AppealCase, Case, CaseFile } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
@@ -79,10 +80,11 @@ export class InternalFileController {
     return { delivered: success }
   }
 
+  @UseGuards(AppealCaseExistsGuard)
   @Post(
     `${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE]
-    }/:fileId`,
+    }/:appealCaseId/:fileId`,
   )
   @ApiCreatedResponse({
     type: DeliverResponse,
@@ -90,8 +92,10 @@ export class InternalFileController {
   })
   deliverCaseFileToCourtOfAppeals(
     @Param('caseId') caseId: string,
+    @Param('appealCaseId') appealCaseId: string,
     @Param('fileId') fileId: string,
     @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
     @CurrentCaseFile() caseFile: CaseFile,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
@@ -101,6 +105,7 @@ export class InternalFileController {
 
     return this.fileService.deliverCaseFileToCourtOfAppeals(
       theCase,
+      appealCase,
       caseFile,
       deliverDto.user,
     )
