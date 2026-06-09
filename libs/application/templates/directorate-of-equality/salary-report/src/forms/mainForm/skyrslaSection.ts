@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { messages } from '../../lib/messages'
+import { DEFAULT_CRITERIA_ANSWERS } from '../../lib/constants'
 
 export const skyrslaSection = buildSection({
   id: 'report',
@@ -38,10 +39,11 @@ export const skyrslaSection = buildSection({
           title: messages.report.criteria.title,
           description: messages.report.criteria.intro,
           children: [
-            buildDescriptionField({
-              id: 'criteria.placeholder',
-              title: '',
-              description: '',
+            buildCustomField({
+              id: 'criteria',
+              component: 'CriteriaEditor',
+              doesNotRequireAnswer: false,
+              defaultValue: DEFAULT_CRITERIA_ANSWERS,
             }),
           ],
         }),

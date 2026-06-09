@@ -382,6 +382,14 @@ export const messages = {
         id: 'salaryReport.application:report.dataEntry.uploadButtonLabel',
         defaultMessage: 'Hlaða upp skjali',
       },
+      importSuccess: {
+        id: 'salaryReport.application:report.dataEntry.importSuccess',
+        defaultMessage: 'Skráin var flutt inn.',
+      },
+      importError: {
+        id: 'salaryReport.application:report.dataEntry.importError',
+        defaultMessage: 'Villa kom upp við innflutning. Vinsamlegast reyndu aftur.',
+      },
     }),
     criteria: defineMessages({
       sectionTitle: {
@@ -394,7 +402,50 @@ export const messages = {
       },
       intro: {
         id: 'salaryReport.application:report.criteria.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Viðmið fyrir starfsbundinn þátt eru grunnurinn að flokkun starfa og eru óbreytanleg. Stilltu vægi fyrir hvert viðmið. Þessi viðmið eru grunninn að flokkun starfa og verða að samtals vera 100%',
+      },
+      jobFactorTitle: {
+        id: 'salaryReport.application:report.criteria.jobFactorTitle',
+        defaultMessage: 'Starfsbundinn þáttur',
+      },
+      jobFactorIntro: {
+        id: 'salaryReport.application:report.criteria.jobFactorIntro',
+        defaultMessage:
+          'Viðmið fyrir starfsbundinn þátt eru grunnurinn að flokkun starfa og eru óbreytanleg. Stilltu vægi fyrir hvert viðmið. Þessi viðmið eru grunninn að flokkun starfa og verða að samtals 100%',
+      },
+      personalFactorTitle: {
+        id: 'salaryReport.application:report.criteria.personalFactorTitle',
+        defaultMessage: 'Persónubundinn þáttur',
+      },
+      personalFactorIntro: {
+        id: 'salaryReport.application:report.criteria.personalFactorIntro',
+        defaultMessage:
+          'Búðu til eigin viðmið og stilltu vægi þeirra. Þessi viðmið eru grunninn að flokkun starfsmanna.',
+      },
+      weightLabel: {
+        id: 'salaryReport.application:report.criteria.weightLabel',
+        defaultMessage: 'Vægi',
+      },
+      criterionNameLabel: {
+        id: 'salaryReport.application:report.criteria.criterionNameLabel',
+        defaultMessage: 'Viðmið',
+      },
+      descriptionLabel: {
+        id: 'salaryReport.application:report.criteria.descriptionLabel',
+        defaultMessage: 'Lýsing',
+      },
+      deleteButton: {
+        id: 'salaryReport.application:report.criteria.deleteButton',
+        defaultMessage: 'Eyða',
+      },
+      addCriterionButton: {
+        id: 'salaryReport.application:report.criteria.addCriterionButton',
+        defaultMessage: 'Bæta við viðmiði',
+      },
+      weightSumError: {
+        id: 'salaryReport.application:report.criteria.weightSumError',
+        defaultMessage: 'Vægi allra viðmiða verður að vera samtals 100% (núverandi: {total}%)',
       },
     }),
     subCriteria: defineMessages({

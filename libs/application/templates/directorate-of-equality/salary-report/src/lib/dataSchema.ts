@@ -31,6 +31,46 @@ const employeeCount = z.object({
   nonBinary: z.string().refine((v) => v !== '' && Number(v) >= 0, { params: messages.errors.invalidNonNegativeNumber }),
 })
 
+const jobFactor = z.object({
+  type: z.string(),
+  title: z.string(),
+  description: z.string(),
+  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+})
+
+const personalFactor = z.object({
+  title: z.string().min(1, { message: 'required' }),
+  description: z.string().optional(),
+  weight: z.string().refine((v) => v !== '' && Number(v) >= 0, {
+    params: messages.errors.invalidNonNegativeNumber,
+  }),
+})
+
+const criteria = z
+  .object({
+    jobFactors: z.array(jobFactor).min(1),
+    personalFactors: z.array(personalFactor).optional(),
+  })
+  .superRefine((val, ctx) => {
+    const jobTotal = (val.jobFactors ?? []).reduce(
+      (sum, f) => sum + (Number(f.weight) || 0),
+      0,
+    )
+    const personalTotal = (val.personalFactors ?? []).reduce(
+      (sum, f) => sum + (Number(f.weight) || 0),
+      0,
+    )
+    if (jobTotal + personalTotal !== 100) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['jobFactors'],
+        params: messages.report.criteria.weightSumError,
+      })
+    }
+  })
+
 const subsidiaries = z.object({
   includesSubsidiaries: z.enum(['yes', 'no']).refine((v) => !!v, { params: messages.errors.required }),
   list: z
@@ -59,6 +99,7 @@ const subsidiaries = z.object({
         }
       })
     })
+    .optional(),
 })
 
 export const dataSchema = z.object({
@@ -70,6 +111,7 @@ export const dataSchema = z.object({
   contactPerson: contactPerson.optional(),
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
+  criteria: criteria.optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
