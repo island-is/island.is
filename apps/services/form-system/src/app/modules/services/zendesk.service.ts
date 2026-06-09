@@ -537,6 +537,15 @@ export class ZendeskService {
     zendeskInstance: Instance,
   ): CustomField[] {
     const customFields: CustomField[] = []
+
+    const subject = applicationDto.formName?.is
+      ? applicationDto.formName.is
+      : 'No subject'
+    const mappedSubject = mapToCustomFields(zendeskInstance, {
+      subject: subject,
+    })
+    customFields.push(...mappedSubject)
+
     const sections = applicationDto.sections?.filter(
       (section) =>
         section.sectionType !== SectionTypes.PREMISES &&
