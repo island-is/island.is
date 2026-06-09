@@ -705,9 +705,7 @@ export class CaseInterceptor implements NestInterceptor {
       .handle()
       .pipe(
         switchMap((theCase: Case) =>
-          from(
-            this.caseRepositoryService.findOriginalAncestorId(theCase),
-          ).pipe(
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
             map((originalAncestorId) =>
               transformCase(theCase, user, originalAncestorId),
             ),
