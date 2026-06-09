@@ -24,10 +24,7 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import {
-  formatCaseType,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -1609,9 +1606,8 @@ export class InternalCaseService {
           CaseState.WAITING_FOR_CANCELLATION,
           ...completedIndictmentCaseStates,
         ],
-        // The national id could be without a hyphen or with a hyphen so we need to
-        // search for both
-        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
+        // nationalId comes from a raw @Param, so normalize it once here
+        '$defendants.national_id$': nationalId.replace(/-/g, ''),
       },
     })
   }
@@ -1685,9 +1681,9 @@ export class InternalCaseService {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
-        // This only selects defendants with the given national id, other defendants are not included
-        '$defendants.national_id$':
-          normalizeAndFormatNationalId(defendantNationalId),
+        // This only selects defendants with the given national id, other defendants are not included.
+        // defendantNationalId comes from a raw @Param, so normalize it once here.
+        '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
       },
     })
 

@@ -12,7 +12,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -625,10 +624,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    // nationalId comes from a raw @Query param, so normalize it once here and
+    // pass the dash-free value down to the lookups and the constructed user.
+    const normalizedNationalId = nationalId.replace(/-/g, '')
+
     return this.caseRepositoryService
       .findOne({
         where: {
-          defenderNationalId: normalizeAndFormatNationalId(nationalId),
+          defenderNationalId: normalizedNationalId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -638,7 +641,7 @@ export class LimitedAccessCaseService {
         if (theCase) {
           // The national id is associated with a defender in a request case
           return this.constructDefender(
-            nationalId,
+            normalizedNationalId,
             theCase.defenderName,
             theCase.defenderPhoneNumber,
             theCase.defenderEmail,
@@ -646,12 +649,12 @@ export class LimitedAccessCaseService {
         }
 
         return this.defendantService
-          .findLatestDefendantByDefenderNationalId(nationalId)
+          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
           .then((defendant) => {
             if (defendant) {
               // The national id is associated with a defender in an indictment case
               return this.constructDefender(
-                nationalId,
+                normalizedNationalId,
                 defendant.defenderName,
                 defendant.defenderPhoneNumber,
                 defendant.defenderEmail,
@@ -659,12 +662,12 @@ export class LimitedAccessCaseService {
             }
 
             return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
               .then((civilClaimant) => {
                 if (civilClaimant) {
                   // The national id is associated with a spokesperson for a civil claimant in an indictment case
                   return this.constructDefender(
-                    nationalId,
+                    normalizedNationalId,
                     civilClaimant.spokespersonName,
                     civilClaimant.spokespersonPhoneNumber,
                     civilClaimant.spokespersonEmail,
