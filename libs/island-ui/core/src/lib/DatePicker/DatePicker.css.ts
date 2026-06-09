@@ -627,3 +627,104 @@ globalStyle(
     boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
   },
 )
+
+// Mobile: full-screen calendar overlay
+globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
+  '@media': {
+    '(max-width: 766px)': {
+      transform: 'none !important' as never,
+      position: 'fixed !important' as never,
+      top: '0 !important' as never,
+      left: '0 !important' as never,
+      width: '100vw !important' as never,
+      height: '100dvh !important' as never,
+      zIndex: 9999,
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: theme.color.white,
+    },
+  },
+})
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"], ${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
+  {
+    '@media': {
+      '(max-width: 766px)': {
+        top: '0 !important' as never,
+        zIndex: 9999,
+      },
+    },
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper .react-datepicker`,
+  {
+    '@media': {
+      '(max-width: 766px)': {
+        flex: 1,
+        overflowY: 'auto',
+      },
+    },
+  },
+)
+
+export const mobilePickerHeader = style({
+  display: 'flex',
+  alignItems: 'flex-end',
+  columnGap: theme.spacing[2],
+  padding: theme.spacing[3],
+  backgroundColor: theme.color.white,
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  flexShrink: 0,
+  ...themeUtils.responsiveStyle({
+    md: {
+      display: 'none',
+    },
+  }),
+})
+
+export const mobilePickerInputWrapper = style({
+  flex: 1,
+  minWidth: 0,
+})
+
+export const mobilePickerLabel = style({
+  display: 'block',
+  color: theme.color.blue400,
+  fontSize: 14,
+  fontWeight: theme.typography.medium,
+  marginBottom: theme.spacing[1],
+})
+
+export const mobilePickerField = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: 8,
+  backgroundColor: theme.color.white,
+  padding: `${theme.spacing[1]}px ${theme.spacing[2]}px`,
+  minHeight: 52,
+})
+
+export const mobilePickerValue = style({
+  color: theme.color.dark400,
+  fontSize: theme.typography.baseFontSize,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
+export const mobilePickerClose = style({
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing[1],
+  outline: 'none',
+  ':focus': {
+    boxShadow: `0 0 0 3px ${theme.color.mint400}`,
+    borderRadius: 4,
+  },
+})
