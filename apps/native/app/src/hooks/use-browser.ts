@@ -1,5 +1,6 @@
 import { Passkey } from 'react-native-passkey'
 import {
+  authStore,
   clearLockScreenSuppression,
   suppressLockScreen,
 } from '@/stores/auth-store'
@@ -14,6 +15,7 @@ import {
 import * as WebBrowser from 'expo-web-browser'
 
 export const openAndSuppressBrowser = async (url: string) => {
+  const openedAt = Date.now()
   suppressLockScreen()
   try {
     await WebBrowser.dismissBrowser()?.catch((e) => void 0)
@@ -23,6 +25,17 @@ export const openAndSuppressBrowser = async (url: string) => {
   } catch (error) {
     console.error('Error opening browser:', error)
   } finally {
+    // Browser session swallows AppState background events while suppressed —
+    // stamp activation here so the lock triggers on next foreground if the
+    // session outlasted the grace period.
+    const elapsed = Date.now() - openedAt
+    const { appLockTimeout } = preferencesStore.getState()
+    if (elapsed >= appLockTimeout) {
+      authStore.setState({
+        lockScreenActivatedAt: openedAt,
+        biometricAutoPromptedForCurrentLock: false,
+      })
+    }
     clearLockScreenSuppression()
   }
 }
