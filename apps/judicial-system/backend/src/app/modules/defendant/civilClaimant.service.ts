@@ -10,7 +10,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -196,7 +195,7 @@ export class CivilClaimantService {
       ],
       where: {
         hasSpokesperson: true,
-        spokespersonNationalId: normalizeAndFormatNationalId(nationalId),
+        spokespersonNationalId: nationalId,
       },
       order: [['created', 'DESC']],
     })

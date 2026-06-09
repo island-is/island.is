@@ -11,7 +11,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -321,9 +320,7 @@ export class VerdictService {
     defendant: Defendant,
     verdict: Verdict,
   ): { code: string; value: string }[] {
-    const receiverSsn =
-      defendant.nationalId &&
-      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
     const ruling =
       theCase.courtSessions?.find(
