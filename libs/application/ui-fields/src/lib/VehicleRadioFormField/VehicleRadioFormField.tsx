@@ -96,13 +96,26 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         value: `${index}`,
         label: (
           <Box display="flex" flexDirection="column">
-            <Box>
-              <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
-                {vehicle.make}
-              </Text>
-              <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
-                {vehicle.color} - {vehicle.permno}
-              </Text>
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="spaceBetween"
+            >
+              <Box>
+                <Text
+                  variant="default"
+                  color={disabled ? 'dark200' : 'dark400'}
+                >
+                  {vehicle.make}
+                </Text>
+                <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
+                  {vehicle.color}
+                </Text>
+              </Box>
+              <Tag variant="blue" disabled>
+                {vehicle.permno}
+              </Tag>
             </Box>
             {disabled && (
               <Box marginTop={2}>
