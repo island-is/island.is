@@ -10,6 +10,7 @@ import {
   VerificationStatusResponse,
   VerificationCallbackInput,
   GetPaymentFlowDTOPaymentStatusEnum,
+  CreateBankTransferInputLocaleEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
@@ -129,7 +130,11 @@ export class PaymentsService {
     createBankTransferInput: CreateBankTransferInput,
   ): Promise<CreateBankTransferResponse> {
     return this.paymentsApi.bankTransferControllerCreate({
-      createBankTransferInput,
+      createBankTransferInput: {
+        ...createBankTransferInput,
+        locale:
+          createBankTransferInput.locale as CreateBankTransferInputLocaleEnum,
+      },
     })
   }
 

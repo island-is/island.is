@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 
-import { PaymentsCreateBankTransferLocale } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { CardErrorCode } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
 
 import { useCreateBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
@@ -13,10 +13,7 @@ interface UseBankTransferPaymentProps {
   onPaymentError: (error: PaymentError) => void
 }
 
-const toLocaleEnum = (lang?: string): PaymentsCreateBankTransferLocale =>
-  lang === 'en'
-    ? PaymentsCreateBankTransferLocale.en
-    : PaymentsCreateBankTransferLocale.is
+const toLocale = (lang?: string): Locale => (lang === 'en' ? 'en' : 'is')
 
 export const useBankTransferPayment = ({
   paymentFlowId,
@@ -38,7 +35,7 @@ export const useBankTransferPayment = ({
         variables: {
           input: {
             paymentFlowId,
-            locale: toLocaleEnum(lang),
+            locale: toLocale(lang),
           },
         },
       })

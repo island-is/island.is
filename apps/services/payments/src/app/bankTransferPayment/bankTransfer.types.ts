@@ -1,7 +1,7 @@
 import { PaymentStatus } from '../../types'
 import { CatalogItemWithQuantity } from '../../types/charges'
 
-/** Normalized bank-transfer status used internally and on the wire. */
+/** Normalized bank-transfer status. */
 export enum BankTransferStatus {
   PENDING = 'pending',
   SUCCESS = 'success',
@@ -10,17 +10,11 @@ export enum BankTransferStatus {
   CANCELLED = 'cancelled',
 }
 
-/** Failure subset of BankTransferStatus surfaced on the GetPaymentFlow response. */
 export enum BankTransferFailureReason {
   REJECTED = 'rejected',
   CANCELLED = 'cancelled',
   ERROR = 'error',
 }
-
-/** True for any status that won't change again (SUCCESS and the three failure values). */
-export const isTerminalBankTransferStatus = (
-  status: BankTransferStatus,
-): boolean => status !== BankTransferStatus.PENDING
 
 export interface CreateBankTransferPaymentInput {
   amount: number

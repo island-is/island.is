@@ -1,16 +1,12 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 
-import { CreateBankTransferInputLocaleEnum } from '@island.is/clients/payments'
-
-registerEnumType(CreateBankTransferInputLocaleEnum, {
-  name: 'PaymentsCreateBankTransferLocale',
-})
+import { Locale } from '@island.is/shared/types'
 
 @InputType('PaymentsCreateBankTransferInput')
 export class CreateBankTransferInput {
   @Field(() => String)
   paymentFlowId!: string
 
-  @Field(() => CreateBankTransferInputLocaleEnum)
-  locale!: CreateBankTransferInputLocaleEnum
+  @Field(() => String)
+  locale!: Locale
 }
