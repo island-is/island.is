@@ -36,14 +36,71 @@ export const Navbar = () => {
     control,
     controlDispatch,
     inSettings,
-    setOpenComponents,
     openComponents,
+    setOpenComponents,
   } = useContext(ControlContext) as IControlContext
+
   const { formatMessage } = useIntl()
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
-  const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
-  const { hasPayment } = form
+
+  const inputSections = useMemo(
+    () =>
+      sections?.filter(
+        (section): section is FormSystemSection =>
+          section !== null &&
+          section !== undefined &&
+          section.sectionType === SectionTypes.INPUT,
+      ) ?? [],
+    [sections],
+  )
+
+  const inputScreens = useMemo(
+    () =>
+      screens?.filter(
+        (screen): screen is FormSystemScreen =>
+          screen !== null &&
+          screen !== undefined &&
+          inputSections.some((section) => section.id === screen.sectionId),
+      ) ?? [],
+    [screens, inputSections],
+  )
+
+  const inputSectionIds = useMemo(
+    () =>
+      inputSections
+        .map((section) => section.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputSections],
+  )
+
+  const inputScreenIds = useMemo(
+    () =>
+      inputScreens
+        .map((screen) => screen.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputScreens],
+  )
+
+  const allNavbarItemsOpen =
+    inputSectionIds.length > 0 &&
+    inputSectionIds.every((id) => openComponents.sections.includes(id)) &&
+    inputScreenIds.every((id) => openComponents.screens.includes(id))
+
+  const toggleAllNavbarItems = () => {
+    setOpenComponents(
+      allNavbarItemsOpen
+        ? {
+            sections: [],
+            screens: [],
+          }
+        : {
+            sections: inputSectionIds,
+            screens: inputScreenIds,
+          },
+    )
+  }
+
   const sectionIds = useMemo(
     () =>
       sections
@@ -51,23 +108,69 @@ export const Navbar = () => {
         .map((s) => s.id as UniqueIdentifier),
     [sections],
   )
-  const screenIds = useMemo(
-    () =>
-      screens
-        ?.filter((s): s is FormSystemScreen => s !== null && s !== undefined)
-        .map((s) => s.id as UniqueIdentifier),
-    [screens],
-  )
-  const fieldsIds = useMemo(
-    () =>
-      fields
-        ?.filter((f): f is FormSystemField => f !== null && f !== undefined)
-        .map((f) => f.id as UniqueIdentifier),
-    [fields],
-  )
+
+  const screenIdsBySection = useMemo(() => {
+    const map = new Map<string, UniqueIdentifier[]>()
+
+    screens
+      ?.filter((screen): screen is FormSystemScreen =>
+        Boolean(screen?.id && screen?.sectionId),
+      )
+      .forEach((screen) => {
+        const existing = map.get(screen.sectionId as string) ?? []
+
+        map.set(screen.sectionId as string, [
+          ...existing,
+          screen.id as UniqueIdentifier,
+        ])
+      })
+
+    return map
+  }, [screens])
+
+  const fieldIdsByScreen = useMemo(() => {
+    const map = new Map<string, UniqueIdentifier[]>()
+
+    fields
+      ?.filter((field): field is FormSystemField =>
+        Boolean(field?.id && field?.screenId),
+      )
+      .forEach((field) => {
+        const existing = map.get(field.screenId as string) ?? []
+
+        map.set(field.screenId as string, [
+          ...existing,
+          field.id as UniqueIdentifier,
+        ])
+      })
+
+    return map
+  }, [fields])
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
+
+  const {
+    sensors,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+    onDragCancel,
+    isDraggingNavbarItem,
+    activeDragType,
+    pendingDropId,
+  } = useNavbarDnD()
+
+  const isPendingDropTarget = (id?: string | null) => {
+    return Boolean(
+      isDraggingNavbarItem &&
+        activeDragType &&
+        pendingDropId &&
+        id &&
+        pendingDropId === id &&
+        activeItem.data?.id !== id,
+    )
+  }
 
   const addSection = async () => {
     try {
@@ -171,7 +274,22 @@ export const Navbar = () => {
     }
   }
 
-  const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
+  const renderToggleAllButton = () => (
+    <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
+      <Button
+        icon={allNavbarItemsOpen ? 'chevronUp' : 'chevronDown'}
+        iconType="filled"
+        circle
+        inline
+        variant="ghost"
+        size="small"
+        onClick={toggleAllNavbarItems}
+        disabled={inputSectionIds.length === 0}
+        title={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+        aria-label={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+      />
+    </Box>
+  )
 
   const renderNonInputSections = () => {
     return sections
@@ -204,7 +322,9 @@ export const Navbar = () => {
           key={field.id}
           type="Field"
           data={field}
-          active={activeItem.data?.id === field.id}
+          active={
+            activeItem.data?.id === field.id || isPendingDropTarget(field.id)
+          }
           focusComponent={focusComponent}
         />
       ))
@@ -218,53 +338,64 @@ export const Navbar = () => {
           screen !== undefined &&
           screen.sectionId === section.id,
       )
-      .map((screen) => (
-        <Box key={screen.id}>
-          <NavComponent
-            type="Screen"
-            data={screen}
-            active={activeItem.data?.id === screen.id}
-            focusComponent={focusComponent}
-          />
-          <SortableContext items={fieldsIds ?? []}>
-            <AnimateHeight
-              duration={300}
-              height={openComponents.screens.includes(screen.id) ? 'auto' : 0}
-              easing="ease-in-out"
-            >
-              {renderFieldsForScreen(screen)}
-            </AnimateHeight>
-          </SortableContext>
-        </Box>
-      ))
+      .map((screen) => {
+        const screenIsOpen = openComponents.screens.includes(screen.id)
+
+        return (
+          <Box key={screen.id}>
+            <NavComponent
+              type="Screen"
+              data={screen}
+              active={
+                activeItem.data?.id === screen.id ||
+                isPendingDropTarget(screen.id)
+              }
+              focusComponent={focusComponent}
+            />
+
+            <SortableContext items={fieldIdsByScreen.get(screen.id) ?? []}>
+              <AnimateHeight
+                duration={isDraggingNavbarItem ? 0 : 150}
+                height={screenIsOpen ? 'auto' : 0}
+                easing="ease-in-out"
+              >
+                {renderFieldsForScreen(screen)}
+              </AnimateHeight>
+            </SortableContext>
+          </Box>
+        )
+      })
   }
 
   const renderInputSections = () => {
-    return sections
-      ?.filter(
-        (s): s is FormSystemSection =>
-          s !== null && s !== undefined && s.sectionType === SectionTypes.INPUT,
-      )
-      .map((section, index) => (
+    return inputSections.map((section, index) => {
+      const sectionIsOpen = openComponents.sections.includes(section.id)
+
+      return (
         <Box key={section.id}>
           <NavComponent
             type="Section"
             data={section}
-            active={activeItem.data?.id === section.id}
+            active={
+              activeItem.data?.id === section.id ||
+              isPendingDropTarget(section.id)
+            }
             index={index + 1}
             focusComponent={focusComponent}
           />
-          <SortableContext items={screenIds ?? []}>
+
+          <SortableContext items={screenIdsBySection.get(section.id) ?? []}>
             <AnimateHeight
-              duration={300}
-              height={openComponents.sections.includes(section.id) ? 'auto' : 0}
+              duration={isDraggingNavbarItem ? 0 : 150}
+              height={sectionIsOpen ? 'auto' : 0}
               easing="ease-in-out"
             >
               {renderScreensForSection(section)}
             </AnimateHeight>
           </SortableContext>
         </Box>
-      ))
+      )
+    })
   }
 
   const renderSettingsView = () => (
@@ -277,7 +408,9 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+
       {renderNonInputSections()}
+
       <div>
         <NavComponent
           type="Section"
@@ -286,6 +419,7 @@ export const Navbar = () => {
           focusComponent={focusComponent}
         />
       </div>
+
       <div>
         <NavComponent
           type="Section"
@@ -299,11 +433,14 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
+      {renderToggleAllButton()}
+
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
           sensors={isReadOnly ? [] : sensors}
           onDragStart={isReadOnly ? undefined : onDragStart}
           onDragEnd={isReadOnly ? undefined : onDragEnd}
+          onDragCancel={isReadOnly ? undefined : onDragCancel}
           onDragOver={isReadOnly ? undefined : onDragOver}
         >
           <SortableContext items={sectionIds ?? []}>
@@ -311,12 +448,7 @@ export const Navbar = () => {
           </SortableContext>
 
           {createPortal(
-            <DragOverlay
-              dropAnimation={{
-                duration: 500,
-                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-              }}
-            >
+            <DragOverlay dropAnimation={null}>
               {activeItem && (
                 <NavComponent
                   type={activeItem.type}
@@ -335,17 +467,7 @@ export const Navbar = () => {
           )}
         </DndContext>
       </Box>
-      {/* {payment && hasPayment && (
-        <Fragment>
-          <NavComponent
-            type="Section"
-            data={payment}
-            active={activeItem.data?.id === payment.id}
-            focusComponent={focusComponent}
-          />
-          {renderScreensForSection(payment as FormSystemSection)}
-        </Fragment>
-      )} */}
+
       <Box
         display="flex"
         justifyContent="center"
@@ -366,8 +488,11 @@ export const Navbar = () => {
 
   if (inSettings) {
     return renderSettingsView()
-  } else if (activeItem) {
+  }
+
+  if (activeItem) {
     return renderDnDView()
   }
+
   return null
 }

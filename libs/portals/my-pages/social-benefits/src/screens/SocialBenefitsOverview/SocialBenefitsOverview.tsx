@@ -15,6 +15,7 @@ import {
 import { useGetApplicationsOverviewQuery } from './SocialBenefitsOverview.generated'
 import { resolveStatusTagVariant } from '../../lib/statusTagVariant'
 import type { VmstApplicationStatus } from '@island.is/api/schema'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 const getStatusTag = (
   statusName?: string | null,
@@ -26,7 +27,13 @@ const getStatusTag = (
 
 const SocialBenefitsOverview = () => {
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useGetApplicationsOverviewQuery()
+  const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
+    Features.isServicePortalUnemploymentBenefitsPageEnabled,
+    false,
+  )
+  const { data, loading, error } = useGetApplicationsOverviewQuery({
+    skip: !vmstEnabled,
+  })
   const overview = data?.vmstApplicationsOverview
 
   return (
@@ -35,32 +42,35 @@ const SocialBenefitsOverview = () => {
       intro={formatMessage(sharedMessages.overviewIntro)}
     >
       <Stack space={3}>
-        {loading && <ActionCardLoader repeat={2} />}
+        {(loading || vmstFlagLoading) && <ActionCardLoader repeat={1} />}
         {!loading && !!error && (
           <AlertMessage
             type="error"
             message={formatMessage(sharedMessages.vmstFetchError)}
           />
         )}
-        {!loading && !error && overview?.unemploymentApplication?.isVisible && (
-          <ActionCard
-            heading={formatMessage(um.unemploymentBenefits)}
-            text={formatMessage(
-              sharedMessages.unemploymentBenefitsCardDescription,
-            )}
-            cta={{
-              label: formatMessage(sharedMessages.overviewCtaLabel),
-              variant: 'text',
-              icon: 'arrowForward',
-              url: UnemploymentBenefitsPaths.Status,
-            }}
-            image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
-            tag={getStatusTag(
-              overview.unemploymentApplication.statusName,
-              overview.unemploymentApplication.status,
-            )}
-          />
-        )}
+        {vmstEnabled &&
+          !loading &&
+          !error &&
+          overview?.unemploymentApplication?.isVisible && (
+            <ActionCard
+              heading={formatMessage(um.unemploymentBenefits)}
+              text={formatMessage(
+                sharedMessages.unemploymentBenefitsCardDescription,
+              )}
+              cta={{
+                label: formatMessage(sharedMessages.overviewCtaLabel),
+                variant: 'text',
+                icon: 'arrowForward',
+                url: UnemploymentBenefitsPaths.Status,
+              }}
+              image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
+              tag={getStatusTag(
+                overview.unemploymentApplication.statusName,
+                overview.unemploymentApplication.status,
+              )}
+            />
+          )}
         <ActionCard
           heading={formatMessage(coreMessages.socialSecurity)}
           text={formatMessage(sharedMessages.socialInsuranceCardDescription)}

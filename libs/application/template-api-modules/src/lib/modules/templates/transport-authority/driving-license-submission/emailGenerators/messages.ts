@@ -3,14 +3,14 @@ export const m = {
     'B-temp': 'Umsókn um ökunám móttekin',
     'B-full': 'Umsókn um fullnaðarskírteini móttekin',
     'B-full-renewal-65': 'Umsókn um endurnýjun ökuskírteinis móttekin',
-    BE: 'Umsókn um kerruréttindi móttekin',
+    BE: 'Umsókn um BE réttindi móttekin',
   },
   drivingLicenseHeading: {
     'B-temp': 'Umsókn þín um ökunám hefur verið móttekin',
     'B-full': 'Umsókn þín um fullnaðarskírteinið hefur verið móttekin',
     'B-full-renewal-65':
       'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin',
-    BE: 'Umsókn þín um kerruréttindi móttekin',
+    BE: 'Umsókn þín um BE réttindi hefur verið móttekin',
   },
   inPersonRequirements: {
     title: {
@@ -49,4 +49,14 @@ export const m = {
     'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
   ],
   congratulations: 'Góðan daginn',
+  nextSteps: {
+    BE: [
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+    ],
+    'B-full-renewal-65': [
+      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+      'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+    ],
+  } as Record<string, string[] | undefined>,
 }

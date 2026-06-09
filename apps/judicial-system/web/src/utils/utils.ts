@@ -550,7 +550,7 @@ export const isMatchingAppealCaseFile = (
     return false
   }
 
-  if (rulingFileId && file.rulingFileId !== rulingFileId) {
+  if ((file.rulingFileId ?? null) !== (rulingFileId ?? null)) {
     return false
   }
 

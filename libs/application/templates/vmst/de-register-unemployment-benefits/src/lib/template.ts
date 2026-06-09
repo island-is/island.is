@@ -14,7 +14,6 @@ import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { DeregisterUnemploymentBenefitsSchema } from './dataSchema'
 import {
-  coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -51,12 +50,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
               label: applicationMessages.actionCardPrerequisites,
               variant: 'blue',
             },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
           },
           roles: [
             {
@@ -93,7 +86,7 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: applicationMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

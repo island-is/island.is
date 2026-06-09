@@ -15,7 +15,7 @@ export const Application = () => {
   const isPaymentReturn =
     typeof window !== 'undefined' && window.location.search.includes('done')
 
-  const { data, loading, error, refetch } = useQuery(GET_APPLICATION, {
+  const { data, loading, error } = useQuery(GET_APPLICATION, {
     variables: {
       input: { id, slug },
     },

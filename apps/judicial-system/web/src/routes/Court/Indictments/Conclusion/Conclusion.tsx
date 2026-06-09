@@ -16,10 +16,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE,
   getStandardUserDashboardRoute,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_COURT_RECORD_ROUTE,
-  INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -142,13 +142,8 @@ const Conclusion: FC = () => {
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
   const { updateDefendantState, updateDefendant } = useDefendants()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
@@ -174,6 +169,7 @@ const Conclusion: FC = () => {
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
   const [conclusionDate, setConclusionDate] = useState<string>()
+  const [isSubmittingForSome, setIsSubmittingForSome] = useState(false)
   const [modalVisible, setModalVisible] = useState<
     | 'SPLIT'
     | 'CREATE_COURT_CASE_NUMBER'
@@ -430,8 +426,14 @@ const Conclusion: FC = () => {
       )
 
   const stepIsValid = () => {
-    // Do not leave any uploads unfinished
-    if (!allFilesDoneOrError) {
+    // Do not leave any uploads unfinished (staged DEFENDANT_RULING files are uploaded on confirm)
+    const hasUnfinishedUploads = uploadFiles.some(
+      (file) =>
+        file.status !== FileUploadStatus.done &&
+        file.status !== FileUploadStatus.error &&
+        !(file.category === CaseFileCategory.DEFENDANT_RULING && !file.key),
+    )
+    if (hasUnfinishedUploads) {
       return false
     }
 
@@ -906,7 +908,11 @@ const Conclusion: FC = () => {
               <InputFileUpload
                 name="ruling"
                 files={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.RULING,
+                  (file) =>
+                    file.category ===
+                    (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                      ? CaseFileCategory.DEFENDANT_RULING
+                      : CaseFileCategory.RULING),
                 )}
                 accept="application/pdf"
                 title={formatMessage(strings.inputFieldLabel)}
@@ -915,14 +921,27 @@ const Conclusion: FC = () => {
                 })}
                 buttonLabel={formatMessage(strings.uploadButtonText)}
                 onChange={(files) => {
-                  handleUpload(
+                  if (
+                    selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                  ) {
                     addUploadFiles(files, {
-                      category: CaseFileCategory.RULING,
-                    }),
-                    updateUploadFile,
-                  )
+                      category: CaseFileCategory.DEFENDANT_RULING,
+                    })
+                  } else {
+                    handleUpload(
+                      addUploadFiles(files, {
+                        category: CaseFileCategory.RULING,
+                      }),
+                      updateUploadFile,
+                    )
+                  }
                 }}
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRemove={(file) =>
+                  selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+                  !file.key
+                    ? removeUploadFile(file)
+                    : handleRemove(file, removeUploadFile)
+                }
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
                 onOpenFile={(file) => onOpenFile(file)}
               />
@@ -999,7 +1018,7 @@ const Conclusion: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() => {
             if (
               selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
@@ -1016,10 +1035,10 @@ const Conclusion: FC = () => {
 
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
-                ? INDICTMENTS_SUMMARY_ROUTE
+                ? DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
                 ? getStandardUserDashboardRoute(user)
-                : INDICTMENTS_COURT_OVERVIEW_ROUTE,
+                : DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
             )
           }}
           nextButtonText={
@@ -1085,7 +1104,7 @@ const Conclusion: FC = () => {
             text: 'Staðfesta',
             onClick: () => {
               router.push(
-                `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
               )
             },
             isDisabled: !validate([
@@ -1160,10 +1179,32 @@ const Conclusion: FC = () => {
             title="Viltu staðfesta lyktir?"
             primaryButton={{
               text: 'Staðfesta',
-              onClick: () =>
-                handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE),
+              onClick: async () => {
+                setIsSubmittingForSome(true)
+                try {
+                  const pendingFiles = uploadFiles.filter(
+                    (file) =>
+                      file.category === CaseFileCategory.DEFENDANT_RULING &&
+                      !file.key,
+                  )
+                  if (pendingFiles.length > 0) {
+                    const result = await handleUpload(
+                      pendingFiles,
+                      updateUploadFile,
+                    )
+                    if (result === 'NONE_SUCCEEDED') {
+                      return
+                    }
+                  }
+                  handleNavigationTo(
+                    DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+                  )
+                } finally {
+                  setIsSubmittingForSome(false)
+                }
+              },
               icon: 'checkmark',
-              isLoading: isUpdatingCase,
+              isLoading: isSubmittingForSome || isUpdatingCase,
             }}
             secondaryButton={{
               text: 'Hætta við',

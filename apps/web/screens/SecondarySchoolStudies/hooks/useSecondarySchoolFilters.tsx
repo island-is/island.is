@@ -8,12 +8,11 @@ import {
 } from 'next-usequerystate'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { SecondarySchoolProgrammeFilterOptionsQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeFilterOptions } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages/messages'
 
-type FilterOptions =
-  SecondarySchoolProgrammeFilterOptionsQuery['secondarySchoolProgrammeFilterOptions']
+type FilterOptions = SecondarySchoolProgrammeFilterOptions
 
 export interface SelectedFilters {
   levels: string[]

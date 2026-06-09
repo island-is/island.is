@@ -275,6 +275,11 @@ describe('InternalCaseController - Archive', () => {
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
           [
             { model: IndictmentCount, as: 'indictmentCounts' },
+            'displayOrder',
+            'ASC',
+          ],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
             'created',
             'ASC',
           ],

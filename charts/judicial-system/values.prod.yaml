@@ -30,7 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'APPEAL_RULING_ORDER'
+    HIDDEN_FEATURES: 'APPEAL_RULING_ORDER,TINY_MCE'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -561,7 +561,6 @@ judicial-system-web:
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
     SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL'
-    TINY_MCE_API_KEY: '/k8s/judicial-system/TINY_MCE_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

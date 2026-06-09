@@ -19,10 +19,6 @@ query getPersonalTaxCredit {
   }
 }
 
-query getPersonalTaxCreditTaxBracket {
-  socialInsurancePersonalTaxCreditTaxBracket
-}
-
 mutation registerSocialInsuranceTaxCardAllowance(
   $input: SocialInsuranceRegisterTaxCardAllowanceInput!
 ) {
@@ -41,8 +37,27 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
 
-mutation setSocialInsurancePersonalTaxCreditTaxBracket(
-  $taxBracket: SocialInsuranceTaxBracketAction!
+query getPersonalTaxCreditSpouseInfo {
+  socialInsurancePersonalTaxCreditSpouseInfo {
+    nationalId
+    name
+    isDeceased
+    deceasedMonthsAndYears {
+      year
+      months
+    }
+    deceasedReasonNotAllowedCode
+  }
+}
+
+mutation setSocialInsuranceSpouseTaxCard(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
 ) {
-  setSocialInsurancePersonalTaxCreditTaxBracket(taxBracket: $taxBracket)
+  setSocialInsuranceSpouseTaxCard(input: $input)
+}
+
+mutation setSocialInsuranceSpouseTaxCardDueToDeath(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
+) {
+  setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
 }
