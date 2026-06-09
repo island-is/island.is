@@ -11,3 +11,13 @@ export enum ShipRegistryCertificateStatus {
 registerEnumType(ShipRegistryCertificateStatus, {
   name: 'ShipRegistryCertificateStatus',
 })
+
+export enum ShipRegistrySailorCertificateStatus {
+  Valid = 'Valid',
+  Invalid = 'Invalid',
+  Unknown = 'Unknown',
+}
+
+registerEnumType(ShipRegistrySailorCertificateStatus, {
+  name: 'ShipRegistrySailorCertificateStatus',
+})

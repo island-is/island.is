@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -45,7 +44,7 @@ export const ShipDetail = () => {
     >
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && !ship && (
-        <EmptyState description={shipsMessages.notFound} />
+        <Problem type="no_data" noBorder={false} />
       )}
 
       {(ship || loading) && (

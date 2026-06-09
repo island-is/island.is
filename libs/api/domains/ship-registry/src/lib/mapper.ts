@@ -1,7 +1,12 @@
 import {
-  MyShipDetailDto,
+  SailorMaritimeBookDto,
+  SailorRegistrationExemptionDto,
+  SailorRightCertificateDto,
+  SailorSchoolCertificateDto,
+  SailorSeaServiceEntryDto,
   ShipBaseInfoDto,
-  ShipCertificateDetailDto,
+  ShipCertificateIssueStatus,
+  ShipDetailDto,
   ValueMessageDto,
   ValueUnitMessageDto,
 } from '@island.is/clients/ship-registry-v2'
@@ -9,13 +14,28 @@ import { isDefined } from '@island.is/shared/utils'
 import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
-import { ShipRegistryCertificateStatus } from './models/enums'
-import { parseDate } from './utils'
+import {
+  ShipRegistryCertificateStatus,
+  ShipRegistrySailorCertificateStatus,
+} from './models/enums'
+import { ShipRegistrySailorRightCertificate } from './models/sailorRightCertificate.model'
+import { ShipRegistrySailorSchoolCertificate } from './models/sailorSchoolCertificate.model'
+import { ShipRegistrySailorMaritimeBook } from './models/sailorMaritimeBook.model'
+import { ShipRegistrySailorRegistrationExemption } from './models/sailorRegistrationExemption.model'
+import { ShipRegistrySailorSeaServiceBookEntry } from './models/sailorSeaServiceBookEntry.model'
 import format from 'date-fns/format'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 import { LocaleEnum } from '@island.is/nest/graphql'
 
+const parseDateString = (s: string | undefined): Date | undefined => {
+  if (!s) return undefined
+  const d = parseISO(s)
+  return isValid(d) ? d : undefined
+}
+
 const mapCertificateStatus = (
-  raw: ShipCertificateDetailDto['certificateIssueStatusEnum'] | undefined,
+  raw: ShipCertificateIssueStatus | undefined,
 ): ShipRegistryCertificateStatus => {
   switch (raw) {
     case 'VALID':
@@ -28,6 +48,19 @@ const mapCertificateStatus = (
       return ShipRegistryCertificateStatus.InInspectionWindow
     default:
       return ShipRegistryCertificateStatus.Unknown
+  }
+}
+
+const mapSailorCertificateStatus = (
+  raw: string | undefined,
+): ShipRegistrySailorCertificateStatus => {
+  switch (raw) {
+    case 'Valid':
+      return ShipRegistrySailorCertificateStatus.Valid
+    case 'Invalid':
+      return ShipRegistrySailorCertificateStatus.Invalid
+    default:
+      return ShipRegistrySailorCertificateStatus.Unknown
   }
 }
 
@@ -72,7 +105,7 @@ export const mapToUserShipCollectionItem = (
 }
 
 export const mapToUserShipFromDetails = (
-  ship: MyShipDetailDto,
+  ship: ShipDetailDto,
   locale: LocaleEnum = LocaleEnum.Is,
 ): UserShip | undefined => {
   const info = ship.shipRegistrationInfo
@@ -84,10 +117,7 @@ export const mapToUserShipFromDetails = (
 
   const registrationNumber = Number(info.shipRegistrationNumber.value)
 
-  const seaworthinessDate =
-    info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
-      ? parseDate(info.seaworthyExpiryDate.value, 'yyyy-MM-dd HH:mm:ss')
-      : undefined
+  const seaworthinessDate = info.seaworthyExpiryDateParsed
 
   const fisheryName = toLocalizedValue(info.fishery, locale)
 
@@ -144,23 +174,65 @@ export const mapToUserShipFromDetails = (
         }
       })
       .filter(isDefined),
-    certificates: ship.shipCertificateDetails
-      ?.map((cert) => {
-        const issueDate = cert.issueDate ? parseDate(cert.issueDate) : null
-        if (!issueDate || !cert.certificateTypeName) return undefined
-        return {
-          name: cert.certificateTypeName,
-          status: mapCertificateStatus(cert.certificateIssueStatusEnum),
-          issueDate,
-          validToDate:
-            cert.validToDate !== ''
-              ? parseDate(cert.validToDate) ?? undefined
-              : undefined,
-          extensionDate: cert.extensionDate
-            ? parseDate(cert.extensionDate) ?? undefined
-            : undefined,
-        }
-      })
-      .filter(isDefined),
+    certificates: ship.shipCertificateDetails.map((cert) => ({
+      name: cert.certificateTypeName,
+      status: mapCertificateStatus(cert.certificateIssueStatusEnum),
+      issueDate: cert.issueDate,
+      validToDate: cert.validToDate,
+      extensionDate: cert.extensionDate,
+    })),
   }
 }
+
+export const mapToSailorSchoolCertificates = (
+  entries: SailorSchoolCertificateDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorSchoolCertificate[] =>
+  entries.map((c) => ({
+    ...c,
+    id: `${c.id}-${locale}`,
+    status: mapSailorCertificateStatus(c.status),
+  }))
+
+export const mapToSailorRightCertificates = (
+  entries: SailorRightCertificateDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorRightCertificate[] =>
+  entries.map((c) => ({
+    ...c,
+    id: `${c.id}-${locale}`,
+    status: mapSailorCertificateStatus(c.status),
+  }))
+
+export const mapToSailorMaritimeBooks = (
+  entries: SailorMaritimeBookDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorMaritimeBook[] =>
+  entries.map((b) => ({
+    ...b,
+    id: `${b.id}-${locale}`,
+  }))
+
+export const mapToSailorRegistrationExemptions = (
+  entries: SailorRegistrationExemptionDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorRegistrationExemption[] =>
+  entries.map((e) => ({
+    ...e,
+    id: `${e.id}-${locale}`,
+  }))
+
+export const mapToSailorSeaServiceBook = (
+  entries: SailorSeaServiceEntryDto[],
+  locale: LocaleEnum,
+): ShipRegistrySailorSeaServiceBookEntry[] =>
+  entries.map((e, i) => ({
+    id: `${e.shipRegistrationNumber ?? String(i)}-${locale}`,
+    shipName: e.shipName,
+    shipRegistrationNumber: e.shipRegistrationNumber,
+    rank: e.rank,
+    rankCode: e.rankCode,
+    startDate: parseDateString(e.startDate),
+    endDate: parseDateString(e.endDate),
+    numberOfDays: e.numberOfDays,
+  }))

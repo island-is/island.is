@@ -168,4 +168,143 @@ export const olMessage = defineMessages({
     defaultMessage:
       'Leyfisbréf gefin út fyrir 1. janúar 2020 eru ekki aðgengileg á island.is. Þurfir þú afrit af áður útgefnu leyfisbréfi getur þú sent póst til mennta- og barnamálaráðuneytisins á netfangið mrn@mrn.is. Afrit leyfisbréfa eru send í tölvupósti sem pdf. skjöl.',
   },
+
+  // Sailor screens
+  sailorSchoolCertificatesIntro: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-intro',
+    defaultMessage:
+      'Hér eru birtar upplýsingar um próf, námskeið og önnur hæfisskilyrði sem tengjast störfum sjómanns, gildistíma réttinda og mikilvæga fresti vegna endurnýjunar eða endurmenntunar.',
+  },
+  sailorSchoolCertificatesEmpty: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-empty',
+    defaultMessage: 'Engin próf, nám eða frestir fundust',
+  },
+  sailorSchoolCertificatesColumnTitle: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-column-title',
+    defaultMessage: 'Próf, nám, námskeið eða frestur',
+  },
+  sailorSchoolCertificatesColumnValidDate: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-column-valid-date',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  sailorSchoolCertificatesExpandSchool: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-expand-school',
+    defaultMessage: 'Skóli',
+  },
+  sailorSchoolCertificatesExpandIssueDate: {
+    id: 'sp.occupational-licenses:sailor-school-certificates-expand-issue-date',
+    defaultMessage: 'Útgáfudagsetning',
+  },
+  sailorRightCertificatesIntro: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-intro',
+    defaultMessage:
+      'Hér eru birtar upplýsingar um atvinnuskírteini sjómanns og réttindaflokka sem þeim fylgja.',
+  },
+  sailorRightCertificatesEmpty: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-empty',
+    defaultMessage: 'Engin atvinnuskírteini fundust',
+  },
+  sailorRightCertificatesColumnType: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-type',
+    defaultMessage: 'Tegund',
+  },
+  sailorRightCertificatesColumnRightsCategories: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-rights-categories',
+    defaultMessage: 'Réttindaflokkar',
+  },
+  sailorRightCertificatesColumnValidDate: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-column-valid-date',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  sailorRightCertificatesExpandIssueDate: {
+    id: 'sp.occupational-licenses:sailor-right-certificates-expand-issue-date',
+    defaultMessage: 'Útgáfudagur',
+  },
+  sailorCrewRegistrationsIntro: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-intro',
+    defaultMessage:
+      'Hér birtast upplýsingar um allar lögskráningar sjómanns á skipum, bæði núverandi og eldri. Lögskráning staðfestir ráðningu og stöðu um borð og er grundvöllur fyrir skráningu siglingartíma, réttinda og atvinnuskírteina.',
+  },
+  sailorTabSeaService: {
+    id: 'sp.occupational-licenses:sailor-tab-sea-service',
+    defaultMessage: 'Siglingartími',
+  },
+  sailorTabExemptions: {
+    id: 'sp.occupational-licenses:sailor-tab-exemptions',
+    defaultMessage: 'Undanþágur',
+  },
+  sailorTabMaritimeBooks: {
+    id: 'sp.occupational-licenses:sailor-tab-maritime-books',
+    defaultMessage: 'Sjóferðabækur',
+  },
+  sailorCrewRegistrationsTabsLabel: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-tabs-label',
+    defaultMessage: 'Lögskráningar',
+  },
+  sailorColumnRank: {
+    id: 'sp.occupational-licenses:sailor-column-rank',
+    defaultMessage: 'Staða',
+  },
+  sailorExemptionsIntro: {
+    id: 'sp.occupational-licenses:sailor-exemptions-intro',
+    defaultMessage:
+      'Hér finnur þú tímabundnar undanþágur sem veittar hafa verið vegna réttinda, mönnunar eða annarra skilyrða sem tengjast störfum um borð.',
+  },
+  sailorExemptionsLinkText: {
+    id: 'sp.occupational-licenses:sailor-exemptions-link-text',
+    defaultMessage: 'Nánar um undanþágur',
+  },
+  sailorColumnShip: {
+    id: 'sp.occupational-licenses:sailor-column-ship',
+    defaultMessage: 'Skip',
+  },
+  sailorColumnValidFrom: {
+    id: 'sp.occupational-licenses:sailor-column-valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  sailorCrewRegistrationsExpandShipNo: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-ship-no',
+    defaultMessage: 'Skipaskrárnúmer',
+  },
+  sailorCrewRegistrationsExpandLowerRank: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-lower-rank',
+    defaultMessage: 'Heimild til að gegna lægri stöðu',
+  },
+  sailorCrewRegistrationsExpandAdvertised: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-advertised',
+    defaultMessage: 'Staðan auglýst',
+  },
+  sailorCrewRegistrationsExpandDays: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-expand-days',
+    defaultMessage: 'Fjöldi daga',
+  },
+  sailorCrewRegistrationsExemptionsEmpty: {
+    id: 'sp.occupational-licenses:sailor-crew-registrations-exemptions-empty',
+    defaultMessage: 'Engar undanþágur fundust',
+  },
+  sailorMaritimeBooksIntro: {
+    id: 'sp.occupational-licenses:sailor-maritime-books-intro',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um útgefnar sjóferðabækur sjómanns.',
+  },
+  sailorMaritimeBooksLinkText: {
+    id: 'sp.occupational-licenses:sailor-maritime-books-link-text',
+    defaultMessage: 'Nánar um sjóferðabækur',
+  },
+  sailorMaritimeBooksEmpty: {
+    id: 'sp.occupational-licenses:sailor-maritime-books-empty',
+    defaultMessage: 'Engar sjóferðabækur fundust',
+  },
+  sailorMaritimeBooksType: {
+    id: 'sp.occupational-licenses:sailor-maritime-books-type',
+    defaultMessage: 'Tegund',
+  },
+  sailorSeaServiceRankAll: {
+    id: 'sp.occupational-licenses:sailor-sea-service-rank-all',
+    defaultMessage: 'Allar stöður',
+  },
+  sailorSeaServiceEmpty: {
+    id: 'sp.occupational-licenses:sailor-sea-service-empty',
+    defaultMessage: 'Engar lögskráningardagar fundust',
+  },
 })
