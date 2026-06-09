@@ -25,15 +25,15 @@ export class CustomsCalculatorResolver {
     return this.customsCalculatorService.getProductCategories()
   }
 
-  // @Query(() => CustomsCalculatorUnitsResponse, {
-  //   name: 'customsCalculatorUnits',
-  // })
-  // getUnits(
-  //   @Args('tariffNumber') tariffNumber: string,
-  //   @Args('referenceDate') referenceDate: string,
-  // ): Promise<CustomsCalculatorUnitsResponse> {
-  //   return this.customsCalculatorService.getUnits(tariffNumber, referenceDate)
-  // }
+  @Query(() => CustomsCalculatorUnitsResponse, {
+    name: 'customsCalculatorUnits',
+    nullable: true,
+  })
+  getUnits(
+    @Args('tariffNumber') tariffNumber: string,
+  ): Promise<CustomsCalculatorUnitsResponse | null> {
+    return this.customsCalculatorService.getProductCategoryUnits(tariffNumber)
+  }
 
   // @Mutation(() => CustomsCalculatorCalculationResponse, {
   //   name: 'customsCalculatorCalculate',

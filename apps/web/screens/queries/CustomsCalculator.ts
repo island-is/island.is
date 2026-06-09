@@ -38,3 +38,11 @@ export const GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES = gql`
     }
   }
 `
+
+export const GET_CUSTOMS_CALCULATOR_UNITS = gql`
+  query CustomsCalculatorUnits($tariffNumber: String!) {
+    customsCalculatorUnits(tariffNumber: $tariffNumber) {
+      units
+    }
+  }
+`

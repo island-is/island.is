@@ -66,10 +66,22 @@ export class CustomsCalculatorService {
         }
     }
 
+    bottomLevelCategories.sort(sortAlpha('label'))
+
     return {
       topLevel: topLevelCategories,
       bottomLevel: bottomLevelCategories,
     }
+  }
+
+  async getProductCategoryUnits(tariffNumber: string) {
+    const referenceDate = new Date().toISOString()
+    const response = await this.customsCalculatorClient.getProductCategoryUnits(
+      tariffNumber,
+      referenceDate,
+    )
+
+    return null
   }
 
   // async getUnits(

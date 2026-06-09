@@ -20,7 +20,10 @@ import {
   ConnectedComponent,
   CustomsCalculatorProductCategoriesQuery,
 } from '@island.is/web/graphql/schema'
-import { GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES } from '@island.is/web/screens/queries/CustomsCalculator'
+import {
+  GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES,
+  GET_CUSTOMS_CALCULATOR_UNITS,
+} from '@island.is/web/screens/queries/CustomsCalculator'
 
 import { CategoryModal } from './CategoryModal'
 import { translation as translationStrings } from './translation.strings'
@@ -183,6 +186,12 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       tariffNumber: string
       description: string
     } | null>(null)
+
+  const unitsResponse = useQuery(GET_CUSTOMS_CALCULATOR_UNITS, {
+    variables: { tariffNumber: selectedBottomLevelCategory?.tariffNumber },
+  })
+
+  console.log(unitsResponse.data)
 
   return (
     <Stack space={3}>

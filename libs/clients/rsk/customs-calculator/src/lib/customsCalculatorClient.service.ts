@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { DefaultApi } from '../../gen/fetch'
+import { writeFileSync } from 'fs'
 
 @Injectable()
 export class CustomsCalculatorClientService {
@@ -28,6 +29,24 @@ export class CustomsCalculatorClientService {
           description: String(item.Lysing ?? '').trim(),
         })) ?? []
     )
+  }
+
+  async getProductCategoryUnits(tariffNumber: string, referenceDate: string) {
+    const payload = (await this.customsCalculatorApi.getReiknivelEiningar({
+      vidmDags: referenceDate,
+      tollskrarnumer: tariffNumber,
+    })) as {
+      Response?: {
+        Einingar?: string
+        Villur?: string
+      }
+    }
+    writeFileSync(
+      'responses.json',
+      JSON.stringify({ payload, tariffNumber, referenceDate }, null, 2),
+    )
+
+    return payload?.Response?.Einingar
   }
 
   // async getUnits(tariffNumber: string, referenceDate: string) {
