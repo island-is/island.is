@@ -38,7 +38,16 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  ConversationAttachmentDto,
+  ConversationAttachmentRequestDto,
+  ConversationBaseDto,
+  ConversationDetailDto,
+  ConversationMessageDto,
+  ConversationStatusFilter,
+  CreateConversationRequestDto,
+  CreateReplyRequestDto,
   DispensationHistoryItemDto,
+  MessagingRecipientDto,
   UserVisibleAppointmentStatuses,
   OrganDonorDto,
 } from './lib/clients/health'
