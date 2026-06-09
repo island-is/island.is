@@ -29,7 +29,7 @@ export class HistoryBuilder {
     currentUserRole: string,
     currentUserNationalId: string,
     isAdmin: boolean,
-  ): Promise<HistoryResponseDto[] | []> {
+  ): Promise<HistoryResponseDto[]> {
     const result: HistoryResponseDto[] = []
 
     for (const entry of history) {
