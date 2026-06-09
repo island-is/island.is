@@ -8,3 +8,25 @@ query GetScopeClients($input: ScopeClientsInput!) {
     }
   }
 }
+
+query GetGrantableClients($input: AuthAdminGrantableClientsInput!) {
+  authAdminGrantableClients(input: $input) {
+    clientId
+    tenantId
+    clientType
+    displayName {
+      value
+      locale
+    }
+  }
+}
+
+mutation UpdateScopeClients($input: UpdateAuthAdminScopeClientsInput!) {
+  updateAuthAdminScopeClients(input: $input) {
+    environments
+    failedEnvironments {
+      environment
+      message
+    }
+  }
+}

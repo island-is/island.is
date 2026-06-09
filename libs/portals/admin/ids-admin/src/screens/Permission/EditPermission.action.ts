@@ -18,6 +18,11 @@ import {
   UpdateScopeUsersMutation,
   UpdateScopeUsersMutationVariables,
 } from './components/PermissionAccessControl.generated'
+import {
+  UpdateScopeClientsDocument,
+  UpdateScopeClientsMutation,
+  UpdateScopeClientsMutationVariables,
+} from './components/PermissionApplications.generated'
 import { getIntent } from '../../utils/getIntent'
 import {
   MergedFormDataSchema,
@@ -26,7 +31,8 @@ import {
 } from './EditPermission.schema'
 
 export type EditPermissionResult = RouterActionResponse<
-  PatchAuthAdminScopeMutation['patchAuthAdminScope']['environments'],
+  | PatchAuthAdminScopeMutation['patchAuthAdminScope']['environments']
+  | { environment: AuthAdminEnvironment }[],
   ValidateFormDataResult<MergedFormDataSchema>['errors'],
   keyof typeof PermissionFormTypes
 > & {
@@ -67,10 +73,17 @@ export const editPermissionAction: WrappedActionFn =
     const { syncEnvironments, environment, ...rawData } = result.data
 
     // Extract scope user fields if present (only in ACCESS_CONTROL intent)
-    const { addedScopeUserNationalIds, removedScopeUserNationalIds, ...data } =
+    const { addedScopeUserNationalIds, removedScopeUserNationalIds, ...rest1 } =
       rawData as typeof rawData & {
         addedScopeUserNationalIds?: string[]
         removedScopeUserNationalIds?: string[]
+      }
+
+    // Extract scope client fields if present (only in APPLICATIONS intent)
+    const { addedScopeClientIds, removedScopeClientIds, ...data } =
+      rest1 as typeof rest1 & {
+        addedScopeClientIds?: string[]
+        removedScopeClientIds?: string[]
       }
 
     const environments: AuthAdminEnvironment[] = []
@@ -96,6 +109,45 @@ export const editPermissionAction: WrappedActionFn =
     }
 
     try {
+      // The APPLICATIONS intent only updates the scope's client list — there
+      // is no patchScope payload, so skip the patch call entirely.
+      if (intent === PermissionFormTypes.APPLICATIONS) {
+        const updateClientsResult = await client.mutate<
+          UpdateScopeClientsMutation,
+          UpdateScopeClientsMutationVariables
+        >({
+          mutation: UpdateScopeClientsDocument,
+          variables: {
+            input: {
+              tenantId,
+              scopeName,
+              addedClientIds: addedScopeClientIds ?? [],
+              removedClientIds: removedScopeClientIds ?? [],
+              environments,
+            },
+          },
+        })
+
+        if (updateClientsResult.errors?.length) {
+          return globalErrorResponse
+        }
+
+        const clientFailures =
+          updateClientsResult.data?.updateAuthAdminScopeClients
+            .failedEnvironments ?? []
+        const successfulEnvironments =
+          updateClientsResult.data?.updateAuthAdminScopeClients.environments ??
+          []
+
+        return {
+          data: successfulEnvironments.map((env) => ({ environment: env })),
+          intent,
+          ...(clientFailures.length > 0 && {
+            failedEnvironments: clientFailures,
+          }),
+        }
+      }
+
       const patchScopeResult = await client.mutate<
         PatchAuthAdminScopeMutation,
         PatchAuthAdminScopeMutationVariables
