@@ -60,10 +60,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               fileCreated: created,
               civilClaimantId,
               isRulingOrderInConfirmedCourtSession:
-                isRulingOrderInConfirmedCourtSession(
-                  id,
-                  theCase.courtSessions,
-                ),
+                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
             }),
         )
 

@@ -227,9 +227,7 @@ const canDefenceUserViewCaseFile = ({
 
     // A ruling order uploaded during the course of a case is only visible once
     // it has been added to a confirmed court session.
-    if (
-      caseFileCategory === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
-    ) {
+    if (caseFileCategory === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
       return Boolean(isRulingOrderInConfirmedCourtSession)
     }
 
