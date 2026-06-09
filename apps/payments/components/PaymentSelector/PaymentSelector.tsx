@@ -20,7 +20,7 @@ interface PaymentMethodOption {
   title: MessageDescriptor
 }
 
-// Render order is the order the user sees the buttons in. Card → invoice → bank transfer keeps the
+// Render order is the order the user sees the buttons in. Card → invoice → bank transfer
 const PAYMENT_METHOD_OPTIONS: readonly PaymentMethodOption[] = [
   { method: 'card', title: card.paymentMethodTitle },
   { method: 'invoice', title: invoice.paymentMethodTitle },

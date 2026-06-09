@@ -214,7 +214,7 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional({
     description:
-      'Populated only when paymentStatus is bank_transfer_failed. Indicates the reason the most recent bank-transfer attempt failed, so the FE can render a specific error message.',
+      'Populated only when paymentStatus is bank_transfer_failed. Indicates the reason the most recent bank-transfer attempt failed.',
     enum: BankTransferFailureReason,
   })
   @IsOptional()
@@ -232,7 +232,7 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional({
     description:
-      'Populated only when paymentStatus is bank_transfer_pending. The timestamp at which the in-flight attempt expires (the same TTL we shared with Blikk on create). The FE polling loop derives its hard timeout from this so it matches the backend TTL exactly.',
+      'Populated only when paymentStatus is bank_transfer_pending. The timestamp at which the in-flight attempt expires.',
     type: Date,
   })
   @IsOptional()

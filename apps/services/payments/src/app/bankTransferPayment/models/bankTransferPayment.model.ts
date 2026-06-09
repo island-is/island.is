@@ -19,12 +19,6 @@ import { PaymentFlow } from '../../paymentFlow/models/paymentFlow.model'
 
 @Table({
   tableName: 'bank_transfer_payment',
-  indexes: [
-    {
-      name: 'bank_transfer_payment_payment_flow_id_idx',
-      fields: ['payment_flow_id'],
-    },
-  ],
 })
 export class BankTransferPayment extends Model<
   InferAttributes<BankTransferPayment>,

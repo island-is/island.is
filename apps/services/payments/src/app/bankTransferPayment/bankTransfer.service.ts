@@ -46,7 +46,6 @@ import {
 } from './dtos'
 import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
-  createLogPrefix,
   generateBankTransferChargeFJSPayload,
   isBankTransferFailureStatus,
   isBlikkStatus,
@@ -174,17 +173,6 @@ export class BankTransferService {
       { useRetry: true, throwOnError: false },
     )
 
-    const logPrefix = createLogPrefix(
-      input.paymentFlowId,
-      correlationId,
-      providerResult.providerPaymentId,
-    )
-
-    this.logger.info(`${logPrefix}Bank transfer payment created`, {
-      paymentFlowId: input.paymentFlowId,
-      status: providerResult.status,
-    })
-
     return {
       providerPaymentId: providerResult.providerPaymentId,
       scaRedirectUrl: providerResult.scaRedirectUrl,
@@ -220,9 +208,9 @@ export class BankTransferService {
   /**
    * Cancels the active bank-transfer attempt for a flow. For a still-PENDING attempt we ask Blikk to
    * cancel first; Blikk only honours this while the payment is in DRAFT, so a payment the user already
-   * took to the bank makes the Blikk cancel throw and we refuse the cancel rather than soft-delete a
-   * live payment (which would orphan a possible settlement). Soft-deletes the local row only once the
-   * payment is confirmed cancelled / already terminal / expired. Idempotent.
+   * took to the bank makes the Blikk cancel throw and we refuse the cancel. Soft-deletes the local row only once the
+   * payment is confirmed cancelled / already terminal / expired.
+   * Idempotent.
    */
   async cancel(
     input: CancelBankTransferInput,
@@ -298,11 +286,6 @@ export class BankTransferService {
       }
       return { ok: true }
     }
-
-    this.logger.info(`${logPrefix}Bank transfer cancelled`, {
-      paymentFlowId: row.paymentFlowId,
-      mappedStatus,
-    })
 
     // Only active-PENDING cancels emit `payment_cancelled`.
     if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
@@ -457,10 +440,6 @@ export class BankTransferService {
 
     // Fulfillment and FJS charge already exist — skip.
     if (existing?.fjsChargeId) {
-      this.logger.info(
-        `[${paymentFlowId}] Bank transfer already fulfilled and charged — skipping FJS charge`,
-        { fulfillmentId: existing.id, fjsChargeId: existing.fjsChargeId },
-      )
       return
     }
 
@@ -476,15 +455,7 @@ export class BankTransferService {
         if ((error as Error)?.name !== 'SequelizeUniqueConstraintError') {
           throw error
         }
-        this.logger.info(
-          `[${paymentFlowId}] Bank transfer fulfillment already claimed — ensuring FJS charge`,
-        )
       }
-    } else {
-      this.logger.info(
-        `[${paymentFlowId}] Bank transfer fulfillment exists without an FJS charge — re-attempting`,
-        { fulfillmentId: existing.id },
-      )
     }
 
     this.logger.info(`[${paymentFlowId}] Creating bank transfer FJS charge`, {
@@ -507,9 +478,6 @@ export class BankTransferService {
           shouldRetryOnError: (error) =>
             error.message !== FjsErrorCode.AlreadyCreatedCharge,
         },
-      )
-      this.logger.info(
-        `[${paymentFlowId}] Bank transfer FJS charge created and linked`,
       )
     } catch (error) {
       // Fulfillment is committed; we don't un-pay. Missing FJS charge needs manual reconciliation.
@@ -662,7 +630,7 @@ export class BankTransferService {
       })
       // On failure, finalize the bank transfer failure.
     } else if (isBankTransferFailureStatus(refreshed.status)) {
-      await this.finalizeBankTransferFailure(row, refreshed, rowLogPrefix(row))
+      await this.finalizeBankTransferFailure(row, refreshed)
       // On PENDING with raw-status drift, update the lastKnownStatus.
     } else if (refreshed.rawStatus !== row.lastKnownStatus) {
       await this.bankTransferPaymentModel.update(
@@ -682,7 +650,6 @@ export class BankTransferService {
   private async finalizeBankTransferFailure(
     row: BankTransferPayment,
     result: BankTransferPaymentResult,
-    logPrefix: string,
   ): Promise<void> {
     const [affectedRows] = await this.bankTransferPaymentModel.update(
       { lastKnownStatus: result.rawStatus },
@@ -699,11 +666,6 @@ export class BankTransferService {
       return
     }
 
-    this.logger.info(`${logPrefix}Bank transfer payment failed`, {
-      paymentFlowId: row.paymentFlowId,
-      status: result.status,
-      message: result.message,
-    })
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
         paymentFlowId: row.paymentFlowId,
@@ -765,9 +727,6 @@ export class BankTransferService {
   ): Promise<void> {
     try {
       await this.blikkClient.cancelPayment(providerPaymentId)
-      this.logger.info(`${logPrefix}Blikk cancel succeeded`, {
-        providerPaymentId,
-      })
     } catch (e) {
       if (e instanceof BlikkClientError && e.status === 404) {
         this.logger.warn(`${logPrefix}Blikk cancel target not found (404)`, {

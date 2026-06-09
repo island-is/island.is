@@ -83,6 +83,11 @@ export const rowLogPrefix = (
     row.providerPaymentId,
   )
 
+/** True for any status that won't change again (SUCCESS and the three failure values). */
+export const isTerminalBankTransferStatus = (
+  status: BankTransferStatus,
+): boolean => status !== BankTransferStatus.PENDING
+
 /** True for ERROR / REJECTED / CANCELLED (distinct from `isTerminalBankTransferStatus` which includes SUCCESS). */
 export const isBankTransferFailureStatus = (
   status: BankTransferStatus,
