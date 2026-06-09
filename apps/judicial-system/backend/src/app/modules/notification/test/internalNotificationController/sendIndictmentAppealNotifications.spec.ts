@@ -1077,7 +1077,13 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
 // ─── 7. Ruling-order appeals identify the case by the ruling order file name ─
 
 describe('InternalNotificationController - Ruling-order appeal uses the ruling order file name instead of the court case number', () => {
-  const { judge, court } = createTestUsers(['judge'])
+  const { judge } = createTestUsers(['judge'])
+  // A court is an Institution, not a user, so createTestUsers is unsuitable here.
+  const court = {
+    id: uuid(),
+    name: 'Héraðsdómur Reykjavíkur',
+    email: 'court@omnitrix.is',
+  }
 
   const caseId = uuid()
   const appealCaseId = uuid()
@@ -1117,7 +1123,7 @@ describe('InternalNotificationController - Ruling-order appeal uses the ruling o
             type: CaseType.INDICTMENT,
             indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             judge: { name: judge.name, email: judge.email },
-            court: { name: 'Héraðsdómur Reykjavíkur' },
+            court: { id: court.id, name: court.name },
             courtCaseNumber,
             defendants,
             civilClaimants,
