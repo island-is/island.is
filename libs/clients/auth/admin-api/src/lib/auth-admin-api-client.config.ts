@@ -20,7 +20,6 @@ export const AuthAdminApiClientConfig = defineConfig({
     return {
       basePaths: env.requiredJSON('AUTH_ADMIN_API_PATHS', {
         development: 'http://localhost:6333/backend',
-        staging: 'https://identity-server.dev01.devland.is/backend',
       }),
       basePath: env.required(
         'AUTH_ADMIN_API_PATH',
