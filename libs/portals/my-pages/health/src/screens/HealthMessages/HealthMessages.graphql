@@ -1,0 +1,31 @@
+query GetHealthMessages(
+  $status: HealthDirectorateHealthMessageStatusFilter
+  $starred: Boolean
+) {
+  healthDirectorateHealthMessages(status: $status, starred: $starred) {
+    id
+    title
+    lastSenderGroupName
+    lastMessageSentAt
+    isStarred
+    isArchived
+    isRead
+    hasAttachment
+  }
+}
+
+mutation StarHealthMessage($id: String!) {
+  healthDirectorateStarHealthMessage(id: $id)
+}
+
+mutation UnstarHealthMessage($id: String!) {
+  healthDirectorateUnstarHealthMessage(id: $id)
+}
+
+mutation ArchiveHealthMessage($id: String!) {
+  healthDirectorateArchiveHealthMessage(id: $id)
+}
+
+mutation UnarchiveHealthMessage($id: String!) {
+  healthDirectorateUnarchiveHealthMessage(id: $id)
+}

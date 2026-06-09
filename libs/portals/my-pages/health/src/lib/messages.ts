@@ -1249,7 +1249,7 @@ export const messages = defineMessages({
   },
   healthOverview: {
     id: 'sp.health:health-overview',
-    defaultMessage: 'Heilsuyfirlit',
+    defaultMessage: 'Mín heilsa',
   },
 
   healthOverviewIntro: {
@@ -1859,7 +1859,7 @@ export const messages = defineMessages({
     id: 'sp.health:basic-information',
   },
   myHealthOverview: {
-    defaultMessage: 'Mitt heilsuyfirlit',
+    defaultMessage: 'Mín heilsa',
     id: 'sp.health:my-health-overview',
   },
   appointments: {
@@ -2706,6 +2706,42 @@ export const messages = defineMessages({
   openingHours: {
     id: 'sp.health:opening-hours',
     defaultMessage: 'Opnunartímar',
+  },
+  contactNetspjall: {
+    id: 'sp.health:contact-netspjall',
+    defaultMessage: 'Netspjall Heilsuveru',
+  },
+  contactNetspjallDesc: {
+    id: 'sp.health:contact-netspjall-desc',
+    defaultMessage: 'Opið frá kl. 8-16 alla virka daga',
+  },
+  contactPhone: {
+    id: 'sp.health:contact-phone',
+    defaultMessage: 'Símaráðgjöf 1700 / 513 1700',
+  },
+  contactPhoneDesc: {
+    id: 'sp.health:contact-phone-desc',
+    defaultMessage: 'Fyrir aðstoð samdægurs.',
+  },
+  contactPhoneEmergencyDesc: {
+    id: 'sp.health:contact-phone-emergency-desc',
+    defaultMessage: 'Ath. í neyð skal hringja í 112.',
+  },
+  contactSendMessage: {
+    id: 'sp.health:contact-send-message',
+    defaultMessage: 'Senda skilaboð á heilsugæslu',
+  },
+  contactSendMessageDesc: {
+    id: 'sp.health:contact-send-message-desc',
+    defaultMessage: 'Heilsugæslan svarar oftast innan 3. virkra daga.',
+  },
+  contactBookTime: {
+    id: 'sp.health:contact-book-time',
+    defaultMessage: 'Bóka tíma',
+  },
+  contactBookTimeDesc: {
+    id: 'sp.health:contact-book-time-desc',
+    defaultMessage: 'Hægt er að bóka tíma fyrir ákveðnar þjónustur hér.',
   },
   appointmentMoreInfo: {
     id: 'sp.health:appointment-more-info',

@@ -18,9 +18,10 @@ import { HealthDirectorateAppointments } from '@island.is/api/schema'
 interface Props {
   data?: DataState<HealthDirectorateAppointments>
   showLinkButton?: boolean
+  cardSize?: 'small' | 'large'
 }
 
-const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
+const Appointments: React.FC<Props> = ({ data, showLinkButton, cardSize }) => {
   const { formatMessage } = useLocale()
   const appointments = data?.data?.data
   const isEmpty = !appointments || appointments?.length === 0
@@ -92,7 +93,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
       </Box>
       <InfoCardGrid
         cards={cards}
-        size={isEmpty ? 'small' : undefined}
+        size={cardSize ?? (isEmpty ? 'small' : undefined)}
         empty={
           isEmpty && !data?.loading
             ? {

@@ -9,7 +9,11 @@ import {
 } from '@island.is/api/schema'
 import { Box, Icon, LoadingDots, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ConfirmationModal, m } from '@island.is/portals/my-pages/core'
+import {
+  ConfirmationModal,
+  FavAndStash,
+  m,
+} from '@island.is/portals/my-pages/core'
 import { dateFormat } from '@island.is/shared/constants'
 import {
   matchPath,
@@ -27,7 +31,6 @@ import {
   useGetDocumentInboxLineV3LazyQuery,
 } from '../../queries/Overview.generated'
 import { messages } from '../../utils/messages'
-import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
@@ -72,11 +75,10 @@ export const DocumentLine: FC<Props> = ({
     id: string
   }>()
   const isUrgent = documentLine.isUrgent
-  const {
-    submitMailAction,
-    loading: postLoading,
-    bookmarkSuccess,
-  } = useMailAction()
+  const { submitMailAction, loading: postLoading } = useMailAction()
+  const [optimisticBookmarked, setOptimisticBookmarked] = useState<
+    boolean | undefined
+  >(undefined)
 
   const { fetchObject, refetch } = useDocumentList()
 
@@ -98,6 +100,7 @@ export const DocumentLine: FC<Props> = ({
   const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
+  const isHovered = useIsChildFocusedorHovered(wrapperRef, false)
   const isAvatarFocused = useIsChildFocusedorHovered(avatarRef, false)
 
   useEffect(() => {
@@ -288,7 +291,7 @@ export const DocumentLine: FC<Props> = ({
     })
   }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
-  const isBookmarked = bookmarked || bookmarkSuccess
+  const isBookmarked = optimisticBookmarked ?? bookmarked
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
@@ -407,31 +410,41 @@ export const DocumentLine: FC<Props> = ({
             </button>
 
             <Box display="flex" alignItems="center">
-              {(postLoading || fileLoading || metadataLoading) && (
+              {(fileLoading || metadataLoading) && (
                 <Box display="flex" alignItems="center">
                   <LoadingDots single />
                 </Box>
               )}
-              {(hasFocusOrHover || isBookmarked) &&
-                !postLoading &&
-                !fileLoading &&
-                !asFrame && (
-                  <FavAndStash
-                    bookmarked={isBookmarked}
-                    onFav={
-                      isBookmarked || hasFocusOrHover
-                        ? async (e) => {
-                            e.stopPropagation()
+              {(hasFocusOrHover || isBookmarked) && !fileLoading && !asFrame && (
+                <FavAndStash
+                  bookmarked={isBookmarked}
+                  colorScheme={
+                    !unread && !isHovered && !active ? 'negative' : 'light'
+                  }
+                  stashLabels={{
+                    add: formatMessage(m.addToStorage),
+                    remove: formatMessage(messages.moveToInbox),
+                  }}
+                  onFav={
+                    isBookmarked || hasFocusOrHover
+                      ? async (e) => {
+                          e.stopPropagation()
+                          const newValue = !isBookmarked
+                          setOptimisticBookmarked(newValue)
+                          try {
                             await submitMailAction(
-                              isBookmarked ? 'unbookmark' : 'bookmark',
+                              newValue ? 'bookmark' : 'unbookmark',
                               documentLine.id,
                             )
                             refetch(fetchObject)
+                          } catch {
+                            setOptimisticBookmarked(!newValue)
                           }
-                        : undefined
-                    }
-                  />
-                )}
+                        }
+                      : undefined
+                  }
+                />
+              )}
               {isUrgent && <UrgentTag />}
             </Box>
           </Box>

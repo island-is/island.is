@@ -1,4 +1,4 @@
-import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import subYears from 'date-fns/subYears'
@@ -7,6 +7,7 @@ import { messages } from '../../lib/messages'
 import {
   CONTENT_GAP_LG,
   DEFAULT_APPOINTMENTS_STATUS,
+  SECTION_GAP,
 } from '../../utils/constants'
 import {
   useGetAppointmentsOverviewQuery,
@@ -22,8 +23,10 @@ import {
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import Appointments from './components/Appointments'
 import BasicInformation from './components/BasicInformation'
+import ContactLinks from './components/ContactLinks'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import * as styles from './HealthOverview.css'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -108,36 +111,60 @@ export const HealthOverview = () => {
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
-  const firstTwoAppointments =
-    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
+  const upcomingAppointment =
+    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 1) || []
 
   return (
     <>
-      <GridRow marginBottom={CONTENT_GAP_LG}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
-          <>
-            <Text variant="h3" as={'h1'}>
-              {formatMessage(messages.healthOverview)}
-            </Text>
+      <GridRow marginBottom={CONTENT_GAP_LG} alignItems="stretch">
+        <GridColumn span={isMobile ? '12/12' : '7/12'}>
+          <div className={styles.leftColumn}>
+            <Box marginBottom={SECTION_GAP}>
+              <Text variant="h3" as={'h1'}>
+                {formatMessage(messages.healthOverview)}
+              </Text>
 
-            <Text variant="default" paddingTop={1}>
-              {formatMessage(messages.healthOverviewIntro)}
-            </Text>
-          </>
+              <Text variant="default" paddingTop={1}>
+                {formatMessage(messages.healthOverviewIntro)}
+              </Text>
+            </Box>
+            {isMobile && (
+              <Box marginBottom={CONTENT_GAP_LG}>
+                <ContactLinks />
+              </Box>
+            )}
+            {!isMobile && showAppointments && <Box flexGrow={1} />}
+            {showAppointments && (
+              <Box marginRight={[0, 0, 0, 0, 12]}>
+                <Appointments
+                  data={{
+                    data: { data: upcomingAppointment },
+                    loading: appointmentsLoading,
+                    error: !!appointmentsError,
+                  }}
+                  showLinkButton
+                  cardSize="large"
+                />
+              </Box>
+            )}
+          </div>
         </GridColumn>
+        {!isMobile && (
+          <GridColumn span="5/12">
+            <div className={styles.imageWrapper}>
+              <img
+                src="./assets/images/jobs.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.decorativeImage}
+              />
+              <div className={styles.contactLinksWrapper}>
+                <ContactLinks />
+              </div>
+            </div>
+          </GridColumn>
+        )}
       </GridRow>
-      {/* Appointments */}
-      {showAppointments && (
-        <Appointments
-          data={{
-            data: { data: firstTwoAppointments },
-            loading: appointmentsLoading,
-            error: !!appointmentsError,
-          }}
-          showLinkButton
-        />
-      )}
-      {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{
           data: paymentOverviewData?.rightsPortalCopaymentStatus,
