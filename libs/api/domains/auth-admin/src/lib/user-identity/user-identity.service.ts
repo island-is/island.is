@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -47,14 +48,25 @@ export class UserIdentityService extends MultiEnvironmentService {
       return []
     }
 
+    const isNationalId = kennitala.isValid(trimmed)
+
     const results = await Promise.allSettled(
       environments.map(async (environment) => {
+        if (isNationalId) {
+          const result = await this.makeRequest(user, environment, (api) =>
+            api.meUserIdentitiesControllerFindByNationalIdRaw({
+              xQueryNationalId: trimmed,
+            }),
+          )
+          return result ? { environment, data: result } : null
+        }
+
         const result = await this.makeRequest(user, environment, (api) =>
-          api.meUserIdentitiesControllerFindByIdentifierRaw({
-            identifier: trimmed,
+          api.meUserIdentitiesControllerFindBySubjectIdRaw({
+            subjectId: trimmed,
           }),
         )
-        return result ? { environment, data: result } : null
+        return result ? { environment, data: [result] } : null
       }),
     )
 

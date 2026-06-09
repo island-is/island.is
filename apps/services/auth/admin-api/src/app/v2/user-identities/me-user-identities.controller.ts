@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   NotFoundException,
   Param,
   Patch,
@@ -35,43 +36,64 @@ const namespace = '@island.is/auth/admin-api/v2/user-identities'
 export class MeUserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
-  @Get(':identifier')
+  @Get()
   @Documentation({
-    description:
-      'Find user identities by national ID (10 digits) or subject ID.',
+    description: 'Find user identities by national ID.',
     response: { status: 200, type: [UserIdentity] },
+    request: {
+      header: {
+        'X-Query-National-Id': {
+          required: true,
+          description: 'The national ID of the user identity',
+        },
+      },
+    },
   })
   @Audit<UserIdentity[]>({
     resources: (identities) => identities.map((identity) => identity.subjectId),
   })
-  async findByIdentifier(
-    @Param('identifier') identifier: string,
+  async findByNationalId(
+    @Headers('X-Query-National-Id') nationalId: string,
   ): Promise<UserIdentity[]> {
-    if (!identifier) {
-      throw new BadRequestException('identifier must be provided')
+    if (!nationalId) {
+      throw new BadRequestException('nationalId must be provided')
     }
 
-    if (!isNaN(+identifier) && identifier.length === 10) {
-      const userIdentities = await this.userIdentityService.findByNationalId(
-        identifier,
-      )
+    const userIdentities = await this.userIdentityService.findByNationalId(
+      nationalId,
+    )
 
-      if (!userIdentities || userIdentities.length === 0) {
-        throw new NotFoundException("This user identity doesn't exist")
-      }
+    if (!userIdentities || userIdentities.length === 0) {
+      throw new NotFoundException("This user identity doesn't exist")
+    }
 
-      return userIdentities
+    return userIdentities
+  }
+
+  @Get(':subjectId')
+  @Documentation({
+    description: 'Find a user identity by subject ID.',
+    response: { status: 200, type: UserIdentity },
+  })
+  @Audit<UserIdentity>({
+    resources: (identity) => identity?.subjectId,
+  })
+  async findBySubjectId(
+    @Param('subjectId') subjectId: string,
+  ): Promise<UserIdentity> {
+    if (!subjectId) {
+      throw new BadRequestException('subjectId must be provided')
     }
 
     const userIdentity = await this.userIdentityService.findBySubjectId(
-      identifier,
+      subjectId,
     )
 
     if (!userIdentity) {
       throw new NotFoundException("This user identity doesn't exist")
     }
 
-    return [userIdentity]
+    return userIdentity
   }
 
   @Patch(':subjectId')
