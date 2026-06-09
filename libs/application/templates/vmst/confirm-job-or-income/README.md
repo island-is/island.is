@@ -18,38 +18,73 @@ Note: Gervimenn must have an active unemployment case registered at Vinnumálast
 PREREQUISITES ──(SUBMIT)──▶ DRAFT ──(SUBMIT)──▶ COMPLETED
 ```
 
-| State             | Description                                                                                                    | API action                                    |
-| ----------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| **PREREQUISITES** | Checks eligibility via Vinnumálastofnun and fetches available pension funds. User must approve data gathering. | `canReportWork`, `getPensionFunds` (on entry) |
-| **DRAFT**         | User selects an income type and fills in a repeater with relevant details (employer, dates, amounts, etc.).    | `submitApplication` (on exit)                 |
-| **COMPLETED**     | Read-only confirmation screen. The report is now accessible on My Pages.                                       | —                                             |
+| State             | Description                                                                                                                     | API action                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **PREREQUISITES** | Checks eligibility via Vinnumálastofnun and fetches available pension funds and income types. User must approve data gathering. | `canReportWork`, `getPensionFunds`, `getIncomeTypes` (on entry) |
+| **DRAFT**         | User selects an income type and fills in a repeater with relevant details (employer, dates, amounts, etc.).                     | `submitApplication` (on exit)                                   |
+| **COMPLETED**     | Read-only confirmation screen. The report is now accessible on My Pages.                                                        | —                                                               |
 
-- Applications can be deleted in PREREQUISITES, DRAFT, and COMPLETED states.
+- Applications can be deleted in PREREQUISITES and DRAFT states.
 - Prerequisites applications are pruned after 1 day (not shown in listings).
 - Draft and completed applications are pruned after 30 days.
 - Only the applicant can access their own application.
 
 ## Data schema
 
-| Field                                | Type                                   | Validation                                                                                                |
-| ------------------------------------ | -------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `typeOfIncome`                       | `string`                               | Required. One of: `casualWork`, `partTime`, `contractWork`, `pension`, `capitalIncome`, `socialInsurance` |
-| `registerIncome`                     | `array of objects`                     | Min 1 entry                                                                                               |
-| `registerIncome[].company`           | `{ nationalId: string, name: string }` | Optional, used for casual work and part-time                                                              |
-| `registerIncome[].monthFrom`         | `string`                               | Optional, used for casual work                                                                            |
-| `registerIncome[].monthTo`           | `string`                               | Optional, used for casual work                                                                            |
-| `registerIncome[].estimatedIncome`   | `string`                               | Optional, used for casual work and part-time                                                              |
-| `registerIncome[].jobStart`          | `string`                               | Optional, used for part-time                                                                              |
-| `registerIncome[].workPercentage`    | `string`                               | Optional, used for part-time                                                                              |
-| `registerIncome[].contractJobStart`  | `string`                               | Optional, used for contract work                                                                          |
-| `registerIncome[].workEnds`          | `string`                               | Optional, used for contract work                                                                          |
-| `registerIncome[].pensionFund`       | `string`                               | Optional, selected from pension funds fetched from Vinnumálastofnun                                       |
-| `registerIncome[].amountPerMonth`    | `string`                               | Optional, used for pension, capital income, and social insurance                                          |
-| `registerIncome[].paymentType`       | `string`                               | Optional, used for capital income (rent/dividend/interest)                                                |
-| `registerIncome[].paymentFrequency`  | `string`                               | Optional, used for capital income and social insurance (oneTime/monthly)                                  |
-| `registerIncome[].socialPaymentType` | `string`                               | Optional, used for social insurance (disability/rehabilitation)                                           |
+The schema uses separate arrays for each income type. Only the array matching the selected `typeOfIncome` is populated.
 
-Fields shown in the form are conditional based on the selected `typeOfIncome`. Only the relevant fields for each income type are displayed and required.
+| Field          | Type     | Validation                                                                                                |
+| -------------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `typeOfIncome` | `string` | Required. One of: `casualWork`, `partTime`, `contractWork`, `pension`, `capitalIncome`, `socialInsurance` |
+
+### `registerCasualWork[]`
+
+| Field             | Type                                   | Validation |
+| ----------------- | -------------------------------------- | ---------- |
+| `company`         | `{ nationalId: string, name: string }` | Optional   |
+| `monthFrom`       | `string`                               | Required   |
+| `monthTo`         | `string`                               | Required   |
+| `estimatedIncome` | `string`                               | Required   |
+
+### `registerPartTime[]`
+
+| Field             | Type                                   | Validation |
+| ----------------- | -------------------------------------- | ---------- |
+| `company`         | `{ nationalId: string, name: string }` | Optional   |
+| `jobStart`        | `string`                               | Required   |
+| `workPercentage`  | `string`                               | Required   |
+| `estimatedIncome` | `string`                               | Required   |
+
+### `registerContractWork[]`
+
+| Field              | Type     | Validation |
+| ------------------ | -------- | ---------- |
+| `contractJobStart` | `string` | Required   |
+| `workEnds`         | `string` | Required   |
+
+### `registerCapitalIncome[]`
+
+| Field              | Type     | Validation |
+| ------------------ | -------- | ---------- |
+| `paymentType`      | `string` | Required   |
+| `amountPerMonth`   | `string` | Required   |
+| `paymentFrequency` | `string` | Required   |
+
+### `registerSocialInsurance[]`
+
+| Field               | Type     | Validation |
+| ------------------- | -------- | ---------- |
+| `socialPaymentType` | `string` | Required   |
+| `amountPerMonth`    | `string` | Required   |
+| `paymentFrequency`  | `string` | Required   |
+
+### `registerPension[]`
+
+| Field            | Type     | Validation                                                          |
+| ---------------- | -------- | ------------------------------------------------------------------- |
+| `pensionFund`    | `string` | Required. Selected from pension funds fetched from Vinnumálastofnun |
+| `pensionType`    | `string` | Required                                                            |
+| `amountPerMonth` | `string` | Required                                                            |
 
 ## Running unit tests
 
