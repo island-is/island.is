@@ -391,15 +391,6 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
-  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
-  {
-    model: Notification,
-    as: 'notifications',
-    required: false,
-    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
   {
     model: Case,
     as: 'mergeCase',

@@ -47,7 +47,6 @@ import {
   isRestrictionCase,
   restrictionCases,
   ServiceRequirement,
-  TrackedNotificationType,
   type User as TUser,
   UserRole,
   VERDICT_APPEAL_WINDOW_DAYS,

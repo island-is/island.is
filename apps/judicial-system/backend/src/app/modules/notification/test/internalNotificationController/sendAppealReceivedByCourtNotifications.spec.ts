@@ -7,7 +7,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealCaseNotificationType,
   getStatementDeadline,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -60,7 +59,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -80,7 +79,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           } as Case,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT,
           },
         )
         .then((result) => (then.result = result))

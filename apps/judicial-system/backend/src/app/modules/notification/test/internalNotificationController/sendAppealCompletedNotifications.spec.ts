@@ -10,7 +10,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -74,7 +73,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -102,7 +101,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
           } as Case,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
