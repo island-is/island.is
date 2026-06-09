@@ -22,6 +22,7 @@ import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
 import { DeleteAccessModal } from '../modals/DeleteAccessModal'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
+import { useDeleteAuthDelegationScopesMutation } from './DeleteDelegationScopes.generated'
 import * as styles from './Tables.css'
 
 type PersonCentricDelegation =
@@ -56,6 +57,7 @@ export const CustomDelegationsPermissionsTable = ({
 
   const [patchDelegation, { loading: patchLoading }] =
     usePatchAuthDelegationMutation()
+  const [deleteDelegationScopes] = useDeleteAuthDelegationScopesMutation()
 
   const { setSelectedScopes, clearForm } = useDelegationForm()
 
@@ -116,34 +118,80 @@ export const CustomDelegationsPermissionsTable = ({
     scopeName?: string,
   ) => {
     if (!delegationId || !scopeName) return
-    try {
-      await patchDelegation({
-        variables: {
-          input: {
-            delegationId,
-            deleteScopes: [scopeName],
+    const isLastScope = data.totalScopeCount <= 1
+    const queryFieldName =
+      direction === 'outgoing'
+        ? 'authDelegationsGroupedByIdentityOutgoing'
+        : 'authDelegationsGroupedByIdentityIncoming'
+
+    const cacheUpdate = (
+      cache: ReturnType<typeof useApolloClient>['cache'],
+    ) => {
+      if (isLastScope) {
+        if (personCacheId) {
+          cache.evict({ id: personCacheId })
+          cache.gc()
+        }
+        cache.modify({
+          fields: {
+            [queryFieldName](
+              existing: readonly Reference[] = [],
+              { readField },
+            ) {
+              return existing.filter(
+                (ref) =>
+                  !(
+                    readField('nationalId', ref) === data.nationalId &&
+                    readField('type', ref) === data.type
+                  ),
+              )
+            },
+          },
+        })
+        return
+      }
+
+      cache.modify({
+        id: personCacheId,
+        fields: {
+          scopes(existing: readonly Reference[], { readField }) {
+            return existing.filter(
+              (scopeRef) =>
+                !(
+                  readField('name', scopeRef) === scopeName &&
+                  readField('delegationId', scopeRef) === delegationId
+                ),
+            )
+          },
+          totalScopeCount(existing: number) {
+            return existing - 1
           },
         },
-        update: (cache) => {
-          cache.modify({
-            id: personCacheId,
-            fields: {
-              scopes(existing: readonly Reference[], { readField }) {
-                return existing.filter(
-                  (scopeRef) =>
-                    !(
-                      readField('name', scopeRef) === scopeName &&
-                      readField('delegationId', scopeRef) === delegationId
-                    ),
-                )
-              },
-              totalScopeCount(existing: number) {
-                return existing - 1
-              },
-            },
-          })
-        },
       })
+    }
+
+    try {
+      if (direction === 'incoming') {
+        await deleteDelegationScopes({
+          variables: {
+            input: {
+              delegationId,
+              scopeNames: [scopeName],
+            },
+          },
+          update: cacheUpdate,
+        })
+      } else {
+        await patchDelegation({
+          variables: {
+            input: {
+              delegationId,
+              deleteScopes: [scopeName],
+            },
+          },
+          update: cacheUpdate,
+        })
+      }
     } catch {
       toast.error(formatMessage(coreMessages.somethingWrong))
     }

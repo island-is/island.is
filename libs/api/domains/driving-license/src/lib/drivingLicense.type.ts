@@ -74,6 +74,7 @@ export interface NewBEDrivingLicenseInput {
   contentList?: NewBEDrivingLicenseContentItem[]
   photoBiometricsId?: string | null
   signatureBiometricsId?: string | null
+  sendPlasticToPerson?: boolean
   healthDeclarationModel: NewBEHealthDeclaration
 }
 

@@ -291,12 +291,7 @@ const caseReceivedByCourtOfAppeals = (
 const caseCompletedByCourtOfAppeals = (
   c: Case,
 ): RequestCaseEvent | undefined => {
-  const completedByCourtOfAppealsNotification = c.notifications?.find(
-    (notification) =>
-      notification.type === TrackedNotificationType.APPEAL_COMPLETED,
-  )
-
-  if (!completedByCourtOfAppealsNotification) {
+  if (!c.appealCase?.appealRulingDate) {
     return undefined
   }
 
@@ -304,7 +299,7 @@ const caseCompletedByCourtOfAppeals = (
     id: c.id,
     event: 'CASE_COMPLETED_BY_COURT_OF_APPEALS',
     eventDescriptor: 'Kæru lokið',
-    date: completedByCourtOfAppealsNotification.created.toISOString(),
+    date: c.appealCase.appealRulingDate.toISOString(),
     institution: 'Landsréttur',
     ...commonFields(c),
   }

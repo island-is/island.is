@@ -40,9 +40,9 @@ import {
   Notification,
   Recipient,
 } from '../../../repository'
-import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './indictmentCaseNotification.strings'
 
 interface Attachment {

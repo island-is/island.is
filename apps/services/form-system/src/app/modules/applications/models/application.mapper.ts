@@ -24,6 +24,7 @@ import {
 } from './dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { ValueDto } from './dto/value.dto'
+import { SectionInfo } from '../../../../app/dataTypes/sectionInfo.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -31,6 +32,20 @@ export class ApplicationMapper {
     form: Form,
     application: Application,
   ): ApplicationDto {
+    const normalizedSectionInfo: SectionInfo = {
+      title: form.sectionInfo?.title ?? { is: '', en: '' },
+      confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
+        is: '',
+        en: '',
+      },
+      confirmationText: form.sectionInfo?.confirmationText ?? {
+        is: '',
+        en: '',
+      },
+      additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+      additionalPremises: form.sectionInfo?.additionalPremises ?? [],
+    }
+
     const applicationDto: ApplicationDto = {
       id: application.id,
       nationalId: application.nationalId,
@@ -54,7 +69,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      sectionInfo: form.sectionInfo,
+      sectionInfo: normalizedSectionInfo,
       organizationNationalId: form.organizationNationalId,
     }
 

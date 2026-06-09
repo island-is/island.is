@@ -1245,6 +1245,7 @@ cms-importer-energy-fund-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1299,6 +1300,7 @@ cms-importer-fsre-buildings-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1537,6 +1539,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCES_V3_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
