@@ -26,7 +26,11 @@ import {
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 
-import { CreateApplicationOperationRequest, CreateApplicationRequest, ApplicationsApi as rvkApplicationsApi } from '@island.is/clients/rvk-financial-aid'
+import {
+  CreateApplicationOperationRequest,
+  CreateApplicationRequest,
+  ApplicationsApi as rvkApplicationsApi,
+} from '@island.is/clients/rvk-financial-aid'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -465,7 +469,8 @@ export class FinancialAidService extends BaseTemplateApiService {
             ledger: answers.bankInfo.ledger,
             accountNumber: answers.bankInfo.accountNumber,
             employment: answers.employment.type,
-            employmentCustom: answers.employment.custom || 'fakeEmploymentCustom',
+            employmentCustom:
+              answers.employment.custom || 'fakeEmploymentCustom',
             formComment: answers.formComment || 'fakeFormComment',
             state: ApplicationState.NEW,
             files: files, // attachments
@@ -486,9 +491,11 @@ export class FinancialAidService extends BaseTemplateApiService {
               externalData.nationalRegistrySpouse.data?.name ||
               answers.spouseName ||
               'fakeName',
-            spouseFormComment: answers.spouseFormComment || 'fakeSpouseFormComment',
+            spouseFormComment:
+              answers.spouseFormComment || 'fakeSpouseFormComment',
             familyStatus: findFamilyStatus(answers, externalData),
-            streetName: externalData.nationalRegistry.data.address?.streetAddress,
+            streetName:
+              externalData.nationalRegistry.data.address?.streetAddress,
             postalCode: externalData.nationalRegistry.data.address?.postalCode,
             city: externalData.nationalRegistry.data.address?.locality,
             directTaxPayments: [JSON.stringify(directTaxPayments())],
@@ -496,7 +503,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           },
           xTenantIdentifier: 'reykjavikurborg',
           xUserPermissions: 'finaid:write',
-        } satisfies CreateApplicationOperationRequest)
+        } as CreateApplicationOperationRequest)
         .then(() => {
           return { currentApplicationId: newApplication.applicationSystemId }
         })
