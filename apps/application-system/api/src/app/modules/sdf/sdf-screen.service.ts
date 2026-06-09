@@ -846,11 +846,22 @@ export class SdfScreenService {
     )
 
     if (validationErrors.length > 0) {
+      // Re-render the current page against the answers the user just submitted
+      // (not the persisted ones) so their in-progress input is preserved while
+      // the validation error is shown. Rebuilding from the persisted application
+      // would drop answers that were never persisted — e.g. a freshly selected
+      // property — collapsing dependent select options and computed display
+      // values and making the related fields disappear behind the error.
+      const workingApplication = {
+        ...toApplicationSnapshot(application),
+        answers: mergedAnswers,
+      } as ApplicationWithAttachments
       const screen = await this.getScreen(
         applicationId,
-        undefined,
+        currentPageIndex,
         locale,
         user,
+        { ephemeral: true, application: workingApplication },
       )
       screen.page.errors = validationErrors
       return screen

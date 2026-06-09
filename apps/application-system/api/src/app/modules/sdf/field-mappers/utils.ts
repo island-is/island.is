@@ -89,7 +89,17 @@ export const applySharedFieldProps = (
   }
 
   if (raw.options) {
-    component.options = resolveFieldProp(raw.options, application)
+    const resolvedOptions = resolveFieldProp(raw.options, application)
+    component.options = Array.isArray(resolvedOptions)
+      ? resolvedOptions.map((option) =>
+          isRecord(option)
+            ? {
+                ...option,
+                label: resolver.resolve(asResolvableFormText(option.label)),
+              }
+            : option,
+        )
+      : resolvedOptions
   }
 
   if (typeof raw.marginTop === 'number') {

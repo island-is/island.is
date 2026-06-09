@@ -6,6 +6,7 @@ import { FireCompensationAppraisalService } from './fire-compensation-appraisal.
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
 import { AssetsClientModule } from '@island.is/clients/assets'
 import { HmsApplicationSystemModule } from '@island.is/clients/hms-application-system'
+import { HmsModule } from '@island.is/clients/hms'
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { HmsApplicationSystemModule } from '@island.is/clients/hms-application-s
     ApplicationsNotificationsModule,
     AssetsClientModule,
     HmsApplicationSystemModule,
+    HmsModule,
   ],
   providers: [FireCompensationAppraisalService],
   exports: [FireCompensationAppraisalService],

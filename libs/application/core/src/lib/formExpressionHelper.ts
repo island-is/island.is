@@ -96,6 +96,16 @@ export const expr = {
       args,
     }
   },
+  // Array membership: true when the `collection` answer (e.g. a checkbox array)
+  // includes the literal `value`. Unlike the other helpers, `value` is kept as a
+  // literal — it is the searched-for entry, not an answer reference.
+  contains: (
+    collection: FormExpression | string,
+    value: FormExpression,
+  ): FormExpression => ({
+    operator: 'CONTAINS',
+    args: [normalizeFieldReference(collection), value],
+  }),
   sum: (...args: FormExpression[]): FormExpression => ({
     operator: 'SUM',
     args,
