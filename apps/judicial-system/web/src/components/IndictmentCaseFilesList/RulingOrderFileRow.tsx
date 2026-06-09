@@ -43,6 +43,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
+import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
 
 interface Props {
   file: CaseFile
@@ -247,6 +248,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
         >
+          <RulingOrderConfirmationStatus file={file} />
           {showCompletedPill && (
             <Box marginRight={1}>
               <TagAppealState
