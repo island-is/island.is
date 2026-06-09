@@ -58,7 +58,7 @@ const AddRulingOrder: FC = () => {
   }
 
   const handleRename = useCallback(
-    async (fileId: string, newName: string, newDisplayDate: string) => {
+    async (fileId: string, newName: string) => {
       const fileToUpdate = uploadFiles.find((file) => file.id === fileId)
 
       if (!fileToUpdate) {
@@ -68,7 +68,6 @@ const AddRulingOrder: FC = () => {
       updateUploadFile({
         ...fileToUpdate,
         userGeneratedFilename: newName,
-        displayDate: newDisplayDate,
       })
     },
     [updateUploadFile, uploadFiles],
