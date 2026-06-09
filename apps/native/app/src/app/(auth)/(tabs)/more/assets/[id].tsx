@@ -14,7 +14,7 @@ export default function AssetsDetailScreen() {
   }>()
   const intl = useIntl()
 
-  const isValidId = !!id && /^F?\d+$/.test(id)
+  const isValidId = !!id && /^F\d+$/.test(id)
 
   const { data, loading, networkStatus } = useGetAssetQuery({
     variables: { input: { assetId: id } },
