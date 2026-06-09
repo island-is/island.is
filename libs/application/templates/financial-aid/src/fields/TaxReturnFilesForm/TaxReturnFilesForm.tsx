@@ -30,6 +30,18 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const taxDataGatheringFailed =
     taxReturnFetchFailed && directTaxPaymentsFetchedFailed
 
+  console.log(
+    'municipalitiesDirectTaxPayments',
+    municipalitiesDirectTaxPayments,
+  )
+  console.log(
+    'municipalitiesPersonalTaxReturn',
+    municipalitiesPersonalTaxReturn,
+  )
+  console.log('taxReturnFetchFailed', taxReturnFetchFailed)
+  console.log('directTaxPaymentsFetchedFailed', directTaxPaymentsFetchedFailed)
+  console.log('taxDataGatheringFailed', taxDataGatheringFailed)
+
   const content = getTaxFormContent(
     taxReturnFetchFailed,
     directTaxPaymentsFetchedFailed,

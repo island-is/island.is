@@ -27,6 +27,7 @@ export type OrganizationSlugType =
   | 'fiskistofa'
   | 'domstolasyslan'
   | 'samband-islenskra-sveitafelaga'
+  | 'reykjavikurborg'
   | 'skatturinn'
   | 'syslumenn'
   | 'atvinnuvegaraduneytid'

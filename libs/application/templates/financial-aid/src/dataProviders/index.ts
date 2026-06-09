@@ -1,11 +1,9 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from '../lib/constants'
 
-export {
-  NationalRegistryV3UserApi,
-  NationalRegistryV3SpouseApi,
-  ChildrenCustodyInformationApiV3,
-} from '@island.is/application/types'
+export { NationalRegistryV3UserApi } from // NationalRegistryV3SpouseApi,
+// ChildrenCustodyInformationApiV3,
+'@island.is/application/types'
 
 export const CurrentApplicationApi = defineTemplateApi({
   action: ApiActions.CURRENTAPPLICATION,
@@ -32,4 +30,15 @@ export const TaxDataSpouseApi = defineTemplateApi({
 
 export const SendSpouseEmailApi = defineTemplateApi({
   action: ApiActions.SENDSPOUSEEMAIL,
+})
+
+// Mock data providers for testing
+
+export const MockSpouseApi = defineTemplateApi({
+  action: 'getSpouse',
+  externalDataId: 'nationalRegistrySpouse', // same key the form expects
+})
+export const MockChildrenApi = defineTemplateApi({
+  action: 'childrenCustodyInformation',
+  externalDataId: 'childrenCustodyInformation',
 })
