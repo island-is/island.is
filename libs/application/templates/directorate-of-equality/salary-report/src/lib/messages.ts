@@ -88,6 +88,17 @@ export const messages = {
           'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       },
     }),
+    activeEqualityReport: defineMessages({
+      title: {
+        id: 'salaryReport.application:prerequisites.activeEqualityReport.title',
+        defaultMessage: 'Upplýsingar frá Jafnréttisstofu',
+      },
+      intro: {
+        id: 'salaryReport.application:prerequisites.activeEqualityReport.intro',
+        defaultMessage:
+          'Við sækjum upplýsingar um þína stöðu hjá Jafnréttisstofu.',
+      },
+    }),
     companyRegistry: defineMessages({
       title: {
         id: 'salaryReport.application:prerequisites.companyRegistry.title',
@@ -343,12 +354,141 @@ export const messages = {
     }),
   },
 
-  // Skýrslugjöf
-  salaryReport: {
+  report: {
     section: defineMessages({
       sectionTitle: {
-        id: 'salaryReport.application:salaryReport.section.sectionTitle',
-        defaultMessage: 'Skýrslugjöf',
+        id: 'salaryReport.application:report.section.sectionTitle',
+        defaultMessage: 'Skýrsla',
+      },
+    }),
+    dataEntry: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.dataEntry.sectionTitle',
+        defaultMessage: 'Innsláttur gagna',
+      },
+      title: {
+        id: 'salaryReport.application:report.dataEntry.title',
+        defaultMessage: 'Innsláttur gagna',
+      },
+      intro: {
+        id: 'salaryReport.application:report.dataEntry.intro',
+        defaultMessage: lorem,
+      },
+      downloadTemplateButton: {
+        id: 'salaryReport.application:report.dataEntry.downloadTemplateButton',
+        defaultMessage: 'Sækja sniðmát',
+      },
+      uploadButtonLabel: {
+        id: 'salaryReport.application:report.dataEntry.uploadButtonLabel',
+        defaultMessage: 'Hlaða upp skjali',
+      },
+    }),
+    criteria: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.criteria.sectionTitle',
+        defaultMessage: 'Viðmið',
+      },
+      title: {
+        id: 'salaryReport.application:report.criteria.title',
+        defaultMessage: 'Viðmið',
+      },
+      intro: {
+        id: 'salaryReport.application:report.criteria.intro',
+        defaultMessage: lorem,
+      },
+    }),
+    subCriteria: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.subCriteria.sectionTitle',
+        defaultMessage: 'Undirviðmið',
+      },
+      title: {
+        id: 'salaryReport.application:report.subCriteria.title',
+        defaultMessage: 'Undirviðmið',
+      },
+      intro: {
+        id: 'salaryReport.application:report.subCriteria.intro',
+        defaultMessage: lorem,
+      },
+    }),
+    employees: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.employees.sectionTitle',
+        defaultMessage: 'Starfsmenn',
+      },
+      title: {
+        id: 'salaryReport.application:report.employees.title',
+        defaultMessage: 'Starfsmenn',
+      },
+      intro: {
+        id: 'salaryReport.application:report.employees.intro',
+        defaultMessage: lorem,
+      },
+    }),
+    jobClassification: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.jobClassification.sectionTitle',
+        defaultMessage: 'Flokkun starfa',
+      },
+      title: {
+        id: 'salaryReport.application:report.jobClassification.title',
+        defaultMessage: 'Flokkun starfa',
+      },
+      intro: {
+        id: 'salaryReport.application:report.jobClassification.intro',
+        defaultMessage: lorem,
+      },
+    }),
+    employeeClassification: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:report.employeeClassification.sectionTitle',
+        defaultMessage: 'Flokkun starfsmanna',
+      },
+      title: {
+        id: 'salaryReport.application:report.employeeClassification.title',
+        defaultMessage: 'Flokkun starfsmanna',
+      },
+      intro: {
+        id: 'salaryReport.application:report.employeeClassification.intro',
+        defaultMessage: lorem,
+      },
+    }),
+  },
+
+  // Launagreining
+  salaryAnalysis: {
+    section: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:salaryAnalysis.section.sectionTitle',
+        defaultMessage: 'Launagreining',
+      },
+    }),
+    overview: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:salaryAnalysis.overview.sectionTitle',
+        defaultMessage: 'Yfirlit',
+      },
+      title: {
+        id: 'salaryReport.application:salaryAnalysis.overview.title',
+        defaultMessage: 'Yfirlit',
+      },
+      intro: {
+        id: 'salaryReport.application:salaryAnalysis.overview.intro',
+        defaultMessage: lorem,
+      },
+    }),
+    improvementPlan: defineMessages({
+      sectionTitle: {
+        id: 'salaryReport.application:salaryAnalysis.improvementPlan.sectionTitle',
+        defaultMessage: 'Úrbótaáætlun',
+      },
+      title: {
+        id: 'salaryReport.application:salaryAnalysis.improvementPlan.title',
+        defaultMessage: 'Úrbótaáætlun',
+      },
+      intro: {
+        id: 'salaryReport.application:salaryAnalysis.improvementPlan.intro',
+        defaultMessage: lorem,
       },
     }),
   },
@@ -357,6 +497,14 @@ export const messages = {
     sectionTitle: {
       id: 'salaryReport.application:overview.sectionTitle',
       defaultMessage: 'Yfirlit',
+    },
+    title: {
+      id: 'salaryReport.application:overview.title',
+      defaultMessage: 'Yfirlit',
+    },
+    intro: {
+      id: 'salaryReport.application:overview.intro',
+      defaultMessage: lorem,
     },
   }),
 }

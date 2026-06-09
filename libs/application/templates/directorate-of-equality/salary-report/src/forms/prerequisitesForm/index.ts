@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, IdentityApi, UserProfileApi } from '../../dataProviders'
+import { ActiveEqualityReportApi, BlankExcelTemplateApi, CompanyRegistryApi, DoeCompanyApi, IdentityApi, UserProfileApi } from '../../dataProviders'
 import { messages } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -41,7 +41,12 @@ export const Prerequisites = buildForm({
               provider: DoeCompanyApi,
             }),
             buildDataProviderItem({
+              provider: BlankExcelTemplateApi,
+            }),
+            buildDataProviderItem({
               provider: ActiveEqualityReportApi,
+              title: messages.prerequisites.activeEqualityReport.title,
+              subTitle: messages.prerequisites.activeEqualityReport.intro,
             }),
             buildDataProviderItem({
               provider: CompanyRegistryApi,
@@ -68,8 +73,13 @@ export const Prerequisites = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'salaryReport',
-      title: messages.salaryReport.section.sectionTitle,
+      id: 'report',
+      title: messages.report.section.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'salaryAnalysis',
+      title: messages.salaryAnalysis.section.sectionTitle,
       children: [],
     }),
     buildSection({

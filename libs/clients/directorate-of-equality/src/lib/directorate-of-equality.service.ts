@@ -2,21 +2,36 @@ import { Inject, Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { data } from '@island.is/clients/middlewares'
 import {
+  analyzeApplicationSalaryReport,
   editApplicationEqualityContent,
+  editApplicationOutliers,
   getApplicationActiveEqualityReport,
+  getApplicationBlankExcelTemplate,
   getApplicationCompany,
   getApplicationEqualityReportTemplateDocx,
   getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
+  getApplicationReportOutliers,
+  importApplicationSalaryReportWorkbook,
   submitApplicationEqualityReport,
+  submitApplicationReportComment,
+  submitApplicationSalaryReport,
 } from '../../gen/fetch'
 import type {
+  ApplicationReportCommentDto,
   ApplicationReportDetailDto,
   CompanyDto,
   CreateReportResponseDto,
   EditEqualityContentDto,
+  EditOutliersDto,
   EqualityReportSummaryDto,
+  GetReportOutliersResponseDto,
+  ParsedReportDto,
+  SalaryAnalysisRequestDto,
+  SalaryAnalysisResponseDto,
+  SubmitApplicationReportCommentDto,
   SubmitEqualityReportDto,
+  SubmitSalaryReportDto,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -103,6 +118,88 @@ export class DirectorateOfEqualityClientService {
       user,
       () => editApplicationEqualityContent({ path: { providerId }, body }),
       'Failed to edit equality content',
+    )
+  }
+
+  async getBlankExcelTemplate(user: User): Promise<Blob | File> {
+    return this.unwrap(
+      user,
+      () => getApplicationBlankExcelTemplate(),
+      'Failed to get blank Excel template',
+    )
+  }
+
+  async importSalaryReportWorkbook(
+    user: User,
+    file: Blob | File,
+  ): Promise<ParsedReportDto> {
+    return this.unwrap(
+      user,
+      () => importApplicationSalaryReportWorkbook({ body: { file } }),
+      'Failed to import salary report workbook',
+    )
+  }
+
+  async analyzeSalaryReport(
+    user: User,
+    body: SalaryAnalysisRequestDto,
+  ): Promise<SalaryAnalysisResponseDto> {
+    return this.unwrap(
+      user,
+      () => analyzeApplicationSalaryReport({ body }),
+      'Failed to analyze salary report',
+    )
+  }
+
+  async submitSalaryReport(
+    user: User,
+    body: SubmitSalaryReportDto,
+  ): Promise<CreateReportResponseDto> {
+    return this.unwrap(
+      user,
+      () => submitApplicationSalaryReport({ body }),
+      'Failed to submit salary report',
+    )
+  }
+
+  async getReportOutliers(
+    user: User,
+    providerId: string,
+    page?: number,
+    pageSize?: number,
+  ): Promise<GetReportOutliersResponseDto> {
+    return this.unwrap(
+      user,
+      () =>
+        getApplicationReportOutliers({
+          path: { providerId },
+          query: { page, pageSize },
+        }),
+      'Failed to get report outliers',
+    )
+  }
+
+  async editOutliers(
+    user: User,
+    providerId: string,
+    body: EditOutliersDto,
+  ): Promise<ApplicationReportDetailDto> {
+    return this.unwrap(
+      user,
+      () => editApplicationOutliers({ path: { providerId }, body }),
+      'Failed to edit outliers',
+    )
+  }
+
+  async submitReportComment(
+    user: User,
+    providerId: string,
+    body: SubmitApplicationReportCommentDto,
+  ): Promise<ApplicationReportCommentDto> {
+    return this.unwrap(
+      user,
+      () => submitApplicationReportComment({ path: { providerId }, body }),
+      'Failed to submit report comment',
     )
   }
 }
