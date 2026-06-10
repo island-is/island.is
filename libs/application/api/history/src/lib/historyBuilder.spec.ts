@@ -29,18 +29,6 @@ type TemplateHelper = ApplicationTemplateHelper<
   EventObject
 >
 
-const makeFormatMessageImpl = (): FormatMessage => (msg, values) => {
-  const template =
-    typeof msg === 'string'
-      ? msg
-      : typeof msg.defaultMessage === 'string'
-      ? msg.defaultMessage
-      : ''
-  return Object.entries(values ?? {}).reduce(
-    (str, [key, val]) => str.replace(`{${key}}`, String(val ?? '')),
-    template,
-  )
-}
 
 const makeEntry = (overrides: Partial<History> = {}): History =>
   ({
@@ -73,9 +61,7 @@ describe('HistoryBuilder', () => {
   let templateHelper: jest.Mocked<Pick<TemplateHelper, 'getHistoryLog'>>
 
   beforeEach(async () => {
-    formatMessage = jest
-      .fn<string, Parameters<FormatMessage>>()
-      .mockImplementation(makeFormatMessageImpl())
+    formatMessage = jest.fn<string, Parameters<FormatMessage>>().mockReturnValue('')
     const module = await Test.createTestingModule({
       providers: [
         HistoryBuilder,
