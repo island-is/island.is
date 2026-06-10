@@ -19,9 +19,6 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 }
 
-// Past timestamp so grace-check fails on cold-start (auth required).
-const COLD_START_ACTIVATED_AT = () => Date.now() - 24 * 60 * 60 * 1000
-
 export default function AuthLayout() {
   const intl = useIntl()
   const router = useRouter()
@@ -33,15 +30,16 @@ export default function AuthLayout() {
     router.push('/app-lock')
   }, [router])
 
-  // Cold-start: lock immediately, require auth (not grace).
+  // Cold-start: init() in the root layout stamps lockScreenActivatedAt before
+  // the auth layout mounts. Trust that stamp — pushing only when it's set
+  // means post-login mounts (no stamp) don't re-lock the freshly-authed user.
   useEffect(() => {
     if (!isOnboarded() || config.isTestingApp) {
       return
     }
-    authStore.setState({
-      lockScreenActivatedAt: COLD_START_ACTIVATED_AT(),
-      biometricAutoPromptedForCurrentLock: false,
-    })
+    if (authStore.getState().lockScreenActivatedAt === undefined) {
+      return
+    }
     pushLockScreen()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

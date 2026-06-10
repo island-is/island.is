@@ -16,13 +16,12 @@ import { AppState } from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 
 export const openAndSuppressBrowser = async (url: string) => {
-  const openedAt = Date.now()
-  // Track real backgrounding during the session so we can lock only when the
-  // user actually left the app — a long uninterrupted browse shouldn't lock.
-  let wentBackground = false
+  // Capture the first background timestamp during the session so the grace
+  // check measures time-spent-backgrounded, not total session duration.
+  let backgroundedAt: number | null = null
   const sub = AppState.addEventListener('change', (state) => {
-    if (state === 'background') {
-      wentBackground = true
+    if (state === 'background' && backgroundedAt === null) {
+      backgroundedAt = Date.now()
     }
   })
   suppressLockScreen()
@@ -38,9 +37,9 @@ export const openAndSuppressBrowser = async (url: string) => {
     clearLockScreenSuppression()
     // iOS' SFSafariViewController doesn't toggle host AppState on close, so
     // the AuthLayout listener won't fire — push the lock ourselves.
-    if (wentBackground) {
+    if (backgroundedAt !== null) {
       authStore.setState({
-        lockScreenActivatedAt: openedAt,
+        lockScreenActivatedAt: backgroundedAt,
         biometricAutoPromptedForCurrentLock: false,
       })
       if (!authStore.getState().lockScreenComponentId) {
