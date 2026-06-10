@@ -42,7 +42,7 @@ export class TokenStorageService {
     return `session::judicial-system::${sessionId}`
   }
 
-  private encrypt(text: string): string {
+  encrypt(text: string): string {
     const iv = crypto.randomBytes(16)
     const cipher = crypto.createCipheriv(ALGORITHM, this.cryptoKey, iv)
     let encrypted = cipher.update(text, 'utf8', 'base64')

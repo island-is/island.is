@@ -65,13 +65,13 @@ describe('TokenStorageService', () => {
   describe('decrypt(encrypt(x)) === x', () => {
     it('round-trips arbitrary strings', () => {
       const original = 'some-refresh-token-value'
-      const encrypted = (service as any).encrypt(original)
+      const encrypted = service.encrypt(original)
       expect(service.decrypt(encrypted)).toBe(original)
     })
 
     it('produces different ciphertext each call (random IV)', () => {
-      const a = (service as any).encrypt('token')
-      const b = (service as any).encrypt('token')
+      const a = service.encrypt('token')
+      const b = service.encrypt('token')
       expect(a).not.toBe(b)
     })
   })
@@ -114,7 +114,7 @@ describe('TokenStorageService', () => {
 
     it('decrypts and returns the refresh token when found', async () => {
       const original = 'the-real-refresh-token'
-      const encrypted = (service as any).encrypt(original)
+      const encrypted = service.encrypt(original)
       mockCacheManager.get.mockResolvedValue(encrypted)
 
       const result = await service.getRefreshToken('some-session-id')
