@@ -24,7 +24,7 @@ async function main() {
 
   const directories = [
     `charts/features/deployments/${featureName}`,
-    `charts/ids-features/deployments/${featureName}`
+    `charts/ids-features/deployments/${featureName}`,
   ]
 
   for (const directory of directories) {
@@ -38,15 +38,15 @@ async function main() {
       const yamlContent = await jsyaml.load(textContent)
       const namespaceToAdd =
         yamlContent &&
-          typeof yamlContent === 'object' &&
-          'namespace' in yamlContent
+        typeof yamlContent === 'object' &&
+        'namespace' in yamlContent
           ? yamlContent?.namespace
           : null
 
       const nsGrantToAdd =
         yamlContent &&
-          typeof yamlContent === 'object' &&
-          'grantNamespaces' in yamlContent
+        typeof yamlContent === 'object' &&
+        'grantNamespaces' in yamlContent
           ? yamlContent?.grantNamespaces
           : null
 
