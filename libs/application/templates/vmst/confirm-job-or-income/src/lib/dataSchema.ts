@@ -44,6 +44,7 @@ const pensionEntrySchema = z.object({
 })
 
 export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   typeOfIncome: z.string().min(1),
   registerCasualWork: z.array(casualWorkEntrySchema).optional(),
   registerPartTime: z.array(partTimeEntrySchema).optional(),

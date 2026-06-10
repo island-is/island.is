@@ -353,6 +353,11 @@ export const application = defineMessages({
       'History log message with period dates when application is submitted',
   },
   /* Completed form */
+  completedFormMultiFieldTitle: {
+    id: 'vmst.cjoi.application:completedFormMultiFieldTitle',
+    defaultMessage: 'Staðfesting',
+    description: 'Title for multi-field in completed form',
+  },
   completedFormAlertTitle: {
     id: 'vmst.cjoi.application:completedFormAlertTitle',
     defaultMessage: 'Tilkynning um tekjur hefur verið móttekin',

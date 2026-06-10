@@ -38,5 +38,8 @@ export const getHistoryLogMessage = (application: Application) => {
     year: 'numeric',
   })
 
-  return `Tilkynning móttekin fyrir tímabil: ${formattedFrom} - ${formattedTo}`
+  return {
+    ...applicationMessages.historyLogReceivedForPeriod,
+    values: { dateFrom: formattedFrom, dateTo: formattedTo },
+  }
 }

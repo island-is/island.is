@@ -8,6 +8,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IncomeType } from './confirm-job-or-income.types'
 import {
   buildIrregularJobRequest,
   buildPartTimeJobRequest,
@@ -134,12 +135,12 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     const typeOfIncome = getValueViaPath<string>(answers, 'typeOfIncome')
 
     const fieldIdMap: Record<string, string> = {
-      casualWork: 'registerCasualWork',
-      partTime: 'registerPartTime',
-      contractWork: 'registerContractWork',
-      capitalIncome: 'registerCapitalIncome',
-      socialInsurance: 'registerSocialInsurance',
-      pension: 'registerPension',
+      [IncomeType.CASUAL_WORK]: 'registerCasualWork',
+      [IncomeType.PART_TIME]: 'registerPartTime',
+      [IncomeType.CONTRACT_WORK]: 'registerContractWork',
+      [IncomeType.CAPITAL_INCOME]: 'registerCapitalIncome',
+      [IncomeType.SOCIAL_INSURANCE]: 'registerSocialInsurance',
+      [IncomeType.PENSION]: 'registerPension',
     }
 
     const fieldId = typeOfIncome ? fieldIdMap[typeOfIncome] : undefined
@@ -163,7 +164,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
 
     try {
       switch (typeOfIncome) {
-        case 'casualWork': {
+        case IncomeType.CASUAL_WORK: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createIrregularJob(
               buildIrregularJobRequest(entry, applicantId),
@@ -172,7 +173,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           break
         }
 
-        case 'partTime': {
+        case IncomeType.PART_TIME: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createPartTimeJob(
               buildPartTimeJobRequest(entry, applicantId),
@@ -181,7 +182,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           break
         }
 
-        case 'contractWork': {
+        case IncomeType.CONTRACT_WORK: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createContractorJob(
               buildContractorJobRequest(entry, applicantId),
@@ -190,7 +191,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           break
         }
 
-        case 'capitalIncome': {
+        case IncomeType.CAPITAL_INCOME: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createCapitalIncomePayment(
               buildCapitalIncomePaymentRequest(entry, applicantId),
@@ -199,7 +200,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           break
         }
 
-        case 'socialInsurance': {
+        case IncomeType.SOCIAL_INSURANCE: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createTRPayment(
               buildTRPaymentRequest(entry, applicantId),
@@ -208,7 +209,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
           break
         }
 
-        case 'pension': {
+        case IncomeType.PENSION: {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createPensionPayment(
               buildPensionPaymentRequest(entry, applicantId),

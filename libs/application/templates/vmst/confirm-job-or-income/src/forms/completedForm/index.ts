@@ -11,6 +11,7 @@ export const completedForm = buildForm({
   title: applicationMessages.completedFormAlertTitle,
   children: [
     buildFormConclusionSection({
+      multiFieldTitle: applicationMessages.completedFormMultiFieldTitle,
       alertTitle: applicationMessages.completedFormAlertTitle,
       alertMessage: '',
       accordion: false,
