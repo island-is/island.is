@@ -52,6 +52,7 @@ export const socialInsuranceFields = [
         type: 'number',
         currency: true,
         required: true,
+        min: 0,
       },
       paymentFrequency: {
         component: 'radio',
