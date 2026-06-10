@@ -359,6 +359,7 @@ export enum CaseIndictmentRulingDecision {
   CANCELLATION = 'CANCELLATION',
   MERGE = 'MERGE',
   WITHDRAWAL = 'WITHDRAWAL',
+  SPLIT_OFF = 'SPLIT_OFF',
 }
 
 export enum SessionArrangements {

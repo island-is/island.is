@@ -22,6 +22,7 @@ import {
   AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseType,
   courtSubtypes,
   IndictmentSubtypeMap,
@@ -53,6 +54,7 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  INDICTMENT_CASE_CONCLUSION = 'INDICTMENT_CASE_CONCLUSION',
   INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
   REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
@@ -773,6 +775,44 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentCaseWithConclusion(
+    user: User,
+    caseId: string,
+    courtName: string,
+    courtCaseNumber: string,
+    content: Record<string, unknown>,
+    elementId?: string,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subject = `${courtName} - ${courtCaseNumber} - lyktir`
+
+      return await this.sendToRobot(
+        subject,
+        JSON.stringify(content),
+        RobotEmailType.INDICTMENT_CASE_CONCLUSION,
+        caseId,
+        elementId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with conclusion',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtName,
+          courtCaseNumber,
+          content: JSON.stringify(content),
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
@@ -1047,4 +1087,68 @@ export class CourtService {
         ),
       )
   }
+}
+
+type BuildIndictmentConclusionContentInput = {
+  isCorrection?: boolean
+  courtCaseNumber: string
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate: Date | string
+  wasAssignedToJudge?: boolean
+  judgeNationalId?: string
+  mergeCaseNumber?: string
+  defendantNationalId?: string
+  splitCaseNumber?: string
+}
+
+export const buildIndictmentConclusionContent = ({
+  isCorrection = false,
+  courtCaseNumber,
+  indictmentRulingDecision,
+  rulingDate,
+  wasAssignedToJudge,
+  judgeNationalId,
+  mergeCaseNumber,
+  defendantNationalId,
+  splitCaseNumber,
+}: BuildIndictmentConclusionContentInput): Record<string, unknown> => {
+  const payload: Record<string, unknown> = {
+    isCorrection,
+    courtCaseNumber,
+    rulingDate:
+      rulingDate instanceof Date ? rulingDate.toISOString() : rulingDate,
+  }
+
+  const decision =
+    splitCaseNumber !== undefined
+      ? CaseIndictmentRulingDecision.SPLIT_OFF
+      : indictmentRulingDecision
+
+  if (decision) {
+    payload.indictmentRulingDecision = decision
+  }
+
+  if (defendantNationalId) {
+    // TODO(Evolv): Confirm per-defendant payload with Auði
+    payload.defendantNationalId = defendantNationalId
+  }
+
+  if (splitCaseNumber) {
+    // TODO(Evolv): Confirm SPLIT_OFF payload with Auði
+    payload.splitCaseNumber = splitCaseNumber
+  }
+
+  if (decision === CaseIndictmentRulingDecision.WITHDRAWAL) {
+    payload.wasAssignedToJudge = Boolean(wasAssignedToJudge)
+    if (judgeNationalId) {
+      payload.judgeNationalId = judgeNationalId
+    }
+  }
+
+  if (decision === CaseIndictmentRulingDecision.MERGE && mergeCaseNumber) {
+    // TODO(Evolv): Confirm merge payload with Auði
+    payload.mergeCaseNumber = mergeCaseNumber
+  }
+
+  return payload
 }

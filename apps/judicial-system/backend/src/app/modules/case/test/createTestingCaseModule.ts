@@ -46,7 +46,14 @@ import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { PdfService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
-jest.mock('../../court/court.service')
+jest.mock('../../court/court.service', () => {
+  const actual = jest.requireActual('../../court/court.service')
+
+  return {
+    ...actual,
+    CourtService: jest.fn().mockImplementation(() => mock()),
+  }
+})
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../event-log/eventLog.service')

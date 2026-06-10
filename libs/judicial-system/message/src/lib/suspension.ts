@@ -26,6 +26,8 @@ export const messageTypeToSuspensionCategory: Partial<
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE]:
     MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION]:
+    MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_CASE_FILE]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]:
     MessageSuspensionCategory.COURT,

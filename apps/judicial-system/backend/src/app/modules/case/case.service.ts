@@ -842,10 +842,25 @@ export class CaseService {
     }
   }
 
+  private addMessagesForIndictmentConclusionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (!theCase.courtCaseNumber || !theCase.indictmentRulingDecision) return
+
+    addMessagesToQueue({
+      type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+      user,
+      caseId: theCase.id,
+    })
+  }
+
   private addMessagesForCompletedIndictmentCaseToQueue(
     updatedCase: Case,
     user: TUser,
   ): void {
+    this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+
     for (const caseFile of updatedCase.caseFiles ?? []) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
@@ -1035,7 +1050,9 @@ export class CaseService {
         }
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
-          if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
+          if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+            this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+          } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
           }
         } else {
@@ -1070,6 +1087,22 @@ export class CaseService {
             updatedCase,
             user,
           )
+
+          if (updatedCase.splitCaseId) {
+            const splitDefendant = updatedCase.defendants?.[0]
+            if (splitDefendant?.id) {
+              addMessagesToQueue({
+                type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+                user,
+                caseId: updatedCase.splitCaseId,
+                body: {
+                  defendantId: splitDefendant.id,
+                  splitCaseNumber: updatedCase.courtCaseNumber,
+                  rulingDate: updatedCase.created?.toISOString(),
+                },
+              })
+            }
+          }
         } else {
           this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         }
@@ -1748,6 +1781,25 @@ export class CaseService {
         )
       }),
     )
+
+    if (theCase.courtCaseNumber) {
+      for (const { defendantId, rulingDecision, rulingDate } of decisions) {
+        if (!rulingDate) {
+          continue
+        }
+
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId: theCase.id,
+          body: {
+            defendantId,
+            indictmentRulingDecision: rulingDecision,
+            rulingDate,
+          },
+        })
+      }
+    }
   }
 
   private async handleEventLogUpdates(
