@@ -23,9 +23,6 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
   fieldOfWork?: string
 
   @Field({ nullable: true })
-  jobCategory?: string
-
-  @Field({ nullable: true })
   title?: string
 
   @Field({ nullable: true })

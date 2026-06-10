@@ -18,6 +18,7 @@ const mockDelegationsApi = {
   meDelegationsControllerFindOneRaw: jest.fn(),
   meDelegationsControllerCreate: jest.fn(),
   meDelegationsControllerPatch: jest.fn(),
+  meDelegationsControllerPatchRaw: jest.fn(),
   meDelegationsControllerDelete: jest.fn(),
 }
 
@@ -168,9 +169,10 @@ describe('MeDelegationsService', () => {
         id: 'existing-del',
         toNationalId,
       })
-      mockDelegationsApi.meDelegationsControllerPatch.mockResolvedValue(
-        patchedDelegation,
-      )
+      mockDelegationsApi.meDelegationsControllerPatchRaw.mockResolvedValue({
+        raw: { status: 200 },
+        value: jest.fn().mockResolvedValue(patchedDelegation),
+      })
 
       // Act
       const result = await service.createOrUpdateDelegations(mockUser, input)
@@ -180,7 +182,7 @@ describe('MeDelegationsService', () => {
         mockDelegationsApi.meDelegationsControllerCreate,
       ).not.toHaveBeenCalled()
       expect(
-        mockDelegationsApi.meDelegationsControllerPatch,
+        mockDelegationsApi.meDelegationsControllerPatchRaw,
       ).toHaveBeenCalledTimes(1)
       expect(result).toHaveLength(1)
     })

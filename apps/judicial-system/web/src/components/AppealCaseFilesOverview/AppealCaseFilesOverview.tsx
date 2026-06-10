@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,

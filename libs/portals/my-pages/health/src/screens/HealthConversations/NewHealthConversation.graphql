@@ -1,0 +1,21 @@
+query GetHealthConversationRecipientsForNew($locale: LocaleEnum) {
+  healthDirectorateHealthConversationRecipients(locale: $locale) {
+    nodeId
+    groupId
+    name
+    allowsMessaging
+    allowedMessageTypes {
+      patientInitiatedTypeCode
+      title
+      isCertificate
+    }
+  }
+}
+
+mutation CreateHealthConversation(
+  $input: HealthDirectorateCreateConversationInput!
+) {
+  healthDirectorateCreateHealthConversation(input: $input) {
+    id
+  }
+}

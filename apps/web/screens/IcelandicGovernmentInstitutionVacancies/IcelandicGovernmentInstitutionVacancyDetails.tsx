@@ -366,6 +366,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
   }
 
   const useNewApiOverride = query?.api === 'new' ? true : undefined
+  const useOldApiOverride = query?.api === 'old' ? true : undefined
 
   const [vacancyResponse, namespaceResponse] = await Promise.all([
     apolloClient.query<
@@ -377,6 +378,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
         input: {
           id: query.id as string,
           ...(useNewApiOverride && { useNewApiOverride }),
+          ...(useOldApiOverride && { useOldApiOverride }),
         },
       },
     }),

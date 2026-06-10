@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AlertMessage } from '@island.is/island-ui/core'
+import { Accordion } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -17,7 +17,6 @@ import {
   FormFooter,
   InfoCard,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PoliceDigitalCaseFilesAccordionItem,
@@ -66,7 +65,6 @@ const Result = () => {
     appealAssistant,
     appealJudges,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const isIndictment = isIndictmentCase(workingCase.type)
@@ -104,14 +102,10 @@ const Result = () => {
                     id: 'defendants-section',
                     items: [defendants({ caseType: workingCase.type })],
                   },
-                  ...(showItem(victims)
-                    ? [
-                        {
-                          id: 'victims-section',
-                          items: [victims],
-                        },
-                      ]
-                    : []),
+                  {
+                    id: 'victims-section',
+                    items: [victims],
+                  },
                   {
                     id: 'case-info-section',
                     items: [

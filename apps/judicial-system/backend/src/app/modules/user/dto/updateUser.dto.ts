@@ -36,4 +36,9 @@ export class UpdateUserDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly canConfirmIndictment?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly canManageMessageSuspension?: boolean
 }

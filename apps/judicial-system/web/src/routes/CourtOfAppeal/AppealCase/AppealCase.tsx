@@ -122,10 +122,7 @@ const AppealCase: FC = () => {
         TrackedNotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
       ).hasSent ||
-      isReopenedCOACase(
-        targetAppealCase?.appealState,
-        workingCase.notifications,
-      )
+      isReopenedCOACase(targetAppealCase)
     ) {
       router.push(
         appendAppealCaseIdQuery(

@@ -13,9 +13,6 @@ export const completedForm = buildForm({
       alertTitle: completedFormMessages.alertTitle,
       multiFieldTitle: completedFormMessages.multiFieldTitle,
       alertMessage: '',
-      descriptionFieldTitle: completedFormMessages.descriptionFieldTitle,
-      descriptionFieldDescription:
-        completedFormMessages.descriptionFieldDescription,
       accordion: false,
       bottomButtonLabel: completedFormMessages.bottomButtonLabel,
       bottomButtonMessage: completedFormMessages.bottomButtonMessage,
