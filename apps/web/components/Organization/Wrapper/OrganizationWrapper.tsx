@@ -119,6 +119,7 @@ interface WrapperProps {
   showReadSpeaker?: boolean
   isSubpage?: boolean
   backLink?: { text: string; url: string }
+  hideFromExternalSearchEngines?: boolean
 }
 
 interface HeaderProps {
@@ -903,6 +904,7 @@ export const OrganizationWrapper: React.FC<
   showReadSpeaker = true,
   isSubpage = true,
   backLink,
+  hideFromExternalSearchEngines = false,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -939,10 +941,11 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
-  const indexableBySearchEngine =
-    organizationPage.organization?.canPagesBeFoundInSearchResults ??
-    organizationPage.canBeFoundInSearchResults ??
-    true
+  const indexableBySearchEngine = hideFromExternalSearchEngines
+    ? false
+    : organizationPage.organization?.canPagesBeFoundInSearchResults ??
+      organizationPage.canBeFoundInSearchResults ??
+      true
 
   const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
     'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',
