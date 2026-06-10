@@ -29,7 +29,6 @@ type TemplateHelper = ApplicationTemplateHelper<
   EventObject
 >
 
-
 const makeEntry = (overrides: Partial<History> = {}): History =>
   ({
     id: 'uuid-1',
@@ -63,7 +62,9 @@ describe('HistoryBuilder', () => {
   let templateHelper: jest.Mocked<Pick<TemplateHelper, 'getHistoryLog'>>
 
   beforeEach(async () => {
-    formatMessage = jest.fn<string, Parameters<FormatMessage>>().mockReturnValue('')
+    formatMessage = jest
+      .fn<string, Parameters<FormatMessage>>()
+      .mockReturnValue('')
     const module = await Test.createTestingModule({
       providers: [
         HistoryBuilder,
