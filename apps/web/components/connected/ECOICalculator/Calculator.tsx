@@ -83,6 +83,7 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
               <Stack space={1}>
                 {answerOptions.map((option, answerIndex) => {
                   const id = `${step.title}-${questionIndex}-${answerIndex}`
+                  const groupName = `${stepIndex}-${questionIndex}`
 
                   if (answerIndex > 3) {
                     return null
@@ -99,7 +100,7 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
                     <RadioButton
                       key={id}
                       id={id}
-                      name={id}
+                      name={groupName}
                       label={label}
                       value={label}
                       checked={
@@ -240,8 +241,9 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
   const steps = (slice.json?.steps ?? []) as Step[]
   const initialRender = useRef(true)
 
-  const step = steps[stepIndex]
-  const showResults = stepIndex >= steps.length
+  const safeStepIndex = Math.min(Math.max(stepIndex, 0), steps.length)
+  const step = steps[safeStepIndex]
+  const showResults = safeStepIndex >= steps.length
 
   const { formatMessage } = useIntl()
 
@@ -299,6 +301,12 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
     )
   }
 
+  const isCurrentStepComplete =
+    showResults ||
+    state.steps[safeStepIndex]?.questions.every(
+      (q) => q.selectedAnswerIndex !== -1,
+    )
+
   return (
     <Stack space={8}>
       <MarkdownText replaceNewLinesWithBreaks={false}>
@@ -310,15 +318,15 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
             <Stack space={1}>
               <Text>
                 {formatMessage(m.form.progress, {
-                  stepIndex: stepIndex + 1,
+                  stepIndex: safeStepIndex + 1,
                   stepCount: steps.length,
                 })}
               </Text>
-              <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+              <ProgressMeter progress={(safeStepIndex + 1) / steps.length} />
             </Stack>
             <ECOIForm
               step={step}
-              stepIndex={stepIndex}
+              stepIndex={safeStepIndex}
               state={state}
               setState={setState}
             />
@@ -340,8 +348,10 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
           )}
           <Button
             key={`next-step-${stepIndex}`}
+            disabled={!isCurrentStepComplete}
             size="small"
             onClick={() => {
+              if (!isCurrentStepComplete) return
               setStepIndex((s) => s + 1)
             }}
           >
