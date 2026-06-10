@@ -67,7 +67,9 @@ const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {
-    return 'Sækjandi lagði fram'
+    return isIndictmentCase(workingCase.type)
+      ? 'Ákærandi lagði fram'
+      : 'Sækjandi lagði fram'
   }
 
   // For indictment cases, try to resolve the defender/spokesperson name
