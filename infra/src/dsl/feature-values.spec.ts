@@ -181,20 +181,11 @@ describe('Feature-deployment support', () => {
     )
   })
 
-  it('feature deployment ingress', () => {
-    expect(values.services.api.ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'feature-A-a.dev01.devland.is',
-            paths: ['/'],
-          },
-        ],
-      },
-    })
+  it('feature deployment httpRoute', () => {
+    expect(values.services.api.ingress).toBeUndefined()
+    expect(values.services.api.httpRoute).toBeDefined()
+    expect(values.services.api.httpRoute['primary-gw'].hostnames).toEqual([
+      'feature-A-a.dev01.devland.is',
+    ])
   })
 })

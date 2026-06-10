@@ -20,13 +20,12 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 
-describe('Ingress definitions', () => {
-  it('Support multiple ingresses', async () => {
+describe('HTTPRoute definitions', () => {
+  it('Support multiple ingresses as HTTPRoutes', async () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
         paths: ['/api'],
-        pathTypeOverride: 'ImplementationSpecific',
       },
       internal: {
         host: { dev: 'b', staging: 'b', prod: 'b' },
@@ -40,40 +39,22 @@ describe('Ingress definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'a.staging01.devland.is',
-            paths: ['/api'],
-            pathTypeOverride: 'ImplementationSpecific',
-          },
-        ],
-      },
-      'internal-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [{ host: 'b.staging01.devland.is', paths: ['/'] }],
-      },
-    })
+    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect(result.serviceDef[0].httpRoute).toBeDefined()
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
+      'a.staging01.devland.is',
+    ])
+    expect(result.serviceDef[0].httpRoute!['internal-gw'].hostnames).toEqual([
+      'b.staging01.devland.is',
+    ])
   })
 
-  it('Extra annotations', async () => {
+  it('Internal ingress produces internal gateway HTTPRoute', async () => {
     const sut = service('api').ingress({
       primary: {
-        host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
+        public: false,
+        host: { dev: 'a', staging: '007', prod: 'a' },
         paths: ['/api'],
-        extraAnnotations: {
-          dev: {},
-          staging: { A: 'B' },
-          prod: {},
-        },
       },
     })
     const result = (await generateOutputOne({
@@ -83,18 +64,35 @@ describe('Ingress definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-          A: 'B',
-        },
-        hosts: [{ host: 'staging01.devland.is', paths: ['/api'] }],
+    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect(
+      result.serviceDef[0].httpRoute!['primary-gw'].parentRefs[0].name,
+    ).toEqual('gateway-internal')
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
+      '007.internal.staging01.devland.is',
+    ])
+  })
+
+  it('Public ingress produces external gateway HTTPRoute', async () => {
+    const sut = service('api').ingress({
+      primary: {
+        host: { dev: 'a', staging: 'a', prod: 'a' },
+        paths: ['/api'],
       },
     })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(
+      result.serviceDef[0].httpRoute!['primary-gw'].parentRefs[0].name,
+    ).toEqual('gateway-external')
   })
-  it('MissingSetting value for ingress host skips rendering it', async () => {
+
+  it('MissingSetting value for host skips rendering it', async () => {
     const sut = service('api').ingress({
       primary: {
         host: {
@@ -120,52 +118,16 @@ describe('Ingress definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
-      },
-    })
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
+      'notmissing-staging01.devland.is',
+    ])
   })
-  it('Internal ingress basic', async () => {
-    const sut = service('api').ingress({
-      primary: {
-        public: false,
-        host: { dev: 'a', staging: '007', prod: 'a' },
-        paths: ['/api'],
-      },
-    })
-    const result = (await generateOutputOne({
-      outputFormat: renderers.helm,
-      service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
-    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-internal-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [{ host: '007.internal.staging01.devland.is', paths: ['/api'] }],
-      },
-    })
-  })
-  it('No annotations is permitted', async () => {
+  it('No ingress output is generated', async () => {
     const sut = service('api').ingress({
       primary: {
-        public: false,
         host: { dev: 'a', staging: 'a', prod: 'a' },
         paths: ['/api'],
-        extraAnnotations: {
-          staging: {
-            'nginx.ingress.kubernetes.io/foo': 'true',
-          },
-        },
       },
     })
     const result = (await generateOutputOne({
@@ -175,53 +137,6 @@ describe('Ingress definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-internal-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-          'nginx.ingress.kubernetes.io/foo': 'true',
-        },
-        hosts: [
-          {
-            host: 'a.internal.staging01.devland.is',
-            paths: ['/api'],
-          },
-        ],
-      },
-    })
-  })
-  it('Empty annotations are valid', async () => {
-    const sut = service('api').ingress({
-      primary: {
-        public: false,
-        host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: ['/api'],
-        extraAnnotations: {
-          staging: {},
-        },
-      },
-    })
-    const result = (await generateOutputOne({
-      outputFormat: renderers.helm,
-      service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
-    })) as SerializeSuccess<HelmService>
-
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-internal-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'a.internal.staging01.devland.is',
-            paths: ['/api'],
-          },
-        ],
-      },
-    })
+    expect(result.serviceDef[0].ingress).toBeUndefined()
   })
 })

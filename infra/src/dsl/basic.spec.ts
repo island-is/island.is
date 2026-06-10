@@ -131,21 +131,15 @@ describe('Basic serialization', () => {
     })
   })
 
-  it('ingress', () => {
-    expect(result.serviceDef[0].ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-          'nginx.ingress.kubernetes.io/service-upstream': 'true',
-        },
-        hosts: [
-          {
-            host: 'a.staging01.devland.is',
-            paths: ['/api'],
-          },
-        ],
-      },
-    })
+  it('httpRoute', () => {
+    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect(result.serviceDef[0].httpRoute).toBeDefined()
+    expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
+      'a.staging01.devland.is',
+    ])
+    expect(
+      result.serviceDef[0].httpRoute!['primary-gw'].parentRefs[0].name,
+    ).toEqual('gateway-external')
   })
 })
 
