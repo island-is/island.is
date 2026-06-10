@@ -102,6 +102,9 @@ describe('CivilClaimantController - Update', () => {
     const updatedCivilClaimant = {
       id: civilClaimantId,
       caseId,
+      nationalId: '1234567890',
+      name: 'Brotaþoli Brotaþolason',
+      spokespersonNationalId: '0987654321',
       ...civilClaimantUpdate,
     }
     let then: Then
@@ -169,6 +172,42 @@ describe('CivilClaimantController - Update', () => {
 
     it('should not queue delivery or notification messages', () => {
       expect(mockQueuedMessages).toEqual([])
+    })
+  })
+
+  describe('civil claimant spokesperson confirmed without required delivery fields', () => {
+    const civilClaimantUpdate = { isSpokespersonConfirmed: true }
+    const updatedCivilClaimant = {
+      id: civilClaimantId,
+      caseId,
+      ...civilClaimantUpdate,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockCivilClaimantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
+
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
+    })
+
+    it('should queue notifications but not delivery', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          elementId: civilClaimantId,
+          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        },
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          user,
+          elementId: civilClaimantId,
+          body: {
+            type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+          },
+        },
+      ])
     })
   })
 

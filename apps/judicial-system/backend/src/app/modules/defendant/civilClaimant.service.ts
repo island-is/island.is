@@ -51,6 +51,16 @@ export class CivilClaimantService {
     )
   }
 
+  private hasRequiredSpokespersonDeliveryFields(
+    civilClaimant: CivilClaimant,
+  ): boolean {
+    return Boolean(
+      civilClaimant.nationalId &&
+        civilClaimant.name &&
+        civilClaimant.spokespersonNationalId,
+    )
+  }
+
   private addMessagesForUpdateCivilClaimantToQueue(
     theCase: Case,
     oldCivilClaimant: CivilClaimant,
@@ -61,7 +71,10 @@ export class CivilClaimantService {
       updatedCivilClaimant.isSpokespersonConfirmed &&
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
-      if (theCase.courtCaseNumber) {
+      if (
+        theCase.courtCaseNumber &&
+        this.hasRequiredSpokespersonDeliveryFields(updatedCivilClaimant)
+      ) {
         addMessagesToQueue({
           type: MessageType.DELIVERY_TO_COURT_INDICTMENT_SPOKESPERSON,
           user,
@@ -171,6 +184,14 @@ export class CivilClaimantService {
     civilClaimant: CivilClaimant,
     user: User,
   ): Promise<DeliverResponse> {
+    if (!this.hasRequiredSpokespersonDeliveryFields(civilClaimant)) {
+      this.logger.error(
+        `Missing required spokesperson delivery fields for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+      )
+
+      return { delivered: false }
+    }
+
     return this.courtService
       .updateIndictmentCaseWithSpokespersonInfo(
         user,

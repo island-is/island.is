@@ -142,6 +142,27 @@ describe('InternalCivilClaimantController - Deliver indictment spokesperson to c
     expect(then.error).toBeUndefined()
   })
 
+  it('should return delivered false if required spokesperson fields are missing', async () => {
+    const incompleteCivilClaimant = {
+      ...civilClaimant,
+      nationalId: undefined,
+    } as CivilClaimant
+
+    const then = await givenWhenThen(
+      caseId,
+      civilClaimantId,
+      theCase,
+      incompleteCivilClaimant,
+      { user },
+    )
+
+    expect(
+      mockCourtService.updateIndictmentCaseWithSpokespersonInfo,
+    ).not.toHaveBeenCalled()
+    expect(then.result).toEqual({ delivered: false })
+    expect(then.error).toBeUndefined()
+  })
+
   it('should return delivered false if court service fails', async () => {
     mockCourtService.updateIndictmentCaseWithSpokespersonInfo.mockRejectedValueOnce(
       new Error('Court service error'),

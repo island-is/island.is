@@ -110,6 +110,15 @@ export class CourtService {
     }`
   }
 
+  private validateCourtRobotEmailParams(
+    courtName?: string,
+    courtCaseNumber?: string,
+  ): void {
+    if (!courtName || !courtCaseNumber) {
+      throw new Error('Missing court name or court case number')
+    }
+  }
+
   private getCourtSubtype(
     type: CaseType,
     isExtension: boolean,
@@ -586,6 +595,8 @@ export class CourtService {
     spokespersonIsLawyer?: boolean,
   ): Promise<unknown> {
     try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
       const subject = `${courtName} - ${courtCaseNumber} - ${
         spokespersonIsLawyer
           ? 'lögmaður brotaþola'
@@ -630,6 +641,8 @@ export class CourtService {
     defenderEmail?: string,
   ): Promise<unknown> {
     try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
       const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
       const content = JSON.stringify({
         nationalId: defendantNationalId,
