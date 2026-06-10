@@ -52,6 +52,8 @@ yarn feature-env \
   --images "*" \
   --writeDest "${IDS_FEATURE_DIR}/${FEATURE_NAME}"
 
+# trigger ci
+
 # yarn feature-env \
 #   cleanup \
 #   --feature "$FEATURE_NAME" \
