@@ -3,33 +3,33 @@ import {
   buildFieldsRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../lib/messages'
-import { isSocialInsurance } from '../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isCapitalIncome } from '../../../utils/conditions'
 
-export const socialInsuranceFields = [
+export const capitalIncomeFields = [
   buildDescriptionField({
-    id: 'socialInsuranceDesc',
-    description: m.application.socialInsuranceDescription,
-    condition: isSocialInsurance,
+    id: 'capitalIncomeDesc',
+    description: m.application.capitalIncomeDescription,
+    condition: isCapitalIncome,
   }),
   buildFieldsRepeaterField({
-    id: 'registerSocialInsurance',
-    condition: isSocialInsurance,
+    id: 'registerCapitalIncome',
+    condition: isCapitalIncome,
     formTitleNumbering: 'suffix',
     formTitle: (_index, application) => {
       const items = getValueViaPath<Array<unknown>>(
         application.answers,
-        'registerSocialInsurance',
+        'registerCapitalIncome',
       )
       if (!items || items.length <= 1) {
         return ''
       }
-      return m.application.socialInsuranceHeading
+      return m.application.capitalIncomeHeading
     },
     addItemButtonText: m.application.addLine,
     minRows: 1,
     fields: {
-      socialPaymentType: {
+      paymentType: {
         component: 'select',
         label: m.application.paymentType,
         required: true,
@@ -37,7 +37,7 @@ export const socialInsuranceFields = [
           const incomeTypes =
             getValueViaPath<Array<{ id?: string; name?: string }>>(
               application.externalData,
-              'incomeTypes.data.trTypes',
+              'incomeTypes.data.capitalIncomeTypes',
             ) ?? []
 
           return incomeTypes.map((type) => ({

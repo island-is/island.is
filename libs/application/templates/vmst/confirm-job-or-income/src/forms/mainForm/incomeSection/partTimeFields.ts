@@ -4,8 +4,8 @@ import {
   buildFieldsRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../lib/messages'
-import { isPartTime } from '../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isPartTime } from '../../../utils/conditions'
 
 export const partTimeFields = [
   buildDescriptionField({

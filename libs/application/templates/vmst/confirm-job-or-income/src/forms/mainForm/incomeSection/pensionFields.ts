@@ -3,8 +3,8 @@ import {
   buildFieldsRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../lib/messages'
-import { isPension } from '../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isPension } from '../../../utils/conditions'
 
 export const pensionFields = [
   buildDescriptionField({
