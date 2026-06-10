@@ -29,9 +29,7 @@ type TemplateHelper = ApplicationTemplateHelper<
   EventObject
 >
 
-// Resolves MessageDescriptor to defaultMessage with basic {key} interpolation,
-// or returns plain strings as-is. Mirrors the minimum behaviour the builder relies on.
-const formatMessage: FormatMessage = (msg, values) => {
+const makeFormatMessageImpl = (): FormatMessage => (msg, values) => {
   const template =
     typeof msg === 'string'
       ? msg
@@ -68,12 +66,16 @@ const ACTOR_NATIONAL_ID = '2222222229'
 
 describe('HistoryBuilder', () => {
   let builder: HistoryBuilder
+  let formatMessage: jest.MockedFunction<FormatMessage>
   let identityService: jest.Mocked<
     Pick<IdentityClientService, 'tryToGetNameFromNationalId'>
   >
   let templateHelper: jest.Mocked<Pick<TemplateHelper, 'getHistoryLog'>>
 
   beforeEach(async () => {
+    formatMessage = jest
+      .fn<string, Parameters<FormatMessage>>()
+      .mockImplementation(makeFormatMessageImpl())
     const module = await Test.createTestingModule({
       providers: [
         HistoryBuilder,
@@ -135,8 +137,9 @@ describe('HistoryBuilder', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].date).toEqual(exitTimestamp)
-    expect(result[0].log).toBe(
-      coreHistoryMessages.paymentStarted.defaultMessage,
+    expect(formatMessage).toHaveBeenCalledWith(
+      coreHistoryMessages.paymentStarted,
+      undefined,
     )
     expect(result[0].subLog).toBeUndefined()
   })
@@ -176,8 +179,9 @@ describe('HistoryBuilder', () => {
       makeEntry({ stateKey: 'review', exitEvent: 'APPROVE' }),
     ])
 
-    expect(result[0].log).toBe(
-      coreHistoryMessages.applicationApprovedBy.defaultMessage,
+    expect(formatMessage).toHaveBeenCalledWith(
+      coreHistoryMessages.applicationApprovedBy,
+      undefined,
     )
   })
 
@@ -216,7 +220,9 @@ describe('HistoryBuilder', () => {
     expect(identityService.tryToGetNameFromNationalId).toHaveBeenCalledWith(
       SUBJECT_NATIONAL_ID,
     )
-    expect(result[0].subLog).toContain('Jón Jónsson')
+    expect(formatMessage).toHaveBeenCalledWith(coreHistoryMessages.byReviewer, {
+      subject: 'Jón Jónsson',
+    })
   })
 
   it('falls back to the nationalId as display name when the identity lookup returns undefined', async () => {
@@ -235,7 +241,9 @@ describe('HistoryBuilder', () => {
       }),
     ])
 
-    expect(result[0].subLog).toContain(SUBJECT_NATIONAL_ID)
+    expect(formatMessage).toHaveBeenCalledWith(coreHistoryMessages.byReviewer, {
+      subject: SUBJECT_NATIONAL_ID,
+    })
   })
 
   it('includes both subject and actor in subLog when they are different people', async () => {
@@ -257,8 +265,10 @@ describe('HistoryBuilder', () => {
       }),
     ])
 
-    expect(result[0].subLog).toContain('Jón Jónsson')
-    expect(result[0].subLog).toContain('María Sigurðardóttir')
+    expect(formatMessage).toHaveBeenCalledWith(
+      coreHistoryMessages.byReviewerWithActor,
+      { subject: 'Jón Jónsson', actor: 'María Sigurðardóttir' },
+    )
   })
 
   it('uses the single-name format when subject and actor are the same person', async () => {
@@ -279,12 +289,9 @@ describe('HistoryBuilder', () => {
     ])
 
     // byReviewer format — name appears once, not twice
-    expect(result[0].subLog).toBe(
-      coreHistoryMessages.byReviewer.defaultMessage.replace(
-        '{subject}',
-        'Jón Jónsson',
-      ),
-    )
+    expect(formatMessage).toHaveBeenCalledWith(coreHistoryMessages.byReviewer, {
+      subject: 'Jón Jónsson',
+    })
   })
 
   it('calls an includeSubjectAndActor function with currentUserRole, nationalId, and isAdmin', async () => {
