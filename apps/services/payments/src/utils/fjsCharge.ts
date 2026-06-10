@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+
 import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowAttributes } from '../app/paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../types/charges'
@@ -21,6 +23,9 @@ export interface GenerateChargeFJSPayloadInput {
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
+  // The moment the payment actually completed. Sent to FJS (as `effictiveDate`, yyyy-mm-dd) so it
+  // knows when the payment was made — distinct from when the charge happens to be created.
+  effectiveDate?: Date
 }
 
 export const generateChargeFJSPayload = ({
@@ -29,6 +34,7 @@ export const generateChargeFJSPayload = ({
   systemId,
   payInfo,
   returnUrl = '',
+  effectiveDate,
 }: GenerateChargeFJSPayloadInput): Charge => {
   const chargeItemSubjectId = paymentFlow.chargeItemSubjectId
     ? paymentFlow.chargeItemSubjectId
@@ -53,6 +59,7 @@ export const generateChargeFJSPayload = ({
     systemID: systemId,
     payInfo,
     returnUrl,
+    effictiveDate: effectiveDate ? format(effectiveDate, 'yyyy-MM-dd') : undefined,
     extraData: paymentFlow.extraData ?? [],
   }
 }

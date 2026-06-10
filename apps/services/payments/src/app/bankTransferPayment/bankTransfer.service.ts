@@ -402,10 +402,13 @@ export class BankTransferService {
       return
     }
 
+    // Blikk gives us no settlement timestamp, so the moment we record SUCCESS is our best
+    // proxy for when the bank transfer was paid (sent to FJS as the charge's effective date).
     const chargePayload = await this.buildFjsChargePayload(
       paymentFlowId,
       providerPaymentId,
       correlationId,
+      new Date(),
     )
 
     await this.createBankTransferFulfillment(
@@ -749,6 +752,7 @@ export class BankTransferService {
     paymentFlowId: string,
     providerPaymentId: string,
     correlationId: string,
+    settledAt: Date,
   ): Promise<Charge> {
     const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
       paymentFlowId,
@@ -766,6 +770,7 @@ export class BankTransferService {
       systemId: environment.chargeFjs.systemId,
       providerPaymentId,
       correlationId,
+      effectiveDate: settledAt,
     })
   }
 
