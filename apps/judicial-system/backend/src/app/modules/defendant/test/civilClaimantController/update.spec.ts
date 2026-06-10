@@ -159,15 +159,10 @@ describe('CivilClaimantController - Update', () => {
       const mockUpdate = mockCivilClaimantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedCivilClaimant]])
 
-      await givenWhenThen(
-        theCase,
-        civilClaimantId,
-        civilClaimantUpdate,
-        {
-          id: civilClaimantId,
-          isSpokespersonConfirmed: true,
-        } as CivilClaimant,
-      )
+      await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate, {
+        id: civilClaimantId,
+        isSpokespersonConfirmed: true,
+      } as CivilClaimant)
     })
 
     it('should not queue delivery or notification messages', () => {
