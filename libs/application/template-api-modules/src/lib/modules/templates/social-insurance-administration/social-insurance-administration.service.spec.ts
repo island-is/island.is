@@ -178,8 +178,8 @@ describe('SocialInsuranceAdministrationService', () => {
     })
 
     // Regression guard (Zendesk 528088): sailor pension must be sent as
-    // 'sailorPension', not collapsed into 'oldAgePension' — TR keys the
-    // seamen age rule off this type at submit.
+    // 'sailorPension', not collapsed into 'oldAgePension' — so TR can key
+    // the seamen age rule off this type at submit.
     expect(sendSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),

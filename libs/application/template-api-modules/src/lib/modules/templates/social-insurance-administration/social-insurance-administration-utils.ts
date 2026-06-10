@@ -867,7 +867,7 @@ export const getOAPApplicationType = (
     return ApplicationType.HALF_OLD_AGE_PENSION
   }
 
-  // Sailor pension is submitted under its own type so TR applies the
+  // Sailor pension is submitted under its own type so TR can apply the
   // seamen age rule instead of the general old-age minimum.
   if (applicationType === ApplicationType.SAILOR_PENSION) {
     return ApplicationType.SAILOR_PENSION
