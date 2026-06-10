@@ -18,6 +18,7 @@ import {
   Radio,
   TextInput,
   TimeInput,
+  Asset,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
@@ -46,6 +47,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
   [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
+  [FieldTypesEnum.ASSETS]: Asset,
 } as const
 
 export const Field = ({ field, valueIndex = 0 }: Props) => {
@@ -58,6 +60,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
     control,
     dispatch,
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
+    ...(field.fieldType === FieldTypesEnum.ASSETS && { state }),
     ...(field.fieldType === FieldTypesEnum.FILE && { state }),
     ...(field.fieldType === FieldTypesEnum.DROPDOWN_LIST && {
       slug: state.application.slug,

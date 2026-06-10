@@ -1,5 +1,5 @@
 export const AssetTypes = {
   REAL_ESTATE: 'REAL_ESTATE',
-  CAR: 'CAR',
+  VEHICLE: 'VEHICLE',
   SHIP: 'SHIP',
 }

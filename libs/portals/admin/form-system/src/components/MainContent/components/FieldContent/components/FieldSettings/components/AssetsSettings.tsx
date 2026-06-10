@@ -14,7 +14,7 @@ import { AssetTypes } from '@island.is/form-system/enums'
 
 const assetTypeOptions = [
   //   { label: 'Fasteign', value: AssetTypes.REAL_ESTATE },
-  { label: 'Ökutæki', value: AssetTypes.CAR },
+  { label: 'Ökutæki', value: AssetTypes.VEHICLE },
   //   { label: 'Skip', value: AssetTypes.SHIP },
 ]
 
@@ -35,14 +35,14 @@ export const AssetsSettings = () => {
   const radioName = `lookupMode-${currentItem.id}`
 
   let isDropdownLabel = 'Birta lista af eignum'
-  if (currentItem.fieldSettings?.assetType === AssetTypes.CAR) {
+  if (currentItem.fieldSettings?.assetType === AssetTypes.VEHICLE) {
     isDropdownLabel = 'Birta lista af eigin ökutækjum'
   } else if (currentItem.fieldSettings?.assetType === AssetTypes.REAL_ESTATE) {
     isDropdownLabel = 'Birta lista af eigin fasteignum'
   }
 
   let notDropdownLabel = 'Slá inn númer eignar handvirkt'
-  if (currentItem.fieldSettings?.assetType === AssetTypes.CAR) {
+  if (currentItem.fieldSettings?.assetType === AssetTypes.VEHICLE) {
     notDropdownLabel = 'Slá inn skráningarnúmer ökutækis handvirkt'
   } else if (currentItem.fieldSettings?.assetType === AssetTypes.REAL_ESTATE) {
     notDropdownLabel = 'Slá inn númer fasteignar handvirkt'
@@ -71,7 +71,7 @@ export const AssetsSettings = () => {
           }}
         />
       </Box>
-      {selected?.value === AssetTypes.CAR && (
+      {selected?.value === AssetTypes.VEHICLE && (
         <>
           <Column span="6/10">
             <RadioButton
