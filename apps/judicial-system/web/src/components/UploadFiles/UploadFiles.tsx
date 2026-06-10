@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
@@ -56,16 +63,21 @@ const UploadFiles: FC<Props> = (props) => {
     onDrop,
   })
 
+  // Keep the latest files in a ref so the unmount cleanup can revoke their
+  // object URLs without re-running (and revoking) on every `files` change.
+  const filesRef = useRef(files)
+  filesRef.current = files
+
   useEffect(() => {
     return () => {
       // Cleanup object URLs when component unmounts
-      files.forEach((file) => {
+      filesRef.current.forEach((file) => {
         if (file.previewUrl) {
           URL.revokeObjectURL(file.previewUrl)
         }
       })
     }
-  }, [files])
+  }, [])
 
   return (
     <div
