@@ -8,7 +8,6 @@ import { CustomsGeneralDetermination } from './models/customsGeneralDeterminatio
 import { CustomsGeneralProcessingFee } from './models/customsGeneralProcessingFee.model'
 import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
 import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
-import { writeFileSync } from 'fs'
 
 @Injectable()
 export class CustomsGeneralService {

@@ -1,3 +1,5 @@
+import { useIntl } from 'react-intl'
+
 import {
   AlertMessage,
   Box,
@@ -9,6 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { SortableTable, SortableTableColumn } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
+
+import { m } from './translation.strings'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRecord = Record<string, any>
@@ -43,6 +47,7 @@ export const CustomsGeneralDateTable = ({
   onRowClick,
 }: Props) => {
   const { activeLocale } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Stack space={3}>
@@ -72,7 +77,11 @@ export const CustomsGeneralDateTable = ({
         )}
       </Inline>
       {error ? (
-        <AlertMessage type="error" title={errorTitle} message={error.message} />
+        <AlertMessage
+          type="error"
+          title={errorTitle}
+          message={formatMessage(m.errorMessage)}
+        />
       ) : loading ? (
         <Box display="flex" justifyContent="center">
           <LoadingDots />

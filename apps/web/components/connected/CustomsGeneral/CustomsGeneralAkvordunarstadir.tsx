@@ -50,7 +50,7 @@ const CustomsGeneralAkvordunarstadir = ({ landakodi }: Props) => {
       <AlertMessage
         type="error"
         title={formatMessage(m.errorTitle)}
-        message={error.message}
+        message={formatMessage(m.errorMessage)}
       />
     )
   }
