@@ -12,11 +12,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  capitalize,
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -75,15 +71,13 @@ export class AppealCaseService {
       return {}
     }
 
-    const normalizedId = normalizeAndFormatNationalId(user.nationalId)
-
     // Only confirmed defenders / spokespersons can act on behalf of a party —
     // unconfirmed picks shouldn't be tied to appeal events.
     const defendant = theCase.defendants?.find(
       (d) =>
         d.isDefenderChoiceConfirmed &&
         d.defenderNationalId &&
-        normalizedId.includes(d.defenderNationalId),
+        d.defenderNationalId === user.nationalId,
     )
     if (defendant) {
       return { defendantId: defendant.id }
@@ -93,7 +87,7 @@ export class AppealCaseService {
       (c) =>
         c.isSpokespersonConfirmed &&
         c.spokespersonNationalId &&
-        normalizedId.includes(c.spokespersonNationalId),
+        c.spokespersonNationalId === user.nationalId,
     )
     if (civilClaimant) {
       return { civilClaimantId: civilClaimant.id }
@@ -248,6 +242,7 @@ export class AppealCaseService {
         type: MessageType.DELIVERY_TO_POLICE_APPEAL,
         user,
         caseId: theCase.id,
+        elementId: appealCase.id,
       })
     }
   }

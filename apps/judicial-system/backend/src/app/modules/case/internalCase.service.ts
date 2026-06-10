@@ -24,10 +24,7 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import {
-  formatCaseType,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -1517,11 +1514,16 @@ export class InternalCaseService {
 
   async deliverAppealToPolice(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     const delivered = await Promise.all(
       theCase.caseFiles
-        ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
+        ?.filter(
+          (file) =>
+            file.rulingFileId === appealCase.rulingFileId &&
+            file.category === CaseFileCategory.APPEAL_RULING,
+        )
         .map(async (caseFile) => {
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
@@ -1540,7 +1542,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver appeal for case ${theCase.id} to police`,
+          `Failed to deliver appeal ruling for appeal case ${appealCase.id} of case ${theCase.id} to police`,
           { reason },
         )
 
@@ -1610,9 +1612,8 @@ export class InternalCaseService {
           CaseState.WAITING_FOR_CANCELLATION,
           ...completedIndictmentCaseStates,
         ],
-        // The national id could be without a hyphen or with a hyphen so we need to
-        // search for both
-        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
+        // nationalId comes from a raw @Param, so normalize it once here
+        '$defendants.national_id$': nationalId.replace(/-/g, ''),
       },
     })
   }
@@ -1686,9 +1687,9 @@ export class InternalCaseService {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
-        // This only selects defendants with the given national id, other defendants are not included
-        '$defendants.national_id$':
-          normalizeAndFormatNationalId(defendantNationalId),
+        // This only selects defendants with the given national id, other defendants are not included.
+        // defendantNationalId comes from a raw @Param, so normalize it once here.
+        '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
       },
     })
 
