@@ -81,6 +81,7 @@ export class InternalNotificationController {
       theCase,
       notificationDto.user,
       notificationDto.userDescriptor,
+      notificationDto.userIds,
     )
   }
 
