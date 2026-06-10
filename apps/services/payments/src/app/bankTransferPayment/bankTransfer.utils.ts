@@ -120,6 +120,7 @@ export const generateBankTransferChargeFJSPayload = ({
   systemId,
   providerPaymentId,
   correlationId,
+  effectiveDate,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
@@ -127,11 +128,13 @@ export const generateBankTransferChargeFJSPayload = ({
   systemId: string
   providerPaymentId: string
   correlationId: string
+  effectiveDate?: Date
 }): Charge =>
   generateChargeFJSPayload({
     paymentFlow,
     charges,
     systemId,
+    effectiveDate,
     payInfo: {
       RRN: providerPaymentId,
       payableAmount: totalPrice,

@@ -23,6 +23,8 @@ export interface GenerateChargeFJSPayloadInput {
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
+  // The moment the payment actually completed. Sent to FJS (as `effictiveDate`, yyyy-mm-dd) so it
+  // knows when the payment was made — distinct from when the charge happens to be created.
   effectiveDate?: Date
 }
 

@@ -138,6 +138,9 @@ export const createBankTransferRefundSaga = (
         providerPaymentId: validation.providerPaymentId,
         // The fulfillment's confirmationRefId is the bank-transfer correlationId.
         correlationId: ctx.paymentFulfillment.confirmationRefId,
+        // Re-creating a charge that failed at settlement: the original payment date is when the
+        // fulfillment was recorded, not now.
+        effectiveDate: new Date(ctx.paymentFulfillment.created),
       })
 
       await paymentFlowService.createFjsCharge(ctx.paymentFlowId, chargePayload)
