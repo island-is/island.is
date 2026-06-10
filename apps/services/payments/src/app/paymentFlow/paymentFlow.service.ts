@@ -989,11 +989,10 @@ export class PaymentFlowService {
       )
 
       if (hasPayInfo) {
-        const [affectedFulfillments] =
-          await this.paymentFulfillmentModel.update(
-            { fjsChargeId },
-            { where: { paymentFlowId, isDeleted: false }, transaction },
-          )
+        await this.paymentFulfillmentModel.update(
+          { fjsChargeId },
+          { where: { paymentFlowId, isDeleted: false }, transaction },
+        )
       }
     })
   }
