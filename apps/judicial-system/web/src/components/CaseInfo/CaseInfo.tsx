@@ -152,17 +152,28 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const [reopenReason, setReopenReason] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
+  // Rulings and fines go through a public prosecutor review step after completion
+  // ("Sakamál í frágangi"). They can only be reopened once they have actually been
+  // sent to the public prosecutor. Other completed decisions (e.g. dismissal or
+  // cancellation) have no such step and can be reopened as soon as they are completed.
+  const requiresPublicProsecutorReview =
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING ||
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+  const hasBeenSentToPublicProsecutor = Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
+  )
+
   const canReopenCase =
     isDistrictCourtUser(user) &&
     !workingCase.mergeCase &&
     workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.WITHDRAWAL &&
-    Boolean(
-      workingCase.indictmentCompletedDate &&
-        workingCase.indictmentSentToPublicProsecutorDate &&
-        workingCase.indictmentSentToPublicProsecutorDate >
-          workingCase.indictmentCompletedDate,
-    ) &&
+    (!requiresPublicProsecutorReview || hasBeenSentToPublicProsecutor) &&
     (!workingCase.appealCase ||
       workingCase.appealCase.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase.appealState === AppealCaseState.WITHDRAWN)
