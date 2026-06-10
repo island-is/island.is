@@ -1,0 +1,122 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+
+@ObjectType()
+export class CustomsCalculatorStatus {
+  @Field({ nullable: true })
+  type?: string
+
+  @Field({ nullable: true })
+  code?: string
+
+  @Field({ nullable: true })
+  message?: string
+}
+
+@ObjectType('CustomsCalculatorTopLevelProductCategory')
+export class TopLevelProductCategory {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  parentLabel!: string
+
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  description!: string
+
+  @CacheField(() => [TopLevelProductCategory])
+  children!: TopLevelProductCategory[]
+}
+
+@ObjectType('CustomsCalculatorBottomLevelProductCategory')
+export class BottomLevelProductCategory {
+  @Field(() => [String])
+  parentLabels!: string[]
+
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  tariffNumber!: string
+
+  @Field(() => String)
+  label!: string
+
+  @Field(() => String)
+  description!: string
+}
+
+@ObjectType()
+export class CustomsCalculatorProductCategoriesResponse {
+  @Field(() => [TopLevelProductCategory])
+  topLevel!: TopLevelProductCategory[]
+
+  @Field(() => [BottomLevelProductCategory])
+  bottomLevel!: BottomLevelProductCategory[]
+}
+
+@ObjectType()
+export class CustomsCalculatorUnitsResponse {
+  @Field(() => CustomsCalculatorStatus, { nullable: true })
+  status?: CustomsCalculatorStatus
+
+  @Field(() => [String], { nullable: true })
+  units?: string[]
+
+  @Field({ nullable: true })
+  errors?: string
+}
+
+@ObjectType()
+export class CustomsCalculatorCharge {
+  @Field({ nullable: true })
+  chargeType?: string
+
+  @Field({ nullable: true })
+  code?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  amount?: string
+
+  @Field({ nullable: true })
+  netAmount?: string
+
+  @Field({ nullable: true })
+  ratePercent?: string
+
+  @Field({ nullable: true })
+  rateAmount?: string
+}
+
+@ObjectType()
+export class CustomsCalculatorLineCharge {
+  @Field({ nullable: true })
+  reportId?: string
+
+  @Field({ nullable: true })
+  currencyName?: string
+
+  @Field(() => [CustomsCalculatorCharge], { nullable: true })
+  charges?: CustomsCalculatorCharge[]
+}
+
+@ObjectType()
+export class CustomsCalculatorCalculationResponse {
+  @Field(() => CustomsCalculatorStatus, { nullable: true })
+  status?: CustomsCalculatorStatus
+
+  @Field(() => CustomsCalculatorLineCharge, { nullable: true })
+  lineCharge?: CustomsCalculatorLineCharge
+
+  @Field({ nullable: true })
+  exchangeRate?: string
+
+  @Field({ nullable: true })
+  errors?: string
+}
