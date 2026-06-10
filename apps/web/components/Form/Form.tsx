@@ -671,12 +671,21 @@ export const Form = ({ form }: FormProps) => {
           ),
         }
         setData(_data)
+        // The built-in email field drives Reply-To via data['email']. If a form
+        // collects the sender's email in a custom email field instead, fall back
+        // to the first valid one so replies reach the sender, not the from-address.
+        const senderEmail = isValidEmail.test(data['email'] ?? '')
+          ? data['email']
+          : form.fields
+              .filter((field) => field.type === FormFieldType.EMAIL)
+              .map((field) => data[getUniqueFormFieldValue(field)])
+              .find((email) => isValidEmail.test(email ?? '')) ?? ''
         submit({
           variables: {
             input: {
               id: form.id,
               name: data['name'] ?? '',
-              email: data['email'] ?? '',
+              email: senderEmail,
               message: formatBody(_data),
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
