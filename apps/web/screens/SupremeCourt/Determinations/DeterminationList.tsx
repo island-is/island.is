@@ -156,6 +156,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
           href: linkResolver('organizationpage', [organizationPage.slug]).href,
         },
       ]}
+      hideFromExternalSearchEngines
     >
       <Stack space={2}>
         <Stack space={2}>
