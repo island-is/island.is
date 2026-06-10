@@ -12,6 +12,7 @@ import { app } from '../lib/firebase'
 import { useBrowser } from './use-browser'
 import { useAuthStore } from '../stores/auth-store'
 import { isString } from '../utils/is-string'
+import { stashPendingDeepLink } from '../app/+native-intent'
 
 // Expo-style notification hook wrapping firebase.
 function useLastNotificationResponse() {
@@ -47,11 +48,16 @@ export function useDeepLinkHandling() {
 
   const handleUrl = useCallback(
     (url?: string | null) => {
-      if (!url || lastUrl.current === url || lockScreenActivatedAt) {
+      if (!url || lastUrl.current === url) {
         return false
       }
-
       lastUrl.current = url
+
+      // Locked: stash so unlockApp replays it, instead of dropping the URL.
+      if (lockScreenActivatedAt) {
+        stashPendingDeepLink(url)
+        return false
+      }
 
       if (url.startsWith('is.island.app') && url.includes('wallet/')) {
         return false

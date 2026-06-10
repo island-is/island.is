@@ -14,6 +14,13 @@ function hrefToPath(href: Href): string {
 // redirectSystemPath drops the navigation; unlockApp() replays it.
 let pendingDeepLink: string | null = null
 
+// Stash a URL to replay after unlock. Used by non-redirectSystemPath entry
+// points (notifications, useLinkingURL) so all locked deep-link sources funnel
+// through the same pending queue.
+export function stashPendingDeepLink(url: string): void {
+  pendingDeepLink = url
+}
+
 export function consumePendingDeepLink(): void {
   const path = pendingDeepLink
   pendingDeepLink = null

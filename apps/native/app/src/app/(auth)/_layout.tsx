@@ -26,8 +26,18 @@ export default function AuthLayout() {
   const appStateRef = useRef(AppState.currentState)
 
   const pushLockScreen = useCallback(() => {
-    if (authStore.getState().lockScreenComponentId) return
+    const state = authStore.getState()
+    if (state.lockScreenComponentId || state.lockScreenPushPending) return
+    authStore.setState({ lockScreenPushPending: true })
     router.push('/app-lock')
+    // Safety net: clear the pending flag if the mount never commits (push
+    // dropped, layout error, etc.) so future locks can still push.
+    setTimeout(() => {
+      const next = authStore.getState()
+      if (next.lockScreenPushPending && !next.lockScreenComponentId) {
+        authStore.setState({ lockScreenPushPending: false })
+      }
+    }, 2000)
   }, [router])
 
   // Cold-start: init() in the root layout stamps lockScreenActivatedAt before

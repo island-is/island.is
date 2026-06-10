@@ -178,9 +178,14 @@ export default function AppLockScreen() {
   }, [])
 
   // Own a componentId so the layout can detect external pops and re-push.
+  // Also clears lockScreenPushPending — the synchronous dedup flag set by the
+  // pusher to prevent racing pushes before this mount commits.
   useEffect(() => {
     const id = `app-lock-${Date.now()}-${Math.random().toString(36).slice(2)}`
-    authStore.setState({ lockScreenComponentId: id })
+    authStore.setState({
+      lockScreenComponentId: id,
+      lockScreenPushPending: false,
+    })
     return () => {
       if (authStore.getState().lockScreenComponentId === id) {
         authStore.setState({ lockScreenComponentId: undefined })

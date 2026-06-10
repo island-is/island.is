@@ -42,7 +42,9 @@ export const openAndSuppressBrowser = async (url: string) => {
         lockScreenActivatedAt: backgroundedAt,
         biometricAutoPromptedForCurrentLock: false,
       })
-      if (!authStore.getState().lockScreenComponentId) {
+      const state = authStore.getState()
+      if (!state.lockScreenComponentId && !state.lockScreenPushPending) {
+        authStore.setState({ lockScreenPushPending: true })
         router.push('/app-lock')
       }
     }
