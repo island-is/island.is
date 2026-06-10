@@ -23,21 +23,21 @@ export const Prerequisites: Form = buildForm({
           id: 'approveExternalData',
           title: 'External data',
           dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
-            }),
+            // buildDataProviderItem({
+            //   provider: UserProfileApi,
+            //   title: 'User profile',
+            //   subTitle: 'User profile',
+            // }),
             buildDataProviderItem({
               provider: ReferenceDataApi,
               title: 'getReferenceData',
               subTitle: 'Reference data',
             }),
-            buildDataProviderItem({
-              provider: NationalRegistryApi,
-              title: 'National Registry',
-              subTitle: 'Information about you in the National Registry.',
-            }),
+            // buildDataProviderItem({
+            //   provider: NationalRegistryApi,
+            //   title: 'National Registry',
+            //   subTitle: 'Information about you in the National Registry.',
+            // }),
           ],
           // Button to trigger the submit event to move the application from the NOT_STARTED state to the DRAFT state.
           submitField: buildSubmitField({

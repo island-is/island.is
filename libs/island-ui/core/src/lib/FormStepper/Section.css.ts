@@ -73,6 +73,17 @@ export const subSectionList = style({
   },
 })
 
+export const sectionButton = style({
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  margin: 0,
+  font: 'inherit',
+  color: 'inherit',
+  textAlign: 'left',
+  cursor: 'pointer',
+})
+
 export const historyDate = style({
   marginTop: '4px',
 })

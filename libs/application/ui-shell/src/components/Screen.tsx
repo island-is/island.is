@@ -13,6 +13,7 @@ import {
   formatTextWithLocale,
   getErrorReasonIfPresent,
   mergeAnswers,
+  validateAnswers,
 } from '@island.is/application/core'
 import {
   Application,
@@ -60,6 +61,7 @@ import { uuid } from 'uuidv4'
 
 type ScreenProps = {
   activeScreenIndex: number
+  allowStepperNavigation?: boolean
   sections: Section[]
   addExternalData(data: ExternalData): void
   application: Application
@@ -93,6 +95,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
 const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   setUpdateForbidden,
   activeScreenIndex,
+  allowStepperNavigation,
   addExternalData,
   answerQuestions,
   application,
@@ -182,6 +185,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   )
   const {
     handleSubmit,
+    getValues,
     formState: { errors: formErrors },
     reset,
   } = hookFormData
@@ -308,6 +312,20 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
 
+      if (allowStepperNavigation) {
+        const fullValidationErrors = validateAnswers({
+          dataSchema,
+          answers: finalAnswers,
+          formatMessage,
+        })
+
+        if (fullValidationErrors) {
+          setIsSubmitting(false)
+          setBeforeSubmitError(fullValidationErrors)
+          return
+        }
+      }
+
       response = await submitApplication({
         variables: {
           input: {
@@ -432,7 +450,14 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         justifyContent="spaceBetween"
         key={screen.id}
         height="full"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={
+          allowStepperNavigation
+            ? (e) => {
+                e?.preventDefault()
+                onSubmit(getValues(), e as any)
+              }
+            : handleSubmit(onSubmit)
+        }
       >
         <GridColumn
           span={['12/12', '12/12', '10/12', '7/9']}
