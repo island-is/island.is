@@ -59,7 +59,9 @@ export const generateChargeFJSPayload = ({
     systemID: systemId,
     payInfo,
     returnUrl,
-    effictiveDate: effectiveDate ? format(effectiveDate, 'yyyy-MM-dd') : undefined,
+    effictiveDate: effectiveDate
+      ? format(effectiveDate, 'yyyy-MM-dd')
+      : undefined,
     extraData: paymentFlow.extraData ?? [],
   }
 }
