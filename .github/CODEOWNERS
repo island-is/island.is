@@ -431,6 +431,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
 /libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
 /libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
+/libs/application/templates/vmst/confirm-job-or-income                                                                       @island-is/origo
 /libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
 /libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
 /libs/application/templates/vmst/submit-documents                                                                            @island-is/origo
@@ -532,6 +533,7 @@ codemagic.yaml                                                                  
 
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-search                                     @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-or-income                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo

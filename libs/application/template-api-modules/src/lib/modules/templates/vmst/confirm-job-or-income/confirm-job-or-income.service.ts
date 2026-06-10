@@ -8,6 +8,14 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  buildIrregularJobRequest,
+  buildPartTimeJobRequest,
+  buildContractorJobRequest,
+  buildCapitalIncomePaymentRequest,
+  buildTRPaymentRequest,
+  buildPensionPaymentRequest,
+} from './confirm-job-or-income.utils'
 
 @Injectable()
 export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
@@ -157,55 +165,27 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       switch (typeOfIncome) {
         case 'casualWork': {
           for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createIrregularJob({
-              applicantId,
-              galdurExternalDomainRequestsIncomeCreateIrregularJobRequest: {
-                employerSSN: entry.company?.nationalId?.replace('-', ''),
-                periodFrom: entry.monthFrom
-                  ? new Date(entry.monthFrom)
-                  : undefined,
-                periodTo: entry.monthTo ? new Date(entry.monthTo) : undefined,
-                estimatedIncome: entry.estimatedIncome
-                  ? Number(entry.estimatedIncome)
-                  : undefined,
-              },
-            })
+            await this.vmstUnemploymentClientService.createIrregularJob(
+              buildIrregularJobRequest(entry, applicantId),
+            )
           }
           break
         }
 
         case 'partTime': {
           for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createPartTimeJob({
-              applicantId,
-              galdurExternalDomainRequestsIncomeCreatePartTimeJobRequest: {
-                employerSSN: entry.company?.nationalId?.replace('-', ''),
-                periodFrom: entry.jobStart
-                  ? new Date(entry.jobStart)
-                  : undefined,
-                ratio: entry.workPercentage
-                  ? Number(entry.workPercentage)
-                  : undefined,
-                estimatedIncome: entry.estimatedIncome
-                  ? Number(entry.estimatedIncome)
-                  : undefined,
-              },
-            })
+            await this.vmstUnemploymentClientService.createPartTimeJob(
+              buildPartTimeJobRequest(entry, applicantId),
+            )
           }
           break
         }
 
         case 'contractWork': {
           for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createContractorJob({
-              applicantId,
-              galdurExternalDomainRequestsIncomeCreateContractorJobRequest: {
-                periodFrom: entry.contractJobStart
-                  ? new Date(entry.contractJobStart)
-                  : undefined,
-                periodTo: entry.workEnds ? new Date(entry.workEnds) : undefined,
-              },
-            })
+            await this.vmstUnemploymentClientService.createContractorJob(
+              buildContractorJobRequest(entry, applicantId),
+            )
           }
           break
         }
@@ -213,21 +193,7 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
         case 'capitalIncome': {
           for (const entry of entries) {
             await this.vmstUnemploymentClientService.createCapitalIncomePayment(
-              {
-                applicantId,
-                galdurExternalDomainRequestsIncomeCreateCapitalIncomePaymentRequest:
-                  {
-                    incomeTypeId: entry.paymentType,
-                    estimatedIncome: entry.amountPerMonth
-                      ? Number(entry.amountPerMonth)
-                      : undefined,
-                    periodFrom: entry.periodFrom
-                      ? new Date(entry.periodFrom)
-                      : undefined,
-                    periodTo:
-                      entry.paymentFrequency === 'oneTime' ? null : undefined,
-                  },
-              },
+              buildCapitalIncomePaymentRequest(entry, applicantId),
             )
           }
           break
@@ -235,36 +201,18 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
 
         case 'socialInsurance': {
           for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createTRPayment({
-              applicantId,
-              galdurExternalDomainRequestsIncomeCreateTRPaymentRequest: {
-                typeId: entry.socialPaymentType,
-                estimatedIncome: entry.amountPerMonth
-                  ? Number(entry.amountPerMonth)
-                  : undefined,
-                periodFrom: entry.periodFrom
-                  ? new Date(entry.periodFrom)
-                  : undefined,
-                periodTo:
-                  entry.paymentFrequency === 'oneTime' ? null : undefined,
-              },
-            })
+            await this.vmstUnemploymentClientService.createTRPayment(
+              buildTRPaymentRequest(entry, applicantId),
+            )
           }
           break
         }
 
         case 'pension': {
           for (const entry of entries) {
-            await this.vmstUnemploymentClientService.createPensionPayment({
-              applicantId,
-              galdurExternalDomainRequestsIncomeCreatePensionPaymentRequest: {
-                typeId: entry.pensionType,
-                pensionFundId: entry.pensionFund,
-                estimatedIncome: entry.amountPerMonth
-                  ? Number(entry.amountPerMonth)
-                  : undefined,
-              },
-            })
+            await this.vmstUnemploymentClientService.createPensionPayment(
+              buildPensionPaymentRequest(entry, applicantId),
+            )
           }
           break
         }
