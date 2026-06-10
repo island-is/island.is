@@ -674,6 +674,17 @@ export class CourtService {
     }
   }
 
+  async hasPriorIndictmentJudgeAssignment(caseId: string): Promise<boolean> {
+    const assignment = await this.robotLogModel.findOne({
+      where: {
+        caseId,
+        type: RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+      },
+    })
+
+    return Boolean(assignment)
+  }
+
   async updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,

@@ -76,6 +76,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
+  DefendantRepositoryService,
   CourtSession,
   DateLog,
   Defendant,
@@ -202,6 +203,7 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => PdfService))
@@ -1064,15 +1066,16 @@ export class InternalCaseService {
     }
 
     if (deliverDto.splitCaseNumber && deliverDto.defendantId) {
-      const defendant = theCase.defendants?.find(
-        (d) => d.id === deliverDto.defendantId,
-      )
+      const defendant = await this.defendantRepositoryService.findOne({
+        where: { id: deliverDto.defendantId },
+      })
 
       if (!defendant?.nationalId) {
         return { delivered: false }
       }
 
-      const rulingDate = deliverDto.rulingDate ?? theCase.rulingDate
+      const rulingDate =
+        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
 
       if (!rulingDate) {
         return { delivered: false }
@@ -1149,16 +1152,21 @@ export class InternalCaseService {
       return { delivered: false }
     }
 
+    const wasAssignedToJudge =
+      theCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.WITHDRAWAL
+        ? Boolean(theCase.judgeId) ||
+          (await this.courtService.hasPriorIndictmentJudgeAssignment(
+            theCase.id,
+          ))
+        : undefined
+
     const content = buildIndictmentConclusionContent({
       courtCaseNumber: theCase.courtCaseNumber,
       isCorrection: Boolean(theCase.rulingModifiedHistory),
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
-      wasAssignedToJudge:
-        theCase.indictmentRulingDecision ===
-        CaseIndictmentRulingDecision.WITHDRAWAL
-          ? Boolean(theCase.judgeId)
-          : undefined,
+      wasAssignedToJudge,
       judgeNationalId:
         theCase.indictmentRulingDecision ===
         CaseIndictmentRulingDecision.WITHDRAWAL

@@ -31,6 +31,7 @@ import {
   CaseString,
   DateLog,
   DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
@@ -67,6 +68,7 @@ jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../verdict/verdict.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
 
@@ -99,6 +101,7 @@ export const createTestingCaseModule = async () => {
       VerdictService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      DefendantRepositoryService,
       DefendantEventLogRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
       {
@@ -184,6 +187,10 @@ export const createTestingCaseModule = async () => {
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
+  const defendantRepositoryService = caseModule.get<DefendantRepositoryService>(
+    DefendantRepositoryService,
+  )
+
   const defendantEventLogRepositoryService =
     caseModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
@@ -249,6 +256,7 @@ export const createTestingCaseModule = async () => {
     indictmentCountService,
     caseRepositoryService,
     caseArchiveRepositoryService,
+    defendantRepositoryService,
     defendantEventLogRepositoryService,
     policeDigitalCaseFileRepositoryService,
     logger,

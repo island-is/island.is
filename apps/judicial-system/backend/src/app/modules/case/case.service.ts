@@ -846,7 +846,12 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    if (!theCase.courtCaseNumber || !theCase.indictmentRulingDecision) return
+    if (
+      !theCase.courtCaseNumber ||
+      !theCase.indictmentRulingDecision ||
+      !theCase.rulingDate
+    )
+      return
 
     addMessagesToQueue({
       type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
