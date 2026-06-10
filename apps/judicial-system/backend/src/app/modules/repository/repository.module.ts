@@ -19,6 +19,7 @@ import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { InstitutionContact } from './models/institutionContact.model'
+import { MessageSuspension } from './models/messageSuspension.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
@@ -33,6 +34,7 @@ import { CourtSessionRepositoryService } from './services/courtSessionRepository
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
@@ -57,6 +59,7 @@ import { repositoryModuleConfig } from './repository.config'
       EventLog,
       IndictmentCount,
       InstitutionContact,
+      MessageSuspension,
       PoliceDigitalCaseFile,
       Subpoena,
       Verdict,
@@ -75,6 +78,7 @@ import { repositoryModuleConfig } from './repository.config'
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     InstitutionContactRepositoryService,
+    MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
@@ -89,6 +93,7 @@ import { repositoryModuleConfig } from './repository.config'
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,

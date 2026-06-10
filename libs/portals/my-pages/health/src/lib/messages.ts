@@ -1870,6 +1870,85 @@ export const messages = defineMessages({
     defaultMessage: 'Upplýsingar um tímabókun',
     id: 'sp.health:appointment-detail',
   },
+  healthConversationsIntro: {
+    defaultMessage:
+      'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
+    id: 'sp.health:health-messages-intro',
+  },
+  healthConversationsSearchPlaceholder: {
+    defaultMessage: 'Sía eftir leitarorði',
+    id: 'sp.health:health-messages-search-placeholder',
+  },
+  healthConversationsCreate: {
+    defaultMessage: 'Ný skilaboð',
+    id: 'sp.health:health-messages-create',
+  },
+  healthConversationsFilterStarred: {
+    defaultMessage: 'Stjörnumerkt',
+    id: 'sp.health:health-messages-filter-starred',
+  },
+  healthConversationsFilterArchived: {
+    defaultMessage: 'Geymsla',
+    id: 'sp.health:health-messages-filter-archived',
+  },
+  healthConversationsNewTitle: {
+    defaultMessage: 'Hafa samband',
+    id: 'sp.health:health-messages-new-title',
+  },
+  healthConversationsNewIntro: {
+    defaultMessage:
+      'Heilsugæslan svarar skilaboðum yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-messages-new-intro',
+  },
+  healthConversationsNewSelectService: {
+    defaultMessage: 'Veldu þjónustu',
+    id: 'sp.health:health-messages-new-select-service',
+  },
+  healthConversationsNewSelectServicePlaceholder: {
+    defaultMessage: 'Veldu þjónustu úr fellilistanum',
+    id: 'sp.health:health-messages-new-select-service-placeholder',
+  },
+  healthConversationsNewBodyPlaceholder: {
+    defaultMessage: 'Sláðu inn skilaboð',
+    id: 'sp.health:health-messages-new-body-placeholder',
+  },
+  healthConversationsNewTermsAccept: {
+    defaultMessage: 'Ég samþykki',
+    id: 'sp.health:health-messages-new-terms-accept',
+  },
+  healthConversationsNewTermsLinkText: {
+    defaultMessage: 'skilmála',
+    id: 'sp.health:health-messages-new-terms-link-text',
+  },
+  healthConversationNotFound: {
+    defaultMessage: 'Skilaboð fundust ekki',
+    id: 'sp.health:health-message-not-found',
+  },
+  healthConversationTo: {
+    defaultMessage: 'Til: {arg}',
+    id: 'sp.health:health-message-to',
+  },
+  healthConversationSend: {
+    defaultMessage: 'Senda skilaboð',
+    id: 'sp.health:health-message-send',
+  },
+  healthConversationCloseReply: {
+    defaultMessage: 'Loka svarglugga',
+    id: 'sp.health:health-message-close-reply',
+  },
+  healthConversationSentTitle: {
+    defaultMessage: 'Skilaboð móttekin',
+    id: 'sp.health:health-message-sent-title',
+  },
+  healthConversationSentText: {
+    defaultMessage:
+      'Við svörum á dagvinnutíma, yfirleitt innan þriggja virkra daga. Ef erindið er brátt og þarfnast svars í dag, hringdu í 1700. Ef um neyðartilfelli er að ræða, hringdu strax í 112.',
+    id: 'sp.health:health-message-sent-text',
+  },
+  healthConversationsNoRecipient: {
+    defaultMessage: 'Ekki er hægt að senda skilaboð eins og er',
+    id: 'sp.health:health-messages-no-recipient',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
@@ -2513,6 +2592,18 @@ export const messages = defineMessages({
     defaultMessage: 'Endurnýjun ekki í boði',
     id: 'sp.health:prescription-blocked-specialist-only-prescription',
   },
+  prescriptionBlockedNoRenewalTargets: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-no-renewal-targets',
+  },
+  prescriptionBlockedInvalidRenewalTarget: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-invalid-renewal-target',
+  },
+  prescriptionBlockedRecipientExcludesAtc: {
+    defaultMessage: 'Endurnýjun ekki í boði vegna',
+    id: 'sp.health:prescription-blocked-recipient-excludes-atc',
+  },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
@@ -2528,6 +2619,15 @@ export const messages = defineMessages({
   renewalStatusRejected: {
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
+  },
+  renewalSendTo: {
+    defaultMessage: 'Sendist til',
+    id: 'sp.health:renewal-send-to',
+  },
+  renewalNoTarget: {
+    defaultMessage:
+      'Ekki tókst að finna stofnun til að senda endurnýjunarbeiðni til. Vinsamlegast hafið samband við heilsugæslu.',
+    id: 'sp.health:renewal-no-target',
   },
   renewalRequestSent: {
     defaultMessage:

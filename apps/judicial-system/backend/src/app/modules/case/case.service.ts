@@ -28,7 +28,6 @@ import {
   capitalize,
   formatDate,
   lowercase,
-  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
@@ -1235,11 +1234,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     return this.caseRepositoryService.findAll({
@@ -1275,11 +1270,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     const expectedCount = theCase.defendants.length

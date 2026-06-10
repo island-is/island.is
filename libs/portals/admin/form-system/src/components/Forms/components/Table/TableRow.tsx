@@ -31,7 +31,6 @@ import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
-import { removeTypename } from '../../../../lib/utils/removeTypename'
 
 interface Props {
   id?: string | null
@@ -203,6 +202,24 @@ export const TableRow = ({
       },
     }
 
+    const test = {
+      title: formatMessage(m.tryOut),
+      icon: 'open' as const,
+      iconType: 'outline' as const,
+      onClick: () => {
+        if (slug) {
+          window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
+        } else {
+          toast.error(
+            formatMessage({
+              id: 'slugMissing',
+              defaultMessage: 'Það vantar slug',
+            }),
+          )
+        }
+      },
+    }
+
     const getJson = {
       title: formatMessage(m.getJson),
       icon: 'download' as const,
@@ -322,10 +339,10 @@ export const TableRow = ({
     if (status === FormStatus.PUBLISHED) {
       return [getJson, copy, changePublishedForm, del]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
-      return [getJson, publishChanged, del]
+      return [test, getJson, publishChanged, del]
     }
 
-    return [getJson, copy, publish, del]
+    return [test, getJson, copy, publish, del]
   }, [
     id,
     slug,

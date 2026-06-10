@@ -1294,6 +1294,7 @@ cms-importer-energy-fund-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1348,6 +1349,7 @@ cms-importer-fsre-buildings-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1735,6 +1737,7 @@ download-service:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS/GOV/7005942039/VMST-Protected/vmst-umsoknir-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -1745,6 +1748,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCES_V3_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
@@ -1841,6 +1845,8 @@ download-service:
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
     XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+    XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
