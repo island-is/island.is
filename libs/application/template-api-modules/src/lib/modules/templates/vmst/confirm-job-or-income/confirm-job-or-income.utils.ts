@@ -8,7 +8,7 @@ export const buildIrregularJobRequest = (
 ) => ({
   applicantId,
   galdurExternalDomainRequestsIncomeCreateIrregularJobRequest: {
-    employerSSN: entry.company?.nationalId?.replace('-', ''),
+    employerSSN: entry.company?.nationalId?.replace(/-/g, ''),
     periodFrom: entry.monthFrom ? new Date(entry.monthFrom) : undefined,
     periodTo: entry.monthTo ? new Date(entry.monthTo) : undefined,
     estimatedIncome: entry.estimatedIncome
@@ -20,7 +20,7 @@ export const buildIrregularJobRequest = (
 export const buildPartTimeJobRequest = (entry: Entry, applicantId: string) => ({
   applicantId,
   galdurExternalDomainRequestsIncomeCreatePartTimeJobRequest: {
-    employerSSN: entry.company?.nationalId?.replace('-', ''),
+    employerSSN: entry.company?.nationalId?.replace(/-/g, ''),
     periodFrom: entry.jobStart ? new Date(entry.jobStart) : undefined,
     ratio: entry.workPercentage ? Number(entry.workPercentage) : undefined,
     estimatedIncome: entry.estimatedIncome
