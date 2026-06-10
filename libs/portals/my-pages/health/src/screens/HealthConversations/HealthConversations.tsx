@@ -143,6 +143,12 @@ const HealthConversations = () => {
           variant="primary"
           size="small"
         />
+        <LinkButton
+          to={HealthPaths.HealthConversationsNew}
+          text={formatMessage(messages.healthConversationsCreate)}
+          variant="primary"
+          size="small"
+        />
       </Box>
       <Box
         display="flex"
