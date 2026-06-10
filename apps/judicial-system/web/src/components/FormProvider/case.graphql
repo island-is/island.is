@@ -454,6 +454,7 @@ query Case($input: CaseQueryInput!) {
     }
     rulingOrderAppealCases {
       id
+      modified
       appealState
       appealedByNationalId
       appealedByRole
