@@ -42,10 +42,29 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       )
     }
 
-    const actions =
-      await this.vmstUnemploymentClientService.getApplicantActions(applicantId)
+    let canReportWork: boolean
 
-    if (!actions.canReportWork) {
+    try {
+      const actions =
+        await this.vmstUnemploymentClientService.getApplicantActions(
+          applicantId,
+        )
+      canReportWork = !!actions.canReportWork
+    } catch (e) {
+      this.logger.error(
+        '[VMST-Confirm-Job-Or-Income] - Error fetching applicant actions',
+        e,
+      )
+      throw new TemplateApiError(
+        {
+          title: errorMessages.cannotApplyErrorTitle,
+          summary: errorMessages.cannotApplyErrorSummary,
+        },
+        400,
+      )
+    }
+
+    if (!canReportWork) {
       throw new TemplateApiError(
         {
           title: errorMessages.cannotApplyErrorTitle,
