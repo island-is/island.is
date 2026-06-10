@@ -97,6 +97,7 @@ import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/co
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
 import { ComplaintsCommitteeRulings } from '../components/connected/ComplaintsCommitteeRulings'
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
+import { ECOICalculator } from '../components/connected/ECOICalculator/Calculator'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
@@ -231,6 +232,9 @@ export const webRenderConnectedComponent = (
       break
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
+      break
+    case 'ECOI/Calculator':
+      connectedComponent = <ECOICalculator slice={slice} />
       break
     case 'DigitalIcelandMailingListThumbnailCard':
       connectedComponent = (
