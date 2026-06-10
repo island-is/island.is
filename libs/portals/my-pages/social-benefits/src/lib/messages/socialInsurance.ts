@@ -263,6 +263,11 @@ export const m = defineMessages({
     defaultMessage:
       'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
   },
+  paymentTypesOverviewIntro: {
+    id: 'sp.social-insurance-maintenance:payment-type-overview-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem þér hafa borist frá TR. Þú getur notað <href>reiknivél TR</href> til að setja inn mismunandi forsendur og sjá hvernig það hefur áhrif á greiðslur þínar á tilteknu ári.',
+  },
   paymentTypesSectionTitle: {
     id: 'sp.social-insurance-maintenance:payment-types-section-title',
     defaultMessage: 'Greiðslur til þín og gildistími þeirra',
@@ -278,10 +283,6 @@ export const m = defineMessages({
   name: {
     id: 'sp.social-insurance-maintenance:name',
     defaultMessage: 'Nafn',
-  },
-  calculateMyRights: {
-    id: 'sp.social-insurance-maintenance:calculate-my-rights',
-    defaultMessage: 'Reikna mín réttindi',
   },
   calculateMyRightsLink: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights-link',

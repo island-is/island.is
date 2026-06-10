@@ -53,6 +53,7 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -560,6 +561,45 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateRequestCaseWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.REQUEST_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update request case with defender info',
         {
           caseId,
           actor: user.name,

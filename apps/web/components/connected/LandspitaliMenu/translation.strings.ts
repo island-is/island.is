@@ -132,4 +132,14 @@ export const m = defineMessages({
     defaultMessage: 'Kvöldverður',
     description: 'Kvöldverður',
   },
+  'Mellanmál em': {
+    id: 'web.landspitaliMenu:mellanmal-em',
+    defaultMessage: 'Millimál',
+    description: 'Millimál',
+  },
+  Kvællsmál: {
+    id: 'web.landspitaliMenu:kvallsmal',
+    defaultMessage: 'Kvöldsnarl',
+    description: 'Kvöldsnarl',
+  },
 })

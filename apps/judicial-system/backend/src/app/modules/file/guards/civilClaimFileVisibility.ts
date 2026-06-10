@@ -31,6 +31,16 @@ export const canDefenceUserViewCivilClaimCaseFile = (
     return true
   }
 
+  // The claimant's own confirmed spokesperson (lögmaður/réttargæslumaður) always
+  // has standing (aðild) to their own civil claim, so they may view it.
+  if (
+    claimant.hasSpokesperson &&
+    claimant.isSpokespersonConfirmed &&
+    claimant.spokespersonNationalId === defenderUserNationalId
+  ) {
+    return true
+  }
+
   return (
     args.defendants?.some(
       (defendant) =>
