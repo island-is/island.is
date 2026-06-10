@@ -51,6 +51,8 @@ const makeApplication = (answersOverrides = {}): Application =>
 
 const SUBJECT_NATIONAL_ID = '1111111119'
 const ACTOR_NATIONAL_ID = '2222222229'
+const SUBJECT_NAME = 'Jón Jónsson'
+const ACTOR_NAME = 'María Sigurðardóttir'
 
 describe('HistoryBuilder', () => {
   let builder: HistoryBuilder
@@ -188,7 +190,7 @@ describe('HistoryBuilder', () => {
   })
 
   it('resolves subject name and sets subLog when includeSubjectAndActor is true', async () => {
-    identityService.tryToGetNameFromNationalId.mockResolvedValue('Jón Jónsson')
+    identityService.tryToGetNameFromNationalId.mockResolvedValue(SUBJECT_NAME)
     templateHelper.getHistoryLog.mockReturnValue({
       onEvent: 'APPROVE',
       logMessage: coreHistoryMessages.applicationApprovedBy,
@@ -207,7 +209,7 @@ describe('HistoryBuilder', () => {
       SUBJECT_NATIONAL_ID,
     )
     expect(formatMessage).toHaveBeenCalledWith(coreHistoryMessages.byReviewer, {
-      subject: 'Jón Jónsson',
+      subject: SUBJECT_NAME,
     })
   })
 
@@ -234,8 +236,8 @@ describe('HistoryBuilder', () => {
 
   it('includes both subject and actor in subLog when they are different people', async () => {
     identityService.tryToGetNameFromNationalId
-      .mockResolvedValueOnce('Jón Jónsson') // subject
-      .mockResolvedValueOnce('María Sigurðardóttir') // actor
+      .mockResolvedValueOnce(SUBJECT_NAME) // subject
+      .mockResolvedValueOnce(ACTOR_NAME) // actor
     templateHelper.getHistoryLog.mockReturnValue({
       onEvent: 'APPROVE',
       logMessage: coreHistoryMessages.applicationApprovedBy,
@@ -253,12 +255,12 @@ describe('HistoryBuilder', () => {
 
     expect(formatMessage).toHaveBeenCalledWith(
       coreHistoryMessages.byReviewerWithActor,
-      { subject: 'Jón Jónsson', actor: 'María Sigurðardóttir' },
+      { subject: SUBJECT_NAME, actor: ACTOR_NAME },
     )
   })
 
   it('uses the single-name format when subject and actor are the same person', async () => {
-    identityService.tryToGetNameFromNationalId.mockResolvedValue('Jón Jónsson')
+    identityService.tryToGetNameFromNationalId.mockResolvedValue(SUBJECT_NAME)
     templateHelper.getHistoryLog.mockReturnValue({
       onEvent: 'APPROVE',
       logMessage: coreHistoryMessages.applicationApprovedBy,
@@ -276,7 +278,7 @@ describe('HistoryBuilder', () => {
 
     // byReviewer format — name appears once, not twice
     expect(formatMessage).toHaveBeenCalledWith(coreHistoryMessages.byReviewer, {
-      subject: 'Jón Jónsson',
+      subject: SUBJECT_NAME,
     })
   })
 
