@@ -400,6 +400,7 @@ export class VmstUnemploymentClientService {
 
   async getApplicantAttachments(
     applicantId: string,
+    onlyCreatedByApplicant?: boolean,
   ): Promise<Array<GaldurExternalDomainModelsAttachmentAttachmentListItem>> {
     const api = await this.createApiClient(
       ApplicantApi,
@@ -408,6 +409,7 @@ export class VmstUnemploymentClientService {
 
     return await api.applicantGetApplicantAttachments({
       applicantId,
+      onlyCreatedByApplicant,
     })
   }
 

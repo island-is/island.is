@@ -17,12 +17,13 @@ import { errorMessages } from '@island.is/application/templates/vmst/submit-docu
 interface DocumentEntry {
   type: string
   file: Array<{ key: string; name: string }>
-  comment: string
+  comment?: string
 }
 
 interface CreatedAttachment {
   attachmentId: string
   attachmentTypeId: string
+  description: string | null
 }
 
 const getMimeType = (fileName: string): string | undefined => {
@@ -148,7 +149,8 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     }
 
     return response.attachmentTypes?.filter(
-      (type) => type.visibleInApplicationDataRequest === true,
+      (type) =>
+        type.visibleInCreateAttachment === true && type.visible === true,
     )
   }
 
@@ -175,6 +177,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       document.file.map((file) => ({
         file,
         attachmentTypeId: document.type,
+        description: document.comment ?? null,
       })),
     )
 
@@ -219,7 +222,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
 
     // Phase 2: Create attachments in parallel in Galdur
     const results = await Promise.allSettled(
-      fileEntries.map(async ({ attachmentTypeId }, i) => {
+      fileEntries.map(async ({ attachmentTypeId, description }, i) => {
         const { content, fileName } = fileContents[i]
         const mimeType = getMimeType(fileName)
 
@@ -247,6 +250,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
           attachmentId: response.attachment.id,
           attachmentTypeId,
           fileName,
+          description,
         }
       }),
     )
@@ -305,6 +309,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
             galdurExternalDomainRequestsApplicantSubmitAttachmentRequestRequest:
               createdAttachments.map((a) => ({
                 attachmentId: a.attachmentId,
+                description: a.description,
               })),
           },
         )

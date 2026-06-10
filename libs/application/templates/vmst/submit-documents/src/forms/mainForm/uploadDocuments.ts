@@ -54,7 +54,6 @@ export const uploadDocumentsSection = buildSection({
               textarea: true,
               displayInTable: false,
               rows: 4,
-              required: true,
             },
           },
           table: {

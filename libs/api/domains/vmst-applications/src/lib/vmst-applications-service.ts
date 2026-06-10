@@ -180,6 +180,7 @@ export class VMSTApplicationsService {
   ): Promise<VmstApplicationsApplicantAttachment[]> {
     const items = await this.vmstUnemploymentService.getApplicantAttachments(
       applicantId,
+      true, // OnlyCreatedByApplicant, return only attachment created by the applicant
     )
 
     return Promise.all(
