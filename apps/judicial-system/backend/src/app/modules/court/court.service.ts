@@ -1130,35 +1130,31 @@ export const buildIndictmentConclusionContent = ({
       rulingDate instanceof Date ? rulingDate.toISOString() : rulingDate,
   }
 
-  const decision =
-    splitCaseNumber !== undefined
-      ? CaseIndictmentRulingDecision.SPLIT_OFF
-      : indictmentRulingDecision
+  if (splitCaseNumber !== undefined) {
+    payload.indictmentRulingDecision = 'SPLIT'
+    payload.splitCaseNumber = splitCaseNumber
+  } else if (indictmentRulingDecision) {
+    payload.indictmentRulingDecision = indictmentRulingDecision
 
-  if (decision) {
-    payload.indictmentRulingDecision = decision
+    if (indictmentRulingDecision === CaseIndictmentRulingDecision.WITHDRAWAL) {
+      payload.wasAssignedToJudge = Boolean(wasAssignedToJudge)
+      if (judgeNationalId) {
+        payload.judgeNationalId = judgeNationalId
+      }
+    }
+
+    if (
+      indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
+      mergeCaseNumber
+    ) {
+      // TODO(Evolv): Confirm merge payload with Auði
+      payload.mergeCaseNumber = mergeCaseNumber
+    }
   }
 
   if (defendantNationalId) {
     // TODO(Evolv): Confirm per-defendant payload with Auði
     payload.defendantNationalId = defendantNationalId
-  }
-
-  if (splitCaseNumber) {
-    // TODO(Evolv): Confirm SPLIT_OFF payload with Auði
-    payload.splitCaseNumber = splitCaseNumber
-  }
-
-  if (decision === CaseIndictmentRulingDecision.WITHDRAWAL) {
-    payload.wasAssignedToJudge = Boolean(wasAssignedToJudge)
-    if (judgeNationalId) {
-      payload.judgeNationalId = judgeNationalId
-    }
-  }
-
-  if (decision === CaseIndictmentRulingDecision.MERGE && mergeCaseNumber) {
-    // TODO(Evolv): Confirm merge payload with Auði
-    payload.mergeCaseNumber = mergeCaseNumber
   }
 
   return payload

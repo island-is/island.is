@@ -79,7 +79,7 @@ describe('buildIndictmentConclusionContent', () => {
         splitCaseNumber: 'S-2/2026',
       }),
     ).toMatchObject({
-      indictmentRulingDecision: 'SPLIT_OFF',
+      indictmentRulingDecision: 'SPLIT',
       splitCaseNumber: 'S-2/2026',
       defendantNationalId: '1111111111',
     })

@@ -145,8 +145,6 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Sameinað'
     case CaseIndictmentRulingDecision.WITHDRAWAL:
       return 'Afturkallað'
-    case CaseIndictmentRulingDecision.SPLIT_OFF:
-      return 'Klofinn frá'
     default:
       return 'Ekki skráð'
   }
