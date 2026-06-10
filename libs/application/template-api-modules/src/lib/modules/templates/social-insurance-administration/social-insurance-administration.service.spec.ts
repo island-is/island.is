@@ -23,9 +23,10 @@ const mockConfig = {
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
+  let module: TestingModule
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         SocialInsuranceAdministrationService,
         {
@@ -125,6 +126,65 @@ describe('SocialInsuranceAdministrationService', () => {
     })
 
     expect(result).toMatchObject({ applicationLineId: '0' })
+  })
+
+  it('should send sailor pension under its own application type', async () => {
+    const auth = createCurrentUser()
+    const oldAgePensionService = module.get(
+      SocialInsuranceAdministrationOldAgePensionService,
+    )
+    const sendSpy = jest.spyOn(
+      oldAgePensionService,
+      'sendOldAgePensionApplication',
+    )
+
+    const application = createApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date('2021-06-10T11:31:02.641Z'),
+          status: 'success',
+        },
+      },
+      answers: {
+        applicationType: { option: 'sailorPension' },
+        paymentInfo: {
+          bank: { ledger: '00', bankNumber: '2222', accountNumber: '123456' },
+          iban: '',
+          swift: '',
+          taxLevel: '2',
+          bankAccountType: 'icelandic',
+          personalAllowance: 'no',
+        },
+        'period.year': '2023',
+      },
+      typeId: ApplicationTypes.OLD_AGE_PENSION,
+    })
+
+    jest
+      .spyOn(socialInsuranceAdministrationService, 'getPdf')
+      .mockImplementation(jest.fn())
+
+    await socialInsuranceAdministrationService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    // Regression guard (Zendesk 528088): sailor pension must be sent as
+    // 'sailorPension', not collapsed into 'oldAgePension' — TR keys the
+    // seamen age rule off this type at submit.
+    expect(sendSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      'sailorPension',
+    )
   })
 
   it('should send household supplement application', async () => {
