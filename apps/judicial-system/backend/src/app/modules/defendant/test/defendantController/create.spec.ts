@@ -110,6 +110,12 @@ describe('DefendantController - Create', () => {
           caseId,
           elementId: defendantId,
         },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
       ])
     })
   })

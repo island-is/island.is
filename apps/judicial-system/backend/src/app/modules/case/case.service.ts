@@ -481,12 +481,20 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-        user,
-        caseId: theCase.id,
-        elementId: defendant.id,
-      })
+      addMessagesToQueue(
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+      )
     }
   }
 

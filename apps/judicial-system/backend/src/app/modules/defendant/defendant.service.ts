@@ -58,16 +58,39 @@ export class DefendantService {
     })
   }
 
+  private hasValidDefendantNationalIdForCourtDelivery(
+    defendant: Defendant,
+  ): defendant is Defendant & { nationalId: string } {
+    const { nationalId } = defendant
+
+    if (defendant.noNationalId || !nationalId) {
+      return false
+    }
+
+    return (
+      nationalId.replace('-', '').length === 10 &&
+      !nationalId.endsWith('5') // Temporary national id from the police system
+    )
+  }
+
   private addMessagesForDeliverDefendantToCourtToQueue(
     defendant: Defendant,
     user: User,
   ): void {
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-      user,
-      caseId: defendant.caseId,
-      elementId: defendant.id,
-    })
+    addMessagesToQueue(
+      {
+        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+        user,
+        caseId: defendant.caseId,
+        elementId: defendant.id,
+      },
+      {
+        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+        user,
+        caseId: defendant.caseId,
+        elementId: defendant.id,
+      },
+    )
   }
 
   private addMessagesForIndictmentToPrisonAdminChangesToQueue(
@@ -536,12 +559,7 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): Promise<DeliverResponse> {
-    if (
-      defendant.noNationalId ||
-      !defendant.nationalId ||
-      defendant.nationalId.replace('-', '').length !== 10 ||
-      defendant.nationalId.endsWith('5') // Temporary national id from the police system
-    ) {
+    if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
       this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
         theCase,
         user,
@@ -549,23 +567,6 @@ export class DefendantService {
 
       return { delivered: true }
     }
-
-    this.courtService
-      .updateRequestCaseWithDefenderInfo(
-        user,
-        theCase.id,
-        theCase.court?.name,
-        theCase.courtCaseNumber,
-        defendant.nationalId,
-        theCase.defenderName,
-        theCase.defenderEmail,
-      )
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
-          { reason },
-        )
-      })
 
     return this.courtService
       .updateCaseWithDefendant(
@@ -581,6 +582,36 @@ export class DefendantService {
       })
       .catch((reason) => {
         this.logger.error('Failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverRequestDefenderInfoToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
+      return { delivered: true }
+    }
+
+    return this.courtService
+      .updateRequestCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        theCase.defenderName,
+        theCase.defenderEmail,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
+          { reason },
+        )
 
         return { delivered: false }
       })
