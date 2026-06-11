@@ -63,7 +63,7 @@ export const mapFeaturedArticles = ({
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
   articles: (fields.articles ?? []).map((entry) =>
-    entry.sys.contentType.sys.id === 'manual'
+    entry?.sys?.contentType?.sys?.id === 'manual'
       ? mapManualToArticleReference(entry as IManual)
       : mapArticleReference(entry as IArticle),
   ),
