@@ -3,6 +3,7 @@ import {
   UserInfoLine,
   formSubmit,
   m as coreMessages,
+  PdfModal,
 } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import {
@@ -20,6 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useState } from 'react'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -28,6 +30,7 @@ const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
   const { formatMessage, formatDateFns } = useLocale()
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
@@ -89,6 +92,12 @@ const MyData = () => {
       }}
       loading={coreLoading}
     >
+      <PdfModal
+        url={pdfUrl}
+        aria-label={formatMessage(um.myDataViewDocument)}
+        onClose={() => setPdfUrl(null)}
+      />
+
       <ActionButtons
         availableActions={availableActions}
         loading={coreLoading}
@@ -185,6 +194,53 @@ const MyData = () => {
                                     if (attachment.downloadServiceUrl) {
                                       formSubmit(attachment.downloadServiceUrl)
                                     }
+                                  },
+                                }
+                              : undefined
+                          }
+                        />
+                        <Divider />
+                      </Box>
+                    )
+                  })}
+                </Stack>
+              )}
+          </Box>
+
+          {/* Bref */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataSubmittedAttachmentsHeading)}
+            </Text>
+            {submittedLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!submittedLoading && submittedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!submittedLoading &&
+              !submittedAttachmentsHasError &&
+              submittedAttachments.length > 0 && (
+                <Stack space={0}>
+                  {submittedAttachments.map((attachment) => {
+                    return (
+                      <Box key={attachment.id}>
+                        <UserInfoLine
+                          label={
+                            getAttachmentName(attachment.typeId) || attachment
+                          }
+                          content={
+                            attachment.created
+                              ? formatDateFns(attachment.created, 'dd.MM.yyyy')
+                              : ''
+                          }
+                          button={
+                            attachment.downloadServiceUrl
+                              ? {
+                                  title: um.myDataViewDocument,
+                                  icon: 'arrowForward',
+                                  onClick: () => {
+                                    setPdfUrl(
+                                      attachment.downloadServiceUrl || '',
+                                    )
                                   },
                                 }
                               : undefined
