@@ -85,19 +85,24 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
           Staðfesta
         </Button>
         {modalVisible && (
-          <Modal
-            title="Viltu staðfesta úrskurð?"
-            primaryButton={{
-              text: 'Staðfesta',
-              onClick: handleConfirm,
-              isLoading: loading,
-            }}
-            secondaryButton={{
-              text: 'Hætta við',
-              onClick: () => setModalVisible(false),
-            }}
-            onClose={() => setModalVisible(false)}
-          />
+          // The modal is a React descendant of the clickable file row, so its
+          // (portaled) click events would otherwise bubble up and trigger the
+          // row's open-file handler. Stop propagation at the modal boundary.
+          <Box onClick={(evt: MouseEvent) => evt.stopPropagation()}>
+            <Modal
+              title="Viltu staðfesta úrskurð?"
+              primaryButton={{
+                text: 'Staðfesta',
+                onClick: handleConfirm,
+                isLoading: loading,
+              }}
+              secondaryButton={{
+                text: 'Hætta við',
+                onClick: () => setModalVisible(false),
+              }}
+              onClose={() => setModalVisible(false)}
+            />
+          </Box>
         )}
       </Box>
     )
