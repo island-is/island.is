@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
+import { Message } from '@island.is/judicial-system/message'
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -38,12 +39,15 @@ describe('InternalDefendantController - Deliver request defender info to court',
     defenderName,
   } as Case
 
+  let mockQueuedMessages: Message[]
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { courtService, internalDefendantController } =
+    const { queuedMessages, courtService, internalDefendantController } =
       await createTestingDefendantModule()
+
+    mockQueuedMessages = queuedMessages
 
     mockCourtService = courtService
     const mockUpdateRequestCaseWithDefenderInfo =
@@ -101,13 +105,30 @@ describe('InternalDefendantController - Deliver request defender info to court',
     })
   })
 
-  describe('no national id', () => {
+  describe.each([
+    {
+      label: 'no national id flag',
+      defendant: { noNationalId: true, nationalId: defendantNationalId },
+    },
+    {
+      label: 'temporary national id',
+      defendant: { nationalId: '1234567895' },
+    },
+    {
+      label: 'invalid length',
+      defendant: { nationalId: '123' },
+    },
+    {
+      label: 'missing national id',
+      defendant: { nationalId: undefined },
+    },
+  ])('invalid national id - $label', ({ defendant: defendantOverride }) => {
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
         ...defendant,
-        noNationalId: true,
+        ...defendantOverride,
       } as Defendant)
     })
 
@@ -119,6 +140,10 @@ describe('InternalDefendantController - Deliver request defender info to court',
 
     it('should return success', () => {
       expect(then.result).toEqual({ delivered: true })
+    })
+
+    it('should not queue notification', () => {
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
