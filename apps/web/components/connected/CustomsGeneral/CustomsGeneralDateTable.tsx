@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -14,26 +15,24 @@ import { useI18n } from '@island.is/web/i18n'
 
 import { m } from './translation.strings'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRecord = Record<string, any>
-
-interface Props {
-  columns: SortableTableColumn<AnyRecord>[]
-  data: AnyRecord[]
+interface Props<T extends Record<string, unknown>> {
+  columns: SortableTableColumn<T>[]
+  data: T[]
   loading: boolean
   error?: Error
   selectedDate: Date
   onDateChange: (date: Date) => void
   dateLabel: string
   errorTitle: string
+  id?: string
   kerfi?: 'I' | 'U'
   onKerfiChange?: (kerfi: 'I' | 'U') => void
-  onRowClick?: (row: AnyRecord) => void
+  onRowClick?: (row: T) => void
 }
 
 export const toApiDate = (date: Date) => `${date.toISOString().split('.')[0]}Z`
 
-export const CustomsGeneralDateTable = ({
+export const CustomsGeneralDateTable = <T extends Record<string, unknown>>({
   columns,
   data,
   loading,
@@ -42,20 +41,23 @@ export const CustomsGeneralDateTable = ({
   onDateChange,
   dateLabel,
   errorTitle,
+  id: idProp,
   kerfi,
   onKerfiChange,
   onRowClick,
-}: Props) => {
+}: Props<T>) => {
   const { activeLocale } = useI18n()
   const { formatMessage } = useIntl()
+  const generatedId = useId()
+  const id = idProp ?? generatedId
 
   return (
     <Stack space={3}>
       <Inline alignY="center" space={3} justifyContent="spaceBetween">
         <Box style={{ maxWidth: 280 }}>
           <DatePicker
-            id="customs-general-dags"
-            name="customs-general-dags"
+            id={id}
+            name={id}
             locale={activeLocale}
             label={dateLabel}
             placeholderText={dateLabel}
