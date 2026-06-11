@@ -56,21 +56,7 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
     }
   }
 
-  if (isConfirmed) {
-    return (
-      <Box display="flex" alignItems="center" marginLeft={1}>
-        <Box marginRight={2} textAlign="right">
-          <Text whiteSpace="nowrap">{`Staðfest - ${formatDate(
-            file.submissionDate,
-          )} kl. ${formatDate(file.submissionDate, 'HH:mm')}`}</Text>
-          <Text variant="small">{workingCase.judge?.name}</Text>
-        </Box>
-        <Icon icon="checkmark" size="large" color="mint600" />
-      </Box>
-    )
-  }
-
-  if (isRegisteredJudge) {
+  if (!isConfirmed && isRegisteredJudge) {
     return (
       <Box marginLeft={1}>
         <Button
@@ -108,7 +94,7 @@ const RulingOrderConfirmationStatus: FC<Props> = ({ file }) => {
     )
   }
 
-  if (isDistrictCourtUser(user)) {
+  if (!isConfirmed && isDistrictCourtUser(user)) {
     return (
       <Box marginLeft={1}>
         <Text variant="small" color="dark300">
