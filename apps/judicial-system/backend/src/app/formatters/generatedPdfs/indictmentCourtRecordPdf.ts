@@ -27,7 +27,7 @@ import {
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
-  // addRichText,
+  addRichText,
   Confirmation,
   drawConfirmation,
   setLineGap,
@@ -89,6 +89,7 @@ export const getFiledBy = (
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
   showOpenCourtSession: boolean,
+  useTinyMCE: boolean,
   confirmation: Confirmation | undefined,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -317,12 +318,14 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    // TODO: uncomment when TinyMCE feature flag is lifted
-    // addRichText(
-    //   doc,
-    //   courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
-    // )
-    addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
+    if (useTinyMCE) {
+      addRichText(
+        doc,
+        courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+      )
+    } else {
+      addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
+    }
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)
