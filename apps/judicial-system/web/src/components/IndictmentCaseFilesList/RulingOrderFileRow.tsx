@@ -212,6 +212,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       currentUserStatementDate,
       'PPPp',
     )}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else if (
     (isProsecution || isDefence) &&
     appealCase.appealState === AppealCaseState.RECEIVED
@@ -219,6 +221,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     statusText = `Frestur til að skila greinargerð ${
       appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
     } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else if (
     isDistrictCourt &&
     appealCase.appealState === AppealCaseState.RECEIVED
@@ -227,8 +231,12 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       appealCase.appealReceivedByCourtDate,
       'PPPp',
     )}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else {
     statusText = getAppealActorText(workingCase, appealCase)
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   }
 
   const showCompletedPill =
