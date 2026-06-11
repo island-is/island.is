@@ -324,9 +324,7 @@ const Completed: FC = () => {
               workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.WITHDRAWAL
             }
-            actionButtonText={
-              canReopenCase ? 'Enduropna mál' : 'Leiðrétta mál'
-            }
+            actionButtonText={canReopenCase ? 'Enduropna mál' : 'Leiðrétta mál'}
             actionButtonColorScheme={canReopenCase ? 'destructive' : 'default'}
             actionButtonVariant="primary"
             onActionButtonClick={() =>

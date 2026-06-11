@@ -53,4 +53,3 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
     expect(fn(defendants)).toBe('varnaraðilar')
   })
 })
-
