@@ -10,10 +10,11 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { isCompany } from 'kennitala'
-import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, EqualityReportTemplateDocxApi, EqualityReportTemplateHtmlApi } from '../dataProviders'
+import { ActiveEqualityReportApi, CompanyRegistryApi, DoeCompanyApi, EqualityReportTemplateDocxApi, EqualityReportTemplateHtmlApi, PreviousEqualityReportContentApi } from '../dataProviders'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -97,7 +98,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [EqualityReportTemplateHtmlApi, EqualityReportTemplateDocxApi],
+              api: [EqualityReportTemplateHtmlApi, EqualityReportTemplateDocxApi, PreviousEqualityReportContentApi],
               delete: true,
             },
           ],
@@ -114,6 +115,10 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: 'submitEqualityReport',
+            shouldPersistToExternalData: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

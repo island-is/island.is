@@ -457,11 +457,20 @@ export const messages = {
       },
       title: {
         id: 'equalityReport.application:equalityReport.previousEqualityPlan.title',
-        defaultMessage: 'Eldri Jafnréttisáætlun',
+        defaultMessage: 'Virk jafnréttisáætlun tilstaðar',
       },
       intro: {
         id: 'equalityReport.application:equalityReport.previousEqualityPlan.intro',
-        defaultMessage: lorem,
+        defaultMessage:
+          'Fyrirtækið hefur skilað inn jafnréttisáætlun til Jafnréttisstofu á síðustu 3 árum og er með virka áætlun skráða. Þú getur sent inn nýja áætlun og látið þá eldri falla úr gildi.',
+      },
+      copyButton: {
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.copyButton',
+        defaultMessage: 'Afrita',
+      },
+      copied: {
+        id: 'equalityReport.application:equalityReport.previousEqualityPlan.copied',
+        defaultMessage: 'Afritað!',
       },
     }),
     goalsAndActions: defineMessages({
@@ -541,6 +550,22 @@ export const messages = {
     noSubsidiaries: {
       id: 'equalityReport.application:overview.noSubsidiaries',
       defaultMessage: 'Nei',
+    },
+  }),
+
+  completed: defineMessages({
+    sectionTitle: {
+      id: 'equalityReport.application:completed.sectionTitle',
+      defaultMessage: 'Umsókn móttekin',
+    },
+    alertTitle: {
+      id: 'equalityReport.application:completed.title',
+      defaultMessage: 'Jafnréttisáætlun hefur verið send til Jafnréttisstofu',
+    },
+    alertDescription: {
+      id: 'equalityReport.application:completed.description',
+      defaultMessage:
+        'Við höfum móttekið jafnréttisáætlunina þína og hún verður yfirfarin af Jafnréttisstofu. Þú færð senda staðfestingu þegar yfirferð er lokið. Ef frekari upplýsingar vantar mun Jafnréttisstofa hafa samband við þig.',
     },
   }),
 }

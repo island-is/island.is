@@ -1,6 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
+import { HTMLEditor } from '../components/html-editor/HTMLEditor'
+import { HTMLText } from '@dmr.is/regulations-tools/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../lib/messages'
@@ -24,16 +26,14 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const subsidiaryList = answers.subsidiaries?.list ?? []
   const hasSubsidiaries = answers.subsidiaries?.includesSubsidiaries === 'yes'
 
-  const equalityPlanText = (() => {
+  const equalityPlanHtml = (() => {
     const base64 =
       getValueViaPath<string>(application.answers, 'information.customField') ??
       ''
     try {
-      return atob(base64)
-        .replace(/<[^>]*>/g, '')
-        .trim()
+      return Buffer.from(base64, 'base64').toString('utf-8') as HTMLText
     } catch {
-      return ''
+      return '' as HTMLText
     }
   })()
 
@@ -72,7 +72,11 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
         <Text variant="h3" marginBottom={3}>
           {formatMessage(messages.overview.equalityPlan)}
         </Text>
-        <Text whiteSpace="preWrap">{equalityPlanText}</Text>
+        <HTMLEditor
+          value={equalityPlanHtml}
+          readOnly
+          fileUploader={() => Promise.resolve({} as unknown)}
+        />
       </ReviewGroup>
     </Box>
   )

@@ -29,10 +29,10 @@ export const equalityReportSection = buildSection({
           title: messages.equalityReport.previousEqualityPlan.title,
           description: messages.equalityReport.previousEqualityPlan.intro,
           children: [
-            buildDescriptionField({
-              id: 'previousEqualityPlan.placeholder',
+            buildCustomField({
+              id: 'previousEqualityPlan.content',
               title: '',
-              description: '',
+              component: 'PreviousEqualityPlan',
             }),
           ],
         }),

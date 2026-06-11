@@ -17,6 +17,11 @@ export const DoeCompanyApi = defineTemplateApi({
   externalDataId: 'doeCompany',
 })
 
+export const PreviousEqualityReportContentApi = defineTemplateApi({
+  action: 'getPreviousEqualityReportContent',
+  externalDataId: 'previousEqualityReportContent',
+})
+
 export const EqualityReportTemplateHtmlApi = defineTemplateApi({
   action: 'getEqualityReportTemplateHtml',
   externalDataId: 'equalityReportTemplateHtml',

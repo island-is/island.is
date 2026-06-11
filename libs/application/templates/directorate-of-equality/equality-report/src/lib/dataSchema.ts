@@ -33,32 +33,34 @@ const employeeCount = z.object({
 
 const subsidiaries = z.object({
   includesSubsidiaries: z.enum(['yes', 'no']).refine((v) => !!v, { params: messages.errors.required }),
-  list: z
-    .array(
-      z.object({
-        nationalIdWithName: z.object({
-          name: z.string().min(1),
-          nationalId: z.string().refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
-            params: messages.errors.required,
+  list: z.optional(
+    z
+      .array(
+        z.object({
+          nationalIdWithName: z.object({
+            name: z.string().min(1),
+            nationalId: z.string().refine((v) => kennitala.isValid(v) && kennitala.isCompany(v), {
+              params: messages.errors.required,
+            }),
           }),
         }),
+      )
+      .superRefine((items, ctx) => {
+        const seen = new Set<string>()
+        items.forEach((item, i) => {
+          const id = item.nationalIdWithName?.nationalId
+          if (id && seen.has(id)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [i, 'nationalIdWithName', 'nationalId'],
+              params: messages.errors.duplicateSubsidiary,
+            })
+          } else if (id) {
+            seen.add(id)
+          }
+        })
       }),
-    )
-    .superRefine((items, ctx) => {
-      const seen = new Set<string>()
-      items.forEach((item, i) => {
-        const id = item.nationalIdWithName?.nationalId
-        if (id && seen.has(id)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [i, 'nationalIdWithName', 'nationalId'],
-            params: messages.errors.duplicateSubsidiary,
-          })
-        } else if (id) {
-          seen.add(id)
-        }
-      })
-    })
+  )
 })
 
 const decodeEditorHtml = (base64: string) => {
