@@ -1,10 +1,4 @@
-import {
-  BifrostStudentTrack,
-  HolarStudentTrack,
-  LbhiStudentTrack,
-  UnakStudentTrack,
-  HIStudentTrack,
-} from '../clients'
+import type { StudentTrack } from '../../../gen/fetch'
 import { UniversityId } from '../universityCareers.types'
 import {
   StudentTrackInstitutionDto,
@@ -21,16 +15,12 @@ export interface StudentTrackDto {
   faculty?: string
   studyProgram?: string
   degree?: string
+  level?: string
   programId?: string
 }
 
 export const mapToStudentTrackDto = (
-  transcript:
-    | HolarStudentTrack
-    | LbhiStudentTrack
-    | BifrostStudentTrack
-    | UnakStudentTrack
-    | HIStudentTrack,
+  transcript: StudentTrack,
   institutionId: UniversityId,
 ): StudentTrackDto | null => {
   if (!transcript.graduationDate) {
@@ -48,5 +38,6 @@ export const mapToStudentTrackDto = (
     graduationDate: new Date(transcript.graduationDate),
     studyProgram: transcript.studyProgram ?? undefined,
     degree: transcript.degree ?? undefined,
+    level: transcript.level ?? undefined,
   }
 }

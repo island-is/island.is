@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
@@ -14,17 +15,18 @@ export interface PreferencesStore {
   hasOnboardedPinCode: boolean
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
+  hasOnboardedPrivacy: boolean
   hasAcceptedNotifications: boolean
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
-  graphicWidgetEnabled: boolean
   inboxWidgetEnabled: boolean
   applicationsWidgetEnabled: boolean
   licensesWidgetEnabled: boolean
   vehiclesWidgetEnabled: boolean
   airDiscountWidgetEnabled: boolean
   appointmentsWidgetEnabled: boolean
+  notificationsWidgetEnabled: boolean
   widgetsInitialised: boolean
   skippedSoftUpdate: boolean
   lastUsedPasskey: number
@@ -56,17 +58,18 @@ const defaultPreferences = {
   hasOnboardedBiometrics: false,
   hasOnboardedPinCode: false,
   hasOnboardedNotifications: false,
+  hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
-  graphicWidgetEnabled: true,
   inboxWidgetEnabled: true,
   applicationsWidgetEnabled: true,
   licensesWidgetEnabled: true,
   vehiclesWidgetEnabled: true,
   airDiscountWidgetEnabled: true,
   appointmentsWidgetEnabled: true,
+  notificationsWidgetEnabled: true,
   widgetsInitialised: false,
   skippedSoftUpdate: false,
   lastUsedPasskey: 0,
@@ -120,6 +123,21 @@ export const preferencesStore = create<PreferencesStore>()(
     {
       name: PREFERENCES_KEY,
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: (persistedState: any, version) => {
+        if (version === 0) {
+          const wasFullyOnboarded =
+            persistedState?.hasOnboardedPinCode &&
+            persistedState?.hasOnboardedBiometrics &&
+            (Platform.OS === 'android' ||
+              persistedState?.hasOnboardedNotifications)
+          return {
+            ...persistedState,
+            hasOnboardedPrivacy: !!wasFullyOnboarded,
+          }
+        }
+        return persistedState
+      },
     },
   ),
 )

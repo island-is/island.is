@@ -14,6 +14,9 @@ export class DelegationScopeTag {
 
   @Field()
   slug!: string
+
+  @Field({ nullable: true })
+  showAsCard?: boolean
 }
 
 export const mapDelegationScopeTag = ({
@@ -24,4 +27,5 @@ export const mapDelegationScopeTag = ({
   title: fields.title ?? '',
   description: fields.description ?? '',
   slug: fields.slug ?? '',
+  showAsCard: fields.showAsCard ?? false,
 })

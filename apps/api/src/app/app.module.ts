@@ -35,6 +35,8 @@ import {
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
+import { FarmersModule } from '@island.is/api/domains/farmers'
+import { FeatureFlagsApiModule } from '@island.is/api/domains/feature-flags'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -47,6 +49,7 @@ import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
+import { IcelandicMedicinesAgencyModule } from '@island.is/api/domains/icelandic-medicines-agency'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
   CommunicationsConfig,
@@ -93,6 +96,7 @@ import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { FarmersClientConfig } from '@island.is/clients/farmers'
 import { PoliceCasesClientConfig } from '@island.is/clients/police-cases'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
@@ -102,6 +106,10 @@ import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import {
+  DirectorateOfEqualityClientModule,
+  DirectorateOfEqualityClientConfig,
+} from '@island.is/clients/directorate-of-equality'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -115,7 +123,6 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
@@ -230,12 +237,16 @@ import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-heal
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { GradeClientConfig } from '@island.is/clients/mms/grade'
+import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
-import { VerdictsModule } from '@island.is/api/domains/verdicts'
+import {
+  VerdictsApiModuleConfig,
+  VerdictsModule,
+} from '@island.is/api/domains/verdicts'
 import {
   SecondarySchoolClientConfig,
   SecondarySchoolPublicClientConfig,
@@ -243,12 +254,15 @@ import {
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
+import { MatildaClientConfig } from '@island.is/clients/matilda'
+import { LyfjastofnunPharmaciesClientConfig } from '@island.is/clients/lyfjastofnun-pharmacies'
 import { HmsConfig } from '@island.is/clients/hms'
 import { NvsPermitsClientConfig } from '@island.is/clients/nvs-permits'
 import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { DocumentProviderDashboardClientConfig } from '@island.is/clients/document-provider-dashboard'
 import { DocumentProviderDashboardClientModule } from '@island.is/clients/document-provider-dashboard'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
@@ -299,7 +313,9 @@ const environment = getConfig
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
+    DirectorateOfEqualityClientModule,
     DirectorateOfLabourModule,
+    FeatureFlagsApiModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -340,6 +356,7 @@ const environment = getConfig
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
+    IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
     ShipRegistryModule,
     IntellectualPropertiesModule,
@@ -358,6 +375,7 @@ const environment = getConfig
     }),
     RegulationsModule,
     RegulationsAdminModule,
+    FarmersModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -410,11 +428,13 @@ const environment = getConfig
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
+        DirectorateOfEqualityClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
         ShipRegistryClientConfig,
         NationalRegistryV3ClientConfig,
+        FarmersClientConfig,
         PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
@@ -434,6 +454,8 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         LshClientConfig,
+        MatildaClientConfig,
+        LyfjastofnunPharmaciesClientConfig,
         FeatureFlagConfig,
         HmsConfig,
         HmsApplicationSystemConfig,
@@ -472,7 +494,6 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
@@ -506,6 +527,7 @@ const environment = getConfig
         JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
+        PrimarySchoolClientConfig,
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
@@ -514,6 +536,7 @@ const environment = getConfig
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
+        VerdictsApiModuleConfig,
         SecondarySchoolClientConfig,
         SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
@@ -522,6 +545,7 @@ const environment = getConfig
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],

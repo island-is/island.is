@@ -10,7 +10,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -18,9 +17,14 @@ import {
 import {
   CaseState,
   CivilClaimantNotificationType,
+  type User,
 } from '@island.is/judicial-system/types'
 
-import { Case, CivilClaimant } from '../repository'
+import {
+  Case,
+  CaseDefendantPoliceCaseNumber,
+  CivilClaimant,
+} from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 
 @Injectable()
@@ -28,6 +32,8 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
+    @InjectModel(CaseDefendantPoliceCaseNumber)
+    private readonly caseDefendantPoliceCaseNumberModel: typeof CaseDefendantPoliceCaseNumber,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -44,6 +50,7 @@ export class CivilClaimantService {
   private addMessagesForUpdateCivilClaimantToQueue(
     oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
+    user: User,
   ): void {
     if (
       updatedCivilClaimant.isSpokespersonConfirmed &&
@@ -55,16 +62,69 @@ export class CivilClaimantService {
         body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
         elementId: updatedCivilClaimant.id,
       })
+      // send a notification to follow-up on scheduled court date
+      addMessagesToQueue({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: updatedCivilClaimant.caseId,
+        user,
+        body: {
+          type: CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
+        },
+        elementId: updatedCivilClaimant.id,
+      })
     }
+  }
+
+  private async filterDefendantIdsByPoliceCaseNumbers(
+    caseId: string,
+    policeCaseNumbers: string[],
+    currentDefendantIds?: string[],
+  ): Promise<string[]> {
+    if (!currentDefendantIds?.length || !policeCaseNumbers.length) {
+      return []
+    }
+
+    const validLinks = await this.caseDefendantPoliceCaseNumberModel.findAll({
+      where: {
+        caseId,
+        policeCaseNumber: policeCaseNumbers,
+        defendantId: currentDefendantIds,
+      },
+    })
+
+    const validDefendantIds = new Set(
+      validLinks
+        .map((link) => link.defendantId)
+        .filter((id): id is string => !!id),
+    )
+
+    return currentDefendantIds.filter((id) => validDefendantIds.has(id))
   }
 
   async update(
     caseId: string,
     civilClaimant: CivilClaimant,
     update: UpdateCivilClaimantDto,
+    user: User,
   ): Promise<CivilClaimant> {
+    let effectiveUpdate = { ...update }
+
+    if (
+      update.policeCaseNumbers !== undefined ||
+      update.defendantIds !== undefined
+    ) {
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        defendantIds: await this.filterDefendantIdsByPoliceCaseNumbers(
+          caseId,
+          update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? [],
+          update.defendantIds ?? civilClaimant.defendantIds,
+        ),
+      }
+    }
+
     const [numberOfAffectedRows, civilClaimants] =
-      await this.civilClaimantModel.update(update, {
+      await this.civilClaimantModel.update(effectiveUpdate, {
         where: { id: civilClaimant.id, caseId },
         returning: true,
       })
@@ -84,6 +144,7 @@ export class CivilClaimantService {
     this.addMessagesForUpdateCivilClaimantToQueue(
       civilClaimant,
       updatedCivilClaimant,
+      user,
     )
 
     return updatedCivilClaimant
@@ -134,7 +195,7 @@ export class CivilClaimantService {
       ],
       where: {
         hasSpokesperson: true,
-        spokespersonNationalId: normalizeAndFormatNationalId(nationalId),
+        spokespersonNationalId: nationalId,
       },
       order: [['created', 'DESC']],
     })

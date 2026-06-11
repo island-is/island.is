@@ -125,6 +125,12 @@ type DndActions =
         update: (updatedForm: FormSystemForm) => void
       }
     }
+  | {
+      type: 'SET_FORM'
+      payload: {
+        form: FormSystemForm
+      }
+    }
 
 type ChangeActions =
   | {
@@ -194,13 +200,6 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_SHOULD_POPULATE'
-      payload: {
-        checked: boolean
-        update: (updatedActiveItem?: ActiveItem) => void
-      }
-    }
-  | {
       type: 'CHANGE_CERTIFICATION'
       payload: {
         certificate: FormSystemFormCertificationTypeDto
@@ -211,6 +210,15 @@ type ChangeActions =
       type: 'CHANGE_SUBMISSION_URL'
       payload: {
         value: string
+        useValidate?: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE'
+      payload: {
+        zendeskInstance: string
+        zendeskBrandId: string
+        organizationId?: string
       }
     }
   | {
@@ -221,12 +229,6 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_USE_VALIDATE'
-      payload: {
-        value: boolean
-      }
-    }
-  | {
-      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -268,7 +270,10 @@ type InputSettingsActions =
       type: 'SET_APPLICANT_FIELD_SETTINGS'
       payload: {
         field: FormSystemField
-        property: 'isPhoneRequired' | 'isEmailRequired'
+        property:
+          | 'isPhoneRequired'
+          | 'isEmailRequired'
+          | 'fetchEmailFromMyPages'
         value: boolean
       }
     }
@@ -338,6 +343,16 @@ type InputSettingsActions =
       }
     }
   | {
+      type: 'SET_ADDITIONAL_PREMISES'
+      payload: {
+        newValue: {
+          title: FormSystemLanguageType
+          description: FormSystemLanguageType
+        }[]
+        update?: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
       type: 'SET_ANY_FIELD_SETTING'
       payload: {
         property: string
@@ -381,7 +396,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
-  isPublished: boolean
+  isReadOnly: boolean
 }
 
 export const controlReducer = (
@@ -568,12 +583,16 @@ export const controlReducer = (
     case 'CHANGE_FIELD_TYPE': {
       const { newValue, fieldSettings, update } = action.payload
       const currentData = activeItem.data as FormSystemField
+      const isListType =
+        newValue === FieldTypesEnum.DROPDOWN_LIST ||
+        newValue === FieldTypesEnum.RADIO_BUTTONS
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
           fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
+          list: isListType ? currentData.list : [],
         },
       }
       let newFields = fields?.map((field) =>
@@ -885,6 +904,7 @@ export const controlReducer = (
     }
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
+      const useValidate = action.payload.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -919,6 +939,22 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
+          useValidate:
+            useValidate !== undefined ? useValidate : form.useValidate,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE': {
+      const { zendeskInstance, zendeskBrandId } = action.payload
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          organizationZendeskInstance: {
+            zendeskInstance,
+            zendeskBrandId,
+          },
         },
       }
       return updatedState
@@ -943,16 +979,6 @@ export const controlReducer = (
       }
       return updatedState
     }
-    case 'CHANGE_USE_POPULATE': {
-      const updatedState = {
-        ...state,
-        form: {
-          ...form,
-          usePopulate: action.payload.value,
-        },
-      }
-      return updatedState
-    }
     case 'UPDATE_APPLICANT_TYPES': {
       return {
         ...state,
@@ -970,10 +996,6 @@ export const controlReducer = (
     // If parent exists and child exists, remove it from the array and also remove the dependency object if the array is empty
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload
-
-      const dependency = form.dependencies?.find(
-        (dep) => dep?.parentProp === activeId,
-      )
 
       let updatedDependencies = form.dependencies ?? []
 
@@ -1112,28 +1134,6 @@ export const controlReducer = (
         data: {
           ...currentData,
           shouldValidate: action.payload.checked ? true : false,
-        },
-      }
-      action.payload.update(newActive)
-      return {
-        ...state,
-        activeItem: newActive,
-        form: {
-          ...form,
-          screens: screens?.map((g) =>
-            g?.id === currentData?.id ? newActive.data : g,
-          ),
-        },
-      }
-    }
-
-    case 'TOGGLE_SHOULD_POPULATE': {
-      const currentData = activeItem.data as FormSystemScreen
-      const newActive = {
-        ...activeItem,
-        data: {
-          ...currentData,
-          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)
@@ -1371,6 +1371,7 @@ export const controlReducer = (
         },
         fieldSettings: {
           ...field.fieldSettings,
+          __typename: undefined,
           chargeItemCode,
           chargeItemName,
           chargeType,
@@ -1736,25 +1737,32 @@ export const controlReducer = (
       update(updatedForm)
       return { ...state, form: updatedForm }
     }
+    case 'SET_FORM': {
+      return {
+        ...state,
+        form: action.payload.form,
+      }
+    }
     case 'SET_COMPLETED_TITLE': {
       const { lang, newValue } = action.payload
       const updatedForm = {
         ...form,
-        completedSectionInfo: {
-          ...(form.completedSectionInfo ?? {}),
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
           title: {
-            ...(form.completedSectionInfo?.title ?? { is: '', en: '' }),
+            ...(form.sectionInfo?.title ?? { is: '', en: '' }),
             [lang]: newValue,
           },
-          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
             is: '',
             en: '',
           },
-          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+          confirmationText: form.sectionInfo?.confirmationText ?? {
             is: '',
             en: '',
           },
-          additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+          additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+          additionalPremises: form.sectionInfo?.additionalPremises ?? [],
         },
       }
       return {
@@ -1768,22 +1776,22 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          completedSectionInfo: {
-            ...(form.completedSectionInfo ?? {}),
-            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
-            confirmationHeader: form.completedSectionInfo
-              ?.confirmationHeader ?? {
+          sectionInfo: {
+            ...(form.sectionInfo ?? {}),
+            title: form.sectionInfo?.title ?? { is: '', en: '' },
+            confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
               is: '',
               en: '',
             },
             confirmationText: {
-              ...(form.completedSectionInfo?.confirmationText ?? {
+              ...(form.sectionInfo?.confirmationText ?? {
                 is: '',
                 en: '',
               }),
               [lang]: newValue,
             },
-            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+            additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+            additionalPremises: form.sectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1794,21 +1802,22 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          completedSectionInfo: {
-            ...(form.completedSectionInfo ?? {}),
-            title: form.completedSectionInfo?.title ?? { is: '', en: '' },
+          sectionInfo: {
+            ...(form.sectionInfo ?? {}),
+            title: form.sectionInfo?.title ?? { is: '', en: '' },
             confirmationHeader: {
-              ...(form.completedSectionInfo?.confirmationHeader ?? {
+              ...(form.sectionInfo?.confirmationHeader ?? {
                 is: '',
                 en: '',
               }),
               [lang]: newValue,
             },
-            confirmationText: form.completedSectionInfo?.confirmationText ?? {
+            confirmationText: form.sectionInfo?.confirmationText ?? {
               is: '',
               en: '',
             },
-            additionalInfo: form.completedSectionInfo?.additionalInfo ?? [],
+            additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+            additionalPremises: form.sectionInfo?.additionalPremises ?? [],
           },
         },
       }
@@ -1816,21 +1825,51 @@ export const controlReducer = (
     case 'SET_COMPLETED_ADDITIONAL_INFO': {
       const newForm = {
         ...form,
-        completedSectionInfo: {
-          ...(form.completedSectionInfo ?? {}),
-          title: form.completedSectionInfo?.title ?? { is: '', en: '' },
-          confirmationHeader: form.completedSectionInfo?.confirmationHeader ?? {
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
+          title: form.sectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
             is: '',
             en: '',
           },
-          confirmationText: form.completedSectionInfo?.confirmationText ?? {
+          confirmationText: form.sectionInfo?.confirmationText ?? {
             is: '',
             en: '',
           },
           additionalInfo: action.payload.newValue,
+          additionalPremises: form.sectionInfo?.additionalPremises ?? [],
         },
       }
       action.payload.update(newForm)
+      return {
+        ...state,
+        form: newForm,
+      }
+    }
+    case 'SET_ADDITIONAL_PREMISES': {
+      const { newValue, update } = action.payload
+      const newForm = {
+        ...form,
+        sectionInfo: {
+          ...(form.sectionInfo ?? {}),
+          title: form.sectionInfo?.title ?? { is: '', en: '' },
+          confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
+            is: '',
+            en: '',
+          },
+          confirmationText: form.sectionInfo?.confirmationText ?? {
+            is: '',
+            en: '',
+          },
+          additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+          additionalPremises: Array.isArray(newValue)
+            ? newValue
+            : form.sectionInfo?.additionalPremises ?? [],
+        },
+      }
+      if (update) {
+        update(newForm)
+      }
       return {
         ...state,
         form: newForm,

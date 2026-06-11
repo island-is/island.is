@@ -33,6 +33,11 @@ import {
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
 
+export enum PaymentMethod {
+  CARD = 'card',
+  INVOICE = 'invoice',
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -67,6 +72,16 @@ export class PaymentService {
     return this.paymentModel.findOne({
       where: {
         application_id: applicationId,
+      },
+    })
+  }
+
+  async findPaymentsByApplicationIds(
+    applicationIds: string[],
+  ): Promise<Payment[]> {
+    return this.paymentModel.findAll({
+      where: {
+        application_id: { [Op.in]: applicationIds },
       },
     })
   }
@@ -193,8 +208,8 @@ export class PaymentService {
       | 'fulfilled'
       | 'amount'
       | 'definition'
-      | 'expires_at'
       | 'request_id'
+      | 'payment_method'
     > = {
       application_id: applicationId,
       fulfilled: false,
@@ -212,7 +227,7 @@ export class PaymentService {
           quantity: chargeItem.quantity,
         })),
       },
-      expires_at: new Date(),
+      payment_method: PaymentMethod.CARD,
       request_id: '', // request_id is not set here, it is set once the requestId has been returned by the payment system
       // the requestId is the ID of the created charge in FJS which must be used when deleting a charge
     }
@@ -293,7 +308,11 @@ export class PaymentService {
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+    const {
+      returnUrl,
+      cancelUrl,
+      invoiceUrl: invoiceReturnUrl,
+    } = await this.getReturnUrls(applicationId)
 
     const resolvedPayerNationalId =
       payerNationalId && payerNationalId.trim().length > 0
@@ -321,7 +340,9 @@ export class PaymentService {
           },
           returnUrl,
           cancelUrl,
+          invoiceReturnUrl,
           redirectToReturnUrlOnSuccess: true,
+          redirectOnInvoiceCreation: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
         },
@@ -512,8 +533,13 @@ export class PaymentService {
     })
   }
 
-  private async getReturnUrls(applicationId: string) {
+  async getApplicationUrl(applicationId: string) {
     const application = await this.applicationService.findOneById(applicationId)
+    if (!application) {
+      throw new NotFoundException(
+        `application was not found for application id ${applicationId}`,
+      )
+    }
 
     let applicationSlug
     if (application?.typeId) {
@@ -524,14 +550,31 @@ export class PaymentService {
       )
     }
 
-    const returnUrl = new URL(this.config.clientLocationOrigin)
-    returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    returnUrl.search = 'done'
+    const baseUrl = new URL(this.config.clientLocationOrigin)
+    baseUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
+    const baseUrlString = baseUrl.toString()
 
-    const cancelUrl = new URL(this.config.clientLocationOrigin)
-    cancelUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    cancelUrl.search = 'cancelled'
+    return baseUrlString
+  }
 
-    return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
+  private async getReturnUrls(applicationId: string) {
+    const baseUrlString = await this.getApplicationUrl(applicationId)
+
+    return {
+      returnUrl: `${baseUrlString}?done`,
+      cancelUrl: `${baseUrlString}?cancelled`,
+      invoiceUrl: `${baseUrlString}?invoice`,
+    }
+  }
+
+  async setPaymentMethod(applicationId: string, paymentMethod: PaymentMethod) {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    payment.payment_method = paymentMethod.toString()
+    await payment.save()
   }
 }

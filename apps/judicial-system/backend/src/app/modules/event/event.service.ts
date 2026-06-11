@@ -14,6 +14,7 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  AppealCaseTransition,
   CaseTransition,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
@@ -39,7 +40,7 @@ const errorEmojis = [
   ':x:',
 ]
 
-export type CaseEvent =
+type CaseEvent =
   | CaseTransition
   | 'ARCHIVE'
   | 'CREATE'
@@ -52,7 +53,11 @@ export type CaseEvent =
   | 'SUBPOENA_SERVICE_STATUS'
   | 'VERDICT_SERVICE_STATUS'
 
-const caseEvent: Record<CaseEvent, string> = {
+type AppealCaseEvent = AppealCaseTransition | 'CREATE_APPEAL'
+
+type Event = CaseEvent | AppealCaseEvent
+
+const eventHeading: Record<Event, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
   [CaseTransition.APPEAL]: ':judge: Kæra',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
@@ -60,7 +65,9 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
+  CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
@@ -71,10 +78,9 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
+  [CaseTransition.REOPEN]: ':recycle: Mál enduropnað',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SPLIT: ':scissors: Mál klofið',
@@ -109,7 +115,7 @@ export class EventService {
   ) {}
 
   async postEvent(
-    event: CaseEvent,
+    event: Event,
     theCase: Case,
     eventOnly = false,
     info?: { [key: string]: string | boolean | Date | undefined },
@@ -119,7 +125,7 @@ export class EventService {
         return
       }
 
-      const title = `${caseEvent[event]}${
+      const title = `${eventHeading[event]}${
         eventOnly ? ' - aðgerð ekki framkvæmd' : ''
       }`
       const typeText = `${capitalize(formatCaseType(theCase.type))}${
@@ -130,9 +136,12 @@ export class EventService {
             ).join(', ')})`
           : ''
       } *${theCase.id}*`
+      const policeCaseNumbersText = theCase.policeCaseNumbers?.length
+        ? theCase.policeCaseNumbers.join(', ')
+        : 'LÖKE númer ekki skráð'
       const prosecutionText = `${
         theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
-      }*${theCase.policeCaseNumbers.join(', ')}*`
+      }*${policeCaseNumbersText}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
@@ -368,7 +377,7 @@ export class EventService {
     return infoText
   }
 
-  logInfo = (event: CaseEvent, theCase: Case) => {
+  logInfo = (event: Event, theCase: Case) => {
     if (!caseEventsToLog.includes(event)) {
       return
     }

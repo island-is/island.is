@@ -25,8 +25,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
+  capitalize,
   formatDate,
-  normalizeAndFormatNationalId,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
@@ -34,12 +35,11 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  AppealCaseState,
   CaseAppealDecision,
-  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -58,6 +58,7 @@ import {
   isInvestigationCase,
   isRequestCase,
   isRestrictionCase,
+  RequestCaseNotificationType,
   ServiceStatus,
   StringType,
   stringTypes,
@@ -78,6 +79,7 @@ import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
+  AppealCaseRepositoryService,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -113,7 +115,10 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
 
 type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation' | 'civilDemands' | 'penalties'
+  | 'postponedIndefinitelyExplanation'
+  | 'civilDemands'
+  | 'penalties'
+  | 'reopenReason'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -121,6 +126,7 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
     StringType.POSTPONED_INDEFINITELY_EXPLANATION,
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
+  reopenReason: StringType.REOPEN_REASON,
 }
 
 export const caseListInclude: Includeable[] = [
@@ -231,6 +237,7 @@ export class CaseService {
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -494,17 +501,6 @@ export class CaseService {
     })
   }
 
-  private addMessagesForDeliverAssignedRolesToCourtOfAppealsToQueue(
-    user: TUser,
-    theCase: Case,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
-      user,
-      caseId: theCase.id,
-    })
-  }
-
   private addMessagesForSubmittedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -513,7 +509,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.READY_FOR_COURT },
+      body: { type: RequestCaseNotificationType.READY_FOR_COURT },
     })
   }
 
@@ -525,7 +521,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+      },
     })
   }
 
@@ -537,7 +535,9 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED },
+      body: {
+        type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+      },
     })
   }
 
@@ -550,7 +550,7 @@ export class CaseService {
       user,
       caseId: theCase.id,
       body: {
-        type: CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+        type: IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
       },
     })
   }
@@ -560,7 +560,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.RECEIVED_BY_COURT },
+      body: { type: RequestCaseNotificationType.RECEIVED_BY_COURT },
     })
 
     if (isIndictmentCase(theCase.type)) {
@@ -779,7 +779,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       },
     )
 
@@ -837,7 +837,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.RULING },
+        body: { type: RequestCaseNotificationType.RULING },
       })
     }
   }
@@ -868,7 +868,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: updatedCase.id,
-      body: { type: CaseNotificationType.RULING },
+      body: { type: RequestCaseNotificationType.RULING },
     })
 
     if (updatedCase.withCourtSessions) {
@@ -893,7 +893,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.MODIFIED },
+      body: { type: RequestCaseNotificationType.MODIFIED },
     })
 
     if (theCase.origin === CaseOrigin.LOKE) {
@@ -913,7 +913,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.REVOKED },
+      body: { type: RequestCaseNotificationType.REVOKED },
     })
   }
 
@@ -956,124 +956,6 @@ export class CaseService {
     }
   }
 
-  private addMessagesForAppealedCaseToQueue(theCase: Case, user: TUser): void {
-    // If case was appealed in court we don't need to send these messages
-    if (
-      theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-    ) {
-      return
-    }
-
-    for (const caseFile of theCase.caseFiles ?? []) {
-      if (
-        caseFile.state === CaseFileState.STORED_IN_RVG &&
-        caseFile.isKeyAccessible &&
-        caseFile.category &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-        ].includes(caseFile.category)
-      ) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })
-      }
-    }
-
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
-    })
-  }
-
-  private addMessagesForReceivedAppealCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
-    })
-  }
-
-  private addMessagesForCompletedAppealCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    for (const caseFile of theCase.caseFiles ?? []) {
-      if (
-        caseFile.state === CaseFileState.STORED_IN_RVG &&
-        caseFile.isKeyAccessible &&
-        caseFile.category &&
-        caseFile.category === CaseFileCategory.APPEAL_RULING
-      ) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })
-      }
-    }
-
-    addMessagesToQueue(
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_COMPLETED },
-      },
-      {
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
-        user,
-        caseId: theCase.id,
-        // The APPEAL_COMPLETED notification must be handled before this message
-        nextRetry:
-          nowFactory().getTime() + this.config.robotMessageDelay * 1000,
-      },
-    )
-
-    if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_POLICE_APPEAL,
-        user,
-        caseId: theCase.id,
-      })
-    }
-  }
-
-  private addMessagesForAppealStatementToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_STATEMENT },
-    })
-  }
-
-  private addMessagesForAppealWithdrawnToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
-      user,
-      caseId: theCase.id,
-      body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
-    })
-  }
-
   private addMessagesForDeniedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
@@ -1082,11 +964,11 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_DENIED },
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_DENIED },
     })
   }
 
-  private addMessagesForReturnedIndictmentCaseToQueue(
+  private addMessagesForReopenedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): void {
@@ -1094,58 +976,8 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.INDICTMENT_RETURNED },
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REOPENED },
     })
-  }
-
-  private addMessagesForNewAppealCaseNumberToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    for (const caseFile of theCase.caseFiles ?? []) {
-      if (
-        caseFile.isKeyAccessible &&
-        caseFile.category &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-        ].includes(caseFile.category)
-      ) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })
-      }
-    }
-
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
-      user,
-      caseId: theCase.id,
-    })
-
-    if (this.allAppealRolesAssigned(theCase)) {
-      this.addMessagesForDeliverAssignedRolesToCourtOfAppealsToQueue(
-        user,
-        theCase,
-      )
-    }
-  }
-
-  private addMessagesForAssignedAppealRolesToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    this.addMessagesForDeliverAssignedRolesToCourtOfAppealsToQueue(
-      user,
-      theCase,
-    )
   }
 
   private addMessagesForIndictmentArraignmentCompletionToQueue(
@@ -1190,6 +1022,13 @@ export class CaseService {
       ) {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         this.addMessagesForReceivedCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.RECEIVED &&
+        isCompletedCase(theCase.state) &&
+        isIndictment
+      ) {
+        // Only the REOPEN transition moves an indictment from a completed state to RECEIVED
+        this.addMessagesForReopenedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         if (!isIndictment) {
           this.addMessagesForDeletedCaseToQueue(updatedCase, user)
@@ -1210,45 +1049,9 @@ export class CaseService {
         isIndictment
       ) {
         this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.state === CaseState.DRAFT &&
-        theCase.state === CaseState.RECEIVED &&
-        isIndictment
-      ) {
-        this.addMessagesForReturnedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
         this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
-    }
-
-    // Applies to appealed cases
-    if (
-      updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
-    ) {
-      if (updatedCase.appealCase?.appealState === CaseAppealState.APPEALED) {
-        this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (
-        theCase.appealCase?.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
-        updatedCase.appealCase?.appealState === CaseAppealState.RECEIVED
-      ) {
-        this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED
-      ) {
-        this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
-      } else if (
-        updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN
-      ) {
-        this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
-      }
-    }
-
-    // Applies to appealed cases
-    if (
-      updatedCase.appealCase?.prosecutorStatementDate?.getTime() !==
-      theCase.appealCase?.prosecutorStatementDate?.getTime()
-    ) {
-      this.addMessagesForAppealStatementToQueue(updatedCase, user)
     }
 
     // This only applies to restriction cases
@@ -1339,30 +1142,6 @@ export class CaseService {
       }
     }
 
-    // This applies to appealed cases
-    if (updatedCase.appealCase?.appealCaseNumber) {
-      if (
-        updatedCase.appealCase?.appealCaseNumber !==
-        theCase.appealCase?.appealCaseNumber
-      ) {
-        // New appeal case number
-        this.addMessagesForNewAppealCaseNumberToQueue(updatedCase, user)
-      } else if (
-        this.allAppealRolesAssigned(updatedCase) &&
-        (updatedCase.appealCase?.appealAssistantId !==
-          theCase.appealCase?.appealAssistantId ||
-          updatedCase.appealCase?.appealJudge1Id !==
-            theCase.appealCase?.appealJudge1Id ||
-          updatedCase.appealCase?.appealJudge2Id !==
-            theCase.appealCase?.appealJudge2Id ||
-          updatedCase.appealCase?.appealJudge3Id !==
-            theCase.appealCase?.appealJudge3Id)
-      ) {
-        // New appeal court assignments
-        this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
-      }
-    }
-
     // This only applies to indictments
     if (isIndictment) {
       const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
@@ -1399,15 +1178,6 @@ export class CaseService {
         user,
       )
     }
-  }
-
-  private allAppealRolesAssigned(updatedCase: Case) {
-    return (
-      updatedCase.appealCase?.appealAssistantId &&
-      updatedCase.appealCase?.appealJudge1Id &&
-      updatedCase.appealCase?.appealJudge2Id &&
-      updatedCase.appealCase?.appealJudge3Id
-    )
   }
 
   async findById(
@@ -1464,11 +1234,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     return this.caseRepositoryService.findAll({
@@ -1504,11 +1270,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     const expectedCount = theCase.defendants.length
@@ -1672,6 +1434,18 @@ export class CaseService {
     if (updatedCase.state === CaseState.COMPLETED) {
       return this.eventLogService.createWithUser(
         EventType.INDICTMENT_COMPLETED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+
+    if (
+      theCase.state === CaseState.COMPLETED &&
+      updatedCase.state === CaseState.RECEIVED
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REOPENED,
         theCase.id,
         user,
         transaction,
@@ -1958,14 +1732,10 @@ export class CaseService {
 
     await Promise.all(
       eventUpdates.map(({ defendantId, eventType, rulingDate }) => {
-        if (!rulingDate) {
-          return this.defendantEventLogRepositoryService.createWithUser(
-            eventType,
-            theCase.id,
-            defendantId,
-            user,
-            transaction,
-          )
+        let created: Date | undefined
+        if (rulingDate) {
+          created = new Date(rulingDate)
+          created.setUTCHours(23, 59, 59, 999)
         }
 
         return this.defendantEventLogRepositoryService.createWithUser(
@@ -1974,7 +1744,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          rulingDate,
+          created,
         )
       }),
     )
@@ -2028,14 +1798,17 @@ export class CaseService {
           !theCase.courtSessions?.length &&
           !theCase.unfiledCourtDocuments?.length))
 
-    const completingIndictmentCase =
+    const isCompletingRequestCase =
+      isRequestCase(theCase.type) && isCompletedCase(update.state)
+
+    const isCompletingIndictmentCase =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
       // Not true when closing again after correcting an indictment case
       theCase.state !== CaseState.CORRECTING
 
-    const completingIndictmentCaseWithoutRuling =
-      completingIndictmentCase &&
+    const isCompletingIndictmentCaseWithoutRuling =
+      isCompletingIndictmentCase &&
       theCase.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.FINE,
@@ -2044,8 +1817,8 @@ export class CaseService {
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
 
-    const completingIndictmentCaseWithRuling =
-      completingIndictmentCase &&
+    const isCompletingIndictmentCaseWithRuling =
+      isCompletingIndictmentCase &&
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
     const requiresCourtTransition =
@@ -2062,12 +1835,66 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
+    if (update.reopenReason !== undefined) {
+      const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
+        user.name
+      } ${lowercase(user.title)}.`
+      update.reopenReason = `${header}\n${update.reopenReason}`
+      update = transitionCase(CaseTransition.REOPEN, theCase, user, update)
+
+      await Promise.all(
+        (theCase.defendants ?? []).flatMap((defendant) => [
+          this.defendantService.updateDatabaseDefendant(
+            theCase.id,
+            defendant.id,
+            {
+              isSentToPrisonAdmin: false,
+              indictmentReviewDecision: null,
+              publicProsecutorIsRegisteredInPoliceSystem: null,
+            },
+            transaction,
+          ),
+          ...(defendant.verdicts ?? []).map((verdict) =>
+            this.verdictService.resetVerdictDataForReopen(verdict, transaction),
+          ),
+        ]),
+      )
+    }
+
     // Keep transient defendant event log decisions out of the case persistence
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
+
+    // Handle appealed in court
+    if (isCompletingRequestCase) {
+      const hasBeenAppealed = Boolean(theCase.appealCase)
+      const prosecutorAppealedInCourt =
+        theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+      const accusedAppealedInCourt =
+        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+
+      if (
+        // TODO: Decide what to do if correcting case
+        !hasBeenAppealed && // don't appeal twice
+        (prosecutorAppealedInCourt || accusedAppealedInCourt)
+      ) {
+        // TODO: Decide if we should set both appeal dates if both appeal
+        if (prosecutorAppealedInCourt) {
+          caseUpdate.prosecutorPostponedAppealDate = update.rulingDate
+        } else {
+          caseUpdate.accusedPostponedAppealDate = update.rulingDate
+        }
+
+        await this.appealCaseRepositoryService.create(
+          theCase.id,
+          { appealState: AppealCaseState.APPEALED },
+          { transaction },
+        )
+      }
+    }
 
     if (Object.keys(caseUpdate).length > 0) {
       await this.caseRepositoryService.update(theCase.id, caseUpdate, {
@@ -2093,7 +1920,7 @@ export class CaseService {
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
-    if (completingIndictmentCaseWithRuling && theCase.defendants) {
+    if (isCompletingIndictmentCaseWithRuling && theCase.defendants) {
       await Promise.all(
         theCase.defendants.map((defendant) => {
           if (!defendant.verdicts || defendant.verdicts.length === 0) {
@@ -2151,7 +1978,7 @@ export class CaseService {
     }
 
     // Remove uploaded ruling files if an indictment case is completed without a ruling
-    if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
+    if (isCompletingIndictmentCaseWithoutRuling && theCase.caseFiles) {
       await Promise.all(
         theCase.caseFiles
           .filter((caseFile) => caseFile.category === CaseFileCategory.RULING)
@@ -2162,7 +1989,7 @@ export class CaseService {
     }
 
     if (
-      completingIndictmentCase &&
+      isCompletingIndictmentCase &&
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {

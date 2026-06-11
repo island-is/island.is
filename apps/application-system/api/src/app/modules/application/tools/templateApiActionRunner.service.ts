@@ -18,7 +18,6 @@ import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class TemplateApiActionRunner {
-  private formatMessage!: FormatMessage
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
@@ -46,7 +45,6 @@ export class TemplateApiActionRunner {
     const oldExternalData = application.externalData
 
     const newExternalData = { data: {} }
-    this.formatMessage = formatMessage
 
     const groupedActions = this.groupByOrder(this.sortActions(actions))
 
@@ -219,12 +217,12 @@ export class TemplateApiActionRunner {
     const reason = {
       summary:
         isTranslationObject(summary) && typeof summary === 'object'
-          ? this.formatMessage(
+          ? formatMessage(
               summary,
               'values' in summary ? summary.values : undefined,
             )
           : summary,
-      title: isTranslationObject(title) ? this.formatMessage(title) : title,
+      title: isTranslationObject(title) ? formatMessage(title) : title,
     }
 
     return {

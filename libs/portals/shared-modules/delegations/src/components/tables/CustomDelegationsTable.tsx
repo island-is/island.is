@@ -6,29 +6,29 @@ import {
   Table as T,
   Text,
   UserAvatar,
-  toast,
 } from '@island.is/island-ui/core'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
-import { useCallback, useState } from 'react'
-import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
+import { useState } from 'react'
+import { formatNationalId } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import { CustomDelegationsPermissionsTable } from './CustomDelegationsPermissionsTable'
-import { ApolloError, Reference, useApolloClient } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
 import { AuthDomain } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { m } from '../../lib/messages'
 import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
-import { useDeleteAuthDelegationMutation } from '../access/AccessDeleteModal/AccessDeleteModal.generated'
 import { useDelegationForm } from '../../context'
 import { DeleteAccessModal } from '../modals/DeleteAccessModal'
 import { DelegationPaths } from '../../lib/paths'
 import { useNavigate } from 'react-router-dom'
+import { useDeleteDelegationsByPerson } from '../../hooks/useDeleteDelegationsByPerson'
 import * as styles from './Tables.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import AnimateHeight from 'react-animate-height'
+import { m as coreMessages } from '@island.is/portals/core'
 
 export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -48,8 +48,6 @@ export default function CustomDelegationsTable({
 }) {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.lg
-  const { formatMessage } = useLocale()
-  const client = useApolloClient()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
     null,
   )
@@ -60,72 +58,8 @@ export default function CustomDelegationsTable({
   const { setSelectedScopes, setIdentities, clearForm, skipNextClear } =
     useDelegationForm()
 
-  const [deleteDelegation, { loading: deleteLoading }] =
-    useDeleteAuthDelegationMutation()
-
-  const queryFieldName =
-    direction === 'outgoing'
-      ? 'authDelegationsGroupedByIdentityOutgoing'
-      : 'authDelegationsGroupedByIdentityIncoming'
-
-  const evictPerson = useCallback(
-    (person: DelegationsByPerson) => {
-      const cacheId = client.cache.identify({
-        __typename: 'AuthDelegationsGroupedByIdentity',
-        nationalId: person.nationalId,
-        type: person.type,
-      })
-      if (cacheId) {
-        client.cache.evict({ id: cacheId })
-        client.cache.gc()
-      }
-
-      client.cache.modify({
-        fields: {
-          [queryFieldName](existing: readonly Reference[] = [], { readField }) {
-            return existing.filter(
-              (ref) =>
-                !(
-                  readField('nationalId', ref) === person.nationalId &&
-                  readField('type', ref) === person.type
-                ),
-            )
-          },
-        },
-      })
-    },
-    [client.cache, queryFieldName],
-  )
-
-  const handleDelete = useCallback(
-    async (person: DelegationsByPerson): Promise<boolean> => {
-      const delegationIds = [
-        ...new Set(
-          person.scopes
-            .map((s) => s.delegationId)
-            .filter((id): id is string => !!id),
-        ),
-      ]
-
-      if (delegationIds.length === 0) return true
-
-      try {
-        await Promise.all(
-          delegationIds.map((delegationId) =>
-            deleteDelegation({
-              variables: { input: { delegationId } },
-            }),
-          ),
-        )
-        evictPerson(person)
-        return true
-      } catch {
-        toast.error(formatMessage(coreMessages.somethingWrong))
-        return false
-      }
-    },
-    [deleteDelegation, evictPerson, formatMessage],
-  )
+  const { deleteByPerson, loading: deleteLoading } =
+    useDeleteDelegationsByPerson({ direction })
 
   const mapScopesToScopeSelection = (person: DelegationsByPerson) => {
     return person.scopes.map((scope) => ({
@@ -164,39 +98,41 @@ export default function CustomDelegationsTable({
   }
 
   return (
-    <Box
-      marginBottom={6}
-      display="flex"
-      flexDirection="column"
-      rowGap={[0, 0, 0, 2]}
-    >
-      <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
+    <>
+      <Box
+        marginBottom={6}
+        display="flex"
+        flexDirection="column"
+        rowGap={[0, 0, 0, 2]}
+      >
+        <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
 
-      {loading ? (
-        <Box padding={3}>
-          <SkeletonLoader space={1} height={40} repeat={2} />
-        </Box>
-      ) : error && !data?.length ? (
-        <Problem error={error} />
-      ) : isMobile ? (
-        <MobileCustomDelegationsTable
-          data={data}
-          direction={direction}
-          expandedRow={expandedRow}
-          setExpandedRow={setExpandedRow}
-          onClickDelete={onClickDelete}
-          onClickEdit={onClickEdit}
-        />
-      ) : (
-        <DesktopCustomDelegationsTable
-          data={data}
-          direction={direction}
-          expandedRow={expandedRow}
-          setExpandedRow={setExpandedRow}
-          onClickDelete={onClickDelete}
-          onClickEdit={onClickEdit}
-        />
-      )}
+        {loading ? (
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={2} />
+          </Box>
+        ) : error && !data?.length ? (
+          <Problem error={error} />
+        ) : isMobile ? (
+          <MobileCustomDelegationsTable
+            data={data}
+            direction={direction}
+            expandedRow={expandedRow}
+            setExpandedRow={setExpandedRow}
+            onClickDelete={onClickDelete}
+            onClickEdit={onClickEdit}
+          />
+        ) : (
+          <DesktopCustomDelegationsTable
+            data={data}
+            direction={direction}
+            expandedRow={expandedRow}
+            setExpandedRow={setExpandedRow}
+            onClickDelete={onClickDelete}
+            onClickEdit={onClickEdit}
+          />
+        )}
+      </Box>
       <DeleteAccessModal
         isVisible={!!personToDelete}
         onClose={() => {
@@ -205,7 +141,7 @@ export default function CustomDelegationsTable({
         }}
         onDelete={async () => {
           if (!personToDelete) return
-          const didDelete = await handleDelete(personToDelete)
+          const didDelete = await deleteByPerson(personToDelete)
           if (!didDelete) return
           setPersonToDelete(null)
           clearForm()
@@ -217,7 +153,7 @@ export default function CustomDelegationsTable({
         }}
         direction={direction}
       />
-    </Box>
+    </>
   )
 }
 
@@ -243,7 +179,6 @@ const DesktopCustomDelegationsTable = ({
     { value: formatMessage(m.name) },
     { value: formatMessage(m.numberOfDelegations) },
     { value: formatMessage(m.validityPeriod) },
-    ...(direction === 'outgoing' ? [{ value: '' }] : []),
     { value: '' },
   ]
 
@@ -298,32 +233,23 @@ const DesktopCustomDelegationsTable = ({
                       ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
                       : formatMessage(m.noValidToDate),
                   },
-                  ...(direction === 'outgoing'
-                    ? [
-                        {
-                          value: (
-                            <Box flexShrink={0}>
-                              <Button
-                                variant="text"
-                                icon="pencil"
-                                iconType="outline"
-                                size="small"
-                                colorScheme="default"
-                                onClick={() => {
-                                  onClickEdit(person)
-                                }}
-                              >
-                                {formatMessage(coreMessages.buttonEdit)}
-                              </Button>
-                            </Box>
-                          ),
-                          align: 'right' as const,
-                        },
-                      ]
-                    : []),
                   {
                     value: (
-                      <Box flexShrink={0}>
+                      <Box flexShrink={0} display="flex" columnGap={2}>
+                        {direction === 'outgoing' && (
+                          <Button
+                            variant="text"
+                            icon="pencil"
+                            iconType="outline"
+                            size="small"
+                            colorScheme="default"
+                            onClick={() => {
+                              onClickEdit(person)
+                            }}
+                          >
+                            {formatMessage(coreMessages.buttonEdit)}
+                          </Button>
+                        )}
                         <Button
                           variant="text"
                           icon="trash"

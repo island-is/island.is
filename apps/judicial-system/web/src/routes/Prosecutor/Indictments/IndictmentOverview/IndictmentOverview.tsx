@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -12,6 +12,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
   CourtCaseInfo,
@@ -19,29 +20,27 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseScheduledCard,
-  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingModifiedAlert,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -61,7 +60,6 @@ const IndictmentOverview: FC = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
-  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
   const shouldDisplayReviewDecision =
     caseIsClosed && workingCase.indictmentReviewer?.id === user?.id
@@ -80,15 +78,15 @@ const IndictmentOverview: FC = () => {
     ConfirmationModal | undefined
   >()
 
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
 
   const shouldDisplayAppealBanner =
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.DISMISSAL &&
     (workingCase.canBeAppealed ||
       workingCase.hasBeenAppealed ||
-      workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
-      workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN)
+      workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
   const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
     Record<string, IndictmentCaseReviewDecision | null | undefined>
@@ -146,18 +144,6 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <AlertMessage
-              type="info"
-              title="Mál leiðrétt"
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.rulingModifiedHistory}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
-          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -173,6 +159,8 @@ const IndictmentOverview: FC = () => {
               ),
           )}
           <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
               workingCase.court &&
               latestDate?.date &&
@@ -221,9 +209,15 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
-            <AllIndictmentCaseFiles
-              displayGeneratedPDFs={displayGeneratedPDFs}
-            />
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
+            <AllIndictmentCaseFiles />
             <Box component="section">
               <InputPenalties />
             </Box>

@@ -22,13 +22,25 @@ import type { ConfigType } from '@nestjs/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { CaseFilterOptionType } from './types'
 import {
+  ALL_COURT_AGENDA_GOPRO_SLUGS,
   ALL_DISTRICT_COURTS,
+  ALL_VERDICT_LIST_GOPRO_SLUGS,
   COURT_OF_APPEAL,
   RETRIAL_COURT,
   SUPREME_COURT,
 } from './constants'
 
 const ITEMS_PER_PAGE = 10
+
+const isFullGoproSlugSelection = (
+  selected: string[],
+  fullSet: readonly string[],
+) => {
+  if (selected.length !== fullSet.length) return false
+  const set = new Set(selected)
+  if (set.size !== fullSet.length) return false
+  return fullSet.every((slug) => set.has(slug))
+}
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
@@ -159,7 +171,7 @@ export class VerdictsClientService {
     pageNumber: number
     searchTerm: string
     caseNumber?: string
-    courtLevel?: string
+    court?: string[]
     keywords?: string[]
     caseCategories?: string[]
     caseTypes?: string[]
@@ -169,7 +181,22 @@ export class VerdictsClientService {
     caseContact?: string
     pageSize?: number
   }) {
-    const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
+    const selectedCourts = input.court ?? []
+    const hasNoCourtFilter = selectedCourts.length === 0
+    const includesSupremeCourt = selectedCourts.includes(SUPREME_COURT)
+    const goproCourts = selectedCourts.filter(
+      (court) => court !== SUPREME_COURT,
+    )
+    const goproCourtsForApi =
+      goproCourts.length > 0 &&
+      isFullGoproSlugSelection(goproCourts, ALL_VERDICT_LIST_GOPRO_SLUGS)
+        ? []
+        : goproCourts
+
+    const shouldFetchGoproVerdicts = hasNoCourtFilter || goproCourts.length > 0
+    const shouldFetchSupremeCourtVerdicts =
+      !input.caseCategories?.length &&
+      (hasNoCourtFilter || includesSupremeCourt)
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
 
@@ -181,14 +208,14 @@ export class VerdictsClientService {
         : ITEMS_PER_PAGE
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      !onlyFetchSupremeCourtVerdicts
+      shouldFetchGoproVerdicts
         ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
               itemsPerPage,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
-              courts: input.courtLevel ? input.courtLevel.split(',') : [],
+              courts: goproCourtsForApi,
               keywords: input.keywords,
               caseCategories: input.caseCategories,
               caseNumber: input.caseNumber,
@@ -200,8 +227,7 @@ export class VerdictsClientService {
             },
           })
         : { status: 'rejected', items: [], total: 0 },
-      !input.caseCategories?.length &&
-      (!input.courtLevel || onlyFetchSupremeCourtVerdicts)
+      shouldFetchSupremeCourtVerdicts
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
@@ -247,10 +273,7 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          verdictJudges:
-            goproItem.court?.code !== 'landsrettur'
-              ? goproItem.judges ?? []
-              : [],
+          verdictJudges: [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -360,7 +383,9 @@ export class VerdictsClientService {
           courts: [COURT_OF_APPEAL],
         },
       }),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+        akvardanir: 0,
+      }),
       goproVerdictApi.getCaseTypesV2({
         requestData: {
           courts: ALL_DISTRICT_COURTS,
@@ -503,22 +528,57 @@ export class VerdictsClientService {
 
   async getCourtAgendas(input: {
     page?: number
-    court?: string
+    court?: string[]
     dateFrom?: string
     dateTo?: string
     lawyer?: string
     scheduleTypes?: string[]
     caseTypes?: string[]
   }) {
-    const onlyFetchSupremeCourtAgendas = input.court === SUPREME_COURT
+    const selectedCourts = input.court ?? []
+    const hasNoCourtFilter = selectedCourts.length === 0
+    const includesSupremeCourt = selectedCourts.includes(SUPREME_COURT)
+    const goproCourts = selectedCourts.filter(
+      (court) => court !== SUPREME_COURT,
+    )
+    const goproCourtsForApi =
+      goproCourts.length > 0 &&
+      isFullGoproSlugSelection(goproCourts, ALL_COURT_AGENDA_GOPRO_SLUGS)
+        ? []
+        : goproCourts
+    const hasScheduleTypesFilter = Boolean(input.scheduleTypes?.length)
+
+    // Supreme court has no schedule types, so skip it whenever a schedule type
+    // filter is active. Otherwise fetch it when the user hasn't filtered
+    // courts at all, or when the supreme court is explicitly included.
+    const shouldFetchSupremeCourtAgendas =
+      !hasScheduleTypesFilter && (hasNoCourtFilter || includesSupremeCourt)
+
+    // The gopro endpoint covers every court except the supreme court. Fetch
+    // from it when no courts are selected (= "all") or at least one non-
+    // supreme court is selected.
+    const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
+
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const parsedInputDateFrom = input.dateFrom
+      ? safelyConvertStringToDate(input.dateFrom, 'dateFrom', this.logger)
+      : undefined
+    const effectiveGoproDateFrom =
+      parsedInputDateFrom && parsedInputDateFrom >= today
+        ? parsedInputDateFrom
+        : today
+    const goproDateFrom = effectiveGoproDateFrom.toISOString()
+    const goproDateTo = input.dateTo || undefined
+
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      (!input.court && !input.scheduleTypes?.length) ||
-      onlyFetchSupremeCourtAgendas
+      shouldFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
             agendaSearchRequest: {
               page: pageNumber,
@@ -543,24 +603,20 @@ export class VerdictsClientService {
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
-      onlyFetchSupremeCourtAgendas
-        ? { status: 'rejected', items: [], total: 0 }
-        : goproCourtAgendasApi.getPublishedBookingsV2({
+      shouldFetchGoproAgendas
+        ? goproCourtAgendasApi.getPublishedBookingsV2({
             pageNumber: pageNumber,
-            courts: input.court ? input.court.split(',') : [],
+            courts: goproCourtsForApi,
             itemsPerPage,
-            dateFrom: input.dateFrom
-              ? input.dateFrom
-              : !input.dateTo
-              ? this.getDefaultDateFrom().dateString
-              : undefined,
-            dateTo: input.dateTo ? input.dateTo : undefined,
+            dateFrom: goproDateFrom,
+            dateTo: goproDateTo,
             lawyer: input.lawyer ? input.lawyer : undefined,
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',
             scheduleType: input.scheduleTypes ? input.scheduleTypes : undefined,
             caseType: input.caseTypes ? input.caseTypes : undefined,
-          }),
+          })
+        : { status: 'rejected', items: [], total: 0 },
     ])
 
     const items = []
@@ -581,6 +637,7 @@ export class VerdictsClientService {
           court: SUPREME_COURT,
           type: '',
           title: agenda.title ?? '',
+          hearingTime: sanitizeHtml(agenda.hearingTime ?? ''),
         })
       }
     } else {
@@ -605,6 +662,9 @@ export class VerdictsClientService {
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
           caseSubType: agenda.caseSubType ?? '',
+          hearingTime: !agenda.court?.code?.startsWith('hd')
+            ? sanitizeHtml(agenda.length ?? '')
+            : undefined,
         })
       }
     } else {
@@ -695,11 +755,17 @@ export class VerdictsClientService {
     return lawyers
   }
 
-  async getSupremeCourtDeterminations(input: { page: number }) {
+  async getSupremeCourtDeterminations(input: {
+    page: number
+    caseTypes?: string[]
+    searchTerm?: string
+  }) {
     const response =
       await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
         page: input.page ?? 1,
         limit: 10,
+        caseTypes: input.caseTypes ? input.caseTypes : undefined,
+        searchTerm: input.searchTerm ? input.searchTerm : undefined,
       })
 
     return {
@@ -798,42 +864,35 @@ export class VerdictsClientService {
       ])
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
+    const courtOfAppealMap = new Map<string, { id: string; label: string }>()
+    const districtCourtMap = new Map<string, { id: string; label: string }>()
 
-    const courtOfAppealSet = new Set<string>()
-    const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!courtOfAppealSet.has(scheduleType.label)) {
-            courtOfAppealSet.add(scheduleType.label)
-            courtOfAppealItems.push(item)
-          }
+          courtOfAppealMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
-    const supremeCourtItems: Array<{ id: string; label: string }> = []
-
-    const districtCourtSet = new Set<string>()
-    const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
         if (scheduleType.label && scheduleType.id !== undefined) {
-          const id = String(scheduleType.id)
-          const item = { id, label: scheduleType.label }
-          if (!mapOfAll.has(scheduleType.label)) {
-            mapOfAll.set(scheduleType.label, item)
+          const item = {
+            id: String(scheduleType.id),
+            label: scheduleType.label,
           }
-          if (!districtCourtSet.has(scheduleType.label)) {
-            districtCourtSet.add(scheduleType.label)
-            districtCourtItems.push(item)
-          }
+          districtCourtMap.set(scheduleType.label, item)
+          mapOfAll.set(scheduleType.label, item)
         }
 
+    const courtOfAppealItems = Array.from(courtOfAppealMap.values())
     courtOfAppealItems.sort(sortAlpha('label'))
+
+    const districtCourtItems = Array.from(districtCourtMap.values())
     districtCourtItems.sort(sortAlpha('label'))
 
     const allItems = Array.from(mapOfAll.values())
@@ -844,7 +903,7 @@ export class VerdictsClientService {
         items: courtOfAppealItems,
       },
       supremeCourt: {
-        items: supremeCourtItems,
+        items: [],
       },
       districtCourt: {
         items: districtCourtItems,
@@ -863,5 +922,12 @@ export class VerdictsClientService {
     return {
       items: response.items ?? [],
     }
+  }
+
+  async getSupremeCourtDeterminationCaseTypes() {
+    const response = await this.supremeCourtApi.apiV2VerdictGetCaseTypesGet({
+      akvardanir: 1,
+    })
+    return response.items ?? []
   }
 }

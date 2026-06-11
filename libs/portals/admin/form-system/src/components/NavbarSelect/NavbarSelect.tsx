@@ -5,8 +5,8 @@ import {
   Maybe,
 } from '@island.is/api/schema'
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
-import { Box } from '@island.is/island-ui/core'
-import { useContext } from 'react'
+import { Box, Button } from '@island.is/island-ui/core'
+import { useContext, useMemo } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { NavComponent as SelectNavComponent } from '../NavComponent/NavComponent'
@@ -15,6 +15,7 @@ const filterSections = (
   sections: Maybe<Maybe<FormSystemSection>[]> | undefined,
 ): FormSystemSection[] => {
   if (!sections) return []
+
   return sections
     .filter(
       (section): section is FormSystemSection =>
@@ -30,10 +31,60 @@ const filterSections = (
 }
 
 export const NavbarSelect = () => {
-  const { control, selectStatus, openComponents } = useContext(ControlContext)
+  const { control, selectStatus, openComponents, setOpenComponents } =
+    useContext(ControlContext)
+
   const { activeItem, form } = control
   const { sections, screens, fields } = form
   let selectable = false
+
+  const inputSections = useMemo(() => filterSections(sections), [sections])
+
+  const inputScreens = useMemo(
+    () =>
+      screens?.filter(
+        (screen): screen is FormSystemScreen =>
+          screen !== null &&
+          screen !== undefined &&
+          inputSections.some((section) => section.id === screen.sectionId),
+      ) ?? [],
+    [screens, inputSections],
+  )
+
+  const inputSectionIds = useMemo(
+    () =>
+      inputSections
+        .map((section) => section.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputSections],
+  )
+
+  const inputScreenIds = useMemo(
+    () =>
+      inputScreens
+        .map((screen) => screen.id)
+        .filter((id): id is string => Boolean(id)),
+    [inputScreens],
+  )
+
+  const allNavbarItemsOpen =
+    inputSectionIds.length > 0 &&
+    inputSectionIds.every((id) => openComponents.sections.includes(id)) &&
+    inputScreenIds.every((id) => openComponents.screens.includes(id))
+
+  const toggleAllNavbarItems = () => {
+    setOpenComponents(
+      allNavbarItemsOpen
+        ? {
+            sections: [],
+            screens: [],
+          }
+        : {
+            sections: inputSectionIds,
+            screens: inputScreenIds,
+          },
+    )
+  }
 
   const paymentFields = fields
     ?.filter(
@@ -56,6 +107,7 @@ export const NavbarSelect = () => {
         ) {
           selectable = true
         }
+
         return (
           <SelectNavComponent
             key={field?.id}
@@ -74,6 +126,7 @@ export const NavbarSelect = () => {
   const renderScreensForSection = (section: FormSystemSection) => {
     if (section.sectionType === SectionTypes.PARTIES) return null
     if (section.sectionType === SectionTypes.PAYMENT) return null
+
     return screens
       ?.filter((screen) => screen?.sectionId === section.id)
       .map((screen) => (
@@ -114,8 +167,23 @@ export const NavbarSelect = () => {
 
   return (
     <>
+      <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
+        <Button
+          icon={allNavbarItemsOpen ? 'chevronUp' : 'chevronDown'}
+          iconType="filled"
+          circle
+          inline
+          variant="ghost"
+          size="small"
+          onClick={toggleAllNavbarItems}
+          disabled={inputSectionIds.length === 0}
+          title={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+          aria-label={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+        />
+      </Box>
+
       <Box style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
-        {filterSections(sections).map((section) => (
+        {inputSections.map((section) => (
           <Box key={section.id}>
             <SelectNavComponent
               type="Section"

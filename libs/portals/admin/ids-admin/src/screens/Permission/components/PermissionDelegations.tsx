@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
 import { MultiValue } from 'react-select'
@@ -7,7 +7,9 @@ import { useLocale } from '@island.is/localization'
 import {
   Box,
   Checkbox,
+  Divider,
   Hidden,
+  Input,
   Select,
   Stack,
   Text,
@@ -20,7 +22,10 @@ import {
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { m } from '../../../lib/messages'
-import { PermissionFormTypes } from '../EditPermission.schema'
+import {
+  PermissionFormTypes,
+  buildThirdPartyLoginUrl,
+} from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
@@ -34,6 +39,21 @@ import {
 } from './PermissionCategoriesAndTags.generated'
 
 const FIELD_PREFIX = 'field-'
+const THIRD_PARTY_URL_SEPARATOR = '?login_hint={{subjectId}}&target_link_uri='
+
+const parseThirdPartyLoginUrl = (
+  url?: string,
+): { originUrl: string; targetLinkUri: string } => {
+  if (!url) return { originUrl: '', targetLinkUri: '' }
+  const idx = url.indexOf(THIRD_PARTY_URL_SEPARATOR)
+  if (idx === -1) return { originUrl: '', targetLinkUri: '' }
+  return {
+    originUrl: url.substring(0, idx),
+    targetLinkUri: decodeURIComponent(
+      url.substring(idx + THIRD_PARTY_URL_SEPARATOR.length),
+    ),
+  }
+}
 
 type Option = { label: string; value: string; description: string }
 type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
@@ -41,11 +61,13 @@ type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
 
 export const PermissionDelegations = ({
   isNewPermissionsOptionsEnabled = false,
+  showThirdPartyUrlOptions = false,
 }: {
   isNewPermissionsOptionsEnabled?: boolean
+  showThirdPartyUrlOptions?: boolean
 } = {}) => {
   const { formatMessage, lang } = useLocale()
-  const { selectedPermission, permission } = usePermission()
+  const { selectedPermission, permission, actionData } = usePermission()
   const { isSuperAdmin } = useSuperAdmin()
   const {
     isAccessControlled,
@@ -62,18 +84,22 @@ export const PermissionDelegations = ({
     getDelegationProviderTranslations('apiScopeDelegation', formatMessage),
   )
 
+  const parsedUrl = parseThirdPartyLoginUrl(
+    (selectedPermission as { thirdPartyLoginUrl?: string }).thirdPartyLoginUrl,
+  )
+
   const [inputValues, setInputValues] = useEnvironmentState<{
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
     supportedDelegationTypes: string[]
-    addedDelegationTypes: string[]
-    removedDelegationTypes: string[]
+    originUrl: string
+    targetLinkUri: string
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
     supportedDelegationTypes,
-    addedDelegationTypes: [],
-    removedDelegationTypes: [],
+    originUrl: parsedUrl.originUrl,
+    targetLinkUri: parsedUrl.targetLinkUri,
   })
 
   const showCategoriesAndTags =
@@ -95,7 +121,7 @@ export const PermissionDelegations = ({
     },
   )
 
-  const categories: Option[] = useMemo(
+  const allCategories: Option[] = useMemo(
     () =>
       categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
         label: cat.title,
@@ -103,6 +129,14 @@ export const PermissionDelegations = ({
         description: cat.description ?? '',
       })) ?? [],
     [categoriesData?.authAdminScopeCategories],
+  )
+
+  const categories: Option[] = useMemo(
+    () =>
+      allCategories.filter(
+        (cat) => isSuperAdmin || !cat.value.startsWith('virtual-'),
+      ),
+    [allCategories, isSuperAdmin],
   )
   const tags: Option[] = useMemo(
     () =>
@@ -124,26 +158,70 @@ export const PermissionDelegations = ({
     useEnvironmentState(false)
 
   useEffect(() => {
-    if (
-      !showCategoriesAndTags ||
-      (tags.length === 0 && categories.length === 0)
-    )
-      return
+    if (!showCategoriesAndTags || categoriesLoading || tagsLoading) return
     setSelectedCategories(
-      (selectedPermission.categoryIds ?? [])
-        .map((id) => categories.find((c) => c.value === id))
-        .filter((c): c is Option => c !== undefined),
+      (selectedPermission.categoryIds ?? []).map(
+        (id) =>
+          allCategories.find((c) => c.value === id) ?? {
+            label: formatMessage(m.deletedCategory, { id }),
+            value: id,
+            description: formatMessage(m.deletedCategoryDescription),
+          },
+      ),
     )
     setSelectedTags(
-      (selectedPermission.tagIds ?? [])
-        .map((id) => tags.find((t) => t.value === id))
-        .filter((t): t is Option => t !== undefined),
+      (selectedPermission.tagIds ?? []).map(
+        (id) =>
+          tags.find((t) => t.value === id) ?? {
+            label: formatMessage(m.deletedTag, { id }),
+            value: id,
+            description: formatMessage(m.deletedTagDescription),
+          },
+      ),
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCategoriesAndTags, tags, categories])
+  }, [
+    showCategoriesAndTags,
+    tags,
+    categories,
+    categoriesLoading,
+    tagsLoading,
+    selectedPermission.environment,
+  ])
+
+  const [urlFieldBlurred, setUrlFieldBlurred] = useState(false)
+
+  useEffect(() => {
+    if (
+      actionData?.intent === PermissionFormTypes.DELEGATIONS &&
+      actionData?.data
+    ) {
+      setCategoriesTagsDirty(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData])
+
+  const urlDirty =
+    showThirdPartyUrlOptions &&
+    (inputValues.originUrl !== parsedUrl.originUrl ||
+      inputValues.targetLinkUri !== parsedUrl.targetLinkUri)
+
+  const urlPartiallyFilled =
+    showThirdPartyUrlOptions &&
+    ((!!inputValues.originUrl && !inputValues.targetLinkUri) ||
+      (!inputValues.originUrl && !!inputValues.targetLinkUri))
+
+  const showUrlErrors = urlFieldBlurred && urlPartiallyFilled
+
+  const delegationTypesDirty = !isEqual(
+    [...(inputValues.supportedDelegationTypes ?? [])].sort(),
+    [...(supportedDelegationTypes ?? [])].sort(),
+  )
 
   const customValidation = useCallback(
     (_newFormData: FormData, _prevFormData: FormData) => {
+      if (urlDirty) return true
+      if (delegationTypesDirty) return true
       if (!showCategoriesAndTags) return false
       return categoriesTagsDirty
     },
@@ -153,72 +231,40 @@ export const PermissionDelegations = ({
       categoriesTagsDirty,
       selectedCategories,
       selectedTags,
+      urlDirty,
+      delegationTypesDirty,
     ],
   )
+
+  const categoryRequired =
+    showCategoriesAndTags &&
+    !categoriesLoading &&
+    categories.length > 0 &&
+    selectedCategories.length === 0
 
   const loadingCategoriesAndTags = categoriesLoading || tagsLoading
 
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split('-')[1]
 
-    if (checked) {
-      const newInputValues = { ...inputValues }
-      // should not be in removed delegation types if field is checked
-      if (inputValues.removedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes =
-          inputValues.removedDelegationTypes.filter((t) => t !== type)
+    setInputValues((prev) => {
+      const currentTypes = prev.supportedDelegationTypes ?? []
+      const isPresent = currentTypes.includes(type)
+      if (checked && !isPresent) {
+        return {
+          ...prev,
+          supportedDelegationTypes: [...currentTypes, type],
+        }
       }
-
-      // if not in supported delegation types, user is adding it for the first time
-      if (!supportedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes = [
-          ...inputValues.addedDelegationTypes,
-          type,
-        ]
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
+      if (!checked && isPresent) {
+        return {
+          ...prev,
+          supportedDelegationTypes: currentTypes.filter((t) => t !== type),
+        }
       }
-
-      // if already in supported delegation types, user is re-adding it
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    } else {
-      const newInputValues = { ...inputValues }
-      // should not be in added delegation types if field is not checked
-      if (inputValues.addedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes =
-          inputValues.addedDelegationTypes.filter((t) => t !== type)
-      }
-      // should not be in supported delegation types if field is not checked
-      if (inputValues.supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes =
-          inputValues.supportedDelegationTypes.filter((t) => t !== type)
-      }
-
-      // if not in removed delegation types, user is removing it for the first time
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes = [
-          ...inputValues.removedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    }
+      return prev
+    })
   }
-
-  const supportsCustomDelegation =
-    selectedPermission.supportedDelegationTypes?.includes(
-      AuthDelegationType.Custom,
-    ) ?? false
 
   return (
     <FormCard
@@ -226,11 +272,10 @@ export const PermissionDelegations = ({
       intent={PermissionFormTypes.DELEGATIONS}
       inSync={checkEnvironmentsSync(permission.environments, [
         'supportedDelegationTypes',
-        ...(supportsCustomDelegation
-          ? (['categoryIds', 'tagIds'] as const)
-          : []),
+        ...(showCategoriesAndTags ? (['categoryIds', 'tagIds'] as const) : []),
       ])}
       customValidation={customValidation}
+      submitDisabled={categoryRequired || urlPartiallyFilled}
     >
       <Stack space={4}>
         {providers.map((provider) =>
@@ -289,13 +334,6 @@ export const PermissionDelegations = ({
                                       selectedCategories.map((c) => c.value),
                                     )}
                                   />
-                                  <input
-                                    type="hidden"
-                                    name="originalCategoryIds"
-                                    value={JSON.stringify(
-                                      selectedPermission.categoryIds ?? [],
-                                    )}
-                                  />
                                   <Select
                                     value={selectedCategories}
                                     options={categories}
@@ -319,6 +357,10 @@ export const PermissionDelegations = ({
                                     }}
                                     placeholder={formatMessage(
                                       m.selectCategoriesPlaceholder,
+                                    )}
+                                    hasError={categoryRequired}
+                                    errorMessage={formatMessage(
+                                      m.categoryRequired,
                                     )}
                                     isMulti
                                     size="sm"
@@ -344,13 +386,6 @@ export const PermissionDelegations = ({
                                     name="tagIds"
                                     value={JSON.stringify(
                                       selectedTags.map((t) => t.value),
-                                    )}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="originalTagIds"
-                                    value={JSON.stringify(
-                                      selectedPermission.tagIds ?? [],
                                     )}
                                   />
                                   <Select
@@ -385,6 +420,80 @@ export const PermissionDelegations = ({
                                 </Stack>
                               )}
                             </Box>
+                            {showThirdPartyUrlOptions && (
+                              <>
+                                <Divider />
+                                <Stack space={3}>
+                                  <Text paddingBottom={1}>
+                                    {formatMessage(m.thirdPartyLoginUrl)}
+                                  </Text>
+                                  <Text variant="small" as="p">
+                                    {formatMessage(
+                                      m.thirdPartyLoginUrlDescription,
+                                    )}
+                                  </Text>
+                                  <Input
+                                    name="originUrl"
+                                    value={inputValues.originUrl}
+                                    label={formatMessage(m.originUrl)}
+                                    size="xs"
+                                    hasError={
+                                      showUrlErrors && !inputValues.originUrl
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.originUrlRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        originUrl: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="targetLinkUri"
+                                    value={inputValues.targetLinkUri}
+                                    label={formatMessage(m.targetLinkUri)}
+                                    size="xs"
+                                    hasError={
+                                      showUrlErrors &&
+                                      !inputValues.targetLinkUri
+                                    }
+                                    errorMessage={formatMessage(
+                                      m.targetLinkUriRequired,
+                                    )}
+                                    onBlur={() => setUrlFieldBlurred(true)}
+                                    onChange={(e) =>
+                                      setInputValues((prev) => ({
+                                        ...prev,
+                                        targetLinkUri: e.target.value,
+                                      }))
+                                    }
+                                  />
+                                  <Input
+                                    name="linkPreview"
+                                    label={formatMessage(m.linkPreview)}
+                                    size="xs"
+                                    readOnly
+                                    textarea
+                                    rows={3}
+                                    value={
+                                      inputValues.originUrl &&
+                                      inputValues.targetLinkUri
+                                        ? buildThirdPartyLoginUrl(
+                                            inputValues.originUrl,
+                                            inputValues.targetLinkUri,
+                                          )
+                                        : ''
+                                    }
+                                    placeholder={formatMessage(
+                                      m.linkPreviewPlaceholder,
+                                    )}
+                                  />
+                                </Stack>
+                              </>
+                            )}
                           </Stack>
                         ) : undefined
                       }
@@ -395,16 +504,13 @@ export const PermissionDelegations = ({
             </Stack>
           ),
         )}
-        {inputValues.removedDelegationTypes.map((type) => (
-          <Hidden key={type} print screen>
-            <input type="hidden" name="removedDelegationTypes" value={type} />
-          </Hidden>
-        ))}
-        {inputValues.addedDelegationTypes.map((type) => (
-          <Hidden key={type} print screen>
-            <input type="hidden" name="addedDelegationTypes" value={type} />
-          </Hidden>
-        ))}
+        <Hidden print screen>
+          <input
+            type="hidden"
+            name="supportedDelegationTypes"
+            value={JSON.stringify(inputValues.supportedDelegationTypes ?? [])}
+          />
+        </Hidden>
       </Stack>
     </FormCard>
   )

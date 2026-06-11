@@ -31,6 +31,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   AuthDelegationProvider,
@@ -47,6 +48,7 @@ describe('DelegationsIndexService', () => {
   let factory: FixtureFactory
   let sequelize: Sequelize
   let nationalRegistryApi: NationalRegistryClientService
+  let nationalRegistryV3Api: NationalRegistryV3ClientService
   let rskApi: RskRelationshipsClient
   let delegationModel: typeof Delegation
   let delegationScopeModel: typeof DelegationScope
@@ -97,6 +99,25 @@ describe('DelegationsIndexService', () => {
       .spyOn(nationalRegistryApi, 'getCustodyChildren')
       .mockImplementation(async () => testCase.fromChildren)
 
+    // mock national registry v3 (Midlun) for the ward delegation v3 code path
+    jest
+      .spyOn(nationalRegistryV3Api, 'getAllDataIndividual')
+      .mockImplementation(async (nationalId: string) => {
+        if (nationalId === user.nationalId) {
+          return {
+            kennitala: nationalId,
+            forsja: {
+              born: testCase.fromChildren.map((childId) => ({
+                barnKennitala: childId,
+                barnNafn: faker.name.findName(),
+              })),
+            },
+          }
+        }
+
+        return { kennitala: nationalId, nafn: faker.name.findName() }
+      })
+
     // mock rsk for procuration delegations
     jest
       .spyOn(rskApi, 'getIndividualRelationships')
@@ -129,6 +150,8 @@ describe('DelegationsIndexService', () => {
           name: faker.name.findName(),
         }),
       )
+
+    nationalRegistryV3Api = app.get(NationalRegistryV3ClientService)
 
     rskApi = app.get(RskRelationshipsClient)
   })

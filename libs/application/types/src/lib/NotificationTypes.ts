@@ -21,6 +21,17 @@ export enum NotificationType {
   TransferOfVehicleOwnershipPruned = 'TransferOfVehicleOwnershipPrunedNotification',
   ChangeCoOwnerOfVehiclePruned = 'ChangeCoOwnerOfVehiclePrunedNotification',
   ChangeOperatorOfVehiclePruned = 'ChangeOperatorOfVehiclePrunedNotification',
+  PaymentReminder = 'PaymentReminderNotification',
+  ApplicationCompletionReminder = 'ApplicationCompletionReminderNotification',
+  TransferOfMachineOwnershipPruned = 'TransferOfMachineOwnershipPrunedNotification',
+  AccidentNotificationPruned = 'AccidentNotificationPrunedNotification',
+  PassportPruned = 'PassportPrunedNotification',
+  IdCardPruned = 'IdCardPrunedNotification',
+  NewPrimarySchoolPruned = 'NewPrimarySchoolPrunedNotification',
+  ChildrenResidenceChangePruned = 'ChildrenResidenceChangePrunedNotification',
+  MarriageConditionsPruned = 'MarriageConditionsPrunedNotification',
+  FinancialAidPruned = 'FinancialAidPrunedNotification',
+  RentalAgreementPruned = 'RentalAgreementPrunedNotification',
 }
 
 interface NotificationKeysMap {
@@ -74,6 +85,13 @@ interface NotificationKeysMap {
   [NotificationType.NewPrimarySchool]: {
     name: string
     id: string
+    applicationLink: string
+  }
+  [NotificationType.PaymentReminder]: {
+    applicationLink: string
+    expiryDate: string
+  }
+  [NotificationType.ApplicationCompletionReminder]: {
     applicationLink: string
   }
 }
@@ -148,6 +166,39 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.ChangeOperatorOfVehiclePruned]: {
     templateId: 'HNIPP.AS.TA.COV.PRUNED',
+  },
+  [NotificationType.PaymentReminder]: {
+    templateId: 'HNIPP.AS.PAY.REMINDER',
+  },
+  [NotificationType.ApplicationCompletionReminder]: {
+    templateId: 'HNIPP.AS.COMPLETION.REMINDER',
+  },
+  [NotificationType.TransferOfMachineOwnershipPruned]: {
+    templateId: 'HNIPP.AS.VER.TOMO.PRUNED',
+  },
+  [NotificationType.AccidentNotificationPruned]: {
+    templateId: 'HNIPP.AS.AN.PRUNED',
+  },
+  [NotificationType.PassportPruned]: {
+    templateId: 'HNIPP.AS.PA.PRUNED',
+  },
+  [NotificationType.IdCardPruned]: {
+    templateId: 'HNIPP.AS.ID.PRUNED',
+  },
+  [NotificationType.NewPrimarySchoolPruned]: {
+    templateId: 'HNIPP.AS.NPS.PRUNED',
+  },
+  [NotificationType.ChildrenResidenceChangePruned]: {
+    templateId: 'HNIPP.AS.CRC.V2.PRUNED',
+  },
+  [NotificationType.MarriageConditionsPruned]: {
+    templateId: 'HNIPP.AS.MAC.PRUNED',
+  },
+  [NotificationType.FinancialAidPruned]: {
+    templateId: 'HNIPP.AS.FA.PRUNED',
+  },
+  [NotificationType.RentalAgreementPruned]: {
+    templateId: 'HNIPP.AS.HMS.RA.PRUNED',
   },
 } as const)
 

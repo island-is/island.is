@@ -2,8 +2,9 @@ import faker from 'faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
+  AppealCaseState,
+  AppealCaseTransition,
   Case,
-  CaseAppealState,
   CaseFile,
   CaseFileCategory,
   CaseFileState,
@@ -17,6 +18,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { TransitionAppealCaseDocument } from './hooks/useAppealCase/transitionAppealCase.generated'
 import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
 export const mockCourt = {
@@ -139,9 +141,37 @@ export const mockTransitonCaseMutation = (caseId: string) => [
       data: {
         transitionCase: {
           state: CaseState.ACCEPTED,
-          appealState: CaseAppealState.COMPLETED,
+          appealState: AppealCaseState.COMPLETED,
           statementDeadline: '2021-09-09T12:00:00.000Z',
           appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
+        },
+      },
+    },
+  },
+]
+
+export const mockTransitionAppealCaseMutation = (
+  caseId: string,
+  appealCaseId: string,
+) => [
+  {
+    request: {
+      query: TransitionAppealCaseDocument,
+      variables: {
+        input: {
+          caseId,
+          appealCaseId,
+          transition: AppealCaseTransition.COMPLETE_APPEAL,
+        },
+      },
+    },
+    result: {
+      data: {
+        transitionAppealCase: {
+          id: appealCaseId,
+          appealState: AppealCaseState.COMPLETED,
+          appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
+          appealRulingDate: '2021-09-09T12:00:00.000Z',
         },
       },
     },

@@ -149,6 +149,13 @@ export class ApiScopeBaseDTO {
   })
   readonly requiresConfirmation!: boolean
 
+  @IsString()
+  @ApiProperty({
+    example: '',
+    description: 'URL to redirect to for third party delegation login',
+  })
+  readonly thirdPartyLoginUrl!: string
+
   @IsArray()
   @IsOptional()
   @ApiProperty({

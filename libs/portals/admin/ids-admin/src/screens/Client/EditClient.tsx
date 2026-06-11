@@ -5,7 +5,6 @@ import { Outlet } from 'react-router-dom'
 import {
   AuthAdminClientType,
   AuthAdminEnvironment,
-  AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
 import {
   AlertMessage,
@@ -26,6 +25,7 @@ import ClientsUrl from './components/ClientsUrl'
 import { DangerZone } from './components/DangerZone'
 import Delegation from './components/Delegation'
 import Lifetime from './components/Lifetime'
+import AllowedCorsOrigins from './components/AllowedCorsOrigins'
 import Permissions from './components/Permissions'
 import { RevokeSecrets } from './components/RevokeSecrets/RevokeSecrets'
 import Translations from './components/Translations'
@@ -37,6 +37,7 @@ import { useClient } from './ClientContext'
 
 import * as styles from './Client.css'
 import { IDSAdminExternalPaths } from '../../lib/paths'
+import format from 'date-fns/format'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -74,6 +75,18 @@ export const EditClient = () => {
               >
                 <ClientType client={client} />
               </div>
+            }
+            postHeader={
+              selectedEnvironment.modified && (
+                <Text variant="small">
+                  {formatMessage(m.modified, {
+                    date: format(
+                      new Date(selectedEnvironment.modified),
+                      'dd.MM.yyyy HH:mm',
+                    ),
+                  })}
+                </Text>
+              )
             }
           />
         )}
@@ -147,6 +160,11 @@ export const EditClient = () => {
           <Permissions
             allowedScopes={selectedEnvironment?.allowedScopes ?? []}
           />
+          {!isMachineApplication && (
+            <AllowedCorsOrigins
+              allowedCorsOrigins={selectedEnvironment?.allowedCorsOrigins ?? []}
+            />
+          )}
           {!isMachineApplication && (
             <Delegation
               promptDelegations={selectedEnvironment.promptDelegations}

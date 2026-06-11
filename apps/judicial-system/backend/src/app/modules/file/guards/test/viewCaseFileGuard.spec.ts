@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseAppealState,
   CaseState,
   completedCaseStates,
   courtOfAppealsRoles,
@@ -137,97 +136,62 @@ describe('View Case File Guard', () => {
   })
 
   describe.each(courtOfAppealsRoles)('role %s', (role) => {
-    describe.each(completedCaseStates)('%s cases', (state) => {
-      const accessibleCaseAppealStates = [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
-        CaseAppealState.WITHDRAWN,
-      ]
+    describe.each([
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      ...completedCaseStates,
+    ])('can view case files for %s cases', (state) => {
+      let then: Then
 
-      describe.each(accessibleCaseAppealStates)(
-        'can view case files for %s cases',
-        (appealState) => {
-          let then: Then
-
-          beforeEach(() => {
-            mockRequest.mockImplementationOnce(() => ({
-              user: {
-                currentUser: {
-                  role,
-                  institution: { type: InstitutionType.COURT_OF_APPEALS },
-                },
-              },
-              case: { state, appealCase: { appealState } },
-            }))
-
-            then = givenWhenThen()
-          })
-
-          it('should activate', () => {
-            expect(then.result).toBe(true)
-          })
-        },
-      )
-
-      describe.each([
-        undefined,
-        ...Object.values(CaseAppealState).filter(
-          (state) => !accessibleCaseAppealStates.includes(state),
-        ),
-      ])('can not view case files for %s cases', (appealState) => {
-        let then: Then
-
-        beforeEach(() => {
-          mockRequest.mockImplementationOnce(() => ({
-            user: {
-              currentUser: {
-                role,
-                institution: { type: InstitutionType.COURT_OF_APPEALS },
-              },
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: {
+            currentUser: {
+              role,
+              institution: { type: InstitutionType.COURT_OF_APPEALS },
             },
-            case: { state, appealCase: { appealState } },
-          }))
+          },
+          case: { state },
+        }))
 
-          then = givenWhenThen()
-        })
+        then = givenWhenThen()
+      })
 
-        it('should throw ForbiddenException', () => {
-          expect(then.error).toBeInstanceOf(ForbiddenException)
-          expect(then.error.message).toBe(`Forbidden for ${role}`)
-        })
+      it('should activate', () => {
+        expect(then.result).toBe(true)
       })
     })
 
     describe.each(
       Object.keys(CaseState).filter(
-        (state) => !completedCaseStates.includes(state as CaseState),
+        (state) =>
+          ![
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            ...completedCaseStates,
+          ].includes(state as CaseState),
       ),
-    )('%s cases', (state) => {
-      describe.each([undefined, ...Object.values(CaseAppealState)])(
-        'can not view case files for %s cases',
-        (appealState) => {
-          let then: Then
+    )('can not view case files for %s cases', (state) => {
+      let then: Then
 
-          beforeEach(() => {
-            mockRequest.mockImplementationOnce(() => ({
-              user: {
-                currentUser: {
-                  role,
-                  institution: { type: InstitutionType.COURT_OF_APPEALS },
-                },
-              },
-              case: { state, appealCase: { appealState } },
-            }))
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: {
+            currentUser: {
+              role,
+              institution: { type: InstitutionType.COURT_OF_APPEALS },
+            },
+          },
+          case: { state },
+        }))
 
-            then = givenWhenThen()
-          })
+        then = givenWhenThen()
+      })
 
-          it('should throw ForbiddenException', () => {
-            expect(then.error).toBeInstanceOf(ForbiddenException)
-            expect(then.error.message).toBe(`Forbidden for ${role}`)
-          })
-        },
-      )
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${role}`)
+      })
     })
   })
 

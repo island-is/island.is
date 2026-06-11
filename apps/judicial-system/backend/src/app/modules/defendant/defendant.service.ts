@@ -1,18 +1,16 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseNotificationType,
   CaseState,
   CaseType,
   DefendantEventType,
@@ -20,6 +18,7 @@ import {
   DefenderChoice,
   isIndictmentCase,
   isPrisonAdminUser,
+  RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
@@ -29,6 +28,7 @@ import {
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  UpdateDefendant,
 } from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
@@ -44,33 +44,6 @@ export class DefendantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private validateDefenderInfoRemoval(
-    update: Pick<
-      UpdateDefendantDto | InternalUpdateDefendantDto,
-      | 'defenderNationalId'
-      | 'defenderName'
-      | 'defenderEmail'
-      | 'defenderPhoneNumber'
-    >,
-  ): void {
-    if (
-      'defenderNationalId' in update &&
-      update.defenderNationalId === null &&
-      !(
-        'defenderName' in update &&
-        update.defenderName === null &&
-        'defenderEmail' in update &&
-        update.defenderEmail === null &&
-        'defenderPhoneNumber' in update &&
-        update.defenderPhoneNumber === null
-      )
-    ) {
-      throw new BadRequestException(
-        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
-      )
-    }
-  }
-
   private addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
     theCase: Case,
     user: User,
@@ -79,7 +52,9 @@ export class DefendantService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+      body: {
+        type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+      },
     })
   }
 
@@ -232,7 +207,7 @@ export class DefendantService {
   async updateDatabaseDefendant(
     caseId: string,
     defendantId: string,
-    update: UpdateDefendantDto,
+    update: UpdateDefendant,
     transaction: Transaction,
   ) {
     return this.defendantRepositoryService.update(caseId, defendantId, update, {
@@ -386,7 +361,17 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
-    this.validateDefenderInfoRemoval(update)
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -417,7 +402,17 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    this.validateDefenderInfoRemoval(update)
+    if (
+      update.defenderNationalId === null &&
+      !(
+        update.defenderEmail === null &&
+        update.defenderName === null &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
+      const { defenderNationalId: _, ...rest } = update
+      update = rest
+    }
 
     // If there is a change in the defender choice after the judge has confirmed the choice,
     // we need to set the isDefenderChoiceConfirmed to false
@@ -531,7 +526,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
+      where: { defenderNationalId: nationalId },
       order: [['created', 'DESC']],
     })
   }
@@ -554,6 +549,23 @@ export class DefendantService {
 
       return { delivered: true }
     }
+
+    this.courtService
+      .updateRequestCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        theCase.defenderName,
+        theCase.defenderEmail,
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
+          { reason },
+        )
+      })
 
     return this.courtService
       .updateCaseWithDefendant(

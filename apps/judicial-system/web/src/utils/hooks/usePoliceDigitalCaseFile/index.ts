@@ -1,73 +1,74 @@
-import { useCallback } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 
+import { FormContext } from '../../../components'
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
-import { usePoliceDigitalCaseFileTokenUrlLazyQuery } from './policeDigitalCaseFileTokenUrl.generated'
 
-const usePoliceDigitalCaseFile = (
-  caseId: string,
-  caseOrigin: CaseOrigin | null | undefined,
-) => {
+const usePoliceDigitalCaseFile = () => {
+  const { workingCase, isLoadingWorkingCase, refreshCase } =
+    useContext(FormContext)
+  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
+  // originalAncestorId is resolved server-side (split case id for indictments,
+  // the extension's original ancestor for request cases). Fall back to caseId
+  // only to satisfy the nullable GraphQL type — the backend always sets it.
+  const effectiveCaseId = originalAncestorId ?? caseId
+
+  const handleCompleted = useCallback(
+    (completedData: {
+      policeDigitalCaseFiles?: { isNew?: boolean | null }[] | null
+    }) => {
+      if (completedData.policeDigitalCaseFiles?.some((file) => file.isNew)) {
+        refreshCase()
+      }
+    },
+    [refreshCase],
+  )
+
   const {
     data,
     loading: digitalCaseFilesLoading,
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId } },
-    skip: caseOrigin !== CaseOrigin.LOKE,
+    variables: { input: { caseId: effectiveCaseId } },
+    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
+    onCompleted: handleCompleted,
   })
 
   const [deleteMutation, { loading: isDeleting }] =
     useDeletePoliceDigitalCaseFileMutation()
 
-  const [getTokenUrlQuery, { loading: tokenUrlLoading }] =
-    usePoliceDigitalCaseFileTokenUrlLazyQuery({
-      fetchPolicy: 'no-cache',
-    })
+  useEffect(() => {
+    const channel = new BroadcastChannel('police-digital-file-redirect')
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'error') {
+        toast.error('Tengill á rafrænt skjal fannst ekki')
+      }
+    }
+    return () => channel.close()
+  }, [])
 
   const openDigitalCaseFileUrl = useCallback(
-    async (policeDigitalFileId: string) => {
-      const newTab = window.open('', '_blank')
-
-      if (!newTab) {
-        toast.error('Ekki tókst að opna nýjan flipa fyrir rafrænt skjal')
-        return
-      }
-
-      newTab.opener = null
-
-      try {
-        const result = await getTokenUrlQuery({
-          variables: {
-            input: { caseId, policeDigitalFileId },
-          },
-        })
-        const url = result.data?.policeDigitalCaseFileTokenUrl
-        if (url) {
-          newTab.location.assign(url)
-        } else {
-          newTab.close()
-          toast.error('Tengill á rafrænt skjal fannst ekki')
-        }
-      } catch {
-        newTab.close()
-        toast.error('Upp kom villa við að sækja tengil á rafrænt skjal')
-      }
+    (policeDigitalFileId: string) => {
+      window.open(
+        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
+        '_blank',
+        'noopener',
+      )
     },
-    [caseId, getTokenUrlQuery],
+    [effectiveCaseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId, fileId } },
+          variables: { input: { caseId: effectiveCaseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -80,7 +81,7 @@ const usePoliceDigitalCaseFile = (
         return false
       }
     },
-    [caseId, deleteMutation, refetch],
+    [effectiveCaseId, deleteMutation, refetch],
   )
 
   return {
@@ -88,7 +89,6 @@ const usePoliceDigitalCaseFile = (
     digitalCaseFilesLoading,
     digitalCaseFilesError,
     isDeleting,
-    tokenUrlLoading,
     openDigitalCaseFileUrl,
     deletePoliceDigitalCaseFile,
   }

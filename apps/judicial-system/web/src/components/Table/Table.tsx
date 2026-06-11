@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -6,7 +6,10 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
@@ -16,6 +19,7 @@ import {
   ContextMenuItem,
   IconButton,
 } from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
@@ -27,6 +31,7 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
+import { areAllDefenderDefendantsCancelledOrDismissed } from '../../utils/utils'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
@@ -86,6 +91,7 @@ const Table: FC<TableProps> = (props) => {
   const { isTransitioningCase } = useCase()
   const { width } = useViewport()
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const handleCaseClick = (theCase: CaseListEntry) => {
     if (!onClick?.(theCase)) {
@@ -145,8 +151,34 @@ const Table: FC<TableProps> = (props) => {
       column: keyof CaseListEntry,
     ) => {
       switch (column) {
-        case 'defendants':
-          return entry.defendants?.[0]?.name ?? ''
+        case 'defendants': {
+          const defenderDefendants = entry.defendants?.filter(
+            (defendant) =>
+              defendant.defenderNationalId &&
+              defendant.isDefenderChoiceConfirmed &&
+              normalizeAndFormatNationalId(user?.nationalId).includes(
+                defendant.defenderNationalId,
+              ),
+          )
+
+          const allDefenderDefendantsAreCancelledOrDismissed =
+            areAllDefenderDefendantsCancelledOrDismissed(
+              user?.nationalId,
+              entry.defendants,
+            )
+
+          const visibleDefendants = entry.defendants?.filter((defendant) => {
+            if (allDefenderDefendantsAreCancelledOrDismissed) {
+              return defenderDefendants?.some((d) => d.id === defendant.id)
+            }
+            return (
+              defendant.indictmentCancelledOrDismissedState === null ||
+              defendant.indictmentCancelledOrDismissedState === undefined
+            )
+          })
+
+          return visibleDefendants?.[0]?.name ?? ''
+        }
         case 'courtCaseNumber':
           return entry.courtCaseNumber ?? ''
         case 'state':
@@ -203,7 +235,7 @@ const Table: FC<TableProps> = (props) => {
     if (sortConfig) {
       data.sort(getSortFn(sortConfig, sortConfig.sortFn))
     }
-  }, [data, formatMessage, sortConfig])
+  }, [data, formatMessage, sortConfig, user?.nationalId])
 
   return width < theme.breakpoints.lg ? (
     <>

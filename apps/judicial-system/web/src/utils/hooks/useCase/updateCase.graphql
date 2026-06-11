@@ -4,8 +4,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     created
     modified
     type
-    indictmentSubtypes
     description
+    indictmentSubtypes
     state
     policeCaseNumbers
     defendants {
@@ -179,48 +179,20 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       legalArguments
     }
     requestDriversLicenseSuspension
-    isStatementDeadlineExpired
-    statementDeadline
     canBeAppealed
     hasBeenAppealed
-    appealedByRole
-    appealedDate
     appealDeadline
     appealCase {
-      appealState
-      appealCaseNumber
-      appealReceivedByCourtDate
-      prosecutorStatementDate
-      defendantStatementDate
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
-      appealRulingModifiedHistory
-      requestAppealRulingNotToBePublished
-      appealValidToDate
-      isAppealCustodyIsolation
-      appealIsolationToDate
+      id
+      appealedByRole
+      appealedDate
+      statementDeadline
+      isStatementDeadlineExpired
     }
     prosecutorsOffice {
       id
       name
     }
-    indictmentReturnedExplanation
     indictmentDecision
     indictmentDeniedExplanation
     mergeCase {

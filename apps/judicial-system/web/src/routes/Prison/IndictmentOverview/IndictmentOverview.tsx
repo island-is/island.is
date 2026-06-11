@@ -2,7 +2,6 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Option, Text, toast } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -27,6 +26,7 @@ import {
   useSentToPrisonAdminDate,
 } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   Defendant,
@@ -161,7 +161,7 @@ const IndictmentOverview = () => {
     >
       <PageHeader title="Yfirlit ákæru - Réttarvörslugátt" />
       <FormContentContainer>
-        <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
+        <PageTitle>
           {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.FINE
             ? 'Viðurlagaákvörðun til fullnustu'
@@ -215,6 +215,13 @@ const IndictmentOverview = () => {
                 judgeName={workingCase.judge?.name}
               />
             </Box>
+          )}
+        {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
+          workingCase.appealCase?.appealConclusion && (
+            <Conclusion
+              title="Úrskurðarorð Landsréttar"
+              conclusionText={workingCase.appealCase?.appealConclusion}
+            />
           )}
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>

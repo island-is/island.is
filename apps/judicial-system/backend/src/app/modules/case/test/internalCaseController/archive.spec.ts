@@ -161,7 +161,6 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
-      indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       isArchived: false,
       caseStrings: [
         { id: caseStringId1, value: 'original_comment1' },
@@ -196,7 +195,6 @@ describe('InternalCaseController - Archive', () => {
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
       indictmentDeniedExplanation: 'original_indictment_denied_explanation',
-      indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       appealCase: {
         appealConclusion: 'original_appeal_conclusion',
         appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
@@ -275,6 +273,11 @@ describe('InternalCaseController - Archive', () => {
         ],
         order: [
           [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
+            'displayOrder',
+            'ASC',
+          ],
           [
             { model: IndictmentCount, as: 'indictmentCounts' },
             'created',
@@ -373,7 +376,6 @@ describe('InternalCaseController - Archive', () => {
           appealConclusion: '',
           appealRulingModifiedHistory: '',
           indictmentDeniedExplanation: '',
-          indictmentReturnedExplanation: '',
           isArchived: true,
         },
         { transaction },

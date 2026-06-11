@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -227,7 +229,7 @@ export enum RequestCaseState {
   DELETED = CaseState.DELETED,
 }
 
-export enum CaseAppealState {
+export enum AppealCaseState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
@@ -241,6 +243,7 @@ export enum CaseTransition {
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   COMPLETE = 'COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  CORRECT = 'CORRECT',
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   DISMISS = 'DISMISS',
@@ -251,7 +254,6 @@ export enum CaseTransition {
   REJECT = 'REJECT',
   REOPEN = 'REOPEN',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
@@ -262,6 +264,7 @@ export enum IndictmentCaseTransition {
   ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
   COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  CORRECT = CaseTransition.CORRECT,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   MOVE = CaseTransition.MOVE,
@@ -269,7 +272,6 @@ export enum IndictmentCaseTransition {
   RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   REOPEN = CaseTransition.REOPEN,
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
-  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
@@ -339,7 +341,7 @@ export enum IndictmentDecision {
   COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
-export enum CaseAppealRulingDecision {
+export enum AppealCaseRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',
@@ -503,10 +505,8 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getStatementDeadline = (appealReceived: Date): string => {
-  return new Date(
-    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
-  ).toISOString()
+export const getStatementDeadline = (appealReceived: Date): Date => {
+  return addDays(appealReceived, 1)
 }
 
 export const isIndictmentCaseState = (
@@ -537,4 +537,11 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
+}
+
+export enum AppealCaseTransition {
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }

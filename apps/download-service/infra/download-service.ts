@@ -6,10 +6,13 @@ import {
   DistrictCommissionersPCard,
   Education,
   Finance,
+  HealthDirectorateHealthService,
   HealthInsurance,
+  MmsPrimarySchool,
   RentalService,
   UniversityCareers,
   Vehicles,
+  VMSTUnemployment,
   WorkMachines,
 } from '../../../infra/src/dsl/xroad'
 
@@ -68,6 +71,7 @@ export const serviceSetup = (services: {
       Base,
       Client,
       Finance,
+      HealthDirectorateHealthService,
       HealthInsurance,
       Vehicles,
       UniversityCareers,
@@ -76,6 +80,8 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       RentalService,
+      MmsPrimarySchool,
+      VMSTUnemployment,
     )
     .ingress({
       primary: {

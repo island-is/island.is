@@ -11,12 +11,14 @@ export const tabScreenOptions: StackScreenProps['options'] = {
       ? { backgroundColor: theme.color.white }
       : undefined,
   headerShadowVisible: false,
+  headerBackButtonDisplayMode: 'minimal',
 }
 
 export const modalScreenOptions: StackScreenProps['options'] = {
   headerShown: true,
   headerTransparent: false,
   headerShadowVisible: false,
+  headerBackButtonDisplayMode: 'minimal',
   headerStyle: {
     backgroundColor: theme.color.white,
   },

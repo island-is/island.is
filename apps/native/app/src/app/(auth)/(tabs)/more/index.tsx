@@ -5,8 +5,8 @@ import styled, { useTheme } from 'styled-components/native'
 
 import airplaneIcon from '@/assets/icons/airplane.png'
 import assetsIcon from '@/assets/icons/assets.png'
-import familyIcon from '@/assets/icons/family.png'
 import financeIcon from '@/assets/icons/finance.png'
+import personIcon from '@/assets/icons/person.png'
 import vehicleIcon from '@/assets/icons/vehicle.png'
 import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
@@ -82,15 +82,15 @@ export default function MoreScreen() {
         <Row>
           <MoreCard
             testID={testIDs.MORE_CARD_FAMILY}
-            title={intl.formatMessage({ id: 'profile.family' })}
-            icon={familyIcon}
+            title={intl.formatMessage({ id: 'profile.myData' })}
+            icon={personIcon}
             onPress={() => router.navigate('/more/family')}
           />
           <MoreCard
             testID={testIDs.MORE_CARD_VEHICLES}
             title={intl.formatMessage({ id: 'profile.vehicles' })}
             icon={vehicleIcon}
-            onPress={() => router.navigate('/more/vehicles')}
+            onPress={() => router.push('/more/vehicles')}
           />
         </Row>
         <Row>

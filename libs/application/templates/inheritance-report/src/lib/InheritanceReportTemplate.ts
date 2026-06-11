@@ -33,9 +33,50 @@ import {
   InheritanceReportFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { InheritanceReportExternalData } from '../types'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
+
+const haveAllSignatoriesSigned = (context: ApplicationContext) => {
+  const externalData = context.application
+    .externalData as InheritanceReportExternalData
+  const signatoriesResult = externalData?.getSignatories?.data
+  // Only allow completion once the signatory list has been fetched
+  // successfully. A successful fetch with no signatories is a valid
+  // completion case — every() is vacuously true — so those applications
+  // don't get stuck in signing until they are pruned. A failed fetch
+  // (success falsy) keeps the application in signing so it retries.
+  if (!signatoriesResult?.success) {
+    return false
+  }
+  return (signatoriesResult.signatories ?? []).every((s) => s.signed)
+}
+
+const submitApplicationAndFetchSignatories = [
+  defineTemplateApi({
+    action: ApiActions.submitToSyslumenn,
+    throwOnError: true,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 0,
+  }),
+  defineTemplateApi({
+    action: ApiActions.sendApplicationCopyToParties,
+    shouldPersistToExternalData: true,
+    externalDataId: 'sendApplicationCopyToParties',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 1,
+  }),
+  defineTemplateApi({
+    action: ApiActions.getSignatories,
+    shouldPersistToExternalData: true,
+    externalDataId: 'getSignatories',
+    throwOnError: false,
+    triggerEvent: DefaultEvents.SUBMIT,
+    order: 2,
+  }),
+]
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -119,7 +160,16 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
           actionCard: {
             displayPruneAt: true,
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
+          // Submit before resolving the SUBMIT target so cases with no
+          // required signatories skip the signing/status state entirely.
+          onExit: submitApplicationAndFetchSignatories,
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -155,42 +205,126 @@ const InheritanceReportTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          SUBMIT: [
+            {
+              target: States.done,
+              cond: haveAllSignatoriesSigned,
+            },
+            { target: States.signing },
+          ],
+        },
+      },
+      [States.signing]: {
+        meta: {
+          name: 'Signing',
+          status: 'inprogress',
+          progress: 0.85,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 90 * 24 * 3600 * 1000, // 90 days
+          },
+          actionCard: {
+            pendingAction: (application) => {
+              const externalData =
+                application.externalData as InheritanceReportExternalData
+              const signatoriesResult = externalData?.getSignatories?.data
+              const signatories = signatoriesResult?.signatories ?? []
+
+              // Signatory list not yet fetched successfully (submission still
+              // processing or a transient syslumenn failure): show a pending
+              // "still working" state rather than a misleading confirmation.
+              if (!signatoriesResult?.success) {
+                return {
+                  title: m.signingPendingTitle,
+                  content: m.signingPendingDescription,
+                  displayStatus: 'info',
+                }
+              }
+
+              // Fetched successfully with no signatories: nothing to sign at
+              // syslumenn, show a neutral "submitted" confirmation.
+              if (signatories.length === 0) {
+                return {
+                  title: m.applicationSubmittedTitle,
+                  content: m.applicationSubmittedDescription,
+                  displayStatus: 'info',
+                }
+              }
+
+              const allSigned = signatories.every((s) => s.signed)
+
+              if (allSigned) {
+                return {
+                  title: m.signingCompleteTitle,
+                  content: m.signingCompleteDescription,
+                  displayStatus: 'success',
+                }
+              }
+
+              return {
+                title: m.signingPendingTitle,
+                content: m.signingPendingDescription,
+                displayStatus: 'info',
+              }
+            },
+          },
+          roles: [
+            Roles.ESTATE_INHERITANCE_APPLICANT,
+            Roles.PREPAID_INHERITANCE_APPLICANT,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: () =>
+              import('../forms/signing').then((val) =>
+                Promise.resolve(val.signingForm),
+              ),
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: '',
+                type: 'primary' as const,
+              },
+            ],
+            write: 'all' as const,
+            read: 'all' as const,
+            api: [
+              defineTemplateApi({
+                action: ApiActions.getSignatories,
+                shouldPersistToExternalData: true,
+                externalDataId: 'getSignatories',
+                throwOnError: false,
+              }),
+            ],
+          })),
+        },
+        on: {
+          // Finalize only once all parties have signed at syslumenn. The signing
+          // form only surfaces the finish button when this condition is met,
+          // so this acts as an auto-completion on the applicant's next visit.
           SUBMIT: {
             target: States.done,
+            cond: haveAllSignatoriesSigned,
           },
         },
       },
       [States.done]: {
         meta: {
           name: 'Done',
-          status: 'approved',
+          status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(60),
           actionCard: {
             displayPruneAt: true,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.completeApplication,
-            throwOnError: true,
-          }),
           roles: [
-            {
-              id: Roles.ESTATE_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/done').then((val) =>
-                  Promise.resolve(val.done),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.PREPAID_INHERITANCE_APPLICANT,
-              formLoader: () =>
-                import('../forms/done').then((val) =>
-                  Promise.resolve(val.done),
-                ),
-              read: 'all',
-            },
-          ],
+            Roles.ESTATE_INHERITANCE_APPLICANT,
+            Roles.PREPAID_INHERITANCE_APPLICANT,
+          ].map((roleId) => ({
+            id: roleId,
+            formLoader: () =>
+              import('../forms/done').then((val) => Promise.resolve(val.done)),
+            read: 'all' as const,
+          })),
         },
       },
     },
@@ -199,12 +333,16 @@ const InheritanceReportTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    const { applicant } = application
+
+    if (applicant === nationalId) {
       if (application.answers.applicationFor === PREPAID_INHERITANCE) {
         return Roles.PREPAID_INHERITANCE_APPLICANT
       }
       return Roles.ESTATE_INHERITANCE_APPLICANT
     }
+
+    return undefined
   },
 }
 

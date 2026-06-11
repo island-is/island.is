@@ -20,6 +20,8 @@ import { m } from './messages/messages'
 import { dataSchema } from './dataSchema'
 import { ApiModule } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -49,6 +51,18 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   dataSchema,
   translationNamespaces: configuration.translation,
   allowMultipleApplicationsInDraft: false,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+    {
+      type: AuthDelegationType.LegalRepresentative,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+  ],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
     states: {

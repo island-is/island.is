@@ -1,11 +1,11 @@
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseOrigin,
   CaseType,
   courtSubtypes,
   EventType,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case, EventLog } from '../repository'
@@ -24,7 +24,7 @@ export interface RequestCaseEvent {
   // event specific fields
   requestDecision?: CaseDecision
   requestDecisionDescriptor?: string
-  courtOfAppealDecision?: CaseAppealRulingDecision
+  courtOfAppealDecision?: AppealCaseRulingDecision
   courtOfAppealDecisionDescriptor?: string
   parentCaseId?: string
 }
@@ -81,31 +81,31 @@ const getDecisionDescriptor = (decision: CaseDecision) => {
 }
 
 const getAppealRulingDecisionDescriptor = (
-  appealRulingDecision: CaseAppealRulingDecision,
+  appealRulingDecision: AppealCaseRulingDecision,
 ) => {
   switch (appealRulingDecision) {
-    case CaseAppealRulingDecision.ACCEPTING: {
+    case AppealCaseRulingDecision.ACCEPTING: {
       return 'Staðfesting'
     }
-    case CaseAppealRulingDecision.REPEAL: {
+    case AppealCaseRulingDecision.REPEAL: {
       return 'Fella úr gildi'
     }
-    case CaseAppealRulingDecision.CHANGED: {
+    case AppealCaseRulingDecision.CHANGED: {
       return 'Niðurstöðu breytt'
     }
-    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY: {
+    case AppealCaseRulingDecision.CHANGED_SIGNIFICANTLY: {
       return 'Niðurstöðu breytt að verulegu leyti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL: {
       return 'Frávísun frá Landsrétti'
     }
-    case CaseAppealRulingDecision.DISMISSED_FROM_COURT: {
+    case AppealCaseRulingDecision.DISMISSED_FROM_COURT: {
       return 'Frávísun frá héraðsdómi'
     }
-    case CaseAppealRulingDecision.REMAND: {
+    case AppealCaseRulingDecision.REMAND: {
       return 'Ómerking og heimvísun'
     }
-    case CaseAppealRulingDecision.DISCONTINUED: {
+    case AppealCaseRulingDecision.DISCONTINUED: {
       return 'Niðurfelling'
     }
     default: {
@@ -291,11 +291,7 @@ const caseReceivedByCourtOfAppeals = (
 const caseCompletedByCourtOfAppeals = (
   c: Case,
 ): RequestCaseEvent | undefined => {
-  const completedByCourtOfAppealsNotification = c.notifications?.find(
-    (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
-  )
-
-  if (!completedByCourtOfAppealsNotification) {
+  if (!c.appealCase?.appealRulingDate) {
     return undefined
   }
 
@@ -303,7 +299,7 @@ const caseCompletedByCourtOfAppeals = (
     id: c.id,
     event: 'CASE_COMPLETED_BY_COURT_OF_APPEALS',
     eventDescriptor: 'Kæru lokið',
-    date: completedByCourtOfAppealsNotification.created.toISOString(),
+    date: c.appealCase.appealRulingDate.toISOString(),
     institution: 'Landsréttur',
     ...commonFields(c),
   }

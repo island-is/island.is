@@ -1,12 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
+import { ApplicationJsonFieldDto } from './application.json.dto'
 
 export class NotificationDto {
   @IsString()
@@ -44,5 +46,13 @@ export class NotificationDto {
   @Expose()
   @ValidateNested()
   @ApiPropertyOptional({ type: ScreenDto })
-  screen?: ScreenDto
+  screenDto?: ScreenDto
+
+  @Type(() => ApplicationJsonFieldDto)
+  @IsOptional()
+  @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ApiPropertyOptional({ type: [ApplicationJsonFieldDto] })
+  fields?: ApplicationJsonFieldDto[]
 }

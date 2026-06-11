@@ -3,8 +3,8 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   PaymentTypesOverviewApi,
-  TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn,
-  TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn,
+  TrWebContractsExternalDigitalIcelandPaymentTypesOverviewBenefitChildrenInformationReturn,
+  TrWebContractsExternalDigitalIcelandPaymentTypesOverviewPaymentTypesOverviewReturn,
 } from '../../../gen/fetch/v1'
 
 @Injectable()
@@ -21,21 +21,24 @@ export class SocialInsuranceAdministrationPaymentTypesOverviewService {
   async getPaymentTypesOverview(
     user: User,
   ): Promise<
-    TrWebApiServicesCommonClientsModelsGetPaymentTypesOverviewReturn[] | null
+    | TrWebContractsExternalDigitalIcelandPaymentTypesOverviewPaymentTypesOverviewReturn[]
+    | null
   > {
-    return this.paymentTypesOverviewApiWithAuth(user)
-      .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet({})
+    const result = await this.paymentTypesOverviewApiWithAuth(user)
+      .apiProtectedV1PaymentTypesOverviewPaymentTypesOverviewGet()
       .catch(handle404)
+    return result?.paymentOverview ?? null
   }
 
   async getChildBenefitsInformation(
     user: User,
   ): Promise<
-    | TrWebApiServicesCommonClientsModelsGetBenefitChildrenInformationReturn[]
+    | TrWebContractsExternalDigitalIcelandPaymentTypesOverviewBenefitChildrenInformationReturn[]
     | null
   > {
-    return this.paymentTypesOverviewApiWithAuth(user)
-      .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet({})
+    const result = await this.paymentTypesOverviewApiWithAuth(user)
+      .apiProtectedV1PaymentTypesOverviewBenefitChildrenInformationGet()
       .catch(handle404)
+    return result?.benefitChildren ?? null
   }
 }

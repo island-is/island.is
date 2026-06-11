@@ -2,7 +2,7 @@ import { Base64 } from 'js-base64'
 import { v4 as uuid } from 'uuid'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
@@ -15,7 +15,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate } from '../../../../test'
 import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -23,7 +23,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  caseId: string,
+  theCase: Case,
+  appealCase: AppealCase,
+) => Promise<Then>
 
 describe('InternalCaseController - Deliver appeal to police', () => {
   const userId = uuid()
@@ -45,11 +49,17 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      appealCase: AppealCase,
+    ) => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverAppealToPolice(caseId, theCase, { user })
+        .deliverAppealToPolice(caseId, appealCase.id, theCase, appealCase, {
+          user,
+        })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -67,13 +77,14 @@ describe('InternalCaseController - Deliver appeal to police', () => {
     const validToDate = randomDate()
     const caseConclusion = 'test conclusion'
     const appealRulingPdf = 'test appeal ruling'
+    const appealCaseId = uuid()
     const caseFile = { id: uuid(), category: CaseFileCategory.APPEAL_RULING }
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
       type: caseType,
       state: caseState,
-      appealCase: { appealState: CaseAppealState.COMPLETED },
+      appealCase: { id: appealCaseId, appealState: AppealCaseState.COMPLETED },
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: uuid() }],
@@ -82,6 +93,10 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       caseFiles: [caseFile],
       policeDefendantNationalId: defendantNationalId,
     } as Case
+    const appealCase = {
+      id: appealCaseId,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
 
     let then: Then
 
@@ -93,7 +108,7 @@ describe('InternalCaseController - Deliver appeal to police', () => {
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
-      then = await givenWhenThen(caseId, theCase)
+      then = await givenWhenThen(caseId, theCase, appealCase)
     })
     it('should update the police case', async () => {
       expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(

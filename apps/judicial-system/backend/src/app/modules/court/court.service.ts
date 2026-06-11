@@ -19,7 +19,7 @@ import type {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseType,
@@ -53,6 +53,7 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -324,22 +325,18 @@ export class CourtService {
           return ''
         }
 
-        // Temporarily disabled because of a bug in court system communication
-        // this.eventService.postErrorEvent(
-        //   'Failed to create an email at court',
-        //   {
-        //     caseId,
-        //     actor: user.name,
-        //     institution: user.institution?.name,
-        //     courtId,
-        //     courtCaseNumber,
-        //     subject: this.mask(subject),
-        //     recipients,
-        //     fromEmail,
-        //     fromName,
-        //   },
-        //   reason,
-        // )
+        this.eventService.postErrorEvent(
+          'Failed to create an email at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+          },
+          reason,
+        )
 
         throw reason
       })
@@ -577,6 +574,45 @@ export class CourtService {
     }
   }
 
+  async updateRequestCaseWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.REQUEST_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update request case with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,
@@ -772,7 +808,7 @@ export class CourtService {
     caseId: string,
     appealCaseNumber?: string,
     isCorrection?: boolean,
-    appealRulingDecision?: CaseAppealRulingDecision,
+    appealRulingDecision?: AppealCaseRulingDecision,
     appealRulingDate?: Date,
   ): Promise<unknown> {
     try {

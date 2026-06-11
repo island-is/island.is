@@ -43,16 +43,18 @@ export {
 export type { Institution } from './lib/institution'
 
 export {
-  CaseNotificationType,
+  UmbrellaNotificationType,
+  RequestCaseNotificationType,
+  IndictmentCaseNotificationType,
+  AppealCaseNotificationType,
   SubpoenaNotificationType,
-  NotificationType,
+  TrackedNotificationType,
   InstitutionNotificationType,
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
-  IndictmentCaseNotificationType,
   EventNotificationType,
-  notificationTypes,
+  trackedNotificationTypes,
 } from './lib/notification'
 
 export {
@@ -60,11 +62,15 @@ export {
   eventTypes,
   DefendantEventType,
   defendantEventTypes,
+  AppealEventType,
+  appealEventTypes,
 } from './lib/eventLog'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
+
+export { MessageSuspensionCategory } from './lib/messageSuspension'
 
 export {
   CaseFileState,
@@ -113,7 +119,7 @@ export {
   IndictmentCaseSubtypes,
   type Subtype,
   courtSubtypes,
-  CaseAppealState,
+  AppealCaseState,
   RequestCaseState,
   CaseTransition,
   IndictmentCaseTransition,
@@ -122,7 +128,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseAppealRulingDecision,
+  AppealCaseRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   RequestSharedWhen,
@@ -147,6 +153,7 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
+  AppealCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
@@ -175,6 +182,7 @@ export {
   offenseSubstances,
   isTrafficViolationIndictmentCount,
   getIndictmentCountCompare,
+  sortIndictmentCounts,
 } from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 

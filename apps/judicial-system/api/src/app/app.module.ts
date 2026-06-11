@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import {
+  AppealCaseModule,
   AuthModule,
   authModuleConfig,
   BackendModule,
@@ -34,6 +35,7 @@ import {
   fileModuleConfig,
   IndictmentCountModule,
   InstitutionModule,
+  MessageSuspensionModule,
   PoliceModule,
   StatisticsModule,
   SubpoenaModule,
@@ -70,6 +72,7 @@ const autoSchemaFile = production
     AuthModule,
     UserModule,
     CaseModule,
+    AppealCaseModule,
     CaseListModule,
     StatisticsModule,
     DefendantModule,
@@ -86,6 +89,7 @@ const autoSchemaFile = production
     VictimModule,
     VerdictModule,
     CaseTableModule,
+    MessageSuspensionModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

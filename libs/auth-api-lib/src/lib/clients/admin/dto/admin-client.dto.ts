@@ -132,6 +132,18 @@ export class AdminClientDto {
   @ApiProperty()
   allowedAcr!: string[]
 
+  @ApiPropertyOptional()
+  modified?: Date
+
+  @ApiPropertyOptional()
+  archived?: Date
+
+  @ApiProperty({
+    description: 'Array of allowed CORS origins for the client.',
+    type: [String],
+  })
+  allowedCorsOrigins!: string[]
+
   @IsEnum(ClientSso)
   @ApiProperty({
     example: 'disabled',

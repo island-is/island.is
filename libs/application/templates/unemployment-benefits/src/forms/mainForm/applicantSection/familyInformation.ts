@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { applicant as applicantMessages } from '../../../lib/messages'
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   Application,
   ExternalData,
 } from '@island.is/application/types'
@@ -23,7 +23,7 @@ export const familyInformationSubSection = buildSubSection({
           id: 'familyInformation.children',
           minRows: (_, externalData: ExternalData) => {
             const children =
-              getValueViaPath<ApplicantChildCustodyInformation[]>(
+              getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                 externalData,
                 'childrenCustodyInformation.data',
               ) ?? []
@@ -48,7 +48,7 @@ export const familyInformationSubSection = buildSubSection({
                 index: number,
               ) => {
                 const children =
-                  getValueViaPath<ApplicantChildCustodyInformation[]>(
+                  getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,
                     'childrenCustodyInformation.data',
                   ) ?? []
@@ -68,7 +68,7 @@ export const familyInformationSubSection = buildSubSection({
                 index: number,
               ) => {
                 const children =
-                  getValueViaPath<ApplicantChildCustodyInformation[]>(
+                  getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,
                     'childrenCustodyInformation.data',
                   ) ?? []

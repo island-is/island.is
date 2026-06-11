@@ -93,6 +93,12 @@ const createMockAdminApi = (
   meScopesControllerFindByTenantIdAndScopeNameRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse(findByNameData)),
+  meScopeClientsControllerFindAllRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse([])),
+  meScopeUsersControllerFindUsersByScopeRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse([])),
 })
 
 const mockAdminDevApi = createMockAdminApi(
@@ -141,6 +147,10 @@ describe('ScopeService', () => {
     mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
     mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
     mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
+    // Find clients by scope
+    mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockClear()
+    mockAdminStagingApi.meScopeClientsControllerFindAllRaw.mockClear()
+    mockAdminProdApi.meScopeClientsControllerFindAllRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -239,6 +249,7 @@ describe('ScopeService', () => {
             isAccessControlled: false,
             categoryIds: [],
             tagIds: [],
+            userNationalIds: [],
           })),
         }),
       )
@@ -281,7 +292,12 @@ describe('ScopeService', () => {
       const environments = Object.entries(groupedScopes)
         .map(([_, scopes]) => scopes)
         .flat()
-        .map((env) => ({ ...env, categoryIds: [], tagIds: [] }))
+        .map((env) => ({
+          ...env,
+          categoryIds: [],
+          tagIds: [],
+          userNationalIds: [],
+        }))
 
       // Act
       const scopeResponses = await scopeService.getScope(currentUser, {
@@ -303,6 +319,70 @@ describe('ScopeService', () => {
         scopeName: mockedScope.name,
         environments: environments,
       } as Scope)
+    })
+
+    it('should get clients for a scope in a specific environment', async () => {
+      // Arrange
+      const scopeName = '@island.is/scope1'
+      const mockClients = [
+        {
+          clientId: '@island.is/web',
+          clientType: 'web',
+          displayName: [
+            { locale: 'is', value: 'Vefur' },
+            { locale: 'en', value: 'Web' },
+          ],
+        },
+        {
+          clientId: '@island.is/native',
+          clientType: 'native',
+          displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ]
+
+      mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockResolvedValueOnce(
+        createMockApiResponse(mockClients),
+      )
+
+      // Act
+      const result = await scopeService.getScopeClients(
+        currentUser,
+        { tenantId: TENANT_ID, scopeName },
+        Environment.Development,
+      )
+
+      // Assert
+      expect(
+        mockAdminDevApi.meScopeClientsControllerFindAllRaw,
+      ).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopeClientsControllerFindAllRaw).toBeCalledWith(
+        {
+          tenantId: TENANT_ID,
+          scopeName,
+        },
+      )
+      expect(
+        mockAdminStagingApi.meScopeClientsControllerFindAllRaw,
+      ).not.toBeCalled()
+      expect(
+        mockAdminProdApi.meScopeClientsControllerFindAllRaw,
+      ).not.toBeCalled()
+
+      expect(result).toEqual([
+        {
+          clientId: '@island.is/web',
+          clientType: 'web',
+          displayName: [
+            { locale: 'is', value: 'Vefur' },
+            { locale: 'en', value: 'Web' },
+          ],
+        },
+        {
+          clientId: '@island.is/native',
+          clientType: 'native',
+          displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ])
     })
   })
 })

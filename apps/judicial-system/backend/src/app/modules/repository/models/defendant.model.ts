@@ -12,7 +12,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   DefendantPlea,
   DefenderChoice,
@@ -23,6 +22,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 import { Subpoena } from './subpoena.model'
 import { Verdict } from './verdict.model'
@@ -39,10 +39,7 @@ export class Defendant extends Model {
     return defendants?.some(
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderNationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        defendant.defenderNationalId === defenderNationalId,
     )
   }
 
@@ -54,10 +51,7 @@ export class Defendant extends Model {
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.caseFilesSharedWithDefender &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(defenderNationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        defendant.defenderNationalId === defenderNationalId,
     )
   }
 
@@ -73,10 +67,7 @@ export class Defendant extends Model {
     return (
       defendant.isDefenderChoiceConfirmed &&
       defendant.caseFilesSharedWithDefender &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(defenderNationalId).includes(
-        defendant.defenderNationalId,
-      )
+      defendant.defenderNationalId === defenderNationalId
     )
   }
 
@@ -187,6 +178,23 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
   subpoenas?: Subpoena[]
 
+  @HasMany(() => CaseDefendantPoliceCaseNumber, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({
+    type: () => CaseDefendantPoliceCaseNumber,
+    isArray: true,
+  })
+  caseDefendantPoliceCaseNumbers?: CaseDefendantPoliceCaseNumber[]
+
+  @Column({ type: DataType.VIRTUAL })
+  @ApiProperty({ type: String, isArray: true })
+  get policeCaseNumbers(): string[] {
+    const rows = this.caseDefendantPoliceCaseNumbers
+
+    return [...new Set((rows ?? []).map((r) => r.policeCaseNumber))].sort(
+      (a, b) => a.localeCompare(b),
+    )
+  }
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -259,4 +267,7 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  // Not persisted — computed on fetch and attached by the case controller
+  connectedCases?: Case[]
 }

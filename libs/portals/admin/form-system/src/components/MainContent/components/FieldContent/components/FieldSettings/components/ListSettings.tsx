@@ -1,156 +1,291 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  GET_ORGANIZATION_ZENDESK_INSTANCE,
+  UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+} from '@island.is/form-system/graphql'
+import { FieldTypesEnum, ListTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
-  Box,
   Button,
   GridColumn as Column,
-  RadioButton,
   GridRow as Row,
+  Input,
+  RadioButton,
   Select,
   Stack,
+  Blockquote,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
+import { ListFromUrl } from './ListFromUrl'
 
-const predeterminedLists = [
-  {
-    label: 'Sveitarfélög',
-    value: 0,
-  },
-  {
-    label: 'Lönd',
-    value: 1,
-  },
-  {
-    label: 'Póstnúmer',
-    value: 2,
-  },
-  {
-    label: 'Iðngreinarmeistara',
-    value: 3,
-  },
-  {
-    label: 'Skráningarflokkar',
-    value: 4,
-  },
-]
+type ZendeskInstanceConfig = {
+  serviceSystemInstance: string
+  serviceSystemBrandID: string
+}
 
 export const ListSettings = () => {
-  const { control, setInListBuilder, controlDispatch, updateActiveItem } =
-    useContext(ControlContext)
-  const { activeItem, isPublished } = control
-  const { dependencies } = control.form
+  const {
+    control,
+    setInListBuilder,
+    controlDispatch,
+    setFocus,
+    focus,
+    updateActiveItem,
+  } = useContext(ControlContext)
+  const { activeItem, isReadOnly, form } = control
   const currentItem = activeItem.data as FormSystemField
-  const [radio, setRadio] = useState([true, false, false])
-  const radioHandler = (index: number) => {
-    setRadio((prev) =>
-      prev.map((_, i) => {
-        return index === i
-      }),
-    )
-  }
+  const [isCustom, setIsCustom] = useState(
+    !currentItem.fieldSettings?.listType ||
+      currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
+  )
+  const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE, {
+    fetchPolicy: 'no-cache',
+  })
+  const [updateOrganizationZendeskInstance] = useMutation(
+    UPDATE_ORGANIZATION_ZENDESK_INSTANCE,
+  )
 
   const { formatMessage } = useLocale()
-  const listTypes = [
-    'sveitarfelog',
-    'lond',
-    'postnumer',
-    'idngreinarMeistara',
-    'skraningarflokkar',
-  ]
-  const getListType = (index: number) => listTypes[index] || 'customList'
 
-  const onClickRadioHandler = (index: number) => {
-    radioHandler(index)
+  const predeterminedLists = [
+    { label: 'Landalisti', value: ListTypesEnum.COUNTRIES },
+    { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
+    { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
+    { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
+    { label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL },
+    {
+      label: 'Zendesk forhlaðinn listi',
+      value: ListTypesEnum.ZENDESK_FIELD_OPTIONS,
+    },
+    {
+      label: 'Zendesk sérsniðinn hlutur',
+      value: ListTypesEnum.ZENDESK_CUSTOM_OBJECT,
+    },
+  ]
+
+  const selectedPredetermined =
+    predeterminedLists.find(
+      (o) => o.value === currentItem.fieldSettings?.listType,
+    ) ?? null
+
+  const selectCustomRadio = () => {
+    if (isReadOnly) return
+    setIsCustom(true)
     controlDispatch({
       type: 'SET_LIST_TYPE',
-      payload: {
-        listType: index === 0 ? 'customList' : 'other',
-        update: updateActiveItem,
-      },
+      payload: { listType: ListTypesEnum.CUSTOM, update: updateActiveItem },
     })
   }
 
-  const hasDependency = (): boolean => {
-    const listItemIds = Array.from(
-      new Set(
-        currentItem.list
-          ?.map((item) => item?.id)
-          .filter((id) => id !== undefined),
-      ),
-    ) as string[]
-    return (
-      dependencies?.some(
-        (dep) =>
-          listItemIds.includes(dep?.parentProp as string) ||
-          dep?.childProps?.some((child) =>
-            listItemIds.includes(child as string),
-          ),
-      ) ?? false
-    )
+  const selectPredeterminedRadio = () => {
+    if (isReadOnly) return
+    setIsCustom(false)
   }
+
+  const updateZendeskInstance = async () => {
+    const data = await getZendeskInstance({
+      variables: {
+        input: { nationalId: form.organizationNationalId },
+      },
+    })
+    const zendeskInstanceInfo =
+      data?.data?.formSystemOrganizationZendeskInstance
+
+    if (!zendeskInstanceInfo) {
+      return
+    }
+
+    let parsed: ZendeskInstanceConfig
+    try {
+      parsed = JSON.parse(zendeskInstanceInfo)
+    } catch {
+      return
+    }
+
+    if (
+      parsed.serviceSystemInstance !==
+        form.organizationZendeskInstance?.zendeskInstance ||
+      parsed.serviceSystemBrandID !==
+        form.organizationZendeskInstance?.zendeskBrandId
+    ) {
+      controlDispatch({
+        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+        payload: {
+          zendeskInstance: parsed.serviceSystemInstance,
+          zendeskBrandId: parsed.serviceSystemBrandID,
+        },
+      })
+      await updateOrganizationZendeskInstance({
+        variables: {
+          input: {
+            zendeskInstance: parsed.serviceSystemInstance,
+            zendeskBrandId: parsed.serviceSystemBrandID,
+            organizationId: form.organizationId,
+          },
+        },
+      })
+    }
+  }
+
+  useEffect(() => {
+    const listType = currentItem.fieldSettings?.listType
+    setIsCustom(!listType || listType === ListTypesEnum.CUSTOM)
+  }, [currentItem.id])
+
+  const radioName = `listTypeMode-${currentItem.id}`
 
   return (
     <Stack space={2}>
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <>
-          <Row>
-            <Column>
-              <Box onClick={() => onClickRadioHandler(0)}>
-                <RadioButton
-                  label={formatMessage(m.customList)}
-                  disabled={isPublished}
-                  // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
-                  checked={radio[0]}
-                />
-              </Box>
-            </Column>
-          </Row>
-          {/* <Row>
-            <Column>
-              <Box onClick={() => onClickRadioHandler(1)}>
-                <RadioButton
-                  label={formatMessage(m.predeterminedLists)}
-                  disabled={isPublished}
-                  // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
-                  checked={radio[1]}
-                />
-              </Box>
-            </Column>
-          </Row> */}
+          <Column span="3/10">
+            <RadioButton
+              id={`${radioName}-custom`}
+              name={radioName}
+              label={formatMessage(m.customList)}
+              disabled={isReadOnly}
+              checked={isCustom}
+              onChange={selectCustomRadio}
+            />
+          </Column>
+          <Column span="3/10">
+            <RadioButton
+              id={`${radioName}-predetermined`}
+              name={radioName}
+              label={formatMessage(m.predeterminedLists)}
+              disabled={
+                isReadOnly ||
+                !!(currentItem.list && currentItem.list.length > 0)
+              }
+              tooltip={
+                !isReadOnly && currentItem.list && currentItem.list.length > 0
+                  ? 'Óvirkt þar sem reiturinn er nú þegar með sérsniðinn lista. Tæmdu listann (Listasmiður) til að virkja tilbúna fellilista.'
+                  : undefined
+              }
+              checked={!isCustom}
+              onChange={selectPredeterminedRadio}
+            />
+          </Column>
         </>
       )}
-      {radio[0] && (
+      {isCustom && (
         <Button variant="ghost" onClick={() => setInListBuilder(true)}>
           {formatMessage(m.listBuilder)}
         </Button>
       )}
-      {/* {radio[1] && (
-        <Column span="5/10">
-          <Select
-            placeholder={formatMessage(m.chooseListType)}
-            name="predeterminedLists"
-            label={formatMessage(m.predeterminedLists)}
-            options={predeterminedLists}
-            isDisabled={isPublished}
-            backgroundColor="blue"
-            onChange={(option) => {
-              const listType = getListType(option?.value as number)
-              controlDispatch({
-                type: 'SET_LIST_TYPE',
-                payload: {
-                  listType: listType,
-                  update: updateActiveItem,
-                },
-              })
-            }}
-          />
-        </Column>
-      )} */}
+      {!isCustom && (
+        <>
+          <Row>
+            <Column span="5/10">
+              <Select
+                placeholder={formatMessage(m.chooseListType)}
+                name="predeterminedLists"
+                label={formatMessage(m.predeterminedLists)}
+                options={predeterminedLists}
+                value={selectedPredetermined}
+                isDisabled={isReadOnly}
+                backgroundColor="blue"
+                onChange={(option) => {
+                  controlDispatch({
+                    type: 'SET_LIST_TYPE',
+                    payload: {
+                      listType: option?.value ?? ListTypesEnum.CUSTOM,
+                      update: updateActiveItem,
+                    },
+                  })
+                  if (
+                    option?.value === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+                    option?.value === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+                  ) {
+                    updateZendeskInstance()
+                  }
+                }}
+              />
+            </Column>
+            {currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_FIELD_OPTIONS && (
+              <Column span="5/10">
+                <Input
+                  label="Zendesk ticket field ID"
+                  name="zendeskTicketFieldId"
+                  type="text"
+                  value={
+                    currentItem.fieldSettings?.zendeskTicketFieldId
+                      ? String(currentItem.fieldSettings.zendeskTicketFieldId)
+                      : ''
+                  }
+                  backgroundColor="blue"
+                  readOnly={isReadOnly}
+                  onChange={(e) => {
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property: 'zendeskTicketFieldId',
+                        value: e.target.value,
+                      },
+                    })
+                  }}
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                />
+              </Column>
+            )}
+            {currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_CUSTOM_OBJECT && (
+              <Column span="5/10">
+                <Input
+                  label="Zendesk custom object key"
+                  name="zendeskCustomObjectKey"
+                  type="text"
+                  value={
+                    currentItem.fieldSettings?.zendeskCustomObjectKey
+                      ? String(currentItem.fieldSettings.zendeskCustomObjectKey)
+                      : ''
+                  }
+                  backgroundColor="blue"
+                  readOnly={isReadOnly}
+                  onChange={(e) => {
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property: 'zendeskCustomObjectKey',
+                        value: e.target.value,
+                      },
+                    })
+                  }}
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                />
+              </Column>
+            )}
+          </Row>
+
+          {(currentItem.fieldSettings?.listType ===
+            ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+            currentItem.fieldSettings?.listType ===
+              ListTypesEnum.ZENDESK_CUSTOM_OBJECT) && (
+            <Row>
+              <Column span="10/10">
+                <Blockquote>
+                  <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
+                    <code>
+                      Zendesk instance:{' '}
+                      {form.organizationZendeskInstance?.zendeskInstance}
+                      .zendesk.com
+                    </code>
+                  </Text>
+                </Blockquote>
+              </Column>
+            </Row>
+          )}
+          {currentItem.fieldSettings?.listType ===
+            ListTypesEnum.LIST_FROM_URL && <ListFromUrl />}
+        </>
+      )}
     </Stack>
   )
 }

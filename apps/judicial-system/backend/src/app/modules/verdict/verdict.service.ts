@@ -11,7 +11,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -43,19 +42,21 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 
-type UpdateVerdict = { serviceDate?: Date | null } & Pick<
+type UpdateVerdict = {
+  serviceDate?: Date | null
+  isAcquittedByPublicProsecutionOffice?: boolean | null
+  defendantHasRequestedAppeal?: boolean | null
+  serviceRequirement?: ServiceRequirement | null
+} & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
   | 'serviceStatus'
-  | 'serviceRequirement'
   | 'servedBy'
   | 'deliveredToDefenderNationalId'
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
-  | 'isAcquittedByPublicProsecutionOffice'
-  | 'defendantHasRequestedAppeal'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -286,6 +287,21 @@ export class VerdictService {
     return updatedVerdict
   }
 
+  async resetVerdictDataForReopen(
+    verdict: Verdict,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    return this.updateVerdict(
+      verdict,
+      {
+        isAcquittedByPublicProsecutionOffice: null,
+        defendantHasRequestedAppeal: null,
+        serviceRequirement: null,
+      },
+      transaction,
+    )
+  }
+
   async updatePoliceDelivery(
     verdict: Verdict,
     update: PoliceUpdateVerdictDto,
@@ -304,9 +320,7 @@ export class VerdictService {
     defendant: Defendant,
     verdict: Verdict,
   ): { code: string; value: string }[] {
-    const receiverSsn =
-      defendant.nationalId &&
-      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
     const ruling =
       theCase.courtSessions?.find(

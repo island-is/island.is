@@ -8,9 +8,10 @@ import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { AppState, Platform } from 'react-native'
 
-import { Button, CancelButton, Illustration, Onboarding } from '@/ui'
+import { Button, Onboarding } from '@/ui'
 import finger from '@/assets/icons/finger-16.png'
 import iris from '@/assets/icons/iris-16.png'
+import onboardingBiometrics from '@/assets/illustrations/onboarding-biometrics.png'
 import { preferencesStore } from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
@@ -97,11 +98,12 @@ export default function BiometricsScreen() {
 
   return (
     <Onboarding
-      illustration={<Illustration />}
-      title={
+      illustration={onboardingBiometrics}
+      title={<FormattedMessage id="onboarding.biometrics.title" />}
+      body={
         isEnrolled ? (
           <FormattedMessage
-            id="onboarding.biometrics.title"
+            id="onboarding.biometrics.body"
             values={{ biometricType: biometricType.text }}
           />
         ) : (
@@ -123,8 +125,11 @@ export default function BiometricsScreen() {
         />
       }
       buttonCancel={
-        <CancelButton
-          title={<FormattedMessage id="onboarding.biometrics.skipButtonText" />}
+        <Button
+          title={intl.formatMessage({
+            id: 'onboarding.biometrics.skipButtonText',
+          })}
+          isOutlined
           onPress={onSkipPress}
         />
       }

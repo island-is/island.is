@@ -1,79 +1,71 @@
-import {
-  AlertMessage,
-  Box,
-  Stack,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroWrapper,
+  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../../lib/messages'
-import { useGetPersonalTaxCreditQuery } from './PersonalTaxCredit.generated'
-import { useTaxCardAllowance } from './useTaxCardAllowance'
-import { MyTaxCreditForm } from './components/MyTaxCreditForm'
-import { PersonalTaxCreditTable } from './components/PersonalTaxCreditTable'
-import { useState } from 'react'
-
-const INITIAL_MY_TAX_CREDIT: MyTaxCreditState = { action: null }
-
-export type MyTaxCreditState =
-  | {
-      action: 'register'
-      data: { year: number | null; month: number | null; percentage: string }
-    }
-  | { action: 'update'; data: { percentage: string } }
-  | {
-      action: 'discontinue'
-      data: { year: number | null; month: number | null }
-    }
-  | { action: null }
+import {
+  useGetPersonalTaxCreditQuery,
+  useGetPersonalTaxCreditSpouseInfoQuery,
+} from './PersonalTaxCredit.generated'
+import { PersonalTaxCreditForm } from './PersonalTaxCreditForm'
+import { SpouseTaxCreditForm } from './SpouseTaxCreditForm'
+import { PersonalTaxCreditTable } from './PersonalTaxCreditTable'
+import { usePersonalTaxCreditForm } from './usePersonalTaxCreditForm'
 
 const PersonalTaxCredit = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const [myTaxCredit, setMyTaxCredit] = useState<MyTaxCreditState>(
-    INITIAL_MY_TAX_CREDIT,
-  )
-
-  const { data, loading, error, refetch } = useGetPersonalTaxCreditQuery({
+  const { data, loading, error } = useGetPersonalTaxCreditQuery({
     errorPolicy: 'all',
   })
-  const [refetching, setRefetching] = useState(false)
-
-  const taxCardAllowance = useTaxCardAllowance()
+  const { data: spouseInfoData } = useGetPersonalTaxCreditSpouseInfoQuery({
+    errorPolicy: 'all',
+  })
 
   const page = data?.socialInsurancePersonalTaxCredit
+  const spouseInfo = spouseInfoData?.socialInsurancePersonalTaxCreditSpouseInfo
+  const isAlreadyRegistered = page?.canEdit ?? false
+  const hasRegistrations = !!page?.taxCards?.length
 
-  const handleSaveMyTaxCredit = async () => {
-    if (!myTaxCredit.action) return
-    try {
-      await taxCardAllowance.save(myTaxCredit)
-      setRefetching(true)
-      await refetch()
-      setRefetching(false)
-      setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
-      toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
-    } catch (e) {
-      setRefetching(false)
-      toast.error(formatMessage(m.personalTaxCreditSaveError))
-    }
-  }
+  const form = usePersonalTaxCreditForm()
+  const { spouseAction } = form
+
+  const isSpouseBlocked =
+    (spouseAction === 'grant' &&
+      (spouseInfo?.isDeceased === true ||
+        (!spouseInfo?.name && !spouseInfo?.nationalId))) ||
+    (spouseAction === 'deceased' &&
+      (!!spouseInfo?.deceasedReasonNotAllowedCode ||
+        !spouseInfo?.deceasedMonthsAndYears?.length))
 
   return (
     <IntroWrapper
       title={formatMessage(m.personalTaxCredit)}
       intro={formatMessage(m.personalTaxCreditDescription)}
-      serviceProviderSlug={TRYGGINGASTOFNUN_SLUG}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.socialInsuranceTooltip,
-      )}
+      desktopContentSpan="10/12"
+      serviceProvider={{
+        slug: TRYGGINGASTOFNUN_SLUG,
+        tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="my-info-settings"
+            to="/min-gogn/stillingar/"
+            text={formatMessage(coreMessages.userInfo)}
+            variant="utility"
+            icon="arrowForward"
+            size="small"
+          />,
+        ],
+      }}
     >
       {loading ? (
         <CardLoader />
@@ -81,41 +73,142 @@ const PersonalTaxCredit = () => {
         <Problem error={error} noBorder={false} />
       ) : (
         <Stack space={6}>
-          {!!page?.taxCards?.length && (
-            <PersonalTaxCreditTable taxCards={page.taxCards} />
-          )}
-
-          {!page?.taxCards?.length && (
-            <AlertMessage
-              type="info"
-              message={formatMessage(m.personalTaxCreditNotRegistered)}
-            />
-          )}
-
           <Box>
             <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.myPersonalTaxCredit)}
+              {formatMessage(m.myTaxCreditUsage)}
             </Text>
-            <MyTaxCreditForm
-              state={myTaxCredit}
-              setState={setMyTaxCredit}
+
+            {hasRegistrations && (
+              <PersonalTaxCreditTable
+                taxCards={page?.taxCards ?? []}
+                renderExpandedRow={
+                  isAlreadyRegistered
+                    ? ({ close }) => (
+                        <Box paddingY={4} paddingX={4} background="blue100">
+                          <Stack space={3}>
+                            <PersonalTaxCreditForm
+                              form={form.personalForm}
+                              monthsAndYears={page?.registrationMonthsAndYears}
+                              discontinuingMonthsAndYears={
+                                page?.discontinuingMonthsAndYears
+                              }
+                              isAlreadyRegistered={isAlreadyRegistered}
+                              canDiscontinue={page?.canDiscontinue ?? false}
+                            />
+                            <Inline space={2}>
+                              <Button
+                                variant="primary"
+                                colorScheme="negative"
+                                size="small"
+                                onClick={() => {
+                                  form.handleCancelPersonal()
+                                  close()
+                                }}
+                              >
+                                {formatMessage(coreMessages.buttonCancel)}
+                              </Button>
+                              <Button
+                                variant="primary"
+                                size="small"
+                                onClick={async () => {
+                                  const saved = await form.handleSavePersonal()
+                                  if (saved) close()
+                                }}
+                                disabled={
+                                  !form.canSubmitPersonal || form.savingPersonal
+                                }
+                                loading={form.savingPersonal}
+                              >
+                                {formatMessage(coreMessages.submit)}
+                              </Button>
+                            </Inline>
+                          </Stack>
+                        </Box>
+                      )
+                    : undefined
+                }
+              />
+            )}
+
+            {!isAlreadyRegistered && (
+              <Box marginTop={hasRegistrations ? 5 : 0}>
+                <PersonalTaxCreditForm
+                  form={form.personalForm}
+                  monthsAndYears={page?.registrationMonthsAndYears}
+                  discontinuingMonthsAndYears={
+                    page?.discontinuingMonthsAndYears
+                  }
+                  isAlreadyRegistered={isAlreadyRegistered}
+                  canDiscontinue={page?.canDiscontinue ?? false}
+                />
+              </Box>
+            )}
+          </Box>
+
+          <Box>
+            <Text variant="h4" marginBottom={2}>
+              {formatMessage(m.spousePersonalTaxCredit)}
+            </Text>
+            <Text marginBottom={3}>
+              {formatMessage(m.spousePersonalTaxCreditDescription)}
+            </Text>
+
+            <SpouseTaxCreditForm
+              form={form.spouseForm}
               monthsAndYears={page?.registrationMonthsAndYears}
-              discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
-              isAlreadyRegistered={page?.canEdit ?? false}
-              canDiscontinue={page?.canDiscontinue ?? false}
-              saving={taxCardAllowance.loading || refetching}
-              onSave={handleSaveMyTaxCredit}
+              deceasedMonthsAndYears={spouseInfo?.deceasedMonthsAndYears}
+              deceasedReasonNotAllowedCode={
+                spouseInfo?.deceasedReasonNotAllowedCode
+              }
+              spouseName={spouseInfo?.name}
+              spouseNationalId={spouseInfo?.nationalId}
+              spouseIsDeceased={spouseInfo?.isDeceased}
             />
           </Box>
 
-          <AlertMessage
-            type="info"
-            message={
-              <Text as="span" variant="small" whiteSpace="preLine">
-                {formatMessage(m.taxBracketInfo)}
-              </Text>
-            }
-          />
+          {!hasRegistrations && (
+            <Inline space={2} justifyContent="flexEnd">
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={form.handleCancelAll}
+              >
+                {formatMessage(coreMessages.buttonCancel)}
+              </Button>
+              <Button
+                size="small"
+                onClick={() => void form.handleSaveAll()}
+                disabled={
+                  !form.canSubmitAll || form.savingAll || isSpouseBlocked
+                }
+                loading={form.savingAll}
+              >
+                {formatMessage(coreMessages.submit)}
+              </Button>
+            </Inline>
+          )}
+
+          {hasRegistrations && spouseAction !== null && (
+            <Inline space={2} justifyContent="flexEnd">
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={form.handleCancelSpouse}
+              >
+                {formatMessage(coreMessages.buttonCancel)}
+              </Button>
+              <Button
+                size="small"
+                onClick={() => void form.handleSaveSpouse()}
+                disabled={
+                  !form.canSubmitSpouse || form.savingSpouse || isSpouseBlocked
+                }
+                loading={form.savingSpouse}
+              >
+                {formatMessage(coreMessages.submit)}
+              </Button>
+            </Inline>
+          )}
         </Stack>
       )}
     </IntroWrapper>

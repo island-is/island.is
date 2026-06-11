@@ -299,22 +299,51 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadHeader: m.healthCertificateUploadHeader,
           uploadDescription: m.healthCertificateUploadDescription,
           uploadButtonLabel: m.healthCertificateUploadButtonLabel,
-          maxSize: 10000000,
+          maxSize: 4000000,
           uploadAccept: '.pdf, .jpg, .jpeg, .png',
           condition: needsHealthCertificateCondition(YES),
         }),
       ],
     }),
-    // 65+ multifield — unchanged
+    // 65+ multifield (legacy) — flag OFF
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
       description: m.healthDeclarationMultiField65Description,
-      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+      condition: (answers) =>
+        answers.applicationFor === B_FULL_RENEWAL_65 &&
+        getValueViaPath(answers, 'is65RenewalRedesignEnabled') !== true,
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription65',
           description: m.healthDeclarationMultiField65Description,
+        }),
+      ],
+    }),
+    // 65+ multifield (redesigned) — flag ON. Description + mandatory cert
+    // upload. No health questions (per product decision: 65+ always submits
+    // a fresh health certificate, no per-condition questionnaire).
+    buildMultiField({
+      id: 'healthDeclarationAge65Redesigned',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) =>
+        answers.applicationFor === B_FULL_RENEWAL_65 &&
+        getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true,
+      space: 2,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription65Redesigned',
+          description: m.healthDeclarationMultiField65DescriptionRedesigned,
+          marginBottom: 2,
+        }),
+        buildFileUploadField({
+          id: 'healthCertificate',
+          title: m.healthCertificateTitle,
+          uploadHeader: m.healthCertificateUploadHeader,
+          uploadDescription: m.healthCertificateUploadDescription,
+          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+          maxSize: 4000000,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
         }),
       ],
     }),

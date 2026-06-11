@@ -15,6 +15,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../appeal-case'
 import {
   Case,
   RequestSignatureResponse,
@@ -52,6 +53,7 @@ import {
 } from '../file'
 import { DeleteResponse, IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
+import { MessageSuspension } from '../message-suspension'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
@@ -208,6 +210,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.put(`user/${userId}`, updateUser)
   }
 
+  getMessageSuspensions(): Promise<MessageSuspension[]> {
+    return this.get('message-suspension')
+  }
+
+  updateMessageSuspension(
+    category: string,
+    updateMessageSuspension: unknown,
+  ): Promise<MessageSuspension> {
+    return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
   getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
@@ -282,10 +295,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`cases/statistics/export-csv?${searchParams}`)
   }
 
-  getConnectedCases(caseId: string): Promise<Case[]> {
-    return this.get(`case/${caseId}/connectedCases`)
-  }
-
   getCandidateMergeCases(caseId: string): Promise<Case[]> {
     return this.get(`case/${caseId}/candidateMergeCases`)
   }
@@ -308,6 +317,45 @@ export class BackendService extends DataSource<{ req: Request }> {
       transitionCase,
       caseTransformer,
     )
+  }
+
+  createAppealCase(
+    caseId: string,
+    createAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase`, createAppealCase)
+  }
+
+  updateAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    updateAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}`,
+      updateAppealCase,
+    )
+  }
+
+  transitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
+    )
+  }
+
+  createAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(`case/${caseId}/appealCase/${appealCaseId}/eventLog`, {
+      eventType,
+    })
   }
 
   requestCourtRecordSignature(
@@ -651,6 +699,13 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
+  reorderIndictmentCounts(
+    caseId: string,
+    body: unknown,
+  ): Promise<IndictmentCount[]> {
+    return this.patch(`case/${caseId}/indictmentCounts/reorder`, body)
+  }
+
   createCourtSession(
     caseId: string,
     createCourtSession: unknown,
@@ -783,6 +838,38 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case/${caseId}/limitedAccess/state`,
       transitionCase,
       caseTransformer,
+    )
+  }
+
+  limitedAccessCreateAppealCase(
+    caseId: string,
+    createAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase`,
+      createAppealCase,
+    )
+  }
+
+  limitedAccessTransitionAppealCase(
+    caseId: string,
+    appealCaseId: string,
+    transitionAppealCase: unknown,
+  ): Promise<AppealCase> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/state`,
+      transitionAppealCase,
+    )
+  }
+
+  limitedAccessCreateAppealEventLog(
+    caseId: string,
+    appealCaseId: string,
+    eventType: string,
+  ): Promise<AppealCase> {
+    return this.post(
+      `case/${caseId}/limitedAccess/appealCase/${appealCaseId}/eventLog`,
+      { eventType },
     )
   }
 

@@ -6,6 +6,7 @@ import { m } from '@island.is/portals/my-pages/core'
 
 import { SessionsPaths } from './lib/paths'
 import { Features } from '@island.is/react/feature-flags'
+import { Navigate } from 'react-router-dom'
 
 const allowedScopes: string[] = [ApiScope.internal, ApiScope.internalProcuring]
 
@@ -20,17 +21,37 @@ export const sessionsModule: PortalModule = {
     const useNewRoute = await featureFlagClient.getValue(
       Features.useNewDelegationSystem,
       false,
-      {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      },
     )
+
+    const hasAccess = userInfo.scopes.some((scope) =>
+      allowedScopes.includes(scope),
+    )
+
+    if (useNewRoute) {
+      return [
+        {
+          name: m.sessions,
+          path: SessionsPaths.SessionsNew,
+          enabled: hasAccess,
+          notAvailableForActors: true,
+          element: <Sessions />,
+        },
+        {
+          name: m.sessions,
+          path: SessionsPaths.Sessions,
+          enabled: hasAccess,
+          navHide: true,
+          notAvailableForActors: true,
+          element: <Navigate to={SessionsPaths.SessionsNew} replace />,
+        },
+      ]
+    }
 
     return [
       {
         name: m.sessions,
-        path: useNewRoute ? SessionsPaths.SessionsNew : SessionsPaths.Sessions,
-        enabled: userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
+        path: SessionsPaths.Sessions,
+        enabled: hasAccess,
         notAvailableForActors: true,
         element: <Sessions />,
       },

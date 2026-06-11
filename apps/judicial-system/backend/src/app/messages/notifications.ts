@@ -731,6 +731,13 @@ export const notifications = {
         'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). Niðurstaða Landsréttar: {appealRulingDecision}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar kæru er lokið',
     },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appeal_completed.text',
+      defaultMessage:
+        'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). Niðurstaða Landsréttar: {appealRulingDecision}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS til sækjanda þegar Landsréttur hefur úrskurðað í kærumáli',
+    },
   }),
   caseAppealResent: defineMessages({
     subject: {
@@ -828,20 +835,6 @@ export const notifications = {
       defaultMessage:
         'Ákæru vegna lögreglumáls númer {caseNumber} hefur verið hafnað. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
       description: 'Texti í pósti til sækjanda máls þegar ákæru er hafnað',
-    },
-  }),
-  indictmentReturned: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.indictment_returned.subject',
-      defaultMessage: 'Ákæra endursend í máli {caseNumber}',
-      description:
-        'Fyrirsögn í pósti til sækjanda máls þegar ákæra er endursend',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.indictment_returned.body',
-      defaultMessage:
-        '{courtName} hefur endursent ákæru vegna lögreglumáls {caseNumber}. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
-      description: 'Texti í pósti til sækjanda máls þegar ákæra er endursend',
     },
   }),
   courtRevokedIndictmentEmail: defineMessages({

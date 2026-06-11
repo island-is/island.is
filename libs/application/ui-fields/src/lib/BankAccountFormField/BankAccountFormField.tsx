@@ -182,7 +182,10 @@ export const BankAccountFormField = ({
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '4/12']}
+          paddingBottom={2}
+        >
           <Box>
             <InputController
               id={`${id}.bankNumber`}
@@ -190,6 +193,7 @@ export const BankAccountFormField = ({
               label={bankNumber}
               placeholder="0000"
               format="####"
+              mask=""
               backgroundColor="blue"
               autoFocus
               clearOnChange={clearOnChange}
@@ -201,7 +205,10 @@ export const BankAccountFormField = ({
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '3/12', '2/12']}
+          paddingBottom={2}
+        >
           <Box>
             <InputController
               id={`${id}.ledger`}
@@ -209,6 +216,7 @@ export const BankAccountFormField = ({
               label={ledger}
               placeholder="00"
               format="##"
+              mask=""
               backgroundColor="blue"
               clearOnChange={clearOnChange}
               clearOnChangeDefaultValue={clearOnChangeDefaultValue}
@@ -227,6 +235,7 @@ export const BankAccountFormField = ({
               label={accountNumber}
               placeholder="000000"
               format="######"
+              mask=""
               backgroundColor="blue"
               clearOnChange={clearOnChange}
               clearOnChangeDefaultValue={clearOnChangeDefaultValue}

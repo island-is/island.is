@@ -1,16 +1,12 @@
 import { v4 as uuid } from 'uuid'
 
-import {
-  CaseType,
-  NotificationType,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -23,6 +19,7 @@ type GivenWhenThen = () => Promise<Then>
 describe('InternalCaseController - Deliver conclusion to court of appeals', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const appealCaseId = uuid()
   const appealCaseNumber = uuid()
   const appealRulingDecision = uuid()
   const appealRulingDate = randomDate()
@@ -30,17 +27,14 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCase: {
-      appealCaseNumber,
-      appealRulingDecision,
-    },
-    notifications: [
-      {
-        type: NotificationType.APPEAL_COMPLETED,
-        created: appealRulingDate,
-      },
-    ],
   } as Case
+
+  const appealCase = {
+    id: appealCaseId,
+    appealCaseNumber,
+    appealRulingDecision,
+    appealRulingDate,
+  } as unknown as AppealCase
 
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
@@ -58,9 +52,15 @@ describe('InternalCaseController - Deliver conclusion to court of appeals', () =
       const then = {} as Then
 
       await internalCaseController
-        .deliverConclusionToCourtOfAppeals(caseId, theCase, {
-          user,
-        })
+        .deliverConclusionToCourtOfAppeals(
+          caseId,
+          appealCaseId,
+          theCase,
+          appealCase,
+          {
+            user,
+          },
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

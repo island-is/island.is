@@ -27,26 +27,29 @@ const PoliceCases = () => {
       loading={loading}
       title={messages.policeCasesTitle}
       intro={messages.policeCasesDescription}
-      serviceProviderSlug={RIKISLOGREGLUSTJORI_SLUG}
-      serviceProviderTooltip={formatMessage(
-        coreMessages.nationalPoliceCommissionerTooltip,
-      )}
-      buttonGroup={[
-        <LinkButton
-          key="link-button-1"
-          to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
-          text={formatMessage(messages.policeCasesHeaderLinkButton1Text)}
-          icon="open"
-          variant="utility"
-        />,
-        <LinkButton
-          key="link-button-2"
-          to={formatMessage(messages.policeCasesHeaderLinkButton2Url)}
-          text={formatMessage(messages.policeCasesHeaderLinkButton2Text)}
-          icon="open"
-          variant="utility"
-        />,
-      ]}
+      serviceProvider={{
+        slug: RIKISLOGREGLUSTJORI_SLUG,
+        tooltip: formatMessage(coreMessages.nationalPoliceCommissionerTooltip),
+      }}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="link-button-1"
+            to={formatMessage(messages.policeCasesHeaderLinkButton1Url)}
+            text={formatMessage(messages.policeCasesHeaderLinkButton1Text)}
+            icon="open"
+            variant="utility"
+          />,
+          <LinkButton
+            key="link-button-2"
+            to={formatMessage(messages.policeCasesHeaderLinkButton2Url)}
+            text={formatMessage(messages.policeCasesHeaderLinkButton2Text)}
+            icon="open"
+            variant="utility"
+          />,
+        ],
+      }}
+      desktopContentSpan="10/12"
     >
       {loading && !error && (
         <Box width="full">
@@ -64,6 +67,7 @@ const PoliceCases = () => {
               heading={formatMessage(messages.policeCaseCardTitle, {
                 arg: c.number,
               })}
+              headingVariant="h4"
               text={
                 c.modified
                   ? formatMessage(messages.policeCaseCardText, {

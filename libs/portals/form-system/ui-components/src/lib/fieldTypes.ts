@@ -14,6 +14,9 @@ export type FieldTypeMapping = {
   [FieldTypesEnum.NATIONAL_ID]: {
     nationalId?: FormSystemValue['nationalId']
     name?: FormSystemValue['name']
+    address?: FormSystemValue['address']
+    municipality?: FormSystemValue['municipality']
+    postalCode?: FormSystemValue['postalCode']
   }
   [FieldTypesEnum.BANK_ACCOUNT]: {
     bankAccount?: FormSystemValue['bankAccount']
@@ -28,10 +31,12 @@ export type FieldTypeMapping = {
     checkboxValue?: FormSystemValue['checkboxValue']
   }
   [FieldTypesEnum.RADIO_BUTTONS]: {
-    listValue?: FormSystemValue['listValue']
+    label?: FormSystemValue['label']
+    value?: FormSystemValue['value']
   }
   [FieldTypesEnum.DROPDOWN_LIST]: {
-    listValue?: FormSystemValue['listValue']
+    label?: FormSystemValue['label']
+    value?: FormSystemValue['value']
   }
   [FieldTypesEnum.TIME_INPUT]: {
     time?: FormSystemValue['time']
@@ -81,7 +86,13 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.PHONE_NUMBER:
       return { phoneNumber: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NATIONAL_ID:
-      return { nationalId: undefined, name: undefined } as FieldTypeMapping[T]
+      return {
+        nationalId: undefined,
+        name: undefined,
+        address: undefined,
+        municipality: undefined,
+        postalCode: undefined,
+      } as FieldTypeMapping[T]
     case FieldTypesEnum.BANK_ACCOUNT:
       return { bankAccount: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.ISK_NUMBERBOX:
@@ -91,9 +102,9 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.CHECKBOX:
       return { checkboxValue: null } as FieldTypeMapping[T]
     case FieldTypesEnum.RADIO_BUTTONS:
-      return { listValue: undefined } as FieldTypeMapping[T]
+      return { label: undefined, value: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.DROPDOWN_LIST:
-      return { listValue: undefined } as FieldTypeMapping[T]
+      return { label: undefined, value: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.TIME_INPUT:
       return { time: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.MESSAGE:

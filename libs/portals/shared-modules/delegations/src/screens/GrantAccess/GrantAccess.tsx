@@ -1,6 +1,7 @@
+import { ApolloError } from '@apollo/client'
 import cn from 'classnames'
 import * as kennitala from 'kennitala'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Control, FormProvider, useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
@@ -39,9 +40,6 @@ import {
 } from './GrantAccess.generated'
 
 import * as styles from './GrantAccess.css'
-import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
-import { useLoaderData } from 'react-router-dom'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -52,7 +50,7 @@ const GrantAccess = () => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { md } = useBreakpoint()
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+
   const {
     options,
     selectedOption,
@@ -148,6 +146,21 @@ const GrantAccess = () => {
       setFormError(error)
     }
   })
+
+  const formErrorOverrides = useMemo(() => {
+    const problem = (formError as ApolloError | undefined)?.graphQLErrors?.[0]
+      ?.extensions?.problem as { status?: number; detail?: string } | undefined
+    if (
+      problem?.status === 400 &&
+      problem.detail?.toLowerCase().includes('deceased')
+    ) {
+      return {
+        title: formatMessage(m.grantDeceasedTitle),
+        message: formatMessage(m.grantDeceasedMessage),
+      }
+    }
+    return {}
+  }, [formError, formatMessage])
 
   const clearPersonState = () => {
     setName('')
@@ -283,7 +296,14 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-              {formError && <Problem error={formError} size="small" />}
+              {formError && (
+                <Problem
+                  error={formError}
+                  size="small"
+                  title={formErrorOverrides.title}
+                  message={formErrorOverrides.message}
+                />
+              )}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>
@@ -300,12 +320,6 @@ const GrantAccess = () => {
             </Box>
           </form>
         </FormProvider>
-
-        {contentfulData?.faqList && (
-          <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
-          </Box>
-        )}
       </div>
     </>
   )

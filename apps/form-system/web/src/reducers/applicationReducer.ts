@@ -15,6 +15,7 @@ import {
 import { hasScreens } from '../utils/reducerHelpers'
 import {
   decrement,
+  getCompletedSectionAndScreen,
   getDecrementVariables,
   getIncrementVariables,
   incrementWithoutScreens,
@@ -185,15 +186,30 @@ export const applicationReducer = (
     }
 
     case 'EXTERNAL_SERVICE_NOTIFICATION': {
-      const { screen, isPopulateError } = action.payload
-      return setExternalServiceErrors(state, screen, isPopulateError)
+      const { screen } = action.payload
+      return setExternalServiceErrors(state, screen)
     }
 
     case 'SUBMITTED': {
       const { submitted, screenError } = action.payload
+
+      if (!submitted) {
+        return {
+          ...state,
+          submitted,
+          screenError,
+        }
+      }
+
+      const { currentSection, currentScreen } = getCompletedSectionAndScreen(
+        state.sections,
+      )
+
       return {
         ...state,
         submitted,
+        currentSection,
+        currentScreen,
         screenError,
       }
     }

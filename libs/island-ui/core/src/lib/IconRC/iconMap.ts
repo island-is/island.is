@@ -34,6 +34,7 @@ export type Icon =
   | 'dots'
   | 'download'
   | 'upload'
+  | 'election'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
@@ -102,6 +103,7 @@ export type Icon =
   | 'grid'
   | 'list'
   | 'hammer'
+  | 'hourglass'
 
 export default {
   filled: {
@@ -141,6 +143,7 @@ export default {
     dots: 'Dots',
     download: 'Download',
     upload: 'Upload',
+    election: 'Election',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
@@ -207,6 +210,7 @@ export default {
     grid: 'Grid',
     list: 'List',
     hammer: 'HammerOutline',
+    hourglass: 'HourglassOutline',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -245,6 +249,7 @@ export default {
     dots: 'Dots',
     download: 'DownloadOutline',
     upload: 'UploadOutline',
+    election: 'Election',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
@@ -311,5 +316,6 @@ export default {
     grid: 'GridOutline',
     list: 'ListOutline',
     hammer: 'HammerOutline',
+    hourglass: 'HourglassOutline',
   },
 }

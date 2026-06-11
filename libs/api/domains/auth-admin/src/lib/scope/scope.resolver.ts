@@ -11,20 +11,31 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
+import { ISLAND_IS_CATEGORY } from '@island.is/auth-api-lib'
 import { CmsContentfulService } from '@island.is/cms'
 
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
+import { ScopeUser } from './models/scope-user.model'
 import { CreateScopeInput } from './dto/create-scope.input'
+import { CreateScopeUserInput } from './dto/create-scope-user.input'
+import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
 import { ScopeService } from './scope.service'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { ScopeInput } from './dto/scope.input'
+import { ScopeClientsInput } from './dto/scope-clients.input'
+import { ScopeUsersInput } from './dto/scope-users.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
+import { ScopesByTenantsInput } from './dto/scopes-by-tenants.input'
 import { ScopesPayload } from './dto/scopes.payload'
+import { ScopesByTenantsPayload } from './dto/scopes-by-tenants.payload'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 import { ScopeCategory } from './models/scope-category.model'
 import { ScopeTag } from './models/scope-tag.model'
+import { PatchScopeResponse } from './models/patch-scope-response.model'
+import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
@@ -45,14 +56,14 @@ export class ScopeResolver {
     return this.scopeService.createScope(user, input)
   }
 
-  @Mutation(() => [ScopeEnvironment], {
+  @Mutation(() => PatchScopeResponse, {
     name: 'patchAuthAdminScope',
   })
   patchScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => AdminPatchScopeInput })
     input: AdminPatchScopeInput,
-  ): Promise<ScopeEnvironment[]> {
+  ): Promise<PatchScopeResponse> {
     return this.scopeService.updateScope({ user, input })
   }
 
@@ -67,12 +78,12 @@ export class ScopeResolver {
     return this.scopeService.publishScope(user, input)
   }
 
-  @Query(() => Scope, { name: 'authAdminScope' })
+  @Query(() => Scope, { name: 'authAdminScope', nullable: true })
   getScope(
     @CurrentUser() user: User,
     @Args('input', { type: () => ScopeInput })
     input: ScopeInput,
-  ): Promise<Scope> {
+  ): Promise<Scope | null> {
     return this.scopeService.getScope(user, input)
   }
 
@@ -85,6 +96,21 @@ export class ScopeResolver {
     input: ScopesInput,
   ): Promise<ScopesPayload> {
     return this.scopeService.getScopes(user, input.tenantId)
+  }
+
+  @Query(() => ScopesByTenantsPayload, {
+    name: 'authAdminScopesByTenants',
+  })
+  getScopesByTenants(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopesByTenantsInput })
+    input: ScopesByTenantsInput,
+  ): Promise<ScopesByTenantsPayload> {
+    return this.scopeService.getScopesByTenants(
+      user,
+      input.tenantIds,
+      input.environment,
+    )
   }
 
   @ResolveField('defaultEnvironment', () => ScopeEnvironment)
@@ -110,6 +136,18 @@ export class ScopeResolver {
     return Array.from(availableEnvironments)
   }
 
+  @Query(() => [ScopeClient], {
+    name: 'authAdminScopeClients',
+    description: 'Get all clients that use the specified scope',
+  })
+  getScopeClients(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeClientsInput })
+    input: ScopeClientsInput,
+  ): Promise<ScopeClient[]> {
+    return this.scopeService.getScopeClients(user, input, input.environment)
+  }
+
   @Query(() => [ScopeCategory], {
     name: 'authAdminScopeCategories',
     description: 'Get available categories for scope categorization',
@@ -119,7 +157,21 @@ export class ScopeResolver {
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang?: string,
   ): Promise<ScopeCategory[]> {
-    return this.cmsContentfulService.getArticleCategories(lang ?? 'is')
+    const language = lang ?? 'is'
+    const cmsCategories = await this.cmsContentfulService.getArticleCategories(
+      language,
+    )
+
+    return [
+      ...cmsCategories,
+      {
+        id: ISLAND_IS_CATEGORY.id,
+        title: ISLAND_IS_CATEGORY.title[language === 'en' ? 'en' : 'is'],
+        slug: ISLAND_IS_CATEGORY.slug,
+        description:
+          ISLAND_IS_CATEGORY.description[language === 'en' ? 'en' : 'is'],
+      },
+    ]
   }
 
   @Query(() => [ScopeTag], {
@@ -132,5 +184,44 @@ export class ScopeResolver {
     lang?: string,
   ): Promise<ScopeTag[]> {
     return this.cmsContentfulService.getDelegationScopeTags(lang ?? 'is')
+  }
+
+  @Query(() => [ScopeUser], {
+    name: 'authAdminScopeUsers',
+    description: 'Get all users with access to a specific scope',
+  })
+  getScopeUsers(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeUsersInput })
+    input: ScopeUsersInput,
+  ): Promise<ScopeUser[]> {
+    return this.scopeService.getScopeUsers(
+      user,
+      input.tenantId,
+      input.scopeName,
+      input.environment,
+    )
+  }
+
+  @Mutation(() => ScopeUser, {
+    name: 'createAuthAdminScopeUser',
+  })
+  createScopeUser(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateScopeUserInput })
+    input: CreateScopeUserInput,
+  ): Promise<ScopeUser> {
+    return this.scopeService.createScopeUser(user, input)
+  }
+
+  @Mutation(() => UpdateScopeUsersResponse, {
+    name: 'updateAuthAdminScopeUsers',
+  })
+  updateScopeUsers(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => UpdateScopeUsersInput })
+    input: UpdateScopeUsersInput,
+  ): Promise<UpdateScopeUsersResponse> {
+    return this.scopeService.updateScopeUsers(user, input)
   }
 }

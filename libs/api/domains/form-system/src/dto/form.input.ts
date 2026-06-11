@@ -4,13 +4,13 @@ import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
-import { CompletedSectionInfoInput } from './completedSectionInfo.input'
 import { FieldInput } from './field.input'
 import { FieldTypeInput } from './fieldType.input'
 import { LanguageTypeInput } from './languageType.input'
 import { ListTypeInput } from './listType.input'
 import { ScreenInput } from './screen.input'
 import { SectionInput } from './section.input'
+import { SectionInfoInput } from './sectionInfo.input'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -65,9 +65,6 @@ export class UpdateFormDtoInput {
   @Field(() => Boolean, { nullable: true })
   useValidate?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  usePopulate?: boolean
-
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 
@@ -89,14 +86,17 @@ export class UpdateFormDtoInput {
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
 
-  @Field(() => CompletedSectionInfoInput, { nullable: true })
-  completedSectionInfo?: CompletedSectionInfoInput
+  @Field(() => SectionInfoInput, { nullable: true })
+  sectionInfo?: SectionInfoInput
 
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
 
   @Field(() => String, { nullable: true })
   status?: string
+
+  @Field(() => String, { nullable: true })
+  lastModifiedBy?: string
 }
 
 @InputType('FormSystemUpdateFormInput')
@@ -152,8 +152,8 @@ export class FormInput {
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
 
-  @Field(() => CompletedSectionInfoInput, { nullable: true })
-  completedSectionInfo?: CompletedSectionInfoInput
+  @Field(() => SectionInfoInput, { nullable: true })
+  sectionInfo?: SectionInfoInput
 
   @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDtoInput[]

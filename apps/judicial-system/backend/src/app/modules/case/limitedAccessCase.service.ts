@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { col, Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -12,35 +12,38 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CaseAppealState,
+  AppealCaseNotificationType,
+  appealEventTypes,
   CaseFileCategory,
   CaseFileState,
-  CaseNotificationType,
   CaseState,
   completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  hasGeneratedCourtRecordPdf,
   isIndictmentCase,
   isRequestCase,
-  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
-import { FileService, getDefenceUserCaseFileCategories } from '../file'
+import {
+  FileService,
+  getConfirmedDefendantsForDefender,
+  getDefenceUserCaseFileCategories,
+  getDefenceUserCutoffDate,
+  getDefenderVisiblePoliceCaseNumbers,
+} from '../file'
 import {
   AppealCase,
+  AppealEventLog,
   Case,
+  CaseDefendantPoliceCaseNumber,
   CaseFile,
   CaseRepositoryService,
   CaseString,
@@ -115,16 +118,13 @@ export const attributes: (keyof Case)[] = [
 ]
 
 export interface LimitedAccessUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'openedByDefender'>,
-    Partial<
-      Pick<
-        AppealCase,
-        | 'appealState'
-        | 'defendantStatementDate'
-        | 'appealRulingDecision'
-        | 'appealedByNationalId'
-      >
-    > {}
+  extends Pick<
+    Case,
+    | 'caseModifiedExplanation'
+    | 'isolationToDate'
+    | 'validToDate'
+    | 'openedByDefender'
+  > {}
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -179,6 +179,48 @@ export const include: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'rulingOrderAppealCases',
+    required: false,
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
     ],
   },
   { model: Case, as: 'parentCase', attributes },
@@ -210,6 +252,12 @@ export const include: Includeable[] = [
         where: { eventType: defendantEventTypes },
         separate: true,
       },
+      {
+        model: CaseDefendantPoliceCaseNumber,
+        as: 'caseDefendantPoliceCaseNumbers',
+        required: false,
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -224,7 +272,10 @@ export const include: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
@@ -287,6 +338,7 @@ export const include: Includeable[] = [
       state: { [Op.not]: CaseFileState.DELETED },
       category: [
         CaseFileCategory.RULING,
+        CaseFileCategory.DEFENDANT_RULING,
         CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -343,7 +395,7 @@ export const include: Includeable[] = [
     model: Notification,
     as: 'notifications',
     required: false,
-    where: { type: NotificationType.APPEAL_COMPLETED },
+    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -464,13 +516,21 @@ export const include: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
-            where: { created: { [Op.lt]: col('Case.created') } },
+            separate: true,
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },
@@ -545,59 +605,8 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    if (update.appealState === CaseAppealState.APPEALED) {
-      for (const caseFile of theCase.caseFiles ?? []) {
-        if (
-          caseFile.state === CaseFileState.STORED_IN_RVG &&
-          caseFile.isKeyAccessible &&
-          caseFile.category &&
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          ].includes(caseFile.category)
-        ) {
-          addMessagesToQueue({
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId: theCase.id,
-            elementId: caseFile.id,
-          })
-        }
-      }
-
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
-      })
-    }
-
-    if (update.appealState === CaseAppealState.WITHDRAWN) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
-      })
-    }
-
     // Return limited access case (read within transaction so we see the updated row)
-    const updatedCase = await this.findById(theCase.id, { transaction })
-
-    if (
-      updatedCase.appealCase?.defendantStatementDate?.getTime() !==
-      theCase.appealCase?.defendantStatementDate?.getTime()
-    ) {
-      addMessagesToQueue({
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.APPEAL_STATEMENT },
-      })
-    }
-
-    return updatedCase
+    return this.findById(theCase.id, { transaction })
   }
 
   private constructDefender(
@@ -624,10 +633,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    // nationalId comes from a raw @Query param, so normalize it once here and
+    // pass the dash-free value down to the lookups and the constructed user.
+    const normalizedNationalId = nationalId.replace(/-/g, '')
+
     return this.caseRepositoryService
       .findOne({
         where: {
-          defenderNationalId: normalizeAndFormatNationalId(nationalId),
+          defenderNationalId: normalizedNationalId,
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -637,7 +650,7 @@ export class LimitedAccessCaseService {
         if (theCase) {
           // The national id is associated with a defender in a request case
           return this.constructDefender(
-            nationalId,
+            normalizedNationalId,
             theCase.defenderName,
             theCase.defenderPhoneNumber,
             theCase.defenderEmail,
@@ -645,12 +658,12 @@ export class LimitedAccessCaseService {
         }
 
         return this.defendantService
-          .findLatestDefendantByDefenderNationalId(nationalId)
+          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
           .then((defendant) => {
             if (defendant) {
               // The national id is associated with a defender in an indictment case
               return this.constructDefender(
-                nationalId,
+                normalizedNationalId,
                 defendant.defenderName,
                 defendant.defenderPhoneNumber,
                 defendant.defenderEmail,
@@ -658,12 +671,12 @@ export class LimitedAccessCaseService {
             }
 
             return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
               .then((civilClaimant) => {
                 if (civilClaimant) {
                   // The national id is associated with a spokesperson for a civil claimant in an indictment case
                   return this.constructDefender(
-                    nationalId,
+                    normalizedNationalId,
                     civilClaimant.spokespersonName,
                     civilClaimant.spokespersonPhoneNumber,
                     civilClaimant.spokespersonEmail,
@@ -761,6 +774,12 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
+    const cutoffDate = getDefenceUserCutoffDate(
+      user.nationalId,
+      theCase.defendants,
+      theCase.civilClaimants,
+    )
+
     const allowedCaseFiles =
       theCase.caseFiles?.filter((file) => {
         if (!file.isKeyAccessible || !file.category) {
@@ -768,6 +787,10 @@ export class LimitedAccessCaseService {
         }
 
         if (!allowedCaseFileCategories.includes(file.category)) {
+          return false
+        }
+
+        if (cutoffDate && file.created > cutoffDate) {
           return false
         }
 
@@ -839,7 +862,18 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      )
+        ? getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        : theCase.policeCaseNumbers
+
+      policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),
@@ -849,7 +883,12 @@ export class LimitedAccessCaseService {
         )
       })
 
-      theCase.defendants?.forEach((defendant) =>
+      const myDefendants = getConfirmedDefendantsForDefender(
+        user.nationalId,
+        theCase.defendants,
+      )
+
+      myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
@@ -866,12 +905,29 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      if (
+      const allMyDefendantsDismissed = Boolean(
+        getDefenceUserCutoffDate(
+          user.nationalId,
+          theCase.defendants,
+          theCase.civilClaimants,
+        ),
+      )
+
+      const shouldIncludeGeneratedCourtRecord =
         allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
         !theCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ) &&
+        !allMyDefendantsDismissed &&
+        hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
         )
-      ) {
+
+      if (shouldIncludeGeneratedCourtRecord) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
             this.pdfService.getCourtRecordPdfForIndictmentCase(
