@@ -27,6 +27,7 @@ export enum States {
 }
 
 export enum TemplateApiActions {
+  submitApplication = 'submitApplication',
   notifyAssignees = 'notifyAssignees',
   notifyApplicantOnAssigneeSubmit = 'notifyApplicantOnAssigneeSubmit',
   notifyApplicantOnAssigneeReject = 'notifyApplicantOnAssigneeReject',

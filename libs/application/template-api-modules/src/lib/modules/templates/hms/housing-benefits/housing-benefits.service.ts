@@ -16,6 +16,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
+import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
@@ -33,6 +34,7 @@ import {
   getRequestedExtraDataFiles,
   getRentalAddress,
   isLastAssigneeToComplete,
+  mapApplicationToHousingBenefitsModel,
   normalizeNationalId,
 } from './utils'
 import {
@@ -58,6 +60,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     private readonly notificationsService: NotificationsService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly configService: ConfigService<SharedModuleConfig>,
+    private readonly hmsHousingBenefitsClientService: HmsHousingBenefitsClientService,
   ) {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
@@ -631,12 +634,71 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     return this.nationalRegistryV3Service.childrenCustodyInformation(props)
   }
 
-  async submitApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const existingApplicationNumber = getValueViaPath<number>(
+      application.externalData,
+      'submitApplication.data.applicationNumber',
+    )
+    if (existingApplicationNumber) {
+      return {
+        applicationNumber: existingApplicationNumber,
+        success: true,
+      }
+    }
 
-    return {
-      id: 1337,
+    try {
+      const model = mapApplicationToHousingBenefitsModel(application)
+      const result =
+        await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
+          auth,
+          model,
+        )
+
+      if (!result.success) {
+        throw new TemplateApiError(
+          'Failed to submit housing benefits application',
+          500,
+        )
+      }
+
+      return {
+        applicationNumber: result.applicationNumber,
+        success: result.success,
+      }
+    } catch (e) {
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+
+      if (e instanceof Response) {
+        const status = e.status
+        let body: string
+        try {
+          body = await e.text()
+        } catch {
+          body = 'Could not read response body'
+        }
+        this.logger.error(
+          'Failed to submit housing benefits application',
+          { status, body },
+        )
+        throw new TemplateApiError(
+          {
+            title: 'Failed to submit housing benefits application',
+            summary: `HMS API returned ${status}: ${body}`,
+          },
+          500,
+        )
+      }
+
+      this.logger.error('Failed to submit housing benefits application:', e)
+      throw new TemplateApiError(
+        {
+          title: 'Failed to submit housing benefits application',
+          summary: e instanceof Error ? e.message : String(e),
+        },
+        500,
+      )
     }
   }
 }

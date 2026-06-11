@@ -61,6 +61,12 @@ export const AssigneeChildrenCustodyInformationApiV3 = defineTemplateApi({
     nationalIdPreface(application, user, 'assigneeChildrenCustody'),
 })
 
+export const SubmitApplicationApi = defineTemplateApi({
+  action: TemplateApiActions.submitApplication,
+  externalDataId: 'submitApplication',
+  throwOnError: true,
+})
+
 export const NotifyAssigneesApi = defineTemplateApi({
   action: TemplateApiActions.notifyAssignees,
   externalDataId: 'notifyAssignees',

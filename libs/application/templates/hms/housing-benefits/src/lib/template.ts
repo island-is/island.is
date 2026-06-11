@@ -38,6 +38,7 @@ import {
   NotifyApplicantOnExtraDataRequestedApi,
   NotifyApplicantOnApprovedByInstitutionApi,
   NotifyApplicantOnRejectedByInstitutionApi,
+  SubmitApplicationApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import { mustFileTaxReturnBeforeApplying } from '../utils/utils'
@@ -412,6 +413,7 @@ const template: ApplicationTemplate<
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.inReview,
+          onEntry: SubmitApplicationApi,
           roles: [
             {
               id: Roles.APPLICANT,

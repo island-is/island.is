@@ -6,12 +6,14 @@ import { NationalRegistryV3Module } from '../../../shared/api/national-registry-
 import { HousingBenefitsService } from './housing-benefits.service'
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
 import { HmsRentalAgreementClientModule } from '@island.is/clients/hms-rental-agreement'
+import { HmsHousingBenefitsClientModule } from '@island.is/clients/hms-housing-benefits'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     ApplicationsNotificationsModule,
     HmsRentalAgreementClientModule,
+    HmsHousingBenefitsClientModule,
     NationalRegistryV3Module,
   ],
   providers: [HousingBenefitsService],

@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/types'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { HomeApi } from '@island.is/clients/hms-rental-agreement'
+import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { HousingBenefitsService } from './housing-benefits.service'
 import { isLastAssigneeToComplete } from './utils'
@@ -79,9 +80,13 @@ const createApplication = (
 describe('HousingBenefitsService notifications', () => {
   let service: HousingBenefitsService
   let sendNotification: jest.Mock
+  let createHousingBenefitsApplication: jest.Mock
 
   beforeEach(async () => {
     sendNotification = jest.fn().mockResolvedValue({ id: 'notification-id' })
+    createHousingBenefitsApplication = jest
+      .fn()
+      .mockResolvedValue({ applicationNumber: 4242, success: true })
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -108,6 +113,12 @@ describe('HousingBenefitsService notifications', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn().mockReturnValue('http://localhost:4242'),
+          },
+        },
+        {
+          provide: HmsHousingBenefitsClientService,
+          useValue: {
+            createHousingBenefitsApplication,
           },
         },
       ],
@@ -500,6 +511,68 @@ describe('HousingBenefitsService notifications', () => {
           rejectReason: 'Does not meet eligibility criteria',
         },
       })
+    })
+  })
+
+  describe('submitApplication', () => {
+    it('maps the application and submits it to HMS', async () => {
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.submitApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(createHousingBenefitsApplication).toHaveBeenCalledTimes(1)
+      expect(createHousingBenefitsApplication).toHaveBeenCalledWith(
+        auth,
+        expect.objectContaining({
+          kennitala: APPLICANT_ID,
+          leaseContractNumber: 123,
+        }),
+      )
+      expect(result).toEqual({ applicationNumber: 4242, success: true })
+    })
+
+    it('does not resubmit when an application number already exists', async () => {
+      const application = createApplication({
+        externalData: {
+          submitApplication: {
+            data: { applicationNumber: 9999 },
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      const result = await service.submitApplication({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      })
+
+      expect(createHousingBenefitsApplication).not.toHaveBeenCalled()
+      expect(result).toEqual({ applicationNumber: 9999, success: true })
+    })
+
+    it('throws when HMS reports the submission was not successful', async () => {
+      createHousingBenefitsApplication.mockResolvedValueOnce({
+        applicationNumber: undefined,
+        success: false,
+      })
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      await expect(
+        service.submitApplication({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toThrow()
     })
   })
 
