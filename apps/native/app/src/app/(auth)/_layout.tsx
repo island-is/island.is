@@ -64,10 +64,10 @@ export default function AuthLayout() {
         isOnboarded() &&
         !config.isTestingApp
       ) {
-        router.push('/app-lock')
+        pushLockScreen()
       }
     })
-  }, [router])
+  }, [pushLockScreen])
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {

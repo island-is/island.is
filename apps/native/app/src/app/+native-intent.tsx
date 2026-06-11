@@ -36,11 +36,13 @@ export function consumePendingDeepLink(): void {
   // forwards to Linking.openURL on Android, which re-delivers the intent and
   // loops endlessly. For custom-scheme URLs the "host" is actually the first
   // path segment (e.g. is.island.app.dev://wallet/X → /wallet/X), so prepend it.
+  // For http/https, host is a domain — leave it off.
   let pathname = path
   if (path.includes('://')) {
     try {
       const url = new URL(path)
-      const host = url.host ? `/${url.host}` : ''
+      const isHttpUrl = url.protocol === 'http:' || url.protocol === 'https:'
+      const host = !isHttpUrl && url.host ? `/${url.host}` : ''
       pathname = `${host}${url.pathname}${url.search}` || '/'
     } catch {
       // keep raw path on parse failure

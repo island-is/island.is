@@ -86,6 +86,16 @@ export default function RootLayout() {
         //    The reactive Redirect in (tabs)/_layout then drives routing.
         if (isAuthenticated) {
           await getNextOnboardingStep()
+          // Stamp a past timestamp so the auth-layout mount effect pushes the
+          // lock on cold start. Past grace forces auth (PIN/biometric) rather
+          // than auto-unlock. Post-login mounts don't hit this path so the
+          // stamp stays undefined → no lock right after login.
+          if (isOnboarded() && !config.isTestingApp) {
+            authStore.setState({
+              lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
+              biometricAutoPromptedForCurrentLock: false,
+            })
+          }
         }
 
         // 4. Initialize Apollo client (with persisted cache)

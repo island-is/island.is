@@ -53,14 +53,17 @@ export function useDeepLinkHandling() {
       }
       lastUrl.current = url
 
-      // Locked: stash so unlockApp replays it, instead of dropping the URL.
-      if (lockScreenActivatedAt) {
-        stashPendingDeepLink(url)
+      // Wallet URLs are intentionally handled elsewhere — keep the bypass
+      // ahead of the lock-stash so locked-state doesn't change wallet flow.
+      if (url.startsWith('is.island.app') && url.includes('wallet/')) {
         return false
       }
 
-      if (url.startsWith('is.island.app') && url.includes('wallet/')) {
-        return false
+      // Locked: stash so unlockApp replays it. Return true so notification
+      // callers still mark the notification as read — we acknowledged the URL.
+      if (lockScreenActivatedAt) {
+        stashPendingDeepLink(url)
+        return true
       }
 
       navigateToUniversalLink({ link: url })
