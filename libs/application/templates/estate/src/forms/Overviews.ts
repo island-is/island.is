@@ -44,6 +44,7 @@ export const overview = buildSection({
     buildMultiField({
       id: 'overviewPrivateDivisionWithPayment',
       title: m.overviewTitle,
+      nextButtonText: m.saveAndContinue,
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
@@ -90,6 +91,7 @@ export const overview = buildSection({
     buildMultiField({
       id: 'overviewUndividedEstateWithPayment',
       title: m.overviewTitle,
+      nextButtonText: m.saveAndContinue,
       description: m.overviewSubtitlePermitToPostpone,
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
