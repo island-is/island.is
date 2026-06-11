@@ -13,6 +13,13 @@ export const mapFieldType = (fieldType: string): string => fieldType
 export const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
+/** Mirrors the legacy `OverviewFormField` empty check used for `hideIfEmpty`. */
+export const isEmpty = (value: unknown): boolean => {
+  if (!value) return true
+  if (Array.isArray(value)) return value.length === 0
+  return false
+}
+
 /**
  * Field props may be values or template callbacks with application-specific
  * signatures; `unknown[]` keeps that flexible without leaking unsafe types.

@@ -31,9 +31,30 @@ import {
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 import { FetchError } from '@island.is/clients/middlewares'
 import { HmsService } from '@island.is/clients/hms'
+
+// NOTE: These error messages intentionally duplicate
+// `prereqMessages.getPropertiesError{Title,Summary}` from the frontend template
+// lib (`@island.is/application/templates/hms/fire-compensation-appraisal`).
+// Importing that barrel into this backend service pulls in the whole template
+// (FormBuilder/React/vanilla-extract) and creates a circular import that strips
+// this service's `design:paramtypes` metadata at decoration time — leaving every
+// type-injected dependency (the API clients, NotificationsService, …) undefined
+// at runtime. Keep backend services free of frontend-template-barrel imports.
+const getPropertiesErrorMessages = {
+  title: {
+    id: 'fca.application:prereq.getPropertiesErrorTitle',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um fasteignir',
+    description: 'Error title for getting properties',
+  },
+  summary: {
+    id: 'fca.application:prereq.getPropertiesErrorSummary#markdown',
+    defaultMessage:
+      'Vinsamlega hafið samband við HMS í [hms@hms.is](mailto:hms@hms.is)',
+    description: 'Error summary for getting properties',
+  },
+}
 
 type SearchAnswer = {
   query?: string
@@ -61,11 +82,14 @@ const getSearchLabel = (address: {
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private propertiesApi: FasteignirApi,
+    @Inject(FasteignirApi) private propertiesApi: FasteignirApi,
+    @Inject(ApplicationApi)
     private hmsApplicationSystemService: ApplicationApi,
+    @Inject(AttachmentS3Service)
     private readonly attachmentService: AttachmentS3Service,
+    @Inject(NotificationsService)
     private readonly notificationsService: NotificationsService,
-    private readonly hmsService: HmsService,
+    @Inject(HmsService) private readonly hmsService: HmsService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -129,8 +153,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
         throw new TemplateApiError(
           {
-            title: prereqMessages.getPropertiesErrorTitle,
-            summary: prereqMessages.getPropertiesErrorSummary,
+            title: getPropertiesErrorMessages.title,
+            summary: getPropertiesErrorMessages.summary,
           },
           500,
         )
@@ -336,9 +360,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     application: TemplateApiModuleActionProps['application'],
   ) {
     // Get the generator
-    const fileGenerator = this.attachmentService.getFilesGenerator(application, [
-      'photos',
-    ])
+    const fileGenerator = this.attachmentService.getFilesGenerator(
+      application,
+      ['photos'],
+    )
 
     const uniqueFileKeys = new Set<string>()
 

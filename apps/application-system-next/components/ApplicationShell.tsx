@@ -12,6 +12,8 @@ import {
   Section,
   Text,
 } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
+import * as institutionLogos from '@island.is/application/assets/institution-logos'
 
 import { useFormActions } from '../hooks/useFormActions'
 import { useDisplayRecompute } from '../hooks/useDisplayRecompute'
@@ -45,6 +47,14 @@ export const ApplicationShell = ({
   } = useFormActions(applicationId, initialScreen)
 
   const { setInfo } = useHeaderInfo()
+
+  // Logos travel as a serializable export name (e.g. "HmsLogo"); resolve it back
+  // to the SVG component from the institution-logos barrel, guarding unknown keys.
+  const logoKey = screen.header.logo
+  const FormLogo =
+    logoKey && logoKey in institutionLogos
+      ? (institutionLogos as Record<string, React.ComponentType>)[logoKey]
+      : undefined
 
   const displayValues = useDisplayRecompute(
     applicationId,
@@ -103,9 +113,9 @@ export const ApplicationShell = ({
                         {screen.header.title}
                       </Text>
                       {screen.header.description && (
-                        <Text marginBottom={3}>
-                          {screen.header.description}
-                        </Text>
+                        <Box marginBottom={3}>
+                          <Markdown>{screen.header.description}</Markdown>
+                        </Box>
                       )}
 
                       {error && (
@@ -228,36 +238,56 @@ export const ApplicationShell = ({
                   paddingLeft={[0, 0, 0, 4]}
                   className={styles.sidebarInner}
                 >
-                  <FormStepperV2
-                    sections={screen.stepper.sections.map((section, idx) => (
-                      <Section
-                        key={section.id}
-                        section={section.title}
-                        sectionIndex={idx}
-                        isActive={screen.stepper.activeSectionIndex === idx}
-                        isComplete={section.isComplete}
-                        subSections={
-                          section.children.length > 1
-                            ? section.children.map((sub, subIdx) => (
-                                <Text
-                                  key={sub.id}
-                                  variant="medium"
-                                  fontWeight={
-                                    screen.stepper.activeSectionIndex === idx &&
-                                    screen.stepper.activeSubSectionIndex ===
-                                      subIdx
-                                      ? 'semiBold'
-                                      : 'regular'
-                                  }
-                                >
-                                  {sub.title}
-                                </Text>
-                              ))
-                            : undefined
-                        }
-                      />
-                    ))}
-                  />
+                  {screen.stepper.sections.length > 0 ? (
+                    <FormStepperV2
+                      sections={screen.stepper.sections.map((section, idx) => (
+                        <Section
+                          key={section.id}
+                          section={section.title}
+                          sectionIndex={idx}
+                          isActive={screen.stepper.activeSectionIndex === idx}
+                          isComplete={section.isComplete}
+                          subSections={
+                            section.children.length > 1
+                              ? section.children.map((sub, subIdx) => (
+                                  <Text
+                                    key={sub.id}
+                                    variant="medium"
+                                    fontWeight={
+                                      screen.stepper.activeSectionIndex ===
+                                        idx &&
+                                      screen.stepper.activeSubSectionIndex ===
+                                        subIdx
+                                        ? 'semiBold'
+                                        : 'regular'
+                                    }
+                                  >
+                                    {sub.title}
+                                  </Text>
+                                ))
+                              : undefined
+                          }
+                        />
+                      ))}
+                    />
+                  ) : (
+                    // Forms without a stepper (e.g. the NOT_STARTED prerequisites
+                    // form) still need a top slot so `justifyContent="spaceBetween"`
+                    // keeps the logo anchored to the bottom of the sidebar, mirroring
+                    // the legacy FormShell which always renders the stepper container.
+                    <Box />
+                  )}
+                  {FormLogo && (
+                    <Box
+                      display={['none', 'none', 'flex']}
+                      alignItems="center"
+                      justifyContent="center"
+                      marginRight={[0, 0, 0, 4]}
+                      paddingBottom={4}
+                    >
+                      <FormLogo />
+                    </Box>
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>

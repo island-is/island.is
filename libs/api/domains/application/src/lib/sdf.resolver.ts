@@ -27,6 +27,7 @@ const mapRestScreenToGql = (dto: ScreenDto): SdfScreen => {
       description: dto.header.description,
       applicationName: dto.header.applicationName,
       institutionName: dto.header.institutionName,
+      logo: dto.header.logo,
     },
     stepper: {
       sections: dto.stepper.sections.map((s) => ({

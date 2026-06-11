@@ -5,7 +5,6 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
-  DefaultEvents,
   FormModes,
   FormText,
 } from '@island.is/application/types'
@@ -290,16 +289,11 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
           rightAlign: true,
           variant: 'currency',
         })
-        .addSubmitField('submit', m.overviewMessages.pay, {
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.overviewMessages.pay,
-              type: 'primary',
-            },
-          ],
-        })
+      // The "Greiða" call-to-action is rendered by the screen footer from the
+      // DRAFT state's role action (event: PAYMENT) — see `buildFooter` /
+      // `footer-builder`. An inline `addSubmitField` here would render a second,
+      // dead button (SdfSubmitField has no dispatch), so it is intentionally
+      // omitted (mirrors the SDF convention used by rental-agreement-sdf).
     })
   })
   .build()

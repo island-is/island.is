@@ -26,6 +26,16 @@ jest.mock('@island.is/application/template-loader', () => ({
 
 const createResolver = () => ({
   resolve: (value: unknown) => (typeof value === 'string' ? value : ''),
+  // Mirror the real FormTextResolver, which exposes the underlying
+  // `formatMessage` via a `format` getter. `buildHeader` uses it to resolve the
+  // application/institution name; a string passes through, a MessageDescriptor
+  // falls back to its defaultMessage/id.
+  format: (message: unknown) =>
+    typeof message === 'string'
+      ? message
+      : (message as { defaultMessage?: string; id?: string })?.defaultMessage ??
+        (message as { id?: string })?.id ??
+        '',
 })
 
 const createScreenForm = () =>

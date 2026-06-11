@@ -1,4 +1,6 @@
 import { YES } from '@island.is/application/core'
+import { applicantInformationMessages } from '@island.is/application/ui-forms'
+import { isValidNumber } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as m from './messages'
 import uniqWith from 'lodash/uniqWith'
@@ -34,6 +36,10 @@ export const dataSchema = z.object({
   confirmReadPrivacyPolicy: readPrivacyPolicy,
   confirmReadFireCompensationInfo: readFireCompensationInfo,
   approveExternalData: z.boolean().refine((v) => v),
+  // Dev/local only: opt into mock payments (see prerequisitesForm). Read by the
+  // shared `Payment.createCharge` action, which fabricates a fulfilled charge so
+  // the payment flow can be exercised without a reachable charge-FJS service.
+  shouldUseMockPayment: z.array(z.literal(YES)).optional(),
   // Main form
   applicant: applicantSchema,
   realEstate: realEstateSchema,

@@ -6,6 +6,7 @@ import {
   GridContainer,
   Header as UIHeader,
 } from '@island.is/island-ui/core'
+import { UserMenu } from '@island.is/shared/components'
 import { useHeaderInfo } from './HeaderInfoProvider'
 
 export const AppHeader = () => {
@@ -16,14 +17,17 @@ export const AppHeader = () => {
       <GridContainer>
         <UIHeader
           info={
-            info.applicationName && info.institutionName
+            info.applicationName
               ? {
-                  title: info.institutionName,
-                  description: info.applicationName,
+                  title: info.institutionName ?? info.applicationName,
+                  description: info.institutionName
+                    ? info.applicationName
+                    : undefined,
                 }
               : undefined
           }
           logoRender={(logo) => <a href="/minarsidur/umsoknir">{logo}</a>}
+          headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>
     </Box>

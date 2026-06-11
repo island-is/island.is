@@ -4,7 +4,10 @@ import { useEffect, useMemo } from 'react'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { getFormExpressionDependencies } from '@island.is/application/core'
 import { ComponentSwitch } from './form-renderer/ComponentSwitch'
-import { groupComponentsIntoRows } from './form-renderer/layout'
+import {
+  groupComponentsIntoRows,
+  isHalfWidthCandidate,
+} from './form-renderer/layout'
 import type {
   FormRendererProps,
   SdfFormDispatch,
@@ -68,7 +71,7 @@ export const FormRenderer = ({
   return (
     <Box>
       {rows.map((row, rowIdx) => {
-        if (row.length === 1 && row[0].width !== 'HALF') {
+        if (row.length === 1 && !isHalfWidthCandidate(row[0])) {
           const component = row[0]
           return (
             <ComponentSwitch

@@ -32,6 +32,19 @@ export class FormTextResolver {
     private readonly locale: Locale,
   ) {}
 
+  get currentLocale(): Locale {
+    return this.locale
+  }
+
+  /**
+   * Exposes the underlying `formatMessage` for helpers that resolve names
+   * directly (e.g. `getApplicationNameTranslationString`, which supports the
+   * dynamic `name(application)` form with interpolated values).
+   */
+  get format(): FormatMessage {
+    return this.formatMessage
+  }
+
   resolve(
     text: FormText | FormTextWithLocale | StaticText | undefined,
   ): string {

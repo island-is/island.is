@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes, UserProfileApi } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { NationalRegistryApi, propertiesApi } from '../../dataProviders'
 import { dataSchema } from '../../lib/dataSchema'
@@ -46,6 +47,23 @@ export const Prerequisites = new FormBuilder<typeof dataSchema>(
                 },
               ],
             })
+
+          // Dev/local-only escape hatch so the payment flow can be tested without
+          // a reachable charge-FJS service. Ticking this persists
+          // `shouldUseMockPayment`, which makes the shared `Payment.createCharge`
+          // action fabricate a fulfilled charge. The field is omitted entirely in
+          // production, and `createCharge` additionally refuses mock payments
+          // there — so it cannot affect real payments.
+          if (!isRunningOnEnvironment('production')) {
+            page.addCheckboxField('shouldUseMockPayment', '', {
+              options: [
+                {
+                  label: 'Enable mock payment (dev only)',
+                  value: YES,
+                },
+              ],
+            })
+          }
           // TODO: put this back in when properties can be fetched without national id
           // .addCheckboxField('otherPropertiesThanIOwnCheckbox', '', {
           //   options: [

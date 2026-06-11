@@ -129,6 +129,14 @@ export class ComponentDto {
   })
   isMulti?: boolean
 
+  /** Phone field: show the country-code dropdown selector. */
+  @ApiPropertyOptional()
+  enableCountrySelector?: boolean
+
+  /** Phone field: restrict the country-code options. */
+  @ApiPropertyOptional({ type: [String] })
+  allowedCountryCodes?: string[]
+
   @ApiPropertyOptional({
     description:
       'Template API actions to run when this select changes (SDF inline REFETCH).',
@@ -355,6 +363,36 @@ export class ComponentDto {
   @ApiPropertyOptional({ type: [Object] })
   informationCardItems?: Array<{ label: string; value: string }>
 
+  /** Overview field: resolved page id to navigate to on "Breyta" (edit). */
+  @ApiPropertyOptional()
+  backId?: string
+
+  /** Overview field: hide the bottom divider. */
+  @ApiPropertyOptional()
+  bottomLine?: boolean
+
+  /** Overview field: render the title/items inside an accordion. */
+  @ApiPropertyOptional()
+  displayTitleAsAccordion?: boolean
+
+  @ApiPropertyOptional({ type: [Object] })
+  overviewItems?: Array<{
+    width?: string
+    keyText?: string
+    valueText?: string
+    inlineKeyText?: boolean
+    boldValueText?: boolean
+    lineAboveKeyText?: boolean
+  }>
+
+  @ApiPropertyOptional({ type: [Object] })
+  overviewAttachments?: Array<{
+    width?: string
+    fileName: string
+    fileType?: string
+    fileSize?: string
+  }>
+
   @ApiPropertyOptional()
   paymentChargeHeading?: string
 
@@ -500,6 +538,12 @@ export class HeaderDto {
 
   @ApiPropertyOptional()
   institutionName?: string
+
+  @ApiPropertyOptional({
+    description:
+      'Export name of the form logo component (e.g. "HmsLogo"). The client maps this to a component from @island.is/application/assets/institution-logos.',
+  })
+  logo?: string
 }
 
 export class ScreenDto {

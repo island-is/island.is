@@ -12,6 +12,7 @@ import { formatPhoneNumber } from './utils'
 import { FileType } from '../types'
 import { formatCurrency } from '@island.is/shared/utils'
 import { getSelectedProperty } from './propertyUtils'
+import { sumUsageUnitsFireCompensation } from './sumUtils'
 
 export const personalInformationOverviewItems = (
   answers: FormValue,
@@ -104,8 +105,11 @@ export const realEstateOverviewItems = (
     )
     .map((unit) => unit.notkunBirting)
 
+  // `usageUnitsFireCompensation` is an SDF display field, whose computed value is
+  // never persisted into answers — so recompute it from source here (same pattern
+  // as `getAmountToPay` and the SDF submit mapper) instead of reading the answer.
   const usageUnitsFireCompensation = parseInt(
-    getValueViaPath<string>(answers, 'usageUnitsFireCompensation') ?? '0',
+    sumUsageUnitsFireCompensation(answers, externalData),
   )
 
   return [

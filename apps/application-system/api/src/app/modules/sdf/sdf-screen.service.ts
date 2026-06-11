@@ -40,8 +40,11 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationActionService } from '../application/application-action.service'
 import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
+import { getApplicationNameTranslationString } from '../application/utils/application'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
+import { applyResolvedFieldDefaults } from './field-default-persistence'
+import { stripEmptyFormValue } from './strip-empty-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
@@ -416,11 +419,26 @@ export class SdfScreenService {
       ? resolver.resolve(screen.description)
       : undefined
 
+    // The application/institution name come from the template (same source the
+    // legacy serializer uses), not `form.title` — NOT_STARTED forms set an empty
+    // title, which previously left the header name blank.
+    const applicationName = getApplicationNameTranslationString(
+      context.template,
+      context.application as Application,
+      resolver.format,
+    )
+    const institutionName = context.template.institution
+      ? resolver.format(context.template.institution)
+      : context.application.institution ?? undefined
+
     return {
       title: resolver.resolve(currentScreen?.title || context.form.title),
       description,
-      applicationName: resolver.resolve(context.form.title),
-      institutionName: context.application.institution ?? undefined,
+      applicationName,
+      institutionName,
+      // Logos are React components and not serializable; send the export name so
+      // the client can resolve it from @island.is/application/assets/institution-logos.
+      logo: context.form.logo?.name,
     }
   }
 
@@ -782,6 +800,19 @@ export class SdfScreenService {
       user,
     )
 
+    // Persist resolved field defaults for the page being left, mirroring the
+    // legacy web renderer (which keeps every field's `defaultValue` in form state
+    // and commits it on submit). Runs before validation and page-advance so both
+    // see the seeded values. EDP screens own no input answers, so this is a no-op
+    // there. Mutates `mergedAnswers` in place. (The helper normalizes the Sequelize
+    // model internally so `externalData`-derived defaults resolve correctly.)
+    applyResolvedFieldDefaults(
+      currentScreen,
+      mergedAnswers,
+      application as Application,
+      locale,
+    )
+
     if (
       currentScreen &&
       'type' in currentScreen &&
@@ -826,9 +857,20 @@ export class SdfScreenService {
         }
       }
 
-      const newPageIndex = currentPageIndex + 1
+      const newPageIndex = await this.resolveAdvancedPageIndex(
+        application,
+        template,
+        mergedAnswers,
+        currentPageIndex,
+        locale,
+        user,
+      )
       await this.applicationService.update(applicationId, {
-        answers: mergedAnswers,
+        // Drop empty-string values so the stored answers match legacy, which
+        // never persisted an untouched/cleared optional field. Only the write
+        // is normalized — validation/page-advance above still run on the
+        // unstripped merge so required-empty fields error exactly as before.
+        answers: stripEmptyFormValue(mergedAnswers),
         pageIndex: newPageIndex,
       })
 
@@ -867,22 +909,32 @@ export class SdfScreenService {
       return screen
     }
 
-    const newPageIndex = currentPageIndex + 1
+    const newPageIndex = await this.resolveAdvancedPageIndex(
+      application,
+      template,
+      mergedAnswers,
+      currentPageIndex,
+      locale,
+      user,
+    )
     await this.applicationService.update(applicationId, {
-      answers: mergedAnswers,
+      // Drop empty-string values so the stored answers match legacy, which
+      // never persisted an untouched/cleared optional field. Only the write
+      // is normalized — validation/page-advance above still run on the
+      // unstripped merge so required-empty fields error exactly as before.
+      answers: stripEmptyFormValue(mergedAnswers),
       pageIndex: newPageIndex,
     })
 
     return this.getScreen(applicationId, undefined, locale, user)
   }
 
-  private async getCurrentScreen(
+  private async buildScreens(
     application: ApplicationWithAttachments,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    pageIndex: number,
     locale: Locale,
     user: User,
-  ): Promise<FormScreen | undefined> {
+  ): Promise<FormScreen[] | undefined> {
     const role = template.mapUserToRole(
       user.nationalId,
       application as Application,
@@ -907,14 +959,57 @@ export class SdfScreenService {
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application as Application, roleInState)
 
-    const screens = convertFormToScreens(
+    return convertFormToScreens(
       form,
       filteredAnswers,
       filteredExternalData,
       bffUser as any,
     )
+  }
+
+  private async getCurrentScreen(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    pageIndex: number,
+    locale: Locale,
+    user: User,
+  ): Promise<FormScreen | undefined> {
+    const screens = await this.buildScreens(application, template, locale, user)
+    if (!screens) return undefined
+
     const resolvedIndex = moveToScreen(screens, pageIndex, true)
     return screens[resolvedIndex]
+  }
+
+  // Resolve the index of the next *navigable* screen after `currentPageIndex`,
+  // computed against the just-submitted answers (which may flip the visibility
+  // of upcoming pages). The persisted cursor must always land on a navigable
+  // screen: it is what the client receives as `page.index` and echoes back as
+  // `lastKnownPageIndex` on the next NEXT_PAGE. Persisting a raw
+  // `currentPageIndex + 1` that points at a conditionally-hidden page desyncs
+  // the cursor from the client and breaks the idempotency check.
+  private async resolveAdvancedPageIndex(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    mergedAnswers: FormValue,
+    currentPageIndex: number,
+    locale: Locale,
+    user: User,
+  ): Promise<number> {
+    const target = currentPageIndex + 1
+    const workingApplication = {
+      ...toApplicationSnapshot(application),
+      answers: mergedAnswers,
+    } as ApplicationWithAttachments
+    const screens = await this.buildScreens(
+      workingApplication,
+      template,
+      locale,
+      user,
+    )
+    if (!screens) return target
+
+    return moveToScreen(screens, target, true)
   }
 
   async goToPreviousPage(
@@ -934,6 +1029,41 @@ export class SdfScreenService {
       await this.applicationService.update(applicationId, {
         pageIndex: newPageIndex,
       })
+    }
+
+    return this.getScreen(applicationId, undefined, locale, user)
+  }
+
+  // Jump directly to a known page by its id (overview "Breyta"/edit button).
+  // Resolves the page id against the role/state screens, lands on the nearest
+  // navigable screen, and persists that cursor — same persistence contract as
+  // NEXT_PAGE/PREV_PAGE so `page.index` and the client stay in sync.
+  async goToPage(
+    applicationId: string,
+    targetPageId: string,
+    locale: Locale,
+    user: User,
+  ): Promise<ScreenDto> {
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+    )
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    const screens = await this.buildScreens(application, template, locale, user)
+    if (screens) {
+      const targetIndex = screens.findIndex(
+        (screen) => screen.id === targetPageId,
+      )
+      if (targetIndex >= 0) {
+        const newPageIndex = moveToScreen(screens, targetIndex, false)
+        const currentPageIndex: number = (application as any).pageIndex ?? 0
+        if (newPageIndex !== currentPageIndex) {
+          await this.applicationService.update(applicationId, {
+            pageIndex: newPageIndex,
+          })
+        }
+      }
     }
 
     return this.getScreen(applicationId, undefined, locale, user)
@@ -1044,19 +1174,33 @@ export class SdfScreenService {
     if (answers && Object.keys(answers).length > 0) {
       const mergedAnswers = { ...application.answers, ...answers }
       await this.applicationService.update(applicationId, {
-        answers: mergedAnswers,
+        // See persistAnswersAndAdvance: strip empty strings on write so the
+        // canonical answers match legacy before the state transition runs.
+        answers: stripEmptyFormValue(mergedAnswers),
       })
       application = await this.requireApplicationForUser(applicationId, user)
     }
 
+    // `requireApplicationForUser` returns a Sequelize model instance whose
+    // attributes live behind prototype getters, not own-enumerable properties.
+    // `changeState` rebuilds the application with an object spread
+    // (`{ ...application }`) before running `onEntry` actions, which drops those
+    // getters — leaving `typeId` undefined and crashing `CreateChargeApi`'s
+    // translation lookup ("No template exists with id undefined"). Pass a plain
+    // snapshot so the spread preserves every field (mirrors the other action
+    // paths in this service).
+    const applicationSnapshot = toApplicationSnapshot(
+      application,
+    ) as ApplicationWithAttachments
+
     const helper = new ApplicationTemplateHelper(
-      application as Application,
+      applicationSnapshot as Application,
       template,
     )
     const apisFromRole = helper.getApisFromRoleInState(role)
     if (apisFromRole.length > 0) {
       await this.applicationActionService.performActionOnApplication(
-        application,
+        applicationSnapshot,
         template,
         user,
         apisFromRole,
@@ -1068,7 +1212,7 @@ export class SdfScreenService {
     const eventStr = event || 'SUBMIT'
 
     const result = await this.applicationActionService.changeState(
-      application,
+      applicationSnapshot,
       template,
       eventStr,
       user,
@@ -1076,10 +1220,20 @@ export class SdfScreenService {
     )
 
     if (result.hasError) {
-      throw new Error(
+      // A failed `onEntry` action (e.g. `CreateChargeApi` when transitioning to
+      // the payment state) aborts the transition here. `throwOnError` defaults
+      // to true, so a charge-creation failure lands in this branch and the user
+      // never reaches the payment-pending screen. Log the full reason so the
+      // root cause is visible server-side, and propagate it to the client.
+      const reason =
         typeof result.error === 'string'
           ? result.error
-          : 'State transition failed',
+          : JSON.stringify(result.error ?? {})
+      this.logger.error(
+        `SDF SUBMIT failed to transition application ${applicationId} on event "${eventStr}": ${reason}`,
+      )
+      throw new Error(
+        `State transition failed for event "${eventStr}": ${reason}`,
       )
     }
 

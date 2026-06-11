@@ -12,8 +12,18 @@ export const buildStepper = (
   activeSubSectionIndex: number,
   resolver: FormTextResolver,
 ): StepperDto => {
-  const stepperSections: StepperSectionDto[] = sections.map(
-    (section, index) => {
+  // Sections with an empty title are intentionally untitled (e.g. the
+  // prerequisites/external-data sections in NOT_STARTED forms). The legacy
+  // `FormStepper` drops these so no empty bullet is shown; mirror that here.
+  // We keep each section's original index so `isComplete`/active highlighting
+  // stay correct, then remap `activeSectionIndex` to its position in the
+  // filtered list.
+  const visibleSections = sections
+    .map((section, index) => ({ section, index }))
+    .filter(({ section }) => resolver.resolve(section.title).trim() !== '')
+
+  const stepperSections: StepperSectionDto[] = visibleSections.map(
+    ({ section, index }) => {
       const subSections = (section.children ?? []).filter(
         (child) => child.type === FormItemTypes.SUB_SECTION,
       ) as SubSection[]
@@ -30,9 +40,14 @@ export const buildStepper = (
     },
   )
 
+  const remappedActiveSectionIndex = visibleSections.findIndex(
+    ({ index }) => index === activeSectionIndex,
+  )
+
   return {
     sections: stepperSections,
-    activeSectionIndex,
+    activeSectionIndex:
+      remappedActiveSectionIndex >= 0 ? remappedActiveSectionIndex : 0,
     activeSubSectionIndex,
   }
 }

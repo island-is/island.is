@@ -3,7 +3,7 @@ import { GlobalStylesProvider } from '../components/GlobalStylesProvider'
 import { Providers } from '../components/Providers'
 import { HeaderInfoProvider } from '../components/HeaderInfoProvider'
 import { AppHeader } from '../components/AppHeader'
-import { BffAuthGuard } from '../components/BffAuthGuard'
+import { AppBffProvider } from '../components/AppBffProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -21,12 +21,12 @@ export default function RootLayout({
       <body>
         <GlobalStylesProvider>
           <Providers>
-            <BffAuthGuard>
+            <AppBffProvider>
               <HeaderInfoProvider>
                 <AppHeader />
                 {children}
               </HeaderInfoProvider>
-            </BffAuthGuard>
+            </AppBffProvider>
           </Providers>
         </GlobalStylesProvider>
       </body>
