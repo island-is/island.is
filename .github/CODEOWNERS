@@ -309,12 +309,14 @@ codemagic.yaml                                                                  
 /libs/clients/payment-schedule/                                                                                              @island-is/norda
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
+/libs/clients/rsk/customs                                                                                                    @island-is/stefna
 
 /libs/api/domains/company-registry                                                                                           @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda
 /libs/api/domains/fishing-license/                                                                                           @island-is/norda
 /libs/api/domains/health-insurance/                                                                                          @island-is/norda
 /libs/api/domains/payment-schedule/                                                                                          @island-is/norda
+/libs/api/domains/customs-general/                                                                                           @island-is/stefna
 
 /libs/shared/form-fields/                                                                                                    @island-is/norda @island-is/island-ui
 
