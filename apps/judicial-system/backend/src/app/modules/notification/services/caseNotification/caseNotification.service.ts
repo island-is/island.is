@@ -2301,6 +2301,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
+    userIds?: string[],
   ): Promise<DeliverResponse> {
     switch (type) {
       case RequestCaseNotificationType.HEADS_UP:
@@ -2353,11 +2354,18 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
+    userIds?: string[],
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     try {
-      return await this.sendNotification(type, theCase, user, userDescriptor)
+      return await this.sendNotification(
+        type,
+        theCase,
+        user,
+        userDescriptor,
+        userIds,
+      )
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

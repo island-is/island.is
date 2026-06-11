@@ -24,6 +24,7 @@ import {
   DateType,
   EventType,
   IndictmentDecision,
+  isIndictmentCase,
   StringType,
 } from '@island.is/judicial-system/types'
 
@@ -187,6 +188,31 @@ export class CaseRepositoryService {
 
       throw error
     }
+  }
+
+  async findParentCaseId(id: string): Promise<string | null | undefined> {
+    const result = await this.caseModel.findByPk(id, {
+      attributes: ['parentCaseId'],
+    })
+    return result?.parentCaseId
+  }
+
+  async findOriginalAncestorId(theCase: Case): Promise<string> {
+    if (isIndictmentCase(theCase.type)) {
+      // indictment cases can be split
+      return theCase.splitCaseId ?? theCase.id
+    }
+
+    // request cases can be extended
+    let originalAncestorId = theCase.id
+    let parentCaseId: string | null | undefined = theCase.parentCaseId
+
+    while (parentCaseId) {
+      originalAncestorId = parentCaseId
+      parentCaseId = await this.findParentCaseId(parentCaseId)
+    }
+
+    return originalAncestorId
   }
 
   async findOne(options?: FindOneOptions): Promise<Case | null> {

@@ -1,4 +1,5 @@
 export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.module'
+export { HealthDirectorateHealthModule } from './lib/clients/health/health.module'
 export * from './lib/healthDirectorateClient.types'
 export * from './lib/clients/occupational-license/gen/fetch'
 export {
