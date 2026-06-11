@@ -78,8 +78,6 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -110,8 +108,6 @@ export class CustomsGeneralService {
       name: item.Heiti,
       description: item.Lysing,
       lagaGrein: item.LagaGrein,
-      validFrom: item.DagsFra?.toISOString(),
-      validTo: item.DagsTil?.toISOString(),
       system: item.Kerfi,
     }))
   }
@@ -131,8 +127,6 @@ export class CustomsGeneralService {
       tariffNumber: item.Tollskrarnumer,
       plRatio: item.PLhlutfall,
       ppRatio: item.PPhlutfall,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
     }))
   }
 
@@ -149,8 +143,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -167,8 +159,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -186,8 +176,6 @@ export class CustomsGeneralService {
       code: item.Kodi,
       companyName: item.Nafn,
       location: item.Stadsetning,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -205,8 +193,6 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -223,8 +209,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -241,8 +225,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -259,8 +241,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       description: item.StuttLysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -277,8 +257,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.TegundVidskiptaSkyrslaKodi,
       name: item.tegundVidskiptaSkyrslaHeiti,
-      validFrom: item.dtFra,
-      validTo: item.dtTil,
       system: item.KerfiID,
     }))
   }
@@ -291,12 +269,8 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       countryCode: item.LandKodi,
       countryName: item.LandHeiti,
-      countryValidFrom: item.LandDagsFra,
-      countryValidTo: item.LandDagsTil,
       currencyCode: item.MyntKodi,
       currencyName: item.MyntHeiti,
-      currencyValidFrom: item.MyntDagsFra,
-      currencyValidTo: item.MyntDagsTil,
     }))
   }
 
@@ -312,8 +286,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -330,8 +302,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -344,8 +314,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       name: item.Heiti,
       description: item.Lysing,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
     }))
   }
 
@@ -361,8 +329,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -379,8 +345,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }
@@ -394,8 +358,6 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
-      validFrom: item.DagsFra,
-      validTo: item.DagsTil,
       system: item.Kerfi,
     }))
   }

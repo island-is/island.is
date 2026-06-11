@@ -10,10 +10,4 @@ export class CustomsGeneralProcessingFee {
 
   @Field(() => String)
   ppRatio!: string
-
-  @Field(() => Date)
-  validFrom!: Date
-
-  @Field(() => Date)
-  validTo!: Date
 }

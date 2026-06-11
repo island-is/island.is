@@ -8,21 +8,9 @@ export class CustomsGeneralCountryCurrency {
   @Field(() => String, { nullable: true })
   countryName?: string
 
-  @Field(() => Date, { nullable: true })
-  countryValidFrom?: Date
-
-  @Field(() => Date, { nullable: true })
-  countryValidTo?: Date
-
   @Field(() => String, { nullable: true })
   currencyCode?: string
 
   @Field(() => String, { nullable: true })
   currencyName?: string
-
-  @Field(() => Date, { nullable: true })
-  currencyValidFrom?: Date
-
-  @Field(() => Date, { nullable: true })
-  currencyValidTo?: Date
 }
