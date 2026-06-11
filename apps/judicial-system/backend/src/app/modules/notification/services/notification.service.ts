@@ -69,7 +69,6 @@ export class NotificationService {
         }
         break
       case UserInitiatedNotificationType.HEADS_UP:
-      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED:
       case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.RULING_ORDER_ADDED:

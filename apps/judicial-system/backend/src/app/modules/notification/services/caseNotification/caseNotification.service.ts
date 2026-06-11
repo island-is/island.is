@@ -2318,6 +2318,7 @@ export class CaseNotificationService extends BaseNotificationService {
   //#region COURT_OF_APPEAL_JUDGE_ASSIGNED notifications
   private async sendCourtOfAppealJudgeAssignedNotification(
     theCase: Case,
+    userIds?: string[],
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
     const recipientRoles = [
@@ -2331,6 +2332,7 @@ export class CaseNotificationService extends BaseNotificationService {
       if (
         theCase.appealCase?.appealCaseNumber &&
         recipient &&
+        userIds?.includes(recipient.id) &&
         theCase.appealCase?.appealJudge1?.name
       ) {
         const { subject, body } =
@@ -4069,6 +4071,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
+    userIds?: string[],
   ): Promise<DeliverResponse> {
     switch (type) {
       case RequestCaseNotificationType.HEADS_UP:
@@ -4108,7 +4111,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case AppealCaseNotificationType.APPEAL_COMPLETED:
         return this.sendAppealCompletedNotifications(theCase)
       case AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED:
-        return this.sendCourtOfAppealJudgeAssignedNotification(theCase)
+        return this.sendCourtOfAppealJudgeAssignedNotification(theCase, userIds)
       case AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED:
         return this.sendAppealCaseFilesUpdatedNotifications(theCase, user)
       case AppealCaseNotificationType.APPEAL_WITHDRAWN:
@@ -4135,11 +4138,18 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
     userDescriptor?: UserDescriptor,
+    userIds?: string[],
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     try {
-      return await this.sendNotification(type, theCase, user, userDescriptor)
+      return await this.sendNotification(
+        type,
+        theCase,
+        user,
+        userDescriptor,
+        userIds,
+      )
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

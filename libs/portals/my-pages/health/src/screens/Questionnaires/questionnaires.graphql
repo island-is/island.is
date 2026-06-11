@@ -58,7 +58,7 @@ fragment AnswerOptions on QuestionnaireAnswerOption {
 fragment QuestionDetail on QuestionnaireQuestion {
   __typename
   id
-  originalId
+  sectionId
   label
   sublabel
   htmlLabel
