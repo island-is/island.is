@@ -371,11 +371,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
