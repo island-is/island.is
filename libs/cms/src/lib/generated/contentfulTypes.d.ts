@@ -4999,6 +4999,12 @@ export interface ISubArticleFields {
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
 
+  /** Content Last Reviewed */
+  contentLastReviewed?: string | undefined
+
+  /** Show date of the most recent review */
+  showDateOfTheMostRecentReview?: boolean | undefined
+
   /** Stepper */
   stepper?: IStepper | undefined
 }
