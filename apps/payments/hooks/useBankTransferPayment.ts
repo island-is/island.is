@@ -1,8 +1,10 @@
+import type { ApolloError } from '@apollo/client'
 import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 import { useLocale } from '@island.is/localization'
-import { CardErrorCode } from '@island.is/shared/constants'
+import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 import type { Locale } from '@island.is/shared/types'
 
 import { useCreateBankTransferMutation } from '../graphql/mutations.graphql.generated'
@@ -41,7 +43,7 @@ export const useBankTransferPayment = ({
       })
 
       const scaRedirectUrl =
-        response.data?.paymentsCreateBankTransfer.scaRedirectUrl
+        response.data?.paymentsCreateBankTransfer?.scaRedirectUrl
 
       // Interactive SCA → redirect.
       if (scaRedirectUrl) {
@@ -52,6 +54,15 @@ export const useBankTransferPayment = ({
       // No SCA redirect URL → reload so SSR lands on the dedicated waiting screen.
       router.reload()
     } catch (e: unknown) {
+      // The flow already settled (e.g. a callback/redirect race finalized it) — reload to land on
+      // the receipt instead of surfacing a generic error and looping back to payment selection.
+      if (
+        findProblemInApolloError(e as ApolloError)?.detail ===
+        PaymentServiceCode.PaymentFlowAlreadyPaid
+      ) {
+        router.reload()
+        return
+      }
       onPaymentError({
         code: (e instanceof Error
           ? e.message

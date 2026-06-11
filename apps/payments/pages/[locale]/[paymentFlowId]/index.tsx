@@ -272,7 +272,6 @@ function PaymentPage({
     productInformation,
     isApplePayPaymentEnabledForUser,
   })
-
   const router = useRouter()
 
   // Bank-transfer polling runs only on the dedicated waiting screen (reached via SSR after submit).

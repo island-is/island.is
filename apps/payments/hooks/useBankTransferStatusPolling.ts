@@ -16,7 +16,7 @@ import { PaymentError } from '../utils/error/error'
  */
 interface UseBankTransferStatusPollingProps {
   paymentFlowId: string | undefined
-  // Gate the loop`.
+  // Gate the loop.
   enabled: boolean
   // Bank transfer payment `expires_at` (matches the TTL we shared with Blikk). Drives the hard timeout
   expiresAt?: Date | string | null
@@ -108,7 +108,7 @@ export const useBankTransferStatusPolling = ({
           return
         }
 
-        const status = result.data?.paymentsVerifyBankTransfer.status
+        const status = result.data?.paymentsVerifyBankTransfer?.status
         if (status === PaymentsBankTransferStatus.success) {
           stop()
           onSuccessRef.current()

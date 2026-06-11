@@ -217,5 +217,25 @@ describe('PaymentFlowController', () => {
         BankTransferFailureReason.REJECTED,
       )
     })
+
+    it('overlays PAID when getBankTransferStatus finalizes a just-settled transfer (no stale UNPAID snapshot)', async () => {
+      const updatedAt = new Date()
+      const overlay: BankTransferStatusOverlay = {
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt,
+      }
+      overlaySpy = jest
+        .spyOn(
+          BankTransferService.prototype as SpiedService,
+          'getBankTransferStatus',
+        )
+        .mockResolvedValue(overlay)
+
+      const paymentFlowId = await createFreshFlow()
+      const response = await server.get(`/v1/payments/${paymentFlowId}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.paymentStatus).toBe(PaymentStatus.PAID)
+    })
   })
 })

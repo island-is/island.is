@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 import { ConfigType } from '@nestjs/config'
 import { BadRequestException } from '@nestjs/common'
 
@@ -512,13 +514,38 @@ describe('BankTransferService', () => {
       rawStatus: 'SUCCESS',
     }
 
-    it('records the provider status on its own row', async () => {
+    it('records the provider status on its own row, guarded so the transition fires once', async () => {
       await service.finalizeBankTransferSuccess(confirmInput)
 
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { lastKnownStatus: 'SUCCESS' },
-        { where: { id: 'btp-1', paymentFlowId: 'flow-1', isDeleted: false } },
+        {
+          where: {
+            id: 'btp-1',
+            paymentFlowId: 'flow-1',
+            isDeleted: false,
+            lastKnownStatus: { [Op.ne]: 'SUCCESS' },
+          },
+        },
       )
+    })
+
+    it('creates the fulfillment before marking the row SUCCESS', async () => {
+      const order: string[] = []
+      jest
+        .spyOn(service, 'createBankTransferFulfillment')
+        .mockImplementation(async () => {
+          order.push('fulfillment')
+        })
+      bankTransferPaymentModel.update.mockImplementation(async () => {
+        order.push('status')
+        return [1]
+      })
+
+      await service.finalizeBankTransferSuccess(confirmInput)
+
+      // Fulfillment must commit first so a SUCCESS lastKnownStatus always implies a paid flow.
+      expect(order).toEqual(['fulfillment', 'status'])
     })
 
     it('passes a transfer charge payload to the fulfillment and notifies upstream', async () => {
@@ -1132,12 +1159,12 @@ describe('BankTransferService', () => {
   })
 
   describe('finalizeBankTransferSuccess — idempotency guard', () => {
-    it('bails without creating a fulfillment when the update affects zero rows (late cancel race)', async () => {
+    it('still repairs the fulfillment but skips the payment_completed event when the status was already SUCCESS (repair / race loser)', async () => {
+      // Status update affects zero rows ⇒ no transition (row was already SUCCESS).
       bankTransferPaymentModel.update.mockResolvedValueOnce([0])
-      const fulfillmentSpy = jest.spyOn(
-        service,
-        'createBankTransferFulfillment',
-      )
+      const fulfillmentSpy = jest
+        .spyOn(service, 'createBankTransferFulfillment')
+        .mockResolvedValue()
 
       await service.finalizeBankTransferSuccess({
         correlationId: 'corr-1',
@@ -1146,7 +1173,9 @@ describe('BankTransferService', () => {
         rawStatus: 'SUCCESS',
       })
 
-      expect(fulfillmentSpy).not.toHaveBeenCalled()
+      // The fulfillment is (idempotently) ensured even when the status transition is a no-op.
+      expect(fulfillmentSpy).toHaveBeenCalled()
+      // …but the success event fires only on the actual transition.
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
   })
@@ -1213,12 +1242,14 @@ describe('BankTransferService', () => {
       })
     })
 
-    it('confirms the payment inline when Blikk now reports SUCCESS and returns null', async () => {
+    it('confirms the payment inline when Blikk now reports SUCCESS and reports PAID from the committed fulfillment', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue(baseRow)
       mockGetPayment(BankTransferStatus.SUCCESS, 'SUCCESS')
       const confirmSpy = jest
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
+      const fulfilledAt = new Date('2026-05-30T10:05:00Z')
+      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
 
       const result = await service.getBankTransferStatus('flow-1')
 
@@ -1228,7 +1259,40 @@ describe('BankTransferService', () => {
         providerPaymentId: 'prov-1',
         rawStatus: 'SUCCESS',
       })
-      expect(result).toBeNull()
+      // PAID is surfaced (not null) so the controller never folds in a stale UNPAID snapshot.
+      expect(result).toEqual({
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: fulfilledAt,
+      })
+    })
+
+    it('repairs a cached-SUCCESS row whose fulfillment never committed and reports PAID', async () => {
+      // base is UNPAID (controller gate) yet the row is already SUCCESS — the poison case.
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        lastKnownStatus: 'SUCCESS',
+      })
+      const getPaymentSpy = jest.spyOn(service, 'getPayment')
+      const confirmSpy = jest
+        .spyOn(service, 'finalizeBankTransferSuccess')
+        .mockResolvedValue()
+      const fulfilledAt = new Date('2026-05-30T10:05:00Z')
+      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
+
+      const result = await service.getBankTransferStatus('flow-1')
+
+      // No Blikk round-trip — the cached SUCCESS is authoritative, we just repair the fulfillment.
+      expect(getPaymentSpy).not.toHaveBeenCalled()
+      expect(confirmSpy).toHaveBeenCalledWith({
+        correlationId: 'corr-1',
+        paymentFlowId: 'flow-1',
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SUCCESS',
+      })
+      expect(result).toEqual({
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: fulfilledAt,
+      })
     })
 
     it.each<[BankTransferStatus, string]>([
@@ -1340,6 +1404,8 @@ describe('BankTransferService', () => {
       const confirmSpy = jest
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
+      const fulfilledAt = new Date('2026-05-30T10:05:00Z')
+      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
 
       const result = await service.getBankTransferStatus('flow-1')
 
@@ -1354,7 +1420,10 @@ describe('BankTransferService', () => {
         { isDeleted: true },
         expect.anything(),
       )
-      expect(result).toBeNull()
+      expect(result).toEqual({
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: fulfilledAt,
+      })
     })
 
     it.each<[string, BankTransferStatus]>([

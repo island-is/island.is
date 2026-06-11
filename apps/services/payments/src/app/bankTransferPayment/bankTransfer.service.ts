@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -332,7 +333,9 @@ export class BankTransferService {
         await this.finalizeFromBlikkResult(row, refreshed)
 
         if (refreshed.status === BankTransferStatus.SUCCESS) {
-          return null
+          // finalizeFromBlikkResult just created the fulfillment — report PAID rather than null so
+          // the controller doesn't fold in a stale pre-finalize UNPAID snapshot.
+          return this.paidBankTransferOverlay(paymentFlowId)
         }
 
         if (isBankTransferFailureStatus(refreshed.status)) {
@@ -349,7 +352,20 @@ export class BankTransferService {
     }
 
     if (mapped === BankTransferStatus.SUCCESS) {
-      return null
+      // Reaching here means the flow is UNPAID (controller gate) yet the row is SUCCESS — a settled
+      // transfer whose fulfillment never committed. Repair it (idempotent), then report PAID.
+      await this.finalizeBankTransferSuccess({
+        correlationId: row.id,
+        paymentFlowId: row.paymentFlowId,
+        providerPaymentId: row.providerPaymentId,
+        rawStatus: row.lastKnownStatus,
+      }).catch((error) => {
+        this.logger.warn(
+          `[${row.paymentFlowId}] Failed to repair settled bank transfer during status read`,
+          { error: (error as Error)?.message },
+        )
+      })
+      return this.paidBankTransferOverlay(paymentFlowId)
     }
 
     // Still PENDING (or Blikk unreachable) and past TTL → abandoned; discard so the flow returns to
@@ -392,16 +408,6 @@ export class BankTransferService {
     providerPaymentId: string
     rawStatus: string
   }): Promise<void> {
-    const [affectedRows] = await this.bankTransferPaymentModel.update(
-      { lastKnownStatus: rawStatus },
-      { where: { id: correlationId, paymentFlowId, isDeleted: false } },
-    )
-
-    // no affected rows ⇒ bail
-    if (affectedRows === 0) {
-      return
-    }
-
     // Blikk gives us no settlement timestamp, so the moment we record SUCCESS is our best
     // proxy for when the bank transfer was paid (sent to FJS as the charge's effective date).
     const chargePayload = await this.buildFjsChargePayload(
@@ -411,11 +417,32 @@ export class BankTransferService {
       new Date(),
     )
 
+    // Create the fulfillment BEFORE marking the row SUCCESS so that a SUCCESS `lastKnownStatus`
+    // always implies a committed fulfillment. If this throws the row stays in its prior state and
+    // the next verify/status read retries — never leaving a settled-but-unpaid flow stuck.
     await this.createBankTransferFulfillment(
       paymentFlowId,
       correlationId,
       chargePayload,
     )
+
+    // Record SUCCESS only once. The `lastKnownStatus` guard makes the transition (and the
+    // payment_completed event below) fire exactly once even when finalizers race or repair runs.
+    const [affectedRows] = await this.bankTransferPaymentModel.update(
+      { lastKnownStatus: rawStatus },
+      {
+        where: {
+          id: correlationId,
+          paymentFlowId,
+          isDeleted: false,
+          lastKnownStatus: { [Op.ne]: rawStatus },
+        },
+      },
+    )
+
+    if (affectedRows === 0) {
+      return
+    }
 
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
@@ -504,7 +531,6 @@ export class BankTransferService {
       sourceReferenceId: input.correlationId,
       callbackUrl: input.callbackUrl,
       partnerRedirectUrl: input.partnerRedirectUrl,
-      source: input.source,
       expiresAt: input.expiresAt,
       items: input.items?.map(toBlikkItem),
     }
@@ -561,6 +587,28 @@ export class BankTransferService {
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────────
+
+  /**
+   * Builds the PAID overlay for a settled bank transfer from the committed fulfillment. Returns null
+   * if no fulfillment exists yet (settlement could not be finalized), so the flow stays UNPAID rather
+   * than falsely reporting PAID without a charge.
+   */
+  private async paidBankTransferOverlay(
+    paymentFlowId: string,
+  ): Promise<BankTransferStatusOverlay | null> {
+    const fulfillment = await this.paymentFulfillmentModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    if (!fulfillment) {
+      return null
+    }
+
+    return {
+      paymentStatus: PaymentStatus.PAID,
+      updatedAt: fulfillment.created,
+    }
+  }
 
   /** Resolves an existing row found at the start of `create`: backfill SUCCESS, reject fresh PENDING, else soft-delete. */
   private async handleExistingActiveBankTransferRow(

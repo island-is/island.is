@@ -129,11 +129,16 @@ export class PaymentsService {
   async createBankTransfer(
     createBankTransferInput: CreateBankTransferInput,
   ): Promise<CreateBankTransferResponse> {
+    const locale = Object.values(CreateBankTransferInputLocaleEnum).includes(
+      createBankTransferInput.locale as CreateBankTransferInputLocaleEnum,
+    )
+      ? (createBankTransferInput.locale as CreateBankTransferInputLocaleEnum)
+      : CreateBankTransferInputLocaleEnum.is
+
     return this.paymentsApi.bankTransferControllerCreate({
       createBankTransferInput: {
         ...createBankTransferInput,
-        locale:
-          createBankTransferInput.locale as CreateBankTransferInputLocaleEnum,
+        locale,
       },
     })
   }

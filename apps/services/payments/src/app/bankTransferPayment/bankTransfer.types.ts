@@ -24,7 +24,6 @@ export interface CreateBankTransferPaymentInput {
   correlationId: string
   callbackUrl?: string
   partnerRedirectUrl?: string
-  source?: string
   items?: CatalogItemWithQuantity[]
   // Unix seconds.
   expiresAt?: number
@@ -43,6 +42,7 @@ export interface BankTransferPaymentResult {
 /** Bank-transfer overlay folded into GetPaymentFlow when the base status is UNPAID. */
 export interface BankTransferStatusOverlay {
   paymentStatus:
+    | PaymentStatus.PAID
     | PaymentStatus.BANK_TRANSFER_PENDING
     | PaymentStatus.BANK_TRANSFER_FAILED
   updatedAt: Date

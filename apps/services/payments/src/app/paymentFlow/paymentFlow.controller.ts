@@ -80,12 +80,13 @@ export class PaymentFlowController {
     @Query('includeEvents') includeEvents?: boolean,
   ): Promise<GetPaymentFlowDTO | null> {
     const base = await this.paymentFlowService.getPaymentFlow(id, includeEvents)
-
     // Only UNPAID flows can have a bank-transfer overlay; PAID/INVOICE_PENDING short-circuit.
     if (!base || base.paymentStatus !== PaymentStatus.UNPAID) {
       return base
     }
 
+    // getBankTransferStatus may finalize a just-settled transfer and report PAID, so we fold its
+    // result in rather than trusting the pre-overlay `base` snapshot.
     const overlay = await this.bankTransferService.getBankTransferStatus(id)
     if (!overlay) {
       return base
