@@ -123,5 +123,17 @@ export const evaluateFormExpression = (
         ? evaluateArg(trueResult)
         : evaluateArg(falseResult)
     }
+    case 'CONTAINS': {
+      const [collection, value] = expression.args
+      const collectionValue = evaluateArg(collection)
+      const target = evaluateArg(value)
+      if (Array.isArray(collectionValue)) {
+        return collectionValue.includes(target)
+      }
+      if (typeof collectionValue === 'string' && typeof target === 'string') {
+        return collectionValue.includes(target)
+      }
+      return false
+    }
   }
 }

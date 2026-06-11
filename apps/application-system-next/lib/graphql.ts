@@ -43,6 +43,7 @@ export interface SdfScreen {
     description?: string
     applicationName?: string
     institutionName?: string
+    logo?: string
   }
   stepper: {
     sections: SdfStepperSection[]
@@ -169,6 +170,8 @@ export interface SdfComponentData {
   width?: string
   options?: { label: string; value: string }[]
   isMulti?: boolean
+  enableCountrySelector?: boolean
+  allowedCountryCodes?: string[]
   strong?: boolean
   large?: boolean
   spacing?: number
@@ -230,6 +233,23 @@ export interface SdfComponentData {
   searchAction?: string
   minQueryLength?: number
   informationCardItems?: Array<{ label: string; value: string }>
+  backId?: string
+  bottomLine?: boolean
+  displayTitleAsAccordion?: boolean
+  overviewItems?: Array<{
+    width?: string
+    keyText?: string
+    valueText?: string
+    inlineKeyText?: boolean
+    boldValueText?: boolean
+    lineAboveKeyText?: boolean
+  }>
+  overviewAttachments?: Array<{
+    width?: string
+    fileName: string
+    fileType?: string
+    fileSize?: string
+  }>
   paymentChargeHeading?: string
   paymentChargeLines?: Array<{
     description: string
@@ -258,6 +278,7 @@ export const GET_SCREEN_QUERY = `
         description
         applicationName
         institutionName
+        logo
       }
       stepper {
         sections {
@@ -418,7 +439,10 @@ export const GET_SCREEN_QUERY = `
             placeholder
             required
             disabled
+            defaultValue
             width
+            enableCountrySelector
+            allowedCountryCodes
             clientShowWhen
           }
           ... on SdfNationalIdField {
@@ -501,6 +525,10 @@ export const GET_SCREEN_QUERY = `
             label
             clientShowWhen
           }
+          ... on SdfPaymentPendingField {
+            id
+            clientShowWhen
+          }
           ... on SdfPaginatedSearchableTableField {
             id
             label
@@ -519,6 +547,25 @@ export const GET_SCREEN_QUERY = `
           ... on SdfOverviewField {
             id
             label
+            description
+            titleVariant
+            backId
+            bottomLine
+            displayTitleAsAccordion
+            overviewItems {
+              width
+              keyText
+              valueText
+              inlineKeyText
+              boldValueText
+              lineAboveKeyText
+            }
+            overviewAttachments {
+              width
+              fileName
+              fileType
+              fileSize
+            }
             clientShowWhen
           }
           ... on SdfVehiclePermnoWithInfoField {
@@ -619,7 +666,7 @@ export const EXECUTE_ACTION_MUTATION = `
     applicationSdfAction(input: $input, locale: $locale) {
       applicationId
       locale
-      header { title description applicationName institutionName }
+      header { title description applicationName institutionName logo }
       stepper {
         sections { id title isComplete children { id title } }
         activeSectionIndex
@@ -640,7 +687,7 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientShowWhen }
           ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientShowWhen }
           ... on SdfFileUploadField { id label required disabled maxSize accept uploadHeader uploadDescription uploadButtonLabel uploadMultiple totalMaxSize maxFileCount forImageUpload maxSizeErrorText introduction clientShowWhen }
-          ... on SdfPhoneField { id label placeholder required disabled width clientShowWhen }
+          ... on SdfPhoneField { id label placeholder required disabled defaultValue width enableCountrySelector allowedCountryCodes clientShowWhen }
           ... on SdfNationalIdField { id label required disabled clientShowWhen }
           ... on SdfDescriptionField { id label description marginTop marginBottom clientShowWhen }
           ... on SdfSubmitField { id label placement actions { event name type } clientShowWhen }
@@ -652,10 +699,11 @@ export const EXECUTE_ACTION_MUTATION = `
           ... on SdfSliderField { id label min max step clientShowWhen }
           ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
           ... on SdfTitleField { id label clientShowWhen }
+          ... on SdfPaymentPendingField { id clientShowWhen }
           ... on SdfPaginatedSearchableTableField { id label clientShowWhen }
           ... on SdfNationalIdWithNameField { id label clientShowWhen }
           ... on SdfFieldsRepeaterField { id label clientShowWhen }
-          ... on SdfOverviewField { id label clientShowWhen }
+          ... on SdfOverviewField { id label description titleVariant backId bottomLine displayTitleAsAccordion overviewItems { width keyText valueText inlineKeyText boldValueText lineAboveKeyText } overviewAttachments { width fileName fileType fileSize } clientShowWhen }
           ... on SdfVehiclePermnoWithInfoField { id label clientShowWhen }
           ... on SdfInformationCardField { id label informationCardItems { label value } clientShowWhen }
           ... on SdfPaymentChargeOverviewField { id paymentChargeHeading paymentChargeLines { description quantity amount } paymentChargeTotalLabel paymentChargeTotalAmount clientShowWhen }
@@ -803,6 +851,53 @@ const throwIfHttpError = (res: Response, payload: unknown): void => {
   )
 }
 
+/**
+ * Read a GraphQL response body without letting a non-JSON body crash the UI.
+ *
+ * `res.json()` throws a raw `JSON.parse: unexpected character …` when the body
+ * isn't JSON — which happens when an upstream/proxy layer returns an empty body
+ * or an HTML/plain-text error page (e.g. a failed action surfacing as a bare
+ * 500). We read the text first and, on a parse failure, surface a clean
+ * `GraphqlHttpError` (for error responses) or a descriptive `Error` (for an
+ * unexpected non-JSON success body) that includes a snippet of what we received.
+ */
+type GraphqlPayload = {
+  data?: Record<string, unknown>
+  errors?: Array<{ message?: string }>
+} & Record<string, unknown>
+
+const parseGraphqlResponse = async (
+  res: Response,
+): Promise<GraphqlPayload> => {
+  const text = await res.text()
+
+  if (text.trim() === '') {
+    if (!res.ok) {
+      throw new GraphqlHttpError(
+        res.status,
+        res.statusText || `Request failed with status ${res.status}`,
+      )
+    }
+    throw new Error('Empty response from GraphQL endpoint')
+  }
+
+  try {
+    return JSON.parse(text) as GraphqlPayload
+  } catch {
+    const snippet = text.slice(0, 500)
+    if (!res.ok) {
+      throw new GraphqlHttpError(
+        res.status,
+        res.statusText || `Request failed with status ${res.status}`,
+        snippet,
+      )
+    }
+    throw new Error(
+      `Malformed (non-JSON) GraphQL response (status ${res.status}): ${snippet}`,
+    )
+  }
+}
+
 export const fetchScreen = async (
   applicationId: string,
   step?: number,
@@ -825,7 +920,7 @@ export const fetchScreen = async (
     },
   )
 
-  const json = await res.json()
+  const json = await parseGraphqlResponse(res)
   throwIfHttpError(res, json)
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
@@ -893,7 +988,7 @@ export const validateAction = async (
     cache: 'no-store',
   })
 
-  const json = await res.json()
+  const json = await parseGraphqlResponse(res)
   throwIfHttpError(res, json)
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
@@ -943,7 +1038,7 @@ export const executeAction = async (
     cache: 'no-store',
   })
 
-  const json = await res.json()
+  const json = await parseGraphqlResponse(res)
   throwIfHttpError(res, json)
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')

@@ -121,7 +121,7 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({
+      text: async () => JSON.stringify({
         data: {
           applicationSdfScreen: {
             applicationId: 'app-1',
@@ -184,7 +184,7 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: false,
       status: 401,
-      json: async () => ({
+      text: async () => JSON.stringify({
         status: 401,
         title: 'Unauthorized',
         detail: 'Missing sid cookie',
@@ -204,7 +204,7 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({
+      text: async () => JSON.stringify({
         data: {
           applicationSdfValidate: {
             errors: [],

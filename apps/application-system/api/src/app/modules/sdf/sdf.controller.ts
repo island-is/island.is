@@ -146,6 +146,15 @@ export class SdfController {
           user!,
         )
 
+      case SdfActionType.GO_TO_PAGE:
+        // The destination page id rides on `event` (see SdfActionType).
+        return this.sdfScreenService.goToPage(
+          applicationId,
+          dto.event ?? '',
+          locale,
+          user!,
+        )
+
       case SdfActionType.REFETCH:
         return this.sdfScreenService.handleRefetch(
           applicationId,

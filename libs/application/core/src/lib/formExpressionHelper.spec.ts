@@ -175,6 +175,60 @@ describe('formExpressionHelper', () => {
     )
   })
 
+  it('builds CONTAINS expressions, keeping the searched value as a literal', () => {
+    expect(expr.contains(expr.get('usageUnits'), '123')).toEqual({
+      operator: 'CONTAINS',
+      args: [{ operator: 'GET', args: ['usageUnits'] }, '123'],
+    })
+    // A string collection is normalized to a GET; the value stays literal.
+    expect(expr.contains('usageUnits', '123')).toEqual({
+      operator: 'CONTAINS',
+      args: [{ operator: 'GET', args: ['usageUnits'] }, '123'],
+    })
+  })
+
+  it('evaluates CONTAINS against array and string collections', () => {
+    const membership = expr.contains(expr.get('usageUnits'), '123')
+    expect(
+      evaluateFormExpression(membership, { usageUnits: ['123', '456'] }),
+    ).toBe(true)
+    expect(
+      evaluateFormExpression(membership, { usageUnits: ['456'] }),
+    ).toBe(false)
+    expect(evaluateFormExpression(membership, { usageUnits: undefined })).toBe(
+      false,
+    )
+    expect(
+      evaluateFormExpression(expr.contains(expr.get('code'), 'ab'), {
+        code: 'abc',
+      }),
+    ).toBe(true)
+  })
+
+  it('sums only the CONTAINS-selected branches (usage-unit appraisal pattern)', () => {
+    const tree = expr.sum(
+      expr.if({
+        condition: expr.contains(expr.get('usageUnits'), '1'),
+        then: 50000000,
+        otherwise: 0,
+      }),
+      expr.if({
+        condition: expr.contains(expr.get('usageUnits'), '2'),
+        then: 7300000,
+        otherwise: 0,
+      }),
+      expr.if({
+        condition: expr.contains(expr.get('usageUnits'), '3'),
+        then: 8600000,
+        otherwise: 0,
+      }),
+    )
+    expect(evaluateFormExpression(tree, { usageUnits: ['2', '3'] })).toBe(
+      15900000,
+    )
+    expect(evaluateFormExpression(tree, { usageUnits: [] })).toBe(0)
+  })
+
   it('type-checks schema-bound client expression field ids', () => {
     type Answers = {
       amount?: number

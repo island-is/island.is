@@ -23,7 +23,9 @@ import { SdfKeyValueField } from './fields/SdfKeyValueField'
 import { SdfLinkField } from './fields/SdfLinkField'
 import { SdfMessageWithLinkButtonField } from './fields/SdfMessageWithLinkButtonField'
 import { SdfNationalIdField } from './fields/SdfNationalIdField'
+import { SdfOverviewField } from './fields/SdfOverviewField'
 import { SdfPaymentChargeOverviewField } from './fields/SdfPaymentChargeOverviewField'
+import { SdfPaymentPendingField } from './fields/SdfPaymentPendingField'
 import { SdfPdfLinkButtonField } from './fields/SdfPdfLinkButtonField'
 import { SdfPhoneField } from './fields/SdfPhoneField'
 import { SdfRadioField } from './fields/SdfRadioField'
@@ -59,7 +61,9 @@ const fieldRenderers: Record<string, React.ComponentType<FieldRendererProps>> = 
   SdfLinkField,
   SdfMessageWithLinkButtonField,
   SdfNationalIdField,
+  SdfOverviewField,
   SdfPaymentChargeOverviewField,
+  SdfPaymentPendingField,
   SdfPdfLinkButtonField,
   SdfPhoneField,
   SdfRadioField,
@@ -74,12 +78,10 @@ const fieldRenderers: Record<string, React.ComponentType<FieldRendererProps>> = 
 
 const unsupportedFieldTypes = new Set([
   'SdfRedirectToServicePortalField',
-  'SdfPaymentPendingField',
   'SdfTitleField',
   'SdfPaginatedSearchableTableField',
   'SdfNationalIdWithNameField',
   'SdfFieldsRepeaterField',
-  'SdfOverviewField',
   'SdfVehiclePermnoWithInfoField',
   'SdfCompanySearchField',
   'SdfAsyncSelectField',

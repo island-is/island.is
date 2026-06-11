@@ -13,7 +13,7 @@ import {
 } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { mockGetProperties } from './mockedFasteign'
+import { getMockedFasteign, mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -24,22 +24,72 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
+  mapAnswersToApplicationDtoSdf,
   mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 import { FetchError } from '@island.is/clients/middlewares'
+import { HmsService } from '@island.is/clients/hms'
+
+// NOTE: These error messages intentionally duplicate
+// `prereqMessages.getPropertiesError{Title,Summary}` from the frontend template
+// lib (`@island.is/application/templates/hms/fire-compensation-appraisal`).
+// Importing that barrel into this backend service pulls in the whole template
+// (FormBuilder/React/vanilla-extract) and creates a circular import that strips
+// this service's `design:paramtypes` metadata at decoration time — leaving every
+// type-injected dependency (the API clients, NotificationsService, …) undefined
+// at runtime. Keep backend services free of frontend-template-barrel imports.
+const getPropertiesErrorMessages = {
+  title: {
+    id: 'fca.application:prereq.getPropertiesErrorTitle',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um fasteignir',
+    description: 'Error title for getting properties',
+  },
+  summary: {
+    id: 'fca.application:prereq.getPropertiesErrorSummary#markdown',
+    defaultMessage:
+      'Vinsamlega hafið samband við HMS í [hms@hms.is](mailto:hms@hms.is)',
+    description: 'Error summary for getting properties',
+  },
+}
+
+type SearchAnswer = {
+  query?: string
+  value?: string
+  label?: string
+}
+
+const cleanupSearch = (search: string): number | undefined => {
+  const normalized = search.replace(/\D/g, '')
+  if (normalized.length !== 7) return undefined
+  const parsed = Number(normalized)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
+const getSearchLabel = (address: {
+  address?: string
+  postalCode?: number
+  municipalityName?: string
+}): string =>
+  [address.address, address.postalCode, address.municipalityName]
+    .filter((value) => value !== undefined && value !== null && value !== '')
+    .join(' ')
+
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private propertiesApi: FasteignirApi,
+    @Inject(FasteignirApi) private propertiesApi: FasteignirApi,
+    @Inject(ApplicationApi)
     private hmsApplicationSystemService: ApplicationApi,
+    @Inject(AttachmentS3Service)
     private readonly attachmentService: AttachmentS3Service,
+    @Inject(NotificationsService)
     private readonly notificationsService: NotificationsService,
+    @Inject(HmsService) private readonly hmsService: HmsService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -103,8 +153,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
         throw new TemplateApiError(
           {
-            title: prereqMessages.getPropertiesErrorTitle,
-            summary: prereqMessages.getPropertiesErrorSummary,
+            title: getPropertiesErrorMessages.title,
+            summary: getPropertiesErrorMessages.summary,
           },
           500,
         )
@@ -305,6 +355,48 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
   }
 
+  // Streams the uploaded photos to HMS, one at a time, in the background.
+  private async uploadApplicationFiles(
+    application: TemplateApiModuleActionProps['application'],
+  ) {
+    // Get the generator
+    const fileGenerator = this.attachmentService.getFilesGenerator(
+      application,
+      ['photos'],
+    )
+
+    const uniqueFileKeys = new Set<string>()
+
+    // Process one file at a time to avoid creating intermetiate arrays
+    for await (const file of fileGenerator) {
+      // Skip if the file has already been processed
+      if (uniqueFileKeys.has(file.key)) {
+        continue
+      }
+      uniqueFileKeys.add(file.key)
+      const attachment = mapAnswersToSingleApplicationFilesContentDto(
+        application,
+        file,
+      )
+      // Kick off each upload as soon as the attachment has been downloaded and mapped
+      this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
+        .apiApplicationUploadPost({
+          applicationFilesContentDto: attachment,
+        })
+        .then((res) => {
+          this.logger.info('Successfully uploaded attachment:', res)
+        })
+        .catch((e) => {
+          // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
+          this.logger.error(
+            `Failed to upload attachment: ${
+              e instanceof TemplateApiError ? e.problem : e.message
+            }`,
+          )
+        })
+    }
+  }
+
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
       // Map the application to the dto interface
@@ -320,42 +412,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
-      // Get the generator
-      const fileGenerator = this.attachmentService.getFilesGenerator(
-        application,
-        ['photos'],
-      )
-
-      const uniqueFileKeys = new Set<string>()
-
-      // Process one file at a time to avoid creating intermetiate arrays
-      for await (const file of fileGenerator) {
-        // Skip if the file has already been processed
-        if (uniqueFileKeys.has(file.key)) {
-          continue
-        }
-        uniqueFileKeys.add(file.key)
-        const attachment = mapAnswersToSingleApplicationFilesContentDto(
-          application,
-          file,
-        )
-        // Kick off each upload as soon as the attachment has been downloaded and mapped
-        this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
-          .apiApplicationUploadPost({
-            applicationFilesContentDto: attachment,
-          })
-          .then((res) => {
-            this.logger.info('Successfully uploaded attachment:', res)
-          })
-          .catch((e) => {
-            // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
-            this.logger.error(
-              `Failed to upload attachment: ${
-                e instanceof TemplateApiError ? e.problem : e.message
-              }`,
-            )
-          })
-      }
+      await this.uploadApplicationFiles(application)
 
       return res
     } catch (e) {
@@ -366,6 +423,139 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         e,
       )
       throw new TemplateApiError(e, 500)
+    }
+  }
+
+  // --- Functions only referenced by the SDF version of this application ---
+  // The legacy (client-rendered) application does not reference any of the
+  // methods below. They route here from the SDF template via the
+  // `namespace: 'FireCompensationAppraisal'` on its template API definitions.
+
+  // SDF variant of submitApplication. Differs only in the DTO mapping: SDF
+  // display fields are not persisted to answers, so the two computed appraisal
+  // values are recomputed from source instead of read from answers.
+  async submitApplicationSdf({ application }: TemplateApiModuleActionProps) {
+    try {
+      const applicationDto = mapAnswersToApplicationDtoSdf(application)
+      const res = await this.hmsApplicationSystemService.apiApplicationPost({
+        applicationDto,
+      })
+      if (res.status !== 200) {
+        throw new TemplateApiError(
+          'Failed to submit application, non 200 status',
+          500,
+        )
+      }
+
+      await this.uploadApplicationFiles(application)
+
+      return res
+    } catch (e) {
+      this.logger.error(
+        `Failed to submit application: ${
+          e instanceof TemplateApiError ? e.problem : e.message
+        }`,
+        e,
+      )
+      throw new TemplateApiError(e, 500)
+    }
+  }
+
+  // Replaces the legacy `PropertySearch` custom component for the SDF
+  // "apply for a property I do not own" flow (address / property-code search).
+  async searchProperties({ application, auth }: TemplateApiModuleActionProps) {
+    const search = getValueViaPath<SearchAnswer>(
+      application.answers,
+      'anyonesProperty',
+    )
+    const query = search?.query?.trim() ?? ''
+    if (query.length < 3) {
+      return { options: [] }
+    }
+
+    const selectedPropertyCode = cleanupSearch(query)
+    if (selectedPropertyCode !== undefined) {
+      const address = await this.hmsService.hmsPropertyCodeInfo(auth, {
+        fasteignNr: selectedPropertyCode,
+      })
+      const option = {
+        ...address,
+        label: getSearchLabel(address),
+        value: String(address.addressCode ?? ''),
+        selectedPropertyCode,
+      }
+      const propertiesByAddressCode = address.addressCode
+        ? await this.hmsService.hmsPropertyInfo(auth, {
+            stadfangNr: address.addressCode,
+            fasteignNr: selectedPropertyCode,
+          })
+        : []
+      return { options: [option], propertiesByAddressCode }
+    }
+
+    const addresses = await this.hmsService.hmsSearch(auth, {
+      partialStadfang: query,
+    })
+    const options = addresses.map((address) => ({
+      ...address,
+      label: getSearchLabel(address),
+      value: String(address.addressCode ?? ''),
+    }))
+    return { options }
+  }
+
+  // Replaces the legacy `FetchPropertiesByCodes` custom component: fetches the
+  // full property (incl. usage units / fire appraisal) for the selected code.
+  async fetchPropertiesByCode({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Array<Fasteign>> {
+    const selectedCode = getValueViaPath<string>(
+      application.answers,
+      'selectedPropertyByCode',
+    )
+    if (!selectedCode) {
+      return []
+    }
+
+    // Mock for dev, since there is no dev service for the propertiesApi.
+    // Return a property keyed to the selected code so the downstream lookup
+    // (`getSelectedProperty`, which joins on `fasteignanumer`) succeeds locally.
+    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      return [
+        getMockedFasteign(
+          'Vesturhóp 34, 240 Grindavík',
+          'F' + selectedCode.replace(/\D/g, ''),
+          [
+            {
+              notkunBirting: 'Íbúð á hæð',
+              brunabotamat: 600000000,
+              notkunareininganumer: '010101',
+            },
+            {
+              notkunBirting: 'Bílskúr',
+              brunabotamat: 45000000,
+              notkunareininganumer: '010102',
+            },
+          ],
+        ),
+      ]
+    }
+
+    try {
+      return (await this.hmsService.hmsPropertyByPropertyCode(auth, {
+        fasteignNrs: [selectedCode],
+      })) as Array<Fasteign>
+    } catch (error) {
+      this.logger.warn(
+        `Fetch property by code for applicationId: ${
+          application.id
+        } failed with problem: ${
+          error instanceof FetchError ? error.problem : error.message
+        }`,
+        error,
+      )
+      return []
     }
   }
 }

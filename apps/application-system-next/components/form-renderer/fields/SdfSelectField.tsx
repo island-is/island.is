@@ -48,7 +48,17 @@ export const SdfSelectField = ({
                 ? selectedOptions.map((opt) => opt.value)
                 : selectedOptions?.value,
             )
-            if (component.onSelectRefetchTemplateApis?.length && dispatch) {
+            // Fire a screen-rebuild REFETCH when the select either needs new
+            // template-API data (`onSelectRefetchTemplateApis`) or only needs
+            // dependent fields re-resolved against the new answer
+            // (`refetchTargets`) — e.g. a checkbox whose server-resolved
+            // `options` depend on the just-selected value but whose data is
+            // already in externalData, so no template API needs to run.
+            if (
+              (component.onSelectRefetchTemplateApis?.length ||
+                component.refetchTargets?.length) &&
+              dispatch
+            ) {
               void dispatch(
                 'REFETCH',
                 undefined,
