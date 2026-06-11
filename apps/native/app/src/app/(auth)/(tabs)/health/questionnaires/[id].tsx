@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -60,9 +60,14 @@ const RowHeader = styled.View`
 `
 
 export default function QuestionnaireDetailScreen() {
-  const { id, organization: orgParam } = useLocalSearchParams<{
+  const {
+    id,
+    organization: orgParam,
+    title: titleParam,
+  } = useLocalSearchParams<{
     id: string
     organization?: string
+    title?: string
   }>()
   const organization = orgParam as
     | QuestionnaireQuestionnairesOrganizationEnum
@@ -87,7 +92,21 @@ export default function QuestionnaireDetailScreen() {
   const questionnaire = data?.questionnairesDetail ?? null
   const base = questionnaire?.baseInformation ?? null
 
-  const title = useMemo(() => base?.title ?? '', [base?.title])
+  const title = useMemo(
+    () => base?.title || titleParam || '',
+    [base?.title, titleParam],
+  )
+
+  const [refetching, setRefetching] = useState(false)
+
+  const onRefresh = useCallback(async () => {
+    setRefetching(true)
+    try {
+      await refetch()
+    } finally {
+      setRefetching(false)
+    }
+  }, [refetch])
 
   const close = useCallback(() => {
     router.back()
@@ -168,7 +187,7 @@ export default function QuestionnaireDetailScreen() {
       <ScrollView
         style={{ flex: 1 }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       >
         {errorContent ? (

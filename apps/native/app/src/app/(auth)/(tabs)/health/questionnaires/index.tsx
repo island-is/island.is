@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FlatList, RefreshControl } from 'react-native'
 import { useTheme } from 'styled-components/native'
@@ -103,15 +103,26 @@ export default function QuestionnairesScreen() {
     })
 
   const isInitialLoading = loading && !data
+  const [refetching, setRefetching] = useState(false)
+
+  const onRefresh = useCallback(async () => {
+    setRefetching(true)
+    try {
+      await refetch()
+    } finally {
+      setRefetching(false)
+    }
+  }, [refetch])
 
   const openDetail = useCallback(
     (
       id: string,
       organization?: QuestionnaireQuestionnairesOrganizationEnum,
+      title?: string,
     ) => {
       router.navigate({
         pathname: '/health/questionnaires/[id]',
-        params: { id, organization },
+        params: { id, organization, title },
       })
     },
     [router],
@@ -119,7 +130,8 @@ export default function QuestionnairesScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: Item }) => {
-      const open = () => openDetail(item.id, item.organization ?? undefined)
+      const open = () =>
+        openDetail(item.id, item.organization ?? undefined, item.title)
       return (
         <QuestionnaireCard
           key={item.id}
@@ -149,12 +161,11 @@ export default function QuestionnairesScreen() {
 
   const questionnaires = useMemo(
     () =>
-      (data?.questionnairesList?.questionnaires ?? [])
-        .filter(
-          (item, index, self) =>
-            item?.id && index === self.findIndex((t) => t?.id === item?.id),
-        )
-        .slice(0, 64), // @todo needs paging
+      (data?.questionnairesList?.questionnaires ?? []).filter(
+        (item, index, self) =>
+          item?.id && index === self.findIndex((t) => t?.id === item?.id),
+      ),
+
     [data],
   )
 
@@ -163,10 +174,7 @@ export default function QuestionnairesScreen() {
       <StackScreen networkStatus={networkStatus} />
       <FlatList
         refreshControl={
-          <RefreshControl
-            refreshing={loading && !isInitialLoading}
-            onRefresh={refetch}
-          />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         style={{
           paddingHorizontal: theme.spacing[2],
@@ -199,7 +207,7 @@ export default function QuestionnairesScreen() {
                       light: theme.color.blue200,
                     }}
                     overlayOpacity={1}
-                    height={112}
+                    height={140}
                     style={{
                       borderRadius: 8,
                       marginBottom: theme.spacing[2],
