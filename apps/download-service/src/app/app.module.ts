@@ -63,10 +63,8 @@ import {
   RightsPortalClientModule,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import {
-  HealthDirectorateClientModule,
-  HealthDirectorateClientConfig,
+  HealthDirectorateHealthModule,
   HealthDirectorateHealthClientConfig,
-  HealthDirectorateVaccinationsClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
   DistrictCommissionersLicensesClientConfig,
@@ -114,7 +112,7 @@ import {
     UniversityCareersClientModule,
     MMSClientModule,
     RightsPortalClientModule,
-    HealthDirectorateClientModule,
+    HealthDirectorateHealthModule,
     FeatureFlagModule,
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
@@ -138,9 +136,7 @@ import {
         MMSClientConfig,
         DistrictCommissionersLicensesClientConfig,
         RightsPortalClientConfig,
-        HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
-        HealthDirectorateVaccinationsClientConfig,
         DocumentClientConfig,
         FeatureFlagConfig,
         HmsRentalAgreementClientConfig,

@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -39,6 +40,7 @@ import {
   AppealEventLog,
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   Defendant,
@@ -507,6 +509,7 @@ const getDefenceUserDefendants = (
 const transformCase = (
   theCase: Case,
   user: User | undefined,
+  originalAncestorId?: string,
 ): Record<string, unknown> => {
   const isDefence = isDefenceUser(user)
   const {
@@ -702,17 +705,30 @@ const transformCase = (
     splitCases:
       theCase.splitCases &&
       theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
+          ),
+        ),
+      )
   }
 }
 

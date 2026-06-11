@@ -450,4 +450,7 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  @Field(() => ID, { nullable: true })
+  readonly originalAncestorId?: string
 }

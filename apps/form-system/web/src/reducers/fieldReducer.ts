@@ -78,14 +78,15 @@ export const fieldReducer = (
       return setFieldValue(state, 'name', id, value, valueIndex)
     }
     case 'SET_ADDRESS': {
-      const { address, postalCode, municipality, id } = action.payload
+      const { address, postalCode, municipality, id, valueIndex } =
+        action.payload
       const value = {
         address: address,
         postalCode: postalCode,
         municipality: municipality,
       }
 
-      return setMultipleFieldValues(state, id, value)
+      return setMultipleFieldValues(state, id, value, valueIndex)
     }
     case 'SET_FILES': {
       const { value, id } = action.payload
