@@ -15,7 +15,7 @@ import { useI18n } from '@island.is/web/i18n'
 
 import { m } from './translation.strings'
 
-interface Props<T extends Record<string, unknown>> {
+interface Props<T extends Record<string, any>> {
   columns: SortableTableColumn<T>[]
   data: T[]
   loading: boolean
@@ -25,14 +25,14 @@ interface Props<T extends Record<string, unknown>> {
   dateLabel: string
   errorTitle: string
   id?: string
-  kerfi?: 'I' | 'U'
-  onKerfiChange?: (kerfi: 'I' | 'U') => void
+  system?: 'I' | 'U'
+  onSystemChange?: (system: 'I' | 'U') => void
   onRowClick?: (row: T) => void
 }
 
 export const toApiDate = (date: Date) => `${date.toISOString().split('.')[0]}Z`
 
-export const CustomsGeneralDateTable = <T extends Record<string, unknown>>({
+export const CustomsGeneralDateTable = <T extends Record<string, any>>({
   columns,
   data,
   loading,
@@ -42,8 +42,8 @@ export const CustomsGeneralDateTable = <T extends Record<string, unknown>>({
   dateLabel,
   errorTitle,
   id: idProp,
-  kerfi,
-  onKerfiChange,
+  system,
+  onSystemChange,
   onRowClick,
 }: Props<T>) => {
   const { activeLocale } = useI18n()
@@ -67,12 +67,12 @@ export const CustomsGeneralDateTable = <T extends Record<string, unknown>>({
             backgroundColor="blue"
           />
         </Box>
-        {Boolean(kerfi) && (
+        {Boolean(system) && (
           <Inline alignY="center" space={1}>
-            <Tag active={kerfi === 'I'} onClick={() => onKerfiChange?.('I')}>
+            <Tag active={system === 'I'} onClick={() => onSystemChange?.('I')}>
               {activeLocale === 'is' ? 'Innflutningur' : 'Import'}
             </Tag>
-            <Tag active={kerfi === 'U'} onClick={() => onKerfiChange?.('U')}>
+            <Tag active={system === 'U'} onClick={() => onSystemChange?.('U')}>
               {activeLocale === 'is' ? 'Útflutningur' : 'Export'}
             </Tag>
           </Inline>

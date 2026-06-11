@@ -4,17 +4,17 @@ import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_CUSTOMS_GENERAL_UNDANTHAGUR } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_EXEMPTIONS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
-import * as styles from './CustomsGeneralUndanthagur.css'
+import * as styles from './CustomsGeneralExemptions.css'
 
-interface UndanthagurItem {
+interface ExemptionItem {
   code: string
   name: string
   description: string
-  lagaGrein: string
+  legalArticle: string
   validFrom: string
   validTo: string
   system: string
@@ -34,16 +34,16 @@ const formatIsoDate = (iso?: string | null, fallback?: string): string => {
 const LABEL_WIDTH = 160
 
 interface DetailViewProps {
-  item: UndanthagurItem
+  item: ExemptionItem
   date: Date
-  kerfi: 'I' | 'U'
+  system: 'I' | 'U'
   onBack: () => void
 }
 
-const UndanthagurDetailView = ({
+const ExemptionDetailView = ({
   item,
   date,
-  kerfi,
+  system,
   onBack,
 }: DetailViewProps) => {
   const { formatMessage } = useIntl()
@@ -55,11 +55,11 @@ const UndanthagurDetailView = ({
     year: 'numeric',
   }).format(date)
 
-  const otimabundid = formatMessage(m.undanthagurOtimabundid)
-  const validFrom = formatIsoDate(item.validFrom, otimabundid)
-  const validTo = formatIsoDate(item.validTo, otimabundid)
-  const flutningsleid =
-    kerfi === 'I'
+  const indefinite = formatMessage(m.exemptionIndefinite)
+  const validFrom = formatIsoDate(item.validFrom, indefinite)
+  const validTo = formatIsoDate(item.validTo, indefinite)
+  const transportDirection =
+    system === 'I'
       ? activeLocale === 'is'
         ? 'Innflutningur'
         : 'Import'
@@ -70,8 +70,8 @@ const UndanthagurDetailView = ({
   const descriptionParagraphs = item.description
     ? item.description.split(/\n\n+/).filter(Boolean)
     : []
-  const lagaGreinParagraphs = item.lagaGrein
-    ? item.lagaGrein.split(/\n\n+/).filter(Boolean)
+  const legalArticleParagraphs = item.legalArticle
+    ? item.legalArticle.split(/\n\n+/).filter(Boolean)
     : []
 
   return (
@@ -83,11 +83,10 @@ const UndanthagurDetailView = ({
           preTextIcon="arrowBack"
           onClick={onBack}
         >
-          {formatMessage(m.undanthagurBackToList)}
+          {formatMessage(m.exemptionBackToList)}
         </Button>
       </Box>
 
-      {/* Key-value info rows */}
       <Box>
         <Box
           display="flex"
@@ -97,7 +96,7 @@ const UndanthagurDetailView = ({
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.undanthagurDetailDagsetning)}
+              {formatMessage(m.exemptionDetailDate)}
             </Text>
           </Box>
           <Text>{queryDate}</Text>
@@ -111,10 +110,10 @@ const UndanthagurDetailView = ({
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.undanthagurDetailFlutningsleid)}
+              {formatMessage(m.exemptionDetailTransportDirection)}
             </Text>
           </Box>
-          <Text>{flutningsleid}</Text>
+          <Text>{transportDirection}</Text>
         </Box>
 
         <Box
@@ -125,7 +124,7 @@ const UndanthagurDetailView = ({
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.undanthagurDetailGildistimi)}
+              {formatMessage(m.exemptionDetailValidityPeriod)}
             </Text>
           </Box>
           <Text>
@@ -133,34 +132,31 @@ const UndanthagurDetailView = ({
           </Text>
         </Box>
 
-        {/* Lykill row */}
         <Box display="flex" flexDirection="row" alignItems="flexStart">
           <Box style={{ minWidth: LABEL_WIDTH }}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.undanthagurColumnLykill)}
+              {formatMessage(m.exemptionColumnKey)}
             </Text>
           </Box>
           <Text>{item.code}</Text>
         </Box>
       </Box>
 
-      {/* Lagagrein section */}
-      {lagaGreinParagraphs.length > 0 && (
+      {legalArticleParagraphs.length > 0 && (
         <Stack space={2}>
           <Text variant="h4" as="h3">
-            {formatMessage(m.undanthagurLagagrein)}
+            {formatMessage(m.exemptionLegalArticle)}
           </Text>
-          {lagaGreinParagraphs.map((para, i) => (
+          {legalArticleParagraphs.map((para, i) => (
             <Text key={i}>{para.trim()}</Text>
           ))}
         </Stack>
       )}
 
-      {/* Lýsing section */}
       {descriptionParagraphs.length > 0 && (
         <Stack space={2}>
           <Text variant="h4" as="h3">
-            {formatMessage(m.undanthagurLysing)}
+            {formatMessage(m.exemptionDescription)}
           </Text>
           {descriptionParagraphs.map((para, i) => (
             <Text key={i}>{para.trim()}</Text>
@@ -171,36 +167,36 @@ const UndanthagurDetailView = ({
   )
 }
 
-const CustomsGeneralUndanthagur = () => {
+const CustomsGeneralExemptions = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [kerfi, setKerfi] = useState<'I' | 'U'>('I')
-  const [selectedItem, setSelectedItem] = useState<UndanthagurItem | null>(null)
+  const [system, setSystem] = useState<'I' | 'U'>('I')
+  const [selectedItem, setSelectedItem] = useState<ExemptionItem | null>(null)
 
   const columns = [
     {
       key: 'code' as const,
-      label: formatMessage(m.undanthagurColumnLykill),
+      label: formatMessage(m.exemptionColumnKey),
       render: (value: unknown) => (
         <span className={styles.link}>{String(value ?? '')}</span>
       ),
     },
     {
       key: 'description' as const,
-      label: formatMessage(m.undanthagurColumnSkyring),
+      label: formatMessage(m.exemptionColumnDescription),
     },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_UNDANTHAGUR, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi } },
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_EXEMPTIONS, {
+    variables: { input: { date: toApiDate(selectedDate), system } },
   })
 
-  const items: UndanthagurItem[] = (data?.customsGeneralUndanthagur ?? []).map(
-    (item: Partial<UndanthagurItem>) => ({
+  const items: ExemptionItem[] = (data?.customsGeneralExemptions ?? []).map(
+    (item: Partial<ExemptionItem>) => ({
       code: item.code ?? '',
       name: item.name ?? '',
       description: item.description ?? '',
-      lagaGrein: item.lagaGrein ?? '',
+      legalArticle: item.legalArticle ?? '',
       validFrom: item.validFrom ?? '',
       validTo: item.validTo ?? '',
       system: item.system ?? '',
@@ -209,10 +205,10 @@ const CustomsGeneralUndanthagur = () => {
 
   if (selectedItem) {
     return (
-      <UndanthagurDetailView
+      <ExemptionDetailView
         item={selectedItem}
         date={selectedDate}
-        kerfi={kerfi}
+        system={system}
         onBack={() => setSelectedItem(null)}
       />
     )
@@ -228,11 +224,11 @@ const CustomsGeneralUndanthagur = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      kerfi={kerfi}
-      onKerfiChange={setKerfi}
-      onRowClick={(row) => setSelectedItem(row as UndanthagurItem)}
+      system={system}
+      onSystemChange={setSystem}
+      onRowClick={(row) => setSelectedItem(row as ExemptionItem)}
     />
   )
 }
 
-export default CustomsGeneralUndanthagur
+export default CustomsGeneralExemptions

@@ -8,33 +8,26 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { SortableTable } from '@island.is/web/components'
-import { GET_CUSTOMS_GENERAL_AKVORDUNARSTADIR } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_ASSESSMENT_LOCATIONS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { m } from './translation.strings'
 
-interface Props {
-  landakodi: string
-}
-
-const CustomsGeneralAkvordunarstadir = ({ landakodi }: Props) => {
+const CustomsGeneralAssessmentLocations = () => {
   const { formatMessage } = useIntl()
 
   const columns = [
     {
       key: 'location' as const,
-      label: formatMessage(m.akvordunarstadirLocation),
+      label: formatMessage(m.assessmentLocationLocation),
     },
     {
       key: 'locationName' as const,
-      label: formatMessage(m.akvordunarstadirLocationName),
+      label: formatMessage(m.assessmentLocationLocationName),
     },
   ]
 
   const { data, loading, error } = useQuery(
-    GET_CUSTOMS_GENERAL_AKVORDUNARSTADIR,
-    {
-      variables: { input: { landakodi } },
-    },
+    GET_CUSTOMS_GENERAL_ASSESSMENT_LOCATIONS,
   )
 
   if (loading) {
@@ -55,7 +48,7 @@ const CustomsGeneralAkvordunarstadir = ({ landakodi }: Props) => {
     )
   }
 
-  const items = (data?.customsGeneralAkvordunarstadir ?? []).map(
+  const items = (data?.customsGeneralAssessmentLocations ?? []).map(
     (item: {
       countryCode?: string
       location?: string
@@ -74,4 +67,4 @@ const CustomsGeneralAkvordunarstadir = ({ landakodi }: Props) => {
   )
 }
 
-export default CustomsGeneralAkvordunarstadir
+export default CustomsGeneralAssessmentLocations

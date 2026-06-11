@@ -8,7 +8,7 @@ export type SortableTableColumn<T> = {
   render?: (value: T[keyof T], row: T) => ReactNode
 }
 
-interface Props<T extends Record<string, unknown>> {
+interface Props<T extends Record<string, any>> {
   columns: SortableTableColumn<T>[]
   data: T[]
   defaultSortKey?: keyof T
@@ -16,7 +16,7 @@ interface Props<T extends Record<string, unknown>> {
   onRowClick?: (row: T) => void
 }
 
-export const SortableTable = <T extends Record<string, unknown>>({
+export const SortableTable = <T extends Record<string, any>>({
   columns,
   data,
   defaultSortKey,

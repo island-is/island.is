@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_VALYKILL } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_MARKET_AREAS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralValykill = () => {
+const CustomsGeneralMarketAreas = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
@@ -16,11 +16,11 @@ const CustomsGeneralValykill = () => {
     { key: 'name' as const, label: formatMessage(m.columnName) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_VALYKILL, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi: 'I' } },
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_MARKET_AREAS, {
+    variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
   })
 
-  const items = (data?.customsGeneralValykill ?? []).map(
+  const items = (data?.customsGeneralMarketAreas ?? []).map(
     (item: { code?: string; name?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
@@ -41,4 +41,4 @@ const CustomsGeneralValykill = () => {
   )
 }
 
-export default CustomsGeneralValykill
+export default CustomsGeneralMarketAreas

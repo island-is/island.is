@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_UMBUDIR } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_PROHIBITIONS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralUmbudir = () => {
+const CustomsGeneralProhibitions = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
@@ -16,11 +16,11 @@ const CustomsGeneralUmbudir = () => {
     { key: 'name' as const, label: formatMessage(m.columnName) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_UMBUDIR, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi: 'I' } },
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_PROHIBITIONS, {
+    variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
   })
 
-  const items = (data?.customsGeneralUmbudir ?? []).map(
+  const items = (data?.customsGeneralProhibitions ?? []).map(
     (item: { code?: string; name?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
@@ -41,4 +41,4 @@ const CustomsGeneralUmbudir = () => {
   )
 }
 
-export default CustomsGeneralUmbudir
+export default CustomsGeneralProhibitions

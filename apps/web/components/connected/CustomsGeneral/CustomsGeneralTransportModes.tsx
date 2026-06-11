@@ -2,30 +2,32 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_TOLLGENGI } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_TRANSPORT_MODES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralTollgengi = () => {
+const CustomsGeneralTransportModes = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [system, setSystem] = useState<'I' | 'U'>('U')
 
   const columns = [
     { key: 'code' as const, label: formatMessage(m.columnCode) },
     { key: 'name' as const, label: formatMessage(m.columnName) },
-    { key: 'rate' as const, label: formatMessage(m.tollgengiRate) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_TOLLGENGI, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi: 'I' } },
-  })
+  const { data, loading, error } = useQuery(
+    GET_CUSTOMS_GENERAL_TRANSPORT_MODES,
+    {
+      variables: { input: { date: toApiDate(selectedDate), system } },
+    },
+  )
 
-  const items = (data?.customsGeneralTollgengi ?? []).map(
-    (item: { code?: string; name?: string; rate?: number }) => ({
+  const items = (data?.customsGeneralTransportModes ?? []).map(
+    (item: { code?: string; name?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
-      rate: item.rate?.toString() ?? '',
     }),
   )
 
@@ -39,8 +41,10 @@ const CustomsGeneralTollgengi = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
+      system={system}
+      onSystemChange={setSystem}
     />
   )
 }
 
-export default CustomsGeneralTollgengi
+export default CustomsGeneralTransportModes

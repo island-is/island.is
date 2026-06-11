@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_MARKADSSVAEDI } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_DELIVERY_TERMS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralMarkadssvaedi = () => {
+const CustomsGeneralDeliveryTerms = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
@@ -16,11 +16,14 @@ const CustomsGeneralMarkadssvaedi = () => {
     { key: 'name' as const, label: formatMessage(m.columnName) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_MARKADSSVAEDI, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi: 'I' } },
-  })
+  const { data, loading, error } = useQuery(
+    GET_CUSTOMS_GENERAL_DELIVERY_TERMS,
+    {
+      variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
+    },
+  )
 
-  const items = (data?.customsGeneralMarkadssvaedi ?? []).map(
+  const items = (data?.customsGeneralDeliveryTerms ?? []).map(
     (item: { code?: string; name?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
@@ -41,4 +44,4 @@ const CustomsGeneralMarkadssvaedi = () => {
   )
 }
 
-export default CustomsGeneralMarkadssvaedi
+export default CustomsGeneralDeliveryTerms

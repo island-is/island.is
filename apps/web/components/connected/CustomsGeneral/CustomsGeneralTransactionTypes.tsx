@@ -2,30 +2,31 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_GJOLD } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_TRANSACTION_TYPES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralGjold = () => {
+const CustomsGeneralTransactionTypes = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-
+  const [system, setSystem] = useState<'I' | 'U'>('I')
   const columns = [
     { key: 'code' as const, label: formatMessage(m.columnCode) },
     { key: 'name' as const, label: formatMessage(m.columnName) },
-    { key: 'description' as const, label: formatMessage(m.columnDescription) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_GJOLD, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi: 'I' } },
-  })
+  const { data, loading, error } = useQuery(
+    GET_CUSTOMS_GENERAL_TRANSACTION_TYPES,
+    {
+      variables: { input: { date: toApiDate(selectedDate), system } },
+    },
+  )
 
-  const items = (data?.customsGeneralGjold ?? []).map(
-    (item: { code?: string; name?: string; description?: string }) => ({
+  const items = (data?.customsGeneralTransactionTypes ?? []).map(
+    (item: { code?: string; name?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
-      description: item.description ?? '',
     }),
   )
 
@@ -39,8 +40,10 @@ const CustomsGeneralGjold = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
+      system={system}
+      onSystemChange={setSystem}
     />
   )
 }
 
-export default CustomsGeneralGjold
+export default CustomsGeneralTransactionTypes

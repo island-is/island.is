@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class CustomsGeneralStorageLocation {
   @Field(() => String, { nullable: true })
-  kennitala?: string
+  nationalId?: string
 
   @Field(() => String, { nullable: true })
   code?: string

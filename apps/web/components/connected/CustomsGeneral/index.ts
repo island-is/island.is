@@ -1,116 +1,116 @@
 import dynamic from 'next/dynamic'
 
-export const CustomsGeneralAbendi = dynamic(
-  () => import('./CustomsGeneralAbendi'),
+export const CustomsGeneralAdvisories = dynamic(
+  () => import('./CustomsGeneralAdvisories'),
   { ssr: false },
 )
 
-export const CustomsGeneralBonn = dynamic(
-  () => import('./CustomsGeneralBonn'),
+export const CustomsGeneralProhibitions = dynamic(
+  () => import('./CustomsGeneralProhibitions'),
   { ssr: false },
 )
 
-export const CustomsGeneralGjold = dynamic(
-  () => import('./CustomsGeneralGjold'),
+export const CustomsGeneralCharges = dynamic(
+  () => import('./CustomsGeneralCharges'),
   { ssr: false },
 )
 
-export const CustomsGeneralLeyfi = dynamic(
-  () => import('./CustomsGeneralLeyfi'),
+export const CustomsGeneralPermits = dynamic(
+  () => import('./CustomsGeneralPermits'),
   { ssr: false },
 )
 
-export const CustomsGeneralTollar = dynamic(
-  () => import('./CustomsGeneralTollar'),
+export const CustomsGeneralTariffs = dynamic(
+  () => import('./CustomsGeneralTariffs'),
   { ssr: false },
 )
 
-export const CustomsGeneralUndanthagur = dynamic(
-  () => import('./CustomsGeneralUndanthagur'),
+export const CustomsGeneralExemptions = dynamic(
+  () => import('./CustomsGeneralExemptions'),
   { ssr: false },
 )
 
-export const CustomsGeneralAfhendingarskilmalar = dynamic(
-  () => import('./CustomsGeneralAfhendingarskilmalar'),
+export const CustomsGeneralDeliveryTerms = dynamic(
+  () => import('./CustomsGeneralDeliveryTerms'),
   { ssr: false },
 )
 
-export const CustomsGeneralFlutningsmati = dynamic(
-  () => import('./CustomsGeneralFlutningsmati'),
+export const CustomsGeneralTransportModes = dynamic(
+  () => import('./CustomsGeneralTransportModes'),
   { ssr: false },
 )
 
-export const CustomsGeneralGeymslustadur = dynamic(
-  () => import('./CustomsGeneralGeymslustadur'),
+export const CustomsGeneralStorageLocations = dynamic(
+  () => import('./CustomsGeneralStorageLocations'),
   { ssr: false },
 )
 
-export const CustomsGeneralKostnadur = dynamic(
-  () => import('./CustomsGeneralKostnadur'),
+export const CustomsGeneralCosts = dynamic(
+  () => import('./CustomsGeneralCosts'),
   { ssr: false },
 )
 
-export const CustomsGeneralMagntala = dynamic(
-  () => import('./CustomsGeneralMagntala'),
+export const CustomsGeneralQuantityUnits = dynamic(
+  () => import('./CustomsGeneralQuantityUnits'),
   { ssr: false },
 )
 
-export const CustomsGeneralMarkadssvaedi = dynamic(
-  () => import('./CustomsGeneralMarkadssvaedi'),
+export const CustomsGeneralMarketAreas = dynamic(
+  () => import('./CustomsGeneralMarketAreas'),
   { ssr: false },
 )
 
-export const CustomsGeneralTegundAfgreidslu = dynamic(
-  () => import('./CustomsGeneralTegundAfgreidslu'),
+export const CustomsGeneralClearanceTypes = dynamic(
+  () => import('./CustomsGeneralClearanceTypes'),
   { ssr: false },
 )
 
-export const CustomsGeneralTegundVidskipta = dynamic(
-  () => import('./CustomsGeneralTegundVidskipta'),
+export const CustomsGeneralTransactionTypes = dynamic(
+  () => import('./CustomsGeneralTransactionTypes'),
   { ssr: false },
 )
 
-export const CustomsGeneralTollmedferd = dynamic(
-  () => import('./CustomsGeneralTollmedferd'),
+export const CustomsGeneralCustomsProcedures = dynamic(
+  () => import('./CustomsGeneralCustomsProcedures'),
   { ssr: false },
 )
 
-export const CustomsGeneralUmbudir = dynamic(
-  () => import('./CustomsGeneralUmbudir'),
+export const CustomsGeneralPackaging = dynamic(
+  () => import('./CustomsGeneralPackaging'),
   { ssr: false },
 )
 
-export const CustomsGeneralUppruni = dynamic(
-  () => import('./CustomsGeneralUppruni'),
+export const CustomsGeneralOrigins = dynamic(
+  () => import('./CustomsGeneralOrigins'),
   { ssr: false },
 )
 
-export const CustomsGeneralValykill = dynamic(
-  () => import('./CustomsGeneralValykill'),
+export const CustomsGeneralSelectionKeys = dynamic(
+  () => import('./CustomsGeneralSelectionKeys'),
   { ssr: false },
 )
 
-export const CustomsGeneralVidbotarskjol = dynamic(
-  () => import('./CustomsGeneralVidbotarskjol'),
+export const CustomsGeneralSupplementaryDocuments = dynamic(
+  () => import('./CustomsGeneralSupplementaryDocuments'),
   { ssr: false },
 )
 
-export const CustomsGeneralVillur = dynamic(
-  () => import('./CustomsGeneralVillur'),
+export const CustomsGeneralErrors = dynamic(
+  () => import('./CustomsGeneralErrors'),
   { ssr: false },
 )
 
-export const CustomsGeneralTollgengi = dynamic(
-  () => import('./CustomsGeneralTollgengi'),
+export const CustomsGeneralExchangeRates = dynamic(
+  () => import('./CustomsGeneralExchangeRates'),
   { ssr: false },
 )
 
-export const CustomsGeneralLandMynt = dynamic(
-  () => import('./CustomsGeneralLandMynt'),
+export const CustomsGeneralCountryCurrencies = dynamic(
+  () => import('./CustomsGeneralCountryCurrencies'),
   { ssr: false },
 )
 
-export const CustomsGeneralAkvordunarstadir = dynamic(
-  () => import('./CustomsGeneralAkvordunarstadir'),
+export const CustomsGeneralAssessmentLocations = dynamic(
+  () => import('./CustomsGeneralAssessmentLocations'),
   { ssr: false },
 )

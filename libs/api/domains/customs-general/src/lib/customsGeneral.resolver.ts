@@ -2,7 +2,6 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CustomsGeneralService } from './customsGeneral.service'
 import {
   CustomsGeneralInput,
-  CustomsGeneralUrvinnslugjoldInput,
   CustomsGeneralDagsInput,
 } from './dto/customsGeneral.input'
 import { CustomsGeneralEntry } from './models/customsGeneralEntry.model'
@@ -10,7 +9,6 @@ import { CustomsGeneralExchangeRate } from './models/customsGeneralExchangeRate.
 import { CustomsGeneralCountryCurrency } from './models/customsGeneralCountryCurrency.model'
 import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
-import { CustomsGeneralProcessingFee } from './models/customsGeneralProcessingFee.model'
 import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
 import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
 
@@ -19,193 +17,179 @@ export class CustomsGeneralResolver {
   constructor(private readonly customsGeneralService: CustomsGeneralService) {}
 
   @Query(() => [CustomsGeneralExchangeRate])
-  async customsGeneralTollgengi(
+  async customsGeneralExchangeRates(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralExchangeRate[]> {
-    return this.customsGeneralService.getTollgengi(input.dags, input.kerfi)
+    return this.customsGeneralService.getExchangeRates(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralAbendi(
+  async customsGeneralAdvisories(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getAbendi(input.dags, input.kerfi)
+    return this.customsGeneralService.getAdvisories(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralBonn(
+  async customsGeneralProhibitions(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getBonn(input.dags, input.kerfi)
+    return this.customsGeneralService.getProhibitions(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralGjold(
+  async customsGeneralCharges(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getGjold(input.dags, input.kerfi)
+    return this.customsGeneralService.getCharges(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralLeyfi(
+  async customsGeneralPermits(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getLeyfi(input.dags, input.kerfi)
+    return this.customsGeneralService.getPermits(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralTollar(
+  async customsGeneralTariffs(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getTollar(input.dags, input.kerfi)
+    return this.customsGeneralService.getTariffs(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralExemption])
-  async customsGeneralUndanthagur(
+  async customsGeneralExemptions(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralExemption[]> {
-    return this.customsGeneralService.getUndanthagur(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralProcessingFee])
-  async customsGeneralUrvinnslugjold(
-    @Args('input') input: CustomsGeneralUrvinnslugjoldInput,
-  ): Promise<CustomsGeneralProcessingFee[]> {
-    return this.customsGeneralService.getUrvinnslugjold(
-      input.dags,
-      input.tollskrarnumerFra,
-      input.tollskrarnumerTil,
-    )
+    return this.customsGeneralService.getExemptions(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralAfhendingarskilmalar(
+  async customsGeneralDeliveryTerms(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getAfhendingarskilmalar(
-      input.dags,
-      input.kerfi,
-    )
+    return this.customsGeneralService.getDeliveryTerms(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralFlutningsmati(
+  async customsGeneralTransportModes(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getFlutningsmati(input.dags, input.kerfi)
+    return this.customsGeneralService.getTransportModes(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralStorageLocation])
-  async customsGeneralGeymslustadur(
+  async customsGeneralStorageLocations(
     @Args('input') input: CustomsGeneralDagsInput,
   ): Promise<CustomsGeneralStorageLocation[]> {
-    return this.customsGeneralService.getGeymslustadur(input.dags)
+    return this.customsGeneralService.getStorageLocations(input.date)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralKostnadur(
+  async customsGeneralCosts(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getKostnadur(input.dags, input.kerfi)
+    return this.customsGeneralService.getCosts(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralMagntala(
+  async customsGeneralQuantityUnits(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getMagntala(input.dags, input.kerfi)
+    return this.customsGeneralService.getQuantityUnits(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralMarkadssvaedi(
+  async customsGeneralMarketAreas(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getMarkadssvaedi(input.dags, input.kerfi)
+    return this.customsGeneralService.getMarketAreas(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralTegundAfgreidslu(
+  async customsGeneralClearanceTypes(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getTegundAfgreidslu(
-      input.dags,
-      input.kerfi,
-    )
+    return this.customsGeneralService.getClearanceTypes(input.date, input.system)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralTegundVidskipta(
+  async customsGeneralTransactionTypes(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getTegundVidskipta(
-      input.dags,
-      input.kerfi,
+    return this.customsGeneralService.getTransactionTypes(
+      input.date,
+      input.system,
     )
   }
 
   @Query(() => [CustomsGeneralCountryCurrency])
-  async customsGeneralLandMynt(
+  async customsGeneralCountryCurrencies(
     @Args('input') input: CustomsGeneralDagsInput,
   ): Promise<CustomsGeneralCountryCurrency[]> {
-    return this.customsGeneralService.getLandMynt(input.dags)
+    return this.customsGeneralService.getCountryCurrencies(input.date)
   }
 
   @Query(() => [CustomsGeneralEntry])
-  async customsGeneralTollmedferd(
+  async customsGeneralCustomsProcedures(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getTollmedferd(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralEntry])
-  async customsGeneralUmbudir(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getUmbudir(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralEntry])
-  async customsGeneralUppruni(
-    @Args('input') input: CustomsGeneralDagsInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getUppruni(input.dags)
-  }
-
-  @Query(() => [CustomsGeneralEntry])
-  async customsGeneralValykill(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getValykill(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralEntry])
-  async customsGeneralVidbotarskjol(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getVidbotarskjol(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralEntry])
-  async customsGeneralVillur(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getVillur(input.dags, input.kerfi)
-  }
-
-  @Query(() => [CustomsGeneralTariffKey])
-  async customsGeneralTollskrarLyklar(
-    @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralTariffKey[]> {
-    return this.customsGeneralService.getTollskrarLyklar(
-      input.dags,
-      input.kerfi,
+    return this.customsGeneralService.getCustomsProcedures(
+      input.date,
+      input.system,
     )
   }
 
+  @Query(() => [CustomsGeneralEntry])
+  async customsGeneralPackaging(
+    @Args('input') input: CustomsGeneralInput,
+  ): Promise<CustomsGeneralEntry[]> {
+    return this.customsGeneralService.getPackaging(input.date, input.system)
+  }
+
+  @Query(() => [CustomsGeneralEntry])
+  async customsGeneralOrigins(
+    @Args('input') input: CustomsGeneralDagsInput,
+  ): Promise<CustomsGeneralEntry[]> {
+    return this.customsGeneralService.getOrigins(input.date)
+  }
+
+  @Query(() => [CustomsGeneralEntry])
+  async customsGeneralSelectionKeys(
+    @Args('input') input: CustomsGeneralInput,
+  ): Promise<CustomsGeneralEntry[]> {
+    return this.customsGeneralService.getSelectionKeys(input.date, input.system)
+  }
+
+  @Query(() => [CustomsGeneralEntry])
+  async customsGeneralSupplementaryDocuments(
+    @Args('input') input: CustomsGeneralInput,
+  ): Promise<CustomsGeneralEntry[]> {
+    return this.customsGeneralService.getSupplementaryDocuments(
+      input.date,
+      input.system,
+    )
+  }
+
+  @Query(() => [CustomsGeneralEntry])
+  async customsGeneralErrors(
+    @Args('input') input: CustomsGeneralInput,
+  ): Promise<CustomsGeneralEntry[]> {
+    return this.customsGeneralService.getErrors(input.date, input.system)
+  }
+
+  @Query(() => [CustomsGeneralTariffKey])
+  async customsGeneralTariffKeys(
+    @Args('input') input: CustomsGeneralInput,
+  ): Promise<CustomsGeneralTariffKey[]> {
+    return this.customsGeneralService.getTariffKeys(input.date, input.system)
+  }
+
   @Query(() => [CustomsGeneralDetermination])
-  async customsGeneralAkvordunarstadir(): Promise<
+  async customsGeneralAssessmentLocations(): Promise<
     CustomsGeneralDetermination[]
   > {
-    return this.customsGeneralService.getAkvordunarstadir()
+    return this.customsGeneralService.getAssessmentLocations()
   }
 }

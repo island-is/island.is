@@ -2,30 +2,27 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_TEGUND_AFGREIDSLU } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_TARIFFS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralTegundAfgreidslu = () => {
+const CustomsGeneralTariffs = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [kerfi, setKerfi] = useState<'I' | 'U'>('I')
+
   const columns = [
-    { key: 'code' as const, label: formatMessage(m.columnCode) },
+    { key: 'name' as const, label: formatMessage(m.columnName) },
     { key: 'description' as const, label: formatMessage(m.columnDescription) },
   ]
 
-  const { data, loading, error } = useQuery(
-    GET_CUSTOMS_GENERAL_TEGUND_AFGREIDSLU,
-    {
-      variables: { input: { dags: toApiDate(selectedDate), kerfi } },
-    },
-  )
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_TARIFFS, {
+    variables: { input: { date: toApiDate(selectedDate), system: 'U' } },
+  })
 
-  const items = (data?.customsGeneralTegundAfgreidslu ?? []).map(
-    (item: { code?: string; description?: string }) => ({
-      code: item.code ?? '',
+  const items = (data?.customsGeneralTariffs ?? []).map(
+    (item: { name?: string; description?: string }) => ({
+      name: item.name ?? '',
       description: item.description ?? '',
     }),
   )
@@ -40,10 +37,8 @@ const CustomsGeneralTegundAfgreidslu = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      kerfi={kerfi}
-      onKerfiChange={setKerfi}
     />
   )
 }
 
-export default CustomsGeneralTegundAfgreidslu
+export default CustomsGeneralTariffs

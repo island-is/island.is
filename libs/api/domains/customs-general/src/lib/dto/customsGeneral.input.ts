@@ -5,31 +5,16 @@ import { IsString } from 'class-validator'
 export class CustomsGeneralInput {
   @Field(() => String)
   @IsString()
-  dags!: string
+  date!: string
 
   @Field(() => String)
   @IsString()
-  kerfi!: string
-}
-
-@InputType()
-export class CustomsGeneralUrvinnslugjoldInput {
-  @Field(() => String)
-  @IsString()
-  dags!: string
-
-  @Field(() => String)
-  @IsString()
-  tollskrarnumerFra!: string
-
-  @Field(() => String)
-  @IsString()
-  tollskrarnumerTil!: string
+  system!: string
 }
 
 @InputType()
 export class CustomsGeneralDagsInput {
   @Field(() => String)
   @IsString()
-  dags!: string
+  date!: string
 }

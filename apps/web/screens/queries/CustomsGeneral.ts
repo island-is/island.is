@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
-export const GET_CUSTOMS_GENERAL_ABENDI = gql`
-  query CustomsGeneralAbendi($input: CustomsGeneralInput!) {
-    customsGeneralAbendi(input: $input) {
+export const GET_CUSTOMS_GENERAL_ADVISORIES = gql`
+  query CustomsGeneralAdvisories($input: CustomsGeneralInput!) {
+    customsGeneralAdvisories(input: $input) {
       code
       name
       description
@@ -10,9 +10,9 @@ export const GET_CUSTOMS_GENERAL_ABENDI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_BONN = gql`
-  query CustomsGeneralBonn($input: CustomsGeneralInput!) {
-    customsGeneralBonn(input: $input) {
+export const GET_CUSTOMS_GENERAL_PROHIBITIONS = gql`
+  query CustomsGeneralProhibitions($input: CustomsGeneralInput!) {
+    customsGeneralProhibitions(input: $input) {
       code
       name
       description
@@ -20,9 +20,9 @@ export const GET_CUSTOMS_GENERAL_BONN = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_GJOLD = gql`
-  query CustomsGeneralGjold($input: CustomsGeneralInput!) {
-    customsGeneralGjold(input: $input) {
+export const GET_CUSTOMS_GENERAL_CHARGES = gql`
+  query CustomsGeneralCharges($input: CustomsGeneralInput!) {
+    customsGeneralCharges(input: $input) {
       code
       name
       description
@@ -30,9 +30,9 @@ export const GET_CUSTOMS_GENERAL_GJOLD = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_LEYFI = gql`
-  query CustomsGeneralLeyfi($input: CustomsGeneralInput!) {
-    customsGeneralLeyfi(input: $input) {
+export const GET_CUSTOMS_GENERAL_PERMITS = gql`
+  query CustomsGeneralPermits($input: CustomsGeneralInput!) {
+    customsGeneralPermits(input: $input) {
       code
       name
       description
@@ -40,9 +40,9 @@ export const GET_CUSTOMS_GENERAL_LEYFI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TOLLAR = gql`
-  query CustomsGeneralTollar($input: CustomsGeneralInput!) {
-    customsGeneralTollar(input: $input) {
+export const GET_CUSTOMS_GENERAL_TARIFFS = gql`
+  query CustomsGeneralTariffs($input: CustomsGeneralInput!) {
+    customsGeneralTariffs(input: $input) {
       code
       name
       description
@@ -50,13 +50,13 @@ export const GET_CUSTOMS_GENERAL_TOLLAR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_UNDANTHAGUR = gql`
-  query CustomsGeneralUndanthagur($input: CustomsGeneralInput!) {
-    customsGeneralUndanthagur(input: $input) {
+export const GET_CUSTOMS_GENERAL_EXEMPTIONS = gql`
+  query CustomsGeneralExemptions($input: CustomsGeneralInput!) {
+    customsGeneralExemptions(input: $input) {
       code
       name
       description
-      lagaGrein
+      legalArticle
       validFrom
       validTo
       system
@@ -64,9 +64,9 @@ export const GET_CUSTOMS_GENERAL_UNDANTHAGUR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_AFHENDINGARSKILMALAR = gql`
-  query CustomsGeneralAfhendingarskilmalar($input: CustomsGeneralInput!) {
-    customsGeneralAfhendingarskilmalar(input: $input) {
+export const GET_CUSTOMS_GENERAL_DELIVERY_TERMS = gql`
+  query CustomsGeneralDeliveryTerms($input: CustomsGeneralInput!) {
+    customsGeneralDeliveryTerms(input: $input) {
       code
       name
       description
@@ -74,9 +74,9 @@ export const GET_CUSTOMS_GENERAL_AFHENDINGARSKILMALAR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_FLUTNINGSMATI = gql`
-  query CustomsGeneralFlutningsmati($input: CustomsGeneralInput!) {
-    customsGeneralFlutningsmati(input: $input) {
+export const GET_CUSTOMS_GENERAL_TRANSPORT_MODES = gql`
+  query CustomsGeneralTransportModes($input: CustomsGeneralInput!) {
+    customsGeneralTransportModes(input: $input) {
       code
       name
       description
@@ -84,10 +84,10 @@ export const GET_CUSTOMS_GENERAL_FLUTNINGSMATI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_GEYMSLUSTADUR = gql`
-  query CustomsGeneralGeymslustadur($input: CustomsGeneralDagsInput!) {
-    customsGeneralGeymslustadur(input: $input) {
-      kennitala
+export const GET_CUSTOMS_GENERAL_STORAGE_LOCATIONS = gql`
+  query CustomsGeneralStorageLocations($input: CustomsGeneralDagsInput!) {
+    customsGeneralStorageLocations(input: $input) {
+      nationalId
       code
       companyName
       location
@@ -95,9 +95,9 @@ export const GET_CUSTOMS_GENERAL_GEYMSLUSTADUR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_KOSTNADUR = gql`
-  query CustomsGeneralKostnadur($input: CustomsGeneralInput!) {
-    customsGeneralKostnadur(input: $input) {
+export const GET_CUSTOMS_GENERAL_COSTS = gql`
+  query CustomsGeneralCosts($input: CustomsGeneralInput!) {
+    customsGeneralCosts(input: $input) {
       code
       name
       description
@@ -105,9 +105,9 @@ export const GET_CUSTOMS_GENERAL_KOSTNADUR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_MAGNTALA = gql`
-  query CustomsGeneralMagntala($input: CustomsGeneralInput!) {
-    customsGeneralMagntala(input: $input) {
+export const GET_CUSTOMS_GENERAL_QUANTITY_UNITS = gql`
+  query CustomsGeneralQuantityUnits($input: CustomsGeneralInput!) {
+    customsGeneralQuantityUnits(input: $input) {
       code
       name
       description
@@ -115,9 +115,9 @@ export const GET_CUSTOMS_GENERAL_MAGNTALA = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_MARKADSSVAEDI = gql`
-  query CustomsGeneralMarkadssvaedi($input: CustomsGeneralInput!) {
-    customsGeneralMarkadssvaedi(input: $input) {
+export const GET_CUSTOMS_GENERAL_MARKET_AREAS = gql`
+  query CustomsGeneralMarketAreas($input: CustomsGeneralInput!) {
+    customsGeneralMarketAreas(input: $input) {
       code
       name
       description
@@ -125,9 +125,9 @@ export const GET_CUSTOMS_GENERAL_MARKADSSVAEDI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TEGUND_AFGREIDSLU = gql`
-  query CustomsGeneralTegundAfgreidslu($input: CustomsGeneralInput!) {
-    customsGeneralTegundAfgreidslu(input: $input) {
+export const GET_CUSTOMS_GENERAL_CLEARANCE_TYPES = gql`
+  query CustomsGeneralClearanceTypes($input: CustomsGeneralInput!) {
+    customsGeneralClearanceTypes(input: $input) {
       code
       name
       description
@@ -135,9 +135,9 @@ export const GET_CUSTOMS_GENERAL_TEGUND_AFGREIDSLU = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TEGUND_VIDSKIPTA = gql`
-  query CustomsGeneralTegundVidskipta($input: CustomsGeneralInput!) {
-    customsGeneralTegundVidskipta(input: $input) {
+export const GET_CUSTOMS_GENERAL_TRANSACTION_TYPES = gql`
+  query CustomsGeneralTransactionTypes($input: CustomsGeneralInput!) {
+    customsGeneralTransactionTypes(input: $input) {
       code
       name
       description
@@ -145,9 +145,9 @@ export const GET_CUSTOMS_GENERAL_TEGUND_VIDSKIPTA = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TOLLMEDFERD = gql`
-  query CustomsGeneralTollmedferd($input: CustomsGeneralInput!) {
-    customsGeneralTollmedferd(input: $input) {
+export const GET_CUSTOMS_GENERAL_CUSTOMS_PROCEDURES = gql`
+  query CustomsGeneralCustomsProcedures($input: CustomsGeneralInput!) {
+    customsGeneralCustomsProcedures(input: $input) {
       code
       name
       description
@@ -155,9 +155,9 @@ export const GET_CUSTOMS_GENERAL_TOLLMEDFERD = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_UMBUDIR = gql`
-  query CustomsGeneralUmbudir($input: CustomsGeneralInput!) {
-    customsGeneralUmbudir(input: $input) {
+export const GET_CUSTOMS_GENERAL_PACKAGING = gql`
+  query CustomsGeneralPackaging($input: CustomsGeneralInput!) {
+    customsGeneralPackaging(input: $input) {
       code
       name
       description
@@ -165,9 +165,9 @@ export const GET_CUSTOMS_GENERAL_UMBUDIR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_UPPRUNI = gql`
-  query CustomsGeneralUppruni($input: CustomsGeneralDagsInput!) {
-    customsGeneralUppruni(input: $input) {
+export const GET_CUSTOMS_GENERAL_ORIGINS = gql`
+  query CustomsGeneralOrigins($input: CustomsGeneralDagsInput!) {
+    customsGeneralOrigins(input: $input) {
       code
       name
       description
@@ -175,9 +175,9 @@ export const GET_CUSTOMS_GENERAL_UPPRUNI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_VALYKILL = gql`
-  query CustomsGeneralValykill($input: CustomsGeneralInput!) {
-    customsGeneralValykill(input: $input) {
+export const GET_CUSTOMS_GENERAL_SELECTION_KEYS = gql`
+  query CustomsGeneralSelectionKeys($input: CustomsGeneralInput!) {
+    customsGeneralSelectionKeys(input: $input) {
       code
       name
       description
@@ -185,9 +185,9 @@ export const GET_CUSTOMS_GENERAL_VALYKILL = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_VIDBOTARSKJOL = gql`
-  query CustomsGeneralVidbotarskjol($input: CustomsGeneralInput!) {
-    customsGeneralVidbotarskjol(input: $input) {
+export const GET_CUSTOMS_GENERAL_SUPPLEMENTARY_DOCUMENTS = gql`
+  query CustomsGeneralSupplementaryDocuments($input: CustomsGeneralInput!) {
+    customsGeneralSupplementaryDocuments(input: $input) {
       code
       name
       description
@@ -195,9 +195,9 @@ export const GET_CUSTOMS_GENERAL_VIDBOTARSKJOL = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_VILLUR = gql`
-  query CustomsGeneralVillur($input: CustomsGeneralInput!) {
-    customsGeneralVillur(input: $input) {
+export const GET_CUSTOMS_GENERAL_ERRORS = gql`
+  query CustomsGeneralErrors($input: CustomsGeneralInput!) {
+    customsGeneralErrors(input: $input) {
       code
       name
       description
@@ -205,9 +205,9 @@ export const GET_CUSTOMS_GENERAL_VILLUR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TOLLGENGI = gql`
-  query CustomsGeneralTollgengi($input: CustomsGeneralInput!) {
-    customsGeneralTollgengi(input: $input) {
+export const GET_CUSTOMS_GENERAL_EXCHANGE_RATES = gql`
+  query CustomsGeneralExchangeRates($input: CustomsGeneralInput!) {
+    customsGeneralExchangeRates(input: $input) {
       code
       name
       rate
@@ -215,9 +215,9 @@ export const GET_CUSTOMS_GENERAL_TOLLGENGI = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_LAND_MYNT = gql`
-  query CustomsGeneralLandMynt($input: CustomsGeneralDagsInput!) {
-    customsGeneralLandMynt(input: $input) {
+export const GET_CUSTOMS_GENERAL_COUNTRY_CURRENCIES = gql`
+  query CustomsGeneralCountryCurrencies($input: CustomsGeneralDagsInput!) {
+    customsGeneralCountryCurrencies(input: $input) {
       countryCode
       countryName
       countryValidFrom
@@ -230,9 +230,9 @@ export const GET_CUSTOMS_GENERAL_LAND_MYNT = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_TOLLSKRAR_LYKLAR = gql`
-  query CustomsGeneralTollskrarLyklar($input: CustomsGeneralInput!) {
-    customsGeneralTollskrarLyklar(input: $input) {
+export const GET_CUSTOMS_GENERAL_TARIFF_KEYS = gql`
+  query CustomsGeneralTariffKeys($input: CustomsGeneralInput!) {
+    customsGeneralTariffKeys(input: $input) {
       version
       description
       periodFrom
@@ -243,23 +243,9 @@ export const GET_CUSTOMS_GENERAL_TOLLSKRAR_LYKLAR = gql`
   }
 `
 
-export const GET_CUSTOMS_GENERAL_URVINNSLUGJOLD = gql`
-  query CustomsGeneralUrvinnslugjold(
-    $input: CustomsGeneralUrvinnslugjoldInput!
-  ) {
-    customsGeneralUrvinnslugjold(input: $input) {
-      tariffNumber
-      plRatio
-      ppRatio
-      validFrom
-      validTo
-    }
-  }
-`
-
-export const GET_CUSTOMS_GENERAL_AKVORDUNARSTADIR = gql`
-  query CustomsGeneralAkvordunarstadir {
-    customsGeneralAkvordunarstadir {
+export const GET_CUSTOMS_GENERAL_ASSESSMENT_LOCATIONS = gql`
+  query CustomsGeneralAssessmentLocations {
+    customsGeneralAssessmentLocations {
       countryCode
       location
       locationName

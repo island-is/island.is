@@ -12,7 +12,13 @@ export class CustomsGeneralExemption {
   description?: string
 
   @Field(() => String, { nullable: true })
-  lagaGrein?: string
+  legalArticle?: string
+
+  @Field(() => String, { nullable: true })
+  validFrom?: string
+
+  @Field(() => String, { nullable: true })
+  validTo?: string
 
   @Field(() => String, { nullable: true })
   system?: string

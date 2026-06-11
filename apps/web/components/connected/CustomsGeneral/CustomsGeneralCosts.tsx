@@ -2,29 +2,30 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_TOLLMEDFERD } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_COSTS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralTollmedferd = () => {
+const CustomsGeneralCosts = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-  const [kerfi, setKerfi] = useState<'I' | 'U'>('I')
   const columns = [
     { key: 'code' as const, label: formatMessage(m.columnCode) },
     { key: 'name' as const, label: formatMessage(m.columnName) },
+    { key: 'description' as const, label: formatMessage(m.columnDescription) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_TOLLMEDFERD, {
-    variables: { input: { dags: toApiDate(selectedDate), kerfi } },
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_COSTS, {
+    variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
   })
 
-  const items = (data?.customsGeneralTollmedferd ?? []).map(
-    (item: { code?: string; name?: string }) => ({
+  const items = (data?.customsGeneralCosts ?? []).map(
+    (item: { code?: string; name?: string; description?: string }) => ({
       code: item.code ?? '',
       name: item.name ?? '',
+      description: item.description ?? '',
     }),
   )
 
@@ -38,10 +39,8 @@ const CustomsGeneralTollmedferd = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      kerfi={kerfi}
-      onKerfiChange={setKerfi}
     />
   )
 }
 
-export default CustomsGeneralTollmedferd
+export default CustomsGeneralCosts

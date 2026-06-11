@@ -43,157 +43,140 @@ export const m = defineMessages({
     description: 'Table column header: valid to date',
   },
 
-  // Geymslustadur columns
-  geymslustadurKennitala: {
+  // StorageLocations columns
+  storageLocationNationalId: {
     id: 'web.customsGeneral:geymslustadurKennitala',
     defaultMessage: 'Kennitala',
     description: 'Column header: national ID of the storage location operator',
   },
-  geymslustadurCode: {
+  storageLocationCode: {
     id: 'web.customsGeneral:geymslustadurCode',
     defaultMessage: 'Kóði',
     description: 'Column header: storage location code',
   },
-  geymslustadurCompanyName: {
+  storageLocationCompanyName: {
     id: 'web.customsGeneral:geymslustadurCompanyName',
     defaultMessage: 'Fyrirtæki',
     description: 'Column header: company name of the storage location operator',
   },
-  geymslustadurLocation: {
+  storageLocationLocation: {
     id: 'web.customsGeneral:geymslustadurLocation',
     defaultMessage: 'Staðsetning geymslusvæðis',
     description: 'Column header: physical location of the storage area',
   },
 
-  // Tollgengi columns
-  tollgengiRate: {
+  // ExchangeRates columns
+  exchangeRateRate: {
     id: 'web.customsGeneral:tollgengiRate',
     defaultMessage: 'Gengi',
     description: 'Column header: exchange rate',
   },
 
-  // TollskrarLyklar columns
-  tollskrarLyklarVersion: {
+  // TariffKeys columns
+  tariffKeyVersion: {
     id: 'web.customsGeneral:tollskrarLyklarVersion',
     defaultMessage: 'Útgáfa',
     description: 'Column header: tariff key version',
   },
-  tollskrarLyklarPeriodFrom: {
+  tariffKeyPeriodFrom: {
     id: 'web.customsGeneral:tollskrarLyklarPeriodFrom',
     defaultMessage: 'Tímabil frá',
     description: 'Column header: period from date',
   },
-  tollskrarLyklarPeriodTo: {
+  tariffKeyPeriodTo: {
     id: 'web.customsGeneral:tollskrarLyklarPeriodTo',
     defaultMessage: 'Tímabil til',
     description: 'Column header: period to date',
   },
-  tollskrarLyklarJsonUrl: {
+  tariffKeyJsonUrl: {
     id: 'web.customsGeneral:tollskrarLyklarJsonUrl',
     defaultMessage: 'JSON skrá',
     description: 'Column header: URL to JSON file',
   },
-  tollskrarLyklarTextUrl: {
+  tariffKeyTextUrl: {
     id: 'web.customsGeneral:tollskrarLyklarTextUrl',
     defaultMessage: 'Texti skrá',
     description: 'Column header: URL to text file',
   },
 
-  // LandMynt columns
-  landMyntCountryCode: {
+  // CountryCurrencies columns
+  countryCurrencyCountryCode: {
     id: 'web.customsGeneral:landMyntCountryCode',
     defaultMessage: 'Landakóði',
     description: 'Column header: country code',
   },
-  landMyntCountryName: {
+  countryCurrencyCountryName: {
     id: 'web.customsGeneral:landMyntCountryName',
     defaultMessage: 'Heiti lands',
     description: 'Column header: country name',
   },
-  landMyntCurrencyCode: {
+  countryCurrencyCurrencyCode: {
     id: 'web.customsGeneral:landMyntCurrencyCode',
     defaultMessage: 'Myntkóði',
     description: 'Column header: currency code',
   },
-  landMyntCurrencyName: {
+  countryCurrencyCurrencyName: {
     id: 'web.customsGeneral:landMyntCurrencyName',
     defaultMessage: 'Heiti myntar',
     description: 'Column header: currency name',
   },
 
-  // Urvinnslugjold columns
-  urvinnslugjoldTariffNumber: {
-    id: 'web.customsGeneral:urvinnslugjoldTariffNumber',
-    defaultMessage: 'Tollskránúmer',
-    description: 'Column header: tariff number',
-  },
-  urvinnslugjoldPlRatio: {
-    id: 'web.customsGeneral:urvinnslugjoldPlRatio',
-    defaultMessage: 'PL hlutfall',
-    description: 'Column header: PL ratio',
-  },
-  urvinnslugjoldPpRatio: {
-    id: 'web.customsGeneral:urvinnslugjoldPpRatio',
-    defaultMessage: 'PP hlutfall',
-    description: 'Column header: PP ratio',
-  },
-
-  // Undanthagur specific
-  undanthagurColumnLykill: {
+  // Exemptions specific
+  exemptionColumnKey: {
     id: 'web.customsGeneral:undanthagurColumnLykill',
     defaultMessage: 'Lykill',
-    description: 'Undanthagur table column header: code/key',
+    description: 'Exemptions table column header: code/key',
   },
-  undanthagurColumnSkyring: {
+  exemptionColumnDescription: {
     id: 'web.customsGeneral:undanthagurColumnSkyring',
     defaultMessage: 'Skýring',
-    description: 'Undanthagur table column header: description/explanation',
+    description: 'Exemptions table column header: description/explanation',
   },
-  undanthagurDetailDagsetning: {
+  exemptionDetailDate: {
     id: 'web.customsGeneral:undanthagurDetailDagsetning',
     defaultMessage: 'Dagsetning',
-    description: 'Undanthagur detail view label: date',
+    description: 'Exemptions detail view label: date',
   },
-  undanthagurDetailFlutningsleid: {
+  exemptionDetailTransportDirection: {
     id: 'web.customsGeneral:undanthagurDetailFlutningsleid',
     defaultMessage: 'Flutningsleið',
-    description: 'Undanthagur detail view label: transport direction',
+    description: 'Exemptions detail view label: transport direction',
   },
-  undanthagurDetailGildistimi: {
+  exemptionDetailValidityPeriod: {
     id: 'web.customsGeneral:undanthagurDetailGildistimi',
     defaultMessage: 'Gildistími',
-    description: 'Undanthagur detail view label: validity period',
+    description: 'Exemptions detail view label: validity period',
   },
-  undanthagurOtimabundid: {
+  exemptionIndefinite: {
     id: 'web.customsGeneral:undanthagurOtimabundid',
     defaultMessage: 'ótímabundið',
-    description: 'Undanthagur detail view: indefinite/unlimited validity',
+    description: 'Exemptions detail view: indefinite/unlimited validity',
   },
-  undanthagurLagagrein: {
+  exemptionLegalArticle: {
     id: 'web.customsGeneral:undanthagurLagagrein',
     defaultMessage: 'Lagagrein',
-    description: 'Undanthagur detail view section: legal article',
+    description: 'Exemptions detail view section: legal article',
   },
-  undanthagurLysing: {
+  exemptionDescription: {
     id: 'web.customsGeneral:undanthagurLysing',
     defaultMessage: 'Lýsing',
-    description: 'Undanthagur detail view section: description',
+    description: 'Exemptions detail view section: description',
   },
-  undanthagurBackToList: {
+  exemptionBackToList: {
     id: 'web.customsGeneral:undanthagurBackToList',
     defaultMessage: 'Sjá lista yfir undanþágur',
-    description: 'Undanthagur detail view: back to list button label',
+    description: 'Exemptions detail view: back to list button label',
   },
 
-  // Akvordunarstadir columns
-  akvordunarstadirLocation: {
+  // AssessmentLocations columns
+  assessmentLocationLocation: {
     id: 'web.customsGeneral:akvordunarstadirLocation',
     defaultMessage: 'Staður',
-    description: 'Column header: determination location code',
+    description: 'Column header: assessment location code',
   },
-  akvordunarstadirLocationName: {
+  assessmentLocationLocationName: {
     id: 'web.customsGeneral:akvordunarstadirLocationName',
     defaultMessage: 'Staðarheiti',
-    description: 'Column header: determination location name',
+    description: 'Column header: assessment location name',
   },
 })

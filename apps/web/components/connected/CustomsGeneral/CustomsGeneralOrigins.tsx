@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
-import { GET_CUSTOMS_GENERAL_UPPRUNI } from '@island.is/web/screens/queries/CustomsGeneral'
+import { GET_CUSTOMS_GENERAL_ORIGINS } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
-const CustomsGeneralUppruni = () => {
+const CustomsGeneralOrigins = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
@@ -16,11 +16,11 @@ const CustomsGeneralUppruni = () => {
     { key: 'description' as const, label: formatMessage(m.columnDescription) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_UPPRUNI, {
-    variables: { input: { dags: toApiDate(selectedDate) } },
+  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_ORIGINS, {
+    variables: { input: { date: toApiDate(selectedDate) } },
   })
 
-  const items = (data?.customsGeneralUppruni ?? []).map(
+  const items = (data?.customsGeneralOrigins ?? []).map(
     (item: { name?: string; description?: string }) => ({
       name: item.name ?? '',
       description: item.description ?? '',
@@ -41,4 +41,4 @@ const CustomsGeneralUppruni = () => {
   )
 }
 
-export default CustomsGeneralUppruni
+export default CustomsGeneralOrigins
