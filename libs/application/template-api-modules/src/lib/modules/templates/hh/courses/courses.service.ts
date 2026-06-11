@@ -492,19 +492,28 @@ export class CoursesService extends BaseTemplateApiService {
     participantList: ApplicationAnswers['participantList'],
     authorization: string,
   ): Promise<void> {
-    const chargeItemsResponse = await this.sharedTemplateApiService
-      .makeGraphqlQuery<{
-        getChargeItemCodesByCourseId: {
-          items: Array<{ code: string; priceAmount: number }>
-        }
-      }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
-        input: { courseId: course.id },
-      })
-      .then((r) => r.json())
+    let priceAmount: number | undefined
+    try {
+      const chargeItemsResponse = await this.sharedTemplateApiService
+        .makeGraphqlQuery<{
+          getChargeItemCodesByCourseId: {
+            items: Array<{ code: string; priceAmount: number }>
+          }
+        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
+          input: { courseId: course.id },
+        })
+        .then((r) => r.json())
 
-    const priceAmount = chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
-      (item) => item.code === courseInstance.chargeItemCode,
-    )?.priceAmount
+      priceAmount =
+        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
+          (item) => item.code === courseInstance.chargeItemCode,
+        )?.priceAmount
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch charge item codes for course, proceeding without price',
+        { error, courseId: course.id },
+      )
+    }
 
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,
