@@ -75,8 +75,8 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   // Optionally email a PDF copy of the application to the parties (málsaðilar)
-  // when the applicant opted in via the overview checkbox. Triggered on entry
-  // to the post-submission state; must never block submission (registered with
+  // when the applicant opted in via the overview checkbox. Triggered during
+  // the submission transition; must never block submission (registered with
   // throwOnError: false).
   async sendApplicationCopyToParties({
     application,
