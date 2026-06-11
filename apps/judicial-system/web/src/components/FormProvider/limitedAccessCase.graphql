@@ -253,7 +253,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     rulingOrderAppealCases {
       id
-      modified
       appealState
       appealedByNationalId
       appealedByRole
