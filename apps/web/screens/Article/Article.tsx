@@ -379,9 +379,13 @@ const ArticleScreen: Screen<ArticleProps> = ({
     return sub.slug.split('/').pop() === query.subSlug
   })
 
-  // When viewing a sub article (Baby Article) show its own "last reviewed"
-  // date; otherwise fall back to the main article's.
-  const reviewedContent = subArticle ?? article
+  // On a sub article (Baby Article) page, prefer the sub article's own "last
+  // reviewed" date when it has one; otherwise fall back to the main article's
+  // date so existing parent-level dates keep rendering (no regression).
+  const reviewedContent =
+    subArticle?.showDateOfTheMostRecentReview && subArticle.contentLastReviewed
+      ? subArticle
+      : article
 
   useContentfulId(article?.id ?? '', subArticle?.id)
 
