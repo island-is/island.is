@@ -1,0 +1,52 @@
+{
+  "name": "application-system-next",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/application-system-next",
+  "projectType": "application",
+  "tags": ["scope:application-system-next"],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/application-system-next"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/application-system-next"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "application-system-next:build",
+        "dev": true,
+        "port": 4250
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "application-system-next:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "application-system-next:build:production",
+          "dev": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/application-system-next/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/application-system-next"]
+    }
+  }
+}

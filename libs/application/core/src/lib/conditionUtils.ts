@@ -35,22 +35,22 @@ const applyStaticConditionalCheck = (
       isValid = valueViaPath !== value
       break
     case Comparators.GT:
-      if (valueViaPath) {
+      if (valueViaPath !== undefined && valueViaPath !== null) {
         isValid = valueViaPath > value
       }
       break
     case Comparators.GTE:
-      if (valueViaPath) {
+      if (valueViaPath !== undefined && valueViaPath !== null) {
         isValid = valueViaPath >= value
       }
       break
     case Comparators.LT:
-      if (valueViaPath) {
+      if (valueViaPath !== undefined && valueViaPath !== null) {
         isValid = valueViaPath < value
       }
       break
     case Comparators.LTE:
-      if (valueViaPath) {
+      if (valueViaPath !== undefined && valueViaPath !== null) {
         isValid = valueViaPath <= value
       }
       break
@@ -75,6 +75,7 @@ export const shouldShowFormItem = (
   user: BffUser | null,
 ): boolean => {
   const { condition } = formItem
+
   if (!condition) {
     return true
   }

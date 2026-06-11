@@ -38,6 +38,8 @@ import { ExampleInputsModule } from './examples/example-inputs/example-inputs.mo
 import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { ExampleNoInputsModule } from './examples/example-no-inputs/example-no-inputs.module'
 import { ExampleNoInputsService } from './examples/example-no-inputs/example-no-inputs-service'
+import { ExampleSdfModule } from './examples/example-sdf/example-sdf.module'
+import { ExampleSdfService } from './examples/example-sdf/example-sdf.service'
 import { AccidentNotificationModule } from './iceland-health/accident-notification/accident-notification.module'
 import { AccidentNotificationService } from './iceland-health/accident-notification/accident-notification.service'
 import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
@@ -186,6 +188,8 @@ import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
+import { RentalAgreementSdfModule } from './hms/rental-agreement-sdf/rental-agreement-sdf.module'
+import { RentalAgreementSdfService } from './hms/rental-agreement-sdf/rental-agreement-sdf.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
@@ -198,6 +202,7 @@ export const modules = [
   ExampleStateTransfersModule,
   ExampleInputsModule,
   ExampleNoInputsModule,
+  ExampleSdfModule,
   ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
@@ -276,6 +281,7 @@ export const modules = [
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  RentalAgreementSdfModule,
   ActivationAllowanceModule,
   TerminateRentalAgreementModule,
   FireCompensationAppraisalModule,
@@ -295,6 +301,7 @@ export const services = [
   ExampleStateTransfersService,
   ExampleInputsService,
   ExampleNoInputsService,
+  ExampleSdfService,
   ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
@@ -374,6 +381,7 @@ export const services = [
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  RentalAgreementSdfService,
   ActivationAllowanceService,
   TerminateRentalAgreementService,
   FireCompensationAppraisalService,

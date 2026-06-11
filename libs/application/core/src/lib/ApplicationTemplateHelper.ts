@@ -245,14 +245,26 @@ export class ApplicationTemplateHelper<
     let hasError = false
     const errorMap: Record<string, string> = {}
     const validatorPaths = Object.keys(validators)
+    const applicationWithNewAnswers: Application = {
+      ...this.application,
+      answers: merge({}, this.application.answers, newAnswers) as FormValue,
+    }
 
     for (const validatorPath of validatorPaths) {
-      if (has(newAnswers, validatorPath)) {
-        const newAnswer = get(newAnswers, validatorPath)
+      const hasDirectAnswer = Object.prototype.hasOwnProperty.call(
+        newAnswers,
+        validatorPath,
+      )
+      const hasPathAnswer = has(newAnswers, validatorPath)
+
+      if (hasDirectAnswer || hasPathAnswer) {
+        const newAnswer = hasDirectAnswer
+          ? newAnswers[validatorPath]
+          : get(newAnswers, validatorPath)
 
         const result = await validators[validatorPath](
           newAnswer,
-          this.application,
+          applicationWithNewAnswers,
         )
 
         if (result) {
@@ -268,6 +280,8 @@ export class ApplicationTemplateHelper<
     if (hasError) {
       return errorMap
     }
+
+    return undefined
   }
 
   getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {

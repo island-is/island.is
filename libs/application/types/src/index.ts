@@ -1,4 +1,5 @@
 export * from './lib/ApplicationTypes'
+export * from './lib/sdfEnabledApplicationSlugs'
 export * from './lib/Condition'
 export * from './lib/BasicDataProvider'
 export * from './lib/DataProviderResult'

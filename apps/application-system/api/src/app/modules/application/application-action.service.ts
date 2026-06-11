@@ -104,6 +104,73 @@ export class ApplicationActionService {
     }
   }
 
+  async performEphemeralActionOnApplication(
+    application: BaseApplication,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    auth: User,
+    apis: TemplateApi | TemplateApi[],
+    locale: Locale,
+    event: string,
+  ): Promise<TemplateAPIModuleActionResult> {
+    if (!Array.isArray(apis)) {
+      apis = [apis]
+    }
+
+    apis = apis.filter(
+      (api) => api.triggerEvent === undefined || api.triggerEvent === event,
+    )
+
+    if (apis.length === 0) {
+      return {
+        updatedApplication: application,
+        hasError: false,
+      }
+    }
+
+    this.logger.info(
+      `Performing ephemeral actions ${apis
+        .map((api) => api.action)
+        .join(', ')} on ${JSON.stringify(template.type)}`,
+    )
+    const namespaces = await getApplicationTranslationNamespaces(application)
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const updatedApplication = await this.templateApiActionRunner.runEphemeral(
+      application,
+      apis,
+      auth,
+      locale,
+      intl.formatMessage,
+    )
+
+    for (const api of apis) {
+      const result =
+        updatedApplication.externalData[api.externalDataId || api.action]
+
+      this.logger.debug(
+        `Performing ephemeral action ${api.action} on ${JSON.stringify(
+          template.name,
+        )} ended with ${result.status}`,
+      )
+
+      if (result.status === 'failure' && api.throwOnError) {
+        return {
+          updatedApplication,
+          hasError: true,
+          error: result.reason,
+        }
+      }
+    }
+
+    this.logger.debug(
+      `Updated ephemeral external data for application with ID ${updatedApplication.id}`,
+    )
+
+    return {
+      updatedApplication,
+      hasError: false,
+    }
+  }
+
   async changeState(
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,

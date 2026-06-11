@@ -10,9 +10,11 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/examples/example-folder-structure-and-conventions'
     ),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
-    import('@island.is/application/templates/examples/example-inputs'),
+    import('@island.is/application/templates/v2/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-no-inputs'),
+  [ApplicationTypes.EXAMPLE_SDF]: () =>
+    import('@island.is/application/templates/examples/example-sdf'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
     import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
@@ -239,6 +241,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/rental-agreement'),
+  [ApplicationTypes.RENTAL_AGREEMENT_SDF]: () =>
+    import('@island.is/application/templates/hms/rental-agreement-sdf'),
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/hms/terminate-rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>
