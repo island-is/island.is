@@ -34,5 +34,4 @@ export const fileNameContainerWithChildren = style({
 export const fileNameContainer = style({
   marginRight: theme.spacing[2],
   wordBreak: 'break-all',
-  minWidth: 0,
 })
