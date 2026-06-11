@@ -350,22 +350,13 @@ export const NationalId = ({
                 name={municipalityField}
                 control={control}
                 defaultValue={getValue(item, 'municipality', valueIndex) ?? ''}
-                rules={{
-                  required: {
-                    value: item?.isRequired ?? false,
-                    message: formatMessage(m.required),
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <Input
                     label={formatMessage(m.city)}
                     name="municipality"
-                    required={item?.isRequired ?? false}
                     backgroundColor="blue"
                     value={field.value}
                     readOnly
-                    hasError={!!fieldState.error || !!hasError}
-                    errorMessage={fieldState.error?.message}
                   />
                 )}
               />
