@@ -28,19 +28,16 @@ const CustomsGeneralUppruni = () => {
   )
 
   return (
-    <>
-      <span>asdf</span>
-      <CustomsGeneralDateTable
-        columns={columns}
-        data={items}
-        loading={loading}
-        error={error}
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-        dateLabel={formatMessage(m.dateLabel)}
-        errorTitle={formatMessage(m.errorTitle)}
-      />
-    </>
+    <CustomsGeneralDateTable
+      columns={columns}
+      data={items}
+      loading={loading}
+      error={error}
+      selectedDate={selectedDate}
+      onDateChange={setSelectedDate}
+      dateLabel={formatMessage(m.dateLabel)}
+      errorTitle={formatMessage(m.errorTitle)}
+    />
   )
 }
 
