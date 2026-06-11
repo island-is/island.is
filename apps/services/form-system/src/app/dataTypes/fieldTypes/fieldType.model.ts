@@ -178,6 +178,15 @@ export const FieldTypes: FieldType[] = [
     },
     isCommon: true,
   },
+  {
+    id: FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    name: { is: 'Kennitala með heimilisfangi', en: 'National Id with address' },
+    description: {
+      is: 'Notandi slær inn kennitölu sína og við flettum upp heimilisfangi í gagnagrunni',
+      en: 'User enters their national Id and we look up their address in a database',
+    },
+    isCommon: false,
+  },
   // {
   //   id: FieldTypesEnum.NATIONAL_ID_ESTATE,
   //   name: { is: 'Kennitala dánarbús', en: 'National Id estate' },

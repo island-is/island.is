@@ -15,6 +15,7 @@ import { AssetsSettings } from './components/AssetsSettings'
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
+
   return (
     <>
       {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
