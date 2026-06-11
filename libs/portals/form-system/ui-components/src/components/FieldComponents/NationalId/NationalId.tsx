@@ -298,6 +298,7 @@ export const NationalId = ({
           <Row>
             <Column span="10/10">
               <Controller
+                key={`${item.id}-${valueIndex}_address`}
                 name={addressField}
                 control={control}
                 defaultValue={getValue(item, 'address', valueIndex) ?? ''}
@@ -325,6 +326,7 @@ export const NationalId = ({
           <Row>
             <Column span="3/10">
               <Controller
+                key={`${item.id}-${valueIndex}_postalCode`}
                 name={postalCodeField}
                 control={control}
                 defaultValue={getValue(item, 'postalCode', valueIndex) ?? ''}
@@ -351,6 +353,7 @@ export const NationalId = ({
 
             <Column span="7/10">
               <Controller
+                key={`${item.id}-${valueIndex}_municipality`}
                 name={municipalityField}
                 control={control}
                 defaultValue={getValue(item, 'municipality', valueIndex) ?? ''}
