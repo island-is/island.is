@@ -199,7 +199,10 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     statusText = 'Kæra afturkölluð'
   } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
     statusText = appealCase.appealRulingDate
-      ? `Niðurstaða Landsréttar ${formatDate(appealCase.appealRulingDate, 'PPP')}`
+      ? `Niðurstaða Landsréttar ${formatDate(
+          appealCase.appealRulingDate,
+          'PPP',
+        )}`
       : 'Niðurstaða Landsréttar'
   } else if (currentUserStatementDate) {
     statusText = `Greinargerð send ${formatDate(
