@@ -332,22 +332,13 @@ export const NationalId = ({
                 name={postalCodeField}
                 control={control}
                 defaultValue={getValue(item, 'postalCode', valueIndex) ?? ''}
-                rules={{
-                  required: {
-                    value: item?.isRequired ?? false,
-                    message: formatMessage(m.required),
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <Input
                     label={formatMessage(m.postalCode)}
                     name="postalCode"
-                    required={item?.isRequired ?? false}
                     backgroundColor="blue"
                     value={field.value}
                     readOnly
-                    hasError={!!fieldState.error || !!hasError}
-                    errorMessage={fieldState.error?.message}
                   />
                 )}
               />
