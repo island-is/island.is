@@ -611,9 +611,7 @@ describe('Limited Access View Case File Guard', () => {
                 case: {
                   type,
                   state,
-                  courtSessions: [
-                    { isConfirmed: true, rulingFileId: fileId },
-                  ],
+                  courtSessions: [{ isConfirmed: true, rulingFileId: fileId }],
                 },
                 caseFile: {
                   id: fileId,
@@ -641,9 +639,7 @@ describe('Limited Access View Case File Guard', () => {
                 case: {
                   type,
                   state,
-                  courtSessions: [
-                    { isConfirmed: false, rulingFileId: fileId },
-                  ],
+                  courtSessions: [{ isConfirmed: false, rulingFileId: fileId }],
                 },
                 caseFile: {
                   id: fileId,

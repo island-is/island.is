@@ -279,8 +279,7 @@ describe('isRulingOrderInConfirmedCourtSession', () => {
   ): CourtSession =>
     ({
       isConfirmed: overrides.isConfirmed ?? false,
-      rulingFileId:
-        'rulingFileId' in overrides ? overrides.rulingFileId : null,
+      rulingFileId: 'rulingFileId' in overrides ? overrides.rulingFileId : null,
     } as unknown as CourtSession)
 
   it('should return true when a confirmed session references the file', () => {

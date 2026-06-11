@@ -355,9 +355,7 @@ describe('getRulingOrderAppealInfo', () => {
     const theCase = {
       state: CaseState.RECEIVED,
       rulingOrderAppealCases: [],
-      courtSessions: [
-        { isConfirmed: true, rulingFileId: 'file-id', endDate },
-      ],
+      courtSessions: [{ isConfirmed: true, rulingFileId: 'file-id', endDate }],
     } as unknown as Case
 
     // The appeal deadline is three days after the ruling time (end of session)
