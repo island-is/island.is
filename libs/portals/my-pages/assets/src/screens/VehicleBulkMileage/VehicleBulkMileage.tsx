@@ -19,7 +19,6 @@ import {
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
@@ -27,6 +26,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useLoaderData } from 'react-router-dom'
+import VehicleBulkMileageMobileTable from './VehicleBulkMileageMobile/VehicleBulkMileageMobileTable'
 
 interface FormData {
   [key: string]: number
@@ -153,11 +153,12 @@ const VehicleBulkMileage = () => {
               })}
             </Text>
           }
-          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-          serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-          childrenWidthFull
-          buttonGroup={
-            isAllowedBulkMileageUpload
+          serviceProvider={{
+            slug: SAMGONGUSTOFA_SLUG,
+            tooltip: formatMessage(m.vehiclesTooltip),
+          }}
+          buttonGroup={{
+            actions: isAllowedBulkMileageUpload
               ? [
                   ...buttons,
                   <LinkButton
@@ -175,13 +176,13 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : buttons
-          }
+              : buttons,
+          }}
         >
           {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>
               <GridRow>
-                <GridColumn span="4/12">
+                <GridColumn span={['12/12', '12/12', '5/12', '5/12', '4/12']}>
                   <Input
                     icon={{ name: 'search' }}
                     backgroundColor="blue"
@@ -204,7 +205,7 @@ const VehicleBulkMileage = () => {
           <Stack space={4}>
             {error && !loading && <Problem error={error} noBorder={false} />}
             {!error && (
-              <VehicleBulkMileageTable
+              <VehicleBulkMileageMobileTable
                 loading={loading}
                 vehicles={vehicles}
                 onMileageUpdateCallback={onMileageUpdate}
@@ -217,7 +218,7 @@ const VehicleBulkMileage = () => {
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
-                    aria-label={formatMessage(m.goToPage)}
+                    aria-label={`${formatMessage(m.goToPage)} ${page}`}
                     onClick={() => {
                       setPage(page)
                     }}

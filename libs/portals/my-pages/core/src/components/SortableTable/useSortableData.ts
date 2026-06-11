@@ -1,3 +1,6 @@
+/**
+ * @deprecated Use `@tanstack/react-table` v8 with `getSortedRowModel()` instead.
+ */
 import { useMemo, useState } from 'react'
 import React from 'react'
 import { ConfigType } from './types'

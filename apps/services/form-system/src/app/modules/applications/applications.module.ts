@@ -29,6 +29,10 @@ import {
   ApplicationStatisticsSerializer,
   InstitutionSerializer,
 } from './tools/applicationAdmin.serializer'
+import { ZendeskListService } from '../services/dataFromUrl/zendeskList.service'
+import { DataFromUrlService } from '../services/dataFromUrl/dataFromUrl.service'
+import { AuthService } from '../services/auth.service'
+import { Payment } from '../payment/payment.model'
 
 @Module({
   imports: [
@@ -44,6 +48,7 @@ import {
       FormCertificationType,
       OrganizationPermission,
       ListItem,
+      Payment,
     ]),
     IdentityClientModule,
     FileModule,
@@ -60,6 +65,9 @@ import {
     ServiceManager,
     ZendeskService,
     NotifyService,
+    ZendeskListService,
+    DataFromUrlService,
+    AuthService,
     ValidationService,
     ApplicationAdminSerializer,
     InstitutionSerializer,

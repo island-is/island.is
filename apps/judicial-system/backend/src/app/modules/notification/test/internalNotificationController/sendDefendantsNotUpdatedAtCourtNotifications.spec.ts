@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
-  NotificationType,
+  RequestCaseNotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -32,7 +32,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+    type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
 
   const { registrar } = createTestUsers(['registrar', 'defender'])
@@ -99,7 +99,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
           ...theCase,
           notifications: [
             {
-              type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+              type: TrackedNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
               recipients: [{ address: registrar.email, success: true }],
             },
           ],

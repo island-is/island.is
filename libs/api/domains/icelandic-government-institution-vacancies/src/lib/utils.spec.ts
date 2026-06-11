@@ -1,4 +1,8 @@
-import { sortVacancyList, VacancyWithCreationDate } from './utils'
+import {
+  mapIcelandicGovernmentInstitutionVacanciesFromElfur,
+  sortVacancyList,
+  VacancyWithCreationDate,
+} from './utils'
 
 describe('sortVacancyList', () => {
   const createVacancy = (
@@ -106,5 +110,36 @@ describe('sortVacancyList', () => {
 
     // Original order should be maintained when all dates equal
     expect(vacancies.map((v) => v.id)).toEqual(['1', '2', '3'])
+  })
+})
+
+describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
+  it('should map jobCategory into fieldOfWork to match the old X-Road API', async () => {
+    const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
+      {
+        vacancyID: '1',
+        heading: 'Hjúkrunarfræðingur óskast',
+        jobTitle: 'Hjúkrunarfræðingur',
+        jobCategory: 'Heilbrigðisþjónusta',
+      },
+    ])
+
+    expect(result).toHaveLength(1)
+    // fieldOfWork carries the category (the card eyebrow), consistent with the
+    // old API. The job title is not surfaced as a separate field.
+    expect(result[0].fieldOfWork).toBe('Heilbrigðisþjónusta')
+    expect(result[0].title).toBe('Hjúkrunarfræðingur óskast')
+  })
+
+  it('should leave fieldOfWork undefined when the API omits jobCategory', async () => {
+    const result = await mapIcelandicGovernmentInstitutionVacanciesFromElfur([
+      {
+        vacancyID: '1',
+        heading: 'Starf',
+        jobTitle: 'Sérfræðingur',
+      },
+    ])
+
+    expect(result[0].fieldOfWork).toBeUndefined()
   })
 })

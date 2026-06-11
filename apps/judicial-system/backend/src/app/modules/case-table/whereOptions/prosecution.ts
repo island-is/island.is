@@ -1,7 +1,7 @@
 import { fn, Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseState,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
@@ -50,14 +50,11 @@ export const prosecutionRequestCasesAppealedWhereOptions = (
       attributes: [],
       required: true,
       where: {
-        appeal_state: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
       },
     },
   },
-  where: {
-    ...prosecutionRequestCasesAccessWhereOptions(user),
-    state: completedRequestCaseStates,
-  },
+  where: prosecutionRequestCasesAccessWhereOptions(user),
 })
 
 export const prosecutionRequestCasesCompletedWhereOptions = (
@@ -75,16 +72,15 @@ export const prosecutionRequestCasesCompletedWhereOptions = (
     '$appealCase.appeal_state$': {
       [Op.or]: [
         null,
-        CaseAppealState.RECEIVED,
-        CaseAppealState.WITHDRAWN,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.WITHDRAWN,
+        AppealCaseState.COMPLETED,
       ],
     },
   },
 })
 
 // Prosecution indictments
-
 export const prosecutionIndictmentsInDraftWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
@@ -118,15 +114,39 @@ export const prosecutionIndictmentsAppealedWhereOptions = (
   includes: {
     appealCase: {
       attributes: [],
-      required: true,
+      required: false,
       where: {
-        appeal_state: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+      },
+    },
+    rulingOrderAppealCases: {
+      attributes: [],
+      required: false,
+      where: {
+        appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
       },
     },
   },
   where: {
-    ...prosecutionIndictmentsAccessWhereOptions(user),
-    state: completedIndictmentCaseStates,
+    [Op.and]: [
+      prosecutionIndictmentsAccessWhereOptions(user),
+      {
+        [Op.or]: [
+          {
+            '$appealCase.appeal_state$': [
+              AppealCaseState.APPEALED,
+              AppealCaseState.RECEIVED,
+            ],
+          },
+          {
+            '$rulingOrderAppealCases.appeal_state$': [
+              AppealCaseState.APPEALED,
+              AppealCaseState.RECEIVED,
+            ],
+          },
+        ],
+      },
+    ],
   },
 })
 

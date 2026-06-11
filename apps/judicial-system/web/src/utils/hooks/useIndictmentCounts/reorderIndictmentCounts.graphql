@@ -1,0 +1,6 @@
+mutation ReorderIndictmentCounts($input: ReorderIndictmentCountsInput!) {
+  reorderIndictmentCounts(input: $input) {
+    id
+    displayOrder
+  }
+}

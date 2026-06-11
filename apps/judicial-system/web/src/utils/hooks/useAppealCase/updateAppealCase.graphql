@@ -1,0 +1,41 @@
+mutation UpdateAppealCase($input: UpdateAppealCaseInput!) {
+  updateAppealCase(input: $input) {
+    id
+    appealState
+    appealCaseNumber
+    appealReceivedByCourtDate
+    prosecutorStatementDate
+    defendantStatementDate
+    defendantStatementDates {
+      defendantId
+      statementDate
+    }
+    civilClaimantStatementDates {
+      civilClaimantId
+      statementDate
+    }
+    appealAssistant {
+      id
+      name
+    }
+    appealJudge1 {
+      id
+      name
+    }
+    appealJudge2 {
+      id
+      name
+    }
+    appealJudge3 {
+      id
+      name
+    }
+    appealRulingDecision
+    appealConclusion
+    appealRulingModifiedHistory
+    requestAppealRulingNotToBePublished
+    appealValidToDate
+    isAppealCustodyIsolation
+    appealIsolationToDate
+  }
+}

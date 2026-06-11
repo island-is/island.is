@@ -49,7 +49,6 @@ import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
@@ -80,6 +79,7 @@ import { HmsConfig } from '@island.is/clients/hms'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 
 @Module({
   imports: [
@@ -128,7 +128,6 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -157,6 +156,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         HmsRentalAgreementClientConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],

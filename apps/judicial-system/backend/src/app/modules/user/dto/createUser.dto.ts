@@ -3,13 +3,14 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   Length,
   MaxLength,
 } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -66,4 +67,9 @@ export class CreateUserDto {
   @IsBoolean()
   @ApiProperty({ type: Boolean })
   readonly canConfirmIndictment!: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly canManageMessageSuspension?: boolean
 }

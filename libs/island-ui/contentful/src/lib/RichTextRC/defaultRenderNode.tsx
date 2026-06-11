@@ -9,6 +9,7 @@ import {
   ResponsiveSpace,
   Box,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
@@ -240,11 +241,18 @@ export const defaultRenderNodeObject: RenderNode = {
     } else {
       url = ''
     }
-    return url ? <Hyperlink href={url}>{children}</Hyperlink> : null
+    return url ? (
+      <Hyperlink href={url}>{children}</Hyperlink>
+    ) : (
+      <Text as="span">{children}</Text>
+    )
   },
   [INLINES.ENTRY_HYPERLINK]: (node, children) => {
     const entry = node.data.target
     const type = entry?.sys?.contentType?.sys?.id
+
+    if (!type) return <Text as="span">{children}</Text>
+
     switch (type) {
       case 'article':
         return entry?.fields?.slug ? (

@@ -3,25 +3,35 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ROUTE_HANDLER_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
   formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isRequestCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseIndictmentRulingDecision,
   CaseType,
+  Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
+import { getDefaultDefendantGender } from '../../utils/utils'
 import { FormContext } from '../FormProvider/FormProvider'
 import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -37,11 +47,7 @@ import * as styles from './InfoCard.css'
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess } = useContext(UserContext)
-
-  // helper for info card items. If items have no values they will have [{falsy value}]
-  const showItem = (item: Item) =>
-    isNonEmptyArray(item.values) && !!item.values[0]
+  const { limitedAccess, user } = useContext(UserContext)
 
   const defendants = ({
     caseType,
@@ -56,7 +62,11 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants
+    const defendants = workingCase.defendants?.filter((defendant) =>
+      isDefenceUser(user) && isCompletedCase(workingCase.state)
+        ? true
+        : !defendant.indictmentCancelledOrDismissedState,
+    )
     const isMultipleDefendants = defendants && defendants.length > 1
 
     return {
@@ -71,7 +81,7 @@ const useInfoCardItems = () => {
               : isMultipleDefendants
               ? formatMessage(core.indictmentDefendants)
               : formatMessage(core.indictmentDefendant, {
-                  gender: defendants?.[0].gender,
+                  gender: getDefaultDefendantGender(defendants),
                 }),
           )}
         </Text>
@@ -88,7 +98,6 @@ const useInfoCardItems = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    workingCaseId={workingCase.id}
                     courtId={workingCase.court?.id}
                     defender={{
                       name: workingCase.defenderName,
@@ -118,6 +127,30 @@ const useInfoCardItems = () => {
             </div>,
           ]
         : [],
+    }
+  }
+
+  const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
+    return {
+      id: `cancelled-and-dismissed-defendant-item-${defendant.id}`,
+      title: (
+        <Text variant="h4" as="h4">
+          {getHumanReadableCaseIndictmentRulingDecision(
+            defendant.indictmentCancelledOrDismissedState?.type,
+          )}
+        </Text>
+      ),
+      values: [
+        <div key="cancelled-and-dismissed-defendants-grid">
+          <Text>{defendant.name}</Text>
+          <Text>
+            {formatDate(
+              defendant.indictmentCancelledOrDismissedState?.time,
+              'P',
+            )}
+          </Text>
+        </div>,
+      ],
     }
   }
 
@@ -218,10 +251,7 @@ const useInfoCardItems = () => {
     values: [
       `${capitalize(
         formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
-      )} eftir kl. ${formatDate(
-        workingCase.requestedCourtDate,
-        constants.TIME_FORMAT,
-      )}`,
+      )} eftir kl. ${formatDate(workingCase.requestedCourtDate, TIME_FORMAT)}`,
     ],
   }
 
@@ -294,9 +324,7 @@ const useInfoCardItems = () => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent
-                  href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-                >
+                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
                   {splitCase.courtCaseNumber}
                 </LinkComponent>
               </div>
@@ -315,7 +343,7 @@ const useInfoCardItems = () => {
             workingCase.splitCase.courtCaseNumber
           ) : (
             <LinkComponent
-              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              href={`${ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
               key={workingCase.splitCase.id}
             >
               {workingCase.splitCase.courtCaseNumber}
@@ -400,14 +428,11 @@ const useInfoCardItems = () => {
       workingCase.parentCase
         ? `${capitalize(
             formatDate(workingCase.parentCase.validToDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(
-            workingCase.parentCase.validToDate,
-            constants.TIME_FORMAT,
-          )}`
+          )} kl. ${formatDate(workingCase.parentCase.validToDate, TIME_FORMAT)}`
         : workingCase.arrestDate
         ? `${capitalize(
             formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-          )} kl. ${formatDate(workingCase.arrestDate, constants.TIME_FORMAT)}`
+          )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
         : 'Var ekki skráður',
     ],
   }
@@ -474,8 +499,8 @@ const useInfoCardItems = () => {
   }
 
   return {
-    showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     prosecutorsOffice,

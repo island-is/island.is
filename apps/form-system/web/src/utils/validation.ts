@@ -16,53 +16,42 @@ export const validateScreen = (state: ApplicationState): string[] => {
   return errors
 }
 
-const hasError = (field: FormSystemField): boolean => {
+export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
   const { fieldType } = field
-  const value = field?.values?.[0]?.json as FormSystemValue
+  const value = field?.values?.[valueIndex]?.json as FormSystemValue
   if (!value) return true
+
   switch (fieldType) {
-    case FieldTypesEnum.CHECKBOX: {
+    case FieldTypesEnum.CHECKBOX:
       return !value?.checkboxValue
-    }
-    case FieldTypesEnum.BANK_ACCOUNT: {
+    case FieldTypesEnum.BANK_ACCOUNT:
       return !validateBanknumber(value?.bankAccount ?? '')
-    }
-    case FieldTypesEnum.TEXTBOX: {
+    case FieldTypesEnum.TEXTBOX:
       return value.text === '' || !value.text
-    }
-    case FieldTypesEnum.EMAIL: {
+    case FieldTypesEnum.NUMBERBOX:
+      return !value?.number || isNaN(value.number)
+    case FieldTypesEnum.EMAIL:
       return !validateEmail(value?.email ?? '')
-    }
-    case FieldTypesEnum.PHONE_NUMBER: {
+    case FieldTypesEnum.PHONE_NUMBER:
       return !validatePhoneNumber(value?.phoneNumber ?? '')
-    }
-    case FieldTypesEnum.NATIONAL_ID: {
+    case FieldTypesEnum.NATIONAL_ID:
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
-    }
-    case FieldTypesEnum.ISK_NUMBERBOX: {
+    case FieldTypesEnum.ISK_NUMBERBOX:
       return !value?.iskNumber || value?.iskNumber.length === 0
-    }
-    case FieldTypesEnum.PROPERTY_NUMBER: {
+    case FieldTypesEnum.PROPERTY_NUMBER:
       return !validatePropertyNumber(value)
-    }
-    case FieldTypesEnum.RADIO_BUTTONS: {
-      return !value?.listValue
-    }
-    case FieldTypesEnum.DROPDOWN_LIST: {
-      return !value?.listValue
-    }
-    case FieldTypesEnum.DATE_PICKER: {
+    case FieldTypesEnum.RADIO_BUTTONS:
+      return !value?.label?.is
+    case FieldTypesEnum.DROPDOWN_LIST:
+      return !value?.label?.is
+    case FieldTypesEnum.DATE_PICKER:
       return !value?.date
-    }
-    case FieldTypesEnum.TIME_INPUT: {
+    case FieldTypesEnum.TIME_INPUT:
       return !value?.time
-    }
-    case FieldTypesEnum.FILE: {
-      return !value?.s3Key
-    }
-    default: {
+    case FieldTypesEnum.FILE:
+      return !value?.s3Key || value.s3Key.length === 0
+    default:
       return false
-    }
   }
 }
 

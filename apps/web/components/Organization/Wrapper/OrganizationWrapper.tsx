@@ -42,7 +42,6 @@ import {
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
-  WatsonChatPanel,
   WebChat,
   Webreader,
 } from '@island.is/web/components'
@@ -71,10 +70,8 @@ import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HveFooter } from './Themes/HveTheme'
 import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
@@ -83,18 +80,9 @@ import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
 import { SAkFooter } from './Themes/SAkTheme'
 import { ShhFooter } from './Themes/SHHTheme'
-import {
-  SjukratryggingarDefaultHeader,
-  SjukratryggingarFooter,
-} from './Themes/SjukratryggingarTheme'
-import {
-  SyslumennDefaultHeader,
-  SyslumennFooter,
-} from './Themes/SyslumennTheme'
-import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
+import { SjukratryggingarFooter } from './Themes/SjukratryggingarTheme'
+import { SyslumennFooter } from './Themes/SyslumennTheme'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
-import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -120,6 +108,7 @@ interface WrapperProps {
   showReadSpeaker?: boolean
   isSubpage?: boolean
   backLink?: { text: string; url: string }
+  hideFromExternalSearchEngines?: boolean
 }
 
 interface HeaderProps {
@@ -211,7 +200,7 @@ export const OrganizationHeader: React.FC<
     : organizationLogoAltTextFallback
 
   const defaultProps: DefaultHeaderProps = {
-    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    fullWidth: false,
     image: organizationPage.defaultHeaderImage?.url,
     background: getBackgroundStyle(organizationPage.themeProperties),
     title: organizationPage.title,
@@ -220,7 +209,7 @@ export const OrganizationHeader: React.FC<
     titleColor:
       (organizationPage.themeProperties
         .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
-    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imagePadding: organizationPage.themeProperties.imagePadding || '0px',
     imageIsFullHeight:
       organizationPage.themeProperties.imageIsFullHeight ?? true,
     imageObjectFit:
@@ -232,244 +221,16 @@ export const OrganizationHeader: React.FC<
         ? 'left'
         : organizationPage.themeProperties.imageObjectPosition === 'right'
         ? 'right'
-        : 'center',
+        : 'right',
     logoAltText: logoAltText,
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
-    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
     isSubpage,
   }
 
-  switch (organizationPage.theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'sjukratryggingar':
-      return (
-        <SjukratryggingarDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'digital_iceland':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          titleClassName={styles.digitalIcelandHeaderTitle}
-        />
-      )
-    case 'hsn':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsnHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'landlaeknir':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'landlaeknirHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
-          )}
-          className={
-            isSubpage
-              ? styles.landlaeknirHeaderGridContainerSubpage
-              : styles.landlaeknirHeaderGridContainer
-          }
-        />
-      )
-    case 'fiskistofa':
-      return (
-        <FiskistofaDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'rikislogmadur':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
-              : styles.rikislogmadurHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'landskjorstjorn':
-      return <DefaultHeader {...defaultProps} />
-    case 'landing_page':
-      return null
-    case 'fjarsysla-rikisins':
-      return <DefaultHeader {...defaultProps} />
-    case 'sak':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.sakHeaderGridContainerSubpage
-              : styles.sakHeaderGridContainer
-          }
-          image={n(
-            `sakHeaderBgImage`,
-            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
-          )}
-          titleSectionPaddingLeft={isSubpage ? 0 : 10}
-        />
-      )
-    case 'gev':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'gevHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
-          )}
-        />
-      )
-    case 'hve':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hveHeaderGridContainerSubpage
-              : styles.hveHeaderGridContainer
-          }
-          image={n(
-            'hveHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
-          )}
-        />
-      )
-    case 'shh':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.shhHeaderGridContainerWidthSubpage
-              : styles.shhHeaderGridContainerWidth
-          }
-          titleSectionPaddingLeft={isSubpage ? 0 : 5}
-        />
-      )
-    case 'hsa':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hsaHeaderGridContainerWidthSubpage
-              : styles.hsaHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'haskolanam':
-      return (
-        <UniversityStudiesHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'nti':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'icelandicNaturalDisasterInsuranceHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
-          )}
-        />
-      )
+  if (organizationPage.theme === 'landing_page') return null
 
-    case 'samgongustofa':
-      return <DefaultHeader {...defaultProps} />
-    case 'geislavarnir-rikisins':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(96.23deg, rgba(1, 54, 65, 0.8) 0.85%, rgba(19, 101, 103, 0.93) 16.4%, rgba(19, 101, 103, 0.885709) 32.16%, rgba(1, 73, 87, 0.88) 56.43%, rgba(2, 69, 91, 0.98) 78.47%, rgba(1, 52, 62, 0.96) 100.8%)"
-          image={n(
-            'geislavarnirRikisinsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5KjaMY9IIB0aX0GOUU60H7/176b6ed26dc01fe4e2559ba2957e85b7/skjaldamerki-transparent.svg',
-          )}
-        />
-      )
-    case 'rettindagaesla-fatlads-folks':
-      return <DefaultHeader {...defaultProps} />
-    case 'hms':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hmsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
-          )}
-        />
-      )
-    case 'rikissaksoknari':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikissaksoknariHeaderGridContainerSubpage
-              : styles.rikissaksoknariHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'vinnueftirlitid':
-      return (
-        <VinnueftilitidHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'hljodbokasafn-islands':
-      return (
-        <HljodbokasafnIslandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'tryggingastofnun':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
-        />
-      )
-    case 'faggilding':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          logoImageClassName={styles.logoLarge}
-        />
-      )
-    case 'rannis':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
-        />
-      )
-    default:
-      return <DefaultHeader {...defaultProps} />
-  }
+  return <DefaultHeader {...defaultProps} />
 }
 
 interface ExternalLinksProps {
@@ -659,12 +420,6 @@ export const OrganizationFooter: React.FC<
           logo={organization.logo?.url}
           title={organization.title}
         />
-      )
-      break
-    case 'haskolanam':
-    case 'university-studies':
-      OrganizationFooterComponent = (
-        <UniversityStudiesFooter organization={organization} />
       )
       break
     case 'gev':
@@ -910,6 +665,7 @@ export const OrganizationWrapper: React.FC<
   showReadSpeaker = true,
   isSubpage = true,
   backLink,
+  hideFromExternalSearchEngines = false,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -946,10 +702,11 @@ export const OrganizationWrapper: React.FC<
 
   const n = useNamespace(namespace)
 
-  const indexableBySearchEngine =
-    organizationPage.organization?.canPagesBeFoundInSearchResults ??
-    organizationPage.canBeFoundInSearchResults ??
-    true
+  const indexableBySearchEngine = hideFromExternalSearchEngines
+    ? false
+    : organizationPage.organization?.canPagesBeFoundInSearchResults ??
+      organizationPage.canBeFoundInSearchResults ??
+      true
 
   const sitemapContentTypeDeterminesNavigationAndBreadcrumbs = n(
     'sitemapContentTypeDeterminesNavigationAndBreadcrumbs',

@@ -97,7 +97,11 @@ export class FormApplicantTypesService {
         ...(applicantType.id !== ApplicantTypesEnum.LEGAL_ENTITY &&
         applicantType.id !==
           ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
-          ? { isPhoneRequired: true, isEmailRequired: true }
+          ? {
+              isPhoneRequired: true,
+              isEmailRequired: true,
+              fetchEmailFromMyPages: true,
+            }
           : {}),
       }
 
@@ -214,7 +218,6 @@ export class FormApplicantTypesService {
       'displayOrder',
       'isCompleted',
       'shouldValidate',
-      'shouldPopulate',
       'isHidden',
       'multiMax',
       'isMulti',

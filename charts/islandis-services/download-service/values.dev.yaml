@@ -28,6 +28,7 @@ env:
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SERVERSIDE_FEATURES_ON: ''
+  VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1'
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -38,6 +39,7 @@ env:
   XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
   XROAD_FINANCES_V3_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3'
+  XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
   XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
   XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
   XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
@@ -49,6 +51,7 @@ env:
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
   XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
+  XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
@@ -134,6 +137,8 @@ secrets:
   XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
   XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
   XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+  XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+  XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

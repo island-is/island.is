@@ -5,6 +5,8 @@ import { ControlContext } from '../../../../../../context/ControlContext'
 import { CheckboxSettings } from './components/CheckboxSettings'
 import { ListSettings } from './components/ListSettings'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
+import { NationalIdSettings } from './components/NationalIdSettings'
+import { NumberSettings } from './components/NumberSettings'
 import { PaymentFieldSettings } from './components/PaymentFieldSettings'
 import { TextFieldSettings } from './components/TextFieldSettings'
 import { FileUploadSettings } from './components/UploadSettings'
@@ -12,6 +14,7 @@ import { FileUploadSettings } from './components/UploadSettings'
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
+
   return (
     <>
       {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
@@ -21,6 +24,7 @@ export const FieldSettings = () => {
       {currentItem.fieldType === FieldTypesEnum.TEXTBOX && (
         <TextFieldSettings />
       )}
+      {currentItem.fieldType === FieldTypesEnum.NUMBERBOX && <NumberSettings />}
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <ListSettings />
       )}
@@ -32,6 +36,9 @@ export const FieldSettings = () => {
       )}
       {currentItem.fieldType === FieldTypesEnum.PAYMENT_QUANTITY && (
         <PaymentFieldSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.NATIONAL_ID && (
+        <NationalIdSettings />
       )}
     </>
   )

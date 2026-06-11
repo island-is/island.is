@@ -3,16 +3,27 @@ import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
 
+import { Environment } from '@island.is/shared/types'
+
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
+import { CreateScopeUserInput } from './dto/create-scope-user.input'
+import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
+import { ScopeClient } from './models/scope-client.model'
+import { ScopeUser } from './models/scope-user.model'
 import { ScopesPayload } from './dto/scopes.payload'
+import { ScopesByTenantsPayload } from './dto/scopes-by-tenants.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+import { PatchScopeResponse } from './models/patch-scope-response.model'
+import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
+
+const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -58,41 +69,134 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
-   * Updates a scope for a specific tenant for the given environments
+   * Updates a scope for a specific tenant for the given environments.
+   *
+   * Per-environment failures are collected and returned alongside the
+   * successful results.
+
    */
   async updateScope({
     user,
-    input: { environments, scopeName, tenantId, ...adminPatchScopeDto },
+    input: {
+      environments,
+      scopeName,
+      tenantId,
+      categoryIds,
+      tagIds,
+      supportedDelegationTypes,
+      ...adminPatchScopeDto
+    },
   }: {
     user: User
     input: AdminPatchScopeInput
-  }): Promise<ScopeEnvironment[]> {
-    if (Object.keys(adminPatchScopeDto).length === 0) {
+  }): Promise<PatchScopeResponse> {
+    const hasAbsoluteCategoryIds = categoryIds !== undefined
+    const hasAbsoluteTagIds = tagIds !== undefined
+    const hasAbsoluteDelegationTypes = supportedDelegationTypes !== undefined
+    const needsPerEnvDeltas =
+      hasAbsoluteCategoryIds || hasAbsoluteTagIds || hasAbsoluteDelegationTypes
+
+    if (Object.keys(adminPatchScopeDto).length === 0 && !needsPerEnvDeltas) {
       throw new Error('Nothing provided to update')
     }
 
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
+        const perEnvDeltas: {
+          addedCategoryIds?: string[]
+          removedCategoryIds?: string[]
+          addedTagIds?: string[]
+          removedTagIds?: string[]
+          addedDelegationTypes?: string[]
+          removedDelegationTypes?: string[]
+        } = {}
+
+        if (needsPerEnvDeltas) {
+          const current = await this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+
+          const currentCategoryIds = current?.categoryIds ?? []
+          const currentTagIds = current?.tagIds ?? []
+          const currentDelegationTypes = current?.supportedDelegationTypes ?? []
+
+          if (hasAbsoluteCategoryIds) {
+            const desired = categoryIds ?? []
+            const added = desired.filter(
+              (id) => !currentCategoryIds.includes(id),
+            )
+            const removed = currentCategoryIds.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedCategoryIds = added
+            if (removed.length > 0) perEnvDeltas.removedCategoryIds = removed
+          }
+
+          if (hasAbsoluteTagIds) {
+            const desired = tagIds ?? []
+            const added = desired.filter((id) => !currentTagIds.includes(id))
+            const removed = currentTagIds.filter((id) => !desired.includes(id))
+            if (added.length > 0) perEnvDeltas.addedTagIds = added
+            if (removed.length > 0) perEnvDeltas.removedTagIds = removed
+          }
+
+          if (hasAbsoluteDelegationTypes) {
+            const desired = supportedDelegationTypes ?? []
+            const added = desired.filter(
+              (id) => !currentDelegationTypes.includes(id),
+            )
+            const removed = currentDelegationTypes.filter(
+              (id) => !desired.includes(id),
+            )
+            if (added.length > 0) perEnvDeltas.addedDelegationTypes = added
+            if (removed.length > 0)
+              perEnvDeltas.removedDelegationTypes = removed
+          }
+        }
+
+        const dtoForEnv = { ...adminPatchScopeDto, ...perEnvDeltas }
+
+        if (Object.keys(dtoForEnv).length === 0) {
+          return this.makeRequest(user, environment, (api) =>
+            api.meScopesControllerFindByTenantIdAndScopeNameRaw({
+              tenantId,
+              scopeName,
+            }),
+          )
+        }
+
         return this.makeRequest(user, environment, (api) =>
           api.meScopesControllerUpdateRaw({
             tenantId,
             scopeName,
-            adminPatchScopeDto,
+            adminPatchScopeDto: dtoForEnv,
           }),
         )
       }),
     )
 
-    return this.handleSettledPromises(updatedSettledPromises, {
-      mapper: (scope, index) => ({
-        ...scope,
-        scopeName: scope.name,
-        environment: environments[index],
-        categoryIds: scope.categoryIds ?? [],
-        tagIds: scope.tagIds ?? [],
-      }),
-      prefixErrorMessage: `Failed to update scope ${scopeName}`,
-    })
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      updatedSettledPromises,
+      environments,
+      {
+        mapper: (scope, index): ScopeEnvironment => ({
+          ...scope,
+          environment: environments[index],
+          categoryIds: scope.categoryIds ?? [],
+          tagIds: scope.tagIds ?? [],
+          userNationalIds: [],
+        }),
+        prefixErrorMessage: `Failed to update scope ${scopeName}`,
+      },
+    )
+
+    return {
+      environments: values,
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
   }
 
   /**
@@ -143,16 +247,24 @@ export class ScopeService extends MultiEnvironmentService {
       environment: targetEnvironment,
       categoryIds: newScope.categoryIds ?? [],
       tagIds: newScope.tagIds ?? [],
+      userNationalIds: [],
     }
   }
 
   /**
-   * Gets all scopes for all available environments for a specific tenant
+   * Gets all scopes for a specific tenant. By default fans out across all
+   * environments; pass `environment` to fan out to just that one.
    */
-  async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
+  async getScopes(
+    user: User,
+    tenantId: string,
+    environment?: Environment,
+  ): Promise<ScopesPayload> {
+    const targetEnvironments = environment ? [environment] : environments
+
     const scopesSettledPromises = await Promise.allSettled(
-      environments.map((environment) =>
-        this.makeRequest(user, environment, (api) =>
+      targetEnvironments.map((env) =>
+        this.makeRequest(user, env, (api) =>
           api.meScopesControllerFindAllByTenantIdRaw({
             tenantId,
           }),
@@ -168,9 +280,10 @@ export class ScopeService extends MultiEnvironmentService {
             (scope) =>
               ({
                 ...scope,
-                environment: environments[index],
+                environment: targetEnvironments[index],
                 categoryIds: scope.categoryIds ?? [],
                 tagIds: scope.tagIds ?? [],
+                userNationalIds: [],
               } as ScopeEnvironment),
           ),
         prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
@@ -182,6 +295,7 @@ export class ScopeService extends MultiEnvironmentService {
     const scopeModels: Scope[] = Object.entries(groupedScopes)
       .map(([scopeName, scopes]) => ({
         scopeName,
+        modified: scopes[0].modified,
         environments: scopes,
       }))
       .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
@@ -196,15 +310,80 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
+   * Gets all scopes for the given tenants in a single fan-out. If
+   * `environment` is provided, each per-tenant fetch is scoped to that env
+   */
+  async getScopesByTenants(
+    user: User,
+    tenantIds: string[],
+    environment?: Environment,
+  ): Promise<ScopesByTenantsPayload> {
+    const uniqueIds = Array.from(new Set(tenantIds))
+
+    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
+    if (limitedIds.length < uniqueIds.length) {
+      this.logger.warn(
+        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+      )
+    }
+
+    const settled = await Promise.allSettled(
+      limitedIds.map(async (tenantId) => ({
+        tenantId,
+        payload: await this.getScopes(user, tenantId, environment),
+      })),
+    )
+
+    const data = settled.flatMap((result, index) => {
+      if (result.status === 'fulfilled') {
+        return [
+          { tenantId: result.value.tenantId, data: result.value.payload.data },
+        ]
+      }
+      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      return []
+    })
+
+    return { data }
+  }
+
+  /**
    * Gets a specific scope by scope name for all available environments
    */
-  async getScope(user: User, input: ScopeInput): Promise<Scope> {
-    const scopeSettledPromises = await Promise.allSettled(
-      environments.map((environment) =>
-        this.makeRequest(user, environment, (api) =>
-          api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+  async getScope(user: User, input: ScopeInput): Promise<Scope | null> {
+    const [scopeSettledPromises, scopeUsersSettledPromises] = await Promise.all(
+      [
+        Promise.allSettled(
+          environments.map((environment) =>
+            this.makeRequest(user, environment, (api) =>
+              api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+            ),
+          ),
         ),
-      ),
+        Promise.allSettled(
+          environments.map((environment) =>
+            this.makeRequest(user, environment, (api) =>
+              api.meScopeUsersControllerFindUsersByScopeRaw({
+                tenantId: input.tenantId,
+                scopeName: input.scopeName,
+              }),
+            ),
+          ),
+        ),
+      ],
+    )
+
+    const userNationalIdsByEnvIndex = scopeUsersSettledPromises.map(
+      (resp, index) => {
+        if (resp.status === 'fulfilled') {
+          return (resp.value ?? []).map((u) => u.nationalId)
+        }
+        this.logger.error(
+          `Failed to get scope users for ${input.scopeName} in environment ${environments[index]}`,
+          resp.reason,
+        )
+        return []
+      },
     )
 
     const environmentsScopes = this.handleSettledPromises(
@@ -215,14 +394,148 @@ export class ScopeService extends MultiEnvironmentService {
           environment: environments[index],
           categoryIds: scope.categoryIds ?? [],
           tagIds: scope.tagIds ?? [],
+          userNationalIds: userNationalIdsByEnvIndex[index],
         }),
         prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
       },
     )
 
+    if (environmentsScopes.length === 0) return null
+
     return {
       scopeName: input.scopeName,
+      modified: environmentsScopes[0].modified,
       environments: environmentsScopes,
+    }
+  }
+
+  async getScopeClients(
+    user: User,
+    input: ScopeInput,
+    environment: Environment,
+  ): Promise<ScopeClient[]> {
+    const clients = await this.makeRequest(user, environment, (api) =>
+      api.meScopeClientsControllerFindAllRaw({
+        tenantId: input.tenantId,
+        scopeName: input.scopeName,
+      }),
+    )
+
+    return (clients ?? []).map((client) => ({
+      clientId: client.clientId,
+      clientType: client.clientType,
+      displayName: client.displayName,
+    }))
+  }
+
+  /**
+   * Gets all users with access to a specific scope in a given environment
+   */
+  async getScopeUsers(
+    user: User,
+    tenantId: string,
+    scopeName: string,
+    environment: Environment,
+  ): Promise<ScopeUser[]> {
+    const result = await this.makeRequest(user, environment, (api) =>
+      api.meScopeUsersControllerFindUsersByScopeRaw({
+        tenantId,
+        scopeName,
+      }),
+    )
+
+    return (result ?? []).map((u) => ({
+      nationalId: u.nationalId,
+      name: u.name ?? undefined,
+      email: u.email,
+    }))
+  }
+
+  /**
+   * Creates a new user with access to a specific scope in the given environments
+   */
+  async createScopeUser(
+    user: User,
+    input: CreateScopeUserInput,
+  ): Promise<ScopeUser> {
+    let createdUser: ScopeUser | null = null
+
+    for (const environment of input.environments) {
+      try {
+        const result = await this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerCreateRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            apiScopeUserDTO: {
+              nationalId: input.nationalId,
+              name: input.name,
+              email: input.email,
+            },
+          }),
+        )
+
+        if (result && !createdUser) {
+          createdUser = {
+            nationalId: result.nationalId,
+            name: result.name ?? undefined,
+            email: result.email,
+          }
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to create scope user in ${environment}`,
+          error as Error,
+        )
+      }
+    }
+
+    if (!createdUser) {
+      throw new Error('Failed to create scope user')
+    }
+
+    return createdUser
+  }
+
+  /**
+   * Updates the user access list for a scope by adding/removing users.
+   *
+   * Per-environment failures are collected and returned and
+   * surfaced to the user.
+   */
+  async updateScopeUsers(
+    user: User,
+    input: UpdateScopeUsersInput,
+  ): Promise<UpdateScopeUsersResponse> {
+    const targetEnvironments = input.environments
+
+    const settledPromises = await Promise.allSettled(
+      targetEnvironments.map((environment) =>
+        this.makeRequest(user, environment, (api) =>
+          api.meScopeUsersControllerUpdateScopeUsersRaw({
+            tenantId: input.tenantId,
+            scopeName: input.scopeName,
+            updateScopeUsersDto: {
+              addedNationalIds: input.addedNationalIds,
+              removedNationalIds: input.removedNationalIds,
+            },
+          }),
+        ),
+      ),
+    )
+
+    const { values, failures } = this.handleSettledPromisesWithFailures(
+      settledPromises,
+      targetEnvironments,
+      {
+        mapper: (_value, index) => targetEnvironments[index],
+        prefixErrorMessage: `Failed to update scope users for ${input.scopeName}`,
+        voidResponse: true,
+      },
+    )
+
+    return {
+      ...(values.length > 0 && { environments: values }),
+      ...(failures.length > 0 && { failedEnvironments: failures }),
     }
   }
 }

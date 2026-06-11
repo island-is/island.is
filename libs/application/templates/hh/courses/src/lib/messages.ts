@@ -13,12 +13,25 @@ export const m = {
         'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
       description: 'Title of application',
     },
+    applicationTitleForProfessionals: {
+      id: 'hh.courses.application:general.applicationTitleForProfessionals',
+      defaultMessage:
+        'Skráning á námskeið fyrir fagfólk (Heilsugæsla höfuðborgarsvæðisins)',
+      description: 'Title of application for professionals',
+    },
     applicationTitleWithCourse: {
       id: 'hh.courses.application:general.applicationTitleWithCourse',
       defaultMessage:
-        '{value} - Námskeið hjá Heilsugæslunni á höfuðborgarsvæðinu',
+        '{value} - Námskeið fyrir almenning (Heilsugæsla höfuðborgarsvæðisins)',
       description:
         'Title of application with course name, shown in the application list',
+    },
+    applicationTitleWithCourseForProfessionals: {
+      id: 'hh.courses.application:general.applicationTitleWithCourseForProfessionals',
+      defaultMessage:
+        '{value} - Námskeið fyrir fagfólk (Heilsugæsla höfuðborgarsvæðisins)',
+      description:
+        'Title of application with course name, shown in the application list for professionals',
     },
     shorterApplicationTitle: {
       id: 'hh.courses.application:general.shorterApplicationTitle',
@@ -82,6 +95,16 @@ export const m = {
       id: 'hh.courses.application:userInformation.noHealthcenter',
       defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
       description: 'Message shown when no health center is found',
+    },
+    workplace: {
+      id: 'hh.courses.application:userInformation.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of workplace field',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:userInformation.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of job title field',
     },
   }),
   prerequisites: defineMessages({
@@ -165,6 +188,16 @@ export const m = {
       id: 'hh.courses.application:participant.participantPhone',
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
+    },
+    participantWorkplace: {
+      id: 'hh.courses.application:participant.participantWorkplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Title of participant workplace field',
+    },
+    participantJobTitle: {
+      id: 'hh.courses.application:participant.participantJobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Title of participant job title field',
     },
   }),
   payer: defineMessages({
@@ -281,6 +314,16 @@ export const m = {
       id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
       description: 'Title of submit button in overview section without payment',
+    },
+    workplace: {
+      id: 'hh.courses.application:overview.workplace',
+      defaultMessage: 'Vinnustaður',
+      description: 'Heading for workplace in overview section',
+    },
+    jobTitle: {
+      id: 'hh.courses.application:overview.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Heading for job title in overview section',
     },
   }),
   completedForm: defineMessages({

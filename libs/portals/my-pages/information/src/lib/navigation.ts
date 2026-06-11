@@ -69,14 +69,9 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         // Municipal
         {
-          customShortcut: {
-            name: m.signatureCollectionMunicipalLists,
-            description:
-              m.signatureCollectionMunicipalListsNavigationDescription,
-          },
           name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
-          icon: { icon: 'document' },
+          icon: { icon: 'election' },
           children: [
             {
               name: m.viewSignatureList,
@@ -89,6 +84,7 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.signatureCollectionParliamentaryLists,
           path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+          icon: { icon: 'election' },
           children: [
             {
               name: m.viewSignatureList,
@@ -101,6 +97,7 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.signatureCollectionPresidentialLists,
           path: SignatureCollectionPaths.SignatureCollectionLists,
+          icon: { icon: 'election' },
           children: [
             {
               name: m.viewSignatureList,

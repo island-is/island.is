@@ -1,7 +1,7 @@
-import { Op } from 'sequelize'
+import { literal, Op } from 'sequelize'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -29,32 +29,49 @@ const courtOfAppealsRequestCasesAccessWhereOptions = {
   [Op.or]: [
     {
       '$appealCase.appeal_state$': [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
       ],
     },
     {
-      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
       '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
   ],
 }
 
+// Ruling-order side uses correlated EXISTS subqueries instead of joined-alias
+// references so the predicate stays valid even when Sequelize wraps the
+// outer query in a subSELECT (e.g. searchCases adds a LIMIT and the HasMany
+// JOIN would otherwise force `subQuery: true` and leave the alias
+// unreachable in the inner WHERE).
 const courtOfAppealsIndictmentsAccessWhereOptions = {
   is_archived: false,
   type: indictmentCases,
-  state: completedIndictmentCaseStates,
   [Op.or]: [
     {
       '$appealCase.appeal_state$': [
-        CaseAppealState.RECEIVED,
-        CaseAppealState.COMPLETED,
+        AppealCaseState.RECEIVED,
+        AppealCaseState.COMPLETED,
       ],
     },
     {
-      '$appealCase.appeal_state$': CaseAppealState.WITHDRAWN,
+      '$appealCase.appeal_state$': AppealCaseState.WITHDRAWN,
       '$appealCase.appeal_received_by_court_date$': { [Op.not]: null },
     },
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."ruling_file_id" IS NOT NULL
+        AND ac."appeal_state" IN ('RECEIVED', 'COMPLETED')
+    )`),
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."ruling_file_id" IS NOT NULL
+        AND ac."appeal_state" = 'WITHDRAWN'
+        AND ac."appeal_received_by_court_date" IS NOT NULL
+    )`),
   ],
 }
 

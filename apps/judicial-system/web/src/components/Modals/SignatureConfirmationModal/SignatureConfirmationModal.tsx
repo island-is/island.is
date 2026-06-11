@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { ApolloError } from '@apollo/client'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   core,
   signedVerdictOverview as m,
@@ -31,6 +31,7 @@ interface SignatureConfirmationModalProps {
   signatureType: SignatureType
   isAudkenni: boolean
   onClose: () => void
+  onErrorOrCanceledClose?: () => void
   navigateOnClose?: boolean
   onRetry?: () => void
 }
@@ -78,6 +79,7 @@ export const SignatureConfirmationModal: FC<
   signatureType,
   isAudkenni,
   onClose,
+  onErrorOrCanceledClose,
   navigateOnClose = true,
   onRetry,
 }) => {
@@ -187,9 +189,13 @@ export const SignatureConfirmationModal: FC<
 
   const handleClose = () => {
     if (navigateOnClose && signingProgress === 'success') {
-      router.push(
-        `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
-      )
+      router.push(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+    } else if (
+      (signingProgress === 'error' || signingProgress === 'canceled') &&
+      onErrorOrCanceledClose
+    ) {
+      onErrorOrCanceledClose()
+      return
     }
     onClose()
   }

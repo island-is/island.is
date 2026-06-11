@@ -31,6 +31,9 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -153,6 +156,9 @@ export class SubpoenaController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get([
     'defendant/:defendantId/subpoena',
@@ -207,6 +213,9 @@ export class SubpoenaController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('defendant/:defendantId/subpoena/:subpoenaId/serviceCertificate')
   // Strictly speaking, only district court users need access to

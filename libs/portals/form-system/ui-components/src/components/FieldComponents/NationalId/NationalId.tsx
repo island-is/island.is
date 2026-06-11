@@ -11,13 +11,13 @@ import {
   GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
@@ -58,6 +58,8 @@ export const NationalId = ({
     defaultValue: getValue(item, 'nationalId', valueIndex) ?? '',
   }) as string
 
+  const showAddress = item.fieldSettings?.showAddress ?? false
+
   const nationalId = (watchedValue ?? '').trim()
   const normalizedId = nationalId.replace(/\D/g, '')
   const queryId = normalizedId ? normalizedId : undefined
@@ -75,11 +77,28 @@ export const NationalId = ({
     shouldQueryBase && isCompanyNationalId(queryId || '')
 
   const nameField = `${item.id}.${valueIndex}_name`
+  const addressField = `${item.id}.${valueIndex}_address`
+  const postalCodeField = `${item.id}.${valueIndex}_postalCode`
+  const municipalityField = `${item.id}.${valueIndex}_municipality`
 
   // Keep RHF in sync with external "item" value (since Controller defaultValue won't update)
   useEffect(() => {
     setValue(nameField, getValue(item, 'name', valueIndex) ?? '')
-  }, [item, nameField, setValue, valueIndex])
+    setValue(addressField, getValue(item, 'address', valueIndex) ?? '')
+    setValue(postalCodeField, getValue(item, 'postalCode', valueIndex) ?? '')
+    setValue(
+      municipalityField,
+      getValue(item, 'municipality', valueIndex) ?? '',
+    )
+  }, [
+    item,
+    nameField,
+    addressField,
+    postalCodeField,
+    municipalityField,
+    setValue,
+    valueIndex,
+  ])
 
   const { data: _nameData } = useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId: queryId } },
@@ -87,6 +106,7 @@ export const NationalId = ({
     skip: !shouldQueryIndividual,
     onCompleted: (nameData) => {
       const newName = removeTypename(nameData?.identity?.name)
+
       if (newName) {
         setValue(nameField, newName, {
           shouldDirty: true,
@@ -99,6 +119,38 @@ export const NationalId = ({
           })
         }
         lastQueriedRef.current = queryId
+      }
+
+      if (showAddress && nameData?.identity?.address) {
+        const address = nameData.identity.address.streetAddress ?? ''
+        const postalCode = nameData.identity.address.postalCode ?? ''
+        const municipality = nameData.identity.address.city ?? ''
+
+        setValue(addressField, address, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        setValue(postalCodeField, postalCode, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        setValue(municipalityField, municipality, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+
+        if (dispatch) {
+          dispatch({
+            type: 'SET_ADDRESS',
+            payload: {
+              id: item.id,
+              valueIndex,
+              address,
+              postalCode,
+              municipality,
+            },
+          })
+        }
       }
     },
   })
@@ -128,19 +180,45 @@ export const NationalId = ({
   useEffect(() => {
     if (!isValidFormat) {
       lastQueriedRef.current = undefined
+
+      setValue(nameField, '')
+      setValue(addressField, '')
+      setValue(postalCodeField, '')
+      setValue(municipalityField, '')
+
       if (dispatch) {
         dispatch({
           type: 'SET_NAME',
           payload: { id: item.id, value: '', valueIndex },
         })
+        dispatch({
+          type: 'SET_ADDRESS',
+          payload: {
+            id: item.id,
+            valueIndex,
+            address: '',
+            postalCode: '',
+            municipality: '',
+          },
+        })
       }
     }
-  }, [isValidFormat, dispatch, item.id, valueIndex])
+  }, [
+    isValidFormat,
+    dispatch,
+    item.id,
+    valueIndex,
+    nameField,
+    addressField,
+    postalCodeField,
+    municipalityField,
+    setValue,
+  ])
 
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['1/1', '1/1', '5/10']}>
           <Controller
             key={`${item.id}-${valueIndex}`}
             name={`${item.id}.${valueIndex}`}
@@ -192,7 +270,7 @@ export const NationalId = ({
         <Column span="10/10">
           <Controller
             key={`${item.id}-${valueIndex}_name`}
-            name={`${item.id}.${valueIndex}_name`}
+            name={nameField}
             control={control}
             defaultValue={getValue(item, 'name', valueIndex) ?? ''}
             rules={{
@@ -216,6 +294,76 @@ export const NationalId = ({
           />
         </Column>
       </Row>
+
+      {showAddress && (
+        <>
+          <Row>
+            <Column span="10/10">
+              <Controller
+                key={`${item.id}-${valueIndex}_address`}
+                name={addressField}
+                control={control}
+                defaultValue={getValue(item, 'address', valueIndex) ?? ''}
+                rules={{
+                  required: {
+                    value: item?.isRequired ?? false,
+                    message: formatMessage(m.required),
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    label={formatMessage(m.address)}
+                    name="address"
+                    required={item?.isRequired ?? false}
+                    backgroundColor="blue"
+                    value={field.value}
+                    readOnly
+                    hasError={!!fieldState.error || !!hasError}
+                    errorMessage={fieldState.error?.message}
+                  />
+                )}
+              />
+            </Column>
+          </Row>
+          <Row>
+            <Column span="3/10">
+              <Controller
+                key={`${item.id}-${valueIndex}_postalCode`}
+                name={postalCodeField}
+                control={control}
+                defaultValue={getValue(item, 'postalCode', valueIndex) ?? ''}
+                render={({ field }) => (
+                  <Input
+                    label={formatMessage(m.postalCode)}
+                    name="postalCode"
+                    backgroundColor="blue"
+                    value={field.value}
+                    readOnly
+                  />
+                )}
+              />
+            </Column>
+
+            <Column span="7/10">
+              <Controller
+                key={`${item.id}-${valueIndex}_municipality`}
+                name={municipalityField}
+                control={control}
+                defaultValue={getValue(item, 'municipality', valueIndex) ?? ''}
+                render={({ field }) => (
+                  <Input
+                    label={formatMessage(m.city)}
+                    name="municipality"
+                    backgroundColor="blue"
+                    value={field.value}
+                    readOnly
+                  />
+                )}
+              />
+            </Column>
+          </Row>
+        </>
+      )}
     </Stack>
   )
 }

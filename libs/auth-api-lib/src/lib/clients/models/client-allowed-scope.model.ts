@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -31,6 +32,9 @@ export class ClientAllowedScope extends Model {
   @ForeignKey(() => Client)
   @ApiProperty()
   clientId!: string
+
+  @BelongsTo(() => Client)
+  client?: Client
 
   @CreatedAt
   @ApiProperty()

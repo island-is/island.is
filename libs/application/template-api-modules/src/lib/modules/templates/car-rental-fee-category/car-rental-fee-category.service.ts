@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
+import { FetchError } from '@island.is/clients/middlewares'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
@@ -36,8 +37,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
   async getVehicleCarMap({
     auth,
+    application,
   }: TemplateApiModuleActionProps): Promise<CarMap> {
     const api = this.rentalsApiWithAuth(auth)
+    const context = {
+      applicationId: application.id,
+      entityId: auth.nationalId,
+    }
 
     const [vehicles, rates] = await Promise.all([
       api
@@ -47,7 +53,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         .catch((error) => {
           this.logger.error(
             'Error getting vehicles with mileage from Skatturinn',
-            error,
+            {
+              ...context,
+              endpoint: 'eligibleVehiclesGet',
+              ...this.extractFetchErrorDetails(error),
+            },
           )
           throw error
         }),
@@ -58,7 +68,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         .catch((error) => {
           this.logger.error(
             'Error getting current vehicles rate category from Skatturinn',
-            error,
+            {
+              ...context,
+              endpoint: 'entriesGet',
+              ...this.extractFetchErrorDetails(error),
+            },
           )
           throw error
         }),
@@ -321,6 +335,23 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         },
         (error as { status?: number })?.status ?? 500,
       )
+    }
+  }
+
+  private extractFetchErrorDetails(error: unknown): Record<string, unknown> {
+    if (error instanceof FetchError) {
+      return {
+        status: error.status,
+        statusText: error.statusText,
+        url: error.url,
+        body: error.body,
+        problem: error.problem,
+        message: error.message,
+      }
+    }
+
+    return {
+      message: error instanceof Error ? error.message : String(error),
     }
   }
 

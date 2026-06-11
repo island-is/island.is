@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
   isDistrictCourtUser,
@@ -28,7 +32,7 @@ import UploadFiles, {
 import {
   Case,
   CaseFileCategory,
-  NotificationType,
+  TrackedNotificationType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -62,13 +66,13 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
       : CaseFileCategory.CASE_FILE // should never happen
     return {
       caseFileCategory: caseFileCategory,
-      previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
+      previousRoute: DEFENDER_INDICTMENT_CASE_ROUTE,
       getCaseInfoNode,
       hasFileRepresentativeSelection: false,
     }
   } else if (isDistrictCourtUser(user)) {
     return {
-      previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+      previousRoute: DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
       getCaseInfoNode: (workingCase: Case) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
@@ -77,7 +81,7 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
   }
   return {
     caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
-    previousRoute: constants.INDICTMENTS_OVERVIEW_ROUTE,
+    previousRoute: PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
     getCaseInfoNode,
     hasFileRepresentativeSelection: false,
   }
@@ -184,7 +188,10 @@ const AddFiles: FC = () => {
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
-      sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
+      await sendNotification(
+        workingCase.id,
+        TrackedNotificationType.CASE_FILES_UPDATED,
+      )
     }
 
     setVisibleModal(undefined)

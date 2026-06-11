@@ -4,10 +4,11 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  AppealCaseRulingDecision,
+  AppealCaseState,
   Case,
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -27,14 +28,38 @@ jest.mock('next/router', () => ({
 }))
 
 describe('useSections getSections', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const wrapper = ({ children }: any) => (
-    <IntlProvider locale="is" onError={jest.fn}>
-      <ApolloProvider client={new ApolloClient({ cache: new InMemoryCache() })}>
-        <UserProvider authenticated={true}>{children}</UserProvider>
-      </ApolloProvider>
-    </IntlProvider>
-  )
+  // useSections reads `workingCase` from FormContext (via the target-appeal
+  // hook). Each test injects its own `c` here so the resolved target appeal
+  // matches what `getSections(c, u)` is called with.
+  const makeWrapper =
+    (workingCase: Case) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ({ children }: any) =>
+      (
+        <IntlProvider locale="is" onError={jest.fn}>
+          <ApolloProvider
+            client={new ApolloClient({ cache: new InMemoryCache() })}
+          >
+            <FormContext.Provider
+              value={
+                {
+                  workingCase,
+                  setWorkingCase: () => workingCase,
+                  isLoadingWorkingCase: false,
+                  caseNotFound: false,
+                  isCaseUpToDate: true,
+                  isCreating: false,
+                  refreshCase: () => undefined,
+                  getCase: () => undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } as any
+              }
+            >
+              <UserProvider authenticated={true}>{children}</UserProvider>
+            </FormContext.Provider>
+          </ApolloProvider>
+        </IntlProvider>
+      )
 
   const u: User = {
     created: faker.date.past().toISOString(),
@@ -72,7 +97,6 @@ describe('useSections getSections', () => {
   }
 
   it('should return the correct sections for restriction cases in DRAFT state', () => {
-    const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
@@ -82,6 +106,9 @@ describe('useSections getSections', () => {
       state: CaseState.DRAFT,
       policeCaseNumbers: [],
     }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
 
     const res = result.current.getSections(c, u)
 
@@ -101,7 +128,6 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
-    const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
@@ -112,10 +138,13 @@ describe('useSections getSections', () => {
       policeCaseNumbers: [],
       appealCase: {
         id: 'test_appeal_case_id',
-        appealState: CaseAppealState.COMPLETED,
-        appealRulingDecision: CaseAppealRulingDecision.REMAND,
+        appealState: AppealCaseState.COMPLETED,
+        appealRulingDecision: AppealCaseRulingDecision.REMAND,
       },
     }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
 
     expect(result.current.getSections(c, u)).toStrictEqual([
       {
@@ -132,7 +161,6 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in RECEIVED state', () => {
-    const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
@@ -141,6 +169,9 @@ describe('useSections getSections', () => {
       state: CaseState.RECEIVED,
       policeCaseNumbers: [],
     }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
 
     expect(result.current.getSections(c, u)).toStrictEqual([
       { children: [], isActive: false, name: expect.any(String) },
@@ -150,7 +181,6 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in WAITING_FOR_CANCELLATION state', () => {
-    const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
@@ -159,6 +189,9 @@ describe('useSections getSections', () => {
       state: CaseState.WAITING_FOR_CANCELLATION,
       policeCaseNumbers: [],
     }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
 
     expect(result.current.getSections(c, u)).toStrictEqual([
       { children: [], isActive: true, name: expect.any(String) },

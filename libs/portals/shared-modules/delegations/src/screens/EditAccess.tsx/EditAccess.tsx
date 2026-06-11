@@ -1,30 +1,39 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  useGetServicePortalPageQuery,
+  useQueryParam,
+} from '@island.is/portals/core'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
-import { useDelegationForm } from '../../context'
+import { DeleteWarningStep } from '../../components/GrantAccessSteps/DeleteWarningStep'
+import { ScopeSelection, useDelegationForm } from '../../context'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 
 import { m as coreMessages } from '@island.is/portals/core'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
+import { DeleteAccessModal } from '../../components/modals/DeleteAccessModal'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import { useIdentityLazyQuery } from '../GrantAccess/GrantAccess.generated'
 import isSameDay from 'date-fns/isSameDay'
+import { useDeleteDelegationsByPerson } from '../../hooks/useDeleteDelegationsByPerson'
 
 const EditAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
   const {
     selectedScopes,
     setSelectedScopes,
@@ -37,13 +46,20 @@ const EditAccess = () => {
   const navigate = useNavigate()
   const [isConfirmModalVisible, setIsConfirmModalVisible] =
     useState<boolean>(false)
+  const [isDeleteModalVisible, setIsDeleteModalVisible] =
+    useState<boolean>(false)
+  const [initialScopes, setInitialScopes] = useState<ScopeSelection[]>([])
+  const [personType, setPersonType] = useState<string | null | undefined>(
+    undefined,
+  )
+  const hasHydratedRef = useRef(false)
 
   // clear the state on unmount
   useEffect(() => {
     return () => clearForm()
   }, [clearForm])
 
-  const needsFetch = selectedScopes.length === 0 && !!nationalIdParam
+  const needsFetch = !hasHydratedRef.current && !!nationalIdParam
 
   const { data: delegationsData, loading: delegationsLoading } =
     useAuthDelegationsGroupedByIdentityOutgoingQuery({
@@ -79,7 +95,7 @@ const EditAccess = () => {
     const allDelegations =
       delegationsData?.authDelegationsGroupedByIdentityOutgoing
 
-    if (!nationalIdParam || selectedScopes.length > 0 || !allDelegations) {
+    if (!nationalIdParam || !allDelegations) {
       return
     }
 
@@ -87,26 +103,33 @@ const EditAccess = () => {
       (p) => p.nationalId === nationalIdParam,
     )
 
-    if (personDelegations) {
-      const scopes = personDelegations.scopes.map((scope) => ({
-        name: scope.name,
-        displayName: scope.displayName,
-        description: scope.apiScope?.description,
-        domain: scope.domain as AuthDomain,
-        delegationId:
-          ('delegationId' in scope
-            ? (scope as { delegationId?: string | null }).delegationId
-            : undefined) ?? undefined,
-        validTo: scope.validTo ? new Date(scope.validTo) : undefined,
-        validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
-        allowsWrite: scope.apiScope?.allowsWrite ?? false,
-      }))
-      setSelectedScopes(scopes)
-    }
+    if (!personDelegations) return
+
+    setPersonType((current) =>
+      current === undefined ? personDelegations.type : current,
+    )
+
+    if (hasHydratedRef.current) return
+
+    const scopes: ScopeSelection[] = personDelegations.scopes.map((scope) => ({
+      name: scope.name,
+      displayName: scope.displayName,
+      description: scope.apiScope?.description ?? undefined,
+      domain: scope.domain as AuthDomain,
+      delegationId:
+        ('delegationId' in scope
+          ? (scope as { delegationId?: string | null }).delegationId
+          : undefined) ?? undefined,
+      validTo: scope.validTo ? new Date(scope.validTo) : undefined,
+      validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
+      allowsWrite: scope.apiScope?.allowsWrite ?? false,
+    })) as ScopeSelection[]
+    setSelectedScopes(scopes)
+    setInitialScopes(scopes)
+    hasHydratedRef.current = true
   }, [
     delegationsData?.authDelegationsGroupedByIdentityOutgoing,
     nationalIdParam,
-    selectedScopes.length,
     setSelectedScopes,
   ])
 
@@ -123,35 +146,86 @@ const EditAccess = () => {
     )
   }, [selectedScopes])
 
-  const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const removedScopes = useMemo(
+    () =>
+      initialScopes.filter(
+        (s) => !selectedScopes.some((sel) => sel.name === s.name),
+      ),
+    [initialScopes, selectedScopes],
+  )
+
+  const { data: contentfulQueryData } = useGetServicePortalPageQuery({
+    variables: { input: { slug: 'umbod/breyta', lang } },
+  })
+  const contentfulData = contentfulQueryData?.getServicePortalPage
+  const faqList =
+    (isCompany(userInfo) && contentfulData?.faqListCompany) ||
+    contentfulData?.faqList
+
+  const recipient = identities[0]
+  const { deleteByPerson, loading: deleting } = useDeleteDelegationsByPerson({
+    direction: 'outgoing',
+  })
+
+  const onConfirmDelete = async () => {
+    if (!recipient?.nationalId) return
+    const didDelete = await deleteByPerson({
+      nationalId: recipient.nationalId,
+      type: personType,
+      scopes: initialScopes.map((s) => ({
+        delegationId: s.delegationId,
+        displayName: s.displayName,
+      })),
+    })
+    if (!didDelete) return
+    setIsDeleteModalVisible(false)
+    toast.success(formatMessage(m.deleteSuccess))
+    clearForm()
+    navigate(DelegationPaths.DelegationsNew)
+  }
+
+  const isAllUnchecked = hasHydratedRef.current && selectedScopes.length === 0
 
   const steps: FlowStep[] = [
     {
       id: 'select-permissions',
       name: formatMessage(m.choosePermissionsLabel),
       content: <AccessScopes />,
-      continueButtonDisabled: selectedScopes.length === 0,
-      continueButtonLabel: formatMessage(m.choosePeriodButtonLabel),
+      continueButtonLabel: isAllUnchecked
+        ? formatMessage(m.continueStepLabel)
+        : formatMessage(m.choosePeriodButtonLabel),
       continueButtonIcon: 'arrowForward',
     },
-    {
-      id: 'select-period',
-      name: formatMessage(m.choosePeriodLabel),
-      content: <AccessPeriod initialIsSamePeriod={initialIsSamePeriod} />,
-      onContinue: () => {
-        setIsConfirmModalVisible(true)
-      },
-      continueButtonLabel: formatMessage(m.confirmAccessButtonLabel),
-      continueButtonIcon: 'checkmark',
-    },
+    isAllUnchecked
+      ? {
+          id: 'delete-warning',
+          name: formatMessage(m.deleteWarningStepLabel),
+          content: <DeleteWarningStep />,
+          onContinue: () => {
+            setIsDeleteModalVisible(true)
+          },
+          continueButtonLabel: formatMessage(m.deleteWarningButton),
+          continueButtonIcon: 'trash',
+          continueButtonColorScheme: 'destructive',
+        }
+      : {
+          id: 'select-period',
+          name: formatMessage(m.choosePeriodLabel),
+          content: <AccessPeriod initialIsSamePeriod={initialIsSamePeriod} />,
+          onContinue: () => {
+            setIsConfirmModalVisible(true)
+          },
+          continueButtonLabel: formatMessage(m.confirmAccessButtonLabel),
+          continueButtonIcon: 'checkmark',
+        },
   ]
 
   if (delegationsLoading || identityLoading) {
     return (
       <>
         <IntroHeader
-          title={formatMessage(m.grantAccessStepsTitle)}
-          intro={formatMessage(m.grantAccessStepsIntro)}
+          title={formatMessage(m.editAccessStepsTitle)}
+          intro={formatMessage(m.editAccessStepsIntro)}
           marginBottom={4}
         />
         <Box padding={3}>
@@ -164,8 +238,8 @@ const EditAccess = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.grantAccessStepsTitle)}
-        intro={formatMessage(m.grantAccessStepsIntro)}
+        title={formatMessage(m.editAccessStepsTitle)}
+        intro={formatMessage(m.editAccessStepsIntro)}
         marginBottom={4}
       />
       <div>
@@ -180,13 +254,30 @@ const EditAccess = () => {
         />
 
         <ConfirmAccessModal
+          isEdit={true}
           onClose={() => setIsConfirmModalVisible(false)}
           isVisible={isConfirmModalVisible}
+          removedScopes={removedScopes}
         />
 
-        {contentfulData?.faqList && (
+        {recipient && (
+          <DeleteAccessModal
+            isVisible={isDeleteModalVisible}
+            onClose={() => setIsDeleteModalVisible(false)}
+            onDelete={onConfirmDelete}
+            loading={deleting}
+            direction="outgoing"
+            otherIdentity={{
+              name: recipient.name,
+              nationalId: recipient.nationalId,
+            }}
+            scopes={initialScopes}
+          />
+        )}
+
+        {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+            <FaqList {...(faqList as unknown as FaqListProps)} />
           </Box>
         )}
       </div>

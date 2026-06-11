@@ -1,19 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, SafeAreaView, Linking } from 'react-native'
+import {
+  View,
+  Image,
+  Linking,
+  BackHandler,
+  useWindowDimensions,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 import { router, useLocalSearchParams } from 'expo-router'
 
-import { Button, Typography, NavigationBarSheet } from '@/ui'
+import { Button, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
 import { isIos } from '@/utils/devices'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 
-const Text = styled.View`
+const Text = styled.View<{ isSmallDevice: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
   text-align: center;
-  margin-vertical: ${({ theme }) => theme.spacing[5]}px;
+  margin-vertical: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[3] : theme.spacing[5]}px;
 `
 
 const Host = styled.View`
@@ -22,9 +34,10 @@ const Host = styled.View`
   flex: 1;
 `
 
-const ButtonWrapper = styled.View`
+const ButtonWrapper = styled.View<{ isSmallDevice: boolean }>`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+  padding-vertical: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[2] : theme.spacing[4]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -39,29 +52,38 @@ export default function UpdateAppScreen() {
   }>()
   const closable = closableParam !== 'false'
   const intl = useIntl()
+  const { height } = useWindowDimensions()
+  const isSmallDevice = height < 800
+
+  // Make sure if closable = false that android back button does not work
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => true)
+    return () => sub.remove()
+  }, [closable])
+
+  // Suppress the lock while the unclosable wall is up — otherwise the lock's
+  // router.back could pop this screen and bypass the required update.
+  useEffect(() => {
+    if (closable) {
+      return
+    }
+    suppressLockScreen()
+    return () => clearLockScreenSuppression()
+  }, [closable])
 
   return (
     <View style={{ flex: 1 }}>
-      <NavigationBarSheet
-        componentId="update-app"
-        title={''}
-        onClosePress={() => {
-          if (closable) {
-            preferencesStore.setState({ skippedSoftUpdate: true })
-            router.back()
-          }
-        }}
-        style={{ marginHorizontal: 16 }}
-        closable={closable}
-      />
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host>
           <Image
             source={logo}
             resizeMode="contain"
             style={{ width: 45, height: 45 }}
           />
-          <Text>
+          <Text isSmallDevice={isSmallDevice}>
             <Title variant={'heading2'} textAlign="center">
               <FormattedMessage
                 id="updateApp.title"
@@ -77,13 +99,15 @@ export default function UpdateAppScreen() {
               />
             </Typography>
           </Text>
-          <Image
-            source={illustrationSrc}
-            style={{ width: 210, height: 240 }}
-            resizeMode="contain"
-          />
+          {height > 650 && (
+            <Image
+              source={illustrationSrc}
+              style={{ flex: 1, maxWidth: 210, maxHeight: 240 }}
+              resizeMode="contain"
+            />
+          )}
         </Host>
-        <ButtonWrapper>
+        <ButtonWrapper isSmallDevice={isSmallDevice}>
           <Button
             title={intl.formatMessage({
               id: 'updateApp.button',

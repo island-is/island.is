@@ -1380,4 +1380,103 @@ export const m = defineMessages({
     defaultMessage: 'Yfirdráttur',
     description: 'Overdraft debt type',
   },
+
+  // Send a copy of the application to the parties (málsaðilar)
+  sendCopyToPartiesLabel: {
+    id: 'es.application:sendCopyToParties.label',
+    defaultMessage: 'Senda afrit af umsókn til málsaðila',
+    description:
+      'Checkbox label to email a copy of the application to the parties',
+  },
+
+  // Signing / signature-status state messages
+  applicationSubmittedTitle: {
+    id: 'es.application:application.submittedTitle',
+    defaultMessage: 'Umsókn send til sýslumanns',
+    description: 'Title shown after the application has been submitted',
+  },
+  applicationSubmittedDescription: {
+    id: 'es.application:application.submittedDescription',
+    defaultMessage: 'Umsóknin hefur verið send til sýslumanns.',
+    description: 'Description shown after the application has been submitted',
+  },
+  signingTitle: {
+    id: 'es.application:signing.title',
+    defaultMessage: 'Undirritun',
+    description: 'Signing title',
+  },
+  signingDescription: {
+    id: 'es.application:signing.description',
+    defaultMessage:
+      'Umsóknin hefur verið send til sýslumanns. Allir aðilar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Signing description',
+  },
+  signingTableTitle: {
+    id: 'es.application:signing.tableTitle',
+    defaultMessage: 'Aðilar sem þurfa að undirrita',
+    description: 'Signing table title',
+  },
+  signingNameLabel: {
+    id: 'es.application:signing.nameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Signatory name column label',
+  },
+  signingNationalIdLabel: {
+    id: 'es.application:signing.nationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'Signatory national ID column label',
+  },
+  signingStatusLabel: {
+    id: 'es.application:signing.statusLabel',
+    defaultMessage: 'Staða undirskriftar',
+    description: 'Signing status label',
+  },
+  signingStatusSigned: {
+    id: 'es.application:signing.status.signed',
+    defaultMessage: 'Undirritað',
+    description: 'Signed status',
+  },
+  signingStatusPending: {
+    id: 'es.application:signing.status.pending',
+    defaultMessage: 'Í bið',
+    description: 'Pending status',
+  },
+  signingActionsInfoTitle: {
+    id: 'es.application:signing.actionsInfoTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Signing next steps title',
+  },
+  signingActionsInfoDescription: {
+    id: 'es.application:signing.actionsInfoDescription',
+    defaultMessage:
+      'Þegar allir aðilar hafa undirritað birtist hnappur hér að neðan til að ljúka umsókn.',
+    description: 'Signing next steps description',
+  },
+  signingComplete: {
+    id: 'es.application:signing.complete',
+    defaultMessage: 'Ljúka umsókn',
+    description: 'Complete button',
+  },
+  signingPendingTitle: {
+    id: 'es.application:signing.pendingTitle',
+    defaultMessage: 'Beðið eftir undirskriftum',
+    description: 'Pending signatures title',
+  },
+  signingPendingDescription: {
+    id: 'es.application:signing.pendingDescription',
+    defaultMessage:
+      'Umsóknin hefur verið send til sýslumanns. Allir aðilar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Pending signatures description',
+  },
+  signingCompleteTitle: {
+    id: 'es.application:signing.completeTitle',
+    defaultMessage: 'Allar undirskriftir komnar',
+    description: 'All signatures complete title',
+  },
+  signingCompleteDescription: {
+    id: 'es.application:signing.completeDescription',
+    defaultMessage:
+      'Allir aðilar hafa undirritað. Þú getur núna lokið umsókninni.',
+    description: 'All signatures complete description',
+  },
 })

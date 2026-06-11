@@ -1,6 +1,8 @@
-import { CaseAppealState } from '@island.is/judicial-system/types'
+import { Op } from 'sequelize'
 
-import { CaseWhereOptions } from '../caseTable.types'
+import { AppealCaseState } from '@island.is/judicial-system/types'
+
+import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
 import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
 // Court of appeals cases
@@ -10,13 +12,41 @@ export const courtOfAppealsCasesInProgressWhereOptions =
     includes: {
       appealCase: {
         attributes: [],
-        required: true,
+        required: false,
         where: {
-          appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
+        },
+      },
+      rulingOrderAppealCases: {
+        attributes: [],
+        required: false,
+        where: {
+          appeal_state: [AppealCaseState.RECEIVED, AppealCaseState.WITHDRAWN],
         },
       },
     },
-    where: courtOfAppealsCasesAccessWhereOptions(),
+    where: {
+      [Op.and]: [
+        courtOfAppealsCasesAccessWhereOptions(),
+        {
+          [Op.or]: [
+            {
+              '$appealCase.appeal_state$': [
+                AppealCaseState.RECEIVED,
+                AppealCaseState.WITHDRAWN,
+              ],
+            },
+            {
+              '$rulingOrderAppealCases.appeal_state$': [
+                AppealCaseState.RECEIVED,
+                AppealCaseState.WITHDRAWN,
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    displayCases: expandCasesWithAppeals,
   })
 
 export const courtOfAppealsCasesCompletedWhereOptions =
@@ -24,11 +54,28 @@ export const courtOfAppealsCasesCompletedWhereOptions =
     includes: {
       appealCase: {
         attributes: [],
-        required: true,
-        where: {
-          appeal_state: CaseAppealState.COMPLETED,
-        },
+        required: false,
+        where: { appeal_state: AppealCaseState.COMPLETED },
+      },
+      rulingOrderAppealCases: {
+        attributes: [],
+        required: false,
+        where: { appeal_state: AppealCaseState.COMPLETED },
       },
     },
-    where: courtOfAppealsCasesAccessWhereOptions(),
+    where: {
+      [Op.and]: [
+        courtOfAppealsCasesAccessWhereOptions(),
+        {
+          [Op.or]: [
+            { '$appealCase.appeal_state$': AppealCaseState.COMPLETED },
+            {
+              '$rulingOrderAppealCases.appeal_state$':
+                AppealCaseState.COMPLETED,
+            },
+          ],
+        },
+      ],
+    },
+    displayCases: expandCasesWithAppeals,
   })

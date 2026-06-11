@@ -2,7 +2,12 @@ import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
+  PROSECUTION_CREATE_INDICTMENT_ROUTE,
+  PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
+  PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -19,26 +24,26 @@ export const CreateCaseButton = () => {
     if (user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
       return [
         {
-          href: constants.CREATE_INDICTMENT_ROUTE,
+          href: PROSECUTION_CREATE_INDICTMENT_ROUTE,
           title: capitalize(formatMessage(core.indictment)),
         },
       ]
     } else if (user?.role === UserRole.PROSECUTOR) {
       return [
         {
-          href: constants.CREATE_INDICTMENT_ROUTE,
+          href: PROSECUTION_CREATE_INDICTMENT_ROUTE,
           title: capitalize(formatMessage(core.indictment)),
         },
         {
-          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+          href: PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
           title: capitalize(formatMessage(core.restrictionCase)),
         },
         {
-          href: constants.CREATE_TRAVEL_BAN_ROUTE,
+          href: PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
           title: capitalize(formatMessage(core.travelBan)),
         },
         {
-          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+          href: PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
           title: capitalize(formatMessage(core.investigationCase)),
         },
       ]

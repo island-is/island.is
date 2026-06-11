@@ -7,7 +7,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -94,7 +94,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi],
               delete: true,
             },
           ],

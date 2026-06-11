@@ -2,7 +2,7 @@ import {
   Box,
   BoxProps,
   GridColumn,
-  GridColumnProps,
+  GridContainer,
   GridRow,
   ResponsiveProp,
   SkeletonLoader,
@@ -16,105 +16,94 @@ import { OrganizationSlugType } from '@island.is/shared/constants'
 import { MessageDescriptor } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { ISLANDIS_SLUG } from '../../utils/constants'
 import FootNote from '../FootNote/FootNote'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 
-type BaseProps = {
+type IntroWrapperBaseProps = {
   title: MessageDescriptor | string
-  img?: string
-  isSubheading?: boolean
-  children?: React.ReactNode
-  childrenWidthFull?: boolean
-  buttonGroup?: Array<React.ReactNode>
-  buttonGroupAlignment?: ResponsiveProp<
-    'flexStart' | 'flexEnd' | 'spaceBetween'
-  >
-  serviceProviderSlug?: OrganizationSlugType
-  serviceProviderTooltip?: string
-  span?: GridColumnProps['span']
-  marginBottom?: BoxProps['marginBottom']
-  narrow?: boolean
   loading?: boolean
-  backgroundColor?: 'purple100' | 'blue100' | 'white'
-  tooltipVariant?: 'light' | 'dark' | 'white'
+  children?: React.ReactNode
+  desktopContentSpan?: '12/12' | '10/12'
+  marginBottom?: BoxProps['marginBottom']
+  serviceProvider?: {
+    slug: OrganizationSlugType
+    tooltip?: string
+  }
+  buttonGroup?: {
+    actions: Array<React.ReactNode>
+    alignment?: ResponsiveProp<'flexStart' | 'flexEnd' | 'spaceBetween'>
+  }
 }
 
-interface WithIntroComponentProps extends BaseProps {
-  introComponent?: React.ReactNode
-  intro?: never
-}
+export type IntroWrapperProps = IntroWrapperBaseProps &
+  (
+    | { intro?: MessageDescriptor | string; introComponent?: never }
+    | { introComponent?: React.ReactNode; intro?: never }
+  )
 
-interface WithIntroProps extends BaseProps {
-  introComponent?: never
-  intro?: MessageDescriptor | string
-}
-
-export type IntroWrapperProps = WithIntroComponentProps | WithIntroProps
-
-/**
- * @deprecated Use `IntroWrapperV2` instead.
- */
-export const IntroWrapper = (props: IntroWrapperProps) => {
-  const { marginBottom, childrenWidthFull = false } = props
+export const IntroWrapper = ({
+  title,
+  intro,
+  introComponent,
+  loading,
+  children,
+  desktopContentSpan = '12/12',
+  marginBottom = [0, 0, 0, 4],
+  serviceProvider,
+  buttonGroup,
+}: IntroWrapperProps) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const isTablet = width < theme.breakpoints.lg && !isMobile
 
-  const { data: organization, loading } = useOrganization(
-    props.serviceProviderSlug ?? ISLANDIS_SLUG,
+  const { data: organization, loading: orgLoading } = useOrganization(
+    serviceProvider?.slug,
   )
 
-  const columnSpan = isMobile
-    ? '8/8'
-    : isTablet
-    ? '6/8'
-    : props.narrow
-    ? '4/8'
-    : '5/8'
+  const effectiveContentSpan =
+    desktopContentSpan === '10/12' && (isMobile || isTablet)
+      ? '12/12'
+      : desktopContentSpan
 
   return (
-    <Box>
-      <GridRow marginBottom={props.buttonGroup ? 0 : marginBottom ?? 4}>
-        <GridColumn span={props.span ? props.span : columnSpan}>
-          {props.loading ? (
-            <Stack space={2}>
-              <SkeletonLoader height={24} width={120} />
-              <SkeletonLoader height={24} width={300} />
+    <GridContainer>
+      <GridRow marginBottom={buttonGroup ? 0 : marginBottom}>
+        <GridColumn span={['12/12', '12/12', '9/12']}>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="flexStart"
+            columnGap={4}
+          >
+            <Stack space={loading ? 2 : 1}>
+              {loading ? (
+                <>
+                  <SkeletonLoader height={24} width={120} />
+                  <SkeletonLoader height={24} width={300} />
+                </>
+              ) : (
+                <>
+                  <Text variant="h3" as="h1">
+                    {formatMessage(title)}
+                  </Text>
+                  {intro && (
+                    <Text variant="default" paddingTop={1}>
+                      {formatMessage(intro)}
+                    </Text>
+                  )}
+                  {introComponent && <Box paddingTop={1}>{introComponent}</Box>}
+                </>
+              )}
             </Stack>
-          ) : (
-            <>
-              <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
-                {formatMessage(props.title)}
-              </Text>
-              {props.intro && (
-                <Text variant="default" paddingTop={1}>
-                  {formatMessage(props.intro)}
-                </Text>
-              )}
-              {props.introComponent && (
-                <Box paddingTop={1}>{props.introComponent}</Box>
-              )}
-            </>
-          )}
+          </Box>
         </GridColumn>
-        {!isMobile && (
-          <GridColumn span={'2/8'} offset={isTablet ? '0' : '1/8'}>
-            {props.img && (
-              <Box
-                alt=""
-                component="img"
-                src={props.img}
-                width="full"
-                height="full"
-                marginRight={0}
-              />
-            )}
-            {props.serviceProviderSlug && organization?.link && (
+        {organization?.link && serviceProvider && (
+          <GridColumn hiddenBelow="md" span={'3/12'}>
+            <Box alignSelf="flexEnd" flexShrink={0}>
               <InstitutionPanel
-                loading={loading}
-                linkHref={organization.link ?? ''}
+                loading={orgLoading}
+                linkHref={organization.link}
                 linkLabel={
                   organization.title
                     ? formatMessage(m.readMoreAbout, {
@@ -123,18 +112,16 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
                     : ''
                 }
                 img={organization.logo?.url ?? ''}
-                imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                imgContainerDisplay="flex"
                 isSvg={organization.logo?.contentType === 'image/svg+xml'}
-                tooltipText={props.serviceProviderTooltip}
-                backgroundColor={props.backgroundColor}
-                tooltipVariant={props.tooltipVariant ?? 'light'}
+                tooltipText={serviceProvider.tooltip}
               />
-            )}
+            </Box>
           </GridColumn>
         )}
       </GridRow>
-      {!props.loading && props.buttonGroup && (
-        <GridRow marginBottom={marginBottom ?? 4}>
+      {!loading && buttonGroup && (
+        <GridRow marginBottom={marginBottom}>
           <GridColumn span={['12/12']}>
             <Box
               width="full"
@@ -145,23 +132,19 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
               rowGap={isMobile ? 2 : 0}
               columnGap={2}
               justifyContent={
-                isMobile
-                  ? 'flexStart'
-                  : props.buttonGroupAlignment ?? 'flexStart'
+                isMobile ? 'flexStart' : buttonGroup.alignment ?? 'flexStart'
               }
             >
-              {props.buttonGroup}
+              {buttonGroup.actions}
             </Box>
           </GridColumn>
         </GridRow>
       )}
-      <GridRow>
-        <GridColumn span={childrenWidthFull || isMobile ? '12/12' : '10/12'}>
-          {props.children}
-        </GridColumn>
+      <GridRow marginTop={2}>
+        <GridColumn span={effectiveContentSpan}>{children}</GridColumn>
       </GridRow>
-      <FootNote serviceProviderSlug={props.serviceProviderSlug} />
-    </Box>
+      <FootNote serviceProviderSlug={serviceProvider?.slug} />
+    </GridContainer>
   )
 }
 

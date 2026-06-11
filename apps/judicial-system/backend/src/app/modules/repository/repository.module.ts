@@ -4,8 +4,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { ConfigModule } from '@island.is/nest/config'
 
 import { AppealCase } from './models/appealCase.model'
+import { AppealEventLog } from './models/appealEventLog.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './models/caseFile.model'
 import { CaseString } from './models/caseString.model'
 import { CourtDocument } from './models/courtDocument.model'
@@ -17,17 +19,22 @@ import { DefendantEventLog } from './models/defendantEventLog.model'
 import { EventLog } from './models/eventLog.model'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { InstitutionContact } from './models/institutionContact.model'
+import { MessageSuspension } from './models/messageSuspension.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
+import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
+import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from './services/caseRepository.service'
 import { CourtDocumentRepositoryService } from './services/courtDocumentRepository.service'
 import { CourtSessionRepositoryService } from './services/courtSessionRepository.service'
 import { DefendantEventLogRepositoryService } from './services/defendantEventLogRepository.service'
 import { DefendantRepositoryService } from './services/defendantRepository.service'
 import { InstitutionContactRepositoryService } from './services/institutionContactRepository.service'
+import { MessageSuspensionRepositoryService } from './services/messageSuspensionRepository.service'
 import { PoliceDigitalCaseFileRepositoryService } from './services/policeDigitalCaseFileRepository.service'
 import { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 import { VerdictRepositoryService } from './services/verdictRepository.service'
@@ -37,9 +44,11 @@ import { repositoryModuleConfig } from './repository.config'
   imports: [
     SequelizeModule.forFeature([
       AppealCase,
+      AppealEventLog,
       Case,
       CaseArchive,
       CaseFile,
+      CaseDefendantPoliceCaseNumber,
       CaseString,
       CourtDocument,
       CourtSession,
@@ -50,6 +59,7 @@ import { repositoryModuleConfig } from './repository.config'
       EventLog,
       IndictmentCount,
       InstitutionContact,
+      MessageSuspension,
       PoliceDigitalCaseFile,
       Subpoena,
       Verdict,
@@ -58,24 +68,32 @@ import { repositoryModuleConfig } from './repository.config'
     ConfigModule.forFeature(repositoryModuleConfig),
   ],
   providers: [
+    AppealEventLogRepositoryService,
+    AppealCaseRepositoryService,
     CaseArchiveRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
     InstitutionContactRepositoryService,
+    MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,
   ],
   exports: [
+    AppealEventLogRepositoryService,
+    AppealCaseRepositoryService,
     CaseArchiveRepositoryService,
+    CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
     CourtSessionRepositoryService,
     CourtDocumentRepositoryService,
     DefendantRepositoryService,
     DefendantEventLogRepositoryService,
+    MessageSuspensionRepositoryService,
     PoliceDigitalCaseFileRepositoryService,
     SubpoenaRepositoryService,
     VerdictRepositoryService,

@@ -23,5 +23,21 @@ query GetServicePortalPage($input: GetServicePortalPageInput!) {
         }
       }
     }
+    faqListCompany {
+      id
+      title
+      showTitle
+      questions {
+        id
+        question
+        answer {
+          ... on Html {
+            __typename
+            id
+            document
+          }
+        }
+      }
+    }
   }
 }

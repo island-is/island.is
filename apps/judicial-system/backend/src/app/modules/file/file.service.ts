@@ -34,12 +34,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
-import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
+import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { PoliceDocumentType } from '../police'
 import {
+  AppealCase,
   Case,
   CaseFile,
   CourtDocumentRepositoryService,
@@ -372,7 +373,7 @@ export class FileService {
     user: User,
     transaction: Transaction,
   ): Promise<CaseFile> {
-    const { key } = createFile
+    const { key, rulingFileId } = createFile
 
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
@@ -380,6 +381,22 @@ export class FileService {
       throw new BadRequestException(
         `${key} is not a valid key for case ${theCase.id}`,
       )
+    }
+
+    if (rulingFileId) {
+      const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
+      if (!rulingFile) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} does not belong to case ${theCase.id}`,
+        )
+      }
+      if (
+        rulingFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+      ) {
+        throw new BadRequestException(
+          `Ruling file ${rulingFileId} is not a court indictment ruling order`,
+        )
+      }
     }
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
@@ -404,12 +421,25 @@ export class FileService {
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(file.category)
     ) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-        user,
-        caseId: theCase.id,
-        elementId: file.id,
-      })
+      const appealCase = file.rulingFileId
+        ? theCase.rulingOrderAppealCases?.find(
+            (a) => a.rulingFileId === file.rulingFileId,
+          )
+        : theCase.appealCase
+
+      if (appealCase) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [appealCase.id, file.id],
+        })
+      } else {
+        // This should never happen, but log an error just in case
+        this.logger.error(
+          `Could not find appeal case for appeal case file ${file.id} of case ${theCase.id}`,
+        )
+      }
     }
 
     if (
@@ -686,6 +716,7 @@ export class FileService {
 
   async deliverCaseFileToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
@@ -703,7 +734,7 @@ export class FileService {
         user,
         theCase.id,
         file.id,
-        theCase.appealCase?.appealCaseNumber,
+        appealCase.appealCaseNumber,
         file.category,
         file.name,
         url,
@@ -712,7 +743,7 @@ export class FileService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with file`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with file ${file.id}`,
           { reason },
         )
 

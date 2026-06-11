@@ -8,7 +8,10 @@ import {
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -30,8 +33,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
-  NotificationType,
   SessionArrangements,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -95,7 +98,7 @@ const HearingArrangements = () => {
   const courtDateNotification = useMemo(
     () =>
       hasSentNotification(
-        NotificationType.COURT_DATE,
+        TrackedNotificationType.COURT_DATE,
         workingCase.notifications,
       ),
     [workingCase.notifications],
@@ -333,9 +336,9 @@ const HearingArrangements = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
+            handleNavigationTo(DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextButtonText={formatMessage(m.continueButton.label)}
@@ -358,7 +361,7 @@ const HearingArrangements = () => {
             onClick: async () => {
               const notificationSent = await sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
               )
 
               if (notificationSent) {
@@ -374,7 +377,7 @@ const HearingArrangements = () => {
             onClick: () => {
               sendNotification(
                 workingCase.id,
-                NotificationType.COURT_DATE,
+                TrackedNotificationType.COURT_DATE,
                 true,
               )
 

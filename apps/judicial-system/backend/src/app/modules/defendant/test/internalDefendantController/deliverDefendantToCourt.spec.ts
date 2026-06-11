@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  RequestCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -28,13 +31,17 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   } as Defendant
   const caseId = uuid()
   const courtId = uuid()
+  const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = uuid()
   const defenderEmail = uuid()
+  const defenderName = 'Test Verjandi'
   const theCase = {
     id: caseId,
     courtId,
+    court: { name: courtName },
     courtCaseNumber,
     defenderEmail,
+    defenderName,
   } as Case
 
   let mockQueuedMessages: Message[]
@@ -50,6 +57,9 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     const mockUpdateCaseWithDefendant =
       mockCourtService.updateCaseWithDefendant as jest.Mock
     mockUpdateCaseWithDefendant.mockRejectedValue(new Error('Some error'))
+    const mockUpdateRequestCaseWithDefenderInfo =
+      mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
+    mockUpdateRequestCaseWithDefenderInfo.mockResolvedValue(uuid())
 
     givenWhenThen = async (defendant: Defendant) => {
       const then = {} as Then
@@ -80,7 +90,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       then = await givenWhenThen(defendant)
     })
 
-    it('should deliver the defendant', () => {
+    it('should deliver the defendant via API', () => {
       expect(mockCourtService.updateCaseWithDefendant).toHaveBeenCalledWith(
         user,
         caseId,
@@ -90,6 +100,20 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
         defenderEmail,
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+
+    it('should send robot email with defender info', () => {
+      expect(
+        mockCourtService.updateRequestCaseWithDefenderInfo,
+      ).toHaveBeenCalledWith(
+        user,
+        caseId,
+        courtName,
+        courtCaseNumber,
+        defendantNationalId,
+        defenderName,
+        defenderEmail,
+      )
     })
   })
 
@@ -107,13 +131,21 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+          body: {
+            type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+          },
         },
       ])
     })
+
+    it('should not send robot email', () => {
+      expect(
+        mockCourtService.updateRequestCaseWithDefenderInfo,
+      ).not.toHaveBeenCalled()
+    })
   })
 
-  describe('delivery fails', () => {
+  describe('API delivery fails', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -122,6 +154,42 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
 
     it('should return a failure response', () => {
       expect(then.result).toEqual({ delivered: false })
+    })
+
+    it('should still send robot email', () => {
+      expect(
+        mockCourtService.updateRequestCaseWithDefenderInfo,
+      ).toHaveBeenCalledWith(
+        user,
+        caseId,
+        courtName,
+        courtCaseNumber,
+        defendantNationalId,
+        defenderName,
+        defenderEmail,
+      )
+    })
+  })
+
+  describe('robot email fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdateCaseWithDefendant =
+        mockCourtService.updateCaseWithDefendant as jest.Mock
+      mockUpdateCaseWithDefendant.mockResolvedValueOnce(uuid())
+
+      const mockUpdateRequestCaseWithDefenderInfo =
+        mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
+      mockUpdateRequestCaseWithDefenderInfo.mockRejectedValueOnce(
+        new Error('Robot email error'),
+      )
+
+      then = await givenWhenThen(defendant)
+    })
+
+    it('should still return success from API delivery', () => {
+      expect(then.result).toEqual({ delivered: true })
     })
   })
 })

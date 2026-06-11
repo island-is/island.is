@@ -441,6 +441,8 @@ const patchExpectedOutput = {
   showInDiscoveryDocument: true,
   supportedDelegationTypes: [],
   tagIds: [],
+  thirdPartyLoginUrl: '',
+  modified: expect.any(String),
   ...inputPatch,
 }
 
@@ -476,6 +478,23 @@ const patchTestCases: Record<string, PatchTestCase> = {
       status: 200,
       body: {
         ...patchExpectedOutput,
+      },
+    },
+  },
+  'should persist and return thirdPartyLoginUrl when patching a scope': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      ...inputPatch,
+      thirdPartyLoginUrl: 'https://example.com/callback',
+    },
+    expected: {
+      status: 200,
+      body: {
+        ...patchExpectedOutput,
+        thirdPartyLoginUrl: 'https://example.com/callback',
+        modified: expect.any(String),
       },
     },
   },
@@ -726,6 +745,8 @@ describe('MeScopesController', () => {
             requiresConfirmation: false,
             showInDiscoveryDocument: true,
             tagIds: [],
+            thirdPartyLoginUrl: '',
+            modified: expect.any(String),
           })
 
           // Assert - db record

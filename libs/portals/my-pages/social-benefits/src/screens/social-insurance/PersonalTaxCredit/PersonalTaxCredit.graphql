@@ -36,3 +36,28 @@ mutation discontinueSocialInsuranceTaxCardAllowance(
 ) {
   discontinueSocialInsuranceTaxCardAllowance(input: $input)
 }
+
+query getPersonalTaxCreditSpouseInfo {
+  socialInsurancePersonalTaxCreditSpouseInfo {
+    nationalId
+    name
+    isDeceased
+    deceasedMonthsAndYears {
+      year
+      months
+    }
+    deceasedReasonNotAllowedCode
+  }
+}
+
+mutation setSocialInsuranceSpouseTaxCard(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
+) {
+  setSocialInsuranceSpouseTaxCard(input: $input)
+}
+
+mutation setSocialInsuranceSpouseTaxCardDueToDeath(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
+) {
+  setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
+}

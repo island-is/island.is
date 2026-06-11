@@ -4,15 +4,15 @@ import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
 
 import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
   CaseIndictmentRulingDecision,
-  CaseNotificationType,
   CaseState,
   CaseType,
+  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -44,7 +44,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: CaseNotificationType.RULING,
+    type: RequestCaseNotificationType.RULING,
   }
   const { testProsecutor } = createTestUsers(['testProsecutor'])
 
@@ -106,7 +106,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     })
 
     it('should send email to prosecutor', () => {
-      const expectedLink = `<a href="${mockConfig.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${caseId}">`
+      const expectedLink = `<a href="${mockConfig.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({

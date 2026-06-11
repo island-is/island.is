@@ -30,8 +30,6 @@ import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResol
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ARTICLES_QUERY } from '@island.is/web/screens/queries'
 
-import { LandingPageFooter } from './index'
-
 const ARTICLES_PAGE_SIZE = 10
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
@@ -204,7 +202,6 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
             </GridColumn>
           </GridRow>
         </GridContainer>
-        <LandingPageFooter footerItems={organization?.footerItems} />
       </Stack>
     </>
   )

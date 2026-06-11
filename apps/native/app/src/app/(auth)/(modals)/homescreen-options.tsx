@@ -8,10 +8,26 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '@/stores/preferences-store'
+import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 
 export default function HomeOptionsScreen() {
   const intl = useIntl()
   const theme = useTheme()
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
+  const isNotificationsWidgetEnabled = useFeatureFlag(
+    'isNotificationWidgetEnabled',
+    false,
+    null,
+  )
+  const isInboxWidgetDisabled = useFeatureFlag(
+    'isPostholfWidgetDisabled',
+    false,
+    null,
+  )
   const vehiclesWidgetEnabled = usePreferencesStore(
     ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
   )
@@ -30,33 +46,56 @@ export default function HomeOptionsScreen() {
   const appointmentsWidgetEnabled = usePreferencesStore(
     ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
   )
-  const graphicWidgetEnabled = usePreferencesStore(
-    ({ graphicWidgetEnabled }) => graphicWidgetEnabled,
+  const notificationsWidgetEnabled = usePreferencesStore(
+    ({ notificationsWidgetEnabled }) => notificationsWidgetEnabled,
   )
 
   const items = [
-    {
-      enabled: graphicWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.graphic',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          graphicWidgetEnabled: value,
-        })
-      },
-    },
-    {
-      enabled: inboxWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.inbox',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          inboxWidgetEnabled: value,
-        })
-      },
-    },
+    ...(isNotificationsWidgetEnabled
+      ? [
+          {
+            enabled: notificationsWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.notifications',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                notificationsWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
+    ...(isInboxWidgetDisabled === false
+      ? [
+          {
+            enabled: inboxWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.inbox',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                inboxWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
+    ...(isAppointmentsEnabled
+      ? [
+          {
+            enabled: appointmentsWidgetEnabled,
+            label: intl.formatMessage({
+              id: 'homeOptions.appointments',
+            }),
+            onValueChange: (value: boolean) => {
+              preferencesStore.setState({
+                appointmentsWidgetEnabled: value,
+              })
+            },
+          },
+        ]
+      : []),
     {
       enabled: licensesWidgetEnabled,
       label: intl.formatMessage({
@@ -98,17 +137,6 @@ export default function HomeOptionsScreen() {
       onValueChange: (value: boolean) => {
         preferencesStore.setState({
           airDiscountWidgetEnabled: value,
-        })
-      },
-    },
-    {
-      enabled: appointmentsWidgetEnabled,
-      label: intl.formatMessage({
-        id: 'homeOptions.appointments',
-      }),
-      onValueChange: (value: boolean) => {
-        preferencesStore.setState({
-          appointmentsWidgetEnabled: value,
         })
       },
     },

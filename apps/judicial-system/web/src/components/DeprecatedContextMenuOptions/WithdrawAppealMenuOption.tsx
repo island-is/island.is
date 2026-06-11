@@ -5,31 +5,34 @@ import { IconMapIcon } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import {
-  CaseAppealState,
+  AppealCaseState,
+  AppealCaseTransition,
   CaseListEntry,
-  CaseTransition,
 } from '../../graphql/schema'
-import { useCase } from '../../utils/hooks'
+import { useAppealCase } from '../../utils/hooks'
 import Modal from '../Modals/Modal/Modal'
 import { strings } from './WithdrawAppealMenuOption.strings'
 
 interface WithdrawAppealModalProps {
   caseId: string
+  appealCaseId: string
   cases: CaseListEntry[]
   onClose: () => void
 }
 
 export const useWithdrawAppealMenuOption = () => {
-  const [caseToWithdraw, setCaseToWithdraw] = useState<string | undefined>()
+  const [caseToWithdraw, setCaseToWithdraw] = useState<
+    { caseId: string; appealCaseId: string } | undefined
+  >()
 
   const { formatMessage } = useIntl()
 
-  const withdrawAppealMenuOption = (caseId: string) => {
+  const withdrawAppealMenuOption = (caseId: string, appealCaseId: string) => {
     return {
       title: formatMessage(strings.withdrawAppeal),
       icon: 'trash' as IconMapIcon,
       onClick: () => {
-        setCaseToWithdraw(caseId)
+        setCaseToWithdraw({ caseId, appealCaseId })
       },
     }
   }
@@ -39,8 +42,8 @@ export const useWithdrawAppealMenuOption = () => {
     userNationalId?: string | null,
   ) => {
     const withdrawableCaseStates = [
-      CaseAppealState.APPEALED,
-      CaseAppealState.RECEIVED,
+      AppealCaseState.APPEALED,
+      AppealCaseState.RECEIVED,
     ]
 
     if (
@@ -76,19 +79,20 @@ export const useWithdrawAppealMenuOption = () => {
 const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
   props,
 ) => {
-  const { caseId, cases, onClose } = props
+  const { caseId, appealCaseId, cases, onClose } = props
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const handleWithdrawAppealClick = async () => {
-    const transitionResult = await transitionCase(
+    const transitionResult = await transitionAppealCase(
       caseId,
-      CaseTransition.WITHDRAW_APPEAL,
+      appealCaseId,
+      AppealCaseTransition.WITHDRAW_APPEAL,
     )
     if (transitionResult === true) {
       const transitionedCase = cases.find((tc) => caseId === tc.id)
       if (transitionedCase) {
-        transitionedCase.appealState = CaseAppealState.WITHDRAWN
+        transitionedCase.appealState = AppealCaseState.WITHDRAWN
       }
       onClose()
     }
@@ -101,7 +105,7 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
       primaryButton={{
         text: formatMessage(strings.withdrawAppealModalPrimaryButtonText),
         onClick: handleWithdrawAppealClick,
-        isLoading: isTransitioningCase,
+        isLoading: isTransitioningAppealCase,
         colorScheme: 'destructive',
       }}
       secondaryButton={{

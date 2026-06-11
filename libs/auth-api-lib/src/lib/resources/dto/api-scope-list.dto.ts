@@ -11,6 +11,8 @@ export class ApiScopeListDTO {
     this.domainName = model.domainName
     this.allowsWrite =
       model instanceof ApiScope ? model.allowsWrite ?? false : false
+    this.thirdPartyLoginUrl =
+      model instanceof ApiScope ? model.thirdPartyLoginUrl ?? '' : ''
     this.group =
       model instanceof ApiScope && model.group
         ? new ApiScopeListDTO(model.group)
@@ -46,6 +48,12 @@ export class ApiScopeListDTO {
     example: false,
   })
   allowsWrite: boolean
+
+  @ApiProperty({
+    description: 'URL to redirect to for third party delegation login.',
+    example: '',
+  })
+  thirdPartyLoginUrl: string
 
   @ApiPropertyOptional({
     description:
