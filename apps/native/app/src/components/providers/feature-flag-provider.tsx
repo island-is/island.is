@@ -1,32 +1,40 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as configcat from 'configcat-js'
 import React, {
   FC,
-  ReactNode,
   createContext,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
-import { environments } from '@/constants/environments'
-import { useAuthStore } from '@/stores/auth-store'
-import { useEnvironmentStore } from '@/stores/environment-store'
 import { Platform } from 'react-native'
 import * as Application from 'expo-application'
+import { gql, useQuery } from '@apollo/client'
+import { useAuthStore } from '@/stores/auth-store'
+import { setFeatureFlagCache } from '@/lib/feature-flag-client'
 
-interface FeatureFlagUser {
-  identifier: string
-  custom: { [key: string]: string }
+type FeatureFlagRecord = Record<string, boolean | string | number>
+
+const FEATURE_FLAGS_QUERY = gql`
+  query FeatureFlags($attributes: FeatureFlagAttributesInput) {
+    featureFlags(attributes: $attributes) {
+      flags
+    }
+  }
+`
+
+const clientAttributes = {
+  appVersion: Application.nativeApplicationVersion ?? undefined,
+  os: Platform.OS.toLowerCase(),
 }
+
+const EMPTY_FLAGS: FeatureFlagRecord = {}
 
 export interface FeatureFlagClient {
   getValue(
     key: string,
-    defaultValue: boolean | string,
-    user?: FeatureFlagUser,
-  ): Promise<boolean | string>
-
+    defaultValue: boolean | string | number,
+  ): Promise<boolean | string | number>
   dispose(): void
 }
 
@@ -36,88 +44,50 @@ const FeatureFlagContext = createContext<FeatureFlagClient>({
   dispose() {},
 })
 
-export interface FeatureFlagContextProviderProps {
-  children: ReactNode
-  defaultUser?: FeatureFlagUser
-}
+export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  const { authorizeResult } = useAuthStore()
+  const isAuthenticated = !!authorizeResult
+  const { data, refetch } = useQuery<{
+    featureFlags: { flags: FeatureFlagRecord }
+  }>(FEATURE_FLAGS_QUERY, {
+    skip: !isAuthenticated,
+    variables: { attributes: clientAttributes },
+  })
+  const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
 
-class ConfigCatAsyncStorageCache {
-  set(key: string, config: string) {
-    return AsyncStorage.setItem(key, config)
-  }
-  async get(key: string) {
-    const item = await AsyncStorage.getItem(key)
-    if (item) {
-      try {
-        return item
-      } catch (err) {
-        // noop
+  // Also triggers on token refresh (~5min), which is acceptable.
+  const prevAuthRef = useRef(authorizeResult)
+  useEffect(() => {
+    if (prevAuthRef.current !== authorizeResult) {
+      prevAuthRef.current = authorizeResult
+      if (authorizeResult) {
+        refetch()
+      } else {
+        setFeatureFlagCache({})
       }
     }
-    return null
-  }
-}
-
-import { setFeatureFlagClient } from '@/lib/feature-flag-client'
-
-export const FeatureFlagProvider: FC<
-  React.PropsWithChildren<FeatureFlagContextProviderProps>
-> = ({ children }) => {
-  const { userInfo } = useAuthStore()
-  const [time, setTime] = useState(Date.now())
-  const { environment = environments.prod } = useEnvironmentStore()
-
-  const client = useMemo(() => {
-    return configcat.getClient(
-      environment.configCat ?? '',
-      configcat.PollingMode.AutoPoll,
-      {
-        dataGovernance: configcat.DataGovernance.EuOnly,
-        cache: new ConfigCatAsyncStorageCache(),
-        logger: configcat.createConsoleLogger(configcat.LogLevel.Off),
-      },
-    )
-  }, [environment])
-  setFeatureFlagClient(client)
+  }, [authorizeResult, refetch])
 
   useEffect(() => {
-    const listener = () => setTime(Date.now())
-    client.addListener('configChanged', listener)
-
-    return () => {
-      client.removeListener('configChanged', listener)
+    if (data?.featureFlags?.flags) {
+      setFeatureFlagCache(flags)
     }
-  }, [client])
+  }, [data, flags])
 
-  const context = useMemo<FeatureFlagClient>(() => {
-    const appVersion = Application.nativeApplicationVersion ?? ''
-    // Convert OS to lowercase to match the feature flag key
-    const os = Platform.OS.toLowerCase()
-
-    const userAuth =
-      userInfo && userInfo.nationalId
-        ? {
-            identifier: userInfo.nationalId,
-            custom: {
-              nationalId: userInfo.nationalId,
-              name: userInfo.name,
-              appVersion,
-              os,
-            },
-          }
-        : undefined
-    return {
-      getValue(
+  const context = useMemo<FeatureFlagClient>(
+    () => ({
+      getValue: async (
         key: string,
-        defaultValue: boolean | string,
-        user: FeatureFlagUser | undefined = userAuth,
-      ) {
-        return client.getValueAsync(key, defaultValue, user)
+        defaultValue: boolean | string | number,
+      ) => {
+        return flags[key] ?? defaultValue
       },
-      dispose: () => client.dispose(),
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, userInfo, time])
+      dispose: () => {},
+    }),
+    [flags],
+  )
 
   return (
     <FeatureFlagContext.Provider value={context}>
