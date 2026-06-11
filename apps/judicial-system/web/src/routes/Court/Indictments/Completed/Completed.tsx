@@ -3,9 +3,15 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
+import {
+  isDistrictCourtUser,
+  isRulingOrDismissalCase,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
@@ -36,6 +42,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCaseBanner,
+  useCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -52,6 +59,7 @@ type modal =
   | 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'
   | 'DELIVER_VERDICTS'
   | 'REOPEN'
+  | 'REOPEN_WITH_REASON'
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
@@ -66,8 +74,12 @@ const Completed: FC = () => {
   const { createEventLog } = useEventLog()
   const { appealBanner, appealModals } = useAppealCaseBanner()
 
+  const { updateCase } = useCase()
+
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
+  const [reopenReason, setReopenReason] = useState('')
+  const [isReopeningCase, setIsReopeningCase] = useState(false)
 
   // If the case has not been sent to the public prosecutor after completion/correction
   // then show the send to public prosecutor button
@@ -77,6 +89,16 @@ const Completed: FC = () => {
       workingCase.indictmentSentToPublicProsecutorDate >
         workingCase.indictmentCompletedDate,
   )
+
+  const canReopenCase =
+    isDistrictCourtUser(user) &&
+    !workingCase.mergeCase &&
+    workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.WITHDRAWAL &&
+    isSentToPublicProsecutor &&
+    (!workingCase.appealCase ||
+      workingCase.appealCase.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase.appealState === AppealCaseState.WITHDRAWN)
 
   const completeCaseConfirmation = useCallback(async () => {
     setIsLoading(true)
@@ -302,10 +324,14 @@ const Completed: FC = () => {
               workingCase.indictmentRulingDecision ===
               CaseIndictmentRulingDecision.WITHDRAWAL
             }
-            actionButtonText="Leiðrétta mál"
-            actionButtonColorScheme="default"
+            actionButtonText={
+              canReopenCase ? 'Enduropna mál' : 'Leiðrétta mál'
+            }
+            actionButtonColorScheme={canReopenCase ? 'destructive' : 'default'}
             actionButtonVariant="primary"
-            onActionButtonClick={() => setModalVisible('REOPEN')}
+            onActionButtonClick={() =>
+              setModalVisible(canReopenCase ? 'REOPEN_WITH_REASON' : 'REOPEN')
+            }
             hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
             nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
             nextIsDisabled={!stepIsValid()}
@@ -349,6 +375,68 @@ const Completed: FC = () => {
         )}
         {modalVisible === 'REOPEN' && (
           <ReopenModal onClose={() => setModalVisible(undefined)} />
+        )}
+        {modalVisible === 'REOPEN_WITH_REASON' && (
+          <Modal
+            title="Viltu opna mál aftur?"
+            text={
+              <ul style={{ listStyle: 'outside', paddingLeft: '24px' }}>
+                {[
+                  'Málið verður opnað að nýju, fyrri lyktum verður eytt og ljúka þarf málinu að nýju með nýrri dómsúrlausn.',
+                  'Aðilar máls fá tilkynningu um að málið hafi verið opnað að nýju, eftir atvikum ríkissaksóknari og Fangelsismálastofnun einnig.',
+                  'Ástæða enduropnunar verður sýnileg aðilum máls.',
+                  'Athugið - aðgerðin er óafturkræf',
+                ].map((item, i) => (
+                  <li key={item}>
+                    <Text variant={i === 3 ? 'h5' : 'default'}>{item}</Text>
+                  </li>
+                ))}
+              </ul>
+            }
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => {
+                setModalVisible(undefined)
+                setReopenReason('')
+              },
+            }}
+            primaryButton={{
+              text: 'Halda áfram',
+              colorScheme: 'destructive',
+              isDisabled: !reopenReason.trim() || isReopeningCase,
+              onClick: async () => {
+                if (!reopenReason.trim()) {
+                  return
+                }
+                setIsReopeningCase(true)
+                try {
+                  const updated = await updateCase(workingCase.id, {
+                    reopenReason,
+                  })
+                  if (updated) {
+                    router.push(
+                      `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                } finally {
+                  setIsReopeningCase(false)
+                }
+              },
+            }}
+          >
+            <Box marginBottom={4}>
+              <Input
+                name="reopenReason"
+                label="Ástæða enduropnunar máls"
+                placeholder="Skráðu ástæðu enduropnunar máls, t.d. vegna endurupptöku eða niðurstöðu Landsréttar."
+                textarea
+                rows={6}
+                value={reopenReason}
+                onChange={(e) => setReopenReason(e.target.value)}
+                required
+              />
+            </Box>
+          </Modal>
         )}
         {appealModals}
       </PageLayout>
