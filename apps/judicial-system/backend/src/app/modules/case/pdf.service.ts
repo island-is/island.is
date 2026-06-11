@@ -26,8 +26,6 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { caseModuleConfig } from './case.config'
-
 import {
   Confirmation,
   createCaseFilesRecord,
@@ -56,6 +54,7 @@ import {
   Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
+import { caseModuleConfig } from './case.config'
 
 @Injectable()
 export class PdfService {
