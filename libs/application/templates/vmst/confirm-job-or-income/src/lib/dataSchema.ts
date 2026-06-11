@@ -43,9 +43,18 @@ const pensionEntrySchema = z.object({
   amountPerMonth: z.string().min(1),
 })
 
+const incomeTypeEnum = z.enum([
+  'casualWork',
+  'partTime',
+  'contractWork',
+  'pension',
+  'capitalIncome',
+  'socialInsurance',
+])
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  typeOfIncome: z.string().min(1),
+  typeOfIncome: z.array(incomeTypeEnum).min(1),
   registerCasualWork: z.array(casualWorkEntrySchema).optional(),
   registerPartTime: z.array(partTimeEntrySchema).optional(),
   registerContractWork: z.array(contractWorkEntrySchema).optional(),

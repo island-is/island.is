@@ -1,17 +1,10 @@
 import {
   buildSection,
-  buildSubmitField,
   buildDescriptionField,
   buildMultiField,
   buildSelectField,
 } from '@island.is/application/core'
-import * as m from '../../../lib/messages'
-import { casualWorkFields } from './casualWorkFields'
-import { partTimeFields } from './partTimeFields'
-import { contractWorkFields } from './contractWorkFields'
-import { pensionFields } from './pensionFields'
-import { capitalIncomeFields } from './capitalIncomeFields'
-import { socialInsuranceFields } from './socialInsuranceFields'
+import * as m from '../../lib/messages'
 
 export const incomeSection = buildSection({
   id: 'incomeSection',
@@ -34,6 +27,7 @@ export const incomeSection = buildSection({
           id: 'typeOfIncome',
           title: m.application.incomeTypeTitle,
           required: true,
+          isMulti: true,
           setOnChange: async () => {
             return [
               { key: 'registerCasualWork', value: undefined },
@@ -62,26 +56,6 @@ export const incomeSection = buildSection({
             {
               value: 'socialInsurance',
               label: m.application.incomeTypeSocialInsurance,
-            },
-          ],
-        }),
-
-        ...casualWorkFields,
-        ...partTimeFields,
-        ...contractWorkFields,
-        ...pensionFields,
-        ...capitalIncomeFields,
-        ...socialInsuranceFields,
-
-        buildSubmitField({
-          id: 'submit',
-          title: m.application.submitButton,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: 'SUBMIT',
-              name: m.application.submitButton,
-              type: 'primary',
             },
           ],
         }),

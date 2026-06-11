@@ -330,6 +330,27 @@ export const application = defineMessages({
     defaultMessage: 'Tilkynna tekjur',
     description: 'Submit button label',
   },
+  overviewSectionTitle: {
+    id: 'vmst.cjoi.application:overviewSectionTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Title for the overview section',
+  },
+  overviewSectionDescription: {
+    id: 'vmst.cjoi.application:overviewSectionDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir að allar upplýsingar séu réttar áður en tilkynningin er send.',
+    description: 'Description for the overview section',
+  },
+  overviewEntryHeading: {
+    id: 'vmst.cjoi.application:overviewEntryHeading',
+    defaultMessage: 'Lína {index}',
+    description: 'Heading for each repeater entry in the overview',
+  },
+  paymentFrequency: {
+    id: 'vmst.cjoi.application:paymentFrequency',
+    defaultMessage: 'Greiðslutíðni',
+    description: 'Payment frequency label',
+  },
   /* Action card */
   actionCardDraft: {
     id: 'vmst.cjoi.application:actionCardDraft',
