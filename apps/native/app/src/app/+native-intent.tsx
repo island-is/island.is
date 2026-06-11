@@ -22,33 +22,35 @@ export function stashPendingDeepLink(url: string): void {
 }
 
 export function consumePendingDeepLink(): void {
-  const path = pendingDeepLink
+  const raw = pendingDeepLink
   pendingDeepLink = null
-  if (!path) return
-  // findRoute only covers universal-link paths (/minarsidur/...). Widgets and
+  if (!raw) return
+
+  // Normalize first so findRoute and router.navigate both work on a clean
+  // relative path. For custom-scheme URLs the "host" is actually the first
+  // path segment (is.island.app.dev://wallet/X → /wallet/X), so prepend it.
+  // For http/https, host is a domain — leave it off. Passing a full URL to
+  // router.navigate would forward to Linking.openURL on Android and loop.
+  let path = raw
+  if (raw.includes('://')) {
+    try {
+      const url = new URL(raw)
+      const isHttpUrl = url.protocol === 'http:' || url.protocol === 'https:'
+      const hostPrefix = !isHttpUrl && url.host ? `/${url.host}` : ''
+      path = `${hostPrefix}${url.pathname}${url.search}` || '/'
+    } catch {
+      // keep raw on parse failure
+    }
+  }
+
+  // findRoute covers universal-link paths (/minarsidur/...). Widgets and
   // custom-scheme URLs come through as the native route already.
   const mapped = findRoute(path)
   if (mapped) {
     router.navigate(mapped as Parameters<typeof router.navigate>[0])
     return
   }
-  // Strip the scheme before navigating — passing a full URL to router.navigate
-  // forwards to Linking.openURL on Android, which re-delivers the intent and
-  // loops endlessly. For custom-scheme URLs the "host" is actually the first
-  // path segment (e.g. is.island.app.dev://wallet/X → /wallet/X), so prepend it.
-  // For http/https, host is a domain — leave it off.
-  let pathname = path
-  if (path.includes('://')) {
-    try {
-      const url = new URL(path)
-      const isHttpUrl = url.protocol === 'http:' || url.protocol === 'https:'
-      const host = !isHttpUrl && url.host ? `/${url.host}` : ''
-      pathname = `${host}${url.pathname}${url.search}` || '/'
-    } catch {
-      // keep raw path on parse failure
-    }
-  }
-  router.navigate(pathname as Parameters<typeof router.navigate>[0])
+  router.navigate(path as Parameters<typeof router.navigate>[0])
 }
 
 export function clearPendingDeepLink(): void {
