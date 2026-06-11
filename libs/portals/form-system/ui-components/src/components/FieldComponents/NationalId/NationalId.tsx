@@ -144,6 +144,7 @@ export const NationalId = ({
             type: 'SET_ADDRESS',
             payload: {
               id: item.id,
+              valueIndex,
               address,
               postalCode,
               municipality,
@@ -194,6 +195,7 @@ export const NationalId = ({
           type: 'SET_ADDRESS',
           payload: {
             id: item.id,
+            valueIndex,
             address: '',
             postalCode: '',
             municipality: '',
