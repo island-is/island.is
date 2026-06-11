@@ -20,10 +20,6 @@ export const consentModule: PortalModule = {
     const useNewRoute = await featureFlagClient.getValue(
       Features.useNewDelegationSystem,
       false,
-      {
-        id: userInfo.profile.nationalId,
-        attributes: {},
-      },
     )
 
     const hasAccess = userInfo.scopes.includes(ApiScope.internal)

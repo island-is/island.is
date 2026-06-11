@@ -165,7 +165,7 @@ export const NationalId = ({
   return (
     <Stack space={2}>
       <Row>
-        <Column span="5/10">
+        <Column span={['1/1', '1/1', '5/10']}>
           <Controller
             key={`${item.id}-${valueIndex}`}
             name={`${item.id}.${valueIndex}`}
@@ -243,7 +243,7 @@ export const NationalId = ({
       </Row>
       {item.fieldSettings?.showAddress && (
         <Row>
-          <Column span="4/10">
+          <Column span={['1/1', '1/1', '4/10']}>
             <Input
               label={formatMessage(m.address)}
               name="address"
@@ -252,7 +252,7 @@ export const NationalId = ({
               readOnly
             />
           </Column>
-          <Column span="2/10">
+          <Column span={['1/1', '1/1', '2/10']}>
             <Input
               label={formatMessage(m.postalCode)}
               name="postalCode"
@@ -261,7 +261,7 @@ export const NationalId = ({
               readOnly
             />
           </Column>
-          <Column span="4/10">
+          <Column span={['1/1', '1/1', '4/10']}>
             <Input
               label={formatMessage(m.city)}
               name="municipality"

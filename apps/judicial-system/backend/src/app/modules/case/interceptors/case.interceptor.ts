@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -7,7 +8,6 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   AppealEventType,
   CaseAppealDecision,
@@ -38,6 +38,7 @@ import {
   AppealEventLog,
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   Defendant,
@@ -385,6 +386,7 @@ export const transformDefendants = ({
         defendant.eventLogs,
       ),
       indictmentCancelledOrDismissedState,
+      connectedCases: defendant.connectedCases ?? [],
     }
   })
 }
@@ -459,9 +461,7 @@ const getDefenceUserDefendants = (
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
       defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(user.nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === user.nationalId,
   )
 
   if (!myDefendants?.length) {
@@ -501,6 +501,7 @@ const getDefenceUserDefendants = (
 const transformCase = (
   theCase: Case,
   user: User | undefined,
+  originalAncestorId?: string,
 ): Record<string, unknown> => {
   const isDefence = isDefenceUser(user)
   const {
@@ -621,14 +622,32 @@ const transformCase = (
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.INDICTMENT_REVIEWED,
-      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
-    ),
-    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      theCase.eventLogs,
-    ),
+    indictmentReviewedDate: (() => {
+      const reviewedDate = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.INDICTMENT_REVIEWED,
+        theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+      )
+      if (!reviewedDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > reviewedDate
+        ? undefined
+        : reviewedDate
+    })(),
+    indictmentSentToPublicProsecutorDate: (() => {
+      const sentDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      )
+      if (!sentDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > sentDate ? undefined : sentDate
+    })(),
     defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
       EventType.APPEAL_RESULT_ACCESSED,
       theCase.eventLogs,
@@ -669,17 +688,30 @@ const transformCase = (
     splitCases:
       theCase.splitCases &&
       theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
+          ),
+        ),
+      )
   }
 }
 

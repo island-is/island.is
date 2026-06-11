@@ -10,7 +10,6 @@ import {
 
 export enum UserInitiatedNotificationType {
   APPEAL_CASE_FILES_UPDATED = AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED,
-  APPEAL_JUDGES_ASSIGNED = AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
   CASE_FILES_UPDATED = RequestCaseNotificationType.CASE_FILES_UPDATED,
   COURT_DATE = RequestCaseNotificationType.COURT_DATE,
   HEADS_UP = RequestCaseNotificationType.HEADS_UP,

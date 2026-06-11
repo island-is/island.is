@@ -658,8 +658,8 @@ export const m = defineMessages({
   },
   getJson: {
     id: 'form.system:get-json',
-    defaultMessage: 'Sækja JSON',
-    description: 'Get JSON',
+    defaultMessage: 'Niðurhala JSON',
+    description: 'Download JSON',
   },
   address: {
     id: 'form.system:address',
@@ -1261,5 +1261,10 @@ export const m = defineMessages({
       'Ekki er hægt að gefa út formið. Allir reitir með íslensku þurfa enska þýðingu.',
     description:
       'The form cannot be published. All name fields with Icelandic text require an English translation.',
+  },
+  copyFieldHover: {
+    id: 'form.system:copy-field-hover',
+    defaultMessage: 'Afrita innslátt',
+    description: 'Copy field',
   },
 })

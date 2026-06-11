@@ -88,6 +88,9 @@ export class FieldSettings {
   @Field(() => Boolean, { nullable: true })
   isEmailRequired?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  fetchEmailFromMyPages?: boolean
+
   @Field(() => String, { nullable: true })
   chargeItemCode?: string
 

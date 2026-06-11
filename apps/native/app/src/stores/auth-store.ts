@@ -305,6 +305,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        lockScreenActivatedAt: undefined,
       }),
       true,
     )

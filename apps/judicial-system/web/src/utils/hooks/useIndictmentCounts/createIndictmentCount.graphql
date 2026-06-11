@@ -1,6 +1,7 @@
 mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
   createIndictmentCount(input: $input) {
     id
+    displayOrder
     created
     modified
     caseId

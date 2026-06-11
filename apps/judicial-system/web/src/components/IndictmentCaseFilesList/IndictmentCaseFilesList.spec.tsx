@@ -80,4 +80,60 @@ describe('IndictmentCaseFilesList', () => {
       screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/),
     ).not.toBeInTheDocument()
   })
+
+  it('should only show defender-visible subpoenas', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'defender-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Defender',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                defendants: [
+                  {
+                    id: 'defendant-1',
+                    name: 'Defendant One',
+                    isDefenderChoiceConfirmed: true,
+                    defenderNationalId: '1234567890',
+                    subpoenas: [
+                      {
+                        id: 'subpoena-1',
+                        created: '2026-01-15T12:00:00.000Z',
+                      },
+                    ],
+                  },
+                  {
+                    id: 'defendant-2',
+                    name: 'Defendant Two',
+                    isDefenderChoiceConfirmed: true,
+                    defenderNationalId: '0987654321',
+                    subpoenas: [
+                      {
+                        id: 'subpoena-2',
+                        created: '2026-01-16T12:00:00.000Z',
+                      },
+                    ],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByText(/Fyrirkall Defendant One/)).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Fyrirkall Defendant Two/),
+    ).not.toBeInTheDocument()
+  })
 })

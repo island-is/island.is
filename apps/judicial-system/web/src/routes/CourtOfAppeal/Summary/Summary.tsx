@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+  COURT_OF_APPEAL_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
@@ -22,7 +26,6 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseTransition,
-  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   getAppealDecision,
@@ -31,7 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   appendAppealCaseIdQuery,
-  hasSentNotification,
+  isReopenedCOACase,
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -74,12 +77,7 @@ const Summary: FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      hasSentNotification(
-        TrackedNotificationType.APPEAL_COMPLETED,
-        workingCase.notifications,
-      ).hasSent
-    ) {
+    if (isReopenedCOACase(targetAppealCase)) {
       setVisibleModal('AppealRulingModified')
     } else {
       await handleComplete()
@@ -138,8 +136,8 @@ const Summary: FC = () => {
           <FormFooter
             previousUrl={appendAppealCaseIdQuery(
               shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                ? `${constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
-                : `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+                ? `${COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${workingCase.id}`
+                : `${COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
               targetAppealCase?.id,
             )}
             nextButtonIcon="checkmark"
@@ -157,7 +155,7 @@ const Summary: FC = () => {
               onClick: () => {
                 router.push(
                   appendAppealCaseIdQuery(
-                    `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
                     targetAppealCase?.id,
                   ),
                 )
@@ -180,7 +178,7 @@ const Summary: FC = () => {
               onClick: () => {
                 router.push(
                   appendAppealCaseIdQuery(
-                    `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                    `${COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
                     targetAppealCase?.id,
                   ),
                 )

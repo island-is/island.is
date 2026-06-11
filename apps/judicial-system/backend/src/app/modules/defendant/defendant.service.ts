@@ -5,7 +5,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -527,7 +526,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
+      where: { defenderNationalId: nationalId },
       order: [['created', 'DESC']],
     })
   }
@@ -550,6 +549,23 @@ export class DefendantService {
 
       return { delivered: true }
     }
+
+    this.courtService
+      .updateRequestCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        theCase.defenderName,
+        theCase.defenderEmail,
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
+          { reason },
+        )
+      })
 
     return this.courtService
       .updateCaseWithDefendant(

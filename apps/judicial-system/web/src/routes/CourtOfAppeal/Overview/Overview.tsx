@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -41,7 +44,7 @@ import {
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview = () => {
+const Overview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -51,7 +54,7 @@ const CourtOfAppealOverview = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
   const {
     defendants,
     policeCaseNumbers,
@@ -63,7 +66,6 @@ const CourtOfAppealOverview = () => {
     registrar,
     caseType,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -78,7 +80,7 @@ const CourtOfAppealOverview = () => {
 
   return (
     <>
-      {workingCase.hasBeenAppealed && appealBanner}
+      {targetAppealCase && appealBanner}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -110,14 +112,10 @@ const CourtOfAppealOverview = () => {
                     id: 'defendants-section',
                     items: [defendants({ caseType: workingCase.type })],
                   },
-                  ...(showItem(victims)
-                    ? [
-                        {
-                          id: 'victims-section',
-                          items: [victims],
-                        },
-                      ]
-                    : []),
+                  {
+                    id: 'victims-section',
+                    items: [victims],
+                  },
                   {
                     id: 'case-info-section',
                     items: [
@@ -186,8 +184,8 @@ const CourtOfAppealOverview = () => {
             onNextButtonClick={() =>
               handleNavigationTo(
                 shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                  ? constants.COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : constants.COURT_OF_APPEAL_CASE_ROUTE,
+                  ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                  : COURT_OF_APPEAL_CASE_ROUTE,
               )
             }
             nextButtonIcon="arrowForward"
@@ -198,4 +196,4 @@ const CourtOfAppealOverview = () => {
   )
 }
 
-export default CourtOfAppealOverview
+export default Overview

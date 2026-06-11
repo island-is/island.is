@@ -56,7 +56,7 @@ export const ProjectHeader = ({
           imageIsFullHeight={
             projectPage.themeProperties?.imageIsFullHeight ?? true
           }
-          imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
+          imagePadding={projectPage.themeProperties?.imagePadding || '0px'}
           imageObjectFit={
             projectPage.themeProperties?.imageObjectFit === 'cover'
               ? 'cover'
@@ -67,13 +67,12 @@ export const ProjectHeader = ({
               ? 'left'
               : projectPage.themeProperties?.imageObjectPosition === 'right'
               ? 'right'
-              : 'center'
+              : 'right'
           }
           titleSectionPaddingLeft={
             projectPage.themeProperties
               ?.titleSectionPaddingLeft as ResponsiveSpace
           }
-          mobileBackground={projectPage.themeProperties?.mobileBackgroundColor}
           isSubpage={isSubpage}
         />
       )

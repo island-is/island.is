@@ -7,6 +7,7 @@ import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { Box } from '@island.is/island-ui/core'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
+import { AuthApiScope } from '@island.is/api/schema'
 
 export const DeleteAccessModal = ({
   onClose,
@@ -15,6 +16,7 @@ export const DeleteAccessModal = ({
   loading,
   direction,
   otherIdentity,
+  scopes,
 }: {
   onClose: () => void
   isVisible: boolean
@@ -23,6 +25,7 @@ export const DeleteAccessModal = ({
 
   direction: 'outgoing' | 'incoming'
   otherIdentity: { name: string; nationalId: string }
+  scopes?: AuthApiScope[]
 }) => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
@@ -74,7 +77,7 @@ export const DeleteAccessModal = ({
         )}
       </Box>
 
-      <ScopesTable showDate editableDates={false} />
+      <ScopesTable scopes={scopes} showDate editableDates={false} />
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter

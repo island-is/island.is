@@ -19,6 +19,15 @@ export class VmstApplicationOverviewItem {
   value?: string
 }
 
+@ObjectType('VmstJobSearchConfirmationStatus')
+export class VmstJobSearchConfirmationStatus {
+  @Field({ nullable: true })
+  canConfirm?: boolean
+
+  @Field({ nullable: true })
+  hasConfirmed?: boolean
+}
+
 @ObjectType('VmstApplicationsAvailableActions')
 export class VmstApplicationsAvailableActions {
   @Field({ nullable: true })
@@ -65,4 +74,7 @@ export class VmstApplicationsUnemploymentApplicationOverview {
 
   @Field(() => [VmstApplicationOverviewItem], { nullable: true })
   overviewItems?: VmstApplicationOverviewItem[]
+
+  @Field(() => VmstJobSearchConfirmationStatus, { nullable: true })
+  jobSearchConfirmationStatus?: VmstJobSearchConfirmationStatus
 }

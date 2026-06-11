@@ -16,6 +16,14 @@ import { mockCaseFile } from '../../utils/mocks'
 import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      pathname: '',
+    }
+  },
+}))
+
 describe('<AppealCaseFilesOverview />', () => {
   test('should display a context menu for all files', async () => {
     const theCase = {
