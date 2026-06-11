@@ -502,9 +502,10 @@ export class CoursesService extends BaseTemplateApiService {
       })
       .then((r) => r.json())
 
-    const priceAmount = chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
-      (item) => item.code === courseInstance.chargeItemCode,
-    )?.priceAmount
+    const priceAmount =
+      chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
+        (item) => item.code === courseInstance.chargeItemCode,
+      )?.priceAmount
 
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,

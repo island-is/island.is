@@ -302,7 +302,11 @@ export class ZendeskService {
     const body = JSON.stringify({ custom_object_record: record })
     try {
       const response = await axios.patch(
-        `${this.api}/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(record.external_id)}`,
+        `${
+          this.api
+        }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
+          record.external_id,
+        )}`,
         body,
         this.params,
       )
