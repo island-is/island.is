@@ -69,17 +69,17 @@ describe('EstateTemplateService', () => {
   })
 
   describe('getSignatories', () => {
-    it.each([
-      EstateTypes.officialDivision,
-      EstateTypes.estateWithoutAssets,
-    ])('returns no signatories for %s without calling Syslumenn', async (type) => {
-      const result = await service.getSignatories(createActionProps(type))
+    it.each([EstateTypes.officialDivision, EstateTypes.estateWithoutAssets])(
+      'returns no signatories for %s without calling Syslumenn',
+      async (type) => {
+        const result = await service.getSignatories(createActionProps(type))
 
-      expect(result).toEqual({ success: true, signatories: [] })
-      expect(
-        mockSyslumennService.getInheritanceReportSignatories,
-      ).not.toHaveBeenCalled()
-    })
+        expect(result).toEqual({ success: true, signatories: [] })
+        expect(
+          mockSyslumennService.getInheritanceReportSignatories,
+        ).not.toHaveBeenCalled()
+      },
+    )
 
     it('fetches signatories from Syslumenn for estate division by heirs', async () => {
       mockSyslumennService.getInheritanceReportSignatories.mockResolvedValue([
