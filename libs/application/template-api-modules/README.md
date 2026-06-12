@@ -137,6 +137,109 @@ import { defineTemplateApi } from '@island.is/application/types'
   },
 ```
 
+# Handling server side errors
+
+In the logs we see several instances of errors caused by user input or user ineligibility being repeated several times. This would seem to point to user frustration and misunderstanding of what is going on.
+
+A good way to help alleviate this problem is clear error messages that notify the user of why an error happened and what needs to happen to resolve it. This is likely to not only help with user sentiment but also lessen the load on support channels.
+
+When a template-api action fails, the goal is to tell the user *why* it failed and *what they can do about it*, in their own language. The way to do that is to throw a `TemplateApiError` carrying an `errorReason` made of **message descriptors** rather than pre-formatted strings. The application UI shell receives the problem and translates the `title`/`summary` on the client in the user's locale, interpolating runtime values like an id or a name where useful. This turns an opaque error into a clear,
+localized explanation, which tends to both improve user sentiment and reduce repeat attempts.
+
+## 1. Define translatable messages
+
+Start in your template's `messages.ts` and define the messages with `defineMessages` from `react-intl`. Keeping the text here (rather than in the service) is what lets it be translated, so add `{placeholders}` for any runtime values you'll want to fill in later.
+
+```typescript
+import { defineMessages } from 'react-intl'
+
+export const serviceErrors = {
+  missingEntry: defineMessages({
+    title: {
+      id: 'xx.application:serviceErrors.missingEntry.title',
+      defaultMessage: 'Missing entry',
+      description: 'Title shown when an entry is missing',
+    },
+    summary: {
+      id: 'xx.application:serviceErrors.missingEntry.summary',
+      // {vehicleId} is interpolated at format time on the client
+      defaultMessage: 'No entry found for vehicle {vehicleId}',
+      description: 'Summary shown when an entry is missing',
+    },
+  }),
+}
+```
+
+Each entry is a `StaticTextObject` (`MessageDescriptor & { values? }`), which is why values can be attached later, at the point where you actually throw.
+
+## 2. Throw `TemplateApiError` with an `errorReason`
+
+In the service, import the error and your messages and throw where the failure is detected. The `errorReason` is a `ProviderErrorReason`: an object with a `title` and `summary`. Spread the descriptor and attach `values` so the runtime data lands in the translated string:
+
+```typescript
+import { TemplateApiError } from '@island.is/nest/problem'
+import { messages } from '@island.is/application/templates/your-template'
+
+if (!entryId) {
+  throw new TemplateApiError(
+    {
+      title: messages.serviceErrors.missingEntry.title,
+      summary: {
+        ...messages.serviceErrors.missingEntry.summary,
+        values: { vehicleId: record.vehicleId },
+      },
+    },
+    400, // HTTP status
+  )
+}
+```
+
+The constructor is flexible: it accepts a single `ProviderErrorReason`, a bare `StaticText`/string, or an array of reasons.
+
+```typescript
+constructor(
+  errorReason:
+    | ProviderErrorReason
+    | StaticText
+    | string
+    | ProviderErrorReason[],
+  status: number,
+  options?: ProblemOptions,
+)
+```
+
+```typescript
+interface ProviderErrorReason {
+  title: StaticText
+  summary: StaticText
+}
+```
+
+Prefer the `{ title, summary }` object, since it gives the user a clear heading plus the detail explaining what to do next.
+
+## 3. The client translates it automatically
+
+No additional client code is needed for this. The UI shell detects `errorReason` on the problem and formats it with the user's `formatMessage`, which resolves the translation and interpolates your `values`:
+
+```typescript
+if ('errorReason' in problem) {
+  const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+  const formattedMessage = `${formatMessage(title)}: ${formatMessage(summary)}`
+}
+```
+
+The error is then surfaced to the user via a toaster message in the UI.
+
+## Key recommendations
+
+- Avoid putting a finished, hard-coded string in `errorReason`. Instead pass message descriptors so the locale is resolved on the client, not the server.
+- Put runtime data in `values` and reference it as `{placeholder}` in `defaultMessage`; don't string-concatenate it into the message. This ensures that the `value` is placed in the correct spot if the translation is changed later.
+- Register the new message ids in your translation namespace so non-default locales (e.g. `en`) resolve correctly.
+- Pick a meaningful HTTP status (e.g. `400` for bad user input); it propagates through the problem response.
+- Map out as many error responses from the services you are using as possible and have error messages that either handle each one or more generic ones that accept `values` which explain each one. This avoids the dreaded "error something happened" situation.
+
+This pattern (descriptor + `values`, translated by the shell) keeps the failure reason user-facing and localized end to end, instead of surfacing a generic error.
+
 # Add a dataprovider to your application
 
 This describes how you can add a shared and custom dataproviders to your application Template
