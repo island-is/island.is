@@ -1,13 +1,12 @@
 import {
   findNearestHighlightColor,
-  HIGHLIGHT_COLORS,
   normalizePastedHighlights,
   normalizePastedIndentation,
   parseCssColor,
+  WORD_HIGHLIGHT_COLORS,
 } from './pasteNormalization'
 
-const YELLOW = HIGHLIGHT_COLORS[0].color
-const BLUE = HIGHLIGHT_COLORS[1].color
+const YELLOW = WORD_HIGHLIGHT_COLORS[0].color
 
 describe('parseCssColor', () => {
   it('resolves Word highlighter color keywords', () => {
@@ -51,43 +50,90 @@ describe('parseCssColor', () => {
 
 describe('findNearestHighlightColor', () => {
   it('maps every palette color to itself', () => {
-    for (const { color } of HIGHLIGHT_COLORS) {
+    for (const { color } of WORD_HIGHLIGHT_COLORS) {
       expect(findNearestHighlightColor(color)).toBe(color)
     }
   })
 
   it('maps a palette color given in rgb() form to its hex value', () => {
-    const [r, g, b] = parseCssColor(BLUE) ?? []
-    expect(findNearestHighlightColor(`rgb(${r}, ${g}, ${b})`)).toBe(BLUE)
+    expect(findNearestHighlightColor('rgb(0, 128, 128)')).toBe('#008080')
   })
 
-  it('snaps Word yellow to the palette yellow', () => {
-    expect(findNearestHighlightColor('yellow')).toBe(YELLOW)
+  it('snaps a near-miss color to the nearest palette color', () => {
+    expect(findNearestHighlightColor('#fffe10')).toBe(YELLOW)
   })
 
-  it('falls back to the first palette color for distant colors', () => {
-    // Black is further than the snap threshold from every palette color.
-    expect(findNearestHighlightColor('black')).toBe(YELLOW)
-  })
-
-  it('falls back to the first palette color for unparseable input', () => {
+  it('falls back to yellow for unparseable input', () => {
     expect(findNearestHighlightColor('windowtext')).toBe(YELLOW)
   })
 })
 
 describe('normalizePastedHighlights', () => {
-  it('rewrites the Word "background" shorthand to a palette background-color', () => {
+  it('rewrites the Word "background" shorthand to a background-color', () => {
     // Word emits highlights as "background:yellow" — the shorthand, a keyword
     // color — after the paste plugin's Word filter has run.
     expect(
       normalizePastedHighlights('<span style="background:yellow">x</span>'),
-    ).toBe(`<span style="background-color: ${YELLOW};">x</span>`)
+    ).toBe('<span style="background-color: #ffff00;">x</span>')
   })
 
-  it('snaps a background-color hex value to the palette', () => {
+  it('preserves each of the 15 Word highlight colors exactly', () => {
+    // The CSS keyword Word emits for each of its 15 highlighter colors,
+    // paired with the canonical hex it must survive as.
+    const wordPalette: [string, string][] = [
+      ['yellow', '#ffff00'],
+      ['lime', '#00ff00'], // Bright Green
+      ['cyan', '#00ffff'],
+      ['magenta', '#ff00ff'],
+      ['blue', '#0000ff'], // Bright Blue
+      ['red', '#ff0000'],
+      ['navy', '#000080'], // Dark Blue
+      ['teal', '#008080'],
+      ['green', '#008000'], // Dark Green
+      ['purple', '#800080'], // Dark Violet
+      ['maroon', '#800000'], // Dark Red
+      ['olive', '#808000'], // Dark Yellow
+      ['silver', '#c0c0c0'], // Gray
+      ['gray', '#808080'], // Dark Gray
+      ['black', '#000000'],
+    ]
+    for (const [keyword, hex] of wordPalette) {
+      expect(
+        normalizePastedHighlights(
+          `<span style="background:${keyword}">x</span>`,
+        ),
+      ).toBe(`<span style="background-color: ${hex};">x</span>`)
+    }
+  })
+
+  it('preserves a Word highlight color given in rgb() form', () => {
     expect(
       normalizePastedHighlights(
-        '<span style="background-color: #ffff00;">x</span>',
+        '<span style="background-color: rgb(0, 128, 128);">x</span>',
+      ),
+    ).toBe('<span style="background-color: #008080;">x</span>')
+  })
+
+  it('preserves a black highlight instead of falling back to yellow', () => {
+    expect(
+      normalizePastedHighlights('<span style="background:black">x</span>'),
+    ).toBe('<span style="background-color: #000000;">x</span>')
+  })
+
+  it('maps "dark" keyword aliases onto the Word palette values', () => {
+    expect(
+      normalizePastedHighlights('<span style="background:darkred">x</span>'),
+    ).toBe('<span style="background-color: #800000;">x</span>')
+    expect(
+      normalizePastedHighlights('<span style="background:darkblue">x</span>'),
+    ).toBe('<span style="background-color: #000080;">x</span>')
+  })
+
+  it('snaps a color outside the Word palette to the nearest Word color', () => {
+    // Near-yellow but not an exact Word color → nearest palette swatch.
+    expect(
+      normalizePastedHighlights(
+        '<span style="background-color: #fffe10;">x</span>',
       ),
     ).toBe(`<span style="background-color: ${YELLOW};">x</span>`)
   })
@@ -115,7 +161,7 @@ describe('normalizePastedHighlights', () => {
     )
     expect(result).toContain('font-weight:bold')
     expect(result).toContain('font-style:italic')
-    expect(result).toContain(`background-color: ${YELLOW};`)
+    expect(result).toContain('background-color: #ffff00;')
   })
 
   it('does not change content without backgrounds', () => {

@@ -8,10 +8,10 @@ import { ErrorMessage } from '@island.is/island-ui/core'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import HighlightColorPicker from './HighlightColorPicker'
 import {
-  HIGHLIGHT_COLORS,
   INDENT_STEP_PX,
   normalizePastedHighlights,
   normalizePastedIndentation,
+  WORD_HIGHLIGHT_COLORS,
 } from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
@@ -95,11 +95,11 @@ const TinyMCE = ({
       while (node && node !== editor.getBody()) {
         const bg: string = node.style?.backgroundColor ?? ''
         if (bg && bg !== 'transparent') {
-          const match = HIGHLIGHT_COLORS.find(
-            ({ color }) => hexToRgb(color) === bg,
+          const match = WORD_HIGHLIGHT_COLORS.map(({ color }) => color).find(
+            (color) => hexToRgb(color) === bg,
           )
           if (match) {
-            setSelectedColor(match.color)
+            setSelectedColor(match)
             return
           }
         }

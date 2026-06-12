@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { motion } from 'motion/react'
 
-import { HIGHLIGHT_COLORS } from './pasteNormalization'
+import { WORD_HIGHLIGHT_COLORS } from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
 const containerVariants = {
@@ -47,7 +47,7 @@ const HighlightColorPicker = forwardRef<HTMLDivElement, Props>(
       animate="visible"
       exit="exit"
     >
-      {HIGHLIGHT_COLORS.map(({ label, color }) => (
+      {WORD_HIGHLIGHT_COLORS.map(({ label, color }) => (
         <motion.button
           key={color}
           type="button"
