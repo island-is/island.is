@@ -201,7 +201,7 @@ describe('BFF PortalEnv serialization', () => {
   })
 
   it('httpRoute', () => {
-    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
     expect(result.serviceDef[0].httpRoute).toBeDefined()
     expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
       'beta.dev01.devland.is',

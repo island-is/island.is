@@ -182,9 +182,9 @@ describe('Feature-deployment support', () => {
   })
 
   it('feature deployment httpRoute', () => {
-    expect(values.services.api.ingress).toBeUndefined()
+    expect((values.services.api as any).ingress).toBeUndefined()
     expect(values.services.api.httpRoute).toBeDefined()
-    expect(values.services.api.httpRoute['primary-gw'].hostnames).toEqual([
+    expect(values.services.api.httpRoute!['primary-gw'].hostnames).toEqual([
       'feature-A-a.dev01.devland.is',
     ])
   })

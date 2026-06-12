@@ -10,12 +10,15 @@ import {
 import { renderHelmServices } from '../dsl/exports/helm'
 import { logger } from '../common'
 
-const renderUrlsForService = ({ ingress = {} }: HelmService) => {
+const renderUrlsForService = ({ httpRoute = {} }: HelmService) => {
   const urls: string[] = []
-  Object.keys(ingress).forEach((ingressName) => {
-    ingress[ingressName].hosts.forEach((host) => {
-      host.paths.forEach((path: string) => {
-        urls.push(`https://${host.host}${path}`)
+  Object.keys(httpRoute).forEach((routeName) => {
+    const route = httpRoute[routeName]
+    route.hostnames.forEach((hostname: string) => {
+      route.rules.forEach((rule) => {
+        rule.matches.forEach((match) => {
+          urls.push(`https://${hostname}${match.pathPrefix ?? match.pathExact ?? ''}`)
+        })
       })
     })
   })

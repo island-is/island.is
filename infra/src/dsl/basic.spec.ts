@@ -132,7 +132,7 @@ describe('Basic serialization', () => {
   })
 
   it('httpRoute', () => {
-    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
     expect(result.serviceDef[0].httpRoute).toBeDefined()
     expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
       'a.staging01.devland.is',

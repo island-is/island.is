@@ -39,7 +39,7 @@ describe('HTTPRoute definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
     expect(result.serviceDef[0].httpRoute).toBeDefined()
     expect(result.serviceDef[0].httpRoute!['primary-gw'].hostnames).toEqual([
       'a.staging01.devland.is',
@@ -64,7 +64,7 @@ describe('HTTPRoute definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
     expect(
       result.serviceDef[0].httpRoute!['primary-gw'].parentRefs[0].name,
     ).toEqual('gateway-internal')
@@ -137,6 +137,6 @@ describe('HTTPRoute definitions', () => {
       env: Staging,
     })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef[0].ingress).toBeUndefined()
+    expect((result.serviceDef[0] as any).ingress).toBeUndefined()
   })
 })
