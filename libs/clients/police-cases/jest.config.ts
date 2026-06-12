@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'police-cases',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

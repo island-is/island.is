@@ -3,16 +3,20 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/form-system/web/src",
   "projectType": "application",
-  "tags": ["scope:form-system"],
+  "tags": [
+    "scope:form-system"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/form-system/web",
-        "index": "apps/form-system/web/src/index.src.html",
+        "index": "apps/form-system/web/src/index.html",
         "baseHref": "/form/",
         "main": "apps/form-system/web/src/main.tsx",
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
@@ -21,7 +25,9 @@
           "apps/form-system/web/src/mockServiceWorker.js",
           "apps/form-system/web/src/assets"
         ],
-        "styles": ["apps/form-system/web/src/styles.scss"],
+        "styles": [
+          "apps/form-system/web/src/styles.scss"
+        ],
         "scripts": [],
         "webpackConfig": "apps/form-system/web/webpack.config.js"
       },
@@ -38,16 +44,22 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "index": "apps/form-system/web/src/index.src.html"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "port": 4242,
-        "buildTarget": "form-system-web:build",
+        "buildTarget": "form-system-web:build:development",
         "hmr": true
       },
       "configurations": {
@@ -58,14 +70,21 @@
           "buildTarget": "form-system-web:build:production",
           "hmr": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/form-system/web/jest.config.ts"
       }
@@ -73,7 +92,9 @@
     "start-bff": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn infra run-local-env services-bff-portals-my-pages"],
+        "commands": [
+          "yarn infra run-local-env services-bff-portals-my-pages"
+        ],
         "cwd": "infra"
       }
     },
@@ -99,11 +120,24 @@
     "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start form-system-web"]
+        "commands": [
+          "API_MOCKS=true yarn start form-system-web"
+        ]
       }
     },
     "docker-static": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    },
+    "generateDevIndexHTML": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/form-system/web/src"
+        ]
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/form-system/web/src/index.html"
+      ]
     }
   }
 }

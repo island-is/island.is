@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'form-system-web',
   preset: '../../../jest.preset.js',
   transform: {

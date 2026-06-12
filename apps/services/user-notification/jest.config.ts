@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'services-user-notification',
   preset: './jest.preset.js',
   rootDir: '../../..',

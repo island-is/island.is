@@ -14,6 +14,8 @@ export const parameters: Parameters = {
 }
 
 const preview: Preview = {
+  // Replaces docs.autodocs:true from main.ts, removed in Storybook 9
+  tags: ['autodocs'],
   decorators: [
     (Story) => {
       const hookFormData = useForm({ defaultValues: {} })

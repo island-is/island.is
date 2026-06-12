@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-social-insurance-administration-death-benefits',
   preset: '../../../../../jest.preset.js',

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-feature-flags',
   preset: './jest.preset.js',
   rootDir: '../../..',

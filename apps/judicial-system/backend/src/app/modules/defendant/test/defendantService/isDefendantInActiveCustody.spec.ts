@@ -76,7 +76,7 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
     })
 
     it('should retrun true', () => {
-      expect(mockFindAll).toBeCalledWith({
+      expect(mockFindAll).toHaveBeenCalledWith({
         include: [
           {
             model: Case,
@@ -108,7 +108,7 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
     })
 
     it('should retrun false', () => {
-      expect(mockFindAll).toBeCalledWith({
+      expect(mockFindAll).toHaveBeenCalledWith({
         include: [
           {
             model: Case,
