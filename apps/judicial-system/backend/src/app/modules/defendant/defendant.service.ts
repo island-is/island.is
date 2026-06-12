@@ -68,8 +68,7 @@ export class DefendantService {
     }
 
     return (
-      nationalId.replace('-', '').length === 10 &&
-      !nationalId.endsWith('5') // Temporary national id from the police system
+      nationalId.replace('-', '').length === 10 && !nationalId.endsWith('5') // Temporary national id from the police system
     )
   }
 
