@@ -96,6 +96,31 @@ import { useI18n } from '@island.is/web/i18n'
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
 import { ComplaintsCommitteeRulings } from '../components/connected/ComplaintsCommitteeRulings'
+import {
+  CustomsGeneralAdvisories,
+  CustomsGeneralAssessmentLocations,
+  CustomsGeneralCharges,
+  CustomsGeneralClearanceTypes,
+  CustomsGeneralCosts,
+  CustomsGeneralCountryCurrencies,
+  CustomsGeneralCustomsProcedures,
+  CustomsGeneralDeliveryTerms,
+  CustomsGeneralErrors,
+  CustomsGeneralExchangeRates,
+  CustomsGeneralExemptions,
+  CustomsGeneralMarketAreas,
+  CustomsGeneralOrigins,
+  CustomsGeneralPackaging,
+  CustomsGeneralPermits,
+  CustomsGeneralProhibitions,
+  CustomsGeneralQuantityUnits,
+  CustomsGeneralSelectionKeys,
+  CustomsGeneralStorageLocations,
+  CustomsGeneralSupplementaryDocuments,
+  CustomsGeneralTariffs,
+  CustomsGeneralTransactionTypes,
+  CustomsGeneralTransportModes,
+} from '../components/connected/CustomsGeneral'
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
@@ -275,6 +300,98 @@ export const webRenderConnectedComponent = (
     case 'Landspitali/Menu':
       connectedComponent = <LandspitaliMenu slice={slice} />
       break
+    case 'Tollur/Tollgengi': {
+      connectedComponent = <CustomsGeneralExchangeRates />
+      break
+    }
+    case 'Tollur/Abendi': {
+      connectedComponent = <CustomsGeneralAdvisories />
+      break
+    }
+    case 'Tollur/Bonn': {
+      connectedComponent = <CustomsGeneralProhibitions />
+      break
+    }
+    case 'Tollur/Gjold': {
+      connectedComponent = <CustomsGeneralCharges />
+      break
+    }
+    case 'Tollur/Leyfi': {
+      connectedComponent = <CustomsGeneralPermits />
+      break
+    }
+    case 'Tollur/Tollar': {
+      connectedComponent = <CustomsGeneralTariffs />
+      break
+    }
+    case 'Tollur/Undanthagur': {
+      connectedComponent = <CustomsGeneralExemptions />
+      break
+    }
+    case 'Tollur/Afhendingarskilmalar': {
+      connectedComponent = <CustomsGeneralDeliveryTerms />
+      break
+    }
+    case 'Tollur/Flutningsmati': {
+      connectedComponent = <CustomsGeneralTransportModes />
+      break
+    }
+    case 'Tollur/Geymslustadur': {
+      connectedComponent = <CustomsGeneralStorageLocations />
+      break
+    }
+    case 'Tollur/Kostnadur': {
+      connectedComponent = <CustomsGeneralCosts />
+      break
+    }
+    case 'Tollur/Magntala': {
+      connectedComponent = <CustomsGeneralQuantityUnits />
+      break
+    }
+    case 'Tollur/Markadssvaedi': {
+      connectedComponent = <CustomsGeneralMarketAreas />
+      break
+    }
+    case 'Tollur/TegundAfgreidslu': {
+      connectedComponent = <CustomsGeneralClearanceTypes />
+      break
+    }
+    case 'Tollur/TegundVidskipta': {
+      connectedComponent = <CustomsGeneralTransactionTypes />
+      break
+    }
+    case 'Tollur/LandMynt': {
+      connectedComponent = <CustomsGeneralCountryCurrencies />
+      break
+    }
+    case 'Tollur/Tollmedferd': {
+      connectedComponent = <CustomsGeneralCustomsProcedures />
+      break
+    }
+    case 'Tollur/Umbudir': {
+      connectedComponent = <CustomsGeneralPackaging />
+      break
+    }
+    case 'Tollur/Uppruni': {
+      connectedComponent = <CustomsGeneralOrigins />
+      break
+    }
+    case 'Tollur/Valykill': {
+      connectedComponent = <CustomsGeneralSelectionKeys />
+      break
+    }
+    case 'Tollur/Vidbotarskjol': {
+      connectedComponent = <CustomsGeneralSupplementaryDocuments />
+      break
+    }
+    case 'Tollur/Villur': {
+      connectedComponent = <CustomsGeneralErrors />
+      break
+    }
+    case 'Tollur/Akvordunarstadir': {
+      connectedComponent = <CustomsGeneralAssessmentLocations />
+      break
+    }
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
