@@ -81,14 +81,14 @@ export class InternalDefendantController {
   )
   @Post(
     `${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]
     }/:defendantId`,
   )
   @ApiCreatedResponse({
     type: DeliverResponse,
-    description: 'Delivers request case defender info to court via robot email',
+    description: 'Delivers a request case defendant to court via robot email',
   })
-  deliverRequestDefenderInfoToCourt(
+  deliverRequestDefendantToCourt(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -96,10 +96,10 @@ export class InternalDefendantController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering defender info for defendant ${defendantId} of request case ${caseId} to court`,
+      `Delivering defendant ${defendantId} of request case ${caseId} to court`,
     )
 
-    return this.defendantService.deliverRequestDefenderInfoToCourt(
+    return this.defendantService.deliverRequestDefendantToCourt(
       theCase,
       defendant,
       deliverDto.user,

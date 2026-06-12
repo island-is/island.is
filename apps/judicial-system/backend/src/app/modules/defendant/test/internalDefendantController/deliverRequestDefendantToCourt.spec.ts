@@ -16,7 +16,7 @@ interface Then {
 
 type GivenWhenThen = (defendant: Defendant) => Promise<Then>
 
-describe('InternalDefendantController - Deliver request defender info to court', () => {
+describe('InternalDefendantController - Deliver request defendant to court', () => {
   const userId = uuid()
   const user = { id: userId } as User
   const deliverDto = { user }
@@ -60,7 +60,7 @@ describe('InternalDefendantController - Deliver request defender info to court',
       const then = {} as Then
 
       await internalDefendantController
-        .deliverRequestDefenderInfoToCourt(
+        .deliverRequestDefendantToCourt(
           caseId,
           defendantId,
           theCase,
@@ -74,7 +74,7 @@ describe('InternalDefendantController - Deliver request defender info to court',
     }
   })
 
-  describe('defender info delivered', () => {
+  describe('defendant delivered', () => {
     let then: Then
 
     beforeEach(async () => {

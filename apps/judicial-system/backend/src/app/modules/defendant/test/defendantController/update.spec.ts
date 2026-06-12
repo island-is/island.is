@@ -149,7 +149,7 @@ describe('DefendantController - Update', () => {
           elementId: defendantId,
         },
         {
-          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
           elementId: defendantId,
@@ -186,7 +186,7 @@ describe('DefendantController - Update', () => {
           elementId: defendantId,
         },
         {
-          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
           elementId: defendantId,

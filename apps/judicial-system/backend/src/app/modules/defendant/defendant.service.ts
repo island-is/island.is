@@ -85,7 +85,7 @@ export class DefendantService {
         elementId: defendant.id,
       },
       {
-        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDER_INFO,
+        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
         user,
         caseId: defendant.caseId,
         elementId: defendant.id,
@@ -587,7 +587,7 @@ export class DefendantService {
       })
   }
 
-  async deliverRequestDefenderInfoToCourt(
+  async deliverRequestDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
     user: User,
