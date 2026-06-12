@@ -1310,7 +1310,6 @@ export class ApplicationsService {
       notificationDto.screenDto = undefined
     }
 
-    console.log('notificationDto', JSON.stringify(notificationDto, null, 2))
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
