@@ -89,25 +89,24 @@ const TinyMCE = ({
     }
   }, [pickerOpen])
 
-  const handleNodeChange = (editor: TinyMCEEditor) => (e: {
-    element: Element
-  }) => {
-    let node: HTMLElement | null = e.element as HTMLElement
-    while (node && node !== editor.getBody()) {
-      const bg: string = node.style?.backgroundColor ?? ''
-      if (bg && bg !== 'transparent') {
-        const match = HIGHLIGHT_COLORS.find(
-          ({ color }) => hexToRgb(color) === bg,
-        )
-        if (match) {
-          setSelectedColor(match.color)
-          return
+  const handleNodeChange =
+    (editor: TinyMCEEditor) => (e: { element: Element }) => {
+      let node: HTMLElement | null = e.element as HTMLElement
+      while (node && node !== editor.getBody()) {
+        const bg: string = node.style?.backgroundColor ?? ''
+        if (bg && bg !== 'transparent') {
+          const match = HIGHLIGHT_COLORS.find(
+            ({ color }) => hexToRgb(color) === bg,
+          )
+          if (match) {
+            setSelectedColor(match.color)
+            return
+          }
         }
+        node = node.parentElement
       }
-      node = node.parentElement
+      setSelectedColor(null)
     }
-    setSelectedColor(null)
-  }
 
   const setupHighlightButton = (editor: TinyMCEEditor) => {
     editor.ui.registry.addToggleButton('highlightcolor', {
