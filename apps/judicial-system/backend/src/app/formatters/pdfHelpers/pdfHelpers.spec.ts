@@ -1,4 +1,6 @@
-import { htmlToBlocks } from './pdfHelpers'
+import PDFDocument from 'pdfkit'
+
+import { addRichText, htmlToBlocks } from './pdfHelpers'
 
 describe('htmlToBlocks', () => {
   it('wraps plain text in a single block', () => {
@@ -212,5 +214,155 @@ describe('htmlToBlocks', () => {
         ' end',
       ])
     })
+  })
+})
+
+describe('addRichText highlight placement', () => {
+  interface Rect {
+    x: number
+    y: number
+    w: number
+    h: number
+    page: number
+  }
+  interface Frag {
+    text: string
+    x: number
+    y: number
+    page: number
+  }
+
+  // Mirrors the document setup in indictmentCourtRecordPdf.ts, instrumented to
+  // record where highlight rects are filled and where text fragments are
+  // actually laid out by PDFKit, so the two can be compared geometrically.
+  const createInstrumentedDoc = () => {
+    const doc = new PDFDocument({
+      size: 'A4',
+      margins: { top: 70, bottom: 70, left: 70, right: 70 },
+      bufferPages: true,
+    })
+    doc.lineGap(2)
+    doc.font('Times-Roman').fontSize(11)
+
+    const rects: Rect[] = []
+    const frags: Frag[] = []
+    const currentPage = () => doc.bufferedPageRange().count
+
+    const originalRect = doc.rect.bind(doc)
+    doc.rect = (x: number, y: number, w: number, h: number) => {
+      rects.push({ x, y, w, h, page: currentPage() })
+      return originalRect(x, y, w, h)
+    }
+
+    const docInternals = (doc as unknown) as {
+      _fragment: (text: string, x: number, y: number, options: unknown) => void
+    }
+    const originalFragment = docInternals._fragment.bind(doc)
+    docInternals._fragment = (
+      text: string,
+      x: number,
+      y: number,
+      options: unknown,
+    ) => {
+      frags.push({ text: `${text}`, x, y, page: currentPage() })
+      return originalFragment(text, x, y, options)
+    }
+
+    return { doc, rects, frags }
+  }
+
+  const findFragmentWith = (frags: Frag[], needle: string): Frag => {
+    const frag = frags.find((f) => f.text.includes(needle))
+    expect(frag).toBeDefined()
+    return frag as Frag
+  }
+
+  // The rect is drawn slightly above the line's text origin (descender
+  // compensation), so allow a few points of slack when comparing.
+  const Y_TOLERANCE = 5
+
+  it('draws the rect on the text when the highlight starts the paragraph', () => {
+    const { doc, rects, frags } = createInstrumentedDoc()
+
+    addRichText(
+      doc,
+      '<p><span style="background-color: #FFF066;">MARKER</span> trailing text</p>',
+    )
+
+    const frag = findFragmentWith(frags, 'MARKER')
+    expect(rects).toHaveLength(1)
+    expect(Math.abs(rects[0].x - frag.x)).toBeLessThanOrEqual(2)
+    expect(Math.abs(rects[0].y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+    doc.end()
+  })
+
+  it('draws the rect on the correct line when preceding text wraps', () => {
+    const { doc, rects, frags } = createInstrumentedDoc()
+
+    // ~40 words of plain text guarantee at least one wrapped line before the
+    // highlighted word, which must end up on the same line as its rect.
+    const filler = 'orðalengja '.repeat(40).trim()
+    addRichText(
+      doc,
+      `<p>${filler} <span style="background-color: #FFF066;">MARKER</span></p>`,
+    )
+
+    const frag = findFragmentWith(frags, 'MARKER')
+    expect(rects).toHaveLength(1)
+    const rect = rects[0]
+
+    // Vertical: the rect must sit on the highlighted word's line, not line 1.
+    expect(Math.abs(rect.y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+
+    // Horizontal: the rect must start where the word starts and stay on the
+    // page (the old accumulation placed it beyond the right margin).
+    const markerX = frag.x + doc.widthOfString(frag.text.split('MARKER')[0])
+    expect(Math.abs(rect.x - markerX)).toBeLessThanOrEqual(2)
+    expect(rect.x + rect.w).toBeLessThanOrEqual(
+      doc.page.width - doc.page.margins.right + 2,
+    )
+    doc.end()
+  })
+
+  it('draws one rect per laid-out line when a highlight wraps', () => {
+    const { doc, rects, frags } = createInstrumentedDoc()
+
+    const highlighted = 'gulmerking '.repeat(40).trim()
+    addRichText(
+      doc,
+      `<p><span style="background-color: #FFF066;">${highlighted}</span></p>`,
+    )
+
+    const highlightFrags = frags.filter((f) => f.text.includes('gulmerking'))
+    const fragYs = [...new Set(highlightFrags.map((f) => Math.round(f.y)))]
+    expect(fragYs.length).toBeGreaterThan(1)
+    // One rect per laid-out line of highlighted text.
+    expect(rects.length).toBe(fragYs.length)
+
+    for (const rect of rects) {
+      expect(
+        fragYs.some((y) => Math.abs(rect.y - y) <= Y_TOLERANCE),
+      ).toBeTruthy()
+    }
+    doc.end()
+  })
+
+  it('keeps rect and text together when the block moves to a new page', () => {
+    const { doc, rects, frags } = createInstrumentedDoc()
+
+    // Park the cursor so close to the bottom margin that the first line no
+    // longer fits; PDFKit moves the text to a new page and the rect must
+    // follow it.
+    doc.y = doc.page.height - doc.page.margins.bottom - 5
+    addRichText(
+      doc,
+      '<p><span style="background-color: #FFF066;">MARKER</span></p>',
+    )
+
+    const frag = findFragmentWith(frags, 'MARKER')
+    expect(rects).toHaveLength(1)
+    expect(rects[0].page).toBe(frag.page)
+    expect(Math.abs(rects[0].y - frag.y)).toBeLessThanOrEqual(Y_TOLERANCE)
+    doc.end()
   })
 })
