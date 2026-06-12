@@ -14,6 +14,7 @@ import { FileUploadSettings } from './components/UploadSettings'
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
+
   return (
     <>
       {currentItem.fieldType === FieldTypesEnum.MESSAGE && (

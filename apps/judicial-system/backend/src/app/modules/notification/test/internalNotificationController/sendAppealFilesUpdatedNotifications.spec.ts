@@ -4,7 +4,6 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   AppealCaseNotificationType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -50,7 +49,7 @@ describe('InternalNotificationController - Send appeal case files updated notifi
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -85,7 +84,7 @@ describe('InternalNotificationController - Send appeal case files updated notifi
           } as Case,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED,
           },
         )
         .then((result) => (then.result = result))

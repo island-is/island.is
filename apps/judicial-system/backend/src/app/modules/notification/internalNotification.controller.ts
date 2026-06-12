@@ -27,6 +27,7 @@ import {
 } from '../defendant'
 import { Case, CivilClaimant, Defendant } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
+import { AppealCaseNotificationDto } from './dto/appealCaseNotification.dto'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'
 import { DefendantNotificationDto } from './dto/defendantNotification.dto'
@@ -38,6 +39,7 @@ import {
 } from './dto/notificationDispatch.dto'
 import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { AppealCaseNotificationService } from './services/appealCaseNotification/appealCaseNotification.service'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
@@ -52,6 +54,7 @@ import { SubpoenaNotificationService } from './services/subpoenaNotification/sub
 export class InternalNotificationController {
   constructor(
     private readonly caseNotificationService: CaseNotificationService,
+    private readonly appealCaseNotificationService: AppealCaseNotificationService,
     private readonly notificationDispatchService: NotificationDispatchService,
     private readonly institutionNotificationService: InstitutionNotificationService,
     private readonly subpoenaNotificationService: SubpoenaNotificationService,
@@ -81,6 +84,29 @@ export class InternalNotificationController {
       theCase,
       notificationDto.user,
       notificationDto.userDescriptor,
+      notificationDto.userIds,
+    )
+  }
+
+  @Post(`case/:caseId/${messageEndpoint[MessageType.APPEAL_CASE_NOTIFICATION]}`)
+  @UseGuards(CaseHasExistedGuard)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends an appeal case notification for an existing case',
+  })
+  sendAppealCaseNotification(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() notificationDto: AppealCaseNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Sending ${notificationDto.type} appeal case notification for case ${caseId}`,
+    )
+
+    return this.appealCaseNotificationService.sendAppealCaseNotification(
+      notificationDto.type,
+      theCase,
+      notificationDto.user,
       notificationDto.userIds,
     )
   }

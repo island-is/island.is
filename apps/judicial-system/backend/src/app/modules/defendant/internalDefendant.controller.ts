@@ -75,6 +75,37 @@ export class InternalDefendantController {
     )
   }
 
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    DefendantExistsGuard,
+  )
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]
+    }/:defendantId`,
+  )
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a request case defendant to court via robot email',
+  })
+  deliverRequestDefendantToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering defendant ${defendantId} of request case ${caseId} to court`,
+    )
+
+    return this.defendantService.deliverRequestDefendantToCourt(
+      theCase,
+      defendant,
+      deliverDto.user,
+    )
+  }
+
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantNationalIdExistsGuard)
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({

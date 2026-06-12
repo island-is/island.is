@@ -13,6 +13,8 @@ export const messageTypeToSuspensionCategory: Partial<
 > = {
   [MessageType.DELIVERY_TO_COURT_PROSECUTOR]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_DEFENDANT]: MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]:
+    MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO]:
     MessageSuspensionCategory.COURT,

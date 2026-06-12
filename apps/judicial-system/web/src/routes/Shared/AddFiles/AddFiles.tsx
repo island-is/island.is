@@ -11,6 +11,7 @@ import {
 import {
   isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -232,7 +233,11 @@ const AddFiles: FC = () => {
         {CaseInfo}
         <SectionHeading
           title={formatMessage(strings.uploadFilesHeading)}
-          description={formatMessage(strings.uploadFilesDescription)}
+          description={`Gögnin verða að hafa lýsandi skráarheiti.${
+            isProsecutionUser(user)
+              ? ' Athugið að viðbótar rafræn gögn eru send til dómstóla í gegnum IDES/LÖKE gluggann.'
+              : ''
+          }`}
         />
         <UploadFiles
           files={uploadFiles}

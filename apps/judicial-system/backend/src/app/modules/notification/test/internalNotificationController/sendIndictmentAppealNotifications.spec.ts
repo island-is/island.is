@@ -10,7 +10,6 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   InstitutionType,
-  RequestCaseNotificationType,
   TrackedNotificationType,
   User,
   UserRole,
@@ -93,7 +92,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -118,7 +117,7 @@ describe('InternalNotificationController - Send indictment appeal to court of ap
           } as Case,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         )
         .then((result) => (then.result = result))
@@ -318,7 +317,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -340,7 +339,7 @@ describe('InternalNotificationController - Send indictment appeal received by co
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT as unknown as RequestCaseNotificationType,
+            type: TrackedNotificationType.APPEAL_RECEIVED_BY_COURT,
           },
         )
         .then((result) => (then.result = result))
@@ -462,7 +461,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -486,7 +485,7 @@ describe('InternalNotificationController - Send indictment appeal statement noti
           } as Case,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_STATEMENT as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_STATEMENT,
           },
         )
         .then((result) => (then.result = result))
@@ -659,7 +658,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -679,7 +678,7 @@ describe('InternalNotificationController - Send indictment appeal completed noti
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -790,7 +789,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
             } as User)
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -814,7 +813,7 @@ describe('InternalNotificationController - Send indictment appeal withdrawn noti
           } as Case,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN,
           },
         )
         .then((result) => (then.result = result))
@@ -970,7 +969,7 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -988,7 +987,7 @@ describe('InternalNotificationController - Send indictment appeal discontinued n
           } as Case,
           {
             user: { id: uuid() } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))

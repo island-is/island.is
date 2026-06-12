@@ -126,7 +126,7 @@ describe('LimitedAccessAppealCaseController - Transition', () => {
     it('should queue the appeal withdrawn notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
         }),
