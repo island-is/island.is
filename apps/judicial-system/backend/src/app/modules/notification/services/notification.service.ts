@@ -68,8 +68,15 @@ export class NotificationService {
           this.addMessageForNotificationToQueue(type, user, theCase)
         }
         break
-      case UserInitiatedNotificationType.HEADS_UP:
       case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
+        addMessagesToQueue({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+          body: { type },
+        })
+        break
+      case UserInitiatedNotificationType.HEADS_UP:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)

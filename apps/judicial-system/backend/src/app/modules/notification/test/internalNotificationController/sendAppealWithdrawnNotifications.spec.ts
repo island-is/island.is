@@ -7,7 +7,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   AppealCaseNotificationType,
   InstitutionType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -89,7 +88,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -123,7 +122,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
               role: userRole,
               institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
             } as User,
-            type: AppealCaseNotificationType.APPEAL_WITHDRAWN as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_WITHDRAWN,
           },
         )
         .then((result) => (then.result = result))

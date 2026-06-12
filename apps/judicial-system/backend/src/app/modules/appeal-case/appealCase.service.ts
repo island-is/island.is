@@ -141,7 +141,7 @@ export class AppealCaseService {
     }
 
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
@@ -193,7 +193,7 @@ export class AppealCaseService {
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
@@ -224,7 +224,7 @@ export class AppealCaseService {
 
     addMessagesToQueue(
       {
-        type: MessageType.NOTIFICATION,
+        type: MessageType.APPEAL_CASE_NOTIFICATION,
         user,
         caseId: theCase.id,
         body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
@@ -252,7 +252,7 @@ export class AppealCaseService {
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
@@ -264,7 +264,7 @@ export class AppealCaseService {
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
@@ -344,7 +344,7 @@ export class AppealCaseService {
     userIds: string[],
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
       body: {

@@ -6,7 +6,6 @@ import { SmsService } from '@island.is/nova-sms'
 import {
   AppealCaseNotificationType,
   InstitutionType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -58,7 +57,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
           {
             id: caseId,
@@ -78,7 +77,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
           } as Case,
           {
             user,
-            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         )
         .then((result) => (then.result = result))
