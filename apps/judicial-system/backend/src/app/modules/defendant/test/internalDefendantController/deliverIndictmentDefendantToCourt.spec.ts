@@ -22,7 +22,7 @@ type GivenWhenThen = (
   body: DeliverDto,
 ) => Promise<Then>
 
-describe('InternalDefendantController - Deliver indictment defender to court', () => {
+describe('InternalDefendantController - Deliver indictment defendant to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const defendantId = uuid()
@@ -67,7 +67,7 @@ describe('InternalDefendantController - Deliver indictment defender to court', (
       const then = {} as Then
 
       await internalDefendantController
-        .deliverIndictmentDefenderToCourt(
+        .deliverIndictmentDefendantToCourt(
           caseId,
           defendantId,
           theCase,
@@ -81,7 +81,7 @@ describe('InternalDefendantController - Deliver indictment defender to court', (
     }
   })
 
-  it('should deliver the defender information to court', async () => {
+  it('should deliver the defendant information to court', async () => {
     const then = await givenWhenThen(caseId, defendantId, theCase, defendant, {
       user,
     })

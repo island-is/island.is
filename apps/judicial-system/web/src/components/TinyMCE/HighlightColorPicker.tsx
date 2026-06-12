@@ -1,17 +1,8 @@
 import React, { forwardRef } from 'react'
 import { motion } from 'motion/react'
 
-import { theme } from '@island.is/island-ui/theme'
-
+import { HIGHLIGHT_COLORS } from './pasteNormalization'
 import * as styles from './TinyMCE.css'
-
-export const HIGHLIGHT_COLORS = [
-  { label: 'Yellow', color: theme.color.yellow400 },
-  { label: 'Blue', color: theme.color.blue100 },
-  { label: 'Mint', color: theme.color.mint200 },
-  { label: 'Rose', color: theme.color.roseTinted200 },
-  { label: 'Purple', color: theme.color.purple200 },
-]
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.92, y: -6 },

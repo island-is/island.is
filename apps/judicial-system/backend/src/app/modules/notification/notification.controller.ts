@@ -69,6 +69,7 @@ export class NotificationController {
       notificationDto.eventOnly,
       theCase,
       user,
+      notificationDto.properties,
     )
   }
 }
