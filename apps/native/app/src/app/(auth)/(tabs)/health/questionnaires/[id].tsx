@@ -76,14 +76,14 @@ export default function QuestionnaireDetailScreen() {
   const intl = useIntl()
   const locale = useLocale()
   const { openBrowser } = useBrowser()
-  const shouldSkipQuery = !id
+  const shouldSkipQuery = !id || !organization
   const { data, loading, error, refetch, networkStatus } =
     useGetQuestionnaireQuery({
       variables: {
         locale,
         input: {
           id: id ?? '',
-          organization: organization ?? undefined,
+          organization: organization as QuestionnaireQuestionnairesOrganizationEnum,
         },
       },
       skip: shouldSkipQuery,
@@ -141,7 +141,7 @@ export default function QuestionnaireDetailScreen() {
 
   let errorContent: React.ReactNode = null
 
-  if (!id) {
+  if (!id || !organization) {
     errorContent = (
       <View>
         <Typography variant="heading3">
