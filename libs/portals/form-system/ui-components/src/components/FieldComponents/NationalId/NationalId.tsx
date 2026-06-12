@@ -144,6 +144,7 @@ export const NationalId = ({
             type: 'SET_ADDRESS',
             payload: {
               id: item.id,
+              valueIndex,
               address,
               postalCode,
               municipality,
@@ -194,6 +195,7 @@ export const NationalId = ({
           type: 'SET_ADDRESS',
           payload: {
             id: item.id,
+            valueIndex,
             address: '',
             postalCode: '',
             municipality: '',
@@ -330,22 +332,13 @@ export const NationalId = ({
                 name={postalCodeField}
                 control={control}
                 defaultValue={getValue(item, 'postalCode', valueIndex) ?? ''}
-                rules={{
-                  required: {
-                    value: item?.isRequired ?? false,
-                    message: formatMessage(m.required),
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <Input
                     label={formatMessage(m.postalCode)}
                     name="postalCode"
-                    required={item?.isRequired ?? false}
                     backgroundColor="blue"
                     value={field.value}
                     readOnly
-                    hasError={!!fieldState.error || !!hasError}
-                    errorMessage={fieldState.error?.message}
                   />
                 )}
               />
@@ -357,22 +350,13 @@ export const NationalId = ({
                 name={municipalityField}
                 control={control}
                 defaultValue={getValue(item, 'municipality', valueIndex) ?? ''}
-                rules={{
-                  required: {
-                    value: item?.isRequired ?? false,
-                    message: formatMessage(m.required),
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <Input
                     label={formatMessage(m.city)}
                     name="municipality"
-                    required={item?.isRequired ?? false}
                     backgroundColor="blue"
                     value={field.value}
                     readOnly
-                    hasError={!!fieldState.error || !!hasError}
-                    errorMessage={fieldState.error?.message}
                   />
                 )}
               />

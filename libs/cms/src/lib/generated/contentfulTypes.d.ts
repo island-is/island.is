@@ -1477,7 +1477,7 @@ export interface IFeaturedArticlesFields {
   image?: Asset | undefined
 
   /** Articles */
-  articles?: IArticle[] | undefined
+  articles?: (IArticle | IManual)[] | undefined
 
   /** Link */
   link?: ILink | undefined
