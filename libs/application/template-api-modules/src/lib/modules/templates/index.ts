@@ -1,3 +1,5 @@
+import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
+import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
 import { SubmitDocumentsService } from './vmst/submit-documents/submit-documents.service'
 import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
@@ -288,6 +290,7 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
+  ConfirmJobOrIncomeModule,
 ]
 
 export const services = [
@@ -386,4 +389,5 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
+  ConfirmJobOrIncomeService,
 ]
