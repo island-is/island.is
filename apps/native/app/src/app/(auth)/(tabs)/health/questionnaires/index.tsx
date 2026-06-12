@@ -15,6 +15,7 @@ import {
 import { useBrowser } from '@/hooks/use-browser'
 import { useLocale } from '@/hooks/use-locale'
 import {
+  fontByWeight,
   Problem,
   QuestionnaireCard,
   type QuestionnaireCardAction,
@@ -104,6 +105,7 @@ export default function QuestionnairesScreen() {
 
   const isInitialLoading = loading && !data
   const [refetching, setRefetching] = useState(false)
+  const [showExpired, setShowExpired] = useState(false)
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -164,15 +166,45 @@ export default function QuestionnairesScreen() {
     const result: Item[] = []
     for (const item of data?.questionnairesList?.questionnaires ?? []) {
       if (!item?.id || seen.has(item.id)) continue
+      if (
+        !showExpired &&
+        item.status === QuestionnaireQuestionnairesStatusEnum.Expired
+      ) {
+        continue
+      }
       seen.add(item.id)
       result.push(item)
     }
     return result
-  }, [data])
+  }, [data, showExpired])
 
   return (
     <>
-      <StackScreen networkStatus={networkStatus} />
+      <StackScreen
+        networkStatus={networkStatus}
+        options={{
+          headerRightItems: isInitialLoading
+            ? []
+            : [
+                {
+                  type: 'button',
+                  label: intl.formatMessage({
+                    id: showExpired
+                      ? 'health.questionnaires.action.hide-expired'
+                      : 'health.questionnaires.action.show-expired',
+                  }),
+                  labelStyle: {
+                    fontSize: 15,
+                    fontWeight: '400',
+                    fontFamily: fontByWeight('400'),
+                  },
+                  onPress() {
+                    setShowExpired((v) => !v)
+                  },
+                },
+              ],
+        }}
+      />
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
