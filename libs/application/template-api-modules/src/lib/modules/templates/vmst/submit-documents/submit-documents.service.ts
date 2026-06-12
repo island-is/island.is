@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService, sharedModuleConfig } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,7 +9,6 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FetchError } from '@island.is/clients/middlewares'
 import { S3Service } from '@island.is/nest/aws'
-import { ConfigType } from '@nestjs/config'
 import { errorMessages } from '@island.is/application/templates/vmst/submit-documents'
 
 interface DocumentEntry {
@@ -55,14 +52,18 @@ const getMimeType = (fileName: string): string | undefined => {
 export class SubmitDocumentsService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
     private readonly s3Service: S3Service,
-    @Inject(sharedModuleConfig.KEY)
-    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.VMST_SUBMIT_DOCUMENTS)
+  }
+
+  async getRequestedAttachments({ auth }: TemplateApiModuleActionProps) {
+    const { applicantId } =
+      await this.vmstUnemploymentClientService.resolveApplicant(auth)
+    return await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
+      applicantId,
+    )
   }
 
   async checkEligibility({

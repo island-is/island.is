@@ -1,4 +1,5 @@
 import {
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -17,8 +18,54 @@ export const uploadDocumentsSection = buildSection({
     buildMultiField({
       id: 'submitDocumentsMultiField',
       title: udm.title,
-      description: udm.multiFieldDescription,
       children: [
+        buildDescriptionField({
+          id: 'uploadDocument.descriptionField',
+          condition: (_, externalData) => {
+            const requestedAttachments =
+              getValueViaPath<{ attachmentTypeId?: string }[]>(
+                externalData,
+                'requestedAttachments.data',
+              ) ?? []
+
+            return requestedAttachments.length > 0 ? true : false
+          },
+          description: (application, _locale, formatMessage) => {
+            const requestedAttachments =
+              getValueViaPath<{ attachmentTypeId?: string }[]>(
+                application.externalData,
+                'requestedAttachments.data',
+              ) ?? []
+            const attachmentTypes =
+              getValueViaPath<{ id: string; name: string }[]>(
+                application.externalData,
+                'attachmentTypes.data',
+              ) ?? []
+
+            const names = requestedAttachments
+              .map(
+                (ra) =>
+                  attachmentTypes.find((at) => at.id === ra.attachmentTypeId)
+                    ?.name,
+              )
+              .filter(Boolean)
+
+            if (names.length === 0) {
+              return ''
+            }
+
+            const heading = formatMessage
+              ? formatMessage(udm.requestedAttachmentsDescription)
+              : ''
+            const bulletList = names.map((name) => `* ${name}`).join('\n')
+
+            return `${heading}\n\n${bulletList}`
+          },
+        }),
+        buildDescriptionField({
+          id: 'uploadDocuments.descriptionFieldTwo',
+          description: udm.multiFieldDescription,
+        }),
         buildTableRepeaterField({
           id: 'documents',
           maxRows: MAX_DOCUMENTS,

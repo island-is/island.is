@@ -50,6 +50,12 @@ export const uploadDocuments = defineMessages({
     defaultMessage: 'Athugasemd',
     description: 'Label for comment input',
   },
+  requestedAttachmentsDescription: {
+    id: 'vmst.vsd.application:uploadDocuments.requestedAttachmentsDescription',
+    defaultMessage:
+      'Vinnumálastofnun óskar eftir að þú skilir inn eftirfarandi gögnum:',
+    description: 'Requested attachments description heading',
+  },
 })
 
 export const application = defineMessages({

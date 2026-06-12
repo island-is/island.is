@@ -61,7 +61,7 @@ const MyData = () => {
 
   const coreLoading = actionsLoading || attachmentTypesLoading
   const requestedLoading = coreLoading || attachmentsLoading
-  const submittedLoading = coreLoading || applicantAttachmentsLoading
+  const applicantDataLoading = coreLoading || applicantAttachmentsLoading
 
   const requestedAttachmentsHasError = !!attachmentsError
   const submittedAttachmentsHasError = !!applicantAttachmentsError
@@ -74,7 +74,10 @@ const MyData = () => {
     requestedAttachments?.filter((a) => !a.attachmentId) ?? []
 
   const submittedAttachments =
-    applicantAttachmentsData?.vmstApplicantAttachments ?? []
+    applicantAttachmentsData?.vmstApplicantAttachments?.userSubmitted ?? []
+
+  const lettersAttachments =
+    applicantAttachmentsData?.vmstApplicantAttachments?.letters ?? []
 
   const getAttachmentName = (attachmentTypeId?: string | null) => {
     if (!attachmentTypeId) return ''
@@ -155,11 +158,11 @@ const MyData = () => {
             <Text variant="eyebrow" color="purple600" marginBottom={2}>
               {formatMessage(um.myDataSubmittedAttachmentsHeading)}
             </Text>
-            {submittedLoading && <SkeletonLoader repeat={3} space={2} />}
-            {!submittedLoading && submittedAttachmentsHasError && (
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
               <Problem type="no_data" noBorder={false} />
             )}
-            {!submittedLoading &&
+            {!applicantDataLoading &&
               !submittedAttachmentsHasError &&
               submittedAttachments.length > 0 && (
                 <Stack space={0}>
@@ -210,23 +213,21 @@ const MyData = () => {
           {/* Bref */}
           <Box paddingTop={4}>
             <Text variant="eyebrow" color="purple600" marginBottom={2}>
-              {formatMessage(um.myDataSubmittedAttachmentsHeading)}
+              {formatMessage(um.myDataLettersHeading)}
             </Text>
-            {submittedLoading && <SkeletonLoader repeat={3} space={2} />}
-            {!submittedLoading && submittedAttachmentsHasError && (
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
               <Problem type="no_data" noBorder={false} />
             )}
-            {!submittedLoading &&
+            {!applicantDataLoading &&
               !submittedAttachmentsHasError &&
-              submittedAttachments.length > 0 && (
+              lettersAttachments.length > 0 && (
                 <Stack space={0}>
-                  {submittedAttachments.map((attachment) => {
+                  {lettersAttachments.map((attachment) => {
                     return (
                       <Box key={attachment.id}>
                         <UserInfoLine
-                          label={
-                            getAttachmentName(attachment.typeId) || attachment
-                          }
+                          label={attachment.name}
                           content={
                             attachment.created
                               ? formatDateFns(attachment.created, 'dd.MM.yyyy')
