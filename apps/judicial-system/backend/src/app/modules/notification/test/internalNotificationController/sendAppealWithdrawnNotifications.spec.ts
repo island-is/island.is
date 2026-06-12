@@ -16,7 +16,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../repository'
+import { AppealCase, Case, Notification } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -59,6 +59,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
   const courtId = uuid()
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -87,9 +88,22 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate,
+        appealAssistant: {
+          name: appealAssistant.name,
+          email: appealAssistant.email,
+        },
+        appealJudge1: {
+          name: appealJudge1.name,
+          email: appealJudge1.email,
+        },
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: {
@@ -101,21 +115,12 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCase: {
-              appealReceivedByCourtDate,
-              appealAssistant: {
-                name: appealAssistant.name,
-                email: appealAssistant.email,
-              },
-              appealJudge1: {
-                name: appealJudge1.name,
-                email: appealJudge1.email,
-              },
-            },
+            appealCase,
             judge: { name: judge.name, email: judge.email },
             registrar: { name: registrar.name, email: registrar.email },
             notifications,
           } as Case,
+          appealCase,
           {
             user: {
               id: userId,

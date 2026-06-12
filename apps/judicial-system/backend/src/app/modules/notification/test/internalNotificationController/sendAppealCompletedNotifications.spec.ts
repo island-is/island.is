@@ -18,7 +18,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -42,6 +42,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const courtId = uuid()
@@ -72,9 +73,17 @@ describe('InternalNotificationController - Send appeal completed notifications',
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision:
+          appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.CUSTODY,
@@ -92,13 +101,9 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderEmail: defender.email,
             courtCaseNumber,
             courtId: courtId,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision:
-                appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
-              appealRulingModifiedHistory,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
             type: AppealCaseNotificationType.APPEAL_COMPLETED,

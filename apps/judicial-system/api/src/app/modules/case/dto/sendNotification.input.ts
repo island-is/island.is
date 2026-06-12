@@ -1,4 +1,5 @@
 import { Allow, IsOptional } from 'class-validator'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -18,4 +19,12 @@ export class SendNotificationInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly eventOnly?: boolean
+
+  // Generic key/value context for notification-specific data. For appeal case
+  // notifications this carries an `appealCaseId` identifying which appeal case
+  // the notification is about.
+  @Allow()
+  @IsOptional()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly properties?: { [key: string]: string }
 }
