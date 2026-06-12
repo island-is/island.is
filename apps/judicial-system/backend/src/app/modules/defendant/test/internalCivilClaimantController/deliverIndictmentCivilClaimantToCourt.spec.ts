@@ -22,7 +22,7 @@ type GivenWhenThen = (
   body: DeliverDto,
 ) => Promise<Then>
 
-describe('InternalCivilClaimantController - Deliver indictment spokesperson to court', () => {
+describe('InternalCivilClaimantController - Deliver indictment civil claimant to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const civilClaimantId = uuid()
@@ -70,7 +70,7 @@ describe('InternalCivilClaimantController - Deliver indictment spokesperson to c
       const then = {} as Then
 
       await internalCivilClaimantController
-        .deliverIndictmentSpokespersonToCourt(
+        .deliverIndictmentCivilClaimantToCourt(
           caseId,
           civilClaimantId,
           theCase,
@@ -84,7 +84,7 @@ describe('InternalCivilClaimantController - Deliver indictment spokesperson to c
     }
   })
 
-  it('should deliver the spokesperson information to court', async () => {
+  it('should deliver the civil claimant information to court', async () => {
     const then = await givenWhenThen(
       caseId,
       civilClaimantId,
@@ -142,24 +142,38 @@ describe('InternalCivilClaimantController - Deliver indictment spokesperson to c
     expect(then.error).toBeUndefined()
   })
 
-  it('should return delivered false if required spokesperson fields are missing', async () => {
-    const incompleteCivilClaimant = {
+  it('should deliver civil claimant information without spokesperson', async () => {
+    const civilClaimantWithoutSpokesperson = {
       ...civilClaimant,
-      nationalId: undefined,
+      hasSpokesperson: false,
+      spokespersonNationalId: undefined,
+      spokespersonIsLawyer: undefined,
+      spokespersonName: undefined,
+      spokespersonEmail: undefined,
     } as CivilClaimant
 
     const then = await givenWhenThen(
       caseId,
       civilClaimantId,
       theCase,
-      incompleteCivilClaimant,
+      civilClaimantWithoutSpokesperson,
       { user },
     )
 
     expect(
       mockCourtService.updateIndictmentCaseWithSpokespersonInfo,
-    ).not.toHaveBeenCalled()
-    expect(then.result).toEqual({ delivered: false })
+    ).toHaveBeenCalledWith(
+      user,
+      caseId,
+      courtName,
+      courtCaseNumber,
+      civilClaimantWithoutSpokesperson.nationalId,
+      civilClaimantWithoutSpokesperson.name,
+      undefined,
+      undefined,
+    )
+
+    expect(then.result).toEqual({ delivered: true })
     expect(then.error).toBeUndefined()
   })
 

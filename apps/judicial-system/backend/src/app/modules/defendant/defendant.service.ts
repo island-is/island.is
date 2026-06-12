@@ -130,7 +130,7 @@ export class DefendantService {
     ) {
       // Defender choice was just confirmed by the court
       addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
         user,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -586,7 +586,7 @@ export class DefendantService {
       })
   }
 
-  async deliverIndictmentDefenderToCourt(
+  async deliverIndictmentDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
     user: User,
@@ -604,7 +604,7 @@ export class DefendantService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update defender info for defendant ${defendant.id} of indictment case ${theCase.id}`,
+          `Failed to update defendant info for defendant ${defendant.id} of indictment case ${theCase.id}`,
           { reason },
         )
 

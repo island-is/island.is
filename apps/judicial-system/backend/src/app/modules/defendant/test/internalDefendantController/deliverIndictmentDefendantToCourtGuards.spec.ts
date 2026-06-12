@@ -4,14 +4,14 @@ import { CaseTypeGuard } from '../../../case'
 import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 
-describe('InternalDefendantController - Deliver indictment defender to court guards', () => {
+describe('InternalDefendantController - Deliver indictment defendant to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalDefendantController.prototype.deliverIndictmentDefenderToCourt,
+      InternalDefendantController.prototype.deliverIndictmentDefendantToCourt,
     )
   })
 

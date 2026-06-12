@@ -119,7 +119,7 @@ describe('CivilClaimantController - Update', () => {
     it('should queue delivery and notification messages', () => {
       expect(mockQueuedMessages).toEqual([
         {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_SPOKESPERSON,
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
           user,
           caseId,
           elementId: civilClaimantId,
@@ -170,11 +170,13 @@ describe('CivilClaimantController - Update', () => {
     })
   })
 
-  describe('civil claimant spokesperson confirmed without required delivery fields', () => {
+  describe('civil claimant spokesperson confirmed without spokesperson', () => {
     const civilClaimantUpdate = { isSpokespersonConfirmed: true }
     const updatedCivilClaimant = {
       id: civilClaimantId,
       caseId,
+      nationalId: '1234567890',
+      name: 'Brotaþoli Brotaþolason',
       ...civilClaimantUpdate,
     }
 
@@ -185,8 +187,14 @@ describe('CivilClaimantController - Update', () => {
       await givenWhenThen(theCase, civilClaimantId, civilClaimantUpdate)
     })
 
-    it('should queue notifications but not delivery', () => {
+    it('should queue delivery and notification messages', () => {
       expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
+          user,
+          caseId,
+          elementId: civilClaimantId,
+        },
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId,

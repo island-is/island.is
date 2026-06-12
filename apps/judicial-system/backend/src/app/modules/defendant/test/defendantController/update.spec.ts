@@ -207,7 +207,7 @@ describe('DefendantController - Update', () => {
         it('should queue messages if defender has been confirmed', () => {
           expect(mockQueuedMessages).toEqual([
             {
-              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
               user,
               caseId,
               elementId: defendantId,

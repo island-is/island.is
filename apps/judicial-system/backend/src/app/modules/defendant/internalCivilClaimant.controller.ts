@@ -38,14 +38,14 @@ export class InternalCivilClaimantController {
   @UseGuards(new CaseTypeGuard(indictmentCases), CivilClaimantExistsGuard)
   @Post(
     `${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_SPOKESPERSON]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT]
     }/:civilClaimantId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers indictment case spokesperson info to court',
+    description: 'Delivers indictment case civil claimant info to court',
   })
-  deliverIndictmentSpokespersonToCourt(
+  deliverIndictmentCivilClaimantToCourt(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
     @CurrentCase() theCase: Case,
@@ -53,10 +53,10 @@ export class InternalCivilClaimantController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering spokesperson info for civil claimant ${civilClaimantId} of case ${caseId} to court`,
+      `Delivering civil claimant info for civil claimant ${civilClaimantId} of case ${caseId} to court`,
     )
 
-    return this.civilClaimantService.deliverIndictmentSpokespersonToCourt(
+    return this.civilClaimantService.deliverIndictmentCivilClaimantToCourt(
       theCase,
       civilClaimant,
       deliverDto.user,
