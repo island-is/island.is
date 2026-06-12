@@ -159,15 +159,16 @@ export default function QuestionnairesScreen() {
     [getActionList, intl, openDetail],
   )
 
-  const questionnaires = useMemo(
-    () =>
-      (data?.questionnairesList?.questionnaires ?? []).filter(
-        (item, index, self) =>
-          item?.id && index === self.findIndex((t) => t?.id === item?.id),
-      ),
-
-    [data],
-  )
+  const questionnaires = useMemo(() => {
+    const seen = new Set<string>()
+    const result: Item[] = []
+    for (const item of data?.questionnairesList?.questionnaires ?? []) {
+      if (!item?.id || seen.has(item.id)) continue
+      seen.add(item.id)
+      result.push(item)
+    }
+    return result
+  }, [data])
 
   return (
     <>

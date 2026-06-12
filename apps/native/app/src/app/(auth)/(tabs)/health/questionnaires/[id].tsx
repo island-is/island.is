@@ -100,13 +100,16 @@ export default function QuestionnaireDetailScreen() {
   const [refetching, setRefetching] = useState(false)
 
   const onRefresh = useCallback(async () => {
+    if (shouldSkipQuery) {
+      return
+    }
     setRefetching(true)
     try {
       await refetch()
     } finally {
       setRefetching(false)
     }
-  }, [refetch])
+  }, [refetch, shouldSkipQuery])
 
   const close = useCallback(() => {
     router.back()
@@ -160,20 +163,6 @@ export default function QuestionnaireDetailScreen() {
   } else if (!loading && !error && !base) {
     errorContent = <Problem type="no_data" withContainer />
   }
-
-  // if (errorContent) {
-  //   return (
-  //     <Host>
-  //       <Stack.Screen options={{ title: '', headerShown: false }} />
-  //       <NavigationBarSheet
-  //         componentId="questionnaire-detail"
-  //         onClosePress={close}
-  //         style={{ marginHorizontal: 16 }}
-  //       />
-  //       <Content>{errorContent}</Content>
-  //     </Host>
-  //   )
-  // }
 
   const isAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.Answered
