@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { Text, Box } from '@island.is/island-ui/core'
 
@@ -32,8 +32,13 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   const nameField = `${fieldIndex}.fullName`
   const nationalIdField = `${fieldIndex}.nationalId`
 
-  setValue(nameField, childFullName)
-  setValue(nationalIdField, childNationalId)
+  // setValue(nameField, childFullName)
+  // setValue(nationalIdField, childNationalId)
+  useEffect(() => {
+    const setOptions = { shouldDirty: false, shouldValidate: false }
+    setValue(nameField, childFullName, setOptions)
+    setValue(nationalIdField, childNationalId, setOptions)
+  }, [nameField, nationalIdField, childFullName, childNationalId, setValue])
 
   const nationalId = childNationalId
   const kennitalaInfo = kennitala.info(nationalId)
@@ -52,7 +57,7 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
       background="blue100"
       padding={3}
       borderRadius="standard"
-      key={childNationalId}
+      // key={childNationalId}
     >
       <Text variant="h3" fontWeight="semiBold" marginBottom={1}>
         {childFullName}
