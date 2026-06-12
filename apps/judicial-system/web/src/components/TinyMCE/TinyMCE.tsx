@@ -8,7 +8,6 @@ import { ErrorMessage } from '@island.is/island-ui/core'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import HighlightColorPicker from './HighlightColorPicker'
 import {
-  HIGHLIGHT_COLORS,
   INDENT_STEP_PX,
   normalizePastedHighlights,
   normalizePastedIndentation,
@@ -97,13 +96,9 @@ const TinyMCE = ({
     while (node && node !== editor.getBody()) {
       const bg: string = node.style?.backgroundColor ?? ''
       if (bg && bg !== 'transparent') {
-        // Word highlight colors are preserved on paste without being part
-        // of the picker palette; they must still be tracked here so the
-        // picker's ✕ button can toggle them off.
-        const match = [
-          ...HIGHLIGHT_COLORS.map(({ color }) => color),
-          ...WORD_HIGHLIGHT_COLORS,
-        ].find((color) => hexToRgb(color) === bg)
+        const match = WORD_HIGHLIGHT_COLORS.map(({ color }) => color).find(
+          (color) => hexToRgb(color) === bg,
+        )
         if (match) {
           setSelectedColor(match)
           return

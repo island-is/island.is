@@ -1,13 +1,12 @@
 import {
   findNearestHighlightColor,
-  HIGHLIGHT_COLORS,
   normalizePastedHighlights,
   normalizePastedIndentation,
   parseCssColor,
+  WORD_HIGHLIGHT_COLORS,
 } from './pasteNormalization'
 
-const YELLOW = HIGHLIGHT_COLORS[0].color
-const BLUE = HIGHLIGHT_COLORS[1].color
+const YELLOW = WORD_HIGHLIGHT_COLORS[0].color
 
 describe('parseCssColor', () => {
   it('resolves Word highlighter color keywords', () => {
@@ -51,26 +50,20 @@ describe('parseCssColor', () => {
 
 describe('findNearestHighlightColor', () => {
   it('maps every palette color to itself', () => {
-    for (const { color } of HIGHLIGHT_COLORS) {
+    for (const { color } of WORD_HIGHLIGHT_COLORS) {
       expect(findNearestHighlightColor(color)).toBe(color)
     }
   })
 
   it('maps a palette color given in rgb() form to its hex value', () => {
-    const [r, g, b] = parseCssColor(BLUE) ?? []
-    expect(findNearestHighlightColor(`rgb(${r}, ${g}, ${b})`)).toBe(BLUE)
+    expect(findNearestHighlightColor('rgb(0, 128, 128)')).toBe('#008080')
   })
 
-  it('snaps Word yellow to the palette yellow', () => {
-    expect(findNearestHighlightColor('yellow')).toBe(YELLOW)
+  it('snaps a near-miss color to the nearest palette color', () => {
+    expect(findNearestHighlightColor('#fffe10')).toBe(YELLOW)
   })
 
-  it('falls back to the first palette color for distant colors', () => {
-    // Black is further than the snap threshold from every palette color.
-    expect(findNearestHighlightColor('black')).toBe(YELLOW)
-  })
-
-  it('falls back to the first palette color for unparseable input', () => {
+  it('falls back to yellow for unparseable input', () => {
     expect(findNearestHighlightColor('windowtext')).toBe(YELLOW)
   })
 })
@@ -136,8 +129,8 @@ describe('normalizePastedHighlights', () => {
     ).toBe('<span style="background-color: #000080;">x</span>')
   })
 
-  it('snaps a color outside the Word palette to the editor palette', () => {
-    // Near-yellow but not an exact Word color → nearest editor swatch.
+  it('snaps a color outside the Word palette to the nearest Word color', () => {
+    // Near-yellow but not an exact Word color → nearest palette swatch.
     expect(
       normalizePastedHighlights(
         '<span style="background-color: #fffe10;">x</span>',
