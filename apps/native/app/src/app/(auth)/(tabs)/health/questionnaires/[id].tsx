@@ -83,7 +83,8 @@ export default function QuestionnaireDetailScreen() {
         locale,
         input: {
           id: id ?? '',
-          organization: organization as QuestionnaireQuestionnairesOrganizationEnum,
+          organization:
+            organization as QuestionnaireQuestionnairesOrganizationEnum,
         },
       },
       skip: shouldSkipQuery,
