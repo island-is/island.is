@@ -215,8 +215,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/university'),
   [ApplicationTypes.DEREGISTER_MACHINE]: () =>
     import('@island.is/application/templates/aosh/deregister-machine'),
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
-    import('@island.is/application/templates/grindavik-housing-buyout'),
   [ApplicationTypes.STREET_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>

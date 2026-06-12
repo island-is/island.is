@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 
 import {
-  AppealCaseState,
   CaseState,
   isCompletedCase,
   isCourtOfAppealsUser,

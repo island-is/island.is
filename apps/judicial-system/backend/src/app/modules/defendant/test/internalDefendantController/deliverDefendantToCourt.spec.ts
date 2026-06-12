@@ -31,17 +31,12 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   } as Defendant
   const caseId = uuid()
   const courtId = uuid()
-  const courtName = 'Héraðsdómur Reykjavíkur'
-  const courtCaseNumber = uuid()
   const defenderEmail = uuid()
-  const defenderName = 'Test Verjandi'
   const theCase = {
     id: caseId,
     courtId,
-    court: { name: courtName },
-    courtCaseNumber,
+    courtCaseNumber: uuid(),
     defenderEmail,
-    defenderName,
   } as Case
 
   let mockQueuedMessages: Message[]
@@ -57,9 +52,6 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     const mockUpdateCaseWithDefendant =
       mockCourtService.updateCaseWithDefendant as jest.Mock
     mockUpdateCaseWithDefendant.mockRejectedValue(new Error('Some error'))
-    const mockUpdateRequestCaseWithDefenderInfo =
-      mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
-    mockUpdateRequestCaseWithDefenderInfo.mockResolvedValue(uuid())
 
     givenWhenThen = async (defendant: Defendant) => {
       const then = {} as Then
@@ -95,25 +87,17 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
         user,
         caseId,
         courtId,
-        courtCaseNumber,
+        theCase.courtCaseNumber,
         defendantNationalId,
         defenderEmail,
       )
       expect(then.result).toEqual({ delivered: true })
     })
 
-    it('should send robot email with defender info', () => {
+    it('should not send robot email', () => {
       expect(
         mockCourtService.updateRequestCaseWithDefenderInfo,
-      ).toHaveBeenCalledWith(
-        user,
-        caseId,
-        courtName,
-        courtCaseNumber,
-        defendantNationalId,
-        defenderName,
-        defenderEmail,
-      )
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -138,10 +122,8 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       ])
     })
 
-    it('should not send robot email', () => {
-      expect(
-        mockCourtService.updateRequestCaseWithDefenderInfo,
-      ).not.toHaveBeenCalled()
+    it('should not call court API', () => {
+      expect(mockCourtService.updateCaseWithDefendant).not.toHaveBeenCalled()
     })
   })
 
@@ -156,40 +138,10 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       expect(then.result).toEqual({ delivered: false })
     })
 
-    it('should still send robot email', () => {
+    it('should not send robot email', () => {
       expect(
         mockCourtService.updateRequestCaseWithDefenderInfo,
-      ).toHaveBeenCalledWith(
-        user,
-        caseId,
-        courtName,
-        courtCaseNumber,
-        defendantNationalId,
-        defenderName,
-        defenderEmail,
-      )
-    })
-  })
-
-  describe('robot email fails', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      const mockUpdateCaseWithDefendant =
-        mockCourtService.updateCaseWithDefendant as jest.Mock
-      mockUpdateCaseWithDefendant.mockResolvedValueOnce(uuid())
-
-      const mockUpdateRequestCaseWithDefenderInfo =
-        mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
-      mockUpdateRequestCaseWithDefenderInfo.mockRejectedValueOnce(
-        new Error('Robot email error'),
-      )
-
-      then = await givenWhenThen(defendant)
-    })
-
-    it('should still return success from API delivery', () => {
-      expect(then.result).toEqual({ delivered: true })
+      ).not.toHaveBeenCalled()
     })
   })
 })
