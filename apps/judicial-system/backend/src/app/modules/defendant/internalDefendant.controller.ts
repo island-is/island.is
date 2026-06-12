@@ -134,14 +134,14 @@ export class InternalDefendantController {
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)
   @Post(
     `${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT]
     }/:defendantId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers indictment case defender info to court',
+    description: 'Delivers indictment case defendant info to court',
   })
-  deliverIndictmentDefenderToCourt(
+  deliverIndictmentDefendantToCourt(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -149,10 +149,10 @@ export class InternalDefendantController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering defender info for defendant ${defendantId} of case ${caseId} to court`,
+      `Delivering defendant info for defendant ${defendantId} of case ${caseId} to court`,
     )
 
-    return this.defendantService.deliverIndictmentDefenderToCourt(
+    return this.defendantService.deliverIndictmentDefendantToCourt(
       theCase,
       defendant,
       deliverDto.user,
