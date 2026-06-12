@@ -86,6 +86,8 @@ export const getFiledBy = (
   return 'Lagt er fram:'
 }
 
+const lineGap = 2
+
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
   showOpenCourtSession: boolean,
@@ -128,7 +130,7 @@ export const createIndictmentCourtRecordPdf = (
 
   addCoatOfArms(doc)
   addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
-  setLineGap(doc, 2)
+  setLineGap(doc, lineGap)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
   addMediumHeading(doc, 'Þingbók')
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
@@ -322,6 +324,7 @@ export const createIndictmentCourtRecordPdf = (
       addRichText(
         doc,
         courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+        lineGap,
       )
     } else {
       addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')

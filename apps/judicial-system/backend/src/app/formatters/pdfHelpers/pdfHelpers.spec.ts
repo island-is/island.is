@@ -285,7 +285,7 @@ describe('addRichText highlight placement', () => {
       return originalRect(x, y, w, h)
     }
 
-    const docInternals = doc as unknown as {
+    const docInternals = (doc as unknown) as {
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
     const originalFragment = docInternals._fragment.bind(doc)
@@ -318,6 +318,7 @@ describe('addRichText highlight placement', () => {
     addRichText(
       doc,
       '<p><span style="background-color: #FFF066;">MARKER</span> trailing text</p>',
+      2,
     )
 
     const frag = findFragmentWith(frags, 'MARKER')
@@ -336,6 +337,7 @@ describe('addRichText highlight placement', () => {
     addRichText(
       doc,
       `<p>${filler} <span style="background-color: #FFF066;">MARKER</span></p>`,
+      2,
     )
 
     const frag = findFragmentWith(frags, 'MARKER')
@@ -362,6 +364,7 @@ describe('addRichText highlight placement', () => {
     addRichText(
       doc,
       `<p><span style="background-color: #FFF066;">${highlighted}</span></p>`,
+      2,
     )
 
     const highlightFrags = frags.filter((f) => f.text.includes('gulmerking'))
@@ -388,6 +391,7 @@ describe('addRichText highlight placement', () => {
     addRichText(
       doc,
       '<p><span style="background-color: #FFF066;">MARKER</span></p>',
+      2,
     )
 
     const frag = findFragmentWith(frags, 'MARKER')

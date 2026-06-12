@@ -693,15 +693,22 @@ interface LineFragment {
   highlight: string | false
 }
 
+// Descender depth of the standard Times fonts, in 1/1000s of the font size
+// (AFM "Descender -217" — identical across all four Times variants).
+const TIMES_DESCENDER = 217
+
 // Lays out and draws each block manually, word by word, instead of letting
 // PDFKit wrap a chain of continued text() calls. Highlight rects and text are
 // drawn from the same computed coordinates, so they cannot drift apart the way
 // a parallel wrap simulation can (wrong line after a wrap, wrong page after a
-// page break).
-export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
+// page break). lineGap must match the line gap set on the document so this
+// text lines up with the surrounding addNormalText output.
+export const addRichText = (
+  doc: PDFKit.PDFDocument,
+  html: string,
+  lineGap = 0,
+): void => {
   const blocks = htmlToBlocks(html)
-  const lineGap =
-    (doc as PDFKit.PDFDocument & { _lineGap?: number })._lineGap ?? 0
 
   for (const block of blocks) {
     const isEmptyBlock =
@@ -723,13 +730,7 @@ export const addRichText = (doc: PDFKit.PDFDocument, html: string): void => {
     const lineAdvance = lineHeight + lineGap
     const visibleHeight = doc.currentLineHeight(false)
     // Shift rect up by half the descender height to centre around visible glyphs
-    const descender =
-      (Math.abs(
-        (doc as PDFKit.PDFDocument & { _font?: { descender?: number } })._font
-          ?.descender ?? 200,
-      ) /
-        1000) *
-      baseFontSize
+    const descender = (TIMES_DESCENDER / 1000) * baseFontSize
     const hPad = 1
 
     let y = doc.y
