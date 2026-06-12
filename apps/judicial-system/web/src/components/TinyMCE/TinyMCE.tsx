@@ -18,7 +18,42 @@ const hexToRgb = (hex: string) => {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+// Word's text highlighter emits its palette as CSS color keywords (e.g.
+// "background:yellow;mso-highlight:yellow"), so we resolve those here. Only
+// real colors from the Word highlight palette are listed — keywords like
+// "transparent" or "windowtext" stay unresolvable and get stripped on paste.
+const NAMED_COLORS: Record<string, [number, number, number]> = {
+  yellow: [255, 255, 0],
+  lime: [0, 255, 0],
+  cyan: [0, 255, 255],
+  aqua: [0, 255, 255],
+  magenta: [255, 0, 255],
+  fuchsia: [255, 0, 255],
+  blue: [0, 0, 255],
+  red: [255, 0, 0],
+  navy: [0, 0, 128],
+  darkblue: [0, 0, 139],
+  teal: [0, 128, 128],
+  darkcyan: [0, 139, 139],
+  green: [0, 128, 0],
+  purple: [128, 0, 128],
+  violet: [238, 130, 238],
+  maroon: [128, 0, 0],
+  darkred: [139, 0, 0],
+  olive: [128, 128, 0],
+  gray: [128, 128, 128],
+  grey: [128, 128, 128],
+  silver: [192, 192, 192],
+  lightgray: [211, 211, 211],
+  lightgrey: [211, 211, 211],
+  darkgray: [169, 169, 169],
+  darkgrey: [169, 169, 169],
+  black: [0, 0, 0],
+}
+
 const parseCssColor = (cssColor: string): [number, number, number] | null => {
+  const named = NAMED_COLORS[cssColor.trim().toLowerCase()]
+  if (named) return named
   const rgb = cssColor.match(
     /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?/,
   )
@@ -247,8 +282,12 @@ const TinyMCE = ({
               setupHighlightButton(editor)
             },
             paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // "background" (shorthand) is required: Word highlights arrive as
+            // "background:yellow" and the paste plugin also maps mso-highlight
+            // to "background" — both are normalized to a palette
+            // background-color in PastePreProcess below.
             paste_retain_style_properties:
-              'font-weight,font-style,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left',
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
