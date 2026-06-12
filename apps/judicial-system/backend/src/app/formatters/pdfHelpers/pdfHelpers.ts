@@ -528,6 +528,15 @@ const extractBgColor = (style: string): string | null => {
   if (/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0*\.?0+\s*\)/.test(normalized))
     return null
 
+  // Browsers serialize inline styles in rgb()/rgba() form, but PDFKit only
+  // understands hex and named colors, so convert before handing it to fill().
+  const rgb = normalized.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
+  if (rgb) {
+    const toHex = (part: string) =>
+      Math.min(255, parseInt(part, 10)).toString(16).padStart(2, '0')
+    return `#${toHex(rgb[1])}${toHex(rgb[2])}${toHex(rgb[3])}`
+  }
+
   return value
 }
 

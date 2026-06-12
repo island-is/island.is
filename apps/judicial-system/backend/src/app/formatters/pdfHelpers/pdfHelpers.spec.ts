@@ -90,7 +90,38 @@ describe('htmlToBlocks', () => {
     const blocks = htmlToBlocks(
       '<p><span style="background-color: rgb(255, 255, 0);">yellow</span></p>',
     )
-    expect(blocks[0].runs[0]).toMatchObject({ highlight: 'rgb(255, 255, 0)' })
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#ffff00' })
+  })
+
+  it('converts an rgb() highlight to hex for PDFKit', () => {
+    // Browsers serialize inline styles in rgb() form, but PDFKit's fill()
+    // only parses hex and named colors, so the raw rgb() string must not
+    // leak through.
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgb(255, 240, 102);">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#fff066' })
+  })
+
+  it('converts an opaque rgba() highlight to hex for PDFKit', () => {
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgba(255, 240, 102, 0.99);">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#fff066' })
+  })
+
+  it('zero-pads single-digit channels when converting rgb() to hex', () => {
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: rgb(0, 9, 255);">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#0009ff' })
+  })
+
+  it('keeps a hex highlight unchanged', () => {
+    const blocks = htmlToBlocks(
+      '<p><span style="background-color: #fff066;">marked</span></p>',
+    )
+    expect(blocks[0].runs[0]).toMatchObject({ highlight: '#fff066' })
   })
 
   it('produces multiple runs within one paragraph', () => {
