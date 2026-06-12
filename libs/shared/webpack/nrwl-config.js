@@ -108,14 +108,63 @@ function ignoreSourceMapWarnings(config) {
 }
 
 /**
- * NX's withReact loads svg's as React components when imported from js/ts files.
+ * Loads svg's imported from js/ts files the same way @nx/react's withReact did
+ * before Nx 22 (which removed its built-in SVGR handling): the default export
+ * is a URL and the named ReactComponent export is a React component.
+ * @param config
+ */
+function addSvgrLoader(config) {
+  // @nx/webpack's withWeb handles svg in its combined image asset rule, which
+  // takes precedence over loaders. Remove svg from it so SVGR handles svg
+  // imports while other image types keep their asset handling.
+  config.module.rules = config.module.rules.map((rule) => {
+    if (
+      rule &&
+      typeof rule === 'object' &&
+      rule.type === 'asset' &&
+      rule.test?.toString().includes('svg')
+    ) {
+      return {
+        ...rule,
+        test: new RegExp(rule.test.source.replace(/\|?svg\|?/, '|')),
+      }
+    }
+    return rule
+  })
+
+  config.module.rules.push({
+    test: /\.svg$/,
+    issuer: /\.(js|ts|md)x?$/,
+    use: [
+      {
+        loader: require.resolve('@svgr/webpack'),
+        options: {
+          svgo: false,
+          titleProp: true,
+          ref: true,
+        },
+      },
+      {
+        loader: require.resolve('url-loader'),
+        options: {
+          limit: 10000, // 10kB
+          name: '[name].[hash:7].[ext]',
+          esModule: false,
+        },
+      },
+    ],
+  })
+}
+
+/**
+ * SVGR (above) loads svg's as React components when imported from js/ts files.
  * But it doesn't work when dynamically imported like this: import(`./svg/${dynamic}.svg`)
  *
  * This pattern is currently used in financial-aid to load logos. It also loads them in an <img> tag, so it expects
  * URLs rather than react components. Ideally we can devise a better way to manage these logos and get rid of this
  * hack in the future.
  *
- * UPGRADE WARNING: This is designed to catch SVGs which are unhandled by withReact.
+ * UPGRADE WARNING: This is designed to catch SVGs which are unhandled by SVGR.
  * @param config
  */
 function addFallbackSvgLoader(config) {
@@ -186,6 +235,7 @@ module.exports = function (config) {
   setApiMocks(config)
   addNodeModulesPolyfill(config)
   ignoreSourceMapWarnings(config)
+  addSvgrLoader(config)
   addFallbackSvgLoader(config)
   addTypeScriptLoaderForNodeModules(config)
   addHotReloading(config)

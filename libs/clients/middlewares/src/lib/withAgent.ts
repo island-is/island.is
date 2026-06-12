@@ -1,5 +1,8 @@
 import Agent, { HttpsOptions, HttpsAgent } from 'agentkeepalive'
 import { SecureContextOptions } from 'tls'
+// node-fetch types the `agent` callback with Node's URL class, which the
+// TS lib's global URL is no longer structurally assignable to.
+import { URL } from 'url'
 import { FetchMiddlewareOptions, MiddlewareAPI } from './nodeFetch'
 
 export type AgentOptions = HttpsOptions

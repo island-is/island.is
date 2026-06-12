@@ -284,7 +284,7 @@ describe('ApplicationController - Create', () => {
     })
 
     it('should call email service once since there is no spouse', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
     })
 
     it('should not return application, since we have to wait for spouse', () => {
@@ -403,7 +403,7 @@ describe('ApplicationController - Create', () => {
     })
 
     it('should call email service twice', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(2)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -490,7 +490,7 @@ describe('ApplicationController - Create', () => {
     })
 
     it('should call file service twice', () => {
-      expect(mockFileService.createFile).toBeCalledTimes(2)
+      expect(mockFileService.createFile).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -595,7 +595,7 @@ describe('ApplicationController - Create', () => {
     })
 
     it('should call direct tax payment service twice', () => {
-      expect(mockDirectTaxPaymentService.create).toBeCalledTimes(2)
+      expect(mockDirectTaxPaymentService.create).toHaveBeenCalledTimes(2)
     })
   })
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-financial-management-authority',
   preset: '../../../jest.preset.js',
   globals: {},

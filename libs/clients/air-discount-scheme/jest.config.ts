@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-air-discount-scheme',
   preset: './jest.preset.js',
   rootDir: '../../..',

@@ -23,9 +23,7 @@ const graphqlPath = `${apiPath}/graphql`
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  nx: {
-    svgr: false,
-  },
+  nx: {},
   webpack: (config, { dev }) => {
     // Workaround for Firefox "unterminated comment" when loading vanilla-extract
     // global.css (gzip+base64 in magic comments). Shorten those comments in dev

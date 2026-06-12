@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-municipality-financial-aid',
   preset: './jest.preset.js',
   rootDir: '../../..',

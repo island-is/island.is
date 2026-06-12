@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName:
     'application-templates-social-insurance-administration-disability-pension',
   preset: '../../../../../jest.preset.js',

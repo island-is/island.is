@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-municipal-list-signing',
   preset: './jest.preset.js',
   rootDir: '../../../../..',

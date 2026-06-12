@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-audit',
   preset: './jest.preset.js',
   rootDir: '../../..',

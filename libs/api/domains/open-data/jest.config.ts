@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'api-domains-open-data',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

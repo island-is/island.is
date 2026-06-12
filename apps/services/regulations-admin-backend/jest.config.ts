@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'regulations-admin-backend',
   preset: '../../../jest.preset.js',
   globalSetup: './test/globalSetup.ts',

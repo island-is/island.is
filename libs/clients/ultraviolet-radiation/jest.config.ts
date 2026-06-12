@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-ultraviolet-radiation',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

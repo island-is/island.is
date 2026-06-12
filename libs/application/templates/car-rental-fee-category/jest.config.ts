@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'car-rental-fee-category',
   preset: '../../../../jest.preset.js',
   transform: {
