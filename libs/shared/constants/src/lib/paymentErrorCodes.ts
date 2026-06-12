@@ -70,8 +70,22 @@ export enum InvoiceErrorCode {
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 
+export enum BankTransferErrorCode {
+  FailedToCreateBankTransfer = 'FailedToCreateBankTransfer',
+  FailedToFetchBankTransfer = 'FailedToFetchBankTransfer',
+  BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
+  BankTransferNotFound = 'BankTransferNotFound',
+  UnknownBankTransferError = 'UnknownBankTransferError',
+  // Terminal-failure codes surfaced through the standard FE error view via `paymentError`.
+  // 1-1 with `bank_transfer_payment.last_known_status` mapped via `mapBlikkStatusToBankTransferStatus`.
+  BankTransferRejected = 'BankTransferRejected',
+  BankTransferCancelled = 'BankTransferCancelled',
+  BankTransferGenericError = 'BankTransferGenericError',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
+  | BankTransferErrorCode
   | PaymentServiceCode

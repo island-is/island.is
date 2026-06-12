@@ -44,6 +44,20 @@ describe('generateChargeFJSPayload', () => {
     expect(withPayinfo.payInfo).toEqual(payInfo)
   })
 
+  it('should format effectiveDate as yyyy-MM-dd in effictiveDate, and omit it when not passed', () => {
+    const withoutEffectiveDate = generateChargeFJSPayload({
+      ...sampleInput,
+    })
+    const withEffectiveDate = generateChargeFJSPayload({
+      ...sampleInput,
+      // Local-time constructor so the formatted day is timezone-independent.
+      effectiveDate: new Date(2026, 5, 9, 13, 45, 30),
+    })
+
+    expect(withoutEffectiveDate.effictiveDate).toBeUndefined()
+    expect(withEffectiveDate.effictiveDate).toBe('2026-06-09')
+  })
+
   it('should include extraData if passed as input and default to empty array if not passed', () => {
     const extraData: GenerateChargeFJSPayloadInput['paymentFlow']['extraData'] =
       [

@@ -11,6 +11,7 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // A helper type to satisfy the linter for partial mocks.
@@ -330,6 +331,144 @@ describe('PaymentFlowService', () => {
       ).rejects.toMatchObject({
         response: { message: PaymentServiceCode.PaymentFlowNotFound },
       })
+    })
+  })
+
+  describe('findPaidFlowsWithoutFjsCharge — bank transfer exclusion', () => {
+    it('does not return a paid bank_transfer flow (no worker backfill for transfers)', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const paymentFlowId = uuid()
+
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+
+      // A paid bank_transfer flow: fulfillment present, no FJS charge, no card details.
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      const result = await service.findPaidFlowsWithoutFjsCharge(
+        new Date(Date.now() + 60_000),
+      )
+
+      expect(result.map((flow) => flow.id)).not.toContain(paymentFlowId)
+    })
+  })
+
+  describe('createFjsCharge — AlreadyCreatedCharge reconcile', () => {
+    // FJS message that maps to FjsErrorCode.AlreadyCreatedCharge.
+    const alreadyCreatedError = new Error('Búið að taka á móti álagningu')
+
+    const chargePayloadWithPayInfo = (paymentFlowId: string) =>
+      ({
+        requestID: paymentFlowId,
+        payInfo: {
+          RRN: paymentFlowId,
+          paymentMeans: 'Milli',
+          payableAmount: 1000,
+        },
+      } as TestPartial)
+
+    it('adopts the existing local FJS charge row and links it to the fulfillment instead of failing', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
+        getModelToken(PaymentFulfillment),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+      // Settled fulfillment with no FJS charge link yet (the partial-failure state we recover from).
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'bank_transfer',
+        confirmationRefId: uuid(),
+      } as TestPartial)
+
+      // A prior test leaves fjsChargeModel.findOne mocked — restore so reconcile does a real lookup.
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      // A row WAS persisted on the prior attempt (carrying the real FJS reception id); only the
+      // fulfillment/flow link is missing.
+      const existingCharge = await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: 'recept-1',
+        user4: 'doc-123',
+        status: 'paid',
+      } as TestPartial)
+
+      jest
+        .spyOn(chargeFjsService, 'createCharge')
+        .mockRejectedValueOnce(alreadyCreatedError)
+
+      const result = await service.createFjsCharge(
+        paymentFlowId,
+        chargePayloadWithPayInfo(paymentFlowId),
+      )
+
+      // The pre-existing charge is adopted and returned — its real reception id is preserved.
+      expect(result).toBeDefined()
+      expect(result.id).toBe(existingCharge.id)
+      expect(result.receptionId).toBe('recept-1')
+
+      // And the fulfillment is linked to it.
+      const fulfillment = await paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, isDeleted: false },
+      })
+      expect(fulfillment?.fjsChargeId).toBe(existingCharge.id)
+    })
+
+    it('still throws when FJS reports the charge exists but no local row exists to reconcile', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+
+      const paymentFlowId = uuid()
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        organisationId: '5534567890',
+      } as TestPartial)
+
+      // No local fjs_charge row → reception id is unrecoverable → reconcile returns null.
+      jest.spyOn(fjsChargeModel, 'findOne').mockRestore()
+
+      jest
+        .spyOn(chargeFjsService, 'createCharge')
+        .mockRejectedValueOnce(alreadyCreatedError)
+
+      await expect(
+        service.createFjsCharge(
+          paymentFlowId,
+          chargePayloadWithPayInfo(paymentFlowId),
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException)
     })
   })
 })
