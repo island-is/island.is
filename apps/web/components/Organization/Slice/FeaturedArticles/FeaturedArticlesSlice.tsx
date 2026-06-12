@@ -66,10 +66,11 @@ export const FeaturedArticlesSlice: React.FC<
               ? sortedArticles
               : slice.articles
             ).map((article) => {
-              const url = linkResolver(
-                (article.type === 'manual' ? 'manual' : 'article') as LinkType,
-                [article.slug],
-              )
+              const type =
+                'type' in article && article.type === 'manual'
+                  ? article.type
+                  : 'article'
+              const url = linkResolver(type as LinkType, [article.slug])
 
               return (
                 <FocusableBox
@@ -78,7 +79,7 @@ export const FeaturedArticlesSlice: React.FC<
                   href={url.href}
                 >
                   <TopicCard
-                    {...('type' in article && article.type === 'manual'
+                    {...(type === 'manual'
                       ? {
                           tag: n(
                             'manual',
