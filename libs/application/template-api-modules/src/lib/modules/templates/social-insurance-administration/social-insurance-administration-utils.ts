@@ -857,14 +857,22 @@ export const getMonthNumber = (monthName: string): number => {
 
 export const getOAPApplicationType = (
   application: Application,
-): ApplicationType.OLD_AGE_PENSION | ApplicationType.HALF_OLD_AGE_PENSION => {
+):
+  | ApplicationType.OLD_AGE_PENSION
+  | ApplicationType.HALF_OLD_AGE_PENSION
+  | ApplicationType.SAILOR_PENSION => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)
 
   if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
     return ApplicationType.HALF_OLD_AGE_PENSION
   }
 
-  // Sailors pension and Old age pension is the same application type
+  // Sailor pension is submitted under its own type so TR can apply the
+  // seamen age rule instead of the general old-age minimum.
+  if (applicationType === ApplicationType.SAILOR_PENSION) {
+    return ApplicationType.SAILOR_PENSION
+  }
+
   return ApplicationType.OLD_AGE_PENSION
 }
 
