@@ -1,17 +1,18 @@
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseTypeGuard } from '../../../case'
-import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
-import { InternalDefendantController } from '../../internalDefendant.controller'
+import { CivilClaimantExistsGuard } from '../../guards/civilClaimantExists.guard'
+import { InternalCivilClaimantController } from '../../internalCivilClaimant.controller'
 
-describe('InternalDefendantController - Deliver indictment defender to court guards', () => {
+describe('InternalCivilClaimantController - Deliver indictment civil claimant to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalDefendantController.prototype.deliverIndictmentDefenderToCourt,
+      InternalCivilClaimantController.prototype
+        .deliverIndictmentCivilClaimantToCourt,
     )
   })
 
@@ -21,6 +22,6 @@ describe('InternalDefendantController - Deliver indictment defender to court gua
     expect(guards[0]).toEqual({
       allowedCaseTypes: indictmentCases,
     })
-    expect(new guards[1]()).toBeInstanceOf(DefendantExistsGuard)
+    expect(new guards[1]()).toBeInstanceOf(CivilClaimantExistsGuard)
   })
 })
