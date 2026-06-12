@@ -1400,6 +1400,17 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknin hefur verið send til sýslumanns.',
     description: 'Description shown after the application has been submitted',
   },
+  signingNoSignatoriesTitle: {
+    id: 'es.application:signing.noSignatoriesTitle',
+    defaultMessage: 'Engar undirskriftir nauðsynlegar',
+    description: 'Title shown when there are no signatories',
+  },
+  signingNoSignatoriesDescription: {
+    id: 'es.application:signing.noSignatoriesDescription',
+    defaultMessage:
+      'Enginn aðili þarf að undirrita þessa umsókn. Þú getur lokið umsókninni hér að neðan.',
+    description: 'Description shown when there are no signatories',
+  },
   signingTitle: {
     id: 'es.application:signing.title',
     defaultMessage: 'Undirritun',
