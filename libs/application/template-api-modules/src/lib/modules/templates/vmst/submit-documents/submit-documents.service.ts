@@ -59,11 +59,15 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
   }
 
   async getRequestedAttachments({ auth }: TemplateApiModuleActionProps) {
-    const { applicantId } =
-      await this.vmstUnemploymentClientService.resolveApplicant(auth)
-    return await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
-      applicantId,
-    )
+    try {
+      const { applicantId } =
+        await this.vmstUnemploymentClientService.resolveApplicant(auth)
+      return await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
+        applicantId,
+      )
+    } catch {
+      return [] // Better to return nothing than fail prereq as this is not vital.
+    }
   }
 
   async checkEligibility({
