@@ -50,7 +50,7 @@ un-highlighted text is unaffected. In DevTools the span has a
 
 **Pass:** each word keeps a highlight. Colors are snapped to the editor
 palette, so they will not match Word exactly — verify each highlighted word
-has *some* distinct palette color and that the mapping is stable (pasting
+has _some_ distinct palette color and that the mapping is stable (pasting
 twice gives the same result).
 
 Also try **black** or **gray 50%** highlight: expect it to come through as
@@ -59,11 +59,12 @@ the Yellow fallback (documented normalization), not to disappear.
 ## Test 3 — Mixed content (regression: other formatting)
 
 1. In Word, create a paragraph containing: plain text, **bold** text,
-   *italic* text, a highlighted word, and a bold+highlighted word.
+   _italic_ text, a highlighted word, and a bold+highlighted word.
    Add a second paragraph indented one level (increase indent).
 2. Copy and paste.
 
 **Pass:**
+
 - Bold and italic survive (as `<b>/<strong>` and `<i>/<em>`).
 - The highlighted word keeps its highlight; the bold+highlighted word keeps
   both.

@@ -254,7 +254,7 @@ describe('addRichText highlight placement', () => {
       return originalRect(x, y, w, h)
     }
 
-    const docInternals = (doc as unknown) as {
+    const docInternals = doc as unknown as {
       _fragment: (text: string, x: number, y: number, options: unknown) => void
     }
     const originalFragment = docInternals._fragment.bind(doc)
