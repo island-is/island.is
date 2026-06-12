@@ -17,7 +17,9 @@ const renderUrlsForService = ({ httpRoute = {} }: HelmService) => {
     route.hostnames.forEach((hostname: string) => {
       route.rules.forEach((rule) => {
         rule.matches.forEach((match) => {
-          urls.push(`https://${hostname}${match.pathPrefix ?? match.pathExact ?? ''}`)
+          urls.push(
+            `https://${hostname}${match.pathPrefix ?? match.pathExact ?? ''}`,
+          )
         })
       })
     })
