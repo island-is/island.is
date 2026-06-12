@@ -12,6 +12,7 @@ import {
   INDENT_STEP_PX,
   normalizePastedHighlights,
   normalizePastedIndentation,
+  WORD_HIGHLIGHT_COLORS,
 } from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
@@ -89,24 +90,29 @@ const TinyMCE = ({
     }
   }, [pickerOpen])
 
-  const handleNodeChange =
-    (editor: TinyMCEEditor) => (e: { element: Element }) => {
-      let node: HTMLElement | null = e.element as HTMLElement
-      while (node && node !== editor.getBody()) {
-        const bg: string = node.style?.backgroundColor ?? ''
-        if (bg && bg !== 'transparent') {
-          const match = HIGHLIGHT_COLORS.find(
-            ({ color }) => hexToRgb(color) === bg,
-          )
-          if (match) {
-            setSelectedColor(match.color)
-            return
-          }
+  const handleNodeChange = (editor: TinyMCEEditor) => (e: {
+    element: Element
+  }) => {
+    let node: HTMLElement | null = e.element as HTMLElement
+    while (node && node !== editor.getBody()) {
+      const bg: string = node.style?.backgroundColor ?? ''
+      if (bg && bg !== 'transparent') {
+        // Word highlight colors are preserved on paste without being part
+        // of the picker palette; they must still be tracked here so the
+        // picker's ✕ button can toggle them off.
+        const match = [
+          ...HIGHLIGHT_COLORS.map(({ color }) => color),
+          ...WORD_HIGHLIGHT_COLORS,
+        ].find((color) => hexToRgb(color) === bg)
+        if (match) {
+          setSelectedColor(match)
+          return
         }
-        node = node.parentElement
       }
-      setSelectedColor(null)
+      node = node.parentElement
     }
+    setSelectedColor(null)
+  }
 
   const setupHighlightButton = (editor: TinyMCEEditor) => {
     editor.ui.registry.addToggleButton('highlightcolor', {

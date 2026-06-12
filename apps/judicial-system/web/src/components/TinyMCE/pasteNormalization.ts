@@ -12,36 +12,64 @@ export const HIGHLIGHT_COLORS = [
   { label: 'Purple', color: theme.color.purple200 },
 ]
 
+// Word's text highlighter supports exactly 15 colors — the classic CSS named
+// palette minus white. A pasted highlight matching one of these is preserved
+// as-is; any other color is snapped to the editor palette as a backup. Word's
+// UI name is noted where it differs from the CSS keyword Word emits.
+export const WORD_HIGHLIGHT_COLORS = [
+  '#ffff00', // yellow
+  '#00ff00', // lime — Bright Green
+  '#00ffff', // cyan
+  '#ff00ff', // magenta
+  '#0000ff', // blue — Bright Blue
+  '#ff0000', // red
+  '#000080', // navy — Dark Blue
+  '#008080', // teal
+  '#008000', // green — Dark Green
+  '#800080', // purple — Dark Violet
+  '#800000', // maroon — Dark Red
+  '#808000', // olive — Dark Yellow
+  '#c0c0c0', // silver — Gray
+  '#808080', // gray — Dark Gray
+  '#000000', // black
+]
+
 // Word's text highlighter emits its palette as CSS color keywords (e.g.
-// "background:yellow;mso-highlight:yellow"), so we resolve those here. Only
-// real colors from the Word highlight palette are listed — keywords like
-// "transparent" or "windowtext" stay unresolvable and get stripped on paste.
+// "background:yellow;mso-highlight:yellow"), so we resolve those here. The
+// "dark"/"light" aliases are deliberately mapped onto the Word palette values
+// rather than their slightly different CSS counterparts — in pasted content
+// they can only mean the Word highlight. Keywords like "transparent", "white"
+// or "windowtext" stay unresolvable and get stripped on paste.
 const NAMED_COLORS: Record<string, [number, number, number]> = {
   yellow: [255, 255, 0],
   lime: [0, 255, 0],
   cyan: [0, 255, 255],
   aqua: [0, 255, 255],
+  turquoise: [0, 255, 255],
   magenta: [255, 0, 255],
   fuchsia: [255, 0, 255],
   blue: [0, 0, 255],
   red: [255, 0, 0],
   navy: [0, 0, 128],
-  darkblue: [0, 0, 139],
+  darkblue: [0, 0, 128],
   teal: [0, 128, 128],
-  darkcyan: [0, 139, 139],
+  darkcyan: [0, 128, 128],
   green: [0, 128, 0],
+  darkgreen: [0, 128, 0],
   purple: [128, 0, 128],
-  violet: [238, 130, 238],
+  violet: [128, 0, 128],
+  darkviolet: [128, 0, 128],
   maroon: [128, 0, 0],
-  darkred: [139, 0, 0],
+  darkred: [128, 0, 0],
   olive: [128, 128, 0],
+  darkyellow: [128, 128, 0],
+  silver: [192, 192, 192],
+  lightgray: [192, 192, 192],
+  lightgrey: [192, 192, 192],
   gray: [128, 128, 128],
   grey: [128, 128, 128],
-  silver: [192, 192, 192],
-  lightgray: [211, 211, 211],
-  lightgrey: [211, 211, 211],
-  darkgray: [169, 169, 169],
-  darkgrey: [169, 169, 169],
+  darkgray: [128, 128, 128],
+  darkgrey: [128, 128, 128],
   black: [0, 0, 0],
 }
 
@@ -97,17 +125,31 @@ export const findNearestHighlightColor = (cssColor: string): string => {
   return minDist <= HIGHLIGHT_DISTANCE_THRESHOLD ? nearest : fallback
 }
 
+const rgbToHex = ([r, g, b]: [number, number, number]): string =>
+  `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`
+
+// An exact Word highlight color is preserved as its canonical hex; any other
+// color falls back to snapping to the editor palette.
+export const normalizeHighlightColor = (cssColor: string): string => {
+  const rgb = parseCssColor(cssColor)
+  if (rgb) {
+    const hex = rgbToHex(rgb)
+    if (WORD_HIGHLIGHT_COLORS.includes(hex)) return hex
+  }
+  return findNearestHighlightColor(cssColor)
+}
+
 // Normalize pasted backgrounds to a known highlight color, and strip ones we
 // can't parse (e.g. Word's "transparent"), which would otherwise render as a
 // black rectangle in the PDF. Word emits highlights as the "background"
 // shorthand (retained via paste_retain_style_properties), which this rewrites
-// to a palette background-color.
+// to a background-color.
 export const normalizePastedHighlights = (html: string): string =>
   html.replace(
     /background(-color)?:\s*(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|[a-zA-Z]+)\s*;?/g,
     (_match: string, _shorthand: string, color: string) =>
       parseCssColor(color)
-        ? `background-color: ${findNearestHighlightColor(color)};`
+        ? `background-color: ${normalizeHighlightColor(color)};`
         : '',
   )
 
