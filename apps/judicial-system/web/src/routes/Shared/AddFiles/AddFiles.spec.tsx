@@ -39,13 +39,15 @@ const renderWithRole = (userRole: UserRole) =>
   )
 
 describe('AddFiles', () => {
-  it('should show the IDES/LÖKE note for prosecution users', async () => {
+  it('should show the Réttarvörslugáttarglugginn note for prosecution users', async () => {
     renderWithRole(UserRole.PROSECUTOR)
 
-    expect(await screen.findByText(/IDES\/LÖKE/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Réttarvörslugáttargluggann í LÖKE/),
+    ).toBeInTheDocument()
   })
 
-  it('should not show the IDES/LÖKE note for defence users', async () => {
+  it('should not show the Réttarvörslugáttarglugginn note for defence users', async () => {
     renderWithRole(UserRole.DEFENDER)
 
     // The base instruction always renders, confirming the page mounted...
@@ -54,7 +56,9 @@ describe('AddFiles', () => {
     ).toBeInTheDocument()
     // ...but the prosecution-only note must not be present.
     await waitFor(() => {
-      expect(screen.queryByText(/IDES\/LÖKE/)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/Réttarvörslugáttargluggann í LÖKE/),
+      ).not.toBeInTheDocument()
     })
   })
 })

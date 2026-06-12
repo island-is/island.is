@@ -235,7 +235,7 @@ const AddFiles: FC = () => {
           title={formatMessage(strings.uploadFilesHeading)}
           description={`Gögnin verða að hafa lýsandi skráarheiti.${
             isProsecutionUser(user)
-              ? ' Athugið að viðbótar rafræn gögn eru send til dómstóla í gegnum IDES/LÖKE gluggann.'
+              ? ' Athugið að viðbótar rafrænum gögnum er bætt við málið í gegnum Réttarvörslugáttargluggann í LÖKE.'
               : ''
           }`}
         />
