@@ -1,4 +1,5 @@
 /* eslint-disable */
+const path = require('path')
 export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
@@ -7,7 +8,7 @@ export default {
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+      { tsconfig: `${__dirname}/tsconfig.spec.json`, isolatedModules: true },
     ],
   },
   testEnvironment: 'node',
