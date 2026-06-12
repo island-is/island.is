@@ -1919,11 +1919,26 @@ export class CaseService {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 
-    // Ensure that verdicts exist at this stage, if they don't exist we create them
+    // Ensure that verdicts exist at this stage, if they don't exist we create them.
+    // Defendants whose indictment has already been cancelled or dismissed
+    // (completed for some) do not receive a verdict.
     if (isCompletingIndictmentCaseWithRuling && theCase.defendants) {
       await Promise.all(
         theCase.defendants.map((defendant) => {
-          if (!defendant.verdicts || defendant.verdicts.length === 0) {
+          const isCancelledOrDismissed = Boolean(
+            DefendantEventLog.getEventLogByEventType(
+              [
+                DefendantEventType.INDICTMENT_CANCELLED,
+                DefendantEventType.INDICTMENT_DISMISSED,
+              ],
+              defendant.eventLogs,
+            ),
+          )
+
+          if (
+            !isCancelledOrDismissed &&
+            (!defendant.verdicts || defendant.verdicts.length === 0)
+          ) {
             return this.verdictService.createVerdict(
               theCase.id,
               { defendantId: defendant.id },
