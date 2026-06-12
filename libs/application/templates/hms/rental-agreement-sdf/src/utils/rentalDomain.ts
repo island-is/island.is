@@ -1,19 +1,5 @@
 import type { DataTableRow } from '@island.is/application/types'
 
-import {
-  EmergencyExitOptions,
-  RentalHousingCategoryClassGroup,
-  RentalHousingCategoryTypes,
-  RentalHousingConditionInspector,
-} from '../utils/enums'
-
-export {
-  EmergencyExitOptions,
-  RentalHousingCategoryClassGroup,
-  RentalHousingCategoryTypes,
-  RentalHousingConditionInspector,
-}
-
 export type RentalPropertyUnit = {
   propertyCode?: number
   propertyUsageDescription?: string

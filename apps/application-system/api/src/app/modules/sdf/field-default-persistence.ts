@@ -19,13 +19,9 @@ import {
 import type { Locale } from '@island.is/shared/types'
 
 /**
- * Field types that do NOT own a persisted answer — their `defaultValue` (if any)
- * must never be written into answers.
- *
- * The critical entry is `DISPLAY`: SDF display fields are recomputed from source
- * (answers + externalData) at render/submit time, so persisting a snapshot of
- * their computed value would go stale. The rest are layout/copy/action fields
- * that carry no answer at all.
+ * Field types whose `defaultValue` must never be written into answers. Notably
+ * `DISPLAY`, which is recomputed from source at render time (a persisted snapshot
+ * would go stale); the rest are layout/copy/action fields carrying no answer.
  */
 const NON_VALUE_BEARING_FIELD_TYPES = new Set<string>([
   FieldTypes.DISPLAY,
@@ -58,10 +54,9 @@ const isEmptyAnswer = (value: unknown): boolean =>
   (Array.isArray(value) && value.length === 0)
 
 /**
- * The fields the user just interacted with on the page being left. Only the page
- * itself (a multiField) or a single leaf field can seed answers; repeaters and
- * external-data-provider screens are skipped (repeater rows have their own
- * per-row default handling and EDP screens own no input answers).
+ * Fields on the page being left that can seed answers: a multiField's children or
+ * a bare leaf field. Repeaters (own per-row handling) and EDP screens (no input
+ * answers) are skipped.
  */
 const collectPageFields = (screen: FormScreen | undefined): FieldDef[] => {
   if (!screen || !('type' in screen)) return []
@@ -77,21 +72,15 @@ const collectPageFields = (screen: FormScreen | undefined): FieldDef[] => {
     return []
   }
 
-  // A bare leaf field rendered as its own screen.
   return 'id' in screen ? [screen as FieldDef] : []
 }
 
 /**
- * Persist resolved field defaults into answers, mirroring how the legacy
- * application-system web renderer keeps every field's resolved `defaultValue`
- * in form state and commits it on submit.
- *
- * SDF text fields otherwise only write to answers on user edit, so a disabled or
- * untouched field that carries a `defaultValue` (e.g. the applicant base-info
- * fields populated from external data) never reaches `answers`. This pass closes
- * that gap on page advance for every value-bearing, visible field that has no
- * answer yet, so downstream readers (overview, submit DTO mappers, notifications)
- * see the same values the user saw on screen — without per-app seeding glue.
+ * Persist resolved field defaults into answers, mirroring the legacy web renderer
+ * which commits every field's resolved `defaultValue` on submit. SDF fields
+ * otherwise only write on user edit, so an untouched field with a `defaultValue`
+ * (e.g. applicant base info from external data) never reaches `answers`. This pass
+ * seeds every visible, value-bearing field that has no answer yet on page advance.
  *
  * `mergedAnswers` is mutated in place and also returned.
  */
@@ -104,18 +93,17 @@ export const applyResolvedFieldDefaults = (
   const fields = collectPageFields(screen)
   if (fields.length === 0) return mergedAnswers
 
-  // Normalize a Sequelize model into a plain object first: its attributes
-  // (`externalData`, `answers`, …) live behind prototype getters, so the object
-  // spread below would otherwise drop them — leaving externalData-derived
-  // defaults (e.g. applicant base info) resolving to empty and never persisting.
+  // Normalize a Sequelize model to a plain object: its attributes live behind
+  // prototype getters that the spread below would drop, leaving externalData-derived
+  // defaults resolving to empty.
   const maybeModel = application as unknown as {
     toJSON?: () => Application
   }
   const plainApplication =
     typeof maybeModel.toJSON === 'function' ? maybeModel.toJSON() : application
 
-  // Resolve closures against the in-progress answers, not just the persisted
-  // ones, so a default that derives from another field on this page is current.
+  // Resolve closures against the in-progress answers so a default deriving from
+  // another field on this page is current.
   const workingApplication = {
     ...plainApplication,
     answers: mergedAnswers,
@@ -159,15 +147,13 @@ export const applyResolvedFieldDefaults = (
             )(workingApplication, field, locale)
           : rawDefault
     } catch {
-      // Mirror `resolveFieldProp`: a throwing default closure is treated as "no
-      // default" rather than failing the whole advance.
+      // A throwing default closure is treated as "no default".
       continue
     }
 
     if (isEmptyAnswer(value)) continue
 
-    // `field.id` may be a dotted path (e.g. `applicant.name`); `set` writes it
-    // nested, matching how the rest of the answers tree is shaped.
+    // `field.id` may be a dotted path; `set` writes it nested.
     set(mergedAnswers, field.id, value)
   }
 

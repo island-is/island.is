@@ -1189,9 +1189,8 @@ export class SdfCustomComponent {
   props?: string
 }
 
-// RepeaterComponent must be declared before the union to avoid forward-reference errors.
-// The circular reference (items → SdfComponent → SdfRepeaterComponent) is handled
-// via NestJS/GraphQL's lazy type resolution using arrow functions.
+// Declared before the union to avoid forward-reference errors; the circular
+// items → SdfComponent → SdfRepeaterComponent ref is broken by lazy arrow types.
 @ObjectType('SdfRepeaterComponent')
 export class SdfRepeaterComponent {
   @Field()
@@ -1212,8 +1211,7 @@ export class SdfRepeaterComponent {
   @Field(() => Int, { nullable: true })
   maxItems?: number
 
-  // Items field uses a lazy type reference to break the circular dependency.
-  // Each item is an array of components (one row of the repeater).
+  // Lazy type reference; each item is one row of components.
   @Field(() => [String], {
     description: 'JSON-serialized rows of components. Parsed by the frontend.',
   })

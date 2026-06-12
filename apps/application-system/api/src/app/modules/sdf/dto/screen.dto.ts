@@ -60,11 +60,9 @@ export class ValidationErrorDto {
 }
 
 /**
- * Generic REST component DTO.
- *
- * The GraphQL gateway exposes this as a typed component union. The REST layer
- * intentionally keeps one documented transport DTO because it mirrors the
- * legacy form AST where field props vary by `type`.
+ * Generic REST component DTO. The GraphQL gateway exposes this as a typed union;
+ * the REST layer keeps one transport DTO mirroring the legacy form AST where
+ * field props vary by `type`.
  */
 export class ComponentDto {
   @ApiProperty({
@@ -254,10 +252,7 @@ export class ComponentDto {
   @ApiPropertyOptional({ enum: [0, 1, 2] })
   spacing?: 0 | 1 | 2
 
-  /**
-   * Checkbox field: background color of each option. Distinct from
-   * `inputBackgroundColor` (text-field specific) to avoid JSON collisions.
-   */
+  /** Checkbox field: per-option background, distinct from `inputBackgroundColor`. */
   @ApiPropertyOptional({ enum: ['blue', 'white'] })
   checkboxBackgroundColor?: 'blue' | 'white'
 
@@ -431,19 +426,19 @@ export class ComponentDto {
   @ApiPropertyOptional()
   titleVariant?: string
 
-  /** Display field: when true, render the read-only input aligned to the right half of the row. */
+  /** Display field: align the read-only input to the right half of the row. */
   @ApiPropertyOptional()
   halfWidthOwnline?: boolean
 
-  /** Display field: inline label rendered inside the read-only Input (distinct from the h4 title which uses `label`). */
+  /** Display field: inline label inside the read-only Input (distinct from `label`). */
   @ApiPropertyOptional()
   displayInputLabel?: string
 
-  /** Display field: serializable expression that the SDF client can evaluate without a backend round-trip. */
+  /** Display field: expression the client can evaluate without a backend round-trip. */
   @ApiPropertyOptional()
   clientValueExpression?: Record<string, unknown> | string | number | boolean
 
-  /** Optional vertical spacing (design system spacing units), e.g. description fields. */
+  /** Vertical spacing in design-system units. */
   @ApiPropertyOptional()
   marginTop?: number
 
@@ -576,9 +571,8 @@ export class ValidateResponseDto {
   errors!: ValidationErrorDto[]
 
   /**
-   * Live-computed display values for `FieldTypes.DISPLAY` fields on the current
-   * page, keyed by field id. Computed from the merged answers sent by the
-   * client — never persisted. Side-effect free (Constraint 1).
+   * Live-computed display values for `FieldTypes.DISPLAY` fields on the page,
+   * keyed by field id. Computed from the client's merged answers; never persisted.
    */
   @ApiPropertyOptional({
     type: Object,

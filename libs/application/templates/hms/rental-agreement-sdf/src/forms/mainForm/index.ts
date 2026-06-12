@@ -6,19 +6,17 @@ import type {
 } from '@island.is/application/types'
 import {
   calculateRentalPropertySize,
-  EmergencyExitOptions,
   getSelectedRentalUnits,
   hasRentalUnitSizeChanged,
   mapRentalPropertyInfo,
   mapRentalPropertyInfoToRows,
-  RentalHousingCategoryClassGroup,
   shouldShowFireExtinguisherAlert as shouldShowRentalFireExtinguisherAlert,
   shouldShowSmokeDetectorAlert as shouldShowRentalSmokeDetectorAlert,
-} from '@island.is/application/templates/hms/rental-agreement'
+} from '../../utils/rentalDomain'
 import type {
   RentalPropertyInfo,
   RentalPropertyUnitAnswer,
-} from '@island.is/application/templates/hms/rental-agreement'
+} from '../../utils/rentalDomain'
 
 import { GetPropertyInfoApi, SearchAddressesApi } from '../../dataProviders'
 import { dataSchema } from '../../lib/dataSchema'
@@ -32,7 +30,9 @@ import {
   specialProvisions,
 } from '../../lib/messages'
 import {
+  EmergencyExitOptions,
   RentalHousingCategoryClass,
+  RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
 } from '../../utils/constants'
