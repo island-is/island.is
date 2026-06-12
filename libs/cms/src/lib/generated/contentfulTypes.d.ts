@@ -4671,6 +4671,7 @@ export interface ISliceConnectedComponentFields {
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
     | 'WHODAS/Calculator'
+    | 'ECOI/Calculator'
     | 'Brennuleyfi/BurningPermitList'
     | 'DigitalIcelandMailingListThumbnailCard'
     | 'DigitalIcelandStatistics'
