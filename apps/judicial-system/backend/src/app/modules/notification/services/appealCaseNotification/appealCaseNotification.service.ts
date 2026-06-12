@@ -122,17 +122,15 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   // The value rendered for the {courtCaseNumber} placeholder in notifications.
   // For ruling-order appeals we identify the appeal by the appealed ruling
   // order's user-generated file name instead of the district court case number.
-  private getCourtCaseNumber(
-    theCase: Case,
-    appealCase: AppealCase,
-  ): string | undefined {
+  private getCourtCaseNumber(theCase: Case, appealCase: AppealCase): string {
     if (appealCase.rulingFileId) {
-      return theCase.caseFiles?.find(
-        (file) => file.id === appealCase.rulingFileId,
-      )?.userGeneratedFilename
+      return (
+        theCase.caseFiles?.find((file) => file.id === appealCase.rulingFileId)
+          ?.userGeneratedFilename ?? appealCase.id
+      )
     }
 
-    return theCase.courtCaseNumber
+    return theCase.courtCaseNumber ?? theCase.appealCase?.id ?? theCase.id
   }
 
   private getIndictmentDefenceRecipients(

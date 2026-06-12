@@ -89,29 +89,6 @@ export class InternalNotificationController {
     )
   }
 
-  @Post(`case/:caseId/${messageEndpoint[MessageType.APPEAL_CASE_NOTIFICATION]}`)
-  @UseGuards(CaseHasExistedGuard)
-  @ApiCreatedResponse({
-    type: DeliverResponse,
-    description: 'Sends an appeal case notification for an existing case',
-  })
-  sendAppealCaseNotification(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @Body() notificationDto: AppealCaseNotificationDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Sending ${notificationDto.type} appeal case notification for case ${caseId}`,
-    )
-
-    return this.appealCaseNotificationService.sendAppealCaseNotification(
-      notificationDto.type,
-      theCase,
-      notificationDto.user,
-      notificationDto.userIds,
-    )
-  }
-
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.APPEAL_CASE_NOTIFICATION]

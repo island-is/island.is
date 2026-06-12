@@ -109,12 +109,14 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(
-      workingCase.id,
-      TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
-      undefined,
-      targetAppealCase?.id ? { appealCaseId: targetAppealCase.id } : undefined,
-    )
+    if (targetAppealCase) {
+      await sendNotification(
+        workingCase.id,
+        TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+        undefined,
+        { appealCaseId: targetAppealCase.id },
+      )
+    }
 
     refreshCase()
 
@@ -123,10 +125,10 @@ const AppealFiles = () => {
     handleUpload,
     uploadFiles,
     updateUploadFile,
+    targetAppealCase,
+    refreshCase,
     sendNotification,
     workingCase.id,
-    targetAppealCase?.id,
-    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
