@@ -52,11 +52,6 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import {
-  ApplicationJsonFieldDto,
-  ApplicationJsonFieldSettingsDto,
-  ApplicationJsonValueDto,
-} from './models/dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -1308,9 +1303,10 @@ export class ApplicationsService {
       notificationDto.command !== NotificationCommands.SUBMIT &&
       notificationDto.screenDto
     ) {
-      notificationDto.fields = this.mapScreenToNotificationFields(
-        notificationDto.screenDto,
-      )
+      notificationDto.fields =
+        this.applicationMapper.mapScreenToApplicationJsonFields(
+          notificationDto.screenDto,
+        )
       notificationDto.screenDto = undefined
     }
 
@@ -1362,44 +1358,6 @@ export class ApplicationsService {
         en: 'Please try again later or send an email to island@island.is',
       },
     }
-  }
-
-  private mapScreenToNotificationFields(
-    screen: ScreenDto,
-  ): ApplicationJsonFieldDto[] {
-    return (screen.fields ?? [])
-      .filter((field) => !field.isHidden)
-      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .map((field) => {
-        const xroadField = new ApplicationJsonFieldDto()
-        xroadField.identifier = field.identifier
-        xroadField.screenIdentifier = screen.identifier
-        xroadField.screenTitle = screen.name
-        xroadField.fieldTitle = field.name
-        xroadField.fieldType = field.fieldType
-
-        const settings = new ApplicationJsonFieldSettingsDto()
-        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
-          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
-        }
-        if (field.fieldType === FieldTypesEnum.APPLICANT) {
-          settings.applicantType = field.fieldSettings?.applicantType
-        }
-        if (
-          settings.isDecimal !== undefined ||
-          settings.applicantType !== undefined
-        ) {
-          xroadField.fieldSettings = settings
-        }
-
-        xroadField.values = (field.values ?? []).map((value) => {
-          const xroadValue = new ApplicationJsonValueDto()
-          xroadValue.order = value.order
-          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-          return xroadValue
-        })
-        return xroadField
-      })
   }
 
   private async getOrganizationZendeskInfo(
