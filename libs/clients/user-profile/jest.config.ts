@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-user-profile',
   preset: './jest.preset.js',
   rootDir: '../../..',

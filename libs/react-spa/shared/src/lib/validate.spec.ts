@@ -126,7 +126,7 @@ describe('loaders utility methods', () => {
         })
 
         // Assert
-        expect(result).toThrowError()
+        expect(result).toThrow()
       } catch (error) {
         // Assert
         if (error instanceof ZodError) {

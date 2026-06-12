@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-administration-of-occupational-safety-and-health',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

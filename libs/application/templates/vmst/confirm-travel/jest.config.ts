@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'confirm-travel',
   preset: '../../../../../jest.preset.js',
   transform: {

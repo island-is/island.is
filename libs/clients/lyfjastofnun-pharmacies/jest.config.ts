@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'lyfjastofnun-pharmacies',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

@@ -169,7 +169,7 @@ describe('AuditService against Cloudwatch', () => {
         namespace: '',
         action,
       })
-    }).toThrowError('Audit namespace is required')
+    }).toThrow('Audit namespace is required')
   })
 
   it('supports auditing for auth without nationalId', () => {

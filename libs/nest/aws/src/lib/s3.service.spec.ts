@@ -115,7 +115,7 @@ describe('S3Service', () => {
 
       const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
 
-      expect(logger.error).toBeCalledTimes(0)
+      expect(logger.error).toHaveBeenCalledTimes(0)
       expect(result).toEqual(false)
     },
   )
@@ -128,8 +128,8 @@ describe('S3Service', () => {
 
       const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
 
-      expect(logger.error).toBeCalledTimes(1)
-      expect(logger.error).toBeCalledWith(
+      expect(logger.error).toHaveBeenCalledTimes(1)
+      expect(logger.error).toHaveBeenCalledWith(
         'Error occurred while checking if file: y exists in S3 bucket: x',
         Error(),
       )
@@ -143,8 +143,8 @@ describe('S3Service', () => {
 
     const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
 
-    expect(logger.error).toBeCalledTimes(1)
-    expect(logger.error).toBeCalledWith(
+    expect(logger.error).toHaveBeenCalledTimes(1)
+    expect(logger.error).toHaveBeenCalledWith(
       'Error occurred while checking if file: y exists in S3 bucket: x',
       TypeError(
         "Cannot read properties of undefined (reading 'httpStatusCode')",
@@ -163,7 +163,7 @@ describe('S3Service', () => {
       const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
       expect(result).toBe(true)
-      expect(logger.error).toBeCalledTimes(0)
+      expect(logger.error).toHaveBeenCalledTimes(0)
     },
   )
 
@@ -177,8 +177,8 @@ describe('S3Service', () => {
 
       expect(result).toBe(false)
 
-      expect(logger.error).toBeCalledTimes(1)
-      expect(logger.error).toBeCalledWith(
+      expect(logger.error).toHaveBeenCalledTimes(1)
+      expect(logger.error).toHaveBeenCalledWith(
         'Error occurred while deleting file: y from S3 bucket: x',
         Error('Unexpected http response when deleting object from S3'),
       )
@@ -191,7 +191,7 @@ describe('S3Service', () => {
     const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
     expect(result).toBe(false)
-    expect(logger.error).toBeCalledWith(
+    expect(logger.error).toHaveBeenCalledWith(
       'Error occurred while deleting file: y from S3 bucket: x',
       expect.any(Error),
     )

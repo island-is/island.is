@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'github-actions-cache',
   preset: './jest.preset.js',
   rootDir: '../..',
