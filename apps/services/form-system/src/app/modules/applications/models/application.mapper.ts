@@ -199,15 +199,18 @@ export class ApplicationMapper {
         (screen.fields ?? []).map((field) => ({
           field,
           screenIdentifier: screen.identifier,
+          screenTitle: screen.name,
         })),
       )
       .filter(({ field }) => !field.isHidden)
       .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
       .filter(({ field }) => (field.values?.length ?? 0) > 0)
-      .map(({ field, screenIdentifier }) => {
+      .map(({ field, screenIdentifier, screenTitle }) => {
         const jsonField = new ApplicationJsonFieldDto()
         jsonField.identifier = field.identifier
         jsonField.screenIdentifier = screenIdentifier
+        jsonField.screenTitle = screenTitle
+        jsonField.fieldTitle = field.name
         jsonField.fieldType = field.fieldType
 
         const settings = new ApplicationJsonFieldSettingsDto()
@@ -235,6 +238,7 @@ export class ApplicationMapper {
 
     const jsonDto = new ApplicationJsonDto()
     jsonDto.id = applicationDto.id ?? ''
+    jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
     jsonDto.slug = applicationDto.slug ?? ''
     jsonDto.isTest = applicationDto.isTest ?? false
     jsonDto.status = applicationDto.status ?? ''

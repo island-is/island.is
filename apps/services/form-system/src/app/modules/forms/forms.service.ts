@@ -1206,13 +1206,16 @@ export class FormsService {
         (screen.fields ?? []).map((field) => ({
           field,
           screenIdentifier: screen.identifier,
+          screenTitle: screen.name,
         })),
       )
       .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .map(({ field, screenIdentifier }) => {
+      .map(({ field, screenIdentifier, screenTitle }) => {
         const jsonField = new ApplicationJsonFieldDto()
         jsonField.identifier = field.identifier
         jsonField.screenIdentifier = screenIdentifier
+        jsonField.screenTitle = screenTitle
+        jsonField.fieldTitle = field.name
         jsonField.fieldType = field.fieldType
 
         const settings = new ApplicationJsonFieldSettingsDto()
@@ -1242,6 +1245,7 @@ export class FormsService {
 
     const jsonSample = new ApplicationJsonDto()
     jsonSample.id = uuidV4()
+    jsonSample.organizationNationalId = form.organizationNationalId ?? ''
     jsonSample.slug = form.slug ?? ''
     jsonSample.isTest = true
     jsonSample.status = 'COMPLETED'
