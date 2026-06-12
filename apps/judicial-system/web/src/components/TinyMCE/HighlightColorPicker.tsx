@@ -4,8 +4,6 @@ import { motion } from 'motion/react'
 import { HIGHLIGHT_COLORS } from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
-export { HIGHLIGHT_COLORS }
-
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.92, y: -6 },
   visible: {
