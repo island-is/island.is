@@ -15,7 +15,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -37,6 +37,7 @@ describe('InternalNotificationController - Send appeal received by court notific
 
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -58,9 +59,14 @@ describe('InternalNotificationController - Send appeal received by court notific
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate: receivedDate,
+      } as AppealCase
+
       await internalNotificationController
         .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: {
@@ -73,10 +79,9 @@ describe('InternalNotificationController - Send appeal received by court notific
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCase: {
-              appealReceivedByCourtDate: receivedDate,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
             type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT,

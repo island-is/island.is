@@ -141,7 +141,7 @@ describe('LimitedAccessAppealCaseController - Transition', () => {
     })
   })
 
-  describe('ruling-order appeals do not queue case-level notifications', () => {
+  describe('ruling-order appeals queue case notifications', () => {
     const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
     const appealCase = {
       id: appealCaseId,
@@ -165,8 +165,15 @@ describe('LimitedAccessAppealCaseController - Transition', () => {
       )
     })
 
-    it('should not queue any messages', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    it('should queue the withdrawn notification for the ruling-order appeal', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          caseId,
+          elementId: appealCaseId,
+          body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
+        }),
+      )
     })
   })
 })

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 import {
   addMessagesToQueue,
@@ -34,11 +38,40 @@ export class NotificationService {
     })
   }
 
+  // Resolves the appeal case the notification is about from the generic
+  // properties bag, validating it belongs to the case. Works for both the
+  // case-level appeal and ruling-order appeals.
+  private resolveAppealCaseId(
+    theCase: Case,
+    properties?: { [key: string]: string },
+  ): string {
+    const appealCaseId = properties?.appealCaseId
+
+    if (!appealCaseId) {
+      throw new BadRequestException(
+        'Missing appealCaseId for appeal case notification',
+      )
+    }
+
+    const appealCaseExists =
+      theCase.appealCase?.id === appealCaseId ||
+      theCase.rulingOrderAppealCases?.some((a) => a.id === appealCaseId)
+
+    if (!appealCaseExists) {
+      throw new BadRequestException(
+        `Appeal case ${appealCaseId} not found for case ${theCase.id}`,
+      )
+    }
+
+    return appealCaseId
+  }
+
   async addMessagesForNotificationToQueue(
     type: UserInitiatedNotificationType,
     eventOnly = false,
     theCase: Case,
     user: User,
+    properties?: { [key: string]: string },
   ): Promise<SendNotificationResponse> {
     switch (type) {
       case UserInitiatedNotificationType.READY_FOR_COURT:
@@ -73,6 +106,7 @@ export class NotificationService {
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,
+          elementId: this.resolveAppealCaseId(theCase, properties),
           body: { type },
         })
         break

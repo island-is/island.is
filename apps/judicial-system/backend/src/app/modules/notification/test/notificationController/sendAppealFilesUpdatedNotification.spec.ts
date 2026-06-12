@@ -24,6 +24,7 @@ type GivenWhenThen = (caseId: string) => Promise<Then>
 describe('NotificationController - Send appeal files updated notifications', () => {
   const userId = uuid()
   const user = { id: userId } as User
+  const appealCaseId = uuid()
 
   let mockQueuedMessages: Message[]
   let givenWhenThen: GivenWhenThen
@@ -38,9 +39,15 @@ describe('NotificationController - Send appeal files updated notifications', () 
       const then = {} as Then
 
       await notificationController
-        .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as unknown as RequestCaseNotificationType,
-        })
+        .sendCaseNotification(
+          caseId,
+          user,
+          { id: caseId, appealCase: { id: appealCaseId } } as Case,
+          {
+            type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as unknown as RequestCaseNotificationType,
+            properties: { appealCaseId },
+          },
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -61,6 +68,7 @@ describe('NotificationController - Send appeal files updated notifications', () 
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId,
+          elementId: appealCaseId,
           body: { type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED },
         },
       ])
