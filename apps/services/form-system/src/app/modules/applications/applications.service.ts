@@ -54,6 +54,7 @@ import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import {
   ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
   ApplicationJsonValueDto,
 } from './models/dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
@@ -1313,6 +1314,7 @@ export class ApplicationsService {
       notificationDto.screenDto = undefined
     }
 
+    console.log('notificationDto', JSON.stringify(notificationDto, null, 2))
     const response = await this.notifyService.sendNotification(
       notificationDto,
       submissionUrl,
@@ -1365,19 +1367,39 @@ export class ApplicationsService {
   private mapScreenToNotificationFields(
     screen: ScreenDto,
   ): ApplicationJsonFieldDto[] {
-    return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationJsonFieldDto()
-      xroadField.identifier = field.identifier
-      xroadField.screenIdentifier = screen.identifier
-      xroadField.fieldType = field.fieldType
-      xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationJsonValueDto()
-        xroadValue.order = value.order
-        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-        return xroadValue
+    return (screen.fields ?? [])
+      .filter((field) => !field.isHidden)
+      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .map((field) => {
+        const xroadField = new ApplicationJsonFieldDto()
+        xroadField.identifier = field.identifier
+        xroadField.screenIdentifier = screen.identifier
+        xroadField.screenTitle = screen.name
+        xroadField.fieldTitle = field.name
+        xroadField.fieldType = field.fieldType
+
+        const settings = new ApplicationJsonFieldSettingsDto()
+        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+        }
+        if (field.fieldType === FieldTypesEnum.APPLICANT) {
+          settings.applicantType = field.fieldSettings?.applicantType
+        }
+        if (
+          settings.isDecimal !== undefined ||
+          settings.applicantType !== undefined
+        ) {
+          xroadField.fieldSettings = settings
+        }
+
+        xroadField.values = (field.values ?? []).map((value) => {
+          const xroadValue = new ApplicationJsonValueDto()
+          xroadValue.order = value.order
+          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
+          return xroadValue
+        })
+        return xroadField
       })
-      return xroadField
-    })
   }
 
   private async getOrganizationZendeskInfo(
