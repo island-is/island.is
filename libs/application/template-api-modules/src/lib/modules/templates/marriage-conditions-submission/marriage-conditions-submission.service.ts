@@ -16,8 +16,8 @@ import {
 } from '@island.is/application/templates/marriage-conditions/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
+import { sortAlpha } from '@island.is/shared/utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   coreErrorMessages,
@@ -32,7 +32,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
-    private readonly nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {
     super(ApplicationTypes.MARRIAGE_CONDITIONS)
   }
@@ -89,7 +88,9 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
   }
 
   async religionCodes() {
-    return await this.nationalRegistryXRoadService.getReligions()
+    const organizations =
+      await this.syslumennService.getReligiousOrganizations()
+    return organizations.map(({ name }) => ({ name })).sort(sortAlpha('name'))
   }
 
   private handleReturn(maritalStatus: string) {
