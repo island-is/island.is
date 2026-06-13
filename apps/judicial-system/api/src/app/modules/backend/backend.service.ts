@@ -484,6 +484,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/file/${fileId}/reject`)
   }
 
+  confirmRulingOrder(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/confirm`)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }

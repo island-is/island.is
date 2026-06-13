@@ -10,6 +10,7 @@ import {
 import {
   CaseFileCategory,
   CourtSessionRulingType,
+  IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
@@ -169,6 +170,47 @@ describe('CourtSessionController - Update', () => {
         user: {},
         caseId,
       })
+    })
+  })
+
+  describe('ORDER court session is confirmed', () => {
+    const fileId = uuid()
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      existingCourtSession.isConfirmed = false
+      existingCourtSession.rulingType = CourtSessionRulingType.ORDER
+      existingCourtSession.rulingFileId = fileId
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        caseId,
+        isConfirmed: true,
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: fileId,
+      })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should also notify the parties about the ruling order', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith(
+        {
+          type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+          user: {},
+          caseId,
+        },
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          user: {},
+          caseId,
+          body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
+        },
+      )
     })
   })
 
