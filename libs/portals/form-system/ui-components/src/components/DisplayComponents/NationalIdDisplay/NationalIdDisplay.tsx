@@ -50,8 +50,7 @@ export const NationalIdDisplay = ({
               {`${formatMessage(m.nationalId)}:`}
               {'\u00A0\u00A0\u00A0'}
               {!nationalId && requiredMissing && (
-                <>
-                  <Text
+                <Text
                     as="span"
                     fontWeight="light"
                     color="red600"
@@ -59,7 +58,6 @@ export const NationalIdDisplay = ({
                   >
                     {formatMessage(m.missingValue)}
                   </Text>
-                </>
               )}
               {nationalId && (
                 <Text
@@ -76,8 +74,7 @@ export const NationalIdDisplay = ({
               {`${formatMessage(m.individualName)}:`}
               {'\u00A0\u00A0\u00A0'}
               {!name && requiredMissing && (
-                <>
-                  <Text
+                <Text
                     as="span"
                     fontWeight="light"
                     color="red600"
@@ -85,7 +82,6 @@ export const NationalIdDisplay = ({
                   >
                     {formatMessage(m.missingValue)}
                   </Text>
-                </>
               )}
               {name && (
                 <Text
@@ -103,8 +99,7 @@ export const NationalIdDisplay = ({
                 {`${formatMessage(m.address)}:`}
                 {'\u00A0\u00A0\u00A0'}
                 {!address && requiredMissing && (
-                  <>
-                    <Text
+                  <Text
                       as="span"
                       fontWeight="light"
                       color="red600"
@@ -112,7 +107,6 @@ export const NationalIdDisplay = ({
                     >
                       {formatMessage(m.missingValue)}
                     </Text>
-                  </>
                 )}
                 {address && (
                   <Text
@@ -131,8 +125,7 @@ export const NationalIdDisplay = ({
                 {`${formatMessage(m.postalCode)}:`}
                 {'\u00A0\u00A0\u00A0'}
                 {!postalCode && requiredMissing && (
-                  <>
-                    <Text
+                  <Text
                       as="span"
                       fontWeight="light"
                       color="red600"
@@ -140,7 +133,6 @@ export const NationalIdDisplay = ({
                     >
                       {formatMessage(m.missingValue)}
                     </Text>
-                  </>
                 )}
                 {postalCode && (
                   <Text
@@ -159,8 +151,7 @@ export const NationalIdDisplay = ({
                 {`${formatMessage(m.city)}:`}
                 {'\u00A0\u00A0\u00A0'}
                 {!municipality && requiredMissing && (
-                  <>
-                    <Text
+                  <Text
                       as="span"
                       fontWeight="light"
                       color="red600"
@@ -168,7 +159,6 @@ export const NationalIdDisplay = ({
                     >
                       {formatMessage(m.missingValue)}
                     </Text>
-                  </>
                 )}
                 {municipality && (
                   <Text
