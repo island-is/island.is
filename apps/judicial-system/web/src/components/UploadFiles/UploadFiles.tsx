@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
@@ -65,16 +72,34 @@ const UploadFiles: FC<Props> = (props) => {
     onDrop,
   })
 
+  // Keep the previous `files` in a ref so we can revoke the object URLs of
+  // files that have been removed, without revoking URLs that are still in use
+  // (e.g. after a rename, which keeps the same previewUrl).
+  const filesRef = useRef(files)
+
+  useEffect(() => {
+    const currentUrls = new Set(files.map((file) => file.previewUrl))
+
+    // Revoke object URLs for files that are no longer present
+    filesRef.current.forEach((file) => {
+      if (file.previewUrl && !currentUrls.has(file.previewUrl)) {
+        URL.revokeObjectURL(file.previewUrl)
+      }
+    })
+
+    filesRef.current = files
+  }, [files])
+
   useEffect(() => {
     return () => {
-      // Cleanup object URLs when component unmounts
-      files.forEach((file) => {
+      // Cleanup remaining object URLs when component unmounts
+      filesRef.current.forEach((file) => {
         if (file.previewUrl) {
           URL.revokeObjectURL(file.previewUrl)
         }
       })
     }
-  }, [files])
+  }, [])
 
   return (
     <div

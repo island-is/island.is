@@ -88,7 +88,8 @@ export const colorPicker = style({
   borderRadius: theme.border.radius.large,
   padding: theme.spacing[1],
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
+  // Word's 15 highlight colors plus the ✕ button fill a 4x4 grid exactly.
+  gridTemplateColumns: 'repeat(4, 1fr)',
   gap: 6,
   boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
 })
