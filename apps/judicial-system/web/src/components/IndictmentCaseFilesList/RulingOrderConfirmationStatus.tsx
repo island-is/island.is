@@ -1,7 +1,6 @@
 import { FC, MouseEvent, useContext, useState } from 'react'
 
-import { Box, Button, Icon, Text, toast } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -19,8 +18,7 @@ interface Props {
 /**
  * Right-aligned confirmation state of a ruling order uploaded during the
  * course of a case:
- * - confirmed: the "Staðfest - {date} kl. {time}" label with the judge's name
- *   and a checkmark (visible to everyone who can see the file),
+ * - confirmed: nothing is rendered,
  * - the registered judge: a "Staðfesta" button,
  * - other district-court staff: a "Bíður staðfestingar" text.
  *

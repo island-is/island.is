@@ -35,7 +35,7 @@ interface Props {
    * Which fields of an uploaded file can be edited. Defaults to all editable
    * fields (file name and display date).
    */
-  editableFileAttributs?: readonly EditableFields[]
+  editableFileAttributes?: readonly EditableFields[]
 }
 
 const UploadFiles: FC<Props> = (props) => {
@@ -47,7 +47,7 @@ const UploadFiles: FC<Props> = (props) => {
     onRename,
     setEditCount,
     isBottomComponent,
-    editableFileAttributs = editableFields,
+    editableFileAttributes = editableFields,
   } = props
   const { formatMessage } = useIntl()
 
@@ -133,7 +133,7 @@ const UploadFiles: FC<Props> = (props) => {
             caseFile={{
               ...file,
               id: file.id ?? '',
-              canEdit: file.percent === 0 ? editableFileAttributs : [],
+              canEdit: file.percent === 0 ? editableFileAttributes : [],
               canOpen: true,
             }}
             onOpen={() => file.previewUrl && window.open(file.previewUrl)}
