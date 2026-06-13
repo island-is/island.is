@@ -7,11 +7,13 @@ import { ForbiddenException } from '@nestjs/common'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
+  DefendantEventType,
   IndictmentCaseNotificationType,
   indictmentCases,
   InstitutionType,
@@ -29,6 +31,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { VerdictService } from '../../../verdict'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -57,14 +60,21 @@ describe('CaseController - Transition', () => {
   let mockQueuedMessages: Message[]
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockVerdictService: VerdictService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, sequelize, caseRepositoryService, caseController } =
-      await createTestingCaseModule()
+    const {
+      queuedMessages,
+      sequelize,
+      caseRepositoryService,
+      verdictService,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
+    mockVerdictService = verdictService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -516,6 +526,56 @@ describe('CaseController - Transition', () => {
       })
     },
   )
+
+  describe('completing an indictment case with a ruling', () => {
+    const caseId = uuid()
+    const dismissedDefendantId = uuid()
+    const activeDefendantId = uuid()
+    const defendants = [
+      {
+        id: dismissedDefendantId,
+        eventLogs: [
+          {
+            eventType: DefendantEventType.INDICTMENT_DISMISSED,
+            created: randomDate(),
+          },
+        ],
+      },
+      { id: activeDefendantId, eventLogs: [] },
+    ]
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: indictmentCases[0],
+      policeCaseNumbers: [uuid()],
+      courtCaseNumber: uuid(),
+      state: CaseState.RECEIVED,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      courtEndTime: randomDate(),
+      defendants,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        ...theCase,
+        state: CaseState.COMPLETED,
+      })
+
+      await givenWhenThen(caseId, theCase, {
+        transition: CaseTransition.COMPLETE,
+      })
+    })
+
+    it('should only create verdicts for defendants whose indictment was not cancelled or dismissed', () => {
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledTimes(1)
+      expect(mockVerdictService.createVerdict).toHaveBeenCalledWith(
+        caseId,
+        { defendantId: activeDefendantId },
+        transaction,
+      )
+    })
+  })
 
   describe('indictment case with 0 defendants', () => {
     each(indictmentCases).describe('%s case', (type) => {

@@ -69,6 +69,12 @@ const Completed: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [modalVisible, setModalVisible] = useState<modal>()
 
+  // Defendants whose indictment was cancelled or dismissed (completed for some)
+  // do not get a verdict and therefore no service requirement
+  const defendantsWithVerdict = workingCase.defendants?.filter(
+    (defendant) => !defendant.indictmentCancelledOrDismissedState,
+  )
+
   // If the case has not been sent to the public prosecutor after completion/correction
   // then show the send to public prosecutor button
   const isSentToPublicProsecutor = Boolean(
@@ -126,7 +132,7 @@ const Completed: FC = () => {
     }
 
     // The verdict needs to be delivered to some defendants
-    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+    const requiresVerdictDeliveryToDefendants = defendantsWithVerdict?.some(
       ({ verdict }) =>
         verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
     )
@@ -148,7 +154,7 @@ const Completed: FC = () => {
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    workingCase.defendants,
+    defendantsWithVerdict,
     workingCase.indictmentSentToPublicProsecutorDate,
     completeCaseConfirmation,
     completeCaseConfirmationWithVerdictDelivery,
@@ -172,7 +178,7 @@ const Completed: FC = () => {
 
   const stepIsValid = () => {
     const isValidDefendants = isRuling
-      ? workingCase.defendants?.every((defendant) =>
+      ? defendantsWithVerdict?.every((defendant) =>
           defendant.verdict?.serviceRequirement ===
           ServiceRequirement.NOT_APPLICABLE
             ? Boolean(defendant.verdict?.appealDecision)
@@ -181,7 +187,7 @@ const Completed: FC = () => {
       : true
     const isValidRuling =
       includeRulingText &&
-      workingCase.defendants?.some(
+      defendantsWithVerdict?.some(
         (defendant) =>
           defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
       )
@@ -211,7 +217,7 @@ const Completed: FC = () => {
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.heading)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.defendants?.map(
+          {defendantsWithVerdict?.map(
             (defendant) =>
               defendant.verdict && (
                 <Box
@@ -280,7 +286,7 @@ const Completed: FC = () => {
                   title={formatMessage(strings.serviceRequirementTitle)}
                 />
                 <div className={grid({ gap: 4 })}>
-                  {workingCase.defendants?.map((defendant) => {
+                  {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
                     if (!verdict) return null
 
