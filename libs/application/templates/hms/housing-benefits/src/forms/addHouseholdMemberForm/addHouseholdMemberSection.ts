@@ -6,34 +6,14 @@ import {
   buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  FormValue,
-} from '@island.is/application/types'
+import { DefaultEvents, FormValue } from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import {
   getAddHouseholdMemberStaticTableData,
   getAddHouseholdMemberTableRepeaterDefaultValue,
-  getRejectedAssigneeNamesForAddMemberScreen,
+  rejectedAssigneesDescription,
 } from '../../utils/addHouseholdMemberUtils'
 import { hasRejectedAssigneesInAnswers } from '../../utils/assigneeRejectionUtils'
-
-const rejectedAssigneesDescription = (application: Application) => {
-  const names = getRejectedAssigneeNamesForAddMemberScreen(application)
-  if (names.length === 0) {
-    return {
-      id: 'hb.application:addHouseholdMember.rejectedAssigneesEmpty',
-      defaultMessage: '',
-    }
-  }
-  return {
-    id: 'hb.application:addHouseholdMember.rejectedAssigneesList#markdown',
-    defaultMessage:
-      'Eftirfarandi heimilismenn hafa hafnað umsókninni og verða fjarlægðir af listanum: \n\n * {names}',
-    values: { names: names.join(' \n\n * ') },
-  }
-}
 
 export const addHouseholdMemberSection = buildSection({
   id: 'addHouseholdMemberSection',

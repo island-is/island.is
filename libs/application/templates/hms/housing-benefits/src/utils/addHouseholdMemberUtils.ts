@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
+import * as m from '../lib/messages'
 import {
   getAssigneeNationalIds,
   getCompletedAssigneeNationalIdSet,
@@ -175,6 +176,17 @@ export const getAddHouseholdMemberTableRepeaterDefaultValue = (
 export const getRejectedAssigneeNamesForAddMemberScreen = (
   application: Application,
 ): string[] => getRejectedAssigneeNames(application)
+
+export const rejectedAssigneesDescription = (application: Application) => {
+  const names = getRejectedAssigneeNamesForAddMemberScreen(application)
+  if (names.length === 0) {
+    return m.addHouseholdMember.rejectedAssigneesEmpty
+  }
+  return {
+    ...m.addHouseholdMember.rejectedAssigneesList,
+    values: { names: names.join(' \n\n * ') },
+  }
+}
 
 /**
  * True when the household table includes an over-18 member who has not yet signed or rejected.
