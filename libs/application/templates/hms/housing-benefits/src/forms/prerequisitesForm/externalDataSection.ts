@@ -17,7 +17,7 @@ import * as m from '../../lib/messages'
 
 export const externalDataSection = buildSection({
   id: 'conditions',
-  title: 'Forkröfur',
+  title: m.prereqMessages.externalDataSectionTitle,
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',

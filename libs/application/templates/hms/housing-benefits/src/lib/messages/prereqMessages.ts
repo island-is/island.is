@@ -130,6 +130,11 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
   },
+  externalDataSectionTitle: {
+    id: 'hb.application:prereq.externalDataSectionTitle',
+    defaultMessage: 'Forkröfur',
+    description: 'Prerequisites external data section title',
+  },
   externalDataTitle: {
     id: 'fca.application:prereq.externalDataTitle',
     defaultMessage: 'Gagnaöflun fyrir umsókn um húsnæðisbætur',
