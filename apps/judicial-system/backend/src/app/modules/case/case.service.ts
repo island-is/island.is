@@ -814,7 +814,16 @@ export class CaseService {
       },
     )
 
-    for (const caseFile of theCase.caseFiles ?? []) {
+    const sortedCaseFiles = [...(theCase.caseFiles ?? [])].sort((a, b) => {
+      if (a.orderWithinChapter === null && b.orderWithinChapter === null) {
+        return new Date(a.created).getTime() - new Date(b.created).getTime()
+      }
+      if (a.orderWithinChapter === null) return 1
+      if (b.orderWithinChapter === null) return -1
+      return (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0)
+    })
+
+    for (const caseFile of sortedCaseFiles) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&

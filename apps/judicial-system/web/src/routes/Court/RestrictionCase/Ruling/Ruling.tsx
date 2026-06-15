@@ -39,6 +39,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { getConclusionAutofill } from './Ruling.logic'
@@ -124,8 +125,9 @@ export const Ruling = () => {
   )
 
   const stepIsValid = isRulingValidRC(workingCase)
-  const caseFiles =
-    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+  const caseFiles = sortCaseFiles(
+    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
+  )
 
   const handleIsolationChange = useCallback(() => {
     let conclusion = undefined

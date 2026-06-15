@@ -53,6 +53,7 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -133,8 +134,9 @@ export const Overview = () => {
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const caseFiles =
-    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+  const caseFiles = sortCaseFiles(
+    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
+  )
 
   return (
     <PageLayout

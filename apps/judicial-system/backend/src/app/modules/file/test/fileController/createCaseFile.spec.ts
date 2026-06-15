@@ -170,6 +170,7 @@ describe('FileController - Create case file', () => {
           caseId,
           name: 'test.txt',
           userGeneratedFilename: 'test.txt',
+          orderWithinChapter: 0,
         },
         { transaction },
       )

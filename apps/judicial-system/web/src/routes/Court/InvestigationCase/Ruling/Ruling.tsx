@@ -37,6 +37,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -107,8 +108,9 @@ const Ruling = () => {
     [workingCase.id],
   )
   const stepIsValid = isRulingValidIC(workingCase)
-  const caseFiles =
-    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+  const caseFiles = sortCaseFiles(
+    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
+  )
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
 

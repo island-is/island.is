@@ -57,6 +57,7 @@ import {
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -136,8 +137,9 @@ export const Overview = () => {
     setModal('caseSubmittedModal')
   }
 
-  const caseFiles =
-    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+  const caseFiles = sortCaseFiles(
+    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
+  )
 
   return (
     <PageLayout
