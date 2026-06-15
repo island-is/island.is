@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
-    "node": "20.20.2",
+    "node": "22.22.3",
     "yarn": "4.6"
   },
   "repository": {
@@ -536,7 +536,7 @@
     "@types/node": "20.15.0"
   },
   "volta": {
-    "node": "20.20.2",
+    "node": "22.22.3",
     "yarn": "4.6.0"
   },
   "packageManager": "yarn@4.6.0"
