@@ -1,5 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
+import { Op } from 'sequelize'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
@@ -12,12 +13,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type {
-  Subtype,
-  User,
-  UserDescriptor,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import type { Subtype, User, UserDescriptor } from '@island.is/judicial-system/types'
 import {
   AppealCaseRulingDecision,
   CaseDecision,
@@ -27,6 +23,7 @@ import {
   courtSubtypes,
   IndictmentSubtypeMap,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
@@ -58,6 +55,11 @@ enum RobotEmailType {
   INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
   REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
+
+const INDICTMENT_JUDGE_ASSIGNMENT_ROLES = [
+  UserRole.DISTRICT_COURT_JUDGE,
+  UserRole.COURT_OF_APPEALS_JUDGE,
+]
 
 @Injectable()
 export class CourtService {
@@ -680,6 +682,7 @@ export class CourtService {
       where: {
         caseId,
         type: RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+        elementId: { [Op.in]: INDICTMENT_JUDGE_ASSIGNMENT_ROLES },
       },
     })
 
@@ -702,6 +705,7 @@ export class CourtService {
         content,
         RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
         caseId,
+        assignedRole?.role,
       )
     } catch (error) {
       this.eventService.postErrorEvent(
