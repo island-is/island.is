@@ -56,7 +56,9 @@ export const mapSeaServiceEntry = (
   shipRegistrationNumber: entry.shipRegistrationNo,
   rank: entry.rankNameAndCode.is,
   rankEn: entry.rankNameAndCode.en,
-  startDate: entry.startDate ? parseDate(entry.startDate) ?? undefined : undefined,
+  startDate: entry.startDate
+    ? parseDate(entry.startDate) ?? undefined
+    : undefined,
   endDate: entry.endDate ? parseDate(entry.endDate) ?? undefined : undefined,
   numberOfDays: Number(entry.numberOfDays),
 })
@@ -66,7 +68,8 @@ export const mapSeaServiceResponse = (
 ): SailorSeaServiceResponseDto => ({
   entries: response.crewRegistrations.map(mapSeaServiceEntry),
   totalCount: response.pagination.totalRecordCount,
-  hasNextPage: response.pagination.pageNumber < response.pagination.numberOfPages,
+  hasNextPage:
+    response.pagination.pageNumber < response.pagination.numberOfPages,
   totalCrewRegistrationDayCount: response.totalCrewRegistrationDayCount,
   seaServiceDayCount: response.seaServiceDayCount,
   workAshoreDayCount: response.workAshoreDayCount,

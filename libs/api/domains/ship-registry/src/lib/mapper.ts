@@ -218,14 +218,22 @@ export const mapToSailorRegistrationExemptions = (
   }))
 
 const mapSeaServiceEntry = (
-  e: { shipName?: string; shipRegistrationNumber?: string; rank?: string; rankEn?: string; startDate?: Date; endDate?: Date; numberOfDays?: number },
+  e: {
+    shipName?: string
+    shipRegistrationNumber?: string
+    rank?: string
+    rankEn?: string
+    startDate?: Date
+    endDate?: Date
+    numberOfDays?: number
+  },
   i: number,
   locale: LocaleEnum,
 ): ShipRegistrySailorSeaServiceBookEntry => ({
   id: `${e.shipRegistrationNumber ?? i}-${i}-${locale}`,
   shipName: e.shipName,
   shipRegistrationNumber: e.shipRegistrationNumber,
-  rank: locale === LocaleEnum.En ? (e.rankEn ?? e.rank) : e.rank,
+  rank: locale === LocaleEnum.En ? e.rankEn ?? e.rank : e.rank,
   startDate: e.startDate,
   endDate: e.endDate,
   numberOfDays: e.numberOfDays,

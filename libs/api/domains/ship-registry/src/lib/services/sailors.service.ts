@@ -71,7 +71,9 @@ export class SailorsService {
       user,
       input,
     )
-    return response ? mapToSailorSeaServiceBookCollection(response, locale) : null
+    return response
+      ? mapToSailorSeaServiceBookCollection(response, locale)
+      : null
   }
 
   async getRanks(locale: LocaleEnum): Promise<ShipRegistryRank[]> {

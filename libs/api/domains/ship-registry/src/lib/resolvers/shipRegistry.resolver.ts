@@ -21,7 +21,10 @@ export class ShipRegistryResolver {
     return this.service.findShipByNameOrNumber(input)
   }
 
-  @Query(() => [ShipRegistryRank], { name: 'shipRegistryRanks', nullable: true })
+  @Query(() => [ShipRegistryRank], {
+    name: 'shipRegistryRanks',
+    nullable: true,
+  })
   async shipRegistryRanks(
     @Args('locale', {
       type: () => LocaleEnum,

@@ -83,9 +83,13 @@ export class SailorsResolver {
     return { locale }
   }
 
-  @ResolveField('seaServiceBook', () => ShipRegistrySailorSeaServiceBookCollection, {
-    nullable: true,
-  })
+  @ResolveField(
+    'seaServiceBook',
+    () => ShipRegistrySailorSeaServiceBookCollection,
+    {
+      nullable: true,
+    },
+  )
   async resolveSeaServiceBook(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorBase,
