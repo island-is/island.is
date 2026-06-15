@@ -2,8 +2,6 @@ import { getValueViaPath, NO } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 
-const ASSIGNee_DECLINED_HOUSEHOLD_RADIO = 'approveBeingAHousholdMemberRadio'
-
 const normalizeNationalId = (id: string): string =>
   kennitala.isValid(id) ? kennitala.sanitize(id) : id
 
@@ -27,7 +25,7 @@ export const getRejectedAssigneeNationalIdsFromAnswers = (
     const bucket = record[topKey]
     if (!bucket || typeof bucket !== 'object') continue
     const radio = (bucket as Record<string, unknown>)[
-      ASSIGNee_DECLINED_HOUSEHOLD_RADIO
+      'approveBeingAHousholdMemberRadio'
     ]
     if (radio === NO) {
       fromRadio.push(kennitala.sanitize(topKey))
