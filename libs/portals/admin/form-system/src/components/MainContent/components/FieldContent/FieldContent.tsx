@@ -17,7 +17,7 @@ export const FieldContent = () => {
   const screenId = (control.activeItem.data as FormSystemField).screenId
   const screen = control.form.screens?.find((s) => s && s.id === screenId)
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
-  const showIdentifier = control.form.useValidate && screen?.shouldValidate
+  const showIdentifier = control.form.submissionServiceUrl !== 'zendesk'
 
   if (inListBuilder) {
     return <ListBuilder />
