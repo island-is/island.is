@@ -238,11 +238,11 @@ export class BankTransferService {
     let mappedStatus = cachedMappedStatus
     let lastKnownStatus = row.lastKnownStatus
 
-    if (
-      cachedMappedStatus === BankTransferStatus.PENDING &&
-      !isRowExpired(row)
-    ) {
-      // Authoritative refresh BEFORE any destructive action.
+    if (cachedMappedStatus === BankTransferStatus.PENDING) {
+      // Authoritative refresh BEFORE any destructive action — including for an expired row. A
+      // transfer that settled just before expiry whose callback was lost must be finalized, not
+      // discarded, or the payer could pay a second time. (Same refresh-before-discard guard as
+      // getBankTransferStatus.)
       const refreshed = await this.refreshFromBlikkOrWarn(row)
       if (refreshed) {
         await this.finalizeFromBlikkResult(row, refreshed)
@@ -254,9 +254,10 @@ export class BankTransferService {
         mappedStatus = refreshed.status
         lastKnownStatus = refreshed.rawStatus
       }
-      // Only DELETE on Blikk while the attempt is still PENDING. Throws if Blikk refuses to cancel
-      // (payment past DRAFT / live) — we let that propagate so we never soft-delete a live payment.
-      if (mappedStatus === BankTransferStatus.PENDING) {
+      // Only DELETE on Blikk while the attempt is still PENDING and not expired. Throws if Blikk
+      // refuses to cancel (payment past DRAFT / live) — we let that propagate so we never soft-delete
+      // a live payment. An expired row is past its TTL, so there is nothing to cancel Blikk-side.
+      if (mappedStatus === BankTransferStatus.PENDING && !isRowExpired(row)) {
         await this.cancelBlikkPayment(row.providerPaymentId, logPrefix)
       }
     }
@@ -584,6 +585,33 @@ export class BankTransferService {
     }
 
     return row.providerPaymentId
+  }
+
+  /**
+   * Soft-deletes the active row for a refund and returns its id (or null if none) so the saga can
+   * restore it on rollback. Deleting the row is what stops a post-refund `verify` (poll, webhook, or
+   * the anonymous mutation) from re-running `finalizeBankTransferSuccess` and resurrecting the
+   * fulfillment + FJS charge the refund just removed — and lets the flow be re-paid by bank transfer.
+   */
+  async softDeleteRowForRefund(paymentFlowId: string): Promise<string | null> {
+    const row = await this.bankTransferPaymentModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    if (!row) {
+      return null
+    }
+
+    await this.softDeleteRow(row.id)
+    return row.id
+  }
+
+  /** Restores a row soft-deleted by {@link softDeleteRowForRefund}; idempotent. Used on refund rollback. */
+  async restoreRow(rowId: string): Promise<void> {
+    await this.bankTransferPaymentModel.update(
+      { isDeleted: false },
+      { where: { id: rowId, isDeleted: true } },
+    )
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────────

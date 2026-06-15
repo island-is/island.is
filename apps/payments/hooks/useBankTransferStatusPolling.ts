@@ -2,10 +2,7 @@ import type { ApolloError } from '@apollo/client'
 import { useEffect, useRef } from 'react'
 
 import { PaymentsBankTransferStatus } from '@island.is/api/schema'
-import {
-  BankTransferErrorCode,
-  CardErrorCode,
-} from '@island.is/shared/constants'
+import { BankTransferErrorCode } from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useVerifyBankTransferMutation } from '../graphql/mutations.graphql.generated'
@@ -31,6 +28,19 @@ const FALLBACK_HARD_TIMEOUT_MS = 10 * 60 * 1000 // 10 minutes
 
 const nextInterval = (attempt: number) =>
   POLL_INTERVALS_MS[Math.min(attempt, POLL_INTERVALS_MS.length - 1)]
+
+const terminalStatusToErrorCode = (
+  status: PaymentsBankTransferStatus,
+): BankTransferErrorCode => {
+  switch (status) {
+    case PaymentsBankTransferStatus.rejected:
+      return BankTransferErrorCode.BankTransferRejected
+    case PaymentsBankTransferStatus.cancelled:
+      return BankTransferErrorCode.BankTransferCancelled
+    default:
+      return BankTransferErrorCode.BankTransferGenericError
+  }
+}
 
 const computeHardTimeoutMs = (
   expiresAt: Date | string | null | undefined,
@@ -94,7 +104,9 @@ export const useBankTransferStatusPolling = ({
       // hard timeout reached
       if (Date.now() - startedAt > hardTimeoutMs) {
         stop()
-        onFailureRef.current({ code: CardErrorCode.UnknownCardError })
+        onFailureRef.current({
+          code: BankTransferErrorCode.BankTransferExpired,
+        })
         return
       }
 
@@ -120,7 +132,7 @@ export const useBankTransferStatusPolling = ({
           status === PaymentsBankTransferStatus.cancelled
         ) {
           stop()
-          onFailureRef.current({ code: CardErrorCode.GenericDecline })
+          onFailureRef.current({ code: terminalStatusToErrorCode(status) })
           return
         }
         // PENDING — schedule the next poll.

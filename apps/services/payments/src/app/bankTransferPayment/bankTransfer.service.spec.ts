@@ -1026,15 +1026,22 @@ describe('BankTransferService', () => {
       expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
     })
 
-    it('skips the Blikk call when the row is PENDING but past expiresAt (Blikk has already cleaned up)', async () => {
+    it('refreshes from Blikk before discarding an expired PENDING row, but does NOT call the Blikk cancel', async () => {
       bankTransferPaymentModel.findOne.mockResolvedValue({
         ...baseRow,
         expiresAt: new Date(Date.now() - 10 * 60 * 1000),
       })
+      // Refresh confirms still PENDING at Blikk → safe to discard.
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'PENDING',
+      })
 
       const result = await service.cancel({ paymentFlowId: 'flow-1' })
 
-      expect(blikkClient.getPayment).not.toHaveBeenCalled()
+      // We DO refresh (so a settled-but-uncallbacked transfer is finalized, not lost) but never
+      // call the Blikk cancel for an expired row — its TTL already elapsed.
+      expect(blikkClient.getPayment).toHaveBeenCalledWith('prov-1')
       expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
       expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
         { isDeleted: true },
@@ -1047,6 +1054,37 @@ describe('BankTransferService', () => {
         },
       )
       expect(result).toEqual({ ok: true })
+    })
+
+    // Bug fix: an expired PENDING row that actually settled at Blikk just before expiry (callback
+    // lost) must be finalized and the cancel refused — otherwise "Start again" discards the settled
+    // row and the payer can pay a second time.
+    it('finalizes SUCCESS and throws PaymentFlowAlreadyPaid when an expired row settled at Blikk', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...baseRow,
+        expiresAt: new Date(Date.now() - 10 * 60 * 1000),
+      })
+      blikkClient.getPayment.mockResolvedValue({
+        id: 'prov-1',
+        status: 'SUCCESS',
+      })
+      const finalizeSpy = jest
+        .spyOn(service, 'finalizeBankTransferSuccess')
+        .mockResolvedValue()
+
+      await expect(service.cancel({ paymentFlowId: 'flow-1' })).rejects.toThrow(
+        PaymentServiceCode.PaymentFlowAlreadyPaid,
+      )
+
+      expect(finalizeSpy).toHaveBeenCalledWith({
+        correlationId: 'corr-1',
+        paymentFlowId: 'flow-1',
+        providerPaymentId: 'prov-1',
+        rawStatus: 'SUCCESS',
+      })
+      expect(blikkClient.cancelPayment).not.toHaveBeenCalled()
+      // The settled row must NOT be soft-deleted.
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
     })
 
     it('emits payment_cancelled when cancelling an active PENDING row', async () => {
@@ -1580,6 +1618,42 @@ describe('BankTransferService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         expect.stringContaining('manual reconciliation required'),
         expect.any(Object),
+      )
+    })
+  })
+
+  describe('softDeleteRowForRefund / restoreRow', () => {
+    it('soft-deletes the active row and returns its id', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        id: 'corr-1',
+        paymentFlowId: 'flow-1',
+        isDeleted: false,
+      })
+
+      const rowId = await service.softDeleteRowForRefund('flow-1')
+
+      expect(rowId).toBe('corr-1')
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { isDeleted: true },
+        { where: { id: 'corr-1', isDeleted: false } },
+      )
+    })
+
+    it('returns null and does nothing when there is no active row', async () => {
+      bankTransferPaymentModel.findOne.mockResolvedValue(null)
+
+      const rowId = await service.softDeleteRowForRefund('flow-1')
+
+      expect(rowId).toBeNull()
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+    })
+
+    it('restoreRow flips isDeleted back to false (guarded on isDeleted=true)', async () => {
+      await service.restoreRow('corr-1')
+
+      expect(bankTransferPaymentModel.update).toHaveBeenCalledWith(
+        { isDeleted: false },
+        { where: { id: 'corr-1', isDeleted: true } },
       )
     })
   })

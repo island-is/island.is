@@ -124,6 +124,7 @@ export interface BankTransferRefundStepResults {
     | { needsFjsCreate: true; providerPaymentId: string }
   DELETE_BANK_TRANSFER_FULFILLMENT: {
     deletedPaymentFulfillment: InferAttributes<PaymentFulfillment>
+    softDeletedRowId: string | null
   }
   ENSURE_FJS_CHARGE: { action: 'created_for_refund' }
   DELETE_FJS_CHARGE: { action: 'deleted_fjs' }

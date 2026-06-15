@@ -31,7 +31,7 @@ import {
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
-import { ALLOWED_LOCALES, Locale } from '../../../utils'
+import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
   bankTransfer,
@@ -281,8 +281,9 @@ function PaymentPage({
       paymentFlow?.paymentStatus ===
       PaymentsGetFlowPaymentStatus.bank_transfer_pending,
     expiresAt: paymentFlow?.bankTransferExpiresAt ?? undefined,
+    // Success needs a reload to land on the receipt screen
     onSuccess: () => router.reload(),
-    onFailure: () => router.reload(),
+    onFailure: (error) => setPaymentError(error),
   })
 
   const { cancelBankTransfer, isCancelling } = useCancelBankTransfer({
@@ -315,7 +316,8 @@ function PaymentPage({
     const isBankTransferCode =
       code === BankTransferErrorCode.BankTransferRejected ||
       code === BankTransferErrorCode.BankTransferCancelled ||
-      code === BankTransferErrorCode.BankTransferGenericError
+      code === BankTransferErrorCode.BankTransferGenericError ||
+      code === BankTransferErrorCode.BankTransferExpired
 
     if (!isBankTransferCode) {
       setPaymentError(null)
@@ -374,8 +376,11 @@ function PaymentPage({
   )
 
   const paymentStatus = paymentFlow?.paymentStatus
-  const bankTransferScaRedirectUrl =
-    paymentFlow?.bankTransferScaRedirectUrl || undefined
+  const bankTransferScaRedirectUrl = isHttpsUrl(
+    paymentFlow?.bankTransferScaRedirectUrl,
+  )
+    ? paymentFlow?.bankTransferScaRedirectUrl ?? undefined
+    : undefined
 
   const isPaid = paymentStatus === PaymentsGetFlowPaymentStatus.paid
   const isInvoicePending =

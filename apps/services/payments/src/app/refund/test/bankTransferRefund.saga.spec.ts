@@ -49,6 +49,7 @@ const mockBankTransferFulfillmentWithoutFjs: InferAttributes<PaymentFulfillment>
   }
 
 const SUCCESS_PROVIDER_PAYMENT_ID = 'blikk-payment-id'
+const SOFT_DELETED_ROW_ID = 'bank-transfer-row-id'
 
 const createMockBankTransferService = (
   providerPaymentId: string | null = SUCCESS_PROVIDER_PAYMENT_ID,
@@ -57,6 +58,10 @@ const createMockBankTransferService = (
     getRefundableProviderPaymentId: jest
       .fn()
       .mockResolvedValue(resolved(providerPaymentId)),
+    softDeleteRowForRefund: jest
+      .fn()
+      .mockResolvedValue(resolved(SOFT_DELETED_ROW_ID)),
+    restoreRow: jest.fn().mockResolvedValue(resolved(undefined)),
   } as unknown as jest.Mocked<BankTransferService>)
 
 describe('Bank Transfer Refund Saga', () => {
@@ -212,6 +217,22 @@ describe('Bank Transfer Refund Saga', () => {
         confirmationRefId: mockBankTransferFulfillmentWithFjs.confirmationRefId,
         correlationId: mockBankTransferFulfillmentWithFjs.id,
       })
+    })
+
+    it('soft-deletes the bank transfer row and records its id', async () => {
+      const { input, context, saga, orchestrator } = setupSaga()
+      await orchestrator.execute(
+        saga,
+        context,
+        BANK_TRANSFER_REFUND_SAGA_START_STEP,
+      )
+
+      expect(
+        mockBankTransferService.softDeleteRowForRefund,
+      ).toHaveBeenCalledWith(input.paymentFlowId)
+      expect(
+        context.stepResults.DELETE_BANK_TRANSFER_FULFILLMENT?.softDeletedRowId,
+      ).toBe(SOFT_DELETED_ROW_ID)
     })
 
     it('should throw when deletePaymentFulfillment returns null', async () => {
@@ -375,7 +396,9 @@ describe('Bank Transfer Refund Saga', () => {
   })
 
   describe('DELETE_FJS_CHARGE failure triggers restore', () => {
-    it('should call restorePaymentFulfillment when DELETE_FJS_CHARGE fails', async () => {
+    it('restores both the fulfillment and the bank transfer row when DELETE_FJS_CHARGE fails', async () => {
+      // A failed FJS deletion is the only refund mechanism for bank transfer, so it must fail the
+      // saga (not silently swallow) and roll back the row + fulfillment soft-deletes.
       mockPaymentFlowService.deleteFjsCharge.mockRejectedValue(
         new Error('FJS delete failed'),
       )
@@ -396,6 +419,9 @@ describe('Bank Transfer Refund Saga', () => {
         paymentFlowId: input.paymentFlowId,
         confirmationRefId: mockBankTransferFulfillmentWithFjs.confirmationRefId,
       })
+      expect(mockBankTransferService.restoreRow).toHaveBeenCalledWith(
+        SOFT_DELETED_ROW_ID,
+      )
     })
   })
 

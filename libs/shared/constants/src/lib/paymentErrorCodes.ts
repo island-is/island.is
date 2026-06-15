@@ -76,11 +76,10 @@ export enum BankTransferErrorCode {
   BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
   BankTransferNotFound = 'BankTransferNotFound',
   UnknownBankTransferError = 'UnknownBankTransferError',
-  // Terminal-failure codes surfaced through the standard FE error view via `paymentError`.
-  // 1-1 with `bank_transfer_payment.last_known_status` mapped via `mapBlikkStatusToBankTransferStatus`.
   BankTransferRejected = 'BankTransferRejected',
   BankTransferCancelled = 'BankTransferCancelled',
   BankTransferGenericError = 'BankTransferGenericError',
+  BankTransferExpired = 'BankTransferExpired',
 }
 
 export type PaymentErrorCode =

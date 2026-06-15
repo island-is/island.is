@@ -170,7 +170,10 @@ describe('PaymentFlowService', () => {
       expect(result).toBeDefined()
       expect(result.paymentStatus).toBe(PaymentStatus.INVOICE_PENDING)
       expect(service.getPaymentFlowDetails).toHaveBeenCalledWith(paymentFlowId)
-      expect(deleteFjsChargeSpy).toHaveBeenCalledWith(paymentFlowId)
+      // Admin flow deletion is best-effort cleanup, so it opts out of the throw-by-default.
+      expect(deleteFjsChargeSpy).toHaveBeenCalledWith(paymentFlowId, {
+        throwOnError: false,
+      })
       expect(updateSpy).toHaveBeenCalledWith(
         { isDeleted: true },
         { where: { id: paymentFlowId, isDeleted: false } },
@@ -469,6 +472,32 @@ describe('PaymentFlowService', () => {
           chargePayloadWithPayInfo(paymentFlowId),
         ),
       ).rejects.toBeInstanceOf(BadRequestException)
+    })
+  })
+
+  describe('deleteFjsCharge', () => {
+    it('rethrows FJS deletion errors by default (refund must fail loudly)', async () => {
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      jest
+        .spyOn(chargeFjsService, 'deleteCharge')
+        .mockRejectedValueOnce(new Error('FJS down'))
+
+      await expect(service.deleteFjsCharge(uuid())).rejects.toThrow('FJS down')
+    })
+
+    it('swallows the error when throwOnError is false (best-effort cleanup)', async () => {
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      jest
+        .spyOn(chargeFjsService, 'deleteCharge')
+        .mockRejectedValueOnce(new Error('FJS down'))
+
+      await expect(
+        service.deleteFjsCharge(uuid(), { throwOnError: false }),
+      ).resolves.toBeUndefined()
     })
   })
 })

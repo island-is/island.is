@@ -1037,7 +1037,10 @@ export class PaymentFlowService {
     return paymentFlows
   }
 
-  async deleteFjsCharge(paymentFlowId: string): Promise<void> {
+  async deleteFjsCharge(
+    paymentFlowId: string,
+    { throwOnError = true }: { throwOnError?: boolean } = {},
+  ): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
     try {
       // Delete from FJS
@@ -1060,9 +1063,10 @@ export class PaymentFlowService {
         `[${paymentFlowId}] Failed to fully process FJS charge deletion or update local records`,
         { error: error.message, stack: error.stack },
       )
-      // We don't rethrow here to allow the refund process to continue if possible,
-      // but the error is logged for monitoring. Manual cleanup might be needed if FJS delete failed.
-      // If FJS deletion fails critically, chargeFjsV2ClientService.deleteCharge should throw, which would be caught here.
+      // Deleting/cancelling the FJS charge IS the refund — it returns the money to the payer.
+      if (throwOnError) {
+        throw error
+      }
     }
   }
 
@@ -1115,7 +1119,7 @@ export class PaymentFlowService {
     }
 
     if (paymentFlowDetails.fjsCharge) {
-      await this.deleteFjsCharge(id)
+      await this.deleteFjsCharge(id, { throwOnError: false })
     }
 
     await this.paymentFlowModel.update(

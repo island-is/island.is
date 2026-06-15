@@ -85,13 +85,22 @@ export const createBankTransferRefundSaga = (
         )
       }
 
-      return { deletedPaymentFulfillment }
+      // Soft-delete the bank_transfer_payment row too. So paymentFlow can be re-paid by bank transfer.
+      const softDeletedRowId = await bankTransferService.softDeleteRowForRefund(
+        ctx.paymentFlowId,
+      )
+
+      return { deletedPaymentFulfillment, softDeletedRowId }
     },
     compensate: async (ctx) => {
-      const { deletedPaymentFulfillment } = requireStepResult(
+      const { deletedPaymentFulfillment, softDeletedRowId } = requireStepResult(
         ctx,
         'DELETE_BANK_TRANSFER_FULFILLMENT',
       )
+
+      if (softDeletedRowId) {
+        await bankTransferService.restoreRow(softDeletedRowId)
+      }
 
       if (deletedPaymentFulfillment) {
         logger.info(

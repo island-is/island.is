@@ -90,4 +90,17 @@ export const bankTransferError = defineMessages({
     description:
       'Header on the standard error view for a bank-transfer cancelled by the user (CANCELLED status)',
   },
+  expired: {
+    id: 'payments:bankTransferError.expired',
+    defaultMessage:
+      'Tími til að ljúka millifærslunni rann út. Reyndu aftur til að halda áfram.',
+    description:
+      'Error shown when the bank-transfer attempt timed out before completing',
+  },
+  expiredTitle: {
+    id: 'payments:bankTransferError.expiredTitle',
+    defaultMessage: 'Millifærsla rann út á tíma',
+    description:
+      'Header on the standard error view for a bank-transfer that expired before completing',
+  },
 })

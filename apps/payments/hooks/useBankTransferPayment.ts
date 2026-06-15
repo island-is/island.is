@@ -3,12 +3,17 @@ import { useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 import { useLocale } from '@island.is/localization'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import type { Locale } from '@island.is/shared/types'
 
 import { useCreateBankTransferMutation } from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
+import { isHttpsUrl } from '../utils'
 
 interface UseBankTransferPaymentProps {
   paymentFlowId: string | undefined
@@ -47,6 +52,12 @@ export const useBankTransferPayment = ({
 
       // Interactive SCA → redirect.
       if (scaRedirectUrl) {
+        if (!isHttpsUrl(scaRedirectUrl)) {
+          onPaymentError({
+            code: BankTransferErrorCode.FailedToCreateBankTransfer,
+          })
+          return
+        }
         window.location.assign(scaRedirectUrl)
         return
       }
