@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 import { Charge } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowAttributes } from '../app/paymentFlow/models/paymentFlow.model'
