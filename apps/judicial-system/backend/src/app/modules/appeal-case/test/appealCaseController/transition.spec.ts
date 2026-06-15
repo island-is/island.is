@@ -123,7 +123,7 @@ describe('AppealCaseController - Transition', () => {
     it('should queue the appeal received notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
         }),
@@ -168,7 +168,7 @@ describe('AppealCaseController - Transition', () => {
     it('should queue the appeal completed notification and conclusion delivery', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
         }),
@@ -206,7 +206,7 @@ describe('AppealCaseController - Transition', () => {
     it('should queue the appeal withdrawn notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
         }),
@@ -214,7 +214,7 @@ describe('AppealCaseController - Transition', () => {
     })
   })
 
-  describe('ruling-order appeals do not queue case-level notifications', () => {
+  describe('ruling-order appeals queue case notifications', () => {
     const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
     const appealCase = {
       id: appealCaseId,
@@ -238,8 +238,15 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
-    it('should not queue any messages', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    it('should queue the received notification for the ruling-order appeal', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          caseId,
+          elementId: appealCaseId,
+          body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
+        }),
+      )
     })
   })
 })

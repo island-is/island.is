@@ -126,7 +126,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     it('should queue the appeal to court of appeals notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
         }),

@@ -19,6 +19,7 @@ import {
   SubpoenaModule,
   UserModule,
 } from '..'
+import { AppealCaseNotificationService } from './services/appealCaseNotification/appealCaseNotification.service'
 import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
@@ -46,6 +47,7 @@ import { NotificationController } from './notification.controller'
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [
+    AppealCaseNotificationService,
     CaseNotificationService,
     CivilClaimantNotificationService,
     DefendantNotificationService,

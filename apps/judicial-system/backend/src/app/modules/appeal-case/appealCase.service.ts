@@ -112,6 +112,7 @@ export class AppealCaseService {
 
   private addMessagesForAppealedCaseToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
     fileCategories: CaseFileCategory[],
   ): void {
@@ -141,9 +142,10 @@ export class AppealCaseService {
     }
 
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
   }
@@ -186,16 +188,26 @@ export class AppealCaseService {
         })
       }
     }
+
+    addMessagesToQueue({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+    })
   }
 
   private addMessagesForReceivedAppealCaseToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_RECEIVED_BY_COURT },
     })
   }
@@ -224,9 +236,10 @@ export class AppealCaseService {
 
     addMessagesToQueue(
       {
-        type: MessageType.NOTIFICATION,
+        type: MessageType.APPEAL_CASE_NOTIFICATION,
         user,
         caseId: theCase.id,
+        elementId: appealCase.id,
         body: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
       },
       {
@@ -249,24 +262,28 @@ export class AppealCaseService {
 
   private addMessagesForAppealStatementToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
     })
   }
 
   private addMessagesForAppealWithdrawnToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
     })
   }
@@ -340,13 +357,15 @@ export class AppealCaseService {
 
   private addMessagesForAppealJudgesAssignedToQueue(
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
     userIds: string[],
   ): void {
     addMessagesToQueue({
-      type: MessageType.NOTIFICATION,
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
+      elementId: appealCase.id,
       body: {
         type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
         userIds,
@@ -421,7 +440,12 @@ export class AppealCaseService {
       })
     }
 
-    this.addMessagesForAppealedCaseToQueue(theCase, user, fileCategories)
+    this.addMessagesForAppealedCaseToQueue(
+      theCase,
+      appealCase,
+      user,
+      fileCategories,
+    )
 
     return appealCase
   }
@@ -559,6 +583,7 @@ export class AppealCaseService {
     if (newlyAssignedUserIds.length > 0) {
       this.addMessagesForAppealJudgesAssignedToQueue(
         theCase,
+        appealCase,
         user,
         newlyAssignedUserIds,
       )
@@ -591,7 +616,7 @@ export class AppealCaseService {
       { transaction },
     )
 
-    this.dispatchEventNotifications(eventType, theCase, user)
+    this.dispatchEventNotifications(eventType, theCase, appealCase, user)
 
     return appealCase
   }
@@ -601,11 +626,12 @@ export class AppealCaseService {
   private dispatchEventNotifications(
     eventType: AppealEventType,
     theCase: Case,
+    appealCase: AppealCase,
     user: User,
   ): void {
     switch (eventType) {
       case AppealEventType.APPEAL_STATEMENT_SENT:
-        this.addMessagesForAppealStatementToQueue(theCase, user)
+        this.addMessagesForAppealStatementToQueue(theCase, appealCase, user)
         break
     }
   }
@@ -635,23 +661,20 @@ export class AppealCaseService {
       })
     }
 
-    // Queue messages based on new appeal state. Ruling-order appeals don't
-    // send the case-level appeal notifications — open question #8 will
-    // determine which (if any) notifications they emit.
-    if (!appealCase.rulingFileId) {
-      const newAppealState = result.appealCaseUpdate.appealState
-      const oldAppealState = appealCase.appealState
+    // Queue messages based on new appeal state. This applies to all appeal
+    // cases, including ruling-order appeals.
+    const newAppealState = result.appealCaseUpdate.appealState
+    const oldAppealState = appealCase.appealState
 
-      if (newAppealState === AppealCaseState.RECEIVED) {
-        // Only send received messages when transitioning from APPEALED (not when reopening)
-        if (oldAppealState === AppealCaseState.APPEALED) {
-          this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
-        }
-      } else if (newAppealState === AppealCaseState.COMPLETED) {
-        this.addMessagesForCompletedAppealCaseToQueue(theCase, appealCase, user)
-      } else if (newAppealState === AppealCaseState.WITHDRAWN) {
-        this.addMessagesForAppealWithdrawnToQueue(theCase, user)
+    if (newAppealState === AppealCaseState.RECEIVED) {
+      // Only send received messages when transitioning from APPEALED (not when reopening)
+      if (oldAppealState === AppealCaseState.APPEALED) {
+        this.addMessagesForReceivedAppealCaseToQueue(theCase, appealCase, user)
       }
+    } else if (newAppealState === AppealCaseState.COMPLETED) {
+      this.addMessagesForCompletedAppealCaseToQueue(theCase, appealCase, user)
+    } else if (newAppealState === AppealCaseState.WITHDRAWN) {
+      this.addMessagesForAppealWithdrawnToQueue(theCase, appealCase, user)
     }
 
     return { ...result, appealCase: updatedAppealCase }
