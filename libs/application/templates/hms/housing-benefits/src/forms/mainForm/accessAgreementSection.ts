@@ -6,12 +6,14 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FormValue, Application } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
+import { Application } from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import { UPLOAD_ACCEPT } from '../../utils/constants'
 import {
   buildMainFormAccessAgreementRepeaterDefaultRows,
+  filterAccessAgreementChildNationalIdOptions,
+  getMainFormAccessAgreementRepeater,
+  MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID,
   mainFormAccessAgreementChildOptions,
   mainFormAccessAgreementRepeaterMaxRows,
   mainFormAccessAgreementRepeaterMinRows,
@@ -66,7 +68,7 @@ export const accessAgreementSection = buildSection({
           marginBottom: 4,
         }),
         buildFieldsRepeaterField({
-          id: 'mainFormAccessAgreementRepeater',
+          id: MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID,
           marginTop: 2,
           width: 'full',
           minRows: (answers, externalData) =>
@@ -90,12 +92,10 @@ export const accessAgreementSection = buildSection({
               application.answers,
               application.externalData,
             )
-            const rows = getValueViaPath<unknown[]>(
+            const repeater = getMainFormAccessAgreementRepeater(
               application.answers,
-              'mainFormAccessAgreementRepeater',
             )
-            const n = Array.isArray(rows) ? rows.length : 0
-            return n >= maxRows
+            return (repeater?.length ?? 0) >= maxRows
           },
           fields: {
             childNationalId: {
@@ -110,43 +110,12 @@ export const accessAgreementSection = buildSection({
                   | undefined
                 return Array.isArray(files) && files.length > 0
               },
-              filterOptions: (options, formValues, index) => {
-                const answersObj = formValues as FormValue
-                const repeater = getValueViaPath<
-                  Array<{ childNationalId?: string }>
-                >(answersObj, 'mainFormAccessAgreementRepeater')
-
-                if (!Array.isArray(repeater)) {
-                  return options
-                }
-                const taken = new Set<string>()
-                repeater.forEach((row, i) => {
-                  if (i === index) {
-                    return
-                  }
-                  const id = row?.childNationalId?.trim()
-                  if (id && kennitala.isValid(id)) {
-                    taken.add(kennitala.sanitize(id))
-                  } else if (id) {
-                    taken.add(id)
-                  }
-                })
-                const curId = repeater[index]?.childNationalId?.trim()
-                const curKey =
-                  curId && kennitala.isValid(curId)
-                    ? kennitala.sanitize(curId)
-                    : curId ?? ''
-                return options.filter((o) => {
-                  const v = String(o.value)
-                  const optKey = kennitala.isValid(v)
-                    ? kennitala.sanitize(v)
-                    : v
-                  if (curKey && optKey === curKey) {
-                    return true
-                  }
-                  return !taken.has(optKey)
-                })
-              },
+              filterOptions: (options, formValues, index) =>
+                filterAccessAgreementChildNationalIdOptions(
+                  options,
+                  getMainFormAccessAgreementRepeater(formValues),
+                  index,
+                ),
             },
             file: {
               component: 'fileUpload',

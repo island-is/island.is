@@ -8,12 +8,62 @@ import * as kennitala from 'kennitala'
 import { getApplicantSubmitMissingAccessAgreementChildren } from './assigneeUtils'
 import { getNonCustodyMinorsMissingCustodyAgreementNationalIds } from './utils'
 
+export const MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID =
+  'mainFormAccessAgreementRepeater'
+
+type AccessAgreementRepeaterRow = {
+  childNationalId?: string
+  file?: unknown
+}
+
 /** Compare national IDs consistently for household rows vs repeater values. */
 const normalizeKtKey = (nationalId: string | undefined | null) => {
   if (!nationalId || typeof nationalId !== 'string') return ''
   const trimmed = nationalId.trim()
   if (!trimmed) return ''
   return kennitala.isValid(trimmed) ? kennitala.sanitize(trimmed) : trimmed
+}
+
+export const getMainFormAccessAgreementRepeater = (
+  answers: FormValue,
+): AccessAgreementRepeaterRow[] | undefined => {
+  const repeater = getValueViaPath<AccessAgreementRepeaterRow[]>(
+    answers,
+    MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID,
+  )
+  return Array.isArray(repeater) ? repeater : undefined
+}
+
+export const filterAccessAgreementChildNationalIdOptions = <
+  T extends { value: string | number },
+>(
+  options: T[],
+  repeater: AccessAgreementRepeaterRow[] | undefined,
+  index: number,
+): T[] => {
+  if (!Array.isArray(repeater)) {
+    return options
+  }
+
+  const taken = new Set<string>()
+  repeater.forEach((row, i) => {
+    if (i === index) {
+      return
+    }
+    const key = normalizeKtKey(row?.childNationalId)
+    if (key) {
+      taken.add(key)
+    }
+  })
+
+  const curKey = normalizeKtKey(repeater[index]?.childNationalId)
+  return options.filter((o) => {
+    const optKey = normalizeKtKey(String(o.value))
+    if (curKey && optKey === curKey) {
+      return true
+    }
+    return !taken.has(optKey)
+  })
 }
 
 type HouseholdMembersRow = {
@@ -75,10 +125,7 @@ export const mainFormAccessAgreementChildOptions = (
 
   const seen = new Set(base.map((o) => String(o.value)))
 
-  const repeater = getValueViaPath<Array<{ childNationalId?: string }>>(
-    answers,
-    'mainFormAccessAgreementRepeater',
-  )
+  const repeater = getMainFormAccessAgreementRepeater(answers)
 
   const extra: typeof base = []
   if (Array.isArray(repeater)) {
