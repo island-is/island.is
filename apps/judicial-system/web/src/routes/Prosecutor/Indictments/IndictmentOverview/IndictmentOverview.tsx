@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
@@ -53,7 +53,9 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
   CONFIRM_PROSECUTOR_DECISION,
-  ConfirmationModal,
+  DUPLICATE_INDICTMENT,
+  isDuplicateIndictmentModal,
+  ModalId,
 } from '../../../PublicProsecutor/components/utils'
 import { strings } from './IndictmentOverview.strings'
 
@@ -83,10 +85,7 @@ const IndictmentOverview: FC = () => {
     (defendant) => !defendant.indictmentReviewDecision,
   )
 
-  const [modalVisible, setModalVisible] = useState<
-    ConfirmationModal | undefined
-  >()
-  const [duplicateModalVisible, setDuplicateModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState<ModalId | undefined>()
 
   // A revoked indictment (withdrawn by the prosecution or cancelled by the
   // court) can be copied into a new draft case by the prosecution
@@ -248,17 +247,6 @@ const IndictmentOverview: FC = () => {
                 />
               )}
             <AllIndictmentCaseFiles />
-            {canDuplicateIndictment && (
-              <Box component="section" display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="ghost"
-                  icon="copy"
-                  onClick={() => setDuplicateModalVisible(true)}
-                >
-                  Afrita mál í drög
-                </Button>
-              </Box>
-            )}
             <Box component="section">
               <InputPenalties />
             </Box>
@@ -307,20 +295,33 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={!shouldDisplayReviewDecision}
-            nextIsDisabled={isReviewMissing || !hasReviewDecisionChanged}
+            hideNextButton={
+              !shouldDisplayReviewDecision && !canDuplicateIndictment
+            }
+            nextIsDisabled={
+              shouldDisplayReviewDecision &&
+              (isReviewMissing || !hasReviewDecisionChanged)
+            }
+            nextIsLoading={canDuplicateIndictment && isDuplicatingIndictmentCase}
+            nextButtonIcon={canDuplicateIndictment ? 'copy' : undefined}
             nextButtonText={
-              workingCase.indictmentReviewedDate
+              canDuplicateIndictment
+                ? 'Afrita mál í drög'
+                : workingCase.indictmentReviewedDate
                 ? 'Breyta ákvörðun'
                 : 'Ljúka yfirlestri'
             }
             onNextButtonClick={() =>
-              setModalVisible(CONFIRM_PROSECUTOR_DECISION)
+              setModalVisible(
+                canDuplicateIndictment
+                  ? DUPLICATE_INDICTMENT
+                  : CONFIRM_PROSECUTOR_DECISION,
+              )
             }
           />
         </FormContentContainer>
         {appealModals}
-        {duplicateModalVisible && (
+        {isDuplicateIndictmentModal(modalVisible) && (
           <Modal
             title="Viltu afrita mál í drög?"
             text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
@@ -331,7 +332,7 @@ const IndictmentOverview: FC = () => {
             }}
             secondaryButton={{
               text: 'Hætta við',
-              onClick: () => setDuplicateModalVisible(false),
+              onClick: () => setModalVisible(undefined),
               isDisabled: isDuplicatingIndictmentCase,
             }}
           />

@@ -34,8 +34,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
-  ConfirmationModal,
   isReviewerAssignedModal,
+  ModalId,
   REVIEWER_ASSIGNED,
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
@@ -53,7 +53,7 @@ export const Overview = () => {
     useState<Option<string> | null>()
 
   const [confirmationModal, setConfirmationModal] = useState<
-    ConfirmationModal | undefined
+    ModalId | undefined
   >()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
