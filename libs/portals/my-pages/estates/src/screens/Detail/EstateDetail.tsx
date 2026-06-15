@@ -262,7 +262,9 @@ export const EstateDetail = () => {
                       )}
                       {estate.deadline.daysRemaining != null && (
                         <Tag variant="purple" outlined disabled>
-                          {`${estate.deadline.daysRemaining} ${formatMessage(em.daysLeft)}`}
+                          {`${estate.deadline.daysRemaining} ${formatMessage(
+                            em.daysLeft,
+                          )}`}
                         </Tag>
                       )}
                     </Box>
@@ -299,9 +301,7 @@ export const EstateDetail = () => {
                         sectionIndex={i}
                         date={date}
                         isComplete={isComplete}
-                        isLast={
-                          i === (estate.progress?.steps?.length ?? 0) - 1
-                        }
+                        isLast={i === (estate.progress?.steps?.length ?? 0) - 1}
                         customSection={
                           hasDetail ? (
                             <AccordionItem
