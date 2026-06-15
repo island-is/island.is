@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -14,7 +15,7 @@ export const PhoneNumberDisplay = ({
   valueIndex,
   requiredMissing = false,
 }: Props) => {
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
 
   const formatPhoneNumber = (raw?: string) => {
     if (!raw) return ''
@@ -43,7 +44,7 @@ export const PhoneNumberDisplay = ({
         {requiredMissing && (
           <>
             {' '}
-            <Text as="span" fontWeight="semiBold" color="red600">
+            <Text as="span" fontWeight="medium" color="red600">
               *
             </Text>
           </>
@@ -51,9 +52,19 @@ export const PhoneNumberDisplay = ({
       </Text>
 
       <Box marginLeft={2}>
-        <Text fontWeight="light" whiteSpace="breakSpaces">
-          {value}
-        </Text>
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="light" color="red600">
+              {formatMessage(m.missingValue)}
+            </Text>
+          </>
+        )}
+        {!requiredMissing && (
+          <Text fontWeight="light" whiteSpace="breakSpaces">
+            {value}
+          </Text>
+        )}
       </Box>
     </Box>
   )
