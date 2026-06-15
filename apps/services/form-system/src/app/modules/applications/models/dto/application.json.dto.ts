@@ -1,3 +1,4 @@
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
@@ -43,6 +44,18 @@ export class ApplicationJsonFieldDto {
   @IsString()
   screenIdentifier!: string
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  screenTitle?: LanguageType
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  fieldTitle?: LanguageType
+
   @ApiProperty()
   @IsString()
   fieldType!: string
@@ -64,6 +77,10 @@ export class ApplicationJsonDto {
   @ApiProperty()
   @IsString()
   id!: string
+
+  @ApiProperty()
+  @IsString()
+  organizationNationalId!: string
 
   @ApiProperty()
   @IsString()
