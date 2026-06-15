@@ -375,8 +375,10 @@ export class ZendeskService {
     }
 
     if (jobStatus.results) {
-      const failed = jobStatus.results.filter(
-        (r) => r.status === 'failed' || r.errors,
+      const failed = jobStatus.results.filter((r) =>
+        r.status === 'failed' || Array.isArray(r.errors)
+          ? (r.errors as unknown[]).length > 0
+          : Boolean(r.errors),
       )
       if (failed.length > 0) {
         throw new Error(
