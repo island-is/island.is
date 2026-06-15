@@ -17,7 +17,6 @@ import {
   getInstitutionsWithApplicationTypesIds,
   getTypeIdsForInstitution,
 } from '@island.is/application/utils'
-import * as kennitala from 'kennitala'
 import {
   ScheduledNotification,
   NotificationStatus,
@@ -45,15 +44,6 @@ const applicationByNationalId = (id: string, nationalId?: string) => ({
         [Op.or]: [
           { applicant: nationalId },
           { assignees: { [Op.contains]: [nationalId] } },
-          ...(kennitala.isValid(nationalId)
-            ? [
-                {
-                  assignees: {
-                    [Op.contains]: [kennitala.sanitize(nationalId)],
-                  },
-                },
-              ]
-            : []),
         ],
       }
     : {}),
@@ -326,10 +316,6 @@ export class ApplicationService {
       [Op.or]: [
         { applicant: { [Op.eq]: nationalId } },
         { assignees: { [Op.contains]: [nationalId] } },
-        // Assignees may be stored in 10-digit format; check both formats
-        ...(kennitala.isValid(nationalId)
-          ? [{ assignees: { [Op.contains]: [kennitala.sanitize(nationalId)] } }]
-          : []),
       ],
     }
 
