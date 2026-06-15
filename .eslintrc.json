@@ -10,7 +10,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": ["infra/src/dsl/"],
+            "allow": ["infra/src/dsl/", "libs/shared/webpack/"],
             "depConstraints": [
               {
                 "sourceTag": "*",
