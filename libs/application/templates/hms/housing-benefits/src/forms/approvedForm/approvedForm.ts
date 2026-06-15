@@ -36,7 +36,7 @@ export const approvedForm = buildForm({
             buildImageField({
               id: 'approvedIllustration',
               image: HikingAndWateringPlants,
-              alt: '',
+              alt: 'Fólk í gönguferð og að vökva plöntur',
               doesNotRequireAnswer: true,
               imagePosition: 'center',
               imageWidth: 'full',
