@@ -6,6 +6,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../utils/constants'
 import { institutionRequestedChangedCircumstances } from '../../utils/extraDataFormConditions'
 
 export const extraDataChangedCircumstancesUploadSection = buildSection({
@@ -20,7 +21,7 @@ export const extraDataChangedCircumstancesUploadSection = buildSection({
       children: [
         buildTextField({
           id: 'extraDataCircumstancesInput',
-          placeholder: 'Lýsing...',
+          placeholder: m.extraDataMessages.circumstancesInputPlaceholder,
           rows: 8,
           variant: 'textarea',
           marginBottom: 4,
@@ -28,7 +29,7 @@ export const extraDataChangedCircumstancesUploadSection = buildSection({
         buildFileUploadField({
           id: 'extraDataAttachments.changedCircumstances',
           title: m.extraDataMessages.documentChangedCircumstances,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
         }),
       ],

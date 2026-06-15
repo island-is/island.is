@@ -5,6 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../utils/constants'
 import { institutionRequestedExemptionReason } from '../../utils/extraDataFormConditions'
 
 export const extraDataExemptionReasonUploadSection = buildSection({
@@ -20,7 +21,7 @@ export const extraDataExemptionReasonUploadSection = buildSection({
         buildFileUploadField({
           id: 'extraDataAttachments.exemptionReason',
           title: m.extraDataMessages.documentExemptionReason,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
         }),
       ],

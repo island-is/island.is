@@ -7,6 +7,7 @@ import {
 import { FormValue } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import * as m from '../../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../../utils/constants'
 import {
   applicantSubmitAccessAgreementChildOptions,
   applicantSubmitAccessAgreementDescription,
@@ -93,7 +94,7 @@ export const applicantSubmitAccessAgreementSection = buildSection({
               component: 'fileUpload',
               width: 'full',
               title: m.assigneeDraft.umgengnissamningurFileTitle,
-              uploadAccept: '.pdf,.doc,.docx',
+              uploadAccept: UPLOAD_ACCEPT,
             },
           },
         }),

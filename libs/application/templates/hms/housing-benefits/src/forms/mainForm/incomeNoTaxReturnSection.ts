@@ -6,6 +6,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../utils/constants'
 import { isTaxReturnNotFiled } from '../../utils/utils'
 
 export const incomeNoTaxReturnSection = buildSection({
@@ -35,7 +36,7 @@ export const incomeNoTaxReturnSection = buildSection({
           titleVariant: 'h3',
           description:
             m.draftMessages.incomeNoTaxReturnSection.filesDescription,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
         }),
       ],

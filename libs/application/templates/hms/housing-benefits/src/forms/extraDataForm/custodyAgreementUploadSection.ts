@@ -5,6 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../utils/constants'
 import { institutionRequestedCustodyAgreement } from '../../utils/extraDataFormConditions'
 
 export const extraDataCustodyAgreementUploadSection = buildSection({
@@ -20,7 +21,7 @@ export const extraDataCustodyAgreementUploadSection = buildSection({
         buildFileUploadField({
           id: 'extraDataAttachments.custodyAgreement',
           title: m.extraDataMessages.documentCustodyAgreement,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
         }),
       ],

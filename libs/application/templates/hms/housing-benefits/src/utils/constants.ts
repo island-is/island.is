@@ -44,3 +44,5 @@ export enum Roles {
   REJECTED_ASSIGNEE = 'rejectedAssignee',
   INSTITUTION = 'institution',
 }
+
+export const UPLOAD_ACCEPT = '.pdf,.doc,.docx'

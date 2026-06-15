@@ -80,6 +80,11 @@ export const extraDataMessages = defineMessages({
       'Skrifaður stutta lýsingu á þínum aðstæðum og í hvernig þær hafa breyst.Hlaðið upp skjölum sem sýna breyttar aðstæður eins og stofnun bað um.',
     description: 'Description for changed circumstances upload',
   },
+  circumstancesInputPlaceholder: {
+    id: 'hb.application:extraData.circumstancesInputPlaceholder',
+    defaultMessage: 'Lýsing...',
+    description: 'Placeholder for changed circumstances description input',
+  },
   circumstancesDescriptionLabel: {
     id: 'hb.application:extraData.circumstancesDescriptionLabel',
     defaultMessage: 'Lýsing á aðstæðum',

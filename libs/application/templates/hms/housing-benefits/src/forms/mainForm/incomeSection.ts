@@ -10,6 +10,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
+import { UPLOAD_ACCEPT } from '../../utils/constants'
 import {
   contractorIncomeSelected,
   foreignIncomeSelected,
@@ -84,7 +85,7 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.contractorFilesTitle,
           titleVariant: 'h3',
           description: m.draftMessages.incomeSection.contractorFilesDescription,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
           marginBottom: 4,
           condition: contractorIncomeSelected,
@@ -116,7 +117,7 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.foreignFilesTitle,
           titleVariant: 'h3',
           description: m.draftMessages.incomeSection.foreignFilesDescription,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
           marginBottom: 4,
           condition: foreignIncomeSelected,
@@ -148,7 +149,7 @@ export const incomeSection = buildSection({
           title: m.draftMessages.incomeSection.otherFilesTitle,
           titleVariant: 'h3',
           description: m.draftMessages.incomeSection.otherFilesDescription,
-          uploadAccept: '.pdf,.doc,.docx',
+          uploadAccept: UPLOAD_ACCEPT,
           uploadMultiple: true,
           condition: otherIncomeSelected,
         }),
