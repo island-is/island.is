@@ -280,7 +280,9 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<Case> {
-    this.logger.debug(`Duplicating indictment case ${input.id} into a new draft`)
+    this.logger.debug(
+      `Duplicating indictment case ${input.id} into a new draft`,
+    )
 
     return this.auditTrailService.audit(
       user.id,

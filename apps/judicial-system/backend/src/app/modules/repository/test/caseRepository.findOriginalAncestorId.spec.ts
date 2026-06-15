@@ -76,7 +76,10 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
           useValue: mockSequelizeModel(),
         },
         { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        { provide: getModelToken(CivilClaimant), useValue: mockSequelizeModel() },
+        {
+          provide: getModelToken(CivilClaimant),
+          useValue: mockSequelizeModel(),
+        },
         { provide: getModelToken(CaseFile), useValue: mockSequelizeModel() },
         { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {

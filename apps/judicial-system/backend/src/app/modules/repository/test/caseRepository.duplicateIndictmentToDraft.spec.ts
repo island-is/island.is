@@ -91,12 +91,13 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         findAll: jest.Mock
         create: jest.Mock
       },
-      policeService: caseDefendantPoliceCaseNumberRepositoryService as unknown as {
-        findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
-        replaceUnassignedFromPoliceCaseNumbersArray: jest.Mock
-        findAssignedLinksByCaseId: jest.Mock
-        assignDefendantPoliceCaseNumbers: jest.Mock
-      },
+      policeService:
+        caseDefendantPoliceCaseNumberRepositoryService as unknown as {
+          findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
+          replaceUnassignedFromPoliceCaseNumbersArray: jest.Mock
+          findAssignedLinksByCaseId: jest.Mock
+          assignDefendantPoliceCaseNumbers: jest.Mock
+        },
       newCaseId,
       newDefendantId,
       newIndictmentCountId,
@@ -207,7 +208,9 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       },
     ])
     ctx.offenseModel.findAll.mockResolvedValue([
-      { toJSON: () => ({ id: uuid(), indictmentCountId: oldIndictmentCountId }) },
+      {
+        toJSON: () => ({ id: uuid(), indictmentCountId: oldIndictmentCountId }),
+      },
     ])
     ctx.victimModel.findAll.mockResolvedValue([
       { toJSON: () => ({ id: uuid(), caseId, name: 'Victim' }) },

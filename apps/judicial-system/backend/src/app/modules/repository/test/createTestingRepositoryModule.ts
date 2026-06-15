@@ -70,9 +70,7 @@ export const createTestingRepositoryModule = async () => {
             .fn()
             .mockResolvedValue(new Map()),
           findAssignedLinksByCaseId: jest.fn().mockResolvedValue([]),
-          assignDefendantPoliceCaseNumbers: jest
-            .fn()
-            .mockResolvedValue([]),
+          assignDefendantPoliceCaseNumbers: jest.fn().mockResolvedValue([]),
           resolvePoliceCaseNumbersForCases: jest
             .fn()
             .mockResolvedValue(undefined),
