@@ -1,33 +1,27 @@
 import {
   buildSection,
-  buildDescriptionField,
   buildMultiField,
-  buildSelectField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 
-export const incomeSection = buildSection({
-  id: 'incomeSection',
-  title: m.application.incomeSectionTitle,
+export const selectIncomeSection = buildSection({
+  id: 'selectIncomeSection',
+  title: m.application.selectIncomeSectionTitle,
   children: [
     buildMultiField({
       id: 'incomeType',
       title: m.application.pageTitle,
+      description: m.application.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'incomeTypeDescription',
-          description: m.application.pageDescription,
-        }),
-        buildDescriptionField({
-          id: 'incomeTypePageInfo',
-          title: m.application.pageInfo,
-          titleVariant: 'h5',
-        }),
-        buildSelectField({
+        buildCheckboxField({
           id: 'typeOfIncome',
           title: m.application.incomeTypeTitle,
           required: true,
-          isMulti: true,
+          large: false,
+          backgroundColor: 'white',
+          width: 'half',
+          spacing: 2,
           setOnChange: async () => {
             return [
               { key: 'registerCasualWork', value: undefined },

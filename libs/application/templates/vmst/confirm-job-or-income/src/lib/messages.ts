@@ -17,16 +17,10 @@ export const application = defineMessages({
     description: `Page title`,
   },
   pageDescription: {
-    id: 'vmst.cjoi.application:pageDescription',
+    id: 'vmst.cjoi.application:pageDescription#markdown',
     defaultMessage:
-      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu. Hvort sem er fast starf, hlutastarf eða tilfallandi vinnu.',
+      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu. Hvort sem er fast starf, hlutastarf eða tilfallandi vinnu.\n\n**Mikilvægt: Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst**',
     description: `Page description`,
-  },
-  pageInfo: {
-    id: 'vmst.cjoi.application:pageInfo',
-    defaultMessage:
-      'Mikilvægt: Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst',
-    description: `Page info`,
   },
   applicationName: {
     id: 'vmst.cjoi.application:applicationName',
@@ -38,39 +32,44 @@ export const application = defineMessages({
     defaultMessage: 'Skrá tekjur',
     description: 'Title for the income section',
   },
+  selectIncomeSectionTitle: {
+    id: 'vmst.cjoi.application:selectIncomeSectionTitle',
+    defaultMessage: 'Velja tekjur',
+    description: 'Title for the select income section',
+  },
   incomeTypeTitle: {
     id: 'vmst.cjoi.application:incomeTypeTitle',
-    defaultMessage: 'Tegund tekna',
+    defaultMessage: 'Ég ætla að tilkynna tekjur í eftirfarandi flokkum:',
     description: `Title for select field for type of income`,
   },
   incomeTypeCasualWork: {
     id: 'vmst.cjoi.application:incomeTypeCasualWork',
-    defaultMessage: 'Tilkynna um tilfallandi vinnu (launþegavinnu)',
+    defaultMessage: 'Tilfallandi vinna (Launþegavinna)',
     description: 'Income type option: casual work',
   },
   incomeTypePartTime: {
     id: 'vmst.cjoi.application:incomeTypePartTime',
-    defaultMessage: 'Tilkynna um hlutastarf',
+    defaultMessage: 'Hlutastarf',
     description: 'Income type option: part-time work',
   },
   incomeTypeContractWork: {
     id: 'vmst.cjoi.application:incomeTypeContractWork',
-    defaultMessage: 'Tilkynna um verktakavinnu',
+    defaultMessage: 'Verktakavinna',
     description: 'Income type option: contract work',
   },
   incomeTypePension: {
     id: 'vmst.cjoi.application:incomeTypePension',
-    defaultMessage: 'Tilkynna um greiðslur úr lífeyrissjóði',
+    defaultMessage: 'Greiðslur úr lífeyrissjóði',
     description: 'Income type option: pension payments',
   },
   incomeTypeCapitalIncome: {
     id: 'vmst.cjoi.application:incomeTypeCapitalIncome',
-    defaultMessage: 'Tilkynna um fjármagnstekjur',
+    defaultMessage: 'Fjármagnstekjur',
     description: 'Income type option: capital income',
   },
   incomeTypeSocialInsurance: {
     id: 'vmst.cjoi.application:incomeTypeSocialInsurance',
-    defaultMessage: 'Tilkynna um tekjur frá Tryggingastofnun',
+    defaultMessage: 'Greiðslur frá Tryggingastofnun',
     description: 'Income type option: social insurance income',
   },
 
@@ -108,21 +107,10 @@ export const application = defineMessages({
 
   // Casual work descriptions
   casualWorkDescription: {
-    id: 'vmst.cjoi.application:casualWorkDescription',
+    id: 'vmst.cjoi.application:casualWorkDescription#markdown',
     defaultMessage:
-      'Tilfallandi vinna er vinna sem er óregluleg eða í stuttan tíma. Til dæmis einstaka vaktir eða skammtímaverkefni.',
+      'Tilfallandi vinna er vinna sem er óregluleg eða í stuttan tíma. Til dæmis einstaka vaktir eða skammtímaverkefni.\n\n**Þetta þarftu að vita:**\n* Tilkynna þarf allar tilfallandi vinnu í hverjum mánuði\n* Þetta gildir jafnvel þótt þú hafir unnið hjá sama atvinnurekanda áður\n* Vinna er skráð mánaðarlega. Ekki þarf að tilkynna hvern dag fyrir sig\n* Ekki þarf að skila launaseðli',
     description: 'Description for casual work type',
-  },
-  casualWorkInfoTitle: {
-    id: 'vmst.cjoi.application:casualWorkInfoTitle',
-    defaultMessage: 'Þetta þarftu að vita:',
-    description: 'Casual work info section title',
-  },
-  casualWorkInfoBullets: {
-    id: 'vmst.cjoi.application:casualWorkInfoBullets#markdown',
-    defaultMessage:
-      '* Tilkynna þarf allar tilfallandi vinnu í hverjum mánuði\n* Þetta gildir jafnvel þótt þú hafir unnið hjá sama atvinnurekanda áður\n* Vinna er skráð mánaðarlega. Ekki þarf að tilkynna hvern dag fyrir sig\n* Ekki þarf að skila launaseðli',
-    description: 'Casual work info bullets',
   },
 
   // Part-time descriptions
@@ -267,6 +255,68 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:monthlyPayment',
     defaultMessage: 'Mánaðarleg greiðsla',
     description: 'Monthly payment option',
+  },
+
+  // Table headers (short versions)
+  tableHeaderNationalId: {
+    id: 'vmst.cjoi.application:tableHeaderNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Table header for national ID',
+  },
+  tableHeaderCompany: {
+    id: 'vmst.cjoi.application:tableHeaderCompany',
+    defaultMessage: 'Fyrirtæki',
+    description: 'Table header for company',
+  },
+  tableHeaderMonthFrom: {
+    id: 'vmst.cjoi.application:tableHeaderMonthFrom',
+    defaultMessage: 'Mánuður frá',
+    description: 'Table header for month from',
+  },
+  tableHeaderMonthTo: {
+    id: 'vmst.cjoi.application:tableHeaderMonthTo',
+    defaultMessage: 'Mánuður til',
+    description: 'Table header for month to',
+  },
+  tableHeaderEstimatedIncome: {
+    id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',
+    defaultMessage: 'Áætlaðar upphæð',
+    description: 'Table header for estimated income',
+  },
+  tableHeaderJobStart: {
+    id: 'vmst.cjoi.application:tableHeaderJobStart',
+    defaultMessage: 'Upphaf',
+    description: 'Table header for job start',
+  },
+  tableHeaderWorkEnds: {
+    id: 'vmst.cjoi.application:tableHeaderWorkEnds',
+    defaultMessage: 'Endir',
+    description: 'Table header for work ends',
+  },
+  tableHeaderWorkPercentage: {
+    id: 'vmst.cjoi.application:tableHeaderWorkPercentage',
+    defaultMessage: 'Hlutfall',
+    description: 'Table header for work percentage',
+  },
+  tableHeaderPensionFund: {
+    id: 'vmst.cjoi.application:tableHeaderPensionFund',
+    defaultMessage: 'Sjóður',
+    description: 'Table header for pension fund',
+  },
+  tableHeaderPaymentType: {
+    id: 'vmst.cjoi.application:tableHeaderPaymentType',
+    defaultMessage: 'Tegund',
+    description: 'Table header for payment type',
+  },
+  tableHeaderAmount: {
+    id: 'vmst.cjoi.application:tableHeaderAmount',
+    defaultMessage: 'Upphæð',
+    description: 'Table header for amount',
+  },
+  tableHeaderFrequency: {
+    id: 'vmst.cjoi.application:tableHeaderFrequency',
+    defaultMessage: 'Tíðni',
+    description: 'Table header for payment frequency',
   },
 
   // Payment type options - capital income

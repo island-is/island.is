@@ -1,15 +1,13 @@
 import {
   buildAlertMessageField,
-  buildDescriptionField,
-  buildFieldsRepeaterField,
+  buildTableRepeaterField,
   buildMultiField,
-  buildSection,
-  getValueViaPath,
+  buildSubSection,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
-import { isContractWork } from '../../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isContractWork } from '../../../utils/conditions'
 
-export const contractWorkSection = buildSection({
+export const contractWorkSection = buildSubSection({
   id: 'contractWorkSection',
   title: m.application.contractWorkHeading,
   condition: isContractWork,
@@ -17,35 +15,19 @@ export const contractWorkSection = buildSection({
     buildMultiField({
       id: 'contractWorkMultiField',
       title: m.application.contractWorkHeading,
+      description: m.application.contractWorkDescription,
       children: [
-        buildDescriptionField({
-          id: 'contractWorkDesc',
-          description: m.application.contractWorkDescription,
-        }),
         buildAlertMessageField({
           id: 'contractWorkAlert',
           title: m.application.contractWorkAlertTitle,
           message: m.application.contractWorkAlert,
           alertType: 'info',
         }),
-        buildFieldsRepeaterField({
+        buildTableRepeaterField({
           id: 'registerContractWork',
-          formTitleNumbering: 'suffix',
-          formTitle: (index, application) => {
-            const items = getValueViaPath<Array<unknown>>(
-              application.answers,
-              'registerContractWork',
-            )
-            if (!items || items.length <= 1) {
-              return ''
-            }
-            return {
-              ...m.application.contractWorkHeading,
-              values: { index: index + 1 },
-            }
-          },
           addItemButtonText: m.application.addLine,
-          minRows: 1,
+          initActiveFieldIfEmpty: true,
+          hideTableHeaderIfEmpty: true,
           fields: {
             contractJobStart: {
               component: 'date',
@@ -74,6 +56,35 @@ export const contractWorkSection = buildSection({
                 const tomorrow = new Date()
                 tomorrow.setDate(tomorrow.getDate() + 1)
                 return tomorrow
+              },
+            },
+          },
+          table: {
+            header: [
+              m.application.tableHeaderJobStart,
+              m.application.tableHeaderWorkEnds,
+            ],
+            rows: ['contractJobStart', 'workEnds'],
+            format: {
+              contractJobStart: (value) => {
+                if (!value) return ''
+                const date = new Date(value)
+                if (isNaN(date.getTime())) return value
+                return date.toLocaleDateString('is-IS', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
+              },
+              workEnds: (value) => {
+                if (!value) return ''
+                const date = new Date(value)
+                if (isNaN(date.getTime())) return value
+                return date.toLocaleDateString('is-IS', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
               },
             },
           },

@@ -1,15 +1,13 @@
 import {
   buildAlertMessageField,
-  buildDescriptionField,
-  buildFieldsRepeaterField,
+  buildTableRepeaterField,
   buildMultiField,
-  buildSection,
-  getValueViaPath,
+  buildSubSection,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
-import { isPartTime } from '../../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isPartTime } from '../../../utils/conditions'
 
-export const partTimeSection = buildSection({
+export const partTimeSection = buildSubSection({
   id: 'partTimeSection',
   title: m.application.partTimeHeading,
   condition: isPartTime,
@@ -17,32 +15,19 @@ export const partTimeSection = buildSection({
     buildMultiField({
       id: 'partTimeMultiField',
       title: m.application.partTimeHeading,
+      description: m.application.partTimeDescription,
       children: [
-        buildDescriptionField({
-          id: 'partTimeDesc',
-          description: m.application.partTimeDescription,
-        }),
         buildAlertMessageField({
           id: 'partTimeAlert',
           title: m.application.partTimeAlertTitle,
           message: m.application.partTimeAlert,
           alertType: 'info',
         }),
-        buildFieldsRepeaterField({
+        buildTableRepeaterField({
           id: 'registerPartTime',
-          formTitleNumbering: 'suffix',
-          formTitle: (_index, application) => {
-            const items = getValueViaPath<Array<unknown>>(
-              application.answers,
-              'registerPartTime',
-            )
-            if (!items || items.length <= 1) {
-              return ''
-            }
-            return m.application.partTimeHeading
-          },
           addItemButtonText: m.application.addLine,
-          minRows: 1,
+          initActiveFieldIfEmpty: true,
+          hideTableHeaderIfEmpty: true,
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -79,6 +64,47 @@ export const partTimeSection = buildSection({
               currency: true,
               required: true,
               min: 0,
+            },
+          },
+          table: {
+            header: [
+              m.application.tableHeaderCompany,
+              m.application.tableHeaderJobStart,
+              m.application.tableHeaderWorkPercentage,
+              m.application.tableHeaderEstimatedIncome,
+            ],
+            rows: [
+              'nationalId',
+              'company',
+              'jobStart',
+              'workPercentage',
+              'estimatedIncome',
+            ],
+            format: {
+              nationalId: (value) => {
+                if (!value) return ''
+                const clean = value.replace('-', '')
+                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+              },
+              jobStart: (value) => {
+                if (!value) return ''
+                const date = new Date(value)
+                if (isNaN(date.getTime())) return value
+                return date.toLocaleDateString('is-IS', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
+              },
+              workPercentage: (value) => {
+                if (!value) return ''
+                return `${value}%`
+              },
+              estimatedIncome: (value) => {
+                if (!value) return ''
+                const num = Number(value)
+                return `${num.toLocaleString('is-IS')} kr.`
+              },
             },
           },
         }),

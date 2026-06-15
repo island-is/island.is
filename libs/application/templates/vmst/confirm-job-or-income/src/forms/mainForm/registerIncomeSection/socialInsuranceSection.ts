@@ -1,14 +1,13 @@
 import {
-  buildDescriptionField,
-  buildFieldsRepeaterField,
+  buildTableRepeaterField,
   buildMultiField,
-  buildSection,
+  buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
-import { isSocialInsurance } from '../../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isSocialInsurance } from '../../../utils/conditions'
 
-export const socialInsuranceSection = buildSection({
+export const socialInsuranceSection = buildSubSection({
   id: 'socialInsuranceSection',
   title: m.application.socialInsuranceHeading,
   condition: isSocialInsurance,
@@ -16,26 +15,13 @@ export const socialInsuranceSection = buildSection({
     buildMultiField({
       id: 'socialInsuranceMultiField',
       title: m.application.socialInsuranceHeading,
+      description: m.application.socialInsuranceDescription,
       children: [
-        buildDescriptionField({
-          id: 'socialInsuranceDesc',
-          description: m.application.socialInsuranceDescription,
-        }),
-        buildFieldsRepeaterField({
+        buildTableRepeaterField({
           id: 'registerSocialInsurance',
-          formTitleNumbering: 'suffix',
-          formTitle: (_index, application) => {
-            const items = getValueViaPath<Array<unknown>>(
-              application.answers,
-              'registerSocialInsurance',
-            )
-            if (!items || items.length <= 1) {
-              return ''
-            }
-            return m.application.socialInsuranceHeading
-          },
           addItemButtonText: m.application.addLine,
-          minRows: 1,
+          initActiveFieldIfEmpty: true,
+          hideTableHeaderIfEmpty: true,
           fields: {
             socialPaymentType: {
               component: 'select',
@@ -71,6 +57,37 @@ export const socialInsuranceSection = buildSection({
                 { value: 'oneTime', label: m.application.oneTimePayment },
                 { value: 'monthly', label: m.application.monthlyPayment },
               ],
+            },
+          },
+          table: {
+            header: [
+              m.application.tableHeaderPaymentType,
+              m.application.tableHeaderAmount,
+              m.application.tableHeaderFrequency,
+            ],
+            rows: ['socialPaymentType', 'amountPerMonth', 'paymentFrequency'],
+            format: {
+              socialPaymentType: (value, _displayIndex, application) => {
+                if (!value || !application) return ''
+                const incomeTypes =
+                  getValueViaPath<Array<{ id?: string; name?: string }>>(
+                    application.externalData,
+                    'incomeTypes.data.trTypes',
+                  ) ?? []
+                const type = incomeTypes.find((t) => t.id === value)
+                return type?.name ?? value
+              },
+              amountPerMonth: (value) => {
+                if (!value) return ''
+                const num = Number(value)
+                return `${num.toLocaleString('is-IS')} kr.`
+              },
+              paymentFrequency: (value) => {
+                if (!value) return ''
+                return value === 'oneTime'
+                  ? m.application.oneTimePayment
+                  : m.application.monthlyPayment
+              },
             },
           },
         }),

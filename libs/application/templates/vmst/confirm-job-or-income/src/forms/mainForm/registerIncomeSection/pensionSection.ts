@@ -1,14 +1,13 @@
 import {
-  buildDescriptionField,
-  buildFieldsRepeaterField,
+  buildTableRepeaterField,
   buildMultiField,
-  buildSection,
+  buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
-import { isPension } from '../../utils/conditions'
+import * as m from '../../../lib/messages'
+import { isPension } from '../../../utils/conditions'
 
-export const pensionSection = buildSection({
+export const pensionSection = buildSubSection({
   id: 'pensionSection',
   title: m.application.pensionHeading,
   condition: isPension,
@@ -16,26 +15,13 @@ export const pensionSection = buildSection({
     buildMultiField({
       id: 'pensionMultiField',
       title: m.application.pensionHeading,
+      description: m.application.pensionDescription,
       children: [
-        buildDescriptionField({
-          id: 'pensionDesc',
-          description: m.application.pensionDescription,
-        }),
-        buildFieldsRepeaterField({
+        buildTableRepeaterField({
           id: 'registerPension',
-          formTitleNumbering: 'suffix',
-          formTitle: (_index, application) => {
-            const items = getValueViaPath<Array<unknown>>(
-              application.answers,
-              'registerPension',
-            )
-            if (!items || items.length <= 1) {
-              return ''
-            }
-            return m.application.pensionHeading
-          },
           addItemButtonText: m.application.addLine,
-          minRows: 1,
+          initActiveFieldIfEmpty: true,
+          hideTableHeaderIfEmpty: true,
           fields: {
             pensionFund: {
               component: 'select',
@@ -80,6 +66,41 @@ export const pensionSection = buildSection({
               currency: true,
               required: true,
               min: 0,
+            },
+          },
+          table: {
+            header: [
+              m.application.tableHeaderPensionFund,
+              m.application.tableHeaderPaymentType,
+              m.application.tableHeaderAmount,
+            ],
+            rows: ['pensionFund', 'pensionType', 'amountPerMonth'],
+            format: {
+              pensionFund: (value, _displayIndex, application) => {
+                if (!value || !application) return ''
+                const pensionFunds =
+                  getValueViaPath<Array<{ id?: string; name?: string }>>(
+                    application.externalData,
+                    'pensionFunds.data',
+                  ) ?? []
+                const fund = pensionFunds.find((f) => f.id === value)
+                return fund?.name ?? value
+              },
+              pensionType: (value, _displayIndex, application) => {
+                if (!value || !application) return ''
+                const incomeTypes =
+                  getValueViaPath<Array<{ id?: string; name?: string }>>(
+                    application.externalData,
+                    'incomeTypes.data.pensionTypes',
+                  ) ?? []
+                const type = incomeTypes.find((t) => t.id === value)
+                return type?.name ?? value
+              },
+              amountPerMonth: (value) => {
+                if (!value) return ''
+                const num = Number(value)
+                return `${num.toLocaleString('is-IS')} kr.`
+              },
             },
           },
         }),
