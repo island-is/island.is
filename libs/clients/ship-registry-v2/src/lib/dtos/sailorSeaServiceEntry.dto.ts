@@ -39,14 +39,15 @@ export interface SailorSeaServiceResponseDto {
 export const mapSeaServiceFilter = (
   filters?: SailorSeaServiceFilterDto,
 ): FishermanShipCrewRegistrationRequestDto => ({
-  date_from: filters?.dateFrom ?? '',
-  date_to: filters?.dateTo ?? '',
-  rank_id: BigInt(filters?.rankId ?? 0),
-  from_or_eq_length: filters?.fromOrEqLength ?? 0,
-  from_or_eq_main_engine_power: filters?.fromOrEqMainEnginePower ?? 0,
-  from_or_eq_brutto_weight: filters?.fromOrEqBruttoWeight ?? 0,
-  page_number: filters?.pageNumber ?? 1,
-  page_size: filters?.pageSize ?? 100,
+  date_from: filters?.dateFrom,
+  date_to: filters?.dateTo,
+  rank_id:
+    filters?.rankId !== undefined ? BigInt(filters.rankId) : undefined,
+  from_or_eq_length: filters?.fromOrEqLength,
+  from_or_eq_main_engine_power: filters?.fromOrEqMainEnginePower,
+  from_or_eq_brutto_weight: filters?.fromOrEqBruttoWeight,
+  page_number: filters?.pageNumber,
+  page_size: filters?.pageSize,
 })
 
 export const mapSeaServiceEntry = (
