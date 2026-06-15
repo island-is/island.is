@@ -1,6 +1,4 @@
 import { YES } from '@island.is/application/core'
-import { applicantInformationMessages } from '@island.is/application/ui-forms'
-import { isValidNumber } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as m from './messages'
 import uniqWith from 'lodash/uniqWith'

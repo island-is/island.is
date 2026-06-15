@@ -65,6 +65,12 @@ export const Prerequisites = new FormBuilder<typeof dataSchema>(
             })
           }
           // TODO: put this back in when properties can be fetched without national id
+          // Before re-enabling, verify the by-code flow end to end:
+          // `calculateAmount` and `sendNotificationToAllInvolved` resolve the
+          // property via `getSelectedRealEstate` (externalData
+          // `fetchPropertiesByCode.data`), and the owner notifications need
+          // `thinglystirEigendur` on the property returned by
+          // `hmsPropertyByPropertyCode` — confirm the HMS endpoint includes it.
           // .addCheckboxField('otherPropertiesThanIOwnCheckbox', '', {
           //   options: [
           //     {

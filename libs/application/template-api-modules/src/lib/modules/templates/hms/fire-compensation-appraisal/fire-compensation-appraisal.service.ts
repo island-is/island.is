@@ -23,10 +23,12 @@ import {
 } from '@island.is/application/core'
 import {
   getApplicant,
+  getSelectedRealEstate,
   mapAnswersToApplicationDto,
   mapAnswersToApplicationDtoSdf,
   mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
+  sumSelectedUnitsFireCompensation,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -178,13 +180,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     const { application } = props
 
     try {
-      const selectedRealEstateId = getValueViaPath<string>(
-        application.answers,
-        'realEstate',
-      )
+      const { selectedRealEstateId, realEstates, selectedRealEstate } =
+        getSelectedRealEstate(application)
 
       if (!selectedRealEstateId) {
         throw new TemplateApiError('Selected real estate id is not set', 500)
+      }
+
+      if (!realEstates) {
+        throw new TemplateApiError('Properties is undefined', 500)
       }
 
       const selectedUsageUnits = getValueViaPath<Array<string>>(
@@ -192,33 +196,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'usageUnits',
       )
 
-      const properties = getValueViaPath<Array<Fasteign>>(
-        application.externalData,
-        'getProperties.data',
+      return paymentForAppraisal(
+        sumSelectedUnitsFireCompensation(
+          selectedRealEstate,
+          selectedUsageUnits ?? [],
+        ),
       )
-
-      if (!properties) {
-        throw new TemplateApiError('Properties is undefined', 500)
-      }
-
-      const property = properties?.find(
-        (property) => property.fasteignanumer === selectedRealEstateId,
-      )
-
-      const usageUnitsFireAppraisal =
-        property?.notkunareiningar?.notkunareiningar?.map((unit) => {
-          if (selectedUsageUnits?.includes(unit.notkunareininganumer ?? '')) {
-            return unit.brunabotamat
-          }
-          return 0
-        })
-
-      const selectedUnitsFireAppraisal =
-        usageUnitsFireAppraisal?.reduce((acc, curr) => {
-          return (acc ?? 0) + (curr ?? 0)
-        }, 0) ?? 0
-
-      return paymentForAppraisal(selectedUnitsFireAppraisal)
     } catch (error) {
       this.logger.error(
         `Failed to calculate amount for applicationId: ${
@@ -239,30 +222,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
     try {
-      const otherPropertiesThanIOwn = getValueViaPath<string[]>(
-        application.answers,
-        'otherPropertiesThanIOwnCheckbox',
-      )?.includes(YES)
-
-      const selectedRealEstateId = otherPropertiesThanIOwn
-        ? 'F' +
-          getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
-        : getValueViaPath<string>(application.answers, 'realEstate')
+      const { selectedRealEstateId, selectedRealEstate } =
+        getSelectedRealEstate(application)
 
       if (!selectedRealEstateId) {
         throw new TemplateApiError('Selected real estate id is not set', 500)
       }
-
-      const realEstates = otherPropertiesThanIOwn
-        ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
-        : getValueViaPath<Array<Fasteign>>(
-            application.externalData,
-            'getProperties.data',
-          )
-
-      const selectedRealEstate = realEstates?.find(
-        (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
-      )
 
       if (!selectedRealEstate) {
         throw new TemplateApiError('Selected real estate is not set', 500)

@@ -277,39 +277,48 @@ export const hashToLength20 = (input: string): string => {
   return crypto.createHash('sha256').update(input).digest('hex').slice(0, 20)
 }
 
-// --- SDF-only helpers (not referenced by the legacy application) ---
-// The SDF application differs from the legacy one in two ways that affect the
-// submit DTO:
-//   1. The "apply for a property I do not own" by-code lookup is a template API
-//      action, so its result lives in externalData rather than the
-//      `anyProperties` answer that the legacy custom component wrote.
-//   2. SDF display fields are not persisted into answers, so the two computed
-//      appraisal values must be recomputed from source instead of read back.
-const getSelectedRealEstateSdf = (
+// Resolves the property the application is about, for both template variants
+// (legacy and SDF).
+export const getSelectedRealEstate = (
   application: Application,
-): Fasteign | undefined => {
+): {
+  selectedRealEstateId: string | undefined
+  realEstates: Array<Fasteign> | undefined
+  selectedRealEstate: Fasteign | undefined
+} => {
   const { answers, externalData } = application
   const otherPropertiesThanIOwn = getValueViaPath<string[]>(
     answers,
     'otherPropertiesThanIOwnCheckbox',
   )?.includes(YES)
+
+  const selectedPropertyByCode = getValueViaPath<string>(
+    answers,
+    'selectedPropertyByCode',
+  )
   const selectedRealEstateId = otherPropertiesThanIOwn
-    ? 'F' + getValueViaPath<string>(answers, 'selectedPropertyByCode')
+    ? selectedPropertyByCode
+      ? 'F' + selectedPropertyByCode
+      : undefined
     : getValueViaPath<string>(answers, 'realEstate')
 
   const realEstates = otherPropertiesThanIOwn
     ? getValueViaPath<Array<Fasteign>>(
         externalData,
         'fetchPropertiesByCode.data',
-      )
+      ) ?? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
     : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
 
-  return realEstates?.find(
-    (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
-  )
+  return {
+    selectedRealEstateId,
+    realEstates,
+    selectedRealEstate: realEstates?.find(
+      (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+    ),
+  }
 }
 
-const sumSelectedUnitsFireCompensation = (
+export const sumSelectedUnitsFireCompensation = (
   property: Fasteign | undefined,
   selectedUsageUnits: Array<string>,
 ): number =>
@@ -326,12 +335,15 @@ const sumTotalFireCompensation = (property: Fasteign | undefined): number =>
     0,
   ) ?? 0
 
+// SDF variant of `mapAnswersToApplicationDto`. SDF display fields are not
+// persisted into answers, so the two computed appraisal values are recomputed
+// from source instead of read back.
 export const mapAnswersToApplicationDtoSdf = (
   application: Application,
 ): ApplicationDto => {
   const { answers } = application
   const applicant = getApplicant(answers)
-  const selectedRealEstate = getSelectedRealEstateSdf(application)
+  const { selectedRealEstate } = getSelectedRealEstate(application)
   const selectedUsageUnits =
     getValueViaPath<Array<string>>(answers, 'usageUnits') ?? []
   const usageUnitsFireCompensation = sumSelectedUnitsFireCompensation(
