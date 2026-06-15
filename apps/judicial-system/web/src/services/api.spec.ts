@@ -17,12 +17,9 @@ describe('Judicial system web api endpoints', () => {
         value: 'judicial-system.csrf=mock_token',
       })
 
-      Object.defineProperty(window, 'location', {
-        value: {
-          pathname: '/test',
-          assign: jest.fn(),
-        },
-      })
+      // jsdom 26 (Jest 30) makes window.location and its methods non-configurable,
+      // so they can no longer be stubbed. logout() calls location.assign, which is
+      // a no-op navigation under jsdom; this test only asserts the cookie deletion.
 
       // Act
       api.logout()
