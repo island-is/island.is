@@ -1043,11 +1043,7 @@ export class PaymentFlowService {
   ): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
     try {
-      // Delete from FJS
-      await this.chargeFjsV2ClientService.deleteCharge(paymentFlowId)
-      this.logger.info(
-        `[${paymentFlowId}] Successfully requested deletion of FJS charge (or it was already deleted/cancelled)`,
-      )
+      await this.requestFjsChargeDeletion(paymentFlowId)
 
       const [updatedCount] = await this.fjsChargeModel.update(
         { isDeleted: true },
@@ -1067,6 +1063,26 @@ export class PaymentFlowService {
       if (throwOnError) {
         throw error
       }
+    }
+  }
+
+  /**
+   * Asks FJS to delete the charge. Resolves on a success response and on FJS's idempotent
+   * "already cancelled" response.
+   */
+  private async requestFjsChargeDeletion(paymentFlowId: string): Promise<void> {
+    try {
+      await this.chargeFjsV2ClientService.deleteCharge(paymentFlowId)
+      this.logger.info(
+        `[${paymentFlowId}] Successfully requested deletion of FJS charge`,
+      )
+    } catch (error) {
+      if (
+        mapFjsErrorToCode(error, true) !== FjsErrorCode.AlreadyDeletedCharge
+      ) {
+        throw error
+      }
+      this.logger.info(`[${paymentFlowId}] FJS charge was already cancelled`)
     }
   }
 

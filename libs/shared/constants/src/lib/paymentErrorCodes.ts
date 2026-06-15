@@ -1,6 +1,8 @@
 export enum FjsErrorCode {
   FailedToCreateCharge = 'FailedToCreateCharge',
   AlreadyCreatedCharge = 'AlreadyCreatedCharge',
+  // FJS already received the charge's cancellation — it is already deleted. Idempotent success for a refund.
+  AlreadyDeletedCharge = 'AlreadyDeletedCharge',
 }
 
 export enum PaymentServiceCode {

@@ -88,6 +88,11 @@ export const fjsErrorMessageToCode = (
   message: string,
   onlyKnownCode = false,
 ): FjsErrorCode | null => {
+  if (message.startsWith('Búið að taka á móti niðurfellingu á álagningu')) {
+    // FJS already received the charge's cancellation — it is already deleted.
+    return FjsErrorCode.AlreadyDeletedCharge
+  }
+
   if (message.startsWith('Búið að taka á móti álagningu')) {
     return FjsErrorCode.AlreadyCreatedCharge
   }

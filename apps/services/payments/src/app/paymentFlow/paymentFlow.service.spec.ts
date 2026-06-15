@@ -499,5 +499,30 @@ describe('PaymentFlowService', () => {
         service.deleteFjsCharge(uuid(), { throwOnError: false }),
       ).resolves.toBeUndefined()
     })
+
+    it('treats an "already cancelled" FJS error as success and syncs local state', async () => {
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      // FJS reports the cancellation was already received — the charge is gone, so this is success.
+      jest
+        .spyOn(chargeFjsService, 'deleteCharge')
+        .mockRejectedValueOnce(
+          new Error('Búið að taka á móti niðurfellingu á álagningu'),
+        )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      const updateSpy = jest.spyOn(fjsChargeModel, 'update')
+
+      const paymentFlowId = uuid()
+      await expect(
+        service.deleteFjsCharge(paymentFlowId),
+      ).resolves.toBeUndefined()
+
+      // Local record is still marked deleted even though the FJS call threw.
+      expect(updateSpy).toHaveBeenCalledWith(
+        { isDeleted: true },
+        { where: { paymentFlowId, isDeleted: false } },
+      )
+    })
   })
 })
