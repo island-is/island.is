@@ -109,8 +109,11 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     let then: Then
 
     beforeEach(async () => {
-      const { courtService, internalCaseController, defendantRepositoryService } =
-        await createTestingCaseModule()
+      const {
+        courtService,
+        internalCaseController,
+        defendantRepositoryService,
+      } = await createTestingCaseModule()
 
       mockCourtService = courtService
       mockDefendantRepositoryService = defendantRepositoryService
@@ -183,8 +186,11 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     let then: Then
 
     beforeEach(async () => {
-      const { courtService, internalCaseController, defendantRepositoryService } =
-        await createTestingCaseModule()
+      const {
+        courtService,
+        internalCaseController,
+        defendantRepositoryService,
+      } = await createTestingCaseModule()
 
       mockCourtService = courtService
       mockDefendantRepositoryService = defendantRepositoryService

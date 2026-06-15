@@ -827,9 +827,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        [CaseIndictmentRulingDecision.WITHDRAWAL],
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not reopen',
         (indictmentRulingDecision) => {
           // Arrange
@@ -974,9 +972,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        [CaseIndictmentRulingDecision.WITHDRAWAL],
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not correct',
         (indictmentRulingDecision) => {
           // Arrange
