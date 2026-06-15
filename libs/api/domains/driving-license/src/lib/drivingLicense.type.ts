@@ -41,6 +41,8 @@ export interface NewTemporaryDrivingLicenseInput {
   email: string
   phone: string
   sendLicenseInMail: boolean
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewBEDrivingLicenseContentItem {
@@ -72,6 +74,7 @@ export interface NewBEDrivingLicenseInput {
   contentList?: NewBEDrivingLicenseContentItem[]
   photoBiometricsId?: string | null
   signatureBiometricsId?: string | null
+  sendPlasticToPerson?: boolean
   healthDeclarationModel: NewBEHealthDeclaration
 }
 

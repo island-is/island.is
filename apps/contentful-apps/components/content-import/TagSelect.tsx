@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FormControl, Select } from '@contentful/f36-components'
 import { useCMA } from '@contentful/react-apps-toolkit'
 
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import { sortAlpha } from '@island.is/shared/utils'
 
 interface TagSelectProps {
   selectedTag: string | null
@@ -18,8 +18,6 @@ export const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
   useEffect(() => {
     const fetchTags = async () => {
       const response = await cma.tag.getMany({
-        environmentId: CONTENTFUL_ENVIRONMENT,
-        spaceId: CONTENTFUL_SPACE,
         query: {
           limit: 1000,
           'name[match]': 'owner-',
@@ -27,10 +25,12 @@ export const TagSelect = ({ selectedTag, setSelectedTag }: TagSelectProps) => {
       })
 
       setTagOptions(
-        response.items.map((item) => ({
-          label: item.name,
-          value: item.sys.id,
-        })),
+        response.items
+          .map((item) => ({
+            label: item.name,
+            value: item.sys.id,
+          }))
+          .sort(sortAlpha('label')),
       )
     }
     fetchTags()

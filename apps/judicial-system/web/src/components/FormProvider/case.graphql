@@ -2,8 +2,8 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    type
     modified
+    type
     splitCases {
       id
       created
@@ -120,6 +120,14 @@ query Case($input: CaseQueryInput!) {
         isDefaultJudgement
         isAcquittedByPublicProsecutionOffice
         defendantHasRequestedAppeal
+      }
+      connectedCases {
+        id
+        courtCaseNumber
+        court {
+          id
+          name
+        }
       }
     }
     defenderName
@@ -287,6 +295,7 @@ query Case($input: CaseQueryInput!) {
     rulingModifiedHistory
     caseResentExplanation
     origin
+    originalAncestorId
     openedByDefender
     defendantWaivesRightToCounsel
     crimeScenes
@@ -294,6 +303,7 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewedDate
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created

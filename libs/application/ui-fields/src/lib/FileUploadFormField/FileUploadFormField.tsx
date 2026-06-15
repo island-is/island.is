@@ -16,6 +16,8 @@ export const FileUploadFormField = ({
   answerQuestions,
   field,
   error,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: Props) => {
   const {
     id,
@@ -87,6 +89,8 @@ export const FileUploadFormField = ({
           maxFileCount={maxFileCount}
           forImageUpload={forImageUpload}
           onRemove={onFileRemoveWhenInAnswers}
+          setFieldLoadingState={setFieldLoadingState}
+          setSubmitButtonDisabled={setSubmitButtonDisabled}
         />
       </Box>
     </Box>

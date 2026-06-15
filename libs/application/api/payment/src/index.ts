@@ -1,3 +1,4 @@
 export * from './lib/payment.module'
-export { PaymentService } from './lib/payment.service'
+export { PaymentService, PaymentMethod } from './lib/payment.service'
 export { PaymentModuleConfig } from './lib/payment.config'
+export { createDailyCompletionNotifications } from './lib/utils'

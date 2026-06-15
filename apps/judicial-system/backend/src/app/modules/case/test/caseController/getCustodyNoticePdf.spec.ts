@@ -10,7 +10,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCustodyNoticePdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../../repository'
 
-jest.mock('../../../../formatters/custodyNoticePdf')
+jest.mock('../../../../formatters/generatedPdfs/custodyNoticePdf')
 
 interface Then {
   error: Error

@@ -103,6 +103,7 @@ export type Icon =
   | 'grid'
   | 'list'
   | 'hammer'
+  | 'hourglass'
 
 export default {
   filled: {
@@ -209,6 +210,7 @@ export default {
     grid: 'Grid',
     list: 'List',
     hammer: 'HammerOutline',
+    hourglass: 'HourglassOutline',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -314,5 +316,6 @@ export default {
     grid: 'GridOutline',
     list: 'ListOutline',
     hammer: 'HammerOutline',
+    hourglass: 'HourglassOutline',
   },
 }

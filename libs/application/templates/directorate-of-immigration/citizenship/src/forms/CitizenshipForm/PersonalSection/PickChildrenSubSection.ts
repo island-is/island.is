@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { selectChildren } from '../../../lib/messages'
 import * as kennitala from 'kennitala'
-import { ApplicantChildCustodyInformation } from '@island.is/application/types'
+import { ApplicantChildCustodyInformationV3 } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 import {
   MAX_AGE_CHILD_INFORMATION_BOX,
@@ -23,7 +23,7 @@ export const PickChildrenSubSection = buildSubSection({
       externalData,
       'childrenCustodyInformation.data',
       [],
-    ) as ApplicantChildCustodyInformation[]
+    ) as ApplicantChildCustodyInformationV3[]
 
     return childWithInfo ? childWithInfo.length > 0 : false
   },
@@ -43,7 +43,7 @@ export const PickChildrenSubSection = buildSubSection({
               externalData,
               'childrenCustodyInformation.data',
               [],
-            ) as ApplicantChildCustodyInformation[]
+            ) as ApplicantChildCustodyInformationV3[]
 
             const childrenInAgeRange = childWithInfo.filter((child) => {
               const childInfo = kennitala.info(child.nationalId)
@@ -74,7 +74,7 @@ export const PickChildrenSubSection = buildSubSection({
               externalData,
               'childrenCustodyInformation.data',
               [],
-            ) as ApplicantChildCustodyInformation[]
+            ) as ApplicantChildCustodyInformationV3[]
 
             const childrenInAgeRange = childWithInfo.filter((child) => {
               const childInfo = kennitala.info(child.nationalId)

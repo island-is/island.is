@@ -16,7 +16,7 @@ import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case, CaseFile } from '../../../repository'
 
-jest.mock('../../../../formatters/caseFilesRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/caseFilesRecordPdf')
 
 interface Then {
   error: Error

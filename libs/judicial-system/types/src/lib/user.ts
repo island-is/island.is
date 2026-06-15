@@ -34,6 +34,7 @@ export interface User {
   institution?: Institution
   active: boolean
   canConfirmIndictment: boolean
+  canManageMessageSuspension?: boolean
   latestLogin?: string
   loginCount?: number
 }

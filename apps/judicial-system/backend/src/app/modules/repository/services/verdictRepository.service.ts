@@ -41,7 +41,7 @@ interface DeleteVerdictOptions {
 interface UpdateVerdict {
   externalPoliceDocumentId?: string
   serviceStatus?: VerdictServiceStatus
-  serviceRequirement?: ServiceRequirement
+  serviceRequirement?: ServiceRequirement | null
   servedBy?: string
   deliveredToDefenderNationalId?: string
   appealDecision?: string

@@ -71,6 +71,19 @@ export default function FilterScreen() {
     dateTo
   )
 
+  // Whether the store currently has filters applied. When true, the Apply
+  // button must remain available even if the user has cleared the local state,
+  // so they can commit the cleared state back to the store.
+  const hasAppliedFilters = !!(
+    store.opened ||
+    store.bookmarked ||
+    store.archived ||
+    store.senderNationalId.length ||
+    store.categoryIds.length ||
+    store.dateFrom ||
+    store.dateTo
+  )
+
   const onApplyFilters = useCallback(() => {
     inboxFilterStore.setState({
       opened,
@@ -222,7 +235,7 @@ export default function FilterScreen() {
           </AccordionItem>
         </Accordion>
       </ScrollView>
-      {isSelected && (
+      {(isSelected || hasAppliedFilters) && (
         <ButtonContainer>
           <Button
             title={intl.formatMessage({ id: 'inbox.filterApplyButton' })}

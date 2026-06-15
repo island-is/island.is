@@ -1,9 +1,8 @@
 import Fuse from 'fuse.js'
 
-import { SecondarySchoolAllProgrammesQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeSimple } from '@island.is/web/graphql/schema'
 
-type SecondarySchoolProgramme =
-  SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes'][0]
+type SecondarySchoolProgramme = SecondarySchoolProgrammeSimple
 
 interface FilterProps {
   key: string
@@ -34,7 +33,6 @@ type QueryLeaf =
   | { 'school.id': string }
   | { 'school.countryArea.id': string }
   | { 'qualification.level.id': string }
-  | { isReferenceProgramme: string }
 
 interface QueryOr {
   $or: Array<QueryLeaf>
@@ -74,9 +72,6 @@ export const SearchProgrammes = ({
         orFilters.push({ 'school.countryArea.id': `=${searchParam}` })
       } else if (filter.key === 'levels') {
         orFilters.push({ 'qualification.level.id': `=${searchParam}` })
-      } else if (filter.key === 'isReferenceProgramme') {
-        const boolValue = searchParam === 'YES' ? 'true' : 'false'
-        orFilters.push({ isReferenceProgramme: `=${boolValue}` })
       }
     })
 

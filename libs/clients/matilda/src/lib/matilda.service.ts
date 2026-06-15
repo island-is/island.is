@@ -33,6 +33,24 @@ export class MatildaClientService {
       throw error
     }
 
-    return data ?? { meals: [] }
+    return {
+      meals: (data?.meals ?? []).map((meal) => ({
+        ...meal,
+        courses: (meal.courses ?? []).map((course) => ({
+          ...course,
+
+          nutrients: (course.nutrients ?? [])
+            .filter(
+              (nutrient) =>
+                !nutrient?.name?.includes('Vítamín') &&
+                !nutrient?.name?.includes('Járn') &&
+                !nutrient?.name?.includes('Kalsíum'),
+            )
+            .map((nutrient) => ({
+              ...nutrient,
+            })),
+        })),
+      })),
+    }
   }
 }

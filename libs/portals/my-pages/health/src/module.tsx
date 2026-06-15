@@ -140,6 +140,18 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const HealthConversations = lazy(() =>
+  import('./screens/HealthConversations/HealthConversations'),
+)
+
+const NewHealthConversation = lazy(() =>
+  import('./screens/HealthConversations/NewHealthConversation'),
+)
+
+const HealthConversationDetail = lazy(() =>
+  import('./screens/HealthConversations/HealthConversationDetail'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -618,6 +630,27 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthConversations,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversations />,
+    },
+    {
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthConversationsNew,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <NewHealthConversation />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthConversationsDetail,
+      key: 'HealthMessages',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversationDetail />,
     },
   ],
 }

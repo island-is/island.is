@@ -18,7 +18,7 @@ import {
   renderHelmValueFileContent,
   renderCleanUpForFeature,
 } from './dsl/exports/helm'
-import { ServiceBuilder } from './dsl/dsl'
+import { ServiceBuilder, ScheduledJobBuilder } from './dsl/dsl'
 import { logger } from './logging'
 import fs from 'fs'
 
@@ -201,12 +201,16 @@ yargs(process.argv.slice(2))
 
         if (writeDest != '') {
           try {
+            const fileName =
+              svc instanceof ScheduledJobBuilder
+                ? 'values.cronjob.yaml'
+                : 'values.yaml'
             fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
             console.log(
-              `writing file to directory: ${writeDest}/${svc.name()}/values.yaml`,
+              `writing file to directory: ${writeDest}/${svc.name()}/${fileName}`,
             )
             fs.writeFileSync(
-              `${writeDest}/${svc.name()}/values.yaml`,
+              `${writeDest}/${svc.name()}/${fileName}`,
               svcString,
             )
           } catch (error) {
