@@ -131,10 +131,6 @@ const template: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined => {
     const { applicant, assignees } = application
-    console.log('--------------------------------------------------')
-    console.log('nationalId: ', nationalId)
-    console.log('assignees: ', assignees)
-    console.log('--------------------------------------------------')
     if (nationalId === applicant) {
       return Roles.APPLICANT
     }
