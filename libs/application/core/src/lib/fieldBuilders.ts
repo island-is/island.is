@@ -1000,6 +1000,7 @@ export const buildTableRepeaterField = (
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   return {
@@ -1021,6 +1022,7 @@ export const buildTableRepeaterField = (
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   }
 }
 

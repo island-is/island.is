@@ -825,6 +825,14 @@
               "type": "boolean"
             },
             "x-position": 2
+          },
+          {
+            "name": "onlyCapitalTypes",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 3
           }
         ],
         "responses": {
@@ -2152,6 +2160,15 @@
               "format": "guid"
             },
             "x-position": 1
+          },
+          {
+            "name": "onlyCreatedByApplicant",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 2
           }
         ],
         "responses": {
@@ -3437,8 +3454,9 @@
             "type": "string",
             "format": "guid"
           },
-          "description": {
-            "type": "string"
+          "typeId": {
+            "type": "string",
+            "format": "guid"
           },
           "estimatedIncome": {
             "type": "number",
@@ -3459,8 +3477,9 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "description": {
-            "type": "string"
+          "incomeTypeId": {
+            "type": "string",
+            "format": "guid"
           },
           "estimatedIncome": {
             "type": "number",
@@ -3489,10 +3508,6 @@
             "type": "string",
             "format": "guid"
           },
-          "pensionFundId": {
-            "type": "string",
-            "format": "guid"
-          },
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"
@@ -3513,10 +3528,6 @@
         "additionalProperties": false,
         "properties": {
           "typeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "pensionFundId": {
             "type": "string",
             "format": "guid"
           },
@@ -8100,6 +8111,10 @@
           "attachmentId": {
             "type": "string",
             "format": "guid"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
