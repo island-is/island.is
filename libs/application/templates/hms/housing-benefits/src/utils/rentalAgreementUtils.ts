@@ -8,7 +8,6 @@ import {
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
-import { isFileUploaded } from './utils'
 
 type AssigneeNationalRegistryProvider = {
   status?: 'failure' | 'success'
@@ -300,14 +299,6 @@ export const getRentalAgreementTenantsForStaticTable = (
   if (tenants.length === 0) {
     return []
   }
-  const fileUploaded = isFileUploaded(application.answers)
-  if (fileUploaded) {
-    return tenants.map((p) => ({
-      name: p.name,
-      nationalId: p.nationalId,
-      file: '',
-    }))
-  }
   return tenants.map((p) => ({
     name: p.name,
     nationalId: p.nationalId,
@@ -439,16 +430,6 @@ export const getHouseholdMembersForTable = (
     return []
   }
 
-  const fileUploaded = isFileUploaded(application.answers)
-
-  if (fileUploaded) {
-    return members.map((p) => ({
-      name: p.name,
-      nationalId: p.nationalId,
-      file: '',
-    }))
-  }
-
   return members.map((p) => ({
     name: p.name,
     nationalId: p.nationalId,
@@ -463,24 +444,13 @@ export const getHouseholdMembersTableRepeaterDefaultValue = (
   application: Application,
 ): Array<{
   nationalIdWithName: { name: string; nationalId: string }
-  file?: []
 }> => {
   const members = mergeDomicileAndCustodyExcludingContractTenants(application)
   if (members.length === 0) {
     return []
   }
 
-  const fileUploaded = isFileUploaded(application.answers)
-
-  return members.map((m) => {
-    if (fileUploaded) {
-      return {
-        nationalIdWithName: { name: m.name, nationalId: m.nationalId },
-        file: [],
-      }
-    }
-    return {
-      nationalIdWithName: { name: m.name, nationalId: m.nationalId },
-    }
-  })
+  return members.map((m) => ({
+    nationalIdWithName: { name: m.name, nationalId: m.nationalId },
+  }))
 }

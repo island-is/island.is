@@ -23,16 +23,6 @@ export const isHouseholdMemberUnder18 = (
   }
 }
 
-export const isFileUploaded = (answers: FormValue): boolean => {
-  const rows = getValueViaPath<
-    Array<{ file?: Array<{ key: string; name: string }> }>
-  >(answers, 'householdMembersTableRepeater')
-  return (
-    Array.isArray(rows) &&
-    rows.some((row) => Array.isArray(row.file) && row.file.length > 0)
-  )
-}
-
 const normalizeKennitalaKey = (nationalId: string | undefined | null) => {
   if (!nationalId || typeof nationalId !== 'string') return ''
   const trimmed = nationalId.trim()
@@ -119,8 +109,9 @@ export const getNonCustodyMinorsMissingCustodyAgreementNames = (
     }
     if (age >= 18) continue
     if (inCustody.has(normalizeKennitalaKey(nationalId))) continue
-    const hasFile = Array.isArray(row.file) && row.file.length > 0
-    if (hasFile) continue
+    if (minorHasAnyUmgengnissamningurUploadAttached(answers, nationalId)) {
+      continue
+    }
     const label = displayNameForHouseholdRow(row)
     if (label) result.push(label)
   }
@@ -247,8 +238,9 @@ export const getNonCustodyMinorsMissingCustodyAgreementNationalIds = (
       continue
     }
     if (inCustody.has(normalizeKennitalaKey(nationalId))) continue
-    const hasFile = Array.isArray(row.file) && row.file.length > 0
-    if (hasFile) continue
+    if (minorHasAnyUmgengnissamningurUploadAttached(answers, nationalId)) {
+      continue
+    }
     result.push(nationalId.trim())
   }
   return result

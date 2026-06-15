@@ -287,8 +287,9 @@ export const getAssigneeChildrenNeedingUmgengnissamningur = (
     const childKey = normalizeKennitalaKey(nationalId)
     if (!childKey) continue
     if (inApplicantCustody.has(childKey)) continue
-    const hasFile = Array.isArray(row.file) && row.file.length > 0
-    if (hasFile) continue
+    if (minorHasAnyUmgengnissamningurUploadAttached(answers, nationalId)) {
+      continue
+    }
     if (currentAssigneeCustody.has(childKey)) continue
 
     let coveredByOtherAssignee = false

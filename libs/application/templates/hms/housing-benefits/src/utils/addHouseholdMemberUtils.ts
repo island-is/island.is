@@ -17,7 +17,6 @@ import {
 
 type HouseholdMemberRepeaterRow = {
   nationalIdWithName?: { nationalId?: string; name?: string }
-  file?: Array<{ key: string; name: string }>
   isRemoved?: boolean
 }
 
@@ -123,7 +122,6 @@ export const getAddHouseholdMemberTableRepeaterDefaultValue = (
   application: Application,
 ): Array<{
   nationalIdWithName: { name: string; nationalId: string }
-  file?: []
 }> => {
   const tenantKeys = new Set(
     getRentalAgreementTenantsFlat(application).map((t) =>
@@ -154,7 +152,6 @@ export const getAddHouseholdMemberTableRepeaterDefaultValue = (
         assigneeDisplayName(application, natId)
       return {
         nationalIdWithName: { name, nationalId: natId },
-        ...(Array.isArray(row.file) ? { file: [] as [] } : {}),
       }
     })
 

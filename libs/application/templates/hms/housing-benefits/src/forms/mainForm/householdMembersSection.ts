@@ -71,12 +71,6 @@ export const householdMembersSection = buildSection({
               m.draftMessages.householdMembersSection.nationalIdColumn,
             ],
             rows: ['name', 'nationalId'],
-            format: {
-              file: (value) => {
-                const files = Array.isArray(value) ? value : []
-                return files.length > 0 ? '✅ ' : ''
-              },
-            },
           },
         }),
         buildHiddenInput({
