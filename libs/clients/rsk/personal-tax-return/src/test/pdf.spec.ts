@@ -16,7 +16,7 @@ describe('Pdf request', () => {
     })
 
     test('nationalId is too long', () => {
-      expect(() => pdfRequest('', '', '', '00000000001', 1999)).toThrowE(
+      expect(() => pdfRequest('', '', '', '00000000001', 1999)).toThrow(
         PreconditionFailedException,
       )
     })
