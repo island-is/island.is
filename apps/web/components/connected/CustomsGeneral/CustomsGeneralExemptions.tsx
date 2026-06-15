@@ -197,8 +197,6 @@ const CustomsGeneralExemptions = () => {
       name: item.name ?? '',
       description: item.description ?? '',
       legalArticle: item.legalArticle ?? '',
-      validFrom: item.validFrom ?? '',
-      validTo: item.validTo ?? '',
       system: item.system ?? '',
     }),
   )

@@ -57,8 +57,6 @@ export const GET_CUSTOMS_GENERAL_EXEMPTIONS = gql`
       name
       description
       legalArticle
-      validFrom
-      validTo
       system
     }
   }
@@ -220,12 +218,8 @@ export const GET_CUSTOMS_GENERAL_COUNTRY_CURRENCIES = gql`
     customsGeneralCountryCurrencies(input: $input) {
       countryCode
       countryName
-      countryValidFrom
-      countryValidTo
       currencyCode
       currencyName
-      currencyValidFrom
-      currencyValidTo
     }
   }
 `

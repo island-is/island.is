@@ -122,8 +122,6 @@ export class CustomsGeneralService {
       name: item.Heiti,
       description: item.Lysing,
       legalArticle: item.LagaGrein,
-      validFrom: item.GildisFra,
-      validTo: item.GildisTil,
       system: item.Kerfi,
     }))
   }
