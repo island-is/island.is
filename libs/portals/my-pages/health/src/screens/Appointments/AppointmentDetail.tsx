@@ -174,7 +174,7 @@ const AppointmentDetail = () => {
                       {locationLink && (
                         <LinkButton
                           to={locationLink}
-                          text={formatMessage(messages.locationDetails)}
+                          text={formatMessage(messages.seeMore)}
                           variant="text"
                           size="small"
                           icon="open"
