@@ -47,7 +47,7 @@ export const MultipleStatistics: React.FC<
                 {statistics.statistics.map((s, sIndex) => (
                   <GridColumn
                     key={`stat-${index}-${sIndex}`}
-                    span={['1/2', '1/2', '1/3', '1/3', '1/5']}
+                    span={['1/2', '1/2', '1/2', '1/3', '1/5']}
                     paddingBottom={4}
                   >
                     <Text variant="h1" color="blue400">
