@@ -10,7 +10,11 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": ["infra/src/dsl/", "libs/shared/webpack/"],
+            "allow": [
+              "infra/src/dsl/",
+              "libs/shared/webpack/",
+              "scripts/ts-node"
+            ],
             "depConstraints": [
               {
                 "sourceTag": "*",
