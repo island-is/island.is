@@ -76,6 +76,7 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { FileService, PoliceDigitalCaseFileService } from '../file'
+import { sortCaseFilesByOrder } from '../file/utils/sortCaseFiles'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
@@ -814,14 +815,7 @@ export class CaseService {
       },
     )
 
-    const sortedCaseFiles = [...(theCase.caseFiles ?? [])].sort((a, b) => {
-      if (a.orderWithinChapter === null && b.orderWithinChapter === null) {
-        return new Date(a.created).getTime() - new Date(b.created).getTime()
-      }
-      if (a.orderWithinChapter === null) return 1
-      if (b.orderWithinChapter === null) return -1
-      return (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0)
-    })
+    const sortedCaseFiles = sortCaseFilesByOrder(theCase.caseFiles ?? [])
 
     for (const caseFile of sortedCaseFiles) {
       if (

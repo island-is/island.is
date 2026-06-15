@@ -29,7 +29,6 @@ interface ReorderableFileUploadProps {
   errorMessage?: string
   dropzoneTitle: string
   dropzoneButtonLabel: string
-  sectionDescription?: string
   accept?: string[]
   onFilesChange: (files: File[]) => void
   onRemove: (file: TUploadFile) => void
@@ -160,7 +159,6 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
     errorMessage,
     dropzoneTitle,
     dropzoneButtonLabel,
-    sectionDescription,
     accept = Object.values(fileExtensionWhitelist),
     onFilesChange,
     onRemove,
@@ -177,10 +175,11 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
 
   useEffect(() => {
     const sorted = [...files].sort((a, b) => {
-      if (a.orderWithinChapter == null && b.orderWithinChapter == null) return 0
-      if (a.orderWithinChapter == null) return 1
-      if (b.orderWithinChapter == null) return -1
-      return a.orderWithinChapter - b.orderWithinChapter
+      if (a.orderWithinChapter === null && b.orderWithinChapter === null)
+        return 0
+      if (a.orderWithinChapter === null) return 1
+      if (b.orderWithinChapter === null) return -1
+      return (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0)
     })
     reorderableFilesRef.current = sorted
     setReorderableFiles(sorted)
@@ -231,11 +230,6 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
         <Text variant="h4" as="h4">
           {dropzoneTitle}
         </Text>
-        {sectionDescription && (
-          <Box marginTop={1}>
-            <Text>{sectionDescription}</Text>
-          </Box>
-        )}
         <Box marginY={3}>
           <Button variant="ghost" icon="attach" disabled={disabled}>
             {dropzoneButtonLabel}
@@ -262,9 +256,7 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
                         reorderableFilesRef.current,
                       )
                     }}
-                    onReorder={() =>
-                      handleReorder(reorderableFilesRef.current)
-                    }
+                    onReorder={() => handleReorder(reorderableFilesRef.current)}
                     onOpen={(id) =>
                       onOpenFile(
                         reorderableFiles.find((f) => f.id === id) ?? file,

@@ -495,7 +495,9 @@ export class FileService {
           transaction,
         },
       )
-      finalOrderWithinChapter = (maxOrder ?? -1) + 1
+      if (maxOrder !== null) {
+        finalOrderWithinChapter = maxOrder + 1
+      }
     }
 
     const file = await this.fileModel.create(
