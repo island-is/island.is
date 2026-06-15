@@ -1,11 +1,7 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import {
-  Application,
-  DataTableRow,
-  FormItemTypes,
-} from '@island.is/application/types'
+import { Application, FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
@@ -54,7 +50,7 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
                     ],
                   },
                 },
-              ] satisfies DataTableRow[],
+              ],
             })
         })
       })
@@ -73,10 +69,10 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
       throw new Error('Expected page1 multi field screen')
     }
 
-    const resolver = {
+    const resolver = ({
       resolve: (v: unknown) =>
         typeof v === 'string' ? v : v != null ? String(v) : '',
-    } as unknown as FormTextResolver
+    } as unknown) as FormTextResolver
 
     const components = mapScreenToComponents(multi, resolver, {} as Application)
     const byId = (id: string) => components.find((c) => c.id === id)

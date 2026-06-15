@@ -114,7 +114,10 @@ export interface ApplicationConfiguration {
   useSdf?: boolean
 }
 
-export const ApplicationConfigurations = {
+export const ApplicationConfigurations: Record<
+  string,
+  ApplicationConfiguration
+> = {
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
@@ -552,4 +555,4 @@ export const ApplicationConfigurations = {
     slug: 'atvinnuleysisbaetur-stadfesting-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
-} satisfies Record<string, ApplicationConfiguration>
+}
