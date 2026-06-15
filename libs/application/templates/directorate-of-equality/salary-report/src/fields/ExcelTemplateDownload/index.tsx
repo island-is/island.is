@@ -6,8 +6,11 @@ import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { FC, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import { DEFAULT_JOB_FACTORS } from '../../lib/constants'
+import type {
+  ParsedCriterionDto,
+  ParsedEmployeeDto,
+} from '@island.is/clients/directorate-of-equality'
+import { DEFAULT_JOB_FACTORS, DEFAULT_SUB_CRITERION } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 
 export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -113,6 +116,34 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
             weight: String(c.weight),
           }))
 
+        const mapSubCriteria = (sc: ParsedCriterionDto['subCriteria'][0]) => ({
+          title: sc.title,
+          description: sc.description,
+          weight: String(sc.weight),
+          stepCount: String(sc.steps.length),
+          steps: sc.steps.map((s) => ({ description: s.description })),
+        })
+
+        const subCriteriaJobFactors = DEFAULT_JOB_FACTORS.map((defaultFactor) => {
+          const parsed = parsedCriteria.find((c) => c.type === defaultFactor.type)
+          return parsed && parsed.subCriteria.length > 0
+            ? parsed.subCriteria.map(mapSubCriteria)
+            : [{ ...DEFAULT_SUB_CRITERION }]
+        })
+
+        const subCriteriaPersonalFactors = parsedCriteria
+          .filter((c) => c.type === 'PERSONAL')
+          .map((c) =>
+            c.subCriteria.length > 0
+              ? c.subCriteria.map(mapSubCriteria)
+              : [{ ...DEFAULT_SUB_CRITERION }],
+          )
+
+        // Employees are stored as the full parsed object (read-only on screen)
+        const employees = (result.data.updateApplicationExternalData
+          .externalData?.parsedSalaryReport?.data?.employees ??
+          []) as ParsedEmployeeDto[]
+
         // Remove the temporary file and write parsed criteria directly to answers
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { excelFile: _removed, ...dataEntryWithoutFile } = ((application.answers
@@ -129,6 +160,11 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
                   jobFactors,
                   personalFactors,
                 },
+                subCriteria: {
+                  jobFactors: subCriteriaJobFactors,
+                  personalFactors: subCriteriaPersonalFactors,
+                },
+                employees,
               },
             },
             locale,
@@ -144,6 +180,18 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
           setValue(`criteria.jobFactors.${i}.weight`, factor.weight)
         })
         setValue('criteria.personalFactors', personalFactors, { shouldDirty: true })
+
+        // Also push the parsed sub-criteria into the form so they survive in
+        // react-hook-form. The sub-criteria screen isn't mounted yet, but its
+        // CriterionPanel seeds from the live form value first, so without this
+        // the imported sub-criteria would only live in the backend/answers.
+        setValue('subCriteria.jobFactors', subCriteriaJobFactors, {
+          shouldDirty: true,
+        })
+        setValue('subCriteria.personalFactors', subCriteriaPersonalFactors, {
+          shouldDirty: true,
+        })
+        setValue('employees', employees, { shouldDirty: true })
         setImportStatus('success')
       } else {
         setImportStatus('error')

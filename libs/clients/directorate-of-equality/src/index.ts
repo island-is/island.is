@@ -11,6 +11,8 @@ export type {
   EqualityReportSummaryDto,
   GetReportOutliersResponseDto,
   ParsedCriterionDto,
+  ParsedSubCriterionDto,
+  ParsedEmployeeDto,
   ParsedReportDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,

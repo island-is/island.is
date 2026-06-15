@@ -461,6 +461,58 @@ export const messages = {
         id: 'salaryReport.application:report.subCriteria.intro',
         defaultMessage: lorem,
       },
+      criterionWeightLabel: {
+        id: 'salaryReport.application:report.subCriteria.criterionWeightLabel',
+        defaultMessage: 'Vægi yfirviðmiðs: {weight}%',
+      },
+      nameLabel: {
+        id: 'salaryReport.application:report.subCriteria.nameLabel',
+        defaultMessage: 'Undirviðmið',
+      },
+      definitionLabel: {
+        id: 'salaryReport.application:report.subCriteria.definitionLabel',
+        defaultMessage: 'Skilgreining',
+      },
+      weightLabel: {
+        id: 'salaryReport.application:report.subCriteria.weightLabel',
+        defaultMessage: 'Vægi',
+      },
+      stepCountLabel: {
+        id: 'salaryReport.application:report.subCriteria.stepCountLabel',
+        defaultMessage: 'Fjöldi þrepa',
+      },
+      stepsLabel: {
+        id: 'salaryReport.application:report.subCriteria.stepsLabel',
+        defaultMessage: 'Þrep',
+      },
+      stepLabel: {
+        id: 'salaryReport.application:report.subCriteria.stepLabel',
+        defaultMessage: '{index}. þrep',
+      },
+      deleteButton: {
+        id: 'salaryReport.application:report.subCriteria.deleteButton',
+        defaultMessage: 'Eyða',
+      },
+      addButton: {
+        id: 'salaryReport.application:report.subCriteria.addButton',
+        defaultMessage: 'Bæta við undirviðmiði',
+      },
+      jobFactorGroupTitle: {
+        id: 'salaryReport.application:report.subCriteria.jobFactorGroupTitle',
+        defaultMessage: 'Starfsbundinn þáttur',
+      },
+      jobFactorGroupIntro: {
+        id: 'salaryReport.application:report.subCriteria.jobFactorGroupIntro',
+        defaultMessage: lorem,
+      },
+      personalFactorGroupTitle: {
+        id: 'salaryReport.application:report.subCriteria.personalFactorGroupTitle',
+        defaultMessage: 'Persónubundinn þáttur',
+      },
+      personalFactorGroupIntro: {
+        id: 'salaryReport.application:report.subCriteria.personalFactorGroupIntro',
+        defaultMessage: lorem,
+      },
     }),
     employees: defineMessages({
       sectionTitle: {
@@ -474,6 +526,86 @@ export const messages = {
       intro: {
         id: 'salaryReport.application:report.employees.intro',
         defaultMessage: lorem,
+      },
+      nameColumn: {
+        id: 'salaryReport.application:report.employees.nameColumn',
+        defaultMessage: 'Nafn',
+      },
+      roleColumn: {
+        id: 'salaryReport.application:report.employees.roleColumn',
+        defaultMessage: 'Starf',
+      },
+      genderColumn: {
+        id: 'salaryReport.application:report.employees.genderColumn',
+        defaultMessage: 'Kyn',
+      },
+      identifierLabel: {
+        id: 'salaryReport.application:report.employees.identifierLabel',
+        defaultMessage: 'Kennitala',
+      },
+      educationLabel: {
+        id: 'salaryReport.application:report.employees.educationLabel',
+        defaultMessage: 'Menntun',
+      },
+      fieldLabel: {
+        id: 'salaryReport.application:report.employees.fieldLabel',
+        defaultMessage: 'Svið',
+      },
+      departmentLabel: {
+        id: 'salaryReport.application:report.employees.departmentLabel',
+        defaultMessage: 'Deild',
+      },
+      startDateLabel: {
+        id: 'salaryReport.application:report.employees.startDateLabel',
+        defaultMessage: 'Starfstímabil',
+      },
+      workRatioLabel: {
+        id: 'salaryReport.application:report.employees.workRatioLabel',
+        defaultMessage: 'Starfshlutfall',
+      },
+      baseSalaryLabel: {
+        id: 'salaryReport.application:report.employees.baseSalaryLabel',
+        defaultMessage: 'Grunnlaun',
+      },
+      additionalSalaryLabel: {
+        id: 'salaryReport.application:report.employees.additionalSalaryLabel',
+        defaultMessage: 'Viðbótarlaun',
+      },
+      bonusSalaryLabel: {
+        id: 'salaryReport.application:report.employees.bonusSalaryLabel',
+        defaultMessage: 'Hlunnindi',
+      },
+      addButton: {
+        id: 'salaryReport.application:report.employees.addButton',
+        defaultMessage: 'Bæta við starfsmanni',
+      },
+      removeButton: {
+        id: 'salaryReport.application:report.employees.removeButton',
+        defaultMessage: 'Fjarlægja starfsmann',
+      },
+      addFormTitle: {
+        id: 'salaryReport.application:report.employees.addFormTitle',
+        defaultMessage: 'Nýr starfsmaður',
+      },
+      genderInputLabel: {
+        id: 'salaryReport.application:report.employees.genderInputLabel',
+        defaultMessage: 'Kyn',
+      },
+      roleInputLabel: {
+        id: 'salaryReport.application:report.employees.roleInputLabel',
+        defaultMessage: 'Starf',
+      },
+      workRatioInputLabel: {
+        id: 'salaryReport.application:report.employees.workRatioInputLabel',
+        defaultMessage: 'Starfshlutfall (%)',
+      },
+      saveButton: {
+        id: 'salaryReport.application:report.employees.saveButton',
+        defaultMessage: 'Vista starfsmann',
+      },
+      cancelButton: {
+        id: 'salaryReport.application:report.employees.cancelButton',
+        defaultMessage: 'Hætta við',
       },
     }),
     jobClassification: defineMessages({

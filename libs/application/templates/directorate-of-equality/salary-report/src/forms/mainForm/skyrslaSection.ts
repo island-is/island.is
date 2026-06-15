@@ -58,10 +58,10 @@ export const skyrslaSection = buildSection({
           title: messages.report.subCriteria.title,
           description: messages.report.subCriteria.intro,
           children: [
-            buildDescriptionField({
-              id: 'subCriteria.placeholder',
-              title: '',
-              description: '',
+            buildCustomField({
+              id: 'subCriteria',
+              component: 'SubCriteriaEditor',
+              doesNotRequireAnswer: false,
             }),
           ],
         }),
@@ -76,10 +76,10 @@ export const skyrslaSection = buildSection({
           title: messages.report.employees.title,
           description: messages.report.employees.intro,
           children: [
-            buildDescriptionField({
-              id: 'employees.placeholder',
-              title: '',
-              description: '',
+            buildCustomField({
+              id: 'employees',
+              component: 'EmployeesEditor',
+              doesNotRequireAnswer: true,
             }),
           ],
         }),

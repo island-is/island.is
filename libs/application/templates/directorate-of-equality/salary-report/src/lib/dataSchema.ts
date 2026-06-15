@@ -102,6 +102,49 @@ const subsidiaries = z.object({
     .optional(),
 })
 
+const subCriterionStep = z.object({
+  description: z.string(),
+})
+
+const subCriterion = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  weight: z.string(),
+  stepCount: z.string(),
+  steps: z.array(subCriterionStep),
+})
+
+const subCriteria = z
+  .object({
+    jobFactors: z.array(z.array(subCriterion)).optional(),
+    personalFactors: z.array(z.array(subCriterion)).optional(),
+  })
+  .optional()
+
+const employeeStepAssignment = z.object({
+  subTitle: z.string(),
+  stepOrder: z.number(),
+  criterionTitle: z.string(),
+})
+
+const employee = z.object({
+  ordinal: z.number(),
+  identifier: z.string().min(1),
+  roleTitle: z.string(),
+  education: z.string(),
+  gender: z.string(),
+  field: z.string(),
+  department: z.string(),
+  startDate: z.string(),
+  workRatio: z.number(),
+  baseSalary: z.number(),
+  additionalSalary: z.number(),
+  bonusSalary: z.number().nullish(),
+  personalStepAssignments: z.array(employeeStepAssignment).default([]),
+})
+
+const employees = z.array(employee).optional()
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -112,6 +155,8 @@ export const dataSchema = z.object({
   employeeCount: employeeCount.optional(),
   subsidiaries: subsidiaries.optional(),
   criteria: criteria.optional(),
+  subCriteria: subCriteria,
+  employees: employees,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

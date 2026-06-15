@@ -14,7 +14,7 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
   // Changes every time a new workbook is successfully processed
   const parsedSalaryReportDate = getValueViaPath<string>(
@@ -23,11 +23,18 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   useEffect(() => {
-    // Answers are the source of truth — never overwrite saved answers
-    const savedFactors = getValueViaPath<JobFactor[]>(
-      application.answers,
-      'criteria.jobFactors',
-    )
+    // Answers are the source of truth — never overwrite them.
+    // Prefer the live form value: it carries the user's in-session edits and
+    // persists across screen navigation, whereas the `application` prop can be
+    // momentarily stale (e.g. ExcelTemplateDownload writes answers via a raw
+    // mutation that bypasses the form reducer).
+    const liveFactors = getValues('criteria.jobFactors') as
+      | JobFactor[]
+      | undefined
+    const savedFactors =
+      liveFactors && liveFactors.length > 0
+        ? liveFactors
+        : getValueViaPath<JobFactor[]>(application.answers, 'criteria.jobFactors')
     const hasFilledWeights = savedFactors?.some((f) => f.weight !== '')
     if (hasFilledWeights) return
 
