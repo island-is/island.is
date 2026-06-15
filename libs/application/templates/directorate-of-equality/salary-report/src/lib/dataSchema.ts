@@ -145,6 +145,19 @@ const employee = z.object({
 
 const employees = z.array(employee).optional()
 
+const stepAssignment = z.object({
+  criterionTitle: z.string(),
+  subTitle: z.string(),
+  stepOrder: z.number(),
+})
+
+const role = z.object({
+  title: z.string(),
+  stepAssignments: z.array(stepAssignment),
+})
+
+const roles = z.array(role).optional()
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((value) => value === true, {
     params: messages.prerequisites.errors.approveExternalData,
@@ -157,6 +170,7 @@ export const dataSchema = z.object({
   criteria: criteria.optional(),
   subCriteria: subCriteria,
   employees: employees,
+  roles: roles,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

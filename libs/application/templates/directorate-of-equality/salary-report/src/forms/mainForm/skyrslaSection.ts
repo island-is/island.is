@@ -94,10 +94,10 @@ export const skyrslaSection = buildSection({
           title: messages.report.jobClassification.title,
           description: messages.report.jobClassification.intro,
           children: [
-            buildDescriptionField({
-              id: 'jobClassification.placeholder',
-              title: '',
-              description: '',
+            buildCustomField({
+              id: 'roles',
+              component: 'JobClassificationEditor',
+              doesNotRequireAnswer: true,
             }),
           ],
         }),

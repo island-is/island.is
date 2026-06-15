@@ -621,6 +621,18 @@ export const messages = {
         id: 'salaryReport.application:report.jobClassification.intro',
         defaultMessage: lorem,
       },
+      stigLabel: {
+        id: 'salaryReport.application:report.jobClassification.stigLabel',
+        defaultMessage: 'Stig',
+      },
+      roleScore: {
+        id: 'salaryReport.application:report.jobClassification.roleScore',
+        defaultMessage: '{score}/{max} stig',
+      },
+      subCriterionInfo: {
+        id: 'salaryReport.application:report.jobClassification.subCriterionInfo',
+        defaultMessage: '{description} {weight}% = {max} stig',
+      },
     }),
     employeeClassification: defineMessages({
       sectionTitle: {

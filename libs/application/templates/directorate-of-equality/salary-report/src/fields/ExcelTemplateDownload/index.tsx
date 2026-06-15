@@ -9,6 +9,7 @@ import { useFormContext } from 'react-hook-form'
 import type {
   ParsedCriterionDto,
   ParsedEmployeeDto,
+  ParsedRoleDto,
 } from '@island.is/clients/directorate-of-equality'
 import { DEFAULT_JOB_FACTORS, DEFAULT_SUB_CRITERION } from '../../lib/constants'
 import { messages } from '../../lib/messages'
@@ -144,6 +145,10 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
           .externalData?.parsedSalaryReport?.data?.employees ??
           []) as ParsedEmployeeDto[]
 
+        // Roles drive the "Flokkun starfa" screen — stored as the full object
+        const roles = (result.data.updateApplicationExternalData.externalData
+          ?.parsedSalaryReport?.data?.roles ?? []) as ParsedRoleDto[]
+
         // Remove the temporary file and write parsed criteria directly to answers
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { excelFile: _removed, ...dataEntryWithoutFile } = ((application.answers
@@ -165,6 +170,7 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
                   personalFactors: subCriteriaPersonalFactors,
                 },
                 employees,
+                roles,
               },
             },
             locale,
@@ -192,6 +198,7 @@ export const ExcelTemplateDownload: FC<React.PropsWithChildren<FieldBaseProps>> 
           shouldDirty: true,
         })
         setValue('employees', employees, { shouldDirty: true })
+        setValue('roles', roles, { shouldDirty: true })
         setImportStatus('success')
       } else {
         setImportStatus('error')

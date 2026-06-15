@@ -1,4 +1,5 @@
 export { CriteriaEditor } from './CriteriaEditor'
 export { EmployeesEditor } from './EmployeesEditor'
 export { ExcelTemplateDownload } from './ExcelTemplateDownload'
+export { JobClassificationEditor } from './JobClassificationEditor'
 export { SubCriteriaEditor } from './SubCriteriaEditor'

@@ -117,6 +117,19 @@ export const EDUCATION_LABELS: Record<string, string> = Object.fromEntries(
   EDUCATION_OPTIONS.map((o) => [o.value, o.label]),
 )
 
+export type StepAssignment = {
+  criterionTitle: string
+  subTitle: string
+  stepOrder: number
+}
+
+// Mirrors ParsedRoleDto. Only stepOrder is editable on the "Flokkun starfa"
+// screen; the rest is read-only context.
+export type Role = {
+  title: string
+  stepAssignments: StepAssignment[]
+}
+
 export const EMPTY_EMPLOYEE: Employee = {
   ordinal: 0,
   identifier: '',

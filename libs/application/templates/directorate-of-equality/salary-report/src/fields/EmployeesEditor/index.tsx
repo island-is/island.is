@@ -9,6 +9,7 @@ import { messages } from '../../lib/messages'
 import { type Employee } from '../../lib/constants'
 import { EmployeeRow } from './EmployeeRow'
 import { AddEmployeeForm } from './AddEmployeeForm'
+import { deriveIdentifierPrefix } from './utils'
 
 const FIELD_NAME = 'employees'
 
@@ -52,11 +53,12 @@ export const EmployeesEditor: FC<
     setIsAdding(false)
   }
 
+  const employees = fields as unknown as Employee[]
+
   const nextOrdinal =
-    (fields as unknown as Employee[]).reduce(
-      (max, e) => Math.max(max, e.ordinal ?? 0),
-      0,
-    ) + 1
+    employees.reduce((max, e) => Math.max(max, e.ordinal ?? 0), 0) + 1
+
+  const identifierPrefix = deriveIdentifierPrefix(employees)
 
   return (
     <Box>
@@ -87,6 +89,7 @@ export const EmployeesEditor: FC<
         {isAdding ? (
           <AddEmployeeForm
             nextOrdinal={nextOrdinal}
+            identifierPrefix={identifierPrefix}
             onAdd={handleAdd}
             onCancel={() => setIsAdding(false)}
           />

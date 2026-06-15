@@ -20,15 +20,16 @@ import {
   GENDER_OPTIONS,
   type Employee,
 } from '../../lib/constants'
+import { computeIdentifier } from './utils'
 
 type Props = {
   nextOrdinal: number
+  identifierPrefix: string
   onAdd: (employee: Employee) => void
   onCancel: () => void
 }
 
 type FormValues = {
-  identifier: string
   roleTitle: string
   gender: string
   education: string
@@ -42,7 +43,6 @@ type FormValues = {
 }
 
 const DEFAULTS: FormValues = {
-  identifier: '',
   roleTitle: '',
   gender: '',
   education: '',
@@ -57,6 +57,7 @@ const DEFAULTS: FormValues = {
 
 export const AddEmployeeForm: FC<Props> = ({
   nextOrdinal,
+  identifierPrefix,
   onAdd,
   onCancel,
 }) => {
@@ -72,7 +73,7 @@ export const AddEmployeeForm: FC<Props> = ({
   const onValid = (data: FormValues) => {
     onAdd({
       ordinal: nextOrdinal,
-      identifier: data.identifier,
+      identifier: computeIdentifier(identifierPrefix, nextOrdinal),
       roleTitle: data.roleTitle,
       gender: data.gender,
       education: data.education,
@@ -99,18 +100,6 @@ export const AddEmployeeForm: FC<Props> = ({
           {formatMessage(m.addFormTitle)}
         </Text>
         <GridRow rowGap={[2, 2, 2, 3]}>
-          <GridColumn span={['12/12', '6/12']}>
-            <InputController
-              id="identifier"
-              name="identifier"
-              label={formatMessage(m.identifierLabel)}
-              backgroundColor="white"
-              size="sm"
-              required
-              rules={{ required: requiredMsg }}
-              error={errors.identifier?.message}
-            />
-          </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <InputController
               id="roleTitle"
@@ -156,6 +145,9 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.fieldLabel)}
               backgroundColor="white"
               size="sm"
+              required
+              rules={{ required: requiredMsg }}
+              error={errors.field?.message}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
@@ -165,6 +157,9 @@ export const AddEmployeeForm: FC<Props> = ({
               label={formatMessage(m.departmentLabel)}
               backgroundColor="white"
               size="sm"
+              required
+              rules={{ required: requiredMsg }}
+              error={errors.department?.message}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>

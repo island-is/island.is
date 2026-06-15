@@ -13,6 +13,7 @@ export type {
   ParsedCriterionDto,
   ParsedSubCriterionDto,
   ParsedEmployeeDto,
+  ParsedRoleDto,
   ParsedReportDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
