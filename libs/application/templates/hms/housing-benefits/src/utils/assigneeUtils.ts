@@ -6,6 +6,8 @@ import {
   ApplicationTypes,
   ExternalData,
   FormValue,
+  NationalRegistryV3Individual,
+  UserProfile,
 } from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
@@ -564,10 +566,10 @@ export const findCurrentAssigneeBackId = (
  */
 export const getAssigneeNationalRegistryData = (
   application: Application,
-): Record<string, unknown> | null => {
+): NationalRegistryV3Individual | null => {
   for (const [key, value] of Object.entries(application.externalData)) {
     if (key.endsWith('.assigneeNationalRegistry') && value?.data) {
-      return value.data as Record<string, unknown>
+      return value.data as NationalRegistryV3Individual
     }
   }
   return null
@@ -579,10 +581,10 @@ export const getAssigneeNationalRegistryData = (
  */
 export const getAssigneeUserProfileData = (
   application: Application,
-): Record<string, unknown> | null => {
+): UserProfile | null => {
   for (const [key, value] of Object.entries(application.externalData)) {
     if (key.endsWith('.assigneeUserProfile') && value?.data) {
-      return value.data as Record<string, unknown>
+      return value.data as UserProfile
     }
   }
   return null

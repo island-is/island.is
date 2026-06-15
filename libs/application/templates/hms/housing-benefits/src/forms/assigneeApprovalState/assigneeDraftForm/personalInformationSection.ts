@@ -35,8 +35,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) =>
-            (getAssigneeNationalRegistryData(application) as any)?.fullName ??
-            '',
+            getAssigneeNationalRegistryData(application)?.fullName ?? '',
         }),
         buildTextField({
           id: (application, user) =>
@@ -47,8 +46,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) =>
-            (getAssigneeNationalRegistryData(application) as any)?.nationalId ??
-            '',
+            getAssigneeNationalRegistryData(application)?.nationalId ?? '',
         }),
         buildTextField({
           id: (application, user) =>
@@ -58,7 +56,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) =>
-            (getAssigneeNationalRegistryData(application) as any)?.address
+            getAssigneeNationalRegistryData(application)?.address
               ?.streetAddress ?? '',
         }),
         buildTextField({
@@ -70,8 +68,8 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) =>
-            (getAssigneeNationalRegistryData(application) as any)?.address
-              ?.postalCode ?? '',
+            getAssigneeNationalRegistryData(application)?.address?.postalCode ??
+            '',
         }),
         buildTextField({
           id: (application, user) =>
@@ -81,8 +79,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) =>
-            (getAssigneeNationalRegistryData(application) as any)?.address
-              ?.city ?? '',
+            getAssigneeNationalRegistryData(application)?.address?.city ?? '',
         }),
         buildTextField({
           id: (application, user) =>
@@ -93,7 +90,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'blue',
           required: true,
           defaultValue: (application: Application) =>
-            (getAssigneeUserProfileData(application) as any)?.email ?? '',
+            getAssigneeUserProfileData(application)?.email ?? '',
           maxLength: 100,
         }),
         buildPhoneField({
@@ -104,8 +101,7 @@ export const personalInformationSection = buildSection({
           backgroundColor: 'blue',
           required: true,
           defaultValue: (application: Application) =>
-            (getAssigneeUserProfileData(application) as any)
-              ?.mobilePhoneNumber ?? '',
+            getAssigneeUserProfileData(application)?.mobilePhoneNumber ?? '',
         }),
       ],
     }),
