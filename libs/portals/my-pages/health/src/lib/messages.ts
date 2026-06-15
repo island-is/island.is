@@ -809,6 +809,10 @@ export const messages = defineMessages({
     defaultMessage: 'Afgr. staður',
     id: 'sp.health:location',
   },
+  locationInstructions: {
+    defaultMessage: 'Nánar um staðsetningu',
+    id: 'sp.health:location-instructions',
+  },
   LOTT: {
     defaultMessage: 'Lífeyrisþegi með óskerta tekjutryggingu',
     id: 'sp.health:lott',

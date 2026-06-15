@@ -151,6 +151,38 @@ const AppointmentDetail = () => {
                     </Box>
                   </Box>
                 )}
+
+                {locationLink && (
+                  <Box display="flex" alignItems="flexStart" columnGap={1}>
+                    <Box flexShrink={0}>
+                      <Icon
+                        icon="informationCircle"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      alignItems="center"
+                      columnGap={2}
+                    >
+                      <Text>
+                        {formatMessage(messages.locationInstructions)}
+                      </Text>
+                      {locationLink && (
+                        <LinkButton
+                          to={locationLink}
+                          text={formatMessage(messages.seeMore)}
+                          variant="text"
+                          size="small"
+                          icon="open"
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                )}
               </Stack>
             </Stack>
             <Box
@@ -166,8 +198,7 @@ const AppointmentDetail = () => {
           {((appointment.practitioners?.length ?? 0) > 0 ||
             appointment.instruction ||
             appointment.location?.phoneNumber ||
-            appointment.location?.openingHoursText ||
-            appointment.location?.organization) && (
+            appointment.location?.openingHoursText) && (
             <InfoLineStack
               label={formatMessage(messages.appointmentMoreInfo)}
               space={1}
@@ -205,16 +236,6 @@ const AppointmentDetail = () => {
                   loading={loading}
                   label={formatMessage(messages.organization)}
                   content={appointment.location.organization}
-                  button={
-                    locationLink
-                      ? {
-                          type: 'link',
-                          to: locationLink,
-                          icon: 'open',
-                          label: formatMessage(messages.appointmentMoreInfo),
-                        }
-                      : undefined
-                  }
                 />
               )}
             </InfoLineStack>
