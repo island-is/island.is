@@ -152,7 +152,7 @@ const AppointmentDetail = () => {
                   </Box>
                 )}
 
-                {appointment.location?.organization && (
+                {locationLink && (
                   <Box display="flex" alignItems="flexStart" columnGap={1}>
                     <Box flexShrink={0}>
                       <Icon
@@ -229,6 +229,13 @@ const AppointmentDetail = () => {
                   loading={loading}
                   label={formatMessage(messages.openingHours)}
                   content={appointment.location.openingHoursText}
+                />
+              )}
+              {appointment.location?.organization && (
+                <InfoLine
+                  loading={loading}
+                  label={formatMessage(messages.organization)}
+                  content={appointment.location.organization}
                 />
               )}
             </InfoLineStack>
