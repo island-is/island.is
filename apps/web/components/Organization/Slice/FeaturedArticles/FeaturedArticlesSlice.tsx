@@ -14,6 +14,7 @@ import { BorderAbove } from '@island.is/web/components'
 import { Article, FeaturedArticles } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { hasProcessEntries } from '@island.is/web/utils/article'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -28,6 +29,7 @@ export const FeaturedArticlesSlice: React.FC<
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const labelId = 'sliceTitle-' + slice.id
+  const { activeLocale } = useI18n()
 
   const sortedArticles =
     slice.sortBy === 'importance'
@@ -64,7 +66,11 @@ export const FeaturedArticlesSlice: React.FC<
               ? sortedArticles
               : slice.articles
             ).map((article) => {
-              const url = linkResolver('Article' as LinkType, [article.slug])
+              const type =
+                'type' in article && article.type === 'manual'
+                  ? article.type
+                  : 'article'
+              const url = linkResolver(type as LinkType, [article.slug])
 
               return (
                 <FocusableBox
@@ -73,12 +79,19 @@ export const FeaturedArticlesSlice: React.FC<
                   href={url.href}
                 >
                   <TopicCard
-                    {...(hasProcessEntries(article as Article) ||
-                    article.processEntryButtonText
+                    {...(type === 'manual'
+                      ? {
+                          tag: n(
+                            'manual',
+                            activeLocale === 'is' ? 'Handbók' : 'Manual',
+                          ),
+                        }
+                      : hasProcessEntries(article as Article) ||
+                        article.processEntryButtonText
                       ? {
                           tag: n(
                             article.processEntryButtonText || 'application',
-                            'Umsókn',
+                            activeLocale === 'is' ? 'Umsókn' : 'Application',
                           ),
                         }
                       : {})}

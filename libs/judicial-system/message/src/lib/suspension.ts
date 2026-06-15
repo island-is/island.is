@@ -13,6 +13,8 @@ export const messageTypeToSuspensionCategory: Partial<
 > = {
   [MessageType.DELIVERY_TO_COURT_PROSECUTOR]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_DEFENDANT]: MessageSuspensionCategory.COURT,
+  [MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]:
+    MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO]:
     MessageSuspensionCategory.COURT,
@@ -20,9 +22,9 @@ export const messageTypeToSuspensionCategory: Partial<
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE]:
     MessageSuspensionCategory.COURT,
-  [MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]:
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT]:
     MessageSuspensionCategory.COURT,
-  [MessageType.DELIVERY_TO_COURT_INDICTMENT_SPOKESPERSON]:
+  [MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT]:
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE]:
     MessageSuspensionCategory.COURT,

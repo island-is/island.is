@@ -50,16 +50,6 @@ export class CivilClaimantService {
     )
   }
 
-  private hasRequiredSpokespersonDeliveryFields(
-    civilClaimant: CivilClaimant,
-  ): boolean {
-    return Boolean(
-      civilClaimant.nationalId &&
-        civilClaimant.name &&
-        civilClaimant.spokespersonNationalId,
-    )
-  }
-
   private addMessagesForUpdateCivilClaimantToQueue(
     theCase: Case,
     oldCivilClaimant: CivilClaimant,
@@ -70,12 +60,9 @@ export class CivilClaimantService {
       updatedCivilClaimant.isSpokespersonConfirmed &&
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
-      if (
-        theCase.courtCaseNumber &&
-        this.hasRequiredSpokespersonDeliveryFields(updatedCivilClaimant)
-      ) {
+      if (theCase.courtCaseNumber) {
         addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_SPOKESPERSON,
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
           user,
           caseId: theCase.id,
           elementId: updatedCivilClaimant.id,
@@ -178,19 +165,11 @@ export class CivilClaimantService {
     return updatedCivilClaimant
   }
 
-  async deliverIndictmentSpokespersonToCourt(
+  async deliverIndictmentCivilClaimantToCourt(
     theCase: Case,
     civilClaimant: CivilClaimant,
     user: User,
   ): Promise<DeliverResponse> {
-    if (!this.hasRequiredSpokespersonDeliveryFields(civilClaimant)) {
-      this.logger.error(
-        `Missing required spokesperson delivery fields for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
-      )
-
-      return { delivered: false }
-    }
-
     return this.courtService
       .updateIndictmentCaseWithSpokespersonInfo(
         user,
@@ -205,7 +184,7 @@ export class CivilClaimantService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update spokesperson info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+          `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
           { reason },
         )
 

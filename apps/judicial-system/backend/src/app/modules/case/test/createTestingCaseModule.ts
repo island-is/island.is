@@ -26,6 +26,7 @@ import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
 import {
+  Case,
   CaseArchiveRepositoryService,
   CaseRepositoryService,
   CaseString,
@@ -182,6 +183,12 @@ export const createTestingCaseModule = async () => {
 
   const caseRepositoryService = caseModule.get<CaseRepositoryService>(
     CaseRepositoryService,
+  )
+
+  const mockFindOriginalAncestorId =
+    caseRepositoryService.findOriginalAncestorId as jest.Mock
+  mockFindOriginalAncestorId.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
   const caseArchiveRepositoryService =

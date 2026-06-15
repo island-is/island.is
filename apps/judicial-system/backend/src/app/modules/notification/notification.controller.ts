@@ -23,9 +23,6 @@ import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { Case } from '../repository'
 import { NotificationDto } from './dto/notification.dto'
 import {
-  courtOfAppealsAssistantNotificationRule,
-  courtOfAppealsJudgeNotificationRule,
-  courtOfAppealsRegistrarNotificationRule,
   defenderNotificationRule,
   districtCourtAssistantNotificationRule,
   districtCourtJudgeNotificationRule,
@@ -50,9 +47,6 @@ export class NotificationController {
     districtCourtJudgeNotificationRule,
     districtCourtRegistrarNotificationRule,
     districtCourtAssistantNotificationRule,
-    courtOfAppealsJudgeNotificationRule,
-    courtOfAppealsRegistrarNotificationRule,
-    courtOfAppealsAssistantNotificationRule,
     defenderNotificationRule,
   )
   @Post()
@@ -75,6 +69,7 @@ export class NotificationController {
       notificationDto.eventOnly,
       theCase,
       user,
+      notificationDto.properties,
     )
   }
 }

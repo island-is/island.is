@@ -599,11 +599,12 @@ export class CourtService {
     try {
       this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
 
-      const subject = `${courtName} - ${courtCaseNumber} - ${
-        spokespersonIsLawyer
+      const subjectSuffix = spokespersonNationalId
+        ? spokespersonIsLawyer
           ? 'lögmaður brotaþola'
           : 'réttargæslumaður brotaþola'
-      }`
+        : 'brotaþoli'
+      const subject = `${courtName} - ${courtCaseNumber} - ${subjectSuffix}`
       const content = JSON.stringify({
         civilClaimantNationalId,
         civilClaimantName,

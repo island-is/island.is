@@ -44,7 +44,6 @@ import {
   isRestrictionCase,
   restrictionCases,
   ServiceRequirement,
-  TrackedNotificationType,
   type User as TUser,
   UserRole,
   VERDICT_APPEAL_WINDOW_DAYS,
@@ -1409,7 +1408,8 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const policeCaseId = await this.findOriginalAncestorId(theCase)
+    const policeCaseId =
+      await this.caseRepositoryService.findOriginalAncestorId(theCase)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1715,18 +1715,6 @@ export class InternalCaseService {
     }
 
     return originalAncestor
-  }
-
-  private async findOriginalAncestorId(theCase: Case): Promise<string> {
-    if (isIndictmentCase(theCase.type)) {
-      // indictment cases can be split
-      return theCase.splitCaseId ?? theCase.id
-    }
-
-    // request cases can be extended
-    const originalAncestor = await this.findOriginalAncestor(theCase)
-
-    return originalAncestor.id
   }
 
   // As this is only currently used by the digital mailbox API
