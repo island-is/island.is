@@ -69,7 +69,6 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'manualChapter',
   'featured',
   'lifeEventPage',
-  'sectionWithImage',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [
