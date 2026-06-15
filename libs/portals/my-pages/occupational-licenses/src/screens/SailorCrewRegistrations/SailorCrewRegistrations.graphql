@@ -1,16 +1,25 @@
 query ShipRegistrySailorCrewRegistrations(
-  $filters: ShipRegistrySeaServiceBookFilterInput
+  $input: ShipRegistrySeaServiceBookInput!
 ) {
   shipRegistrySailor {
-    seaServiceBook(filters: $filters) {
-      id
-      shipName
-      shipRegistrationNumber
-      rank
-      rankCode
-      startDate
-      endDate
-      numberOfDays
+    seaServiceBook(input: $input) {
+      data {
+        id
+        shipName
+        shipRegistrationNumber
+        rank
+        startDate
+        endDate
+        numberOfDays
+      }
+      totalCount
+      pageInfo {
+        hasNextPage
+      }
+      totalCrewRegistrationDayCount
+      seaServiceDayCount
+      workAshoreDayCount
+      totalWorkDays
     }
     certificates {
       registrationExemptions {

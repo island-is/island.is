@@ -30,9 +30,11 @@ import {
   mapSchoolCertificate,
   SailorSchoolCertificateDto,
 } from './dtos/sailorSchoolCertificate.dto'
-import type {
-  SailorSeaServiceEntryDto,
-  SailorSeaServiceFilterDto,
+import {
+  mapSeaServiceFilter,
+  mapSeaServiceResponse,
+  type SailorSeaServiceFilterDto,
+  type SailorSeaServiceResponseDto,
 } from './dtos/sailorSeaServiceEntry.dto'
 import { mapShipDetail, type ShipDetailDto } from './dtos/ship.dto'
 
@@ -102,22 +104,16 @@ export class ShipRegistryClientV2Service {
   async getSailorSeaService(
     user: User,
     filters?: SailorSeaServiceFilterDto,
-  ): Promise<SailorSeaServiceEntryDto[]> {
+  ): Promise<SailorSeaServiceResponseDto | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getCrewRegistrationCountByShip({
-          // TODO: OpenAPI spec for POST /sailor/crewregistrationsbyship does not define a request body — regenerate client once spec is updated
-          body: filters as never,
+          body: mapSeaServiceFilter(filters),
         }),
       ),
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: unknown[] = Array.isArray(response)
-      ? response
-      : (response as any)?.data ?? []
-
-    return data as SailorSeaServiceEntryDto[]
+    return response ? mapSeaServiceResponse(response) : null
   }
 
   async getRanks(): Promise<RankDto[]> {

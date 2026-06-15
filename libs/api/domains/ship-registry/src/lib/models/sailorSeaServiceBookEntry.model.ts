@@ -14,9 +14,6 @@ export class ShipRegistrySailorSeaServiceBookEntry {
   @Field({ nullable: true })
   rank?: string
 
-  @Field({ nullable: true })
-  rankCode?: string
-
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date
 

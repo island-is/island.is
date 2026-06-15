@@ -1,9 +1,10 @@
 import {
+  RankDto,
   SailorMaritimeBookDto,
   SailorRegistrationExemptionDto,
   SailorRightCertificateDto,
   SailorSchoolCertificateDto,
-  SailorSeaServiceEntryDto,
+  SailorSeaServiceResponseDto,
   ShipBaseInfoDto,
   ShipCertificateIssueStatus,
   ShipDetailDto,
@@ -23,16 +24,10 @@ import { ShipRegistrySailorSchoolCertificate } from './models/sailorSchoolCertif
 import { ShipRegistrySailorMaritimeBook } from './models/sailorMaritimeBook.model'
 import { ShipRegistrySailorRegistrationExemption } from './models/sailorRegistrationExemption.model'
 import { ShipRegistrySailorSeaServiceBookEntry } from './models/sailorSeaServiceBookEntry.model'
+import { ShipRegistrySailorSeaServiceBookCollection } from './models/sailorSeaServiceBookCollection.model'
+import { ShipRegistryRank } from './models/rank.model'
 import format from 'date-fns/format'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import { LocaleEnum } from '@island.is/nest/graphql'
-
-const parseDateString = (s: string | undefined): Date | undefined => {
-  if (!s) return undefined
-  const d = parseISO(s)
-  return isValid(d) ? d : undefined
-}
 
 const mapCertificateStatus = (
   raw: ShipCertificateIssueStatus | undefined,
@@ -222,17 +217,38 @@ export const mapToSailorRegistrationExemptions = (
     id: `${e.id}-${locale}`,
   }))
 
-export const mapToSailorSeaServiceBook = (
-  entries: SailorSeaServiceEntryDto[],
+const mapSeaServiceEntry = (
+  e: { shipName?: string; shipRegistrationNumber?: string; rank?: string; rankEn?: string; startDate?: Date; endDate?: Date; numberOfDays?: number },
+  i: number,
   locale: LocaleEnum,
-): ShipRegistrySailorSeaServiceBookEntry[] =>
-  entries.map((e, i) => ({
-    id: `${e.shipRegistrationNumber ?? String(i)}-${locale}`,
-    shipName: e.shipName,
-    shipRegistrationNumber: e.shipRegistrationNumber,
-    rank: e.rank,
-    rankCode: e.rankCode,
-    startDate: parseDateString(e.startDate),
-    endDate: parseDateString(e.endDate),
-    numberOfDays: e.numberOfDays,
+): ShipRegistrySailorSeaServiceBookEntry => ({
+  id: `${e.shipRegistrationNumber ?? i}-${i}-${locale}`,
+  shipName: e.shipName,
+  shipRegistrationNumber: e.shipRegistrationNumber,
+  rank: locale === LocaleEnum.En ? (e.rankEn ?? e.rank) : e.rank,
+  startDate: e.startDate,
+  endDate: e.endDate,
+  numberOfDays: e.numberOfDays,
+})
+
+export const mapToSailorSeaServiceBookCollection = (
+  response: SailorSeaServiceResponseDto,
+  locale: LocaleEnum,
+): ShipRegistrySailorSeaServiceBookCollection => ({
+  data: response.entries.map((e, i) => mapSeaServiceEntry(e, i, locale)),
+  totalCount: response.totalCount,
+  pageInfo: { hasNextPage: response.hasNextPage },
+  totalCrewRegistrationDayCount: response.totalCrewRegistrationDayCount,
+  seaServiceDayCount: response.seaServiceDayCount,
+  workAshoreDayCount: response.workAshoreDayCount,
+  totalWorkDays: response.totalWorkDays,
+})
+
+export const mapToRanks = (
+  dtos: RankDto[],
+  locale: LocaleEnum,
+): ShipRegistryRank[] =>
+  dtos.map((dto) => ({
+    id: String(dto.ID),
+    name: locale === LocaleEnum.En ? dto.RANK_EN : dto.RANK,
   }))

@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2'
 import {
+  mapToRanks,
   mapToSailorMaritimeBooks,
   mapToSailorRegistrationExemptions,
   mapToSailorRightCertificates,
   mapToSailorSchoolCertificates,
-  mapToSailorSeaServiceBook,
+  mapToSailorSeaServiceBookCollection,
 } from '../mapper'
 import { ShipRegistrySailorSchoolCertificate } from '../models/sailorSchoolCertificate.model'
 import { ShipRegistrySailorRightCertificate } from '../models/sailorRightCertificate.model'
 import { ShipRegistrySailorMaritimeBook } from '../models/sailorMaritimeBook.model'
 import { ShipRegistrySailorRegistrationExemption } from '../models/sailorRegistrationExemption.model'
-import { ShipRegistrySailorSeaServiceBookEntry } from '../models/sailorSeaServiceBookEntry.model'
+import { ShipRegistrySailorSeaServiceBookCollection } from '../models/sailorSeaServiceBookCollection.model'
+import { ShipRegistryRank } from '../models/rank.model'
 import { LocaleEnum } from '@island.is/nest/graphql'
-import type { SeaServiceBookFilterInput } from '../dto/sailor-sea-service-book-filter.input'
+import type { SeaServiceBookInput } from '../dto/seaServiceBook.input'
 
 @Injectable()
 export class SailorsService {
@@ -63,12 +65,17 @@ export class SailorsService {
   async getSailorSeaServiceBook(
     user: User,
     locale: LocaleEnum,
-    filters?: SeaServiceBookFilterInput,
-  ): Promise<ShipRegistrySailorSeaServiceBookEntry[]> {
-    const entries = await this.shipRegistryClientV2Service.getSailorSeaService(
+    input: SeaServiceBookInput,
+  ): Promise<ShipRegistrySailorSeaServiceBookCollection | null> {
+    const response = await this.shipRegistryClientV2Service.getSailorSeaService(
       user,
-      filters,
+      input,
     )
-    return mapToSailorSeaServiceBook(entries, locale)
+    return response ? mapToSailorSeaServiceBookCollection(response, locale) : null
+  }
+
+  async getRanks(locale: LocaleEnum): Promise<ShipRegistryRank[]> {
+    const dtos = await this.shipRegistryClientV2Service.getRanks()
+    return mapToRanks(dtos, locale)
   }
 }

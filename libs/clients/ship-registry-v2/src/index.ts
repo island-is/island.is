@@ -13,6 +13,7 @@ export type { SailorRegistrationExemptionDto } from './lib/dtos/sailorRegistrati
 export type {
   SailorSeaServiceEntryDto,
   SailorSeaServiceFilterDto,
+  SailorSeaServiceResponseDto,
 } from './lib/dtos/sailorSeaServiceEntry.dto'
 export type { ShipCertificateDto } from './lib/dtos/shipCertificate.dto'
 export type {

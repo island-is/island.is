@@ -32,8 +32,8 @@ import {
   ShipRegistrySailorCertificates,
   type ShipRegistrySailorCertificatesBase,
 } from '../models/sailorCertificates.model'
-import { ShipRegistrySailorSeaServiceBookEntry } from '../models/sailorSeaServiceBookEntry.model'
-import { SeaServiceBookFilterInput } from '../dto/sailor-sea-service-book-filter.input'
+import { ShipRegistrySailorSeaServiceBookCollection } from '../models/sailorSeaServiceBookCollection.model'
+import { SeaServiceBookInput } from '../dto/seaServiceBook.input'
 import { SailorsService } from '../services/sailors.service'
 
 const namespace = '@island.is/api/ship-registry'
@@ -83,25 +83,21 @@ export class SailorsResolver {
     return { locale }
   }
 
-  @ResolveField(
-    'seaServiceBook',
-    () => [ShipRegistrySailorSeaServiceBookEntry],
-    {
-      nullable: true,
-    },
-  )
+  @ResolveField('seaServiceBook', () => ShipRegistrySailorSeaServiceBookCollection, {
+    nullable: true,
+  })
   async resolveSeaServiceBook(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorBase,
-    @Args('filters', { type: () => SeaServiceBookFilterInput, nullable: true })
-    filters?: SeaServiceBookFilterInput,
-  ): Promise<ShipRegistrySailorSeaServiceBookEntry[]> {
+    @Args('input', { type: () => SeaServiceBookInput })
+    input: SeaServiceBookInput,
+  ): Promise<ShipRegistrySailorSeaServiceBookCollection | null> {
     this.auditService.audit({
       auth: user,
       namespace,
       action: 'resolveSeaServiceBook',
       resources: user.nationalId,
     })
-    return this.sailorsService.getSailorSeaServiceBook(user, locale, filters)
+    return this.sailorsService.getSailorSeaServiceBook(user, locale, input)
   }
 }
