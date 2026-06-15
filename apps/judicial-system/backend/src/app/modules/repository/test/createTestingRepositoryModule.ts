@@ -7,11 +7,13 @@ import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
@@ -51,6 +53,8 @@ export const createTestingRepositoryModule = async () => {
       { provide: getModelToken(EventLog), useValue: mockModel() },
       { provide: getModelToken(Victim), useValue: mockModel() },
       { provide: getModelToken(IndictmentCount), useValue: mockModel() },
+      { provide: getModelToken(Offense), useValue: mockModel() },
+      { provide: getModelToken(CivilClaimant), useValue: mockModel() },
       { provide: getModelToken(CaseFile), useValue: mockModel() },
       { provide: getModelToken(AppealCase), useValue: mockModel() },
       {
@@ -65,6 +69,10 @@ export const createTestingRepositoryModule = async () => {
           findDistinctPoliceCaseNumbersByCaseIds: jest
             .fn()
             .mockResolvedValue(new Map()),
+          findAssignedLinksByCaseId: jest.fn().mockResolvedValue([]),
+          assignDefendantPoliceCaseNumbers: jest
+            .fn()
+            .mockResolvedValue([]),
           resolvePoliceCaseNumbersForCases: jest
             .fn()
             .mockResolvedValue(undefined),
@@ -78,6 +86,31 @@ export const createTestingRepositoryModule = async () => {
     getModelToken(AppealCase),
   )
 
+  const caseModel = repositoryModule.get<typeof Case>(getModelToken(Case))
+
+  const defendantModel = repositoryModule.get<typeof Defendant>(
+    getModelToken(Defendant),
+  )
+
+  const indictmentCountModel = repositoryModule.get<typeof IndictmentCount>(
+    getModelToken(IndictmentCount),
+  )
+
+  const offenseModel = repositoryModule.get<typeof Offense>(
+    getModelToken(Offense),
+  )
+
+  const victimModel = repositoryModule.get<typeof Victim>(getModelToken(Victim))
+
+  const civilClaimantModel = repositoryModule.get<typeof CivilClaimant>(
+    getModelToken(CivilClaimant),
+  )
+
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    repositoryModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
   const caseRepositoryService = repositoryModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -87,5 +120,12 @@ export const createTestingRepositoryModule = async () => {
   return {
     caseRepositoryService,
     appealCaseModel,
+    caseModel,
+    defendantModel,
+    indictmentCountModel,
+    offenseModel,
+    victimModel,
+    civilClaimantModel,
+    caseDefendantPoliceCaseNumberRepositoryService,
   }
 }

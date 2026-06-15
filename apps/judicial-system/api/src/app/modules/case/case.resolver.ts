@@ -18,6 +18,7 @@ import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
 import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
+import { DuplicateIndictmentCaseInput } from './dto/duplicateIndictmentCase.input'
 import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
@@ -266,6 +267,25 @@ export class CaseResolver {
       user.id,
       AuditedAction.EXTEND_CASE,
       backendService.extendCase(input.id),
+      (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
+  duplicateIndictmentCase(
+    @Args('input', { type: () => DuplicateIndictmentCaseInput })
+    input: DuplicateIndictmentCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case> {
+    this.logger.debug(`Duplicating indictment case ${input.id} into a new draft`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DUPLICATE_INDICTMENT_CASE,
+      backendService.duplicateIndictmentCase(input.id),
       (theCase) => theCase.id,
     )
   }

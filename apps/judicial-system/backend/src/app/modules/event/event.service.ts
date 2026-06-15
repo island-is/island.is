@@ -45,6 +45,7 @@ type CaseEvent =
   | 'ARCHIVE'
   | 'CREATE'
   | 'CREATE_XRD'
+  | 'DUPLICATE'
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_ARRAIGNMENT_DATE'
@@ -69,6 +70,7 @@ const eventHeading: Record<Event, string> = {
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  DUPLICATE: ':recycle: Mál afritað í drög',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',

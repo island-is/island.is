@@ -4,7 +4,7 @@
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
-  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
+  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx", "/public/**"],
   "rules": {
     "eqeqeq": ["error", "always"],
     "@nx/enforce-module-boundaries": [
