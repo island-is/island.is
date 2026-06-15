@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
@@ -14,28 +15,37 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
 import { ShipRegistrySailorRegistrationExemption } from '@island.is/api/schema'
-import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
+import { ShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
 const columnHelper =
   createColumnHelper<ShipRegistrySailorRegistrationExemption>()
 
-export const SailorCrewRegistrationsExemptions = () => {
+interface Props {
+  data: ShipRegistrySailorCrewRegistrationsQuery | undefined
+  loading: boolean
+  error: ApolloError | undefined
+}
+
+export const SailorCrewRegistrationsExemptions = ({
+  data,
+  loading,
+  error,
+}: Props) => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
-  const exemptions =
-    data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
-
   const filtered = useMemo(
-    () =>
-      exemptions.filter(
+    () => {
+      const exemptions =
+        data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
+      return exemptions.filter(
         (e) =>
           !search ||
           (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
           (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
-      ),
-    [exemptions, search],
+      )
+    },
+    [data, search],
   )
 
   const columns = useMemo(

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
+import { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { Stack } from '@island.is/island-ui/core'
+import { Box, Pagination, Stack } from '@island.is/island-ui/core'
 import {
   CardLoader,
   Table,
@@ -11,16 +12,33 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
 import { ShipRegistrySailorSeaServiceBookEntry } from '@island.is/api/schema'
-import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
+import { ShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorSeaServiceBookEntry>()
 
-export const SailorCrewRegistrationsSeaService = () => {
+interface Props {
+  data: ShipRegistrySailorCrewRegistrationsQuery | undefined
+  loading: boolean
+  error: ApolloError | undefined
+  page: number
+  setPage: (page: number) => void
+  pageSize: number
+}
+
+export const SailorCrewRegistrationsSeaService = ({
+  data,
+  loading,
+  error,
+  page,
+  setPage,
+  pageSize,
+}: Props) => {
   const { formatMessage, locale } = useLocale()
 
-  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
-
-  const entries = data?.shipRegistrySailor?.seaServiceBook ?? []
+  const seaServiceBook = data?.shipRegistrySailor?.seaServiceBook
+  const entries = seaServiceBook?.data ?? []
+  const totalCount = seaServiceBook?.totalCount ?? 0
+  const totalPages = Math.ceil(totalCount / pageSize)
 
   const columns = useMemo(
     () => [
@@ -63,12 +81,27 @@ export const SailorCrewRegistrationsSeaService = () => {
         <Problem type="no_data" noBorder={false} />
       )}
       {!loading && !error && entries.length > 0 && (
-        <Table
-          columns={columns}
-          data={entries}
-          emptyMessage={om.sailorSeaServiceEmpty}
-          mobileTitleKey="shipName"
-        />
+        <>
+          <Table
+            columns={columns}
+            data={entries}
+            emptyMessage={om.sailorSeaServiceEmpty}
+            mobileTitleKey="shipName"
+          />
+          {totalPages > 1 && (
+            <Box marginTop={3}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <button className={className} onClick={() => setPage(page)}>
+                    {children}
+                  </button>
+                )}
+              />
+            </Box>
+          )}
+        </>
       )}
     </Stack>
   )

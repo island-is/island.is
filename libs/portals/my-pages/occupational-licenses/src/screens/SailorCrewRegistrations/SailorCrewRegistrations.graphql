@@ -16,10 +16,6 @@ query ShipRegistrySailorCrewRegistrations(
       pageInfo {
         hasNextPage
       }
-      totalCrewRegistrationDayCount
-      seaServiceDayCount
-      workAshoreDayCount
-      totalWorkDays
     }
     certificates {
       registrationExemptions {

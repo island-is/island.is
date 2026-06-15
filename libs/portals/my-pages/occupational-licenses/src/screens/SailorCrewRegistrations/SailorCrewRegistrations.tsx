@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import {
@@ -13,11 +14,17 @@ import { SailorCrewRegistrationsExemptions } from './SailorCrewRegistrationsExem
 import { SailorCrewRegistrationsMaritimeBooks } from './SailorCrewRegistrationsMaritimeBooks'
 import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
+const PAGE_SIZE = 20
+
 const SailorCrewRegistrations = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage } = useLocale()
 
-  const { loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
+  const [page, setPage] = useState(1)
+
+  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery({
+    variables: { input: { pageNumber: page, pageSize: PAGE_SIZE } },
+  })
 
   return (
     <IntroWrapper
@@ -40,7 +47,14 @@ const SailorCrewRegistrations = () => {
                 label: formatMessage(om.sailorTabSeaService),
                 content: (
                   <Box marginTop={6}>
-                    <SailorCrewRegistrationsSeaService />
+                    <SailorCrewRegistrationsSeaService
+                      data={data}
+                      loading={loading}
+                      error={error}
+                      page={page}
+                      setPage={setPage}
+                      pageSize={PAGE_SIZE}
+                    />
                   </Box>
                 ),
               },
@@ -48,7 +62,11 @@ const SailorCrewRegistrations = () => {
                 label: formatMessage(om.sailorTabExemptions),
                 content: (
                   <Box marginTop={6}>
-                    <SailorCrewRegistrationsExemptions />
+                    <SailorCrewRegistrationsExemptions
+                      data={data}
+                      loading={loading}
+                      error={error}
+                    />
                   </Box>
                 ),
               },
@@ -56,7 +74,11 @@ const SailorCrewRegistrations = () => {
                 label: formatMessage(om.sailorTabMaritimeBooks),
                 content: (
                   <Box marginTop={6}>
-                    <SailorCrewRegistrationsMaritimeBooks />
+                    <SailorCrewRegistrationsMaritimeBooks
+                      data={data}
+                      loading={loading}
+                      error={error}
+                    />
                   </Box>
                 ),
               },

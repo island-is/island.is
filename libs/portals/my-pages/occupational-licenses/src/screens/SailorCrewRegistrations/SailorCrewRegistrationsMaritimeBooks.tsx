@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
@@ -12,24 +13,33 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { olMessage as om } from '../../lib/messages'
 import { ShipRegistrySailorMaritimeBook } from '@island.is/api/schema'
-import { useShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
+import { ShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorMaritimeBook>()
 
-export const SailorCrewRegistrationsMaritimeBooks = () => {
+interface Props {
+  data: ShipRegistrySailorCrewRegistrationsQuery | undefined
+  loading: boolean
+  error: ApolloError | undefined
+}
+
+export const SailorCrewRegistrationsMaritimeBooks = ({
+  data,
+  loading,
+  error,
+}: Props) => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const { data, loading, error } = useShipRegistrySailorCrewRegistrationsQuery()
-  const books = data?.shipRegistrySailor?.certificates?.maritimeBooks ?? []
-
   const filtered = useMemo(
-    () =>
-      books.filter(
+    () => {
+      const books = data?.shipRegistrySailor?.certificates?.maritimeBooks ?? []
+      return books.filter(
         (b) =>
           !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
-      ),
-    [books, search],
+      )
+    },
+    [data, search],
   )
 
   const columns = useMemo(
