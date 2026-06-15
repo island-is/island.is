@@ -35,7 +35,7 @@ import {
   getUserDashboardRoute,
   IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
-  IDS_REFRESH_TOKEN_NAME,
+  IDS_SESSION_COOKIE_NAME,
   REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
 import {
@@ -53,6 +53,7 @@ import {
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { Cookie } from './auth.types'
+import { TokenStorageService } from './tokenStorage.service'
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -95,15 +96,14 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
-  // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
-  // In the future based on usage, we might consider storing it not in the session cookie
   private readonly accessToken: Cookie = {
     name: IDS_ACCESS_TOKEN_NAME,
     options: this.defaultCookieOptions,
   }
 
-  private readonly refreshToken: Cookie = {
-    name: IDS_REFRESH_TOKEN_NAME,
+  // Holds an opaque session ID that maps to the encrypted refresh token stored in cache
+  private readonly sessionCookie: Cookie = {
+    name: IDS_SESSION_COOKIE_NAME,
     options: this.defaultCookieOptions,
   }
 
@@ -111,6 +111,7 @@ export class AuthController {
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
+    private readonly tokenStorageService: TokenStorageService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(authModuleConfig.KEY)
@@ -263,8 +264,21 @@ export class AuthController {
         return
       }
 
-      const refreshToken = req.cookies[this.refreshToken.name]
-      const idsTokens = await this.authService.refreshToken(refreshToken)
+      const sessionId = req.cookies[this.sessionCookie.name]
+
+      if (!sessionId) {
+        throw new Error('No session cookie found')
+      }
+
+      const storedRefreshToken = await this.tokenStorageService.getRefreshToken(
+        sessionId,
+      )
+
+      if (!storedRefreshToken) {
+        throw new Error('Session not found in cache')
+      }
+
+      const idsTokens = await this.authService.refreshToken(storedRefreshToken)
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
@@ -280,10 +294,10 @@ export class AuthController {
         res.cookie(this.accessToken.name, newAccessToken, {
           ...this.accessToken.options,
         })
-        res.cookie(this.refreshToken.name, newRefreshToken, {
-          ...this.refreshToken.options,
-          maxAge: EXPIRES_IN_MILLISECONDS,
-        })
+        await this.tokenStorageService.updateRefreshToken(
+          sessionId,
+          newRefreshToken,
+        )
       }
 
       this.logger.debug('Token refresh successful')
@@ -316,13 +330,22 @@ export class AuthController {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
-    const refreshToken = req.cookies[this.refreshToken.name]
+    const sessionId = req.cookies[this.sessionCookie.name]
 
-    try {
-      await this.authService.revokeRefreshToken(refreshToken)
-    } catch (error) {
-      // Tolerate failure but log error
-      this.logger.error('Failed to revoke refresh token:', { error })
+    if (sessionId) {
+      try {
+        const storedRefreshToken =
+          await this.tokenStorageService.getRefreshToken(sessionId)
+
+        if (storedRefreshToken) {
+          await this.authService.revokeRefreshToken(storedRefreshToken)
+        }
+
+        await this.tokenStorageService.deleteSession(sessionId)
+      } catch (error) {
+        // Tolerate failure but log error
+        this.logger.error('Failed to revoke refresh token:', { error })
+      }
     }
 
     this.clearCookies(res)
@@ -410,6 +433,7 @@ export class AuthController {
       this.redirectCookie,
       this.csrfCookie,
       this.accessTokenCookie,
+      this.sessionCookie,
     ],
   ) {
     const clearCookie = (cookie: Cookie) => {
@@ -474,7 +498,11 @@ export class AuthController {
     const redirectRoute =
       !userId || currentUser?.id === userId ? requestedRedirectRoute : undefined
 
-    if (idToken) {
+    if (idToken && refreshToken) {
+      const sessionId = await this.tokenStorageService.storeRefreshToken(
+        refreshToken,
+      )
+
       res.cookie(this.idToken.name, idToken, {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
@@ -483,8 +511,8 @@ export class AuthController {
       res.cookie(this.accessToken.name, accessToken, {
         ...this.accessToken.options,
       })
-      res.cookie(this.refreshToken.name, refreshToken, {
-        ...this.refreshToken.options,
+      res.cookie(this.sessionCookie.name, sessionId, {
+        ...this.sessionCookie.options,
         maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
       })
     } else {

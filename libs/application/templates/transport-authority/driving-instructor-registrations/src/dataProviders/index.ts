@@ -1,4 +1,4 @@
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   HasTeachingRightsApi,
 } from '@island.is/application/types'

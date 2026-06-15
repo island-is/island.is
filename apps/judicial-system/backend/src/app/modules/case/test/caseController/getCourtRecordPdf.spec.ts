@@ -202,6 +202,7 @@ describe('CaseController - Get court record pdf', () => {
       expect(createIndictmentCourtRecordPdf).toHaveBeenCalledWith(
         theCase,
         false,
+        true,
         undefined,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
