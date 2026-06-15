@@ -8,8 +8,11 @@ mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
   }
 }
 
-query AuthScopeCategoriesForGrant($lang: String!) {
-  authScopeCategories(lang: $lang) {
+query AuthScopeCategoriesForGrant(
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeCategories(lang: $lang, direction: $direction) {
     id
     title
     description
@@ -23,8 +26,11 @@ query AuthScopeCategoriesForGrant($lang: String!) {
   }
 }
 
-query AuthScopeTagsForGrant($lang: String!) {
-  authScopeTags(lang: $lang) {
+query AuthScopeTagsForGrant(
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeTags(lang: $lang, direction: $direction) {
     id
     title
     description

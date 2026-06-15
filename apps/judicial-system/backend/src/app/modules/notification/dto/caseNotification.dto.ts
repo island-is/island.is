@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -23,4 +30,12 @@ export class CaseNotificationDto {
   @IsObject()
   @ApiPropertyOptional({ type: Object })
   readonly userDescriptor?: UserDescriptor
+
+  // The ids of the users that should receive the notification. Used to limit
+  // recipients to a specific subset (e.g. only newly assigned appeal judges).
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  readonly userIds?: string[]
 }

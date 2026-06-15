@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseState,
@@ -90,10 +89,7 @@ export const getDefenceUserCutoffDate = (
   const myDefendants = defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === nationalId,
   )
 
   if (!myDefendants?.length) {
@@ -364,11 +360,7 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   const myDefendants = (defendants ?? []).filter(
     (d) =>
-      d.isDefenderChoiceConfirmed &&
-      d.defenderNationalId &&
-      normalizeAndFormatNationalId(userNationalId).includes(
-        d.defenderNationalId,
-      ),
+      d.isDefenderChoiceConfirmed && d.defenderNationalId === userNationalId,
   )
 
   const assignedToMe = new Set(
@@ -379,3 +371,23 @@ export const getDefenderVisiblePoliceCaseNumbers = (
     (pcn) => assignedToMe.has(pcn) || !allAssigned.has(pcn),
   )
 }
+
+export const getConfirmedDefendantsForDefender = (
+  userNationalId: string,
+  defendants?: Defendant[],
+): Defendant[] => {
+  return (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId === userNationalId,
+  )
+}
+
+export const isConfirmedDefenderOfSpecificDefendant = (
+  userNationalId: string,
+  defendantId: string,
+  defendants?: Defendant[],
+): boolean =>
+  getConfirmedDefendantsForDefender(userNationalId, defendants).some(
+    (defendant) => defendant.id === defendantId,
+  )

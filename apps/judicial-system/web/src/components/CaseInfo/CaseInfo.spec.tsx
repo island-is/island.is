@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 
 import {
   AppealCaseState,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   Defendant,
@@ -76,6 +77,9 @@ describe('CourtCaseInfo - reopen button visibility', () => {
   const completedIndictmentCase = {
     ...mockCase(CaseType.INDICTMENT),
     state: CaseState.COMPLETED,
+    indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    indictmentCompletedDate: '2024-01-01',
+    indictmentSentToPublicProsecutorDate: '2024-01-02',
   }
 
   const renderComponent = (
@@ -152,6 +156,73 @@ describe('CourtCaseInfo - reopen button visibility', () => {
     }
 
     renderComponent(UserRole.DISTRICT_COURT_JUDGE, caseWithWithdrawnAppeal)
+
+    expect(
+      screen.getByRole('button', { name: 'Enduropna mál' }),
+    ).toBeInTheDocument()
+  })
+
+  it('hides the reopen button when the indictment ruling decision is withdrawal', () => {
+    const withdrawnCase = {
+      ...completedIndictmentCase,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, withdrawnCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the reopen button when the case has been merged', () => {
+    const mergedCase = {
+      ...completedIndictmentCase,
+      mergeCase: { id: 'merged_case_id' },
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, mergedCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the reopen button when a ruling case has not been sent to public prosecutor', () => {
+    const notSentCase = {
+      ...completedIndictmentCase,
+      indictmentSentToPublicProsecutorDate: undefined,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, notSentCase)
+
+    expect(
+      screen.queryByRole('button', { name: 'Enduropna mál' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the reopen button for a dismissed case even though it was never sent to public prosecutor', () => {
+    const dismissedCase = {
+      ...completedIndictmentCase,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      indictmentSentToPublicProsecutorDate: undefined,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, dismissedCase)
+
+    expect(
+      screen.getByRole('button', { name: 'Enduropna mál' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the reopen button for a cancelled case even though it was never sent to public prosecutor', () => {
+    const cancelledCase = {
+      ...completedIndictmentCase,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      indictmentSentToPublicProsecutorDate: undefined,
+    }
+
+    renderComponent(UserRole.DISTRICT_COURT_JUDGE, cancelledCase)
 
     expect(
       screen.getByRole('button', { name: 'Enduropna mál' }),

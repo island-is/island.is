@@ -122,13 +122,11 @@ export const hasSentNotification = (
 }
 
 export const isReopenedCOACase = (
-  appealState?: AppealCaseState | null,
-  notifications?: Notification[] | null,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return (
-    appealState !== AppealCaseState.COMPLETED &&
-    hasSentNotification(TrackedNotificationType.APPEAL_COMPLETED, notifications)
-      .hasSent
+    appealCase?.appealState !== AppealCaseState.COMPLETED &&
+    Boolean(appealCase?.appealRulingDate)
   )
 }
 
@@ -550,7 +548,7 @@ export const isMatchingAppealCaseFile = (
     return false
   }
 
-  if (rulingFileId && file.rulingFileId !== rulingFileId) {
+  if ((file.rulingFileId ?? null) !== (rulingFileId ?? null)) {
     return false
   }
 

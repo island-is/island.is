@@ -136,9 +136,12 @@ export class EventService {
             ).join(', ')})`
           : ''
       } *${theCase.id}*`
+      const policeCaseNumbersText = theCase.policeCaseNumbers?.length
+        ? theCase.policeCaseNumbers.join(', ')
+        : 'LÖKE númer ekki skráð'
       const prosecutionText = `${
         theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
-      }*${theCase.policeCaseNumbers.join(', ')}*`
+      }*${policeCaseNumbersText}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''

@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
-import { ApplicationXroadFieldDto } from './application.xroad.dto'
+import { ApplicationJsonFieldDto } from './application.json.dto'
 
 export class NotificationDto {
   @IsString()
@@ -22,6 +22,13 @@ export class NotificationDto {
   @Expose()
   @ApiProperty()
   nationalId!: string
+
+  @IsString()
+  @Type(() => String)
+  @Expose()
+  @ApiPropertyOptional()
+  @IsOptional()
+  organizationNationalId?: string
 
   @Type(() => String)
   @IsString()
@@ -48,11 +55,11 @@ export class NotificationDto {
   @ApiPropertyOptional({ type: ScreenDto })
   screenDto?: ScreenDto
 
-  @Type(() => ApplicationXroadFieldDto)
+  @Type(() => ApplicationJsonFieldDto)
   @IsOptional()
   @Expose()
   @IsArray()
   @ValidateNested({ each: true })
-  @ApiPropertyOptional({ type: [ApplicationXroadFieldDto] })
-  fields?: ApplicationXroadFieldDto[]
+  @ApiPropertyOptional({ type: [ApplicationJsonFieldDto] })
+  fields?: ApplicationJsonFieldDto[]
 }

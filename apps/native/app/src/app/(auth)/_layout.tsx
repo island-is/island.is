@@ -1,6 +1,6 @@
 import { Redirect, Stack, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef } from 'react'
-import { AppState, Keyboard } from 'react-native'
+import { AppState, Keyboard, Platform } from 'react-native'
 
 import {
   authStore,
@@ -24,52 +24,105 @@ export default function AuthLayout() {
   const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const appStateRef = useRef(AppState.currentState)
-  const lockScreenShownRef = useRef(false)
 
-  const showLockScreen = useCallback(() => {
-    if (lockScreenShownRef.current) return
-    lockScreenShownRef.current = true
+  const pushLockScreen = useCallback(() => {
+    const state = authStore.getState()
+    if (state.lockScreenComponentId || state.lockScreenPushPending) return
+    authStore.setState({ lockScreenPushPending: true })
     router.push('/app-lock')
+    // Safety net: clear the pending flag if the mount never commits (push
+    // dropped, layout error, etc.) so future locks can still push.
+    setTimeout(() => {
+      const next = authStore.getState()
+      if (next.lockScreenPushPending && !next.lockScreenComponentId) {
+        authStore.setState({ lockScreenPushPending: false })
+      }
+    }, 2000)
   }, [router])
 
-  // Reset ref when the lock screen clears its own state (PIN/biometric unlock)
+  // Cold-start: init() in the root layout stamps lockScreenActivatedAt before
+  // the auth layout mounts. Trust that stamp — pushing only when it's set
+  // means post-login mounts (no stamp) don't re-lock the freshly-authed user.
   useEffect(() => {
-    return authStore.subscribe((state) => {
-      if (!state.lockScreenActivatedAt && !state.lockScreenComponentId) {
-        lockScreenShownRef.current = false
-      }
-    })
-  }, [])
-
-  // On mount: always show the lock screen if the user is onboarded.
-  // The lock screen itself decides whether to auto-dismiss (within timeout) or require unlock.
-  useEffect(() => {
-    if (isOnboarded() && !config.isTestingApp) {
-      showLockScreen()
+    if (!isOnboarded() || config.isTestingApp) {
+      return
     }
+    if (authStore.getState().lockScreenActivatedAt === undefined) {
+      return
+    }
+    pushLockScreen()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Listen for app state changes to show/dismiss the lock screen
+  // Re-push if the modal gets popped while still locked (deep-link races).
+  useEffect(() => {
+    return authStore.subscribe((state, prev) => {
+      if (
+        prev.lockScreenComponentId &&
+        !state.lockScreenComponentId &&
+        state.lockScreenActivatedAt !== undefined &&
+        isOnboarded() &&
+        !config.isTestingApp
+      ) {
+        pushLockScreen()
+      }
+    })
+  }, [pushLockScreen])
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
-      // Going to background: stamp the time and show lock immediately (covers app switcher)
-      if (
-        appStateRef.current === 'active' &&
-        (nextAppState === 'inactive' || nextAppState === 'background')
-      ) {
-        if (isOnboarded() && !isLockScreenSuppressed()) {
-          Keyboard.dismiss()
-          authStore.setState({ lockScreenActivatedAt: Date.now() })
-          showLockScreen()
+      const previousAppState = appStateRef.current
+      appStateRef.current = nextAppState
+
+      if (!isOnboarded() || config.isTestingApp) {
+        return
+      }
+      if (isLockScreenSuppressed()) return
+
+      // → background: stamp grace clock (once per lock session).
+      if (nextAppState === 'background' && previousAppState !== 'background') {
+        Keyboard.dismiss()
+        if (authStore.getState().lockScreenActivatedAt === undefined) {
+          authStore.setState({
+            lockScreenActivatedAt: Date.now(),
+            biometricAutoPromptedForCurrentLock: false,
+          })
         }
+        pushLockScreen()
+        return
       }
 
-      appStateRef.current = nextAppState
+      // iOS-only: stamp + mount on active→inactive (Face ID overlay, Simulator
+      // skipping 'background', app-switcher peek). Skipping on Android because
+      // 'inactive' there fires for non-backgrounding events (screen
+      // transitions, system dialogs) and would re-lock right after unlock.
+      if (
+        Platform.OS === 'ios' &&
+        previousAppState === 'active' &&
+        nextAppState === 'inactive'
+      ) {
+        if (authStore.getState().lockScreenActivatedAt === undefined) {
+          authStore.setState({
+            lockScreenActivatedAt: Date.now(),
+            biometricAutoPromptedForCurrentLock: false,
+          })
+        }
+        pushLockScreen()
+        return
+      }
+
+      // → active while still locked: re-push if modal was popped.
+      if (
+        nextAppState === 'active' &&
+        previousAppState !== 'active' &&
+        authStore.getState().lockScreenActivatedAt !== undefined
+      ) {
+        pushLockScreen()
+      }
     })
 
     return () => subscription.remove()
-  }, [showLockScreen])
+  }, [pushLockScreen])
 
   if (!authorizeResult) {
     return <Redirect href="/login" />
@@ -146,12 +199,35 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="(modals)/update-app"
+        options={({ route }) => {
+          const closable =
+            (route.params as { closable?: string } | undefined)?.closable !==
+            'false'
+          if (closable) {
+            return {
+              ...modalScreenOptions,
+              headerTitle: '',
+            }
+          }
+          return {
+            ...modalScreenOptions,
+            headerTitle: '',
+            headerShown: false,
+            gestureEnabled: false,
+            sheetGrabberVisible: false,
+            presentation: Platform.OS === 'ios' ? 'fullScreenModal' : 'modal',
+            unstable_headerRightItems: () => [],
+          }
+        }}
+      />
+      <Stack.Screen
         name="app-lock"
         options={{
           headerShown: false,
-          presentation: 'transparentModal',
+          presentation: 'fullScreenModal',
           gestureEnabled: false,
-          animation: 'fade',
+          animation: 'none',
         }}
       />
     </Stack>

@@ -497,6 +497,8 @@ export class DrivingLicenseService {
         email: input.email,
         phone: input.phone,
         auth,
+        photoBiometricsId: input.photoBiometricsId,
+        signatureBiometricsId: input.signatureBiometricsId,
       })
 
     return {
@@ -585,6 +587,7 @@ export class DrivingLicenseService {
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
       signatureBiometricsId: input.signatureBiometricsId,
+      sendPlasticToPerson: input.sendPlasticToPerson,
       healthDeclarationModel: input.healthDeclarationModel,
     })
 

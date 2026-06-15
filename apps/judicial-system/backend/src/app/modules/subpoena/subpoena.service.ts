@@ -43,6 +43,7 @@ import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CaseDefendantPoliceCaseNumberRepositoryService,
   CourtDocumentRepositoryService,
   CourtSession,
   Defendant,
@@ -90,6 +91,7 @@ export class SubpoenaService {
   constructor(
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -292,6 +294,13 @@ export class SubpoenaService {
     update: UpdateSubpoenaDto,
     transaction: Transaction,
   ): Promise<Subpoena> {
+    // Case is often loaded via Sequelize include (e.g. internal LÖKE PATCH) and does not
+    // pass through CaseRepository, so the virtual policeCaseNumbers field is unset.
+    await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+      [theCase],
+      { transaction },
+    )
+
     const {
       defenderChoice,
       defenderNationalId,

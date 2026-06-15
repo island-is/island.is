@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
   },
+  zoomIn: {
+    id: 'service.portal:zoom-in',
+    defaultMessage: 'Þysja inn',
+  },
+  zoomOut: {
+    id: 'service.portal:zoom-out',
+    defaultMessage: 'Þysja út',
+  },
   more: {
     id: 'service.portal:more',
     defaultMessage: 'Meira',
@@ -1828,6 +1836,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open-enlarged-aria-label',
     defaultMessage: '{subject} stækkað',
   },
+  close: {
+    id: 'service.portal:close',
+    defaultMessage: 'Loka',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
@@ -2253,6 +2265,10 @@ export const m = defineMessages({
     id: 'service.portal:a11y-progress-bar-description',
     defaultMessage:
       'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
+  },
+  unemploymentHasConfirmedJobSearch: {
+    id: 'service.portal:unemployment-has-confirmed-job-search',
+    defaultMessage: 'Atvinnuleit þín er staðfest fyrir þetta tímabil',
   },
 })
 

@@ -220,6 +220,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -260,6 +261,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isStatementDeadlineExpired
       appealCaseNumber
       appealReceivedByCourtDate
+      appealRulingDate
       prosecutorStatementDate
       defendantStatementDate
       defendantStatementDates {
@@ -331,6 +333,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created
@@ -522,6 +525,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isStatementDeadlineExpired
         appealCaseNumber
         appealReceivedByCourtDate
+        appealRulingDate
         prosecutorStatementDate
         defendantStatementDate
         defendantStatementDates {

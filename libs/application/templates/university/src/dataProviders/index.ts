@@ -2,7 +2,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 
 export {
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 
 export const UniversityApi = defineTemplateApi({

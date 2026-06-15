@@ -5,7 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Input, Tag, Text } from '@island.is/island-ui/core'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   enumerate,
@@ -20,6 +20,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseState,
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -151,6 +152,32 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const [reopenReason, setReopenReason] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
+  // Rulings and fines go through a public prosecutor review step after completion
+  // ("Sakamál í frágangi"). They can only be reopened once they have actually been
+  // sent to the public prosecutor. Other completed decisions (e.g. dismissal or
+  // cancellation) have no such step and can be reopened as soon as they are completed.
+  const requiresPublicProsecutorReview =
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING ||
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+  const hasBeenSentToPublicProsecutor = Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
+  )
+
+  const canReopenCase =
+    isDistrictCourtUser(user) &&
+    !workingCase.mergeCase &&
+    workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.WITHDRAWAL &&
+    (!requiresPublicProsecutorReview || hasBeenSentToPublicProsecutor) &&
+    (!workingCase.appealCase ||
+      workingCase.appealCase.appealState === AppealCaseState.COMPLETED ||
+      workingCase.appealCase.appealState === AppealCaseState.WITHDRAWN)
+
   return (
     <>
       <Box component="section" marginBottom={5}>
@@ -178,21 +205,16 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                 </Text>
               </Box>
             )}
-            {isDistrictCourtUser(user) &&
-              (!workingCase.appealCase ||
-                workingCase.appealCase.appealState ===
-                  AppealCaseState.COMPLETED ||
-                workingCase.appealCase.appealState ===
-                  AppealCaseState.WITHDRAWN) && (
-                <Button
-                  variant="text"
-                  colorScheme="destructive"
-                  size="small"
-                  onClick={() => setModalVisible('REOPEN')}
-                >
-                  Enduropna mál
-                </Button>
-              )}
+            {canReopenCase && (
+              <Button
+                variant="text"
+                colorScheme="destructive"
+                size="small"
+                onClick={() => setModalVisible('REOPEN')}
+              >
+                Enduropna mál
+              </Button>
+            )}
           </Box>
         ) : (
           <ProsecutorAndDefendantsEntries workingCase={workingCase} />
@@ -235,7 +257,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
                   })
                   if (updated) {
                     router.push(
-                      `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+                      `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
                     )
                   }
                 } finally {
@@ -247,8 +269,8 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             <Box marginBottom={4}>
               <Input
                 name="reopenReason"
-                label="Ástæða enduropnunar"
-                placeholder="Skráðu ástæðu enduropnunar hér..."
+                label="Ástæða enduropnunar máls"
+                placeholder="Skráðu ástæðu enduropnunar máls, t.d. vegna endurupptöku eða niðurstöðu Landsréttar."
                 textarea
                 rows={6}
                 value={reopenReason}

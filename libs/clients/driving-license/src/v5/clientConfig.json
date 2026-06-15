@@ -4558,12 +4558,14 @@
         "description": "Dto for image and signature data"
       },
       "Dto.V5.ImageDto": {
+        "required": ["dateRegistered", "image", "socialSecurityNumber"],
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "description": "Picture id",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "socialSecurityNumber": {
             "type": "string",
@@ -4584,17 +4586,20 @@
           "quality": {
             "type": "integer",
             "description": "Quality",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "program": {
             "type": "integer",
             "description": "Belongs to what program",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "type": {
             "type": "integer",
             "description": "Type of image",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -5134,6 +5139,11 @@
           "signatureBiometricsId": {
             "type": "string",
             "description": "If person chooses signature from þjóðskrá, then this is\r\na placeholder for that biometric id",
+            "nullable": true
+          },
+          "sendPlasticToPerson": {
+            "type": "boolean",
+            "description": "Person requests plastic to be sent to them",
             "nullable": true
           },
           "healthDeclarationModel": {

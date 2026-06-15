@@ -43,3 +43,10 @@ describe('IndictmentCountController - Delete Offense Roles', () => {
     prosecutorRepresentativeRule,
   ])
 })
+
+describe('IndictmentCountController - Reorder Roles', () => {
+  verifyRolesRules(IndictmentCountController, 'reorder', [
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  ])
+})

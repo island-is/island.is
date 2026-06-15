@@ -56,13 +56,15 @@ export class DelegationScopeService {
   async createOrUpdate(
     delegationId: string,
     scopes?: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
       await this.delete(
         delegationId,
         scopes.map((s) => s.name),
+        transaction,
       )
-      return this.createMany(delegationId, scopes)
+      return this.createMany(delegationId, scopes, transaction)
     }
 
     return []
@@ -71,6 +73,7 @@ export class DelegationScopeService {
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
   ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(
@@ -85,12 +88,15 @@ export class DelegationScopeService {
       delegationId,
     }))
 
-    await this.delegationScopeModel.bulkCreate(delegationScopes)
+    await this.delegationScopeModel.bulkCreate(delegationScopes, {
+      transaction,
+    })
     return this.delegationScopeModel.findAll({
       where: {
         id: delegationScopes.map((s) => s.id),
       },
       include: [ApiScope],
+      transaction,
     })
   }
 
@@ -112,9 +118,25 @@ export class DelegationScopeService {
     })
   }
 
-  async findByDelegationId(delegationId: string): Promise<DelegationScope[]> {
+  async deleteByName(
+    delegationId: string,
+    scopeNames: string[],
+    transaction?: Transaction,
+  ): Promise<number> {
+    if (scopeNames.length === 0) return 0
+    return this.delegationScopeModel.destroy({
+      where: { delegationId, scopeName: scopeNames },
+      transaction,
+    })
+  }
+
+  async findByDelegationId(
+    delegationId: string,
+    transaction?: Transaction,
+  ): Promise<DelegationScope[]> {
     return this.delegationScopeModel.findAll({
       where: { delegationId },
+      transaction,
     })
   }
 

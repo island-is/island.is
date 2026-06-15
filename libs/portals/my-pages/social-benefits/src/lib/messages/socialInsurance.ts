@@ -263,6 +263,11 @@ export const m = defineMessages({
     defaultMessage:
       'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
   },
+  paymentTypesOverviewIntro: {
+    id: 'sp.social-insurance-maintenance:payment-type-overview-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem þér hafa borist frá TR. Þú getur notað <href>reiknivél TR</href> til að setja inn mismunandi forsendur og sjá hvernig það hefur áhrif á greiðslur þínar á tilteknu ári.',
+  },
   paymentTypesSectionTitle: {
     id: 'sp.social-insurance-maintenance:payment-types-section-title',
     defaultMessage: 'Greiðslur til þín og gildistími þeirra',
@@ -279,10 +284,6 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:name',
     defaultMessage: 'Nafn',
   },
-  calculateMyRights: {
-    id: 'sp.social-insurance-maintenance:calculate-my-rights',
-    defaultMessage: 'Reikna mín réttindi',
-  },
   calculateMyRightsLink: {
     id: 'sp.social-insurance-maintenance:calculate-my-rights-link',
     defaultMessage: 'https://island.is/s/tryggingastofnun/reiknivel',
@@ -298,14 +299,6 @@ export const m = defineMessages({
   spouseNoUsage: {
     id: 'sp.social-insurance-maintenance:spouse-no-usage',
     defaultMessage: 'Engin nýting',
-  },
-  spouseTaxCreditUsingSummaryTitle: {
-    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-title',
-    defaultMessage: 'Maki nýtir persónuafslátt',
-  },
-  spouseTaxCreditUsingSummaryBody: {
-    id: 'sp.social-insurance-maintenance:spouse-tax-credit-using-summary-body',
-    defaultMessage: 'Maki hefur leyfi til að nýta persónuafsláttinn þinn.',
   },
   youAreUsingSpouseTaxCreditTitle: {
     id: 'sp.social-insurance-maintenance:you-are-using-spouse-tax-credit-title',
@@ -327,5 +320,30 @@ export const m = defineMessages({
   nationalIdWithValue: {
     id: 'sp.social-insurance-maintenance:national-id-with-value',
     defaultMessage: 'Kennitala: {value}',
+  },
+  spouseInfoNotFound: {
+    id: 'sp.social-insurance-maintenance:spouse-info-not-found',
+    defaultMessage: 'Engar upplýsingar fundust um maka',
+  },
+  spouseTaxCreditUnknownError: {
+    id: 'sp.social-insurance-maintenance:spouse-tax-credit-unknown-error',
+    defaultMessage:
+      'Ekki er hægt að framkvæma umbeðna breytingu. Vinsamlegast hafðu samband við þjónustuver TR ef þú vilt breyta skattkorti maka.',
+  },
+  grantSpouseNotAllowedDeceased: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-not-allowed-deceased',
+    defaultMessage:
+      'Ekki er hægt að veita maka leyfi til að nota persónuafslátt þar sem maki er skráður látinn.',
+  },
+  // Shown when the deceased spouse tax card cannot be applied — two specific
+  // blocking reasons with distinct user-facing explanations.
+  deceasedSpouseNotRegistered: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-not-registered-deceased',
+    defaultMessage: 'Maki ekki skráður látinn samkvæmt kerfum TR',
+  },
+  deceasedSpouseDateOfDeathOutOfRange: {
+    id: 'sp.social-insurance-maintenance:tax-card-error-spouse-date-of-death-not-within-valid-range',
+    defaultMessage:
+      'Til þess að nýta persónuafslátt látins maka þá má andlátsdagsetningin ekki vera eldri en 8 mánuðir frá deginum í dag',
   },
 })

@@ -15,7 +15,9 @@ import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolAllProgrammesQuery,
+  SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeFilterOptionsQuery,
+  SecondarySchoolProgrammeSimple,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -54,8 +56,8 @@ const getDeterministicWeight = (value: string) => {
 }
 
 interface SecondarySchoolStudiesLandingPageProps {
-  programmes: SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes']
-  filterOptions: SecondarySchoolProgrammeFilterOptionsQuery['secondarySchoolProgrammeFilterOptions']
+  programmes: Array<SecondarySchoolProgrammeSimple>
+  filterOptions: SecondarySchoolProgrammeFilterOptions
   hourlySeed: string
   locale: string
 }
@@ -150,7 +152,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
       'qualification.level.id',
       'school.id',
       'school.countryArea.id',
-      'isReferenceProgramme',
     ],
   }
 

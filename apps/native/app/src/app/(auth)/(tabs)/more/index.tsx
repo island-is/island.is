@@ -90,7 +90,7 @@ export default function MoreScreen() {
             testID={testIDs.MORE_CARD_VEHICLES}
             title={intl.formatMessage({ id: 'profile.vehicles' })}
             icon={vehicleIcon}
-            onPress={() => router.navigate('/more/vehicles')}
+            onPress={() => router.push('/more/vehicles')}
           />
         </Row>
         <Row>

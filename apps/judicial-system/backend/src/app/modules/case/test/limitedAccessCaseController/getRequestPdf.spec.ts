@@ -6,7 +6,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../../repository'
 
-jest.mock('../../../../formatters/requestPdf')
+jest.mock('../../../../formatters/generatedPdfs/requestPdf')
 
 interface Then {
   error: Error

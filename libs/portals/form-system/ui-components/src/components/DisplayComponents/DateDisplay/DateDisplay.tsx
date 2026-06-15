@@ -1,14 +1,20 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }
 
-export const DateDisplay = ({ item, valueIndex }: Props) => {
-  const { formatDate, lang } = useLocale()
+export const DateDisplay = ({
+  item,
+  valueIndex,
+  requiredMissing = false,
+}: Props) => {
+  const { formatDate, lang, formatMessage } = useLocale()
 
   const formatDateValue = (raw: unknown) => {
     if (raw == null) return ''
@@ -40,10 +46,26 @@ export const DateDisplay = ({ item, valueIndex }: Props) => {
     >
       <Text as="p" fontWeight="semiBold">
         {item.name?.[lang]}
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="medium" color="red600">
+              *
+            </Text>
+          </>
+        )}
       </Text>
 
       <Box marginLeft={2}>
-        <Text fontWeight="light">{value}</Text>
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="light" color="red600">
+              {formatMessage(m.missingValue)}
+            </Text>
+          </>
+        )}
+        {!requiredMissing && <Text fontWeight="light">{value}</Text>}
       </Box>
     </Box>
   )

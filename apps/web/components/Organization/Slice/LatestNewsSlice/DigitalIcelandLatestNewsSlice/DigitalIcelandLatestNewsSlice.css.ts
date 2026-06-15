@@ -17,25 +17,6 @@ export const frontpageSeeMoreLink = style({
   },
 })
 
-export const itemListContainer = style({
-  display: 'grid',
-  gap: theme.spacing[4],
-  ...themeUtils.responsiveStyle({
-    xs: {
-      gridTemplateColumns: 'minmax(230px, 450px)',
-      justifyContent: 'center',
-    },
-    lg: {
-      gridTemplateColumns: '1fr 1fr 1fr',
-      gap: theme.spacing[3],
-    },
-    xl: {
-      gridTemplateColumns: '1fr 1fr 1fr',
-      gap: theme.spacing[4],
-    },
-  }),
-})
-
 export const itemListContainerMobileScroll = style({
   display: 'grid',
   gap: theme.spacing[4],

@@ -6,7 +6,13 @@ import { Editor } from '@tinymce/tinymce-react'
 import { ErrorMessage } from '@island.is/island-ui/core'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
-import HighlightColorPicker, { HIGHLIGHT_COLORS } from './HighlightColorPicker'
+import HighlightColorPicker from './HighlightColorPicker'
+import {
+  INDENT_STEP_PX,
+  normalizePastedHighlights,
+  normalizePastedIndentation,
+  WORD_HIGHLIGHT_COLORS,
+} from './pasteNormalization'
 import * as styles from './TinyMCE.css'
 
 type ToolbarToggleButtonInstanceApi = Ui.Toolbar.ToolbarToggleButtonInstanceApi
@@ -89,11 +95,11 @@ const TinyMCE = ({
       while (node && node !== editor.getBody()) {
         const bg: string = node.style?.backgroundColor ?? ''
         if (bg && bg !== 'transparent') {
-          const match = HIGHLIGHT_COLORS.find(
-            ({ color }) => hexToRgb(color) === bg,
+          const match = WORD_HIGHLIGHT_COLORS.map(({ color }) => color).find(
+            (color) => hexToRgb(color) === bg,
           )
           if (match) {
-            setSelectedColor(match.color)
+            setSelectedColor(match)
             return
           }
         }
@@ -155,8 +161,9 @@ const TinyMCE = ({
           }}
           init={{
             height: 450,
-            plugins: 'lists fullscreen',
+            plugins: 'lists fullscreen paste',
             toolbar: 'bold italic indent outdent highlightcolor fullscreen',
+            indentation: `${INDENT_STEP_PX}px`,
             toolbar_mode: 'wrap',
             menubar: false,
             setup: (editor) => {
@@ -166,11 +173,20 @@ const TinyMCE = ({
                 onBlur?.(editor.getContent())
               })
               editor.on('NodeChange', handleNodeChange(editor))
+              editor.on('PastePreProcess', (args) => {
+                args.content = normalizePastedIndentation(
+                  normalizePastedHighlights(args.content),
+                )
+              })
               setupHighlightButton(editor)
             },
             paste_word_valid_elements: 'p,b,strong,i,em,span,br',
+            // "background" (shorthand) is required: Word highlights arrive as
+            // "background:yellow" and the paste plugin also maps mso-highlight
+            // to "background" — both are normalized to a palette
+            // background-color in PastePreProcess below.
             paste_retain_style_properties:
-              'font-weight,font-style,background-color,margin-left,padding-left',
+              'font-weight,font-style,background,background-color,margin-left,padding-left',
             paste_strip_class_attributes: 'all',
             content_style:
               "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,700;1,300;1,700&display=swap'); body { font-family: 'IBM Plex Sans', sans-serif; font-size: 18px; font-weight: 300; } strong, b { font-weight: 700; } p { margin: 0; }",
@@ -179,7 +195,9 @@ const TinyMCE = ({
             placeholder,
           }}
           initialValue={initialValueRef.current}
-          onEditorChange={(content) => onChange?.(content)}
+          onEditorChange={(content) => {
+            onChange?.(content)
+          }}
           disabled={disabled}
         />
         <AnimatePresence>

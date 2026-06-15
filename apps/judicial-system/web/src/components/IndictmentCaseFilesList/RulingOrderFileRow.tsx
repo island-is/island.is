@@ -1,13 +1,15 @@
-import { FC, useContext } from 'react'
+import { ComponentProps, FC, useContext } from 'react'
+import router from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Icon } from '@island.is/island-ui/core'
+import { Box, IconMapIcon } from '@island.is/island-ui/core'
 import {
-  APPEAL_FILES_ROUTE,
-  APPEAL_ROUTE,
-  DEFENDER_APPEAL_FILES_ROUTE,
-  DEFENDER_APPEAL_ROUTE,
-  DEFENDER_STATEMENT_ROUTE,
-  STATEMENT_ROUTE,
+  DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
+  DEFENDER_APPEAL_CASE_APPEAL_ROUTE,
+  DEFENDER_APPEAL_CASE_STATEMENT_ROUTE,
+  PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_APPEAL_CASE_APPEAL_ROUTE,
+  PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -67,11 +69,15 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     (a) => a.rulingFileId === file.id,
   )
 
-  const appealRoute = isDefence ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE
-  const statementRoute = isDefence ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+  const appealRoute = isDefence
+    ? DEFENDER_APPEAL_CASE_APPEAL_ROUTE
+    : PROSECUTION_APPEAL_CASE_APPEAL_ROUTE
+  const statementRoute = isDefence
+    ? DEFENDER_APPEAL_CASE_STATEMENT_ROUTE
+    : PROSECUTION_APPEAL_CASE_STATEMENT_ROUTE
   const appealFilesRoute = isDefence
-    ? DEFENDER_APPEAL_FILES_ROUTE
-    : APPEAL_FILES_ROUTE
+    ? DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE
+    : PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE
   const appealHref = `${appealRoute}/${workingCase.id}?rulingFileId=${file.id}`
   const statementHref = `${statementRoute}/${workingCase.id}?rulingFileId=${file.id}`
   const filesHref = `${appealFilesRoute}/${workingCase.id}?rulingFileId=${file.id}`
@@ -134,7 +140,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         icon: 'document',
         ...(file.isAppealDeadlineExpired
           ? { onClick: openConfirmAppealAfterDeadline }
-          : { href: appealHref }),
+          : { onClick: () => router.push(appealHref) }),
       })
     }
   } else if (
@@ -148,13 +154,13 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           icon: 'document',
           ...(appealCase.isStatementDeadlineExpired
             ? { onClick: openConfirmStatementAfterDeadline }
-            : { href: statementHref }),
+            : { onClick: () => router.push(statementHref) }),
         })
       }
       items.push({
         title: 'Bæta við gögnum',
         icon: 'add',
-        href: filesHref,
+        onClick: () => router.push(filesHref),
       })
       if (isAppellant) {
         items.push(withdrawAppeal(workingCase.id, appealCase.id))
@@ -176,6 +182,9 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   // and district-court users. Other roles (e.g. PUBLIC_PROSECUTOR_STAFF) see
   // the row without status text or actions.
   let statusText: string | undefined
+  let statusIcon: IconMapIcon | undefined = undefined
+  let statusIconColor: ComponentProps<typeof Icon>['color'] | undefined =
+    undefined
 
   if (!hasBeenAppealed) {
     // Pre-appeal: only the appealing-eligible parties see the deadline.
@@ -183,18 +192,18 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       statusText = `Kærufrestur ${
         file.isAppealDeadlineExpired ? 'rann' : 'rennur'
       } út ${formatDate(file.appealDeadline, 'PPPp')}`
+      statusIcon = 'warning'
+      statusIconColor = 'yellow600'
     }
   } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
     statusText = 'Kæra afturkölluð'
   } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
-    // No notification template for ruling-order appeal completion yet
-    // (open question #8). Use the row's modified timestamp as the proxy
-    // for "completion date" — the last write was the COMPLETE_APPEAL
-    // transition.
-    statusText = `Niðurstaða Landsréttar ${formatDate(
-      appealCase.modified,
-      'PPP',
-    )}`
+    statusText = appealCase.appealRulingDate
+      ? `Niðurstaða Landsréttar ${formatDate(
+          appealCase.appealRulingDate,
+          'PPP',
+        )}`
+      : 'Niðurstaða Landsréttar'
   } else if (currentUserStatementDate) {
     statusText = `Greinargerð send ${formatDate(
       currentUserStatementDate,
@@ -230,6 +239,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
         <PdfButton
           title={fileName}
           subtitle={statusText}
+          subtitleIcon={statusIcon}
+          subtitleIconColor={statusIconColor}
           renderAs="row"
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
