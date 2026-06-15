@@ -10,7 +10,6 @@ import * as m from '../../../lib/messages'
 import {
   applicantSubmitApprovedAssigneesDescription,
   applicantSubmitRejectedAssigneesDescription,
-  applicantSubmitRejectedInfoMessages,
 } from '../../../utils/applicantSubmitInfoUtils'
 import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
 
@@ -32,8 +31,8 @@ export const infoSection = buildSection({
         }),
         buildAlertMessageField({
           id: 'applicantSubmitInfoRejectedAlert',
-          title: applicantSubmitRejectedInfoMessages.infoRejectedAlertTitle,
-          message: applicantSubmitRejectedInfoMessages.infoRejectedAlertMessage,
+          title: m.applicantSubmitMessages.infoRejectedAlertTitle,
+          message: m.applicantSubmitMessages.infoRejectedAlertMessage,
           alertType: 'warning',
           condition: (answers) => hasRejectedAssigneesInAnswers(answers),
           marginBottom: 4,
