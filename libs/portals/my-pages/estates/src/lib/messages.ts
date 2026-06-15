@@ -48,6 +48,10 @@ export const estatesMessages = defineMessages({
   },
 
   // Detail screen
+  detailFallbackTitle: {
+    id: 'sp.estates:detail-fallback-title',
+    defaultMessage: 'Dánarbú',
+  },
   deceasedName: {
     id: 'sp.estates:deceased-name',
     defaultMessage: 'Nafn látins',
@@ -108,19 +112,6 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:next-steps',
     defaultMessage: 'Næstu skref',
   },
-  nextStepsTitle: {
-    id: 'sp.estates:next-steps-title',
-    defaultMessage: 'Ákvörðun um skipti á dánarbúi',
-  },
-  nextStepsDescription: {
-    id: 'sp.estates:next-steps-description',
-    defaultMessage:
-      'Senda þarf inn umsókn um leyfi til einkaskipta eða opinberra skipta til sýslumanns',
-  },
-  applicationNotSubmitted: {
-    id: 'sp.estates:application-not-submitted',
-    defaultMessage: 'Umsókn ekki send inn',
-  },
   sendApplication: {
     id: 'sp.estates:send-application',
     defaultMessage: 'Senda umsókn',
@@ -128,15 +119,6 @@ export const estatesMessages = defineMessages({
   deadline: {
     id: 'sp.estates:deadline',
     defaultMessage: 'Frestur',
-  },
-  deadlineTitle: {
-    id: 'sp.estates:deadline-title',
-    defaultMessage: 'Frestur varðandi skipti',
-  },
-  deadlineDescription: {
-    id: 'sp.estates:deadline-description',
-    defaultMessage:
-      'Innan 4 mánaða frá andláti þarf að taka ákvörðun um skipti búss',
   },
   daysLeft: {
     id: 'sp.estates:days-left',
@@ -176,14 +158,6 @@ export const estatesMessages = defineMessages({
   filesButtonUrl: {
     id: 'sp.estates:files-button-url',
     defaultMessage: 'https://island.is/danarbu/skila-gognum',
-  },
-  fileStatusReceived: {
-    id: 'sp.estates:file-status-received',
-    defaultMessage: 'Móttekið',
-  },
-  fileStatusPending: {
-    id: 'sp.estates:file-status-pending',
-    defaultMessage: 'Beðið',
   },
   viewFile: {
     id: 'sp.estates:view-file',
