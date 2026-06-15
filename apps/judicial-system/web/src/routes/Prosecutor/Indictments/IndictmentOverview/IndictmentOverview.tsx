@@ -302,7 +302,9 @@ const IndictmentOverview: FC = () => {
               shouldDisplayReviewDecision &&
               (isReviewMissing || !hasReviewDecisionChanged)
             }
-            nextIsLoading={canDuplicateIndictment && isDuplicatingIndictmentCase}
+            nextIsLoading={
+              canDuplicateIndictment && isDuplicatingIndictmentCase
+            }
             nextButtonIcon={canDuplicateIndictment ? 'copy' : undefined}
             nextButtonText={
               canDuplicateIndictment
