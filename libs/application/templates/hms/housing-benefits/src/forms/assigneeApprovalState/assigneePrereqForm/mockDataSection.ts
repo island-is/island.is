@@ -45,7 +45,10 @@ export const assigneeMockDataSection = buildSection({
               'assigneeDevMockSettings.mockNationalRegistryAddress',
             ),
           options: [
-            { value: YES, label: m.prereqMessages.devMockNationalRegistryAddressLabel },
+            {
+              value: YES,
+              label: m.prereqMessages.devMockNationalRegistryAddressLabel,
+            },
           ],
           marginBottom: 2,
         }),
