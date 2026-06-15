@@ -8,6 +8,7 @@ import {
   NO,
   getValueViaPath,
 } from '@island.is/application/core'
+import * as m from '../../../lib/messages'
 import {
   nationalIdPreface,
   getNationalIdPrefix,
@@ -18,32 +19,29 @@ export const assetDeclerationSection = buildSection({
   condition: (answers, externalData, user) =>
     doesAssigneeAddressMatchRentalContract(answers, externalData, user),
   id: 'assetDeclerationSection',
-  title: 'Eignayfirlýsing',
+  title: m.assigneeDraft.assetDeclerationTitle,
   children: [
     buildMultiField({
       id: 'assetDeclerationMultiField',
-      title: 'Eignayfirlýsing',
+      title: m.assigneeDraft.assetDeclerationMultiFieldTitle,
       children: [
         buildDescriptionField({
           id: 'assetDeclerationDescription',
-          description:
-            'Skattframtali fyrir síðasta ár hefur ekki verið skilað. Til að halda áfram þarf að fylla út eignayfirlýsingu.',
+          description: m.assigneeDraft.assetDeclerationDescription,
         }),
         buildDescriptionField({
           id: 'assetDeclerationDescription2',
-          description:
-            'Eignayfirlýsing er einfaldlega upplistun á öllum þínum eignum. Ef þú átt engar eignir, þá þarft þú að lýsa því yfir að þú átt engar eignir.',
+          description: m.assigneeDraft.assetDeclerationDescription2,
           marginBottom: 4,
         }),
         buildRadioField({
           id: (application, user) =>
             nationalIdPreface(application, user, 'assetDeclerationRadio'),
-          title: 'Átt þú einhverskonar eignir?',
-          description:
-            'Eignir geta til dæmis verið: Fasteignir, ökutæki, hlutabréf eða fjármagn',
+          title: m.assigneeDraft.assetDeclerationRadioTitle,
+          description: m.assigneeDraft.assetDeclerationRadioDescription,
           options: [
-            { label: 'Já', value: YES },
-            { label: 'Nei', value: NO },
+            { label: m.miscMessages.yes, value: YES },
+            { label: m.miscMessages.no, value: NO },
           ],
           marginBottom: 4,
         }),
@@ -58,7 +56,7 @@ export const assetDeclerationSection = buildSection({
           },
           id: (application, user) =>
             nationalIdPreface(application, user, 'assetDeclerationTextField'),
-          description: 'Vinsamlegast listaðu upp allar þínar eignir.',
+          description: m.assigneeDraft.assetDeclerationTextFieldDescription,
           variant: 'textarea',
           rows: 10,
         }),

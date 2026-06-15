@@ -185,4 +185,42 @@ export const assigneeDraft = defineMessages({
     defaultMessage: 'Umgengnissamningur',
     description: 'File upload title for umgengnissamningur (optional)',
   },
+  assetDeclerationTitle: {
+    id: 'hb.application:assigneeDraft.assetDeclerationTitle',
+    defaultMessage: 'Eignayfirlýsing',
+    description: 'Assignee draft asset declaration section title',
+  },
+  assetDeclerationMultiFieldTitle: {
+    id: 'hb.application:assigneeDraft.assetDeclerationMultiFieldTitle',
+    defaultMessage: 'Eignayfirlýsing',
+    description: 'Assignee draft asset declaration multi field title',
+  },
+  assetDeclerationDescription: {
+    id: 'hb.application:assigneeDraft.assetDeclerationDescription',
+    defaultMessage:
+      'Skattframtali fyrir síðasta ár hefur ekki verið skilað. Til að halda áfram þarf að fylla út eignayfirlýsingu.',
+    description: 'Assignee draft asset declaration description',
+  },
+  assetDeclerationDescription2: {
+    id: 'hb.application:assigneeDraft.assetDeclerationDescription2',
+    defaultMessage:
+      'Eignayfirlýsing er einfaldlega upplistun á öllum þínum eignum. Ef þú átt engar eignir, þá þarft þú að lýsa því yfir að þú átt engar eignir.',
+    description: 'Assignee draft asset declaration description 2',
+  },
+  assetDeclerationRadioTitle: {
+    id: 'hb.application:assigneeDraft.assetDeclerationRadioTitle',
+    defaultMessage: 'Átt þú einhverskonar eignir?',
+    description: 'Assignee draft asset declaration radio title',
+  },
+  assetDeclerationRadioDescription: {
+    id: 'hb.application:assigneeDraft.assetDeclerationRadioDescription',
+    defaultMessage:
+      'Eignir geta til dæmis verið: Fasteignir, ökutæki, hlutabréf eða fjármagn',
+    description: 'Assignee draft asset declaration radio description',
+  },
+  assetDeclerationTextFieldDescription: {
+    id: 'hb.application:assigneeDraft.assetDeclerationTextFieldDescription',
+    defaultMessage: 'Vinsamlegast listaðu upp allar þínar eignir.',
+    description: 'Assignee draft asset declaration text field description',
+  },
 })
