@@ -3324,10 +3324,10 @@
         ]
       }
     },
-    "/api/islandisestatepages": {
+    "/api/IslandIsEstatePages": {
       "get": {
         "tags": ["IslandIsEstatePages"],
-        "operationId": "IslandIsEstatePages_Get",
+        "operationId": "IslandIsEstatePages_GetEstatePages",
         "responses": {
           "200": {
             "description": "Success",
@@ -3335,6 +3335,134 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EstatePages"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/IslandIsEstatePages/caseid/{caseId}": {
+      "get": {
+        "tags": ["IslandIsEstatePages"],
+        "operationId": "IslandIsEstatePages_GetEstateCase",
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstateCase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/IslandIsEstatePages/Document/{documentId}": {
+      "get": {
+        "tags": ["IslandIsEstatePages"],
+        "operationId": "IslandIsEstatePages_Document",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EDocument"
                 }
               }
             }
@@ -6996,8 +7124,28 @@
           "Yfirdrattur"
         ],
         "enum": [
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-          20, 21
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
         ]
       },
       "UpplysingarUrDanarbuiRadstofunSkeyti": {
@@ -8353,6 +8501,496 @@
           },
           "isOpen": {
             "type": "boolean"
+          }
+        }
+      },
+      "EstateCase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "caseId": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabeledValueOfString"
+              }
+            ]
+          },
+          "deceased": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Deceased"
+              }
+            ]
+          },
+          "representative": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateRepresentative"
+              }
+            ]
+          },
+          "estateManager": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateManager"
+              }
+            ]
+          },
+          "status": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateStatus"
+              }
+            ]
+          },
+          "nextSteps": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/NextStep"
+            }
+          },
+          "deadline": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Deadline"
+              }
+            ]
+          },
+          "progress": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Progress"
+              }
+            ]
+          },
+          "inheritors": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Inheritor"
+            }
+          },
+          "documents": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/EstateDocument"
+            }
+          }
+        }
+      },
+      "LabeledValueOfString": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          }
+        }
+      },
+      "Deceased": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "name": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabeledValueOfString"
+              }
+            ]
+          },
+          "sid": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabeledValueOfString"
+              }
+            ]
+          },
+          "dateOfDeath": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabeledValueOfDateOnly"
+              }
+            ]
+          }
+        }
+      },
+      "LabeledValueOfDateOnly": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          }
+        }
+      },
+      "EstateRepresentative": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "sid": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          }
+        }
+      },
+      "EstateManager": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "sid": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "EstateStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "isOpen": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextStep": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "detailedDescription": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "stepStatus": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/StepStatus"
+              }
+            ]
+          },
+          "action": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateAction"
+              }
+            ]
+          }
+        }
+      },
+      "StepStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          }
+        }
+      },
+      "EstateAction": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "method": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Deadline": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "detailedDescription": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "daysRemaining": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Progress": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "steps": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ProgressStep"
+            }
+          }
+        }
+      },
+      "ProgressStep": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "completedDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "information": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "action": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateAction"
+              }
+            ]
+          }
+        }
+      },
+      "Inheritor": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "person": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Person"
+              }
+            ]
+          },
+          "relation": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Relation"
+              }
+            ]
+          }
+        }
+      },
+      "Relation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "text": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          }
+        }
+      },
+      "EstateDocument": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentTypeDescription": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocalizedText"
+              }
+            ]
+          },
+          "documentDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "availability": {
+            "type": "string",
+            "nullable": true
+          },
+          "islandIsDocumentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestAction": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/EstateAction"
+              }
+            ]
+          }
+        }
+      },
+      "EDocument": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentContentBase64": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
