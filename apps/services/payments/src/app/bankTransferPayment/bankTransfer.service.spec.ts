@@ -1249,7 +1249,9 @@ describe('BankTransferService', () => {
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
       const fulfilledAt = new Date('2026-05-30T10:05:00Z')
-      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
+      paymentFulfillmentModel.findOne.mockResolvedValue({
+        created: fulfilledAt,
+      })
 
       const result = await service.getBankTransferStatus('flow-1')
 
@@ -1277,7 +1279,9 @@ describe('BankTransferService', () => {
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
       const fulfilledAt = new Date('2026-05-30T10:05:00Z')
-      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
+      paymentFulfillmentModel.findOne.mockResolvedValue({
+        created: fulfilledAt,
+      })
 
       const result = await service.getBankTransferStatus('flow-1')
 
@@ -1405,7 +1409,9 @@ describe('BankTransferService', () => {
         .spyOn(service, 'finalizeBankTransferSuccess')
         .mockResolvedValue()
       const fulfilledAt = new Date('2026-05-30T10:05:00Z')
-      paymentFulfillmentModel.findOne.mockResolvedValue({ created: fulfilledAt })
+      paymentFulfillmentModel.findOne.mockResolvedValue({
+        created: fulfilledAt,
+      })
 
       const result = await service.getBankTransferStatus('flow-1')
 
