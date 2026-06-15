@@ -42,7 +42,7 @@ export const MainContent = () => {
   const { formatMessage } = useIntl()
 
   const showIdentifier =
-    form.useValidate && (activeItem.data as FormSystemScreen)?.shouldValidate
+    form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
 
   const activeScreen =
     activeItem.type === 'Screen'
