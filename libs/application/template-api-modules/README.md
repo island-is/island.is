@@ -139,12 +139,12 @@ import { defineTemplateApi } from '@island.is/application/types'
 
 # Handling server side errors
 
-In the logs we see several instances of errors caused by user input or user ineligibility being repeated several times. This would seem to point to user frustration and misunderstanding of what is going on.
+In the logs we see several instances of errors caused by user input or user ineligibility being repeated. This would seem to point to user frustration and misunderstanding of what is going on.
 
 A good way to help alleviate this problem is clear error messages that notify the user of why an error happened and what needs to happen to resolve it. This is likely to not only help with user sentiment but also lessen the load on support channels.
 
-When a template-api action fails, the goal is to tell the user *why* it failed and *what they can do about it*, in their own language. The way to do that is to throw a `TemplateApiError` carrying an `errorReason` made of **message descriptors** rather than pre-formatted strings. The application UI shell receives the problem and translates the `title`/`summary` on the client in the user's locale, interpolating runtime values like an id or a name where useful. This turns an opaque error into a clear,
-localized explanation, which tends to both improve user sentiment and reduce repeat attempts.
+When a template-api action fails, the goal is to tell the user *why* it failed and *what they can do about it*, in their own language. The way to do that is to throw a `TemplateApiError` carrying an `errorReason` made of **message descriptors** rather than pre-formatted strings. The application UI shell receives the problem and translates the `title`/`summary` on the client in the user's locale, interpolating runtime values like an id or a name where useful.
+This turns an opaque error into a clear, localized explanation, which tends to both improve user sentiment and reduce repeat attempts.
 
 ## 1. Define translatable messages
 
@@ -222,13 +222,73 @@ Prefer the `{ title, summary }` object, since it gives the user a clear heading 
 No additional client code is needed for this. The UI shell detects `errorReason` on the problem and formats it with the user's `formatMessage`, which resolves the translation and interpolates your `values`:
 
 ```typescript
-if ('errorReason' in problem) {
   const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
   const formattedMessage = `${formatMessage(title)}: ${formatMessage(summary)}`
+```
+
+## 4. How the error reaches the user
+
+Once thrown, the error travels back as a problem response and the UI shell decides how to surface it. There are two display paths, and which one you get depends on the `buildSubmitField` configuration on the screen the user submitted from.
+
+### The default: a toaster
+
+By default, any failed update or submit is shown as a toast notification. The shell calls `handleServerError`, which pulls the `errorReason` off the problem, formats it as `title: summary` in the user's locale, and shows it:
+
+```typescript
+if ('errorReason' in problem) {
+  const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+  const message = `${formatMessage(title)}: ${formatMessage(summary)}`
+  toast.error(message)
+  return
 }
 ```
 
-The error is then surfaced to the user via a toaster message in the UI.
+This is the right choice for most cases: short, single-line messages that confirm what went wrong. You don't need to configure anything to get it.
+
+### Errors that need more attention: `renderLongErrors`
+
+Some submission errors deserve a more prominent treatment than a transient toast. They tend to share two traits: they are often long or multi-line (for example, one line per invalid vehicle), or they may signal something the user cannot fix by simply going back and editing their application.
+
+Think of a user trying to sell a car before paying licensing fees, or trying to start a new driving-license application while one is already in progress. Retrying the submit won't help, so the user needs a clear, persistent explanation rather than a message that disappears on its own. 
+
+The same applies when the error itself is a multiline list the user has to act on — for example, a set of entries that must be removed before resubmitting. That kind of message won't fit in a toaster and needs to stay on screen so the user can refer back to it while fixing each item.
+
+For these cases, opt in to an inline error box on the `buildSubmitField`:
+
+```typescript
+buildSubmitField({
+  id: 'submit',
+  refetchApplicationAfterSubmit: true,
+  renderLongErrors: true,
+  formatLongErrorMessage: formatMyApiErrorMessages,
+  actions: [
+    { event: 'SUBMIT', name: m.submitButton, type: 'primary' },
+  ],
+})
+```
+
+With `renderLongErrors: true`, the shell skips the toast container entirely and instead renders the message in a red, full-width box that preserves line breaks (`whiteSpace="preLine"`), so multi-line output stays readable. Note this applies to the **submit** flow specifically.
+
+`formatLongErrorMessage` is an optional hook that receives the already-formatted `title: summary` string and returns a cleaned-up version to display. Use it to reshape noisy backend output, for example grouping repeated messages and collecting the affected ids:
+
+```typescript
+export const formatMyApiErrorMessages = (message: string) => {
+  // Turn:
+  //   Permno: EOH53 - An active entry already exists.
+  //   Permno: HKS27 - An active entry already exists.
+  // into:
+  //   An active entry already exists. (EOH53, HKS27)
+  const lines = message
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  // ...group by message text, collect ids, then join with '\n'
+  return formatted
+}
+```
+
+In short: rely on the default toaster for concise messages, and reach for `renderLongErrors` (with an optional `formatLongErrorMessage`) when the message is long, lists multiple problems, or needs to stay on screen because a retry alone won't resolve it.
 
 ## Key recommendations
 
