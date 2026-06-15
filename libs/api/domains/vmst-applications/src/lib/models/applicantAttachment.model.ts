@@ -20,3 +20,12 @@ export class VmstApplicationsApplicantAttachment {
   @Field(() => String, { nullable: true })
   downloadServiceUrl?: string | null
 }
+
+@ObjectType('VmstApplicationsApplicantAttachmentsResponse')
+export class VmstApplicationsApplicantAttachmentsResponse {
+  @Field(() => [VmstApplicationsApplicantAttachment], { nullable: true })
+  userSubmitted?: VmstApplicationsApplicantAttachment[] | null
+
+  @Field(() => [VmstApplicationsApplicantAttachment], { nullable: true })
+  letters?: VmstApplicationsApplicantAttachment[] | null
+}
