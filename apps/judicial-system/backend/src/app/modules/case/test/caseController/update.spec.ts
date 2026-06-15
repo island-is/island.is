@@ -427,7 +427,8 @@ describe('CaseController - Update', () => {
       expect(
         mockQueuedMessages.filter(
           (message) =>
-            message.type === MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+            message.type ===
+            MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
         ),
       ).toEqual([])
     })
@@ -449,7 +450,9 @@ describe('CaseController - Update', () => {
       caseFiles: [],
     } as Case
 
-    const caseToUpdate = { courtCaseNumber: newCourtCaseNumber } as UpdateCaseDto
+    const caseToUpdate = {
+      courtCaseNumber: newCourtCaseNumber,
+    } as UpdateCaseDto
     const updatedCase = {
       ...indictmentCase,
       courtCaseNumber: newCourtCaseNumber,
