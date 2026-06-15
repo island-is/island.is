@@ -46,11 +46,11 @@ export const assetDeclerationSection = buildSection({
           marginBottom: 4,
         }),
         buildTextField({
-          condition: (_answers, _externalData, user) => {
+          condition: (answers, _externalData, user) => {
             if (!user) return false
             const prefix = getNationalIdPrefix(user)
             return (
-              getValueViaPath(_answers, `${prefix}.assetDeclerationRadio`) ===
+              getValueViaPath(answers, `${prefix}.assetDeclerationRadio`) ===
               YES
             )
           },
