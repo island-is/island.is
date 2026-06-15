@@ -48,10 +48,6 @@ export const estatesMessages = defineMessages({
   },
 
   // Detail screen
-  detailTitle: {
-    id: 'sp.estates:detail-title',
-    defaultMessage: 'Dánarbú',
-  },
   deceasedName: {
     id: 'sp.estates:deceased-name',
     defaultMessage: 'Nafn látins',
@@ -188,14 +184,6 @@ export const estatesMessages = defineMessages({
   fileStatusPending: {
     id: 'sp.estates:file-status-pending',
     defaultMessage: 'Beðið',
-  },
-  fileStatusMissing: {
-    id: 'sp.estates:file-status-missing',
-    defaultMessage: 'Vantar',
-  },
-  fileSizeLabel: {
-    id: 'sp.estates:file-size-label',
-    defaultMessage: 'Stærð',
   },
   viewFile: {
     id: 'sp.estates:view-file',

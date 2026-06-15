@@ -16,22 +16,19 @@ export const estatesModule: PortalModule = {
     {
       name: m.myEstates,
       path: EstatesPaths.EstatesRoot,
-      // TODO: Switch to ApiScope.estates once the scope is provisioned
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.estates),
       element: <EstatesOverview />,
     },
     {
       name: m.estatesDetail,
       path: EstatesPaths.EstatesDetail,
-      // TODO: Switch to ApiScope.estates once the scope is provisioned
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.estates),
       element: <EstateDetail />,
     },
     {
       name: m.estatesDetail,
       path: EstatesPaths.EstatesFiles,
-      // TODO: Switch to ApiScope.estates once the scope is provisioned
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.estates),
       element: <EstateFiles />,
     },
   ],

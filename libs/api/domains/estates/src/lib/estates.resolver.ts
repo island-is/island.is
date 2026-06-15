@@ -25,8 +25,7 @@ import { EstatesDomainService } from './estates.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-// TODO: Switch to ApiScope.estates once the scope is provisioned
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.estates)
 @FeatureFlag(Features.isServicePortalEstatesEnabled)
 @Audit({ namespace: '@island.is/api/estates' })
 @Resolver(() => Estate)
