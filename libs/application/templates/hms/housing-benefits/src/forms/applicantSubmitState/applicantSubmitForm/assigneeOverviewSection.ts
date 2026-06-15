@@ -6,17 +6,16 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
-import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
 import { getSignedAssigneeOverviewItems } from '../../../utils/assigneeUtil'
 
 export const assigneeOverviewSection = buildSection({
   id: 'applicantSubmitAssigneeOverviewSection',
-  title: asm.assigneeOverviewSectionTitle,
+  title: m.applicantSubmitMessages.assigneeOverviewSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitAssigneeOverviewMultiField',
-      title: asm.assigneeOverviewTitle,
-      description: asm.assigneeOverviewDescription,
+      title: m.applicantSubmitMessages.assigneeOverviewTitle,
+      description: m.applicantSubmitMessages.assigneeOverviewDescription,
       children: [
         buildOverviewField({
           id: 'submitAssigneeInfoOverview',
@@ -25,13 +24,13 @@ export const assigneeOverviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'applicantSubmitFormSubmit',
-          title: asm.submitButton,
+          title: m.applicantSubmitMessages.submitButton,
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: asm.submitButton,
+              name: m.applicantSubmitMessages.submitButton,
               type: 'primary',
             },
           ],

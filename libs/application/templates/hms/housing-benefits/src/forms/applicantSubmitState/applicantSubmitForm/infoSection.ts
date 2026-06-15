@@ -6,7 +6,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { HandShake } from '@island.is/application/assets/graphics'
-import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
+import * as m from '../../../lib/messages'
 import {
   applicantSubmitApprovedAssigneesDescription,
   applicantSubmitRejectedAssigneesDescription,
@@ -16,16 +16,16 @@ import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionU
 
 export const infoSection = buildSection({
   id: 'applicantSubmitInfoSection',
-  title: asm.infoSectionTitle,
+  title: m.applicantSubmitMessages.infoSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitInfoMultiField',
-      title: asm.infoTitle,
+      title: m.applicantSubmitMessages.infoTitle,
       children: [
         buildAlertMessageField({
           id: 'applicantSubmitInfoAlert',
-          title: asm.infoAlertTitle,
-          message: asm.infoAlertMessage,
+          title: m.applicantSubmitMessages.infoAlertTitle,
+          message: m.applicantSubmitMessages.infoAlertMessage,
           alertType: 'success',
           condition: (answers) => !hasRejectedAssigneesInAnswers(answers),
           marginBottom: 4,
@@ -52,7 +52,7 @@ export const infoSection = buildSection({
         }),
         buildDescriptionField({
           id: 'applicantSubmitInfoDescription',
-          description: asm.infoDescription,
+          description: m.applicantSubmitMessages.infoDescription,
           marginBottom: 8,
         }),
         buildImageField({

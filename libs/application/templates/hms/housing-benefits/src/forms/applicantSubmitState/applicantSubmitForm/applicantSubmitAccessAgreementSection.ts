@@ -7,7 +7,6 @@ import {
 import { FormValue } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import * as m from '../../../lib/messages'
-import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
 import {
   applicantSubmitAccessAgreementChildOptions,
   applicantSubmitAccessAgreementDescription,
@@ -23,12 +22,12 @@ export const applicantSubmitAccessAgreementSection = buildSection({
   condition: (answers, externalData) =>
     shouldShowApplicantSubmitAccessAgreementSection(answers, externalData),
   id: 'applicantSubmitAccessAgreementSection',
-  title: asm.applicantSubmitAccessAgreementSectionTitle,
+  title: m.applicantSubmitMessages.applicantSubmitAccessAgreementSectionTitle,
   children: [
     buildMultiField({
       id: (_application, user) =>
         `${getNationalIdPrefix(user)}.applicantSubmitAccessAgreement`,
-      title: asm.applicantSubmitAccessAgreementTitle,
+      title: m.applicantSubmitMessages.applicantSubmitAccessAgreementTitle,
       description: applicantSubmitAccessAgreementDescription,
       children: [
         buildFieldsRepeaterField({

@@ -10,7 +10,6 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, ExternalData } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
-import { applicantSubmitMessages as asm } from '../../../lib/messages/applicantSubmitMessages'
 import {
   personalInformationOverviewItems,
   rentalAgreementOverviewItems,
@@ -32,12 +31,12 @@ import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../../utils/utils'
 
 export const applicantOverviewSection = buildSection({
   id: 'applicantSubmitOverviewSection',
-  title: asm.applicantOverviewSectionTitle,
+  title: m.applicantSubmitMessages.applicantOverviewSectionTitle,
   children: [
     buildMultiField({
       id: 'applicantSubmitOverviewMultiField',
-      title: asm.applicantOverviewTitle,
-      description: asm.applicantOverviewDescription,
+      title: m.applicantSubmitMessages.applicantOverviewTitle,
+      description: m.applicantSubmitMessages.applicantOverviewDescription,
       children: [
         buildOverviewField({
           id: 'submitPersonalInfoOverview',
@@ -51,7 +50,7 @@ export const applicantOverviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'submitApplicantSubmitAccessAgreementOverview',
-          title: asm.applicantSubmitAccessAgreementTitle,
+          title: m.applicantSubmitMessages.applicantSubmitAccessAgreementTitle,
           backId: 'applicantSubmitAccessAgreement',
           condition: (answers, externalData) =>
             shouldShowApplicantSubmitAccessAgreementSection(
