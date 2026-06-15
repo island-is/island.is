@@ -7,4 +7,7 @@ export class EstatesRepresentative {
 
   @Field()
   nationalId!: string
+
+  @Field({ nullable: true })
+  text?: string
 }

@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur/api/IslandIsEstatePages/caseid/3333 -H 'Accept: application/json' > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10016/Syslumenn-Protected/swagger -H 'Accept: application/json' > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
