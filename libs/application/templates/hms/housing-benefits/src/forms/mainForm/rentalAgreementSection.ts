@@ -12,10 +12,6 @@ export const rentalAgreementSection = buildSection({
   title: m.draftMessages.rentalAgreement.title,
   children: [
     buildMultiField({
-      condition: (answers, externalData) => {
-        console.log('externalData: ', externalData)
-        return true
-      },
       id: 'rentalAgreementMultiField',
       title: m.draftMessages.rentalAgreement.title,
       description: m.draftMessages.rentalAgreement.multiFieldDescription,
