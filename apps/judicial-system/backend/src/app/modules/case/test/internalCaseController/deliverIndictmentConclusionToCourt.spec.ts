@@ -1,3 +1,5 @@
+import { mock } from 'jest-mock-extended'
+import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -11,7 +13,13 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
 import { buildIndictmentConclusionContent } from '../../../court/court.service'
-import { Case, DefendantRepositoryService } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+  Institution,
+  User as RepositoryUser,
+} from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -21,6 +29,30 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
+const deliverConclusionCase = (
+  overrides: Partial<Case> & Pick<Case, 'id'>,
+): Case =>
+  mock<Case>({
+    rulingModifiedHistory: undefined,
+    judgeId: undefined,
+    defendants: undefined,
+    splitCases: undefined,
+    mergeCase: undefined,
+    mergeCaseNumber: undefined,
+    ...overrides,
+  })
+
+const deliverConclusionCourt = (name: string): Institution =>
+  mock<Institution>({ name })
+
+const deliverConclusionDefendant = (
+  overrides: Partial<Defendant> & Pick<Defendant, 'id'>,
+): Defendant =>
+  mock<Defendant>({
+    nationalId: undefined,
+    ...overrides,
+  })
+
 describe('InternalCaseController - Deliver indictment conclusion to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
@@ -28,15 +60,14 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
   const courtCaseNumber = 'S-1/2026'
   const rulingDate = randomDate()
 
-  const theCase = {
+  const theCase = deliverConclusionCase({
     id: caseId,
     type: CaseType.INDICTMENT,
-    court: { name: courtName },
+    court: deliverConclusionCourt(courtName),
     courtCaseNumber,
     indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
     rulingDate,
-    rulingModifiedHistory: null,
-  } as Case
+  })
 
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
@@ -96,21 +127,31 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     const defendantNationalId = '1111111111'
     const splitCaseNumber = 'S-2/2026'
     const splitRulingDate = randomDate()
+    const splitChildCaseId = uuid()
 
-    const parentCase = {
+    const splitChildCase = deliverConclusionCase({
+      id: splitChildCaseId,
+      defendants: [],
+    })
+
+    const parentCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       defendants: [],
-    } as Case
+      splitCases: [splitChildCase],
+    })
 
     let mockDefendantRepositoryService: DefendantRepositoryService
     let then: Then
 
     beforeEach(async () => {
-      const { courtService, internalCaseController, defendantRepositoryService } =
-        await createTestingCaseModule()
+      const {
+        courtService,
+        internalCaseController,
+        defendantRepositoryService,
+      } = await createTestingCaseModule()
 
       mockCourtService = courtService
       mockDefendantRepositoryService = defendantRepositoryService
@@ -141,7 +182,10 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
 
     it('should look up the defendant by id and deliver split-off conclusion', () => {
       expect(mockDefendantRepositoryService.findOne).toHaveBeenCalledWith({
-        where: { id: defendantId },
+        where: {
+          id: defendantId,
+          caseId: { [Op.in]: [caseId, splitChildCaseId] },
+        },
       })
 
       expect(
@@ -169,22 +213,32 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     const defendantNationalId = '1111111111'
     const splitCaseNumber = 'S-2/2026'
     const caseCreated = randomDate()
+    const splitChildCaseId = uuid()
 
-    const parentCase = {
+    const splitChildCase = deliverConclusionCase({
+      id: splitChildCaseId,
+      defendants: [],
+    })
+
+    const parentCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       created: caseCreated,
       defendants: [],
-    } as Case
+      splitCases: [splitChildCase],
+    })
 
     let mockDefendantRepositoryService: DefendantRepositoryService
     let then: Then
 
     beforeEach(async () => {
-      const { courtService, internalCaseController, defendantRepositoryService } =
-        await createTestingCaseModule()
+      const {
+        courtService,
+        internalCaseController,
+        defendantRepositoryService,
+      } = await createTestingCaseModule()
 
       mockCourtService = courtService
       mockDefendantRepositoryService = defendantRepositoryService
@@ -233,18 +287,67 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     })
   })
 
-  describe('withdrawal conclusion with prior judge assignment in robot_log', () => {
-    const withdrawalCase = {
+  describe('split-off conclusion not delivered for defendant from unrelated case', () => {
+    const defendantId = uuid()
+    const splitCaseNumber = 'S-2/2026'
+    const splitRulingDate = randomDate()
+
+    const parentCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
+      courtCaseNumber,
+      defendants: [],
+      splitCases: [],
+    })
+
+    let then: Then
+
+    beforeEach(async () => {
+      const {
+        courtService,
+        internalCaseController,
+        defendantRepositoryService,
+      } = await createTestingCaseModule()
+
+      mockCourtService = courtService
+
+      const mockFindOne = defendantRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValue(null)
+
+      then = await internalCaseController
+        .deliverIndictmentConclusionToCourt(caseId, parentCase, {
+          user,
+          defendantId,
+          splitCaseNumber,
+          rulingDate: splitRulingDate.toISOString(),
+        })
+        .then((result) => ({ result, error: undefined as unknown as Error }))
+        .catch((error) => ({
+          result: undefined as unknown as DeliverResponse,
+          error,
+        }))
+    })
+
+    it('should not deliver when defendant is not on the case or a split case', () => {
+      expect(
+        mockCourtService.updateIndictmentCaseWithConclusion,
+      ).not.toHaveBeenCalled()
+
+      expect(then.result).toEqual({ delivered: false })
+    })
+  })
+
+  describe('withdrawal conclusion with prior judge assignment in robot_log', () => {
+    const withdrawalCase = deliverConclusionCase({
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
       rulingDate,
-      rulingModifiedHistory: null,
-      judgeId: null,
-      judge: undefined,
-    } as Case
+      judgeId: undefined,
+    })
 
     let then: Then
 
@@ -303,13 +406,18 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     const defendantNationalId = '2222222222'
     const perDefendantRulingDate = randomDate()
 
-    const caseWithDefendant = {
+    const caseWithDefendant = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
-      defendants: [{ id: defendantId, nationalId: defendantNationalId }],
-    } as Case
+      defendants: [
+        deliverConclusionDefendant({
+          id: defendantId,
+          nationalId: defendantNationalId,
+        }),
+      ],
+    })
 
     let then: Then
 
@@ -360,17 +468,16 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
 
   describe('withdrawal conclusion with judge assigned', () => {
     const judgeNationalId = '0000000000'
-    const withdrawalCase = {
+    const withdrawalCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
       rulingDate,
-      rulingModifiedHistory: null,
       judgeId: uuid(),
-      judge: { nationalId: judgeNationalId },
-    } as Case
+      judge: mock<RepositoryUser>({ nationalId: judgeNationalId }),
+    })
 
     let then: Then
 
@@ -422,17 +529,15 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
   })
 
   describe('withdrawal conclusion without judge assignment', () => {
-    const withdrawalCase = {
+    const withdrawalCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
       rulingDate,
-      rulingModifiedHistory: null,
-      judgeId: null,
-      judge: undefined,
-    } as Case
+      judgeId: undefined,
+    })
 
     let then: Then
 
@@ -488,16 +593,18 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
 
   describe('MERGE conclusion delivered', () => {
     const mergeCaseNumber = 'S-100/2025'
-    const mergeCase = {
+    const mergeCase = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
       indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
       rulingDate,
-      rulingModifiedHistory: null,
-      mergeCase: { courtCaseNumber: mergeCaseNumber },
-    } as Case
+      mergeCase: deliverConclusionCase({
+        id: uuid(),
+        courtCaseNumber: mergeCaseNumber,
+      }),
+    })
 
     let then: Then
 
@@ -544,14 +651,14 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
   })
 
   describe('missing court case number', () => {
-    const caseWithoutCourtCaseNumber = {
+    const caseWithoutCourtCaseNumber = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber: undefined,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       rulingDate,
-    } as Case
+    })
 
     let then: Then
 
@@ -587,13 +694,13 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     const defendantId = uuid()
     const perDefendantRulingDate = randomDate()
 
-    const caseWithDefendant = {
+    const caseWithDefendant = deliverConclusionCase({
       id: caseId,
       type: CaseType.INDICTMENT,
-      court: { name: courtName },
+      court: deliverConclusionCourt(courtName),
       courtCaseNumber,
-      defendants: [{ id: defendantId }],
-    } as Case
+      defendants: [deliverConclusionDefendant({ id: defendantId })],
+    })
 
     let then: Then
 

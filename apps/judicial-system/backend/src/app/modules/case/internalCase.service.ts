@@ -75,11 +75,11 @@ import {
   CaseFile,
   CaseRepositoryService,
   CaseString,
-  DefendantRepositoryService,
   CourtSession,
   DateLog,
   Defendant,
   DefendantEventLog,
+  DefendantRepositoryService,
   EventLog,
   IndictmentCount,
   Institution,
@@ -1065,8 +1065,16 @@ export class InternalCaseService {
     }
 
     if (deliverDto.splitCaseNumber && deliverDto.defendantId) {
+      const allowedCaseIds = [
+        theCase.id,
+        ...(theCase.splitCases?.map((splitCase) => splitCase.id) ?? []),
+      ]
+
       const defendant = await this.defendantRepositoryService.findOne({
-        where: { id: deliverDto.defendantId },
+        where: {
+          id: deliverDto.defendantId,
+          caseId: { [Op.in]: allowedCaseIds },
+        },
       })
 
       if (!defendant?.nationalId) {
