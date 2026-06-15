@@ -15,7 +15,7 @@ import {
 } from '@island.is/portals/my-pages/information'
 import { licensesModule } from '@island.is/portals/my-pages/licenses'
 import { airDiscountModule } from '@island.is/portals/my-pages/air-discount'
-import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
+import { createDelegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { healthModule } from '@island.is/portals/my-pages/health'
 import { indexModule } from '../module'
 import { consentModule } from '@island.is/portals/my-pages/consent'
@@ -36,7 +36,7 @@ export const modules: PortalModule[] = [
   applicationsModule,
   assetsModule,
   consentModule,
-  delegationsModule,
+  createDelegationsModule('my-pages'),
   documentsModule,
   educationCareerModule,
   educationModule,

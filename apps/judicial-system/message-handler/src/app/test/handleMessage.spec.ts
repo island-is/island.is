@@ -14,6 +14,7 @@ import { User } from '@island.is/judicial-system/types'
 import { appModuleConfig } from '../app.config'
 import { InternalDeliveryService } from '../internalDelivery.service'
 import { MessageHandlerService } from '../messageHandler.service'
+import { SuspensionSettingsService } from '../suspensionSettings.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
@@ -42,6 +43,7 @@ describe('MessageHandlerService - Handle message', () => {
       const messageHandlerService = new MessageHandlerService(
         undefined as unknown as MessageService,
         new InternalDeliveryService(config, logger),
+        undefined as unknown as SuspensionSettingsService,
         config,
         logger,
       )

@@ -29,6 +29,7 @@ import { EducationController } from './modules/education-documents/education-doc
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
 import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import { HealthConversationsAttachmentController } from './modules/health/conversations-attachment.controller'
 import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 
@@ -62,6 +63,10 @@ import {
   RightsPortalClientModule,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import {
+  HealthDirectorateHealthModule,
+  HealthDirectorateHealthClientConfig,
+} from '@island.is/clients/health-directorate'
+import {
   DistrictCommissionersLicensesClientConfig,
   DistrictCommissionersLicensesClientModule,
 } from '@island.is/clients/district-commissioners-licenses'
@@ -74,6 +79,11 @@ import {
   PrimarySchoolClientModule,
 } from '@island.is/clients/mms/primary-school'
 import { RentalAgreementsController } from './modules/rental-agreements/rental-agreements.controller'
+import { VmstAttachmentController } from './modules/vmst-attachments/vmst-attachment.controller'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
 @Module({
   controllers: [
     DocumentController,
@@ -82,10 +92,12 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
     VehicleController,
     EducationController,
     HealthPaymentsOverviewController,
+    HealthConversationsAttachmentController,
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesController,
     RentalAgreementsController,
+    VmstAttachmentController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -100,9 +112,11 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
     UniversityCareersClientModule,
     MMSClientModule,
     RightsPortalClientModule,
+    HealthDirectorateHealthModule,
     FeatureFlagModule,
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
+    VmstUnemploymentClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -122,10 +136,12 @@ import { RentalAgreementsController } from './modules/rental-agreements/rental-a
         MMSClientConfig,
         DistrictCommissionersLicensesClientConfig,
         RightsPortalClientConfig,
+        HealthDirectorateHealthClientConfig,
         DocumentClientConfig,
         FeatureFlagConfig,
         HmsRentalAgreementClientConfig,
         PrimarySchoolClientConfig,
+        VmstUnemploymentClientConfig,
       ],
     }),
   ],

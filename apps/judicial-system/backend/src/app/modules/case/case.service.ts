@@ -28,7 +28,6 @@ import {
   capitalize,
   formatDate,
   lowercase,
-  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
@@ -482,12 +481,20 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-        user,
-        caseId: theCase.id,
-        elementId: defendant.id,
-      })
+      addMessagesToQueue(
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+      )
     }
   }
 
@@ -1235,11 +1242,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     return this.caseRepositoryService.findAll({
@@ -1275,11 +1278,7 @@ export class CaseService {
     const defendantOrConditions = theCase.defendants.map((defendant) =>
       defendant.noNationalId
         ? { nationalId: defendant.nationalId, name: defendant.name }
-        : {
-            nationalId: {
-              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-            },
-          },
+        : { nationalId: defendant.nationalId },
     )
 
     const expectedCount = theCase.defendants.length
@@ -1864,7 +1863,7 @@ export class CaseService {
             transaction,
           ),
           ...(defendant.verdicts ?? []).map((verdict) =>
-            this.verdictService.resetPublicProsecutorData(verdict, transaction),
+            this.verdictService.resetVerdictDataForReopen(verdict, transaction),
           ),
         ]),
       )

@@ -94,6 +94,9 @@ export class ScopeEnvironment {
   @Field(() => [String], { defaultValue: [] })
   tagIds!: string[]
 
+  @Field(() => [String], { defaultValue: [] })
+  userNationalIds!: string[]
+
   @Field(() => Date, { nullable: true })
   modified?: Date
 }

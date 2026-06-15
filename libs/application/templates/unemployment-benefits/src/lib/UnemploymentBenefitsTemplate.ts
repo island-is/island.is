@@ -8,8 +8,8 @@ import {
   DefaultEvents,
   FormModes,
   ApplicationConfigurations,
-  NationalRegistryUserApi,
-  ChildrenCustodyInformationApi,
+  NationalRegistryV3UserApi,
+  ChildrenCustodyInformationApiV3,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../shared/constants'
@@ -73,8 +73,8 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 UserProfileApi,
-                NationalRegistryUserApi,
-                ChildrenCustodyInformationApi,
+                NationalRegistryV3UserApi,
+                ChildrenCustodyInformationApiV3,
                 UnemploymentApi,
               ],
               delete: true,

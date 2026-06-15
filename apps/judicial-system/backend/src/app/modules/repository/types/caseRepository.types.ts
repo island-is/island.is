@@ -1,4 +1,4 @@
-import { col, Includeable, Op } from 'sequelize'
+import { col, Includeable, literal, Op } from 'sequelize'
 
 import {
   appealEventTypes,
@@ -207,7 +207,10 @@ export const caseInclude: Includeable[] = [
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
-    order: [['created', 'ASC']],
+    order: [
+      ['displayOrder', 'ASC'],
+      ['created', 'ASC'],
+    ],
     include: [
       {
         model: Offense,
@@ -431,13 +434,21 @@ export const caseInclude: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        separate: true,
         include: [
           {
             model: Subpoena,
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
-            where: { created: { [Op.lt]: col('Case.created') } },
+            separate: true,
+            where: {
+              created: {
+                [Op.lt]: literal(
+                  `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                ),
+              },
+            },
           },
         ],
       },

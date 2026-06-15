@@ -293,10 +293,25 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         'PATCH /v1/me/delegations/:id can delete scopes you have access to in $name',
         async (domain) => {
           // Arrange
+          const delegationScopeModel = app.get<typeof DelegationScope>(
+            getModelToken(DelegationScope),
+          )
+          const delegationModel = app.get<typeof Delegation>(
+            getModelToken(Delegation),
+          )
           const delegation = delegations.find(
             (delegation) => delegation.domainName === domain.name,
           )
           assert(delegation)
+
+          const before = await delegationScopeModel.findAll({
+            where: { delegationId: delegation.id },
+          })
+          const accessibleNames = new Set(domain.scopes.map((s) => s.name))
+          const willBeEmpty = before.every((s) =>
+            accessibleNames.has(s.scopeName),
+          )
+
           const delegationDto: PatchDelegationDTO = {
             deleteScopes: domain.scopes.map(({ name }) => name),
           }
@@ -307,10 +322,16 @@ describe.each(Object.keys(accessOutgoingTestCases))(
             .send(delegationDto)
 
           // Assert
-          expect(res.status).toEqual(200)
-          expect(res.body).toMatchObject({
-            scopes: [],
-          })
+          if (willBeEmpty) {
+            expect(res.status).toEqual(204)
+            const after = await delegationModel.findByPk(delegation.id)
+            expect(after).toBeNull()
+          } else {
+            expect(res.status).toEqual(200)
+            expect(res.body).toMatchObject({
+              scopes: [],
+            })
+          }
         },
       )
 

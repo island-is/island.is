@@ -69,9 +69,10 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           externalData?.getSignatories?.data?.signatories || []
         setSignatories(fetchedSignatories)
 
+        const fetchSucceeded =
+          externalData?.getSignatories?.data?.success === true
         const allSigned =
-          fetchedSignatories.length > 0 &&
-          fetchedSignatories.every((s) => s.signed)
+          fetchSucceeded && fetchedSignatories.every((s) => s.signed)
         setSubmitButtonDisabled?.(!allSigned)
       } catch {
         setError(true)
@@ -109,8 +110,8 @@ export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.inReviewNameLabel)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.inReviewNationalIdLabel)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.signingNameLabel)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.signingNationalIdLabel)}</T.HeadData>
             <T.HeadData>{formatMessage(m.signingStatusLabel)}</T.HeadData>
           </T.Row>
         </T.Head>

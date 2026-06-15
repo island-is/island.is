@@ -1,12 +1,18 @@
 import {
+  ConversationStatusFilter,
   DiseaseVaccinationDtoVaccinationStatusEnum,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
+  AppointmentAssigneeTypeEnum,
+  AppointmentLinkTypeEnum,
+  AppointmentModalityEnum,
   AppointmentStatusEnum,
+  HealthConversationDirectionEnum,
+  HealthConversationStatusFilterEnum,
+  ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
-  ReferralStatusEnum,
 } from '../models/enums'
 
 export const mapVaccinationStatus = (
@@ -40,6 +46,55 @@ export const toAppointmentStatusEnum = (
   Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
     ? (status as AppointmentStatusEnum)
     : undefined
+
+export const toAppointmentModalityEnum = (
+  modality?: string,
+): AppointmentModalityEnum | undefined => {
+  switch (modality) {
+    case 'IN_PERSON':
+      return AppointmentModalityEnum.IN_PERSON
+    case 'VIDEO':
+      return AppointmentModalityEnum.VIDEO
+    default:
+      return undefined
+  }
+}
+
+export const toAppointmentAssigneeTypeEnum = (
+  type: string,
+): AppointmentAssigneeTypeEnum | undefined => {
+  switch (type) {
+    case 'SERVICE':
+      return AppointmentAssigneeTypeEnum.SERVICE
+    case 'ROLE':
+      return AppointmentAssigneeTypeEnum.ROLE
+    case 'ROOM':
+      return AppointmentAssigneeTypeEnum.ROOM
+    case 'EQUIPMENT':
+      return AppointmentAssigneeTypeEnum.EQUIPMENT
+    case 'OTHER':
+      return AppointmentAssigneeTypeEnum.OTHER
+    default:
+      return undefined
+  }
+}
+
+export const toAppointmentLinkTypeEnum = (
+  type: string,
+): AppointmentLinkTypeEnum | undefined => {
+  switch (type) {
+    case 'PATIENT_INSTRUCTIONS':
+      return AppointmentLinkTypeEnum.PATIENT_INSTRUCTIONS
+    case 'PREPARATION':
+      return AppointmentLinkTypeEnum.PREPARATION
+    case 'ORGANIZATION_INFO':
+      return AppointmentLinkTypeEnum.ORGANIZATION_INFO
+    case 'VIDEO_CALL':
+      return AppointmentLinkTypeEnum.VIDEO_CALL
+    default:
+      return undefined
+  }
+}
 
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
@@ -107,5 +162,33 @@ export const mapReferralStatusValueToStatus = (
     default:
       // Unknown status values if new ones get added without letting us know
       return ReferralStatusEnum.Unknown
+  }
+}
+
+export const toConversationDirectionEnum = (
+  direction: string,
+): HealthConversationDirectionEnum => {
+  switch (direction) {
+    case 'PATIENT':
+      return HealthConversationDirectionEnum.PATIENT
+    case 'STAFF':
+      return HealthConversationDirectionEnum.STAFF
+    case 'SYSTEM':
+      return HealthConversationDirectionEnum.SYSTEM
+    default:
+      return HealthConversationDirectionEnum.SYSTEM
+  }
+}
+
+export const toConversationStatusFilter = (
+  status: HealthConversationStatusFilterEnum,
+): ConversationStatusFilter => {
+  switch (status) {
+    case HealthConversationStatusFilterEnum.ACTIVE:
+      return ConversationStatusFilter.ACTIVE
+    case HealthConversationStatusFilterEnum.ARCHIVED:
+      return ConversationStatusFilter.ARCHIVED
+    case HealthConversationStatusFilterEnum.ALL:
+      return ConversationStatusFilter.ALL
   }
 }

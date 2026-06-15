@@ -21,8 +21,8 @@ import {
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../repository'
 
-jest.mock('../../../../formatters/courtRecordPdf')
-jest.mock('../../../../formatters/indictmentCourtRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/courtRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/indictmentCourtRecordPdf')
 
 interface Then {
   error: Error
@@ -218,6 +218,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
       expect(createIndictmentCourtRecordPdf).toHaveBeenCalledWith(
         theCase,
         false,
+        true,
         undefined,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)

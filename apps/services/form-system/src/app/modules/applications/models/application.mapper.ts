@@ -17,12 +17,14 @@ import { Application } from './application.model'
 import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 import { ApplicationDto } from './dto/application.dto'
 import {
-  ApplicationXroadDto,
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './dto/application.xroad.dto'
+  ApplicationJsonDto,
+  ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
+  ApplicationJsonValueDto,
+} from './dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { ValueDto } from './dto/value.dto'
+import { SectionInfo } from '../../../../app/dataTypes/sectionInfo.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -30,6 +32,20 @@ export class ApplicationMapper {
     form: Form,
     application: Application,
   ): ApplicationDto {
+    const normalizedSectionInfo: SectionInfo = {
+      title: form.sectionInfo?.title ?? { is: '', en: '' },
+      confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
+        is: '',
+        en: '',
+      },
+      confirmationText: form.sectionInfo?.confirmationText ?? {
+        is: '',
+        en: '',
+      },
+      additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+      additionalPremises: form.sectionInfo?.additionalPremises ?? [],
+    }
+
     const applicationDto: ApplicationDto = {
       id: application.id,
       nationalId: application.nationalId,
@@ -53,7 +69,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      sectionInfo: form.sectionInfo,
+      sectionInfo: normalizedSectionInfo,
       organizationNationalId: form.organizationNationalId,
     }
 
@@ -174,10 +190,10 @@ export class ApplicationMapper {
     return applicationMinimalDto
   }
 
-  mapApplicationDtoToApplicationXroadDto(
+  mapApplicationDtoToApplicationJsonDto(
     applicationDto: ApplicationDto,
-  ): ApplicationXroadDto {
-    const fields: ApplicationXroadFieldDto[] = (applicationDto.sections ?? [])
+  ): ApplicationJsonDto {
+    const fields: ApplicationJsonFieldDto[] = (applicationDto.sections ?? [])
       .flatMap((section) => section.screens ?? [])
       .flatMap((screen) =>
         (screen.fields ?? []).map((field) => ({
@@ -189,28 +205,43 @@ export class ApplicationMapper {
       .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
       .filter(({ field }) => (field.values?.length ?? 0) > 0)
       .map(({ field, screenIdentifier }) => {
-        const xroadField = new ApplicationXroadFieldDto()
-        xroadField.identifier = field.identifier
-        xroadField.screenIdentifier = screenIdentifier
-        xroadField.fieldType = field.fieldType
-        xroadField.values = (field.values ?? []).map((value) => {
-          const xroadValue = new ApplicationXroadValueDto()
-          xroadValue.order = value.order
-          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-          return xroadValue
+        const jsonField = new ApplicationJsonFieldDto()
+        jsonField.identifier = field.identifier
+        jsonField.screenIdentifier = screenIdentifier
+        jsonField.fieldType = field.fieldType
+
+        const settings = new ApplicationJsonFieldSettingsDto()
+        if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+          settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+        }
+        if (field.fieldType === FieldTypesEnum.APPLICANT) {
+          settings.applicantType = field.fieldSettings?.applicantType
+        }
+        if (
+          settings.isDecimal !== undefined ||
+          settings.applicantType !== undefined
+        ) {
+          jsonField.fieldSettings = settings
+        }
+
+        jsonField.values = (field.values ?? []).map((value) => {
+          const jsonValue = new ApplicationJsonValueDto()
+          jsonValue.order = value.order
+          jsonValue.json = value.json ?? {}
+          return jsonValue
         })
-        return xroadField
+        return jsonField
       })
 
-    const xroadDto = new ApplicationXroadDto()
-    xroadDto.id = applicationDto.id ?? ''
-    xroadDto.slug = applicationDto.slug ?? ''
-    xroadDto.isTest = applicationDto.isTest ?? false
-    xroadDto.status = applicationDto.status ?? ''
-    xroadDto.submittedAt = applicationDto.submittedAt ?? null
-    xroadDto.fields = fields
+    const jsonDto = new ApplicationJsonDto()
+    jsonDto.id = applicationDto.id ?? ''
+    jsonDto.slug = applicationDto.slug ?? ''
+    jsonDto.isTest = applicationDto.isTest ?? false
+    jsonDto.status = applicationDto.status ?? ''
+    jsonDto.submittedAt = applicationDto.submittedAt ?? null
+    jsonDto.fields = fields
 
-    return xroadDto
+    return jsonDto
   }
 
   private isHidden(

@@ -148,7 +148,10 @@ export class VMSTApplicationsResolver {
       auth,
     )
 
-    return this.vmstApplicationsService.getApplicantAttachments(applicantId)
+    return this.vmstApplicationsService.getApplicantAttachments(
+      applicantId,
+      auth.nationalId,
+    )
   }
 
   @Query(() => VmstApplicationsAttachmentTypeList, {

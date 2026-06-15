@@ -26,8 +26,11 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import set from 'lodash/set'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   ApplicationAttachments,
   AttachmentPaths,
@@ -38,8 +41,7 @@ import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { Features } from '@island.is/feature-flags'
+import { SharedTemplateApiService } from '../../shared'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -49,60 +51,139 @@ export class EstateTemplateService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly s3Service: S3Service,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.ESTATE)
   }
 
-  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
-    const rawValue = await this.featureFlagService.getValue(
-      Features.estateReviewEnabled,
-      false,
-      auth,
-    )
-    const reviewEnabled = !!rawValue
-    this.logger.info('[estate]: checkReviewFlag result', {
-      rawValue,
-      rawValueType: typeof rawValue,
-      reviewEnabled,
-    })
-    return { reviewEnabled }
-  }
-
-  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
-    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
+  // Optionally email a PDF copy of the application to the parties
+  // (málsaðilar) when the applicant opted in via the overview checkbox.
+  // Triggered during the submission transition; must never block
+  // submission (registered with throwOnError: false).
+  async sendApplicationCopyToParties({
+    application,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
 
-    const estateMembers = answers?.estate?.estateMembers ?? []
-    const updatedMembers = estateMembers.map((member) => {
-      if (!nationalIdsMatch(member?.nationalId, actorNationalId)) {
-        return member
-      }
-
-      return {
-        ...member,
-        approved: true,
-        approvedDate: new Date().toISOString(),
-      }
-    })
-
-    const didUpdate = estateMembers.some((member) =>
-      nationalIdsMatch(member?.nationalId, actorNationalId),
+    const sendCopy = getValueViaPath<string[]>(
+      application.answers,
+      'sendCopyToParties',
+      [],
     )
-    if (!didUpdate) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProviderSubmit,
-          summary:
-            'Approving user is not a listed estate member on this application.',
-        },
-        400,
+    if (!sendCopy?.includes(YES)) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Idempotency: do not re-send when the state is re-entered/refreshed.
+    const alreadySent = getValueViaPath<boolean>(
+      application.externalData,
+      'sendApplicationCopyToParties.data.sent',
+      false,
+    )
+    if (alreadySent) {
+      return { sent: true, recipients: 0 }
+    }
+
+    const recipients = (answers?.estate?.estateMembers ?? []).filter(
+      (member) =>
+        member.enabled !== false &&
+        !!member.email &&
+        !!member.nationalId &&
+        !nationalIdsMatch(member.nationalId, application.applicant),
+    )
+
+    if (recipients.length === 0) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Build a PDF of the application data (same source as the syslumenn upload).
+    const externalData = application.externalData.syslumennOnEntry?.data as {
+      estate?: EstateSchema['estate']
+      estates?: Array<EstateSchema['estate']>
+    }
+    let estateData = externalData?.estates?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+    estateData = estateData ?? externalData?.estate ?? undefined
+    if (!estateData) {
+      this.logger.warn(
+        '[estate]: sendApplicationCopyToParties skipped - no estate data',
+      )
+      return { sent: false, recipients: 0 }
+    }
+
+    const uploadData = generateRawUploadData(answers, estateData, application)
+    // transformUploadDataToPDFStream mutates its input, so deep copy first.
+    const pdfData = structuredClone(uploadData)
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      pdfData,
+      application.id,
+    )
+    const fileContent = pdfBuffer.toString('binary')
+
+    const results = await Promise.allSettled(
+      recipients.map((member) =>
+        this.sharedTemplateAPIService.sendEmailWithAttachment(
+          (props, attachment, recipientEmail) => {
+            const isIcelandic = props.options.locale !== 'en'
+            const subject = isIcelandic
+              ? 'Afrit af umsókn um dánarbússkipti'
+              : 'Copy of estate division application'
+            const intro = isIcelandic
+              ? 'Meðfylgjandi er afrit af umsókn um dánarbússkipti sem þú ert málsaðili að.'
+              : 'Attached is a copy of an estate division application you are a party to.'
+
+            return {
+              from: {
+                name: props.options.email.sender,
+                address: props.options.email.address,
+              },
+              to: [
+                {
+                  name: member.name ?? '',
+                  address: recipientEmail,
+                },
+              ],
+              subject,
+              template: {
+                title: subject,
+                body: [
+                  { component: 'Heading', context: { copy: subject } },
+                  { component: 'Copy', context: { copy: intro } },
+                ],
+              },
+              attachments: [
+                {
+                  filename: 'Afrit_af_umsokn.pdf',
+                  content: attachment,
+                  encoding: 'binary',
+                },
+              ],
+            }
+          },
+          application,
+          fileContent,
+          member.email ?? '',
+          currentUserLocale,
+        ),
+      ),
+    )
+
+    const failed = results.filter((r) => r.status === 'rejected').length
+    if (failed > 0) {
+      this.logger.error(
+        `[estate]: Failed to email application copy to ${failed}/${recipients.length} parties`,
       )
     }
 
-    set(application.answers, 'estate.estateMembers', updatedMembers)
-
-    return { success: true }
+    // Persist sent:true on partial success so re-entry does not re-send to
+    // parties that already received the copy. Only mark sent:false when every
+    // send failed, leaving the door open to retry.
+    return {
+      sent: failed < recipients.length,
+      recipients: recipients.length - failed,
+    }
   }
 
   async estateProvider({
@@ -343,6 +424,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
+    if (
+      answers.selectedEstate === EstateTypes.officialDivision ||
+      answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ) {
+      this.logger.info(
+        '[estate]: Skipping getSignatories API for estate type without signatories',
+        { selectedEstate: answers.selectedEstate },
+      )
+      return {
+        success: true,
+        signatories: [],
+      }
+    }
 
     const syslumennData = application.externalData?.syslumennOnEntry?.data as
       | { estates: Array<EstateInfo> }
@@ -391,8 +485,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const estateTypeMap: Record<string, SignatoryEstateTypes> = {
       [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
       [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
-      [EstateTypes.officialDivision]: SignatoryEstateTypes.OpinberSkipti,
-      [EstateTypes.estateWithoutAssets]: SignatoryEstateTypes.Eignaleysi,
     }
 
     const estateType = estateTypeMap[selectedEstate]

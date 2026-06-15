@@ -3,7 +3,10 @@ import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
   lowercase,
@@ -477,10 +480,12 @@ const CourtRecord: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
+            handleNavigationTo(
+              DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+            )
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={hasMissingInfoInRulingStep}

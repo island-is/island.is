@@ -10,7 +10,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -19,7 +18,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -31,7 +30,7 @@ interface Then {
 type GivenWhenThen = (
   defenderNationalId?: string,
   appealRulingDecision?: AppealCaseRulingDecision,
-  notifications?: { type: AppealCaseNotificationType }[],
+  appealRulingModifiedHistory?: string,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -43,6 +42,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const courtId = uuid()
@@ -69,13 +69,21 @@ describe('InternalNotificationController - Send appeal completed notifications',
     givenWhenThen = async (
       defenderNationalId?: string,
       appealRulingDecision?: AppealCaseRulingDecision,
-      notifications?: { type: AppealCaseNotificationType }[],
+      appealRulingModifiedHistory?: string,
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision:
+          appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.CUSTODY,
@@ -93,16 +101,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderEmail: defender.email,
             courtCaseNumber,
             courtId: courtId,
-            notifications,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision:
-                appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_COMPLETED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -192,9 +196,11 @@ describe('InternalNotificationController - Send appeal completed notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(uuid(), AppealCaseRulingDecision.CHANGED, [
-        { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-      ])
+      then = await givenWhenThen(
+        uuid(),
+        AppealCaseRulingDecision.CHANGED,
+        'Leiðrétting á úrskurði',
+      )
     })
 
     it('should send resent email but not sms to prosecutor', () => {

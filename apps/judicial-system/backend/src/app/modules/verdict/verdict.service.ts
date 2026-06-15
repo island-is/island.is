@@ -11,7 +11,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -47,11 +46,11 @@ type UpdateVerdict = {
   serviceDate?: Date | null
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
+  serviceRequirement?: ServiceRequirement | null
 } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
   | 'serviceStatus'
-  | 'serviceRequirement'
   | 'servedBy'
   | 'deliveredToDefenderNationalId'
   | 'appealDecision'
@@ -288,7 +287,7 @@ export class VerdictService {
     return updatedVerdict
   }
 
-  async resetPublicProsecutorData(
+  async resetVerdictDataForReopen(
     verdict: Verdict,
     transaction: Transaction,
   ): Promise<Verdict> {
@@ -297,6 +296,7 @@ export class VerdictService {
       {
         isAcquittedByPublicProsecutionOffice: null,
         defendantHasRequestedAppeal: null,
+        serviceRequirement: null,
       },
       transaction,
     )
@@ -320,9 +320,7 @@ export class VerdictService {
     defendant: Defendant,
     verdict: Verdict,
   ): { code: string; value: string }[] {
-    const receiverSsn =
-      defendant.nationalId &&
-      normalizeAndFormatNationalId(defendant.nationalId)[0]
+    const receiverSsn = defendant.nationalId ?? ''
     const policeNumbers = theCase.policeCaseNumbers?.filter(Boolean) ?? []
     const ruling =
       theCase.courtSessions?.find(
