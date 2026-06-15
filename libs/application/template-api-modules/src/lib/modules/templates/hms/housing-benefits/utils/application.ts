@@ -276,7 +276,8 @@ export const mapApplicationToHousingBenefitsModel = (
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
     postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
     islandIsDateRegistered: new Date(),
-    phoneNumber: getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+    phoneNumber:
+      getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
     email: getValueViaPath<string>(answers, 'applicant.email') ?? '',
     bank: bankAccount?.bankNumber ?? '',
     ledger: bankAccount?.ledger ?? '',

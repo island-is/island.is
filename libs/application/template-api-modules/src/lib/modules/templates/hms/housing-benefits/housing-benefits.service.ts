@@ -678,10 +678,10 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         } catch {
           body = 'Could not read response body'
         }
-        this.logger.error(
-          'Failed to submit housing benefits application',
-          { status, body },
-        )
+        this.logger.error('Failed to submit housing benefits application', {
+          status,
+          body,
+        })
         throw new TemplateApiError(
           {
             title: 'Failed to submit housing benefits application',

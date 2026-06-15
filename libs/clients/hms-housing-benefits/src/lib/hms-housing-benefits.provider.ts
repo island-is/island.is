@@ -44,9 +44,7 @@ export const HmsHousingBenefitsApiProvider: Provider<PaymentApi> = {
     config: ConfigType<typeof HousingBenefitsConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
-    new PaymentApi(
-      createConfiguration(xroadConfig, config, idsClientConfig),
-    ),
+    new PaymentApi(createConfiguration(xroadConfig, config, idsClientConfig)),
   inject: [XRoadConfig.KEY, HousingBenefitsConfig.KEY, IdsClientConfig.KEY],
 }
 

@@ -8,9 +8,7 @@
   "paths": {
     "/api/v{version}/Application/createHousingBenefitsApplication": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "Creates a new housing benefits application.",
         "parameters": [
           {
@@ -101,9 +99,7 @@
     },
     "/api/v{version}/Payment/paymenthistory": {
       "post": {
-        "tags": [
-          "Payment"
-        ],
+        "tags": ["Payment"],
         "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system with pagination.",
         "parameters": [
           {
@@ -297,17 +293,7 @@
         "additionalProperties": false
       },
       "ApplicationFileType": {
-        "enum": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
+        "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9],
         "type": "integer",
         "format": "int32"
       },
@@ -323,14 +309,7 @@
         "additionalProperties": false
       },
       "ExemptionType": {
-        "enum": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
+        "enum": [1, 2, 3, 4, 5, 6],
         "type": "integer",
         "format": "int32"
       },
@@ -559,12 +538,7 @@
         "additionalProperties": false
       },
       "ModelValidationState": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
