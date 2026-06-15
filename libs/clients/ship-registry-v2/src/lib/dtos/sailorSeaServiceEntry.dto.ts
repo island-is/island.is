@@ -41,8 +41,7 @@ export const mapSeaServiceFilter = (
 ): FishermanShipCrewRegistrationRequestDto => ({
   date_from: filters?.dateFrom,
   date_to: filters?.dateTo,
-  rank_id:
-    filters?.rankId !== undefined ? BigInt(filters.rankId) : undefined,
+  rank_id: filters?.rankId !== undefined ? BigInt(filters.rankId) : undefined,
   from_or_eq_length: filters?.fromOrEqLength,
   from_or_eq_main_engine_power: filters?.fromOrEqMainEnginePower,
   from_or_eq_brutto_weight: filters?.fromOrEqBruttoWeight,
