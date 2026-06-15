@@ -30,10 +30,10 @@ The worker **skips** a flow (and requires manual intervention) when that flow ha
 
 ### Worker configuration
 
-| Env var | Default | Description |
-|--------|---------|-------------|
-| `PAYMENTS_WORKER_MAX_FAILURE_EVENTS_PER_FLOW` | 5 | Stop retrying a flow after this many failure events (FJS error responses) for that flow+task. |
-| `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE` | 5 | Only consider paid flows whose fulfillment is at least this many minutes old (avoids races with payment confirmation). |
+| Env var                                                      | Default | Description                                                                                                            |
+| ------------------------------------------------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `PAYMENTS_WORKER_MAX_FAILURE_EVENTS_PER_FLOW`                | 5       | Stop retrying a flow after this many failure events (FJS error responses) for that flow+task.                          |
+| `PAYMENTS_WORKER_MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE` | 5       | Only consider paid flows whose fulfillment is at least this many minutes old (avoids races with payment confirmation). |
 
 ### Manual intervention
 
