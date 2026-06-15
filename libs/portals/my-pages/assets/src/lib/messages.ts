@@ -1755,6 +1755,11 @@ export const shipsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
   },
+  shipDetailIntroWarning: {
+    id: 'sp.ships:ship-detail-intro-warning',
+    defaultMessage:
+      'Ef endurskoðun er skráð á skipið vegna athugasemda sem settar voru á skipið þá fellur haffærisskírteini úr gildi þegar frestur til endurskoðunar er liðinn hafi ekki verið bætt úr þessum atriðum og endurskoðun framkvæmd.',
+  },
   registrationNumber: {
     id: 'sp.ships:registration-number',
     defaultMessage: 'Skráningarnúmer',
