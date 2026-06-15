@@ -18,7 +18,7 @@ export const noRentalAgreementMessages = defineMessages({
     description: 'No rental agreement screen description',
   },
   descriptionMarkdown: {
-    id: 'hb.application:noRentalAgreement.description#markdown',
+    id: 'hb.application:noRentalAgreement.descriptionMarkdown#markdown',
     defaultMessage:
       'Til að sækja um húsnæðisbætur þarf að: \n\n \n\n * Hafa gildan leigusamning til staðar.\n\n * Þú þarft að vera skráð/ur sem leigjandi á leigusamningnum.\n\n * Hafa leigusamning sem er ótímabundinn eða samning sem gildir að minnsta kosti 3 mánuði fram í tímann.',
     description: 'No rental agreement screen description markdown',

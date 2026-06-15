@@ -120,13 +120,13 @@ export const prereqMessages = defineMessages({
     description: 'Tax subtitle',
   },
   checkboxLabel: {
-    id: 'fca.application:prereq.checkboxLabel',
+    id: 'hb.application:prereq.checkboxLabel',
     defaultMessage:
       'Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu tilkynningarinnar',
     description: 'External information retrieval checkbox label',
   },
   subTitle: {
-    id: 'fca.application:prereq.subTitle',
+    id: 'hb.application:prereq.subTitle',
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
   },
@@ -136,7 +136,7 @@ export const prereqMessages = defineMessages({
     description: 'Prerequisites external data section title',
   },
   externalDataTitle: {
-    id: 'fca.application:prereq.externalDataTitle',
+    id: 'hb.application:prereq.externalDataTitle',
     defaultMessage: 'Gagnaöflun fyrir umsókn um húsnæðisbætur',
     description: 'External data title',
   },
