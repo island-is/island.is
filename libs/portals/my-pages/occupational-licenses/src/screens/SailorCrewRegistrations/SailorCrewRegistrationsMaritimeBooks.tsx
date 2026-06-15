@@ -31,16 +31,13 @@ export const SailorCrewRegistrationsMaritimeBooks = ({
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const filtered = useMemo(
-    () => {
-      const books = data?.shipRegistrySailor?.certificates?.maritimeBooks ?? []
-      return books.filter(
-        (b) =>
-          !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
-      )
-    },
-    [data, search],
-  )
+  const filtered = useMemo(() => {
+    const books = data?.shipRegistrySailor?.certificates?.maritimeBooks ?? []
+    return books.filter(
+      (b) =>
+        !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
+    )
+  }, [data, search])
 
   const columns = useMemo(
     () => [

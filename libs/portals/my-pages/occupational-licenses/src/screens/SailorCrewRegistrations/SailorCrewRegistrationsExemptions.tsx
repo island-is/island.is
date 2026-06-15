@@ -34,19 +34,16 @@ export const SailorCrewRegistrationsExemptions = ({
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const filtered = useMemo(
-    () => {
-      const exemptions =
-        data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
-      return exemptions.filter(
-        (e) =>
-          !search ||
-          (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
-          (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
-      )
-    },
-    [data, search],
-  )
+  const filtered = useMemo(() => {
+    const exemptions =
+      data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
+    return exemptions.filter(
+      (e) =>
+        !search ||
+        (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
+        (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
+    )
+  }, [data, search])
 
   const columns = useMemo(
     () => [
