@@ -129,7 +129,9 @@ export const EstateFiles = () => {
                   {doc.requestAction?.url && (
                     <LinkButton
                       to={doc.requestAction.url}
-                      text={doc.requestAction.label ?? formatMessage(em.viewFile)}
+                      text={
+                        doc.requestAction.label ?? formatMessage(em.viewFile)
+                      }
                       variant="text"
                       icon="open"
                     />

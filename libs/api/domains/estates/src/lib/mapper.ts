@@ -1,4 +1,9 @@
-import type { Estate, EstateCase, LocalizedText, EstateAction } from '@island.is/clients/estates'
+import type {
+  Estate,
+  EstateCase,
+  LocalizedText,
+  EstateAction,
+} from '@island.is/clients/estates'
 import { isDefined } from '@island.is/shared/utils'
 import { LocaleEnum } from '@island.is/nest/graphql'
 import { Estate as EstateModel } from './models/estate.model'
