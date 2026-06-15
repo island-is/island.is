@@ -16,7 +16,7 @@ import {
   useMotionValue,
 } from 'motion/react'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, FileUploadStatus, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 
 import { TUploadFile } from '../../utils/hooks'
@@ -137,7 +137,9 @@ const DraggableFileRow: FC<DraggableFileRowProps> = (props) => {
             file.name?.replace(/\.pdf$/i, '') ??
             file.name,
           canEdit: ['fileName'],
-          canOpen: file.isKeyAccessible ?? false,
+          canOpen:
+            file.status === FileUploadStatus.done &&
+            file.isKeyAccessible !== false,
         }}
         enableDrag
         onOpen={(id) => onOpen(id)}
