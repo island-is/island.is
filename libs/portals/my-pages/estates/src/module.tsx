@@ -10,7 +10,7 @@ const EstateDetail = lazy(() => import('./screens/Detail/EstateDetail'))
 const EstateFiles = lazy(() => import('./screens/Files/EstateFiles'))
 
 export const estatesModule: PortalModule = {
-  name: m.myEstates,
+  name: m.estates,
   featureFlag: Features.isServicePortalEstatesEnabled,
   routes: ({ userInfo }) => [
     {
@@ -24,12 +24,14 @@ export const estatesModule: PortalModule = {
       path: EstatesPaths.EstatesDetail,
       enabled: userInfo.scopes.includes(ApiScope.estates),
       element: <EstateDetail />,
-    },
-    {
-      name: m.estatesDetail,
-      path: EstatesPaths.EstatesFiles,
-      enabled: userInfo.scopes.includes(ApiScope.estates),
-      element: <EstateFiles />,
+      children: [
+        {
+          name: m.myEstates,
+          path: EstatesPaths.EstatesFiles,
+          enabled: userInfo.scopes.includes(ApiScope.estates),
+          element: <EstateFiles />,
+        },
+      ],
     },
   ],
 }

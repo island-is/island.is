@@ -3,7 +3,7 @@ import { m } from '@island.is/portals/my-pages/core'
 import { EstatesPaths } from './paths'
 
 export const estatesNavigation: PortalNavigationItem = {
-  name: m.myEstates,
+  name: m.estates,
   description: m.myEstatesIntro,
   path: EstatesPaths.EstatesRoot,
   icon: {
@@ -14,16 +14,18 @@ export const estatesNavigation: PortalNavigationItem = {
       name: m.myEstates,
       description: m.myEstatesIntro,
       path: EstatesPaths.EstatesRoot,
-    },
-    {
-      name: m.estatesDetail,
-      navHide: true,
-      path: EstatesPaths.EstatesDetail,
       children: [
         {
-          name: 'skjol',
+          name: m.estatesDetail,
           navHide: true,
-          path: EstatesPaths.EstatesFiles,
+          path: EstatesPaths.EstatesDetail,
+          children: [
+            {
+              name: 'skjol',
+              navHide: true,
+              path: EstatesPaths.EstatesFiles,
+            },
+          ],
         },
       ],
     },

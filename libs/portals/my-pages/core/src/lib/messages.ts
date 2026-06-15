@@ -1776,6 +1776,10 @@ export const m = defineMessages({
     defaultMessage:
       'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
   },
+  estates: {
+    id: 'service.portal:estates',
+    defaultMessage: 'Dánarbú',
+  },
   myEstates: {
     id: 'service.portal:my-estates',
     defaultMessage: 'Mín dánarbú',
