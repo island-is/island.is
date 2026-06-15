@@ -1,4 +1,3 @@
-// trigger deploy
 import { processJob } from '@island.is/infra-nest-server'
 
 const job = processJob()
