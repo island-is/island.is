@@ -589,7 +589,7 @@ describe('CaseController - Transition', () => {
           policeCaseNumbers: [policeCaseNumber],
           state: CaseState.DRAFT,
           defendants: [],
-        } as Case
+        } as unknown as Case
 
         const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
           transition: CaseTransition.ASK_FOR_CONFIRMATION,

@@ -86,6 +86,12 @@ export const Overview = () => {
       verdictTimelineCards: JSX.Element[]
     }>(
       (acc, defendant) => {
+        // Defendants whose indictment was cancelled or dismissed (completed for
+        // some) do not get a verdict, so we show nothing for them here.
+        if (defendant.indictmentCancelledOrDismissedState) {
+          return acc
+        }
+
         const { verdict } = defendant
 
         const isServiceRequired =
@@ -112,11 +118,15 @@ export const Overview = () => {
         }
 
         acc.verdictTimelineCards.push(
-          <VerdictTimelineCard
+          <Box
             key={`${defendant.id}_verdict_timeline_card`}
-            defendant={defendant}
-            canDefendantAppealVerdict={canDefendantAppealVerdict}
-          />,
+            dataTestId="verdictTimelineCard"
+          >
+            <VerdictTimelineCard
+              defendant={defendant}
+              canDefendantAppealVerdict={canDefendantAppealVerdict}
+            />
+          </Box>,
         )
 
         return acc
