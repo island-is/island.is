@@ -180,12 +180,14 @@ export const BankAccountsRepeater: FC<
               )}
               {!field.initial && (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveBankAccount.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               )}
             </Box>
             <GridRow>

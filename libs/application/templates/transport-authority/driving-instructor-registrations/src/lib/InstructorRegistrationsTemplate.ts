@@ -8,7 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   HasTeachingRightsApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   GetTeacherRightsApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -81,16 +81,16 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
               ],
               api: [
                 HasTeachingRightsApi,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 GetTeacherRightsApi,
               ],
               delete: true,
               write: {
                 answers: ['approveExternalData'],
                 externalData: [
-                  HasTeachingRightsApi.externalDataId as string,
-                  NationalRegistryUserApi.externalDataId as string,
-                  GetTeacherRightsApi.externalDataId as string,
+                  HasTeachingRightsApi.externalDataId,
+                  NationalRegistryV3UserApi.externalDataId,
+                  GetTeacherRightsApi.externalDataId,
                 ],
               },
             },

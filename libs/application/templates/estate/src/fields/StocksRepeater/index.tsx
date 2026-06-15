@@ -162,12 +162,14 @@ export const StocksRepeater: FC<
               )}
               {!field.initial && (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveStock.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               )}
             </Box>
             <GridRow>

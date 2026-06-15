@@ -137,7 +137,7 @@ export interface ApplicationStateMeta<
     /**
      * Configures which messages should be displayed to the user when presenting the
      * application's history.
-     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * Each `HistoryEventMessage` object maps a state's `exitEvent` to its corresponding user-friendly log message.
      * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
      * or a single `HistoryEventMessage` object.
      */

@@ -38,6 +38,8 @@ export const FieldsRepeaterFormField = ({
   field: data,
   showFieldName,
   error,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: Props) => {
   const {
     id,
@@ -156,6 +158,8 @@ export const FieldsRepeaterFormField = ({
           dataId={resolvedId}
           index={index}
           values={values}
+          setFieldLoadingState={setFieldLoadingState}
+          setSubmitButtonDisabled={setSubmitButtonDisabled}
         />
       ))}
     </GridRow>

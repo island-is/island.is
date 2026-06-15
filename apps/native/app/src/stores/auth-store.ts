@@ -52,7 +52,14 @@ interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
+  lockScreenComponentId: string | undefined
+  // Synchronously set when a push is dispatched, cleared when the lock route
+  // mounts (or times out). Prevents two pushers from racing before componentId
+  // can dedupe them.
+  lockScreenPushPending: boolean
   lockScreenSuppressedUntil: number | undefined
+  // Auto-prompt biometrics at most once per lock session (loop guard).
+  biometricAutoPromptedForCurrentLock: boolean
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -141,7 +148,10 @@ export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
+  lockScreenComponentId: undefined,
+  lockScreenPushPending: false,
   lockScreenSuppressedUntil: undefined,
+  biometricAutoPromptedForCurrentLock: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -330,6 +340,11 @@ export function isLockScreenSuppressed() {
 
 export function clearLockScreenSuppression() {
   authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
+
+// True if the lock screen is in an auth-required state (not just a mask).
+export function isLockScreenActive() {
+  return authStore.getState().lockScreenActivatedAt !== undefined
 }
 
 export async function readAuthorizeResult(): Promise<void> {

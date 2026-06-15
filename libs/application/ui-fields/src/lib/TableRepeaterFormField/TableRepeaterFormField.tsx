@@ -54,6 +54,8 @@ type TableRepeaterForm = Record<string, TableRepeaterRow[]>
 export const TableRepeaterFormField: FC<Props> = ({
   application,
   setBeforeSubmitCallback,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
   field: data,
   showFieldName,
   error,
@@ -443,6 +445,8 @@ export const TableRepeaterFormField: FC<Props> = ({
                     dataId={resolvedId}
                     activeIndex={activeIndex}
                     values={values}
+                    setFieldLoadingState={setFieldLoadingState}
+                    setSubmitButtonDisabled={setSubmitButtonDisabled}
                   />
                 ))}
               </GridRow>

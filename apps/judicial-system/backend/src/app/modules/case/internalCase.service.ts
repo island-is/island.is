@@ -44,7 +44,6 @@ import {
   isRestrictionCase,
   restrictionCases,
   ServiceRequirement,
-  TrackedNotificationType,
   type User as TUser,
   UserRole,
   VERDICT_APPEAL_WINDOW_DAYS,
@@ -1264,7 +1263,8 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const policeCaseId = await this.findOriginalAncestorId(theCase)
+    const policeCaseId =
+      await this.caseRepositoryService.findOriginalAncestorId(theCase)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1514,11 +1514,16 @@ export class InternalCaseService {
 
   async deliverAppealToPolice(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     const delivered = await Promise.all(
       theCase.caseFiles
-        ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
+        ?.filter(
+          (file) =>
+            file.rulingFileId === appealCase.rulingFileId &&
+            file.category === CaseFileCategory.APPEAL_RULING,
+        )
         .map(async (caseFile) => {
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
@@ -1537,7 +1542,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver appeal for case ${theCase.id} to police`,
+          `Failed to deliver appeal ruling for appeal case ${appealCase.id} of case ${theCase.id} to police`,
           { reason },
         )
 
@@ -1565,18 +1570,6 @@ export class InternalCaseService {
     }
 
     return originalAncestor
-  }
-
-  private async findOriginalAncestorId(theCase: Case): Promise<string> {
-    if (isIndictmentCase(theCase.type)) {
-      // indictment cases can be split
-      return theCase.splitCaseId ?? theCase.id
-    }
-
-    // request cases can be extended
-    const originalAncestor = await this.findOriginalAncestor(theCase)
-
-    return originalAncestor.id
   }
 
   // As this is only currently used by the digital mailbox API
