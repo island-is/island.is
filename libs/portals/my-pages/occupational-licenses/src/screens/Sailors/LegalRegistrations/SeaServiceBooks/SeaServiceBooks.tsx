@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
@@ -11,42 +10,31 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { olMessage as om } from '../../lib/messages'
+import { olMessage as om } from '../../../../lib/messages'
 import { ShipRegistrySailorMaritimeBook } from '@island.is/api/schema'
-import { ShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
+import { useShipRegistrySailorSeaServiceBooksQuery } from './SeaServiceBooks.generated'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorMaritimeBook>()
 
-interface Props {
-  data: ShipRegistrySailorCrewRegistrationsQuery | undefined
-  loading: boolean
-  error: ApolloError | undefined
-}
-
-export const SailorCrewRegistrationsMaritimeBooks = ({
-  data,
-  loading,
-  error,
-}: Props) => {
+export const SeaServiceBooks = () => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const filtered = useMemo(() => {
-    const books = data?.shipRegistrySailor?.certificates?.maritimeBooks ?? []
-    return books.filter(
-      (b) =>
-        !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
-    )
-  }, [data, search])
+  const { data, loading, error } = useShipRegistrySailorSeaServiceBooksQuery()
+
+  const filtered = useMemo(
+    () =>
+      (data?.shipRegistrySailor?.certificates?.seaServiceBooks ?? []).filter(
+        (b) =>
+          !search || (b.id ?? '').toLowerCase().includes(search.toLowerCase()),
+      ),
+    [data, search],
+  )
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
         header: formatMessage(m.number),
-        cell: ({ getValue }) => getValue() ?? '-',
-      }),
-      columnHelper.accessor('type', {
-        header: formatMessage(om.sailorMaritimeBooksType),
         cell: ({ getValue }) => getValue() ?? '-',
       }),
       columnHelper.accessor('dateFrom', {

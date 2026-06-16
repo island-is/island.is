@@ -14,7 +14,7 @@ export class ShipRegistrySailorCertificates {
   rightCertificates?: ShipRegistrySailorRightCertificate[]
 
   @Field(() => [ShipRegistrySailorMaritimeBook], { nullable: true })
-  maritimeBooks?: ShipRegistrySailorMaritimeBook[]
+  seaServiceBooks?: ShipRegistrySailorMaritimeBook[]
 
   @Field(() => [ShipRegistrySailorRegistrationExemption], { nullable: true })
   registrationExemptions?: ShipRegistrySailorRegistrationExemption[]

@@ -21,3 +21,19 @@ export enum ShipRegistrySailorCertificateStatus {
 registerEnumType(ShipRegistrySailorCertificateStatus, {
   name: 'ShipRegistrySailorCertificateStatus',
 })
+
+export enum ShipRegistrySailorCrewRegistrationField {
+  SHIP_NAME = 'SHIP_NAME',
+  LENGTH = 'LENGTH',
+  GROSS_TONNAGE = 'GROSS_TONNAGE',
+  MAIN_ENGINE = 'MAIN_ENGINE',
+  SHIP_REGISTRATION_NUMBER = 'SHIP_REGISTRATION_NUMBER',
+  RANK = 'RANK',
+  START_DATE = 'START_DATE',
+  END_DATE = 'END_DATE',
+  NUMBER_OF_DAYS = 'NUMBER_OF_DAYS',
+}
+
+registerEnumType(ShipRegistrySailorCrewRegistrationField, {
+  name: 'ShipRegistrySailorCrewRegistrationField',
+})

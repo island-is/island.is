@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { Box, FilterInput, Text } from '@island.is/island-ui/core'
 import {
@@ -13,37 +12,32 @@ import {
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { olMessage as om } from '../../lib/messages'
+import { olMessage as om } from '../../../../lib/messages'
 import { ShipRegistrySailorRegistrationExemption } from '@island.is/api/schema'
-import { ShipRegistrySailorCrewRegistrationsQuery } from './SailorCrewRegistrations.generated'
+import { useShipRegistrySailorRegistrationExemptionsQuery } from './Exemptions.generated'
 
 const columnHelper =
   createColumnHelper<ShipRegistrySailorRegistrationExemption>()
 
-interface Props {
-  data: ShipRegistrySailorCrewRegistrationsQuery | undefined
-  loading: boolean
-  error: ApolloError | undefined
-}
-
-export const SailorCrewRegistrationsExemptions = ({
-  data,
-  loading,
-  error,
-}: Props) => {
+export const Exemptions = () => {
   const { formatMessage, locale } = useLocale()
   const [search, setSearch] = useState('')
 
-  const filtered = useMemo(() => {
-    const exemptions =
-      data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
-    return exemptions.filter(
-      (e) =>
-        !search ||
-        (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
-        (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
-    )
-  }, [data, search])
+  const { data, loading, error } =
+    useShipRegistrySailorRegistrationExemptionsQuery()
+
+  const filtered = useMemo(
+    () =>
+      (
+        data?.shipRegistrySailor?.certificates?.registrationExemptions ?? []
+      ).filter(
+        (e) =>
+          !search ||
+          (e.shipName ?? '').toLowerCase().includes(search.toLowerCase()) ||
+          (e.rank ?? '').toLowerCase().includes(search.toLowerCase()),
+      ),
+    [data, search],
+  )
 
   const columns = useMemo(
     () => [

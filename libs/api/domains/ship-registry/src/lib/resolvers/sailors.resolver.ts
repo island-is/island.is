@@ -32,8 +32,8 @@ import {
   ShipRegistrySailorCertificates,
   type ShipRegistrySailorCertificatesBase,
 } from '../models/sailorCertificates.model'
-import { ShipRegistrySailorSeaServiceBookCollection } from '../models/sailorSeaServiceBookCollection.model'
-import { SeaServiceBookInput } from '../dto/seaServiceBook.input'
+import { ShipRegistrySailorSeagoingTimeCollection } from '../models/sailorSeagoingTime.model'
+import { SeagoingTimeInput } from '../dto/seagoingTime.input'
 import { SailorsService } from '../services/sailors.service'
 
 const namespace = '@island.is/api/ship-registry'
@@ -84,22 +84,22 @@ export class SailorsResolver {
   }
 
   @ResolveField(
-    'seaServiceBook',
-    () => ShipRegistrySailorSeaServiceBookCollection,
+    'seagoingTime',
+    () => ShipRegistrySailorSeagoingTimeCollection,
     {
       nullable: true,
     },
   )
-  async resolveSeaServiceBook(
+  async resolveSeagoingTime(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorBase,
-    @Args('input', { type: () => SeaServiceBookInput })
-    input: SeaServiceBookInput,
-  ): Promise<ShipRegistrySailorSeaServiceBookCollection | null> {
+    @Args('input', { type: () => SeagoingTimeInput })
+    input: SeagoingTimeInput,
+  ): Promise<ShipRegistrySailorSeagoingTimeCollection | null> {
     this.auditService.audit({
       auth: user,
       namespace,
-      action: 'resolveSeaServiceBook',
+      action: 'resolveSeagoingTime',
       resources: user.nationalId,
     })
     return this.sailorsService.getSailorSeaServiceBook(user, locale, input)

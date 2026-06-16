@@ -5,7 +5,7 @@ import type {
 } from '../../../gen/fetch'
 import { parseDate } from '../utils'
 
-export interface SailorSeaServiceFilterDto {
+export interface SeagoingTimeFilterDto {
   dateFrom?: string
   dateTo?: string
   rankId?: number
@@ -16,7 +16,12 @@ export interface SailorSeaServiceFilterDto {
   pageSize?: number
 }
 
-export interface SailorSeaServiceEntryDto {
+export interface CrewRegistrationValueUnitDto {
+  value: string
+  unit?: string
+}
+
+export interface CrewRegistrationDto {
   shipName?: string
   shipRegistrationNumber?: string
   rank?: string
@@ -24,20 +29,41 @@ export interface SailorSeaServiceEntryDto {
   startDate?: Date
   endDate?: Date
   numberOfDays?: number
+  length?: CrewRegistrationValueUnitDto
+  grossTonnage?: CrewRegistrationValueUnitDto
+  mainEngine?: CrewRegistrationValueUnitDto
 }
 
-export interface SailorSeaServiceResponseDto {
-  entries: SailorSeaServiceEntryDto[]
+export interface CrewRegistrationLabelTranslationDto {
+  is: string
+  en: string
+}
+
+export interface CrewRegistrationLabelsDto {
+  shipName?: CrewRegistrationLabelTranslationDto
+  length?: CrewRegistrationLabelTranslationDto
+  grossTonnage?: CrewRegistrationLabelTranslationDto
+  mainEngine?: CrewRegistrationLabelTranslationDto
+  shipRegistrationNo?: CrewRegistrationLabelTranslationDto
+  rankNameAndCode?: CrewRegistrationLabelTranslationDto
+  startDate?: CrewRegistrationLabelTranslationDto
+  endDate?: CrewRegistrationLabelTranslationDto
+  numberOfDays?: CrewRegistrationLabelTranslationDto
+}
+
+export interface SeagoingTimeResponseDto {
+  entries: CrewRegistrationDto[]
   totalCount: number
   hasNextPage: boolean
   totalCrewRegistrationDayCount: number
   seaServiceDayCount: number
   workAshoreDayCount: number
   totalWorkDays: number
+  header?: CrewRegistrationLabelsDto
 }
 
-export const mapSeaServiceFilter = (
-  filters?: SailorSeaServiceFilterDto,
+export const mapSeagoingTimeFilter = (
+  filters?: SeagoingTimeFilterDto,
 ): FishermanShipCrewRegistrationRequestDto => ({
   date_from: filters?.dateFrom,
   date_to: filters?.dateTo,
@@ -49,9 +75,9 @@ export const mapSeaServiceFilter = (
   page_size: filters?.pageSize,
 })
 
-export const mapSeaServiceEntry = (
+export const mapCrewRegistration = (
   entry: CrewRegistrationsByShipDto,
-): SailorSeaServiceEntryDto => ({
+): CrewRegistrationDto => ({
   shipName: entry.shipName,
   shipRegistrationNumber: entry.shipRegistrationNo,
   rank: entry.rankNameAndCode.is,
@@ -61,12 +87,21 @@ export const mapSeaServiceEntry = (
     : undefined,
   endDate: entry.endDate ? parseDate(entry.endDate) ?? undefined : undefined,
   numberOfDays: Number(entry.numberOfDays),
+  length: entry.length
+    ? { value: entry.length.value, unit: entry.length.unit ?? undefined }
+    : undefined,
+  grossTonnage: entry.bruttoGrossTonnage
+    ? { value: entry.bruttoGrossTonnage.value, unit: entry.bruttoGrossTonnage.unit ?? undefined }
+    : undefined,
+  mainEngine: entry.mainEngineKw
+    ? { value: entry.mainEngineKw.value, unit: entry.mainEngineKw.unit ?? undefined }
+    : undefined,
 })
 
-export const mapSeaServiceResponse = (
+export const mapSeagoingTimeResponse = (
   response: CrewRegistrationsByShipResponseDto,
-): SailorSeaServiceResponseDto => ({
-  entries: response.crewRegistrations.map(mapSeaServiceEntry),
+): SeagoingTimeResponseDto => ({
+  entries: response.crewRegistrations.map(mapCrewRegistration),
   totalCount: response.pagination.totalRecordCount,
   hasNextPage:
     response.pagination.pageNumber < response.pagination.numberOfPages,
@@ -74,4 +109,11 @@ export const mapSeaServiceResponse = (
   seaServiceDayCount: response.seaServiceDayCount,
   workAshoreDayCount: response.workAshoreDayCount,
   totalWorkDays: response.totalWorkDays,
+  header: response.header
+    ? {
+        ...response.header,
+        grossTonnage: response.header.bruttoGrossTonnage,
+        mainEngine: response.header.mainEngineKw,
+      }
+    : undefined,
 })

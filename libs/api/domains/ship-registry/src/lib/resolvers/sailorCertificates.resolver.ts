@@ -79,17 +79,17 @@ export class SailorCertificatesResolver {
     return this.sailorsService.getSailorRightCertificates(user, locale)
   }
 
-  @ResolveField('maritimeBooks', () => [ShipRegistrySailorMaritimeBook], {
+  @ResolveField('seaServiceBooks', () => [ShipRegistrySailorMaritimeBook], {
     nullable: true,
   })
-  async resolveMaritimeBooks(
+  async resolveSeaServiceBooks(
     @Context('req') { user }: { user: User },
     @Parent() { locale }: ShipRegistrySailorCertificatesBase,
   ): Promise<ShipRegistrySailorMaritimeBook[]> {
     this.auditService.audit({
       auth: user,
       namespace,
-      action: 'resolveMaritimeBooks',
+      action: 'resolveSeaServiceBooks',
       resources: user.nationalId,
     })
     return this.sailorsService.getSailorMaritimeBooks(user, locale)

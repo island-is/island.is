@@ -11,10 +11,12 @@ export type { SailorRightCertificateDto } from './lib/dtos/sailorRightCertificat
 export type { SailorMaritimeBookDto } from './lib/dtos/sailorMaritimeBook.dto'
 export type { SailorRegistrationExemptionDto } from './lib/dtos/sailorRegistrationExemption.dto'
 export type {
-  SailorSeaServiceEntryDto,
-  SailorSeaServiceFilterDto,
-  SailorSeaServiceResponseDto,
-} from './lib/dtos/sailorSeaServiceEntry.dto'
+  CrewRegistrationDto,
+  SeagoingTimeFilterDto,
+  CrewRegistrationLabelsDto,
+  CrewRegistrationLabelTranslationDto,
+  SeagoingTimeResponseDto,
+} from './lib/dtos/seagoingTime.dto'
 export type { ShipCertificateDto } from './lib/dtos/shipCertificate.dto'
 export type {
   ShipDetailDto,

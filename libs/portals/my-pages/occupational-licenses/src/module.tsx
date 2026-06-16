@@ -15,16 +15,16 @@ const OccupationalLicensesOverviewScreen = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
 )
 
-const SailorSchoolCertificatesScreen = lazy(() =>
-  import('./screens/SailorSchoolCertificates/SailorSchoolCertificates'),
+const CompetencyCertificatesScreen = lazy(() =>
+  import('./screens/Sailors/CompetencyCertificates/CompetencyCertificates'),
 )
 
-const SailorRightCertificatesScreen = lazy(() =>
-  import('./screens/SailorRightCertificates/SailorRightCertificates'),
+const RightCertificatesScreen = lazy(() =>
+  import('./screens/Sailors/RightCertificates/RightCertificates'),
 )
 
-const SailorCrewRegistrationsScreen = lazy(() =>
-  import('./screens/SailorCrewRegistrations/SailorCrewRegistrations'),
+const LegalRegistrationsScreen = lazy(() =>
+  import('./screens/Sailors/LegalRegistrations/LegalRegistrations'),
 )
 
 export const occupationalLicensesModule: PortalModule = {
@@ -62,21 +62,21 @@ export const occupationalLicensesModule: PortalModule = {
       path: OccupationalLicensesPaths.SailorsSchoolCertificates,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
-      element: <SailorSchoolCertificatesScreen />,
+      element: <CompetencyCertificatesScreen />,
     },
     {
       name: m.sailorsRightCertificatesTitle,
       path: OccupationalLicensesPaths.SailorsRightCertificates,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
-      element: <SailorRightCertificatesScreen />,
+      element: <RightCertificatesScreen />,
     },
     {
       name: m.sailorsCrewRegistrationsTitle,
       path: OccupationalLicensesPaths.SailorsCrewRegistrations,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
-      element: <SailorCrewRegistrationsScreen />,
+      element: <LegalRegistrationsScreen />,
     },
   ],
 }

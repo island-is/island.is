@@ -13,49 +13,39 @@ import {
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { olMessage as om } from '../../lib/messages'
-import { useShipRegistrySailorRightCertificatesQuery } from './SailorRightCertificates.generated'
-import { ShipRegistrySailorRightCertificate } from '@island.is/api/schema'
-
-const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
+import { olMessage as om } from '../../../lib/messages'
+import { useShipRegistrySailorSchoolCertificatesQuery } from './CompetencyCertificates.generated'
+import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
 
 //TODO: add file export
+const columnHelper = createColumnHelper<ShipRegistrySailorSchoolCertificate>()
 
-const SailorRightCertificates = () => {
+const CompetencyCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage, locale } = useLocale()
 
-  const { data, loading, error } = useShipRegistrySailorRightCertificatesQuery()
-  const rightCertificates =
-    data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
+  const { data, loading, error } =
+    useShipRegistrySailorSchoolCertificatesQuery()
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(
     () =>
-      rightCertificates.filter(
+      (data?.shipRegistrySailor?.certificates?.schoolCertificates ?? []).filter(
         (c) =>
           !search ||
-          (c.type ?? '').toLowerCase().includes(search.toLowerCase()) ||
-          (c.rightsCategories ?? '')
-            .toLowerCase()
-            .includes(search.toLowerCase()),
+          (c.title ?? '').toLowerCase().includes(search.toLowerCase()),
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rightCertificates, search],
+    [data, search],
   )
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('type', {
-        header: formatMessage(om.sailorRightCertificatesColumnType),
-        cell: ({ getValue }) => getValue() ?? '-',
-      }),
-      columnHelper.accessor('rightsCategories', {
-        header: formatMessage(om.sailorRightCertificatesColumnRightsCategories),
+      columnHelper.accessor('title', {
+        header: formatMessage(om.sailorSchoolCertificatesColumnTitle),
         cell: ({ getValue }) => getValue() ?? '-',
       }),
       columnHelper.accessor('validToDate', {
-        header: formatMessage(om.sailorRightCertificatesColumnValidDate),
+        header: formatMessage(om.sailorSchoolCertificatesColumnValidDate),
         cell: ({ getValue }) => {
           const value = getValue()
           return value ? formatDate(new Date(value)) : '-'
@@ -66,15 +56,15 @@ const SailorRightCertificates = () => {
     [locale],
   )
 
-  const renderExpandedRow = (row: Row<ShipRegistrySailorRightCertificate>) => (
+  const renderExpandedRow = (row: Row<ShipRegistrySailorSchoolCertificate>) => (
     <NestedTable
       data={[
         {
-          title: formatMessage(om.licenseNumber),
-          value: row.original.certificateNumber ?? '-',
+          title: formatMessage(om.sailorSchoolCertificatesExpandSchool),
+          value: row.original.school ?? '-',
         },
         {
-          title: formatMessage(om.sailorRightCertificatesExpandIssueDate),
+          title: formatMessage(om.sailorSchoolCertificatesExpandIssueDate),
           value: row.original.issueDate
             ? formatDate(new Date(row.original.issueDate))
             : '-',
@@ -85,8 +75,8 @@ const SailorRightCertificates = () => {
 
   return (
     <IntroWrapper
-      title={m.sailorsRightCertificatesTitle}
-      intro={om.sailorRightCertificatesIntro}
+      title={m.sailorsSchoolCertificatesTitle}
+      intro={om.sailorSchoolCertificatesIntro}
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),
@@ -94,14 +84,14 @@ const SailorRightCertificates = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && rightCertificates.length === 0 && (
+      {!loading && !error && filtered.length === 0 && !search && (
         <Problem type="no_data" noBorder={false} />
       )}
-      {!loading && !error && rightCertificates.length > 0 && (
+      {!loading && !error && (filtered.length > 0 || search) && (
         <Stack space={2}>
           <Box width="half">
             <FilterInput
-              name="rightCertificateSearch"
+              name="schoolCertificateSearch"
               placeholder={formatMessage(m.inputSearchTerm)}
               value={search}
               onChange={(val) => setSearch(val)}
@@ -114,8 +104,8 @@ const SailorRightCertificates = () => {
             <Table
               columns={columns}
               data={filtered}
-              emptyMessage={om.sailorRightCertificatesEmpty}
-              mobileTitleKey="type"
+              emptyMessage={om.sailorSchoolCertificatesEmpty}
+              mobileTitleKey="title"
               renderExpandedRow={renderExpandedRow}
             />
           )}
@@ -125,4 +115,4 @@ const SailorRightCertificates = () => {
   )
 }
 
-export default SailorRightCertificates
+export default CompetencyCertificates

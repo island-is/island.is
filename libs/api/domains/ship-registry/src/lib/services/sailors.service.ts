@@ -7,16 +7,16 @@ import {
   mapToSailorRegistrationExemptions,
   mapToSailorRightCertificates,
   mapToSailorSchoolCertificates,
-  mapToSailorSeaServiceBookCollection,
-} from '../mapper'
+  mapToSailorSeagoingTime,
+} from '../mappers'
 import { ShipRegistrySailorSchoolCertificate } from '../models/sailorSchoolCertificate.model'
 import { ShipRegistrySailorRightCertificate } from '../models/sailorRightCertificate.model'
 import { ShipRegistrySailorMaritimeBook } from '../models/sailorMaritimeBook.model'
 import { ShipRegistrySailorRegistrationExemption } from '../models/sailorRegistrationExemption.model'
-import { ShipRegistrySailorSeaServiceBookCollection } from '../models/sailorSeaServiceBookCollection.model'
+import { ShipRegistrySailorSeagoingTimeCollection } from '../models/sailorSeagoingTime.model'
 import { ShipRegistryRank } from '../models/rank.model'
 import { LocaleEnum } from '@island.is/nest/graphql'
-import type { SeaServiceBookInput } from '../dto/seaServiceBook.input'
+import type { SeagoingTimeInput } from '../dto/seagoingTime.input'
 
 @Injectable()
 export class SailorsService {
@@ -65,15 +65,13 @@ export class SailorsService {
   async getSailorSeaServiceBook(
     user: User,
     locale: LocaleEnum,
-    input: SeaServiceBookInput,
-  ): Promise<ShipRegistrySailorSeaServiceBookCollection | null> {
+    input: SeagoingTimeInput,
+  ): Promise<ShipRegistrySailorSeagoingTimeCollection | null> {
     const response = await this.shipRegistryClientV2Service.getSailorSeaService(
       user,
       input,
     )
-    return response
-      ? mapToSailorSeaServiceBookCollection(response, locale)
-      : null
+    return response ? mapToSailorSeagoingTime(response, locale) : null
   }
 
   async getRanks(locale: LocaleEnum): Promise<ShipRegistryRank[]> {

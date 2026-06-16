@@ -31,11 +31,11 @@ import {
   SailorSchoolCertificateDto,
 } from './dtos/sailorSchoolCertificate.dto'
 import {
-  mapSeaServiceFilter,
-  mapSeaServiceResponse,
-  type SailorSeaServiceFilterDto,
-  type SailorSeaServiceResponseDto,
-} from './dtos/sailorSeaServiceEntry.dto'
+  mapSeagoingTimeFilter,
+  mapSeagoingTimeResponse,
+  type SeagoingTimeFilterDto,
+  type SeagoingTimeResponseDto,
+} from './dtos/seagoingTime.dto'
 import { mapShipDetail, type ShipDetailDto } from './dtos/ship.dto'
 
 @Injectable()
@@ -103,17 +103,17 @@ export class ShipRegistryClientV2Service {
 
   async getSailorSeaService(
     user: User,
-    filters?: SailorSeaServiceFilterDto,
-  ): Promise<SailorSeaServiceResponseDto | null> {
+    filters?: SeagoingTimeFilterDto,
+  ): Promise<SeagoingTimeResponseDto | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getCrewRegistrationCountByShip({
-          body: mapSeaServiceFilter(filters),
+          body: mapSeagoingTimeFilter(filters),
         }),
       ),
     )
 
-    return response ? mapSeaServiceResponse(response) : null
+    return response ? mapSeagoingTimeResponse(response) : null
   }
 
   async getRanks(): Promise<RankDto[]> {

@@ -1,7 +1,9 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import { ShipRegistryValueUnit } from './valueUnit.model'
 
+/** A record of the sailor being legally registered as a crew member on a specific vessel (lögskráning). */
 @ObjectType()
-export class ShipRegistrySailorSeaServiceBookEntry {
+export class ShipRegistrySailorCrewRegistration {
   @Field(() => ID)
   id!: string
 
@@ -22,4 +24,13 @@ export class ShipRegistrySailorSeaServiceBookEntry {
 
   @Field(() => Int, { nullable: true })
   numberOfDays?: number
+
+  @Field(() => ShipRegistryValueUnit, { nullable: true })
+  length?: ShipRegistryValueUnit
+
+  @Field(() => ShipRegistryValueUnit, { nullable: true })
+  grossTonnage?: ShipRegistryValueUnit
+
+  @Field(() => ShipRegistryValueUnit, { nullable: true })
+  mainEngine?: ShipRegistryValueUnit
 }

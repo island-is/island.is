@@ -1,7 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 
-@InputType('ShipRegistrySeaServiceBookInput')
-export class SeaServiceBookInput {
+@InputType('ShipRegistrySeagoingTimeInput')
+export class SeagoingTimeInput {
   @Field({ nullable: true })
   dateFrom?: string
 

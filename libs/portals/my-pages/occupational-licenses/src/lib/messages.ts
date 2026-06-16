@@ -307,4 +307,36 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-sea-service-empty',
     defaultMessage: 'Engar lögskráningardagar fundust',
   },
+  sailorSeaServiceDateFrom: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-from',
+    defaultMessage: 'Dagsetning frá',
+  },
+  sailorSeaServiceDateTo: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-to',
+    defaultMessage: 'Dagsetning til',
+  },
+  sailorSeaServiceRank: {
+    id: 'sp.occupational-licenses:sailor-sea-service-rank',
+    defaultMessage: 'Staða',
+  },
+  sailorSeaServiceSearchButton: {
+    id: 'sp.occupational-licenses:sailor-sea-service-search-button',
+    defaultMessage: 'Leita',
+  },
+  sailorSeaServiceTotalCrewDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-total-crew-days',
+    defaultMessage: 'Lögskráningardagar',
+  },
+  sailorSeaServiceServiceDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-service-days',
+    defaultMessage: 'Annar siglingatími',
+  },
+  sailorSeaServiceWorkAshoreDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-work-ashore-days',
+    defaultMessage: 'Vinnutímar í landi',
+  },
+  sailorSeaServiceTotalWorkDays: {
+    id: 'sp.occupational-licenses:sailor-sea-service-total-work-days',
+    defaultMessage: 'Samtals',
+  },
 })
