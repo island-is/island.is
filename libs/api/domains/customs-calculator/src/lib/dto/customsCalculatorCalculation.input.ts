@@ -6,22 +6,10 @@ export class CustomsCalculatorCalculationInput {
   tariffNumber!: string
 
   @Field()
-  customsCode!: string
-
-  @Field()
-  referenceDate!: string
-
-  @Field()
   currencyCode!: string
 
   @Field()
-  productPrice!: string
-
-  @Field()
-  plasticPackagingKg!: string
-
-  @Field()
-  cardboardPackagingKg!: string
+  priceWithShipping!: string
 
   @Field()
   unitCount!: string
@@ -36,15 +24,6 @@ export class CustomsCalculatorCalculationInput {
   percentage!: string
 
   @Field()
-  netNetWeightKg!: string
-
-  @Field()
-  sugar!: string
-
-  @Field()
-  sweetener!: string
-
-  @Field()
   nedcEmission!: string
 
   @Field()
@@ -55,7 +34,4 @@ export class CustomsCalculatorCalculationInput {
 
   @Field()
   wltpWeightedEmission!: string
-
-  @Field()
-  curbWeight!: string
 }

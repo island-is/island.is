@@ -46,3 +46,20 @@ export const GET_CUSTOMS_CALCULATOR_UNITS = gql`
     }
   }
 `
+
+export const GET_CUSTOMS_CALCULATOR_CALCULATE = gql`
+  query CustomsCalculatorCalculate($input: CustomsCalculatorCalculationInput!) {
+    customsCalculatorCalculate(input: $input) {
+      startAmount
+      additionalAmount
+      totalAmount
+      charges {
+        code
+        description
+        amount
+        percentage
+        unit
+      }
+    }
+  }
+`

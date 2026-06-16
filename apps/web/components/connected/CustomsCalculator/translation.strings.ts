@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
+  startAmountLabel: {
+    id: 'web.customsCalculator:startAmountLabel',
+    defaultMessage: 'Verð með flutningi',
+    description: 'Label for the start amount',
+  },
+  totalAmountBreakdownLabel: {
+    id: 'web.customsCalculator:totalAmountBreakdownLabel',
+    defaultMessage: 'Samtals',
+    description: 'Label for the total amount breakdown',
+  },
+  amountLabel: {
+    id: 'web.customsCalculator:amountLabel',
+    defaultMessage: 'Upphæð',
+    description: 'Label for the amount',
+  },
+  breakdownLabel: {
+    id: 'web.customsCalculator:breakdownLabel',
+    defaultMessage: 'Sundurliðun',
+    description: 'Label for the breakdown',
+  },
+  totalAmountLabel: {
+    id: 'web.customsCalculator:totalAmountLabel',
+    defaultMessage: 'Áætlað heildarverð',
+    description: 'Label for the total amount',
+  },
+  additionalAmountLabel: {
+    id: 'web.customsCalculator:additionalAmountLabel',
+    defaultMessage: 'Þar af innflutningsgjöld',
+    description: 'Label for the additional amount',
+  },
   nedcDescription: {
     id: 'web.customsCalculator:nedcDescription',
     defaultMessage: ' ',

@@ -6,6 +6,7 @@ import {
   BottomLevelProductCategory,
   CustomsCalculatorProductCategoriesResponse,
 } from './models/customsCalculator.model'
+import { CustomsCalculatorCalculationInput } from './dto/customsCalculatorCalculation.input'
 
 @Injectable()
 export class CustomsCalculatorService {
@@ -84,6 +85,33 @@ export class CustomsCalculatorService {
     return {
       units,
     }
+  }
+
+  async calculate(input: CustomsCalculatorCalculationInput) {
+    const referenceDate = `${new Date().toISOString().split('.')[0]}Z`
+    const response = await this.customsCalculatorClient.calculate({
+      tariffNumber: input.tariffNumber,
+      currencyCode: input.currencyCode,
+      priceWithShipping: input.priceWithShipping,
+      unitCount: input.unitCount,
+      netWeightKg: input.netWeightKg,
+      liters: input.liters,
+      percentage: input.percentage,
+      nedcEmission: input.nedcEmission,
+      nedcWeightedEmission: input.nedcWeightedEmission,
+      wltpEmission: input.wltpEmission,
+      wltpWeightedEmission: input.wltpWeightedEmission,
+      cardboardPackagingKg: '',
+      referenceDate,
+      curbWeight: '',
+      customsCode: '',
+      netNetWeightKg: '',
+      plasticPackagingKg: '',
+      sugar: '',
+      sweetener: '',
+    })
+
+    return response
   }
 
   // async getUnits(

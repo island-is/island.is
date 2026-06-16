@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CustomsCalculatorCalculationInput } from './dto/customsCalculatorCalculation.input'
 import {
   CustomsCalculatorCalculationResponse,
@@ -34,12 +34,13 @@ export class CustomsCalculatorResolver {
     return this.customsCalculatorService.getProductCategoryUnits(tariffNumber)
   }
 
-  // @Mutation(() => CustomsCalculatorCalculationResponse, {
-  //   name: 'customsCalculatorCalculate',
-  // })
-  // calculate(
-  //   @Args('input') input: CustomsCalculatorCalculationInput,
-  // ): Promise<CustomsCalculatorCalculationResponse> {
-  //   return this.customsCalculatorService.calculate(input)
-  // }
+  @Query(() => CustomsCalculatorCalculationResponse, {
+    name: 'customsCalculatorCalculate',
+    nullable: true,
+  })
+  calculate(
+    @Args('input') input: CustomsCalculatorCalculationInput,
+  ): Promise<CustomsCalculatorCalculationResponse> {
+    return this.customsCalculatorService.calculate(input)
+  }
 }

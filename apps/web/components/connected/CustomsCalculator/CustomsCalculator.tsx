@@ -6,7 +6,6 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   Box,
-  Button,
   Icon,
   Inline,
   Stack,
@@ -347,14 +346,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         <Units
           unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
           currencyOptions={currencyOptions}
+          tariffNumber={selectedBottomLevelCategory?.tariffNumber ?? ''}
         />
       )}
-
-      <Box className={styles.buttonContainer}>
-        <Button fluid={true} disabled={!selectedBottomLevelCategory}>
-          {formatMessage(translationStrings.runCalculation)}
-        </Button>
-      </Box>
     </Stack>
   )
 }

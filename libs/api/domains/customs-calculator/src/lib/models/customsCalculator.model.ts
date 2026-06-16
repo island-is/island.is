@@ -67,50 +67,32 @@ export class CustomsCalculatorUnitsResponse {
 @ObjectType()
 export class CustomsCalculatorCharge {
   @Field({ nullable: true })
-  chargeType?: string
-
-  @Field({ nullable: true })
   code?: string
 
   @Field({ nullable: true })
-  name?: string
+  description?: string
 
   @Field({ nullable: true })
   amount?: string
 
   @Field({ nullable: true })
-  netAmount?: string
+  percentage?: string
 
   @Field({ nullable: true })
-  ratePercent?: string
-
-  @Field({ nullable: true })
-  rateAmount?: string
-}
-
-@ObjectType()
-export class CustomsCalculatorLineCharge {
-  @Field({ nullable: true })
-  reportId?: string
-
-  @Field({ nullable: true })
-  currencyName?: string
-
-  @Field(() => [CustomsCalculatorCharge], { nullable: true })
-  charges?: CustomsCalculatorCharge[]
+  unit?: string
 }
 
 @ObjectType()
 export class CustomsCalculatorCalculationResponse {
-  @Field(() => CustomsCalculatorStatus, { nullable: true })
-  status?: CustomsCalculatorStatus
+  @Field(() => [CustomsCalculatorCharge])
+  charges!: CustomsCalculatorCharge[]
 
-  @Field(() => CustomsCalculatorLineCharge, { nullable: true })
-  lineCharge?: CustomsCalculatorLineCharge
+  @Field()
+  startAmount!: string
 
-  @Field({ nullable: true })
-  exchangeRate?: string
+  @Field()
+  additionalAmount!: string
 
-  @Field({ nullable: true })
-  errors?: string
+  @Field()
+  totalAmount!: string
 }
