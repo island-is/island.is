@@ -141,12 +141,14 @@ export const OtherAssetsRepeater: FC<
               )}
               {!field.initial && (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveOtherAsset.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               )}
             </Box>
             <GridRow>

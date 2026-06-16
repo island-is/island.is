@@ -15,6 +15,7 @@ export const estateWithoutAssets = buildSection({
     buildMultiField({
       id: 'estateAssetsExist',
       title: m.doAssetsExist,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildRadioField({
           id: 'estateWithoutAssets.estateAssetsExist',
