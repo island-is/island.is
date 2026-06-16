@@ -276,6 +276,8 @@ export const is = {
   'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
+  'documentReply.sendMessageError': 'Ekki tókst að senda svar',
+  'documentReply.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document communications
   'documentCommunications.caseNumber': 'Málsnúmer',

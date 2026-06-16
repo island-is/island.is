@@ -277,6 +277,8 @@ export const en: TranslatedMessages = {
   'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
+  'documentReply.sendMessageError': 'Could not send reply',
+  'documentReply.pleaseTryAgain': 'Please try again later',
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
