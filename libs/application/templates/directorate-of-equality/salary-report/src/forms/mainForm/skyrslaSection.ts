@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubSection,
@@ -112,10 +111,10 @@ export const skyrslaSection = buildSection({
           title: messages.report.employeeClassification.title,
           description: messages.report.employeeClassification.intro,
           children: [
-            buildDescriptionField({
-              id: 'employeeClassification.placeholder',
-              title: '',
-              description: '',
+            buildCustomField({
+              id: 'employees',
+              component: 'EmployeeClassificationEditor',
+              doesNotRequireAnswer: true,
             }),
           ],
         }),

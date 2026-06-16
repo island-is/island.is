@@ -1,5 +1,5 @@
 import type { ParsedCriterionDto } from '@island.is/clients/directorate-of-equality'
-import type { Role, StepAssignment } from '../../lib/constants'
+import type { StepAssignment } from '../../lib/constants'
 
 export type StepMeta = {
   steps: { order: number; score: number }[]
@@ -52,11 +52,13 @@ export type AssignmentGroup = {
   items: { assignment: StepAssignment; index: number }[]
 }
 
-// Group a role's assignments by criterion, preserving first-seen order
+// Group step assignments by criterion, preserving first-seen order
 // (which follows the criteria order in the source data).
-export const groupAssignmentsByCriterion = (role: Role): AssignmentGroup[] => {
+export const groupAssignmentsByCriterion = (
+  assignments: StepAssignment[],
+): AssignmentGroup[] => {
   const groups: AssignmentGroup[] = []
-  role.stepAssignments.forEach((assignment, index) => {
+  assignments.forEach((assignment, index) => {
     let group = groups.find((g) => g.criterionTitle === assignment.criterionTitle)
     if (!group) {
       group = { criterionTitle: assignment.criterionTitle, items: [] }

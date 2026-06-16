@@ -35,7 +35,7 @@ export const RolePanel: FC<Props> = ({
   const assignments = watched ?? role.stepAssignments
   const { score, max } = computeRoleScore(assignments, stepMetaByTitle)
 
-  const groups = groupAssignmentsByCriterion(role)
+  const groups = groupAssignmentsByCriterion(role.stepAssignments)
 
   return (
     <AccordionCard
