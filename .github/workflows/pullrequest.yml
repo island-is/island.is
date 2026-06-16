@@ -119,8 +119,10 @@ jobs:
         env:
           projects: ${{ steps.unicorn.outputs.projects }}
         run: |
-          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted)
-          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
+          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted).
+          # NO_COLOR=1: Nx 22 (picocolors) forces ANSI colour on the stream prefix in CI even when stdout is piped,
+          # so lines start with escape codes instead of the project name and the anchored grep below matches nothing.
+          NO_COLOR=1 yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
             grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
           # Get affected projects sorted
           echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
