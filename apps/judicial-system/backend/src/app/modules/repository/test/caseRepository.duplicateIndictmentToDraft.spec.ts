@@ -2,6 +2,8 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
+  CaseFileCategory,
+  CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
@@ -25,6 +27,8 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       offenseModel,
       victimModel,
       civilClaimantModel,
+      caseFileModel,
+      awsS3Service,
       caseDefendantPoliceCaseNumberRepositoryService,
     } = await createTestingRepositoryModule()
 
@@ -32,6 +36,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     const newCase = { id: newCaseId } as Case
     const newDefendantId = uuid()
     const newIndictmentCountId = uuid()
+    const newCivilClaimantId = uuid()
 
     const mockCaseModel = caseModel as unknown as {
       findByPk: jest.Mock
@@ -73,6 +78,17 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       create: jest.Mock
     }
     mockCivilClaimantModel.findAll.mockResolvedValue([])
+    mockCivilClaimantModel.create.mockResolvedValue({ id: newCivilClaimantId })
+
+    const mockCaseFileModel = caseFileModel as unknown as {
+      findAll: jest.Mock
+      create: jest.Mock
+    }
+    mockCaseFileModel.findAll.mockResolvedValue([])
+
+    const mockAwsS3Service = awsS3Service as unknown as {
+      copyObject: jest.Mock
+    }
 
     return {
       caseRepositoryService,
@@ -91,6 +107,8 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         findAll: jest.Mock
         create: jest.Mock
       },
+      caseFileModel: mockCaseFileModel,
+      awsS3Service: mockAwsS3Service,
       policeService:
         caseDefendantPoliceCaseNumberRepositoryService as unknown as {
           findDistinctPoliceCaseNumbersByCaseIds: jest.Mock
@@ -101,6 +119,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       newCaseId,
       newDefendantId,
       newIndictmentCountId,
+      newCivilClaimantId,
     }
   }
 
@@ -290,5 +309,194 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       }),
       { transaction },
     )
+  })
+
+  it('copies eligible case files to a new S3 key and resets them to a draft state', async () => {
+    const caseId = uuid()
+    const fileId = uuid()
+
+    const sourceCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+
+    const ctx = await setup(sourceCase)
+
+    ctx.caseFileModel.findAll.mockResolvedValue([
+      {
+        id: fileId,
+        key: `${caseId}/abc/document.pdf`,
+        isKeyAccessible: true,
+        toJSON: () => ({
+          id: fileId,
+          caseId,
+          category: CaseFileCategory.CASE_FILE,
+          key: `${caseId}/abc/document.pdf`,
+          state: CaseFileState.STORED_IN_COURT,
+          policeFileId: uuid(),
+          hash: 'some-hash',
+          hashAlgorithm: 'sha256',
+        }),
+      },
+    ])
+
+    await ctx.caseRepositoryService.duplicateIndictmentToDraft(caseId, {
+      transaction,
+    })
+
+    // Only eligible (prosecutor uploaded) categories are queried
+    expect(ctx.caseFileModel.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          caseId,
+          category: expect.arrayContaining([
+            CaseFileCategory.CRIMINAL_RECORD,
+            CaseFileCategory.COST_BREAKDOWN,
+            CaseFileCategory.CASE_FILE,
+            CaseFileCategory.PROSECUTOR_CASE_FILE,
+            CaseFileCategory.DEFENDANT_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIM,
+            CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+            CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          ]),
+        }),
+      }),
+    )
+
+    // The S3 object is copied to a new key under the new case
+    expect(ctx.awsS3Service.copyObject).toHaveBeenCalledTimes(1)
+    const [copyCaseType, copySourceKey, copyDestKey] =
+      ctx.awsS3Service.copyObject.mock.calls[0]
+    expect(copyCaseType).toBe(CaseType.INDICTMENT)
+    expect(copySourceKey).toBe(`${caseId}/abc/document.pdf`)
+    expect(copyDestKey).toMatch(
+      new RegExp(`^${ctx.newCaseId}/[0-9a-f-]+/document\\.pdf$`),
+    )
+
+    // A new case file record is created pointing at the new case and key, reset
+    // to a draft state, with police/hash references cleared
+    expect(ctx.caseFileModel.create).toHaveBeenCalledTimes(1)
+    const fileCreatedWith = ctx.caseFileModel.create.mock.calls[0][0]
+    expect(fileCreatedWith).toEqual(
+      expect.objectContaining({
+        id: undefined,
+        caseId: ctx.newCaseId,
+        key: copyDestKey,
+        state: CaseFileState.STORED_IN_RVG,
+        policeFileId: undefined,
+        hash: undefined,
+        hashAlgorithm: undefined,
+      }),
+    )
+  })
+
+  it('remaps the defendant and civil claimant references of copied files', async () => {
+    const caseId = uuid()
+    const oldDefendantId = uuid()
+    const oldCivilClaimantId = uuid()
+
+    const sourceCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+
+    const ctx = await setup(sourceCase)
+
+    ctx.defendantModel.findAll.mockResolvedValue([
+      { id: oldDefendantId, name: 'Accused' },
+    ])
+    ctx.civilClaimantModel.findAll.mockResolvedValue([
+      {
+        id: oldCivilClaimantId,
+        defendantIds: [oldDefendantId],
+        toJSON: () => ({
+          id: oldCivilClaimantId,
+          caseId,
+          defendantIds: [oldDefendantId],
+        }),
+      },
+    ])
+
+    ctx.caseFileModel.findAll.mockResolvedValue([
+      {
+        id: uuid(),
+        key: `${caseId}/abc/claim.pdf`,
+        isKeyAccessible: true,
+        defendantId: oldDefendantId,
+        civilClaimantId: oldCivilClaimantId,
+        toJSON: () => ({
+          id: uuid(),
+          caseId,
+          category: CaseFileCategory.CIVIL_CLAIM,
+          key: `${caseId}/abc/claim.pdf`,
+          defendantId: oldDefendantId,
+          civilClaimantId: oldCivilClaimantId,
+        }),
+      },
+    ])
+
+    await ctx.caseRepositoryService.duplicateIndictmentToDraft(caseId, {
+      transaction,
+    })
+
+    const fileCreatedWith = ctx.caseFileModel.create.mock.calls[0][0]
+    expect(fileCreatedWith.defendantId).toBe(ctx.newDefendantId)
+    expect(fileCreatedWith.civilClaimantId).toBe(ctx.newCivilClaimantId)
+  })
+
+  it('skips files whose S3 object is not accessible', async () => {
+    const caseId = uuid()
+
+    const sourceCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+
+    const ctx = await setup(sourceCase)
+
+    ctx.caseFileModel.findAll.mockResolvedValue([
+      {
+        id: uuid(),
+        key: `${caseId}/abc/missing.pdf`,
+        isKeyAccessible: false,
+        toJSON: () => ({ id: uuid(), caseId }),
+      },
+    ])
+
+    await ctx.caseRepositoryService.duplicateIndictmentToDraft(caseId, {
+      transaction,
+    })
+
+    expect(ctx.awsS3Service.copyObject).not.toHaveBeenCalled()
+    expect(ctx.caseFileModel.create).not.toHaveBeenCalled()
+  })
+
+  it('skips a file when its S3 copy fails without failing the duplication', async () => {
+    const caseId = uuid()
+
+    const sourceCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+
+    const ctx = await setup(sourceCase)
+
+    ctx.caseFileModel.findAll.mockResolvedValue([
+      {
+        id: uuid(),
+        key: `${caseId}/abc/broken.pdf`,
+        isKeyAccessible: true,
+        toJSON: () => ({ id: uuid(), caseId }),
+      },
+      {
+        id: uuid(),
+        key: `${caseId}/def/ok.pdf`,
+        isKeyAccessible: true,
+        toJSON: () => ({ id: uuid(), caseId }),
+      },
+    ])
+
+    ctx.awsS3Service.copyObject
+      .mockRejectedValueOnce(new Error('S3 copy failed'))
+      .mockResolvedValueOnce(undefined)
+
+    const result = await ctx.caseRepositoryService.duplicateIndictmentToDraft(
+      caseId,
+      { transaction },
+    )
+
+    // The duplication still succeeds and the second (working) file is copied
+    expect(result).toBeDefined()
+    expect(ctx.awsS3Service.copyObject).toHaveBeenCalledTimes(2)
+    expect(ctx.caseFileModel.create).toHaveBeenCalledTimes(1)
   })
 })

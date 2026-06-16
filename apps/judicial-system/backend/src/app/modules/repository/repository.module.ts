@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
+import { AwsS3Module } from '../aws-s3/awsS3.module'
 import { AppealCase } from './models/appealCase.model'
 import { AppealEventLog } from './models/appealEventLog.model'
 import { Case } from './models/case.model'
@@ -70,6 +71,7 @@ import { repositoryModuleConfig } from './repository.config'
       Victim,
     ]),
     ConfigModule.forFeature(repositoryModuleConfig),
+    AwsS3Module,
   ],
   providers: [
     AppealEventLogRepositoryService,

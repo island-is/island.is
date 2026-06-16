@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -76,6 +77,12 @@ export const createTestingRepositoryModule = async () => {
             .mockResolvedValue(undefined),
         },
       },
+      {
+        provide: AwsS3Service,
+        useValue: {
+          copyObject: jest.fn().mockResolvedValue(undefined),
+        },
+      },
       CaseRepositoryService,
     ],
   }).compile()
@@ -104,6 +111,12 @@ export const createTestingRepositoryModule = async () => {
     getModelToken(CivilClaimant),
   )
 
+  const caseFileModel = repositoryModule.get<typeof CaseFile>(
+    getModelToken(CaseFile),
+  )
+
+  const awsS3Service = repositoryModule.get<AwsS3Service>(AwsS3Service)
+
   const caseDefendantPoliceCaseNumberRepositoryService =
     repositoryModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
       CaseDefendantPoliceCaseNumberRepositoryService,
@@ -124,6 +137,8 @@ export const createTestingRepositoryModule = async () => {
     offenseModel,
     victimModel,
     civilClaimantModel,
+    caseFileModel,
+    awsS3Service,
     caseDefendantPoliceCaseNumberRepositoryService,
   }
 }

@@ -259,6 +259,24 @@ export class AwsS3Service {
     )
   }
 
+  copyObject(
+    caseType: CaseType,
+    sourceKey: string,
+    destKey: string,
+  ): Promise<void> {
+    const src = formatS3Key(caseType, sourceKey)
+    const dst = formatS3Key(caseType, destKey)
+
+    return this.s3
+      .copyObject({
+        Bucket: this.config.bucket,
+        CopySource: `${this.config.bucket}/${src}`,
+        Key: dst,
+      })
+      .promise()
+      .then(() => undefined)
+  }
+
   async deleteObject(caseType: CaseType, key: string): Promise<boolean> {
     const s3Key = formatS3Key(caseType, key)
 

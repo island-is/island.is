@@ -8,6 +8,7 @@ import {
   Transaction,
   UpdateOptions,
 } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   Inject,
@@ -20,7 +21,9 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseState,
+  CaseType,
   DateType,
   EventType,
   IndictmentDecision,
@@ -28,6 +31,7 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -128,6 +132,7 @@ export class CaseRepositoryService {
     private readonly civilClaimantModel: typeof CivilClaimant,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -987,31 +992,105 @@ export class CaseRepositoryService {
         )
       }
 
-      // Copy all civil claimants, remapping their defendant references
+      // Copy all civil claimants, remapping their defendant references. These
+      // are created sequentially so we can build a map from the original civil
+      // claimant ids to the new ones for later file remapping.
       const civilClaimants = await this.civilClaimantModel.findAll({
         where: { caseId },
         transaction,
       })
+
+      const civilClaimantIdMap = new Map<string, string>()
 
       for (const civilClaimant of civilClaimants) {
         const remappedDefendantIds = civilClaimant.defendantIds
           ?.map((defendantId) => defendantIdMap.get(defendantId))
           .filter((defendantId): defendantId is string => Boolean(defendantId))
 
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      // Copy all prosecutor uploaded case files to the new case. The new case
+      // is fully independent, so each S3 object is copied to a new key rather
+      // than shared, and the files are reset to a draft (RVG) state.
+      const caseFilesCategoriesToCopy = [
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      ]
+
+      const filesToCopy = await this.caseFileModel.findAll({
+        where: { caseId, category: caseFilesCategoriesToCopy },
+        transaction,
+      })
+
+      for (const file of filesToCopy) {
+        // Files without an accessible S3 object cannot be copied
+        if (!file.isKeyAccessible || !file.key) {
+          continue
+        }
+
+        // The key is `${caseId}/${uuid}/${filename}` - keep the filename but
+        // point the object at the new case under a fresh uuid
+        const filename = file.key.split('/').slice(2).join('/')
+        const newKey = `${newCaseId}/${uuid()}/${filename}`
+
+        try {
+          await this.awsS3Service.copyObject(
+            CaseType.INDICTMENT,
+            file.key,
+            newKey,
+          )
+        } catch (error) {
+          // Tolerate failure of a single file, but log error and skip it
+          this.logger.error(
+            `Failed to copy S3 object for case file ${file.id}`,
+            { error },
+          )
+
+          continue
+        }
+
         promises.push(
-          this.civilClaimantModel.create(
+          this.caseFileModel.create(
             {
-              ...civilClaimant.toJSON(),
+              ...file.toJSON(),
               id: undefined,
               caseId: newCaseId,
-              defendantIds: remappedDefendantIds,
+              key: newKey,
+              state: CaseFileState.STORED_IN_RVG,
+              defendantId: file.defendantId
+                ? defendantIdMap.get(file.defendantId)
+                : undefined,
+              civilClaimantId: file.civilClaimantId
+                ? civilClaimantIdMap.get(file.civilClaimantId)
+                : undefined,
+              // Don't carry over the police system reference
+              policeFileId: undefined,
+              // The hash was computed for the original key and is no longer valid
+              hash: undefined,
+              hashAlgorithm: undefined,
             },
             { transaction },
           ),
         )
       }
-
-      // TODO: copy case files (later)
 
       await Promise.all(promises)
 
