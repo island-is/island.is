@@ -4,7 +4,6 @@ export enum ApplicationTypes {
   EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
-  EXAMPLE_SDF = 'ExampleSdf',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   PASSPORT = 'Passport',
@@ -84,7 +83,6 @@ export enum ApplicationTypes {
   MACHINE_REGISTRATION = 'MachineRegistration',
   PRACTICAL_EXAM = 'PracticalExam',
   RENTAL_AGREEMENT = 'RentalAgreement',
-  RENTAL_AGREEMENT_SDF = 'RentalAgreementSdf',
   TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
@@ -135,11 +133,6 @@ export const ApplicationConfigurations: Record<
     slug: 'example-no-inputs',
     translation: 'eni.application',
   },
-  [ApplicationTypes.EXAMPLE_SDF]: {
-    slug: 'example-sdf',
-    translation: 'exsdf.application',
-    useSdf: true,
-  },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'example-payment',
     translation: 'ep.application',
@@ -175,7 +168,6 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
     translation: ['pl.application', 'uiForms.application'],
-    useSdf: true,
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -464,11 +456,6 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
     translation: ['ra.application', 'uiForms.application'],
-  },
-  [ApplicationTypes.RENTAL_AGREEMENT_SDF]: {
-    slug: 'leigusamningur2',
-    translation: 'application.system',
-    useSdf: true,
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',

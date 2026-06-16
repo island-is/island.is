@@ -31,11 +31,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
-  [ApplicationTypes.EXAMPLE_SDF]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
@@ -417,11 +412,6 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
-    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-  },
-  [ApplicationTypes.RENTAL_AGREEMENT_SDF]: {
     nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,

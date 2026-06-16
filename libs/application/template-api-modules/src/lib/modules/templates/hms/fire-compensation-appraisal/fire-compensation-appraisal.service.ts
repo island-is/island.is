@@ -103,6 +103,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   }
 
   async getProperties({ auth, application }: TemplateApiModuleActionProps) {
+    console.log('external data', application.externalData)
     let properties: Array<Fasteign> = []
     const otherPropertiesThanIOwn = getValueViaPath<string[]>(
       application.answers,

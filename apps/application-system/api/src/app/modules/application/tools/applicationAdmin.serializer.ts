@@ -15,6 +15,7 @@ import {
   institutionMapper,
 } from '@island.is/application/types'
 import {
+  flattenTranslationNamespaces,
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
@@ -305,7 +306,7 @@ export class ApplicationTypeAdminSerializer
 
     const namespaces = [
       'application.system',
-      ...(template?.translationNamespaces ?? []),
+      ...flattenTranslationNamespaces(template?.translationNamespaces),
     ]
     const intl = await this.intlService.useIntl(namespaces, locale)
     const name = template
@@ -357,7 +358,7 @@ export class ApplicationAdminStatisticsSerializer
     )
     const namespaces = [
       'application.system',
-      ...(template?.translationNamespaces ?? []),
+      ...flattenTranslationNamespaces(template?.translationNamespaces),
     ]
     const intl = await this.intlService.useIntl(namespaces, locale)
     const name = getApplicationStatisticsNameTranslationString(

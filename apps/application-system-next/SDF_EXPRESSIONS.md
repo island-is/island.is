@@ -58,8 +58,6 @@ Available helpers: `answer`, `equals`, `notEquals`, `contains`, `gt`, `gte`, `lt
 
 `contains` means **array membership**. It checks whether an answer array includes the supplied string or number. It does not perform string substring matching.
 
-See `libs/application/templates/hms/rental-agreement-sdf/src/forms/mainForm/index.ts`.
-
 **2. Plain object conditions**
 
 Simple field comparisons compile to static checks:
@@ -91,13 +89,14 @@ page.addKeyValueField('plotSoilType', 'Soil', getSoilType, {
 })
 ```
 
-See `libs/application/templates/examples/example-sdf/src/forms/mainForm/index.ts`.
+For real `showWhen` closures, see `showOwnedProperty` / `showOtherProperty` in
+`libs/application/templates/v2/hms/fire-compensation-appraisal/src/forms/mainForm/index.ts`.
 
 Use `getSuccessfulExternalData` when the template also needs the typed payload:
 
 ```ts
 const getPlotDetailsData = (
-  app: ExampleSdfApplication,
+  app: Application,
 ): PlotDetailsData | null =>
   getSuccessfulExternalData(
     app.externalData,
@@ -448,6 +447,6 @@ GraphQL schema: `libs/application/sdf-types/src/sdf.graphql`. Client queries: `a
 | Client display field | `apps/application-system-next/components/form-renderer/fields/SdfDisplayField.tsx` |
 | Client display recompute hook | `apps/application-system-next/hooks/useDisplayRecompute.ts` |
 | Client expression hook | `apps/application-system-next/hooks/useFormExpressionEvaluator.ts` |
-| Example templates | `libs/application/templates/v2/examples/example-inputs/`, `libs/application/templates/examples/example-sdf/`, `libs/application/templates/hms/rental-agreement-sdf/` |
+| Example templates | `libs/application/templates/v2/examples/example-inputs/`, `libs/application/templates/v2/hms/fire-compensation-appraisal/` |
 
 For adding new SDF field components to the renderer, see [README.md](./README.md).

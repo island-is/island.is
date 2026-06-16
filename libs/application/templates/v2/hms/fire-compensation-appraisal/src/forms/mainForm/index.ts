@@ -16,7 +16,6 @@ import { HmsPropertyInfo } from '@island.is/api/schema'
 import { dataSchema } from '../../lib/dataSchema'
 import * as m from '../../lib/messages'
 import {
-  propertiesApi,
   SearchPropertiesApi,
   FetchPropertiesByCodeApi,
 } from '../../dataProviders'
@@ -293,7 +292,7 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
       // DRAFT state's role action (event: PAYMENT) — see `buildFooter` /
       // `footer-builder`. An inline `addSubmitField` here would render a second,
       // dead button (SdfSubmitField has no dispatch), so it is intentionally
-      // omitted (mirrors the SDF convention used by rental-agreement-sdf).
+      // omitted (mirrors the SDF footer convention).
     })
   })
   .build()

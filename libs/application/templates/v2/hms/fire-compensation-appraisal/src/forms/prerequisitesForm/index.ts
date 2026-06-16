@@ -48,12 +48,7 @@ export const Prerequisites = new FormBuilder<typeof dataSchema>(
               ],
             })
 
-          // Dev/local-only escape hatch so the payment flow can be tested without
-          // a reachable charge-FJS service. Ticking this persists
-          // `shouldUseMockPayment`, which makes the shared `Payment.createCharge`
-          // action fabricate a fulfilled charge. The field is omitted entirely in
-          // production, and `createCharge` additionally refuses mock payments
-          // there — so it cannot affect real payments.
+          // Dev/local-only escape hatch so the submit flow can be tested without payments
           if (!isRunningOnEnvironment('production')) {
             page.addCheckboxField('shouldUseMockPayment', '', {
               options: [
@@ -65,12 +60,6 @@ export const Prerequisites = new FormBuilder<typeof dataSchema>(
             })
           }
           // TODO: put this back in when properties can be fetched without national id
-          // Before re-enabling, verify the by-code flow end to end:
-          // `calculateAmount` and `sendNotificationToAllInvolved` resolve the
-          // property via `getSelectedRealEstate` (externalData
-          // `fetchPropertiesByCode.data`), and the owner notifications need
-          // `thinglystirEigendur` on the property returned by
-          // `hmsPropertyByPropertyCode` — confirm the HMS endpoint includes it.
           // .addCheckboxField('otherPropertiesThanIOwnCheckbox', '', {
           //   options: [
           //     {

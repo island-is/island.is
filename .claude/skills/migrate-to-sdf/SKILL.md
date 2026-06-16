@@ -38,12 +38,11 @@ Read it in two modes:
   and payment-pending fields.
 
 ### Reference implementations (read these first)
-- `libs/application/templates/hms/rental-agreement-sdf` — closest real analogue:
-  HMS, `FormBuilder`, address search + `onSelectRefetch` → template API.
 - `libs/application/templates/v2/hms/fire-compensation-appraisal` — the app this
-  skill was written from (payment state, replaced custom components).
+  skill was written from and the closest real analogue: HMS, `FormBuilder`,
+  payment state, property search + `onSelectRefetch` → template API, and replaced
+  custom components.
 - `libs/application/templates/v2/examples/example-inputs` — every field type.
-- `libs/application/templates/examples/example-sdf` — minimal skeleton.
 - Docs: `ServerDriven-App-Sys.md`, `apps/application-system-next/SDF_EXPRESSIONS.md`.
 
 ---
@@ -149,7 +148,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
    render nothing. So **never import a legacy React field** (e.g. a `PropertySearch`
    from another template) and **never author a new React custom field** — compose
    from existing SDF fields + template-api actions instead. Patterns (mirror
-   rental-agreement-sdf):
+   fire-compensation-appraisal-sdf):
    - Address/entity search → `addSearchField({ searchAction, options, ... })`
      backed by a `searchX` template API that returns `{ options, ...data }`.
    - "On select, load details" → a select/search with

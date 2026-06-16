@@ -10,6 +10,7 @@ import {
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
+  TranslationNamespaces,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
@@ -100,13 +101,21 @@ export const getApplicationStateInformation = async (
   return helper.getApplicationStateInformation() || null
 }
 
+export const flattenTranslationNamespaces = (
+  ...namespaces: (TranslationNamespaces | undefined)[]
+): string[] =>
+  namespaces.flatMap((ns) =>
+    Array.isArray(ns) ? ns.flat() : ns ? [ns] : [],
+  )
+
 export const getApplicationTranslationNamespaces = async (
   application: Application,
 ): Promise<string[]> => {
   const template = await getApplicationTemplateByTypeId(application.typeId)
-  const translationNamespaces = ([] as string[])
-    .concat(ApplicationConfigurations[application.typeId].translation)
-    .concat(template?.translationNamespaces ?? [])
+  const translationNamespaces = flattenTranslationNamespaces(
+    ApplicationConfigurations[application.typeId].translation,
+    template?.translationNamespaces,
+  )
 
   // We load the core namespace for the application system + the ones defined in the application template
   return [...new Set(['application.system', ...translationNamespaces])] // Remove duplicates
