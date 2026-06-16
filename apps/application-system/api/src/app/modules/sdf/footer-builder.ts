@@ -18,11 +18,14 @@ const CALL_TO_ACTION_VARIANT_MAP: Record<string, string> = {
   rejectGhost: 'GHOST',
 }
 
-function mapCallToActionType(event: string): string {
-  if (event === 'SUBMIT' || event === 'APPROVE' || event === 'REJECT') {
-    return SdfActionType.SUBMIT
-  }
-  return SdfActionType.NEXT_PAGE
+function mapCallToActionType(): string {
+  // Footer buttons are built exclusively from the current state's role actions,
+  // which are always state-machine transition events (SUBMIT, PAYMENT, APPROVE,
+  // REJECT, ABORT, ...). They must dispatch SUBMIT carrying the event name so
+  // the backend advances the XState machine — never NEXT_PAGE, which only moves
+  // the page cursor and would no-op on the final screen. (Page navigation is
+  // synthesized separately in `buildFooter` for non-final screens.)
+  return SdfActionType.SUBMIT
 }
 
 export function buildFooterButtons(
@@ -53,7 +56,7 @@ export function buildFooterButtons(
         id: eventStr,
         text: resolver.resolve(action.name),
         variant: CALL_TO_ACTION_VARIANT_MAP[action.type] ?? 'PRIMARY',
-        actionType: mapCallToActionType(eventStr),
+        actionType: mapCallToActionType(),
       }
     })
 }

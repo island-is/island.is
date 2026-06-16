@@ -35,7 +35,16 @@ export const mapDisplayField: FieldMapper = (
     )
   }
   if (raw.clientValueExpression !== undefined) {
-    component.clientValueExpression = raw.clientValueExpression as
+    // `clientValueExpression` may be a resolver `(answers, externalData) =>
+    // FormExpression` so authors can bake externalData-derived literals into the
+    // tree (the client evaluator only sees flat answers). Resolve it to a static
+    // tree here before it crosses the wire.
+    const resolvedClientValueExpression = resolveFieldProp(
+      raw.clientValueExpression,
+      application?.answers,
+      application?.externalData,
+    )
+    component.clientValueExpression = resolvedClientValueExpression as
       | Record<string, unknown>
       | string
       | number

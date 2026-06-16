@@ -11,6 +11,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 export enum SdfActionType {
   NEXT_PAGE = 'NEXT_PAGE',
   PREV_PAGE = 'PREV_PAGE',
+  // Jump directly to a known page by id (overview "Breyta"/edit button). The
+  // destination page id is carried in the `event` field.
+  GO_TO_PAGE = 'GO_TO_PAGE',
   SUBMIT = 'SUBMIT',
   REFETCH = 'REFETCH',
   VALIDATE = 'VALIDATE',

@@ -276,3 +276,244 @@ export const mapAnswersToApplicationDto = (
 export const hashToLength20 = (input: string): string => {
   return crypto.createHash('sha256').update(input).digest('hex').slice(0, 20)
 }
+
+// Resolves the property the application is about, for both template variants
+// (legacy and SDF).
+export const getSelectedRealEstate = (
+  application: Application,
+): {
+  selectedRealEstateId: string | undefined
+  realEstates: Array<Fasteign> | undefined
+  selectedRealEstate: Fasteign | undefined
+} => {
+  const { answers, externalData } = application
+  const otherPropertiesThanIOwn = getValueViaPath<string[]>(
+    answers,
+    'otherPropertiesThanIOwnCheckbox',
+  )?.includes(YES)
+
+  const selectedPropertyByCode = getValueViaPath<string>(
+    answers,
+    'selectedPropertyByCode',
+  )
+  const selectedRealEstateId = otherPropertiesThanIOwn
+    ? selectedPropertyByCode
+      ? 'F' + selectedPropertyByCode
+      : undefined
+    : getValueViaPath<string>(answers, 'realEstate')
+
+  const realEstates = otherPropertiesThanIOwn
+    ? getValueViaPath<Array<Fasteign>>(
+        externalData,
+        'fetchPropertiesByCode.data',
+      ) ?? getValueViaPath<Array<Fasteign>>(answers, 'anyProperties')
+    : getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data')
+
+  return {
+    selectedRealEstateId,
+    realEstates,
+    selectedRealEstate: realEstates?.find(
+      (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+    ),
+  }
+}
+
+export const sumSelectedUnitsFireCompensation = (
+  property: Fasteign | undefined,
+  selectedUsageUnits: Array<string>,
+): number =>
+  property?.notkunareiningar?.notkunareiningar?.reduce((acc, unit) => {
+    if (selectedUsageUnits.includes(unit.notkunareininganumer ?? '')) {
+      return acc + (unit.brunabotamat ?? 0)
+    }
+    return acc
+  }, 0) ?? 0
+
+const sumTotalFireCompensation = (property: Fasteign | undefined): number =>
+  property?.notkunareiningar?.notkunareiningar?.reduce(
+    (acc, unit) => acc + (unit?.brunabotamat ?? 0),
+    0,
+  ) ?? 0
+
+// SDF variant of `mapAnswersToApplicationDto`. SDF display fields are not
+// persisted into answers, so the two computed appraisal values are recomputed
+// from source instead of read back.
+export const mapAnswersToApplicationDtoSdf = (
+  application: Application,
+): ApplicationDto => {
+  const { answers } = application
+  const applicant = getApplicant(answers)
+  const { selectedRealEstate } = getSelectedRealEstate(application)
+  const selectedUsageUnits =
+    getValueViaPath<Array<string>>(answers, 'usageUnits') ?? []
+  const usageUnitsFireCompensation = sumSelectedUnitsFireCompensation(
+    selectedRealEstate,
+    selectedUsageUnits,
+  ).toString()
+  const totalFireCompensation = sumTotalFireCompensation(
+    selectedRealEstate,
+  ).toString()
+
+  const fileAnswers = getValueViaPath<Array<AnswerFile>>(
+    application.answers,
+    'photos',
+  )
+  const parsedFiles = fileAnswers?.map((file) => {
+    const parts = file.key.split('.')
+    const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
+    const heiti = parts.join('.').replace(/^[^_]*_/, '')
+    const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
+    return {
+      flokkur: ending === 'pdf' ? 5 : 2,
+      heiti,
+      dags: new Date(),
+      tegund,
+      fileID: hashToLength20(file.key.split('_')[0]),
+      ending: `.${ending}`,
+    }
+  })
+
+  return {
+    applicationName: 'Brunabótamat - Endurmat',
+    status: 40, // Fixed value something from umsóknasmiður
+    language: 'IS',
+    portalApplicationID: application.id,
+    applicationType: APPLICATION_TYPE,
+    applicationJson: null,
+    dagssetning: new Date(),
+    adilar: [
+      {
+        kennitala: applicant.nationalId,
+        heiti: applicant.name,
+        heimili: applicant.address,
+        postnumer: applicant.postalCode,
+        stadur: applicant.city,
+        tegund: kennitala.isPerson(applicant.nationalId ?? '') ? 0 : 2, // 0 is a person and 2 is a company
+        hlutverk: 'Umsækjandi',
+        netfang: applicant.email,
+        simi: applicant.phoneNumber,
+      },
+    ],
+    notandagogn: [
+      {
+        flokkur: 'Skil á umsókn',
+        heiti:
+          'Ég lýsi yfir að ég hef kynnt mér efni á island.is um brunabótamat',
+        tegund: 'bool',
+        gildi:
+          getValueViaPath<Array<string>>(
+            answers,
+            'confirmReadFireCompensationInfo',
+          )?.[0] === YES
+            ? 'true'
+            : 'false',
+        guid: GUID,
+      },
+      {
+        flokkur: 'Skil á umsókn',
+        heiti: 'Ég hef kynnt mér persónuverndarstefnu HMS',
+        tegund: 'bool',
+        gildi:
+          getValueViaPath<Array<string>>(
+            answers,
+            'confirmReadPrivacyPolicy',
+          )?.[0] === YES
+            ? 'true'
+            : 'false',
+        guid: GUID,
+      },
+      {
+        flokkur: 'Eign',
+        heiti: 'Fasteignanumer',
+        tegund: 'fastanúmer',
+        gildi:
+          selectedRealEstate?.notkunareiningar?.notkunareiningar?.[0]?.fasteignanumer?.replace(
+            /\D/g,
+            '',
+          ),
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Heimili',
+        tegund: 'string',
+        gildi: selectedRealEstate?.sjalfgefidStadfang?.birtingStutt,
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Póstnúmer',
+        tegund: 'string',
+        gildi: selectedRealEstate?.sjalfgefidStadfang?.postnumer?.toString(),
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Valdar notkunareiningar',
+        tegund: 'string',
+        gildi: JSON.stringify(selectedUsageUnits.filter(Boolean)),
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Núverandi brunabótamat valdra notkunareininga',
+        tegund: 'string',
+        gildi: usageUnitsFireCompensation,
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Núverandi heildar brunabótamat',
+        tegund: 'string',
+        gildi: totalFireCompensation,
+        guid: GUID,
+      },
+      {
+        flokkur: 'Matsaðferð',
+        heiti: 'Endurmat vegna endurbóta',
+        tegund: 'radio',
+        gildi: getValueViaPath<Array<string>>(
+          answers,
+          'appraisalMethod',
+        )?.includes('renovations')
+          ? 'Já, vegna endurbóta'
+          : 'Nei, ekki vegna endurbóta',
+        guid: GUID,
+      },
+      {
+        flokkur: 'Matsaðferð',
+        heiti: 'Endurmat vegna viðbyggingar',
+        tegund: 'radio',
+        gildi: getValueViaPath<Array<string>>(
+          answers,
+          'appraisalMethod',
+        )?.includes('additions')
+          ? 'Já, vegna viðbyggingar'
+          : 'Nei, ekki vegna viðbyggingar',
+        guid: GUID,
+      },
+      {
+        flokkur: 'FastanúmerAfleiða',
+        heiti: 'Sveitarfélag',
+        tegund: 'string',
+        gildi: selectedRealEstate?.sjalfgefidStadfang?.sveitarfelagBirting,
+        guid: GUID,
+      },
+      {
+        flokkur: 'Lýsing á fasteign',
+        heiti: 'Lýsing á framkvæmdum ',
+        tegund: 'multi',
+        gildi: getValueViaPath<string>(answers, 'description'),
+        guid: GUID,
+      },
+    ],
+    greidsla: {
+      upphaed: null,
+      dags: null,
+      korthafi: null,
+      kortanumer: null,
+      tegundKorts: null,
+    },
+    files: parsedFiles,
+  }
+}

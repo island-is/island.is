@@ -95,6 +95,7 @@ export enum ApplicationTypes {
   CAR_RENTAL_DAYRATE_RETURNS = 'CarRentalDayrateReturns',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
+  FIRE_COMPENSATION_APPRAISAL_SDF = 'FireCompensationAppraisalSdf',
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
@@ -113,7 +114,10 @@ export interface ApplicationConfiguration {
   useSdf?: boolean
 }
 
-export const ApplicationConfigurations = {
+export const ApplicationConfigurations: Record<
+  string,
+  ApplicationConfiguration
+> = {
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
@@ -506,6 +510,11 @@ export const ApplicationConfigurations = {
     slug: 'endurmat-brunabotamats',
     translation: ['fca.application', 'uiForms.application'],
   },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF]: {
+    slug: 'endurmat-brunabotamats2',
+    translation: ['fca.application', 'uiForms.application'],
+    useSdf: true,
+  },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',
     translation: 'lg.application',
@@ -546,4 +555,4 @@ export const ApplicationConfigurations = {
     slug: 'atvinnuleysisbaetur-stadfesting-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
   },
-} satisfies Record<string, ApplicationConfiguration>
+}

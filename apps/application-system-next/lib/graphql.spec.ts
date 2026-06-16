@@ -121,35 +121,37 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({
-        data: {
-          applicationSdfScreen: {
-            applicationId: 'app-1',
-            locale: 'is',
-            header: { title: 'Title' },
-            stepper: {
-              sections: [],
-              activeSectionIndex: 0,
-              activeSubSectionIndex: 0,
-            },
-            page: {
-              id: 'page-1',
-              index: 0,
-              sectionIndex: 0,
-              subSectionIndex: 0,
-              components: [],
-              errors: [],
-            },
-            footer: {
-              buttons: [],
-              canGoBack: false,
+      text: async () =>
+        JSON.stringify({
+          data: {
+            applicationSdfScreen: {
+              applicationId: 'app-1',
+              locale: 'is',
+              header: { title: 'Title' },
+              stepper: {
+                sections: [],
+                activeSectionIndex: 0,
+                activeSubSectionIndex: 0,
+              },
+              page: {
+                id: 'page-1',
+                index: 0,
+                sectionIndex: 0,
+                subSectionIndex: 0,
+                components: [],
+                errors: [],
+              },
+              footer: {
+                buttons: [],
+                canGoBack: false,
+              },
             },
           },
-        },
-      }),
+        }),
     } as Response)
-    ;(globalThis as typeof globalThis & { fetch: typeof fetch }).fetch =
-      fetchMock as typeof fetch
+    ;(globalThis as typeof globalThis & {
+      fetch: typeof fetch
+    }).fetch = fetchMock as typeof fetch
     const windowDescriptor = Object.getOwnPropertyDescriptor(
       globalThis,
       'window',
@@ -160,12 +162,13 @@ describe('graphql SDF queries', () => {
     })
 
     try {
-      await fetchScreen('app-1', undefined, 'is', {
+      const headers: ForwardAuthHeaders = {
         cookie: 'sid=123',
         authorization: undefined,
         host: 'localhost:4250',
         protocol: 'http',
-      } satisfies ForwardAuthHeaders)
+      }
+      await fetchScreen('app-1', undefined, 'is', headers)
     } finally {
       if (windowDescriptor) {
         Object.defineProperty(globalThis, 'window', windowDescriptor)
@@ -184,14 +187,16 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: false,
       status: 401,
-      json: async () => ({
-        status: 401,
-        title: 'Unauthorized',
-        detail: 'Missing sid cookie',
-      }),
+      text: async () =>
+        JSON.stringify({
+          status: 401,
+          title: 'Unauthorized',
+          detail: 'Missing sid cookie',
+        }),
     } as Response)
-    ;(globalThis as typeof globalThis & { fetch: typeof fetch }).fetch =
-      fetchMock as typeof fetch
+    ;(globalThis as typeof globalThis & {
+      fetch: typeof fetch
+    }).fetch = fetchMock as typeof fetch
 
     await expect(fetchScreen('app-1')).rejects.toMatchObject({
       message: 'Unauthorized',
@@ -204,17 +209,19 @@ describe('graphql SDF queries', () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({
-        data: {
-          applicationSdfValidate: {
-            errors: [],
-            displayValues: { displayField: '77' },
+      text: async () =>
+        JSON.stringify({
+          data: {
+            applicationSdfValidate: {
+              errors: [],
+              displayValues: { displayField: '77' },
+            },
           },
-        },
-      }),
+        }),
     } as Response)
-    ;(globalThis as typeof globalThis & { fetch: typeof fetch }).fetch =
-      fetchMock as typeof fetch
+    ;(globalThis as typeof globalThis & {
+      fetch: typeof fetch
+    }).fetch = fetchMock as typeof fetch
 
     await validateAction(
       'app-1',

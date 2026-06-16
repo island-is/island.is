@@ -16,9 +16,9 @@ export const draftForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    partiesSection,
     rentalHousingSection,
     rentalPeriodSection,
-    partiesSection,
     costsSection,
     overviewSection,
   ],

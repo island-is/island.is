@@ -14,4 +14,5 @@ export const SDF_ENABLED_APPLICATION_SLUGS: readonly string[] = [
   'example-sdf',
   'faedingarorlof',
   'leigusamningur2',
+  'endurmat-brunabotamats2',
 ]

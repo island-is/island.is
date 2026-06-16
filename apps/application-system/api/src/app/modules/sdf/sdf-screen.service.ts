@@ -10,6 +10,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import {
   ApplicationTemplateHelper,
   getFormExpressionDependencies,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
@@ -40,8 +41,12 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationActionService } from '../application/application-action.service'
 import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
+import { getApplicationNameTranslationString } from '../application/utils/application'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
+import { applyResolvedFieldDefaults } from './field-default-persistence'
+import { applyFlatAnswers } from './apply-flat-answers'
+import { stripEmptyFormValue } from './strip-empty-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
@@ -52,16 +57,15 @@ import {
 } from './dto/screen.dto'
 import { SdfActionType } from './dto/action.dto'
 
-// Vanilla-extract CSS files (.css.ts) import `style()` which requires a
-// build-tool-managed "file scope". On the server there is no build tool running,
-// so we set a persistent no-op scope. The generated class-name strings are
-// thrown away — we only need the form AST, not actual CSS.
+// vanilla-extract's `style()` needs a build-tool "file scope" that doesn't exist
+// on the server. Set a no-op scope so importing form templates doesn't throw; the
+// generated class names are discarded since we only need the form AST.
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { setFileScope } = require('@vanilla-extract/css/fileScope')
   setFileScope('sdf-server-shim', 'application-system-api')
 } catch {
-  // vanilla-extract not available — form templates that don't use CSS will still work
+  // vanilla-extract not available; CSS-free templates still work
 }
 
 interface AdapterOptions {
@@ -162,7 +166,6 @@ export class SdfScreenService {
       screens,
     } = context
 
-    // Step 5: Resolve Current Screen
     const step5Start = Date.now()
     const resolvedIndex = await this.resolvePageIndex(
       applicationId,
@@ -175,7 +178,6 @@ export class SdfScreenService {
     const currentScreen = screens[resolvedIndex]
     this.logTiming('Step 5: Resolve Current Screen', step5Start)
 
-    // Step 6: Build Stepper
     const step6Start = Date.now()
     const resolver = await this.i18nResolverService.createResolver(
       application as Application,
@@ -195,7 +197,6 @@ export class SdfScreenService {
     )
     this.logTiming('Step 6: Build Stepper', step6Start)
 
-    // Step 7: Build Page
     const step7Start = Date.now()
     const page = this.buildPage(
       currentScreen,
@@ -205,7 +206,6 @@ export class SdfScreenService {
     )
     this.logTiming('Step 7: Build Page', step7Start)
 
-    // Step 8: Build Footer
     const step8Start = Date.now()
     const footer = this.buildFooter(
       context,
@@ -215,13 +215,10 @@ export class SdfScreenService {
     )
     this.logTiming('Step 8: Build Footer', step8Start)
 
-    // Step 9: Build Header
     const header = this.buildHeader(context, currentScreen, resolver)
 
-    // Step 10: Extract persisted answers for current page fields
     const pageAnswers = this.extractPageAnswers(currentScreen, application)
 
-    // Step 11: Assemble & Return Screen
     this.logTiming('Total pipeline', startTime)
 
     return {
@@ -242,30 +239,26 @@ export class SdfScreenService {
     options: AdapterOptions,
     pipelineStartTime: number,
   ): Promise<ScreenRenderContext> {
-    // Step 1: Load Application
     const application =
       options.application ??
       (await this.requireApplicationForUser(applicationId, user))
     this.logTiming('Step 1: Load Application', pipelineStartTime)
 
-    // Step 2: Load Template
     const step2Start = Date.now()
     const template = await getApplicationTemplateByTypeId(application.typeId)
     this.logTiming('Step 2: Load Template', step2Start)
 
-    // Step 3: Resolve Role & Form
     const step3Start = Date.now()
     const roleInState = this.resolveRoleInState(application, template, user)
     const form = await this.loadForm(roleInState, application)
     this.logTiming('Step 3: Resolve Role & Form', step3Start)
 
-    // Step 3.5: Apply Role-Based Data Filtering (SECURITY-CRITICAL)
+    // Security-critical: filter answers/external data by role before rendering.
     const step35Start = Date.now()
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application, roleInState)
     this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
 
-    // Step 4: Compile Form to Screens
     const step4Start = Date.now()
     const bffUser = this.buildBffUser(user, locale)
     const screens = convertFormToScreens(
@@ -338,8 +331,8 @@ export class SdfScreenService {
     ephemeral: boolean,
   ): Promise<number> {
     // Priority: explicit override > persisted DB value > answer-based inference.
-    // Ephemeral renders (REFETCH) must keep the persisted page index so the client
-    // does not advance ahead of what NEXT_PAGE has committed.
+    // Ephemeral (REFETCH) renders keep the persisted index so the client never
+    // advances ahead of what NEXT_PAGE committed.
     if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
       const resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
       if (!ephemeral && application.pageIndex !== pageIndexOverride) {
@@ -354,12 +347,9 @@ export class SdfScreenService {
     const persistedPageIndex = application.pageIndex ?? 0
     const hasAnswers = Object.keys(application.answers ?? {}).length > 0
     if (!ephemeral && persistedPageIndex === 0 && hasAnswers) {
-      // Migration fallback: existing app with no persisted page index.
-      // Infer from answers and persist so this only runs once.
-      // Ephemeral renders (e.g. REFETCH) must not use this path: we cannot
-      // persist here, and returning an inferred index would desync
-      // `page.index` from `application.pageIndex` and break NEXT_PAGE
-      // idempotency (lastKnownPageIndex vs persisted cursor).
+      // Migration fallback for existing apps with no persisted page index:
+      // infer from answers and persist once. Skipped for ephemeral renders,
+      // which can't persist and would desync the cursor from the client.
       const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
       await this.applicationService.update(applicationId, {
         pageIndex: resolvedIndex,
@@ -416,11 +406,25 @@ export class SdfScreenService {
       ? resolver.resolve(screen.description)
       : undefined
 
+    // Name comes from the template, not `form.title`: NOT_STARTED forms have an
+    // empty title which would leave the header name blank.
+    const applicationName = getApplicationNameTranslationString(
+      context.template,
+      context.application as Application,
+      resolver.format,
+    )
+    const institutionName = context.template.institution
+      ? resolver.format(context.template.institution)
+      : context.application.institution ?? undefined
+
     return {
       title: resolver.resolve(currentScreen?.title || context.form.title),
       description,
-      applicationName: resolver.resolve(context.form.title),
-      institutionName: context.application.institution ?? undefined,
+      applicationName,
+      institutionName,
+      // Logos are non-serializable React components; send the export name for the
+      // client to resolve from @island.is/application/assets/institution-logos.
+      logo: context.form.logo?.name,
     }
   }
 
@@ -433,10 +437,17 @@ export class SdfScreenService {
       ...this.extractClientExpressionAnswerIds(currentScreen),
     ])
     const pageAnswers: Record<string, unknown> = {}
+    const storedAnswers = application.answers ?? {}
 
     for (const fieldId of pageFieldIds) {
-      if (fieldId in (application.answers ?? {})) {
-        pageAnswers[fieldId] = application.answers[fieldId]
+      // Answers are stored nested (e.g. `applicant.phoneNumber`); read by path and
+      // return under the flat field id the client keys on. Fall back to a literal
+      // flat key for older applications written before nested normalization.
+      const value =
+        getValueViaPath(storedAnswers, fieldId) ??
+        (fieldId in storedAnswers ? storedAnswers[fieldId] : undefined)
+      if (value !== undefined) {
+        pageAnswers[fieldId] = value
       }
     }
 
@@ -471,11 +482,9 @@ export class SdfScreenService {
   }
 
   /**
-   * Recomputes the current screen against an in-memory answer snapshot.
-   *
-   * REFETCH must not persist answers, page index, or external data. Template APIs
-   * requested here run through the ephemeral action path, which mutates only the
-   * in-memory application object used to render the response.
+   * Recomputes the current screen against an in-memory answer snapshot without
+   * persisting anything. Template APIs run through the ephemeral action path,
+   * mutating only the in-memory application used to render the response.
    */
   async handleRefetch(
     applicationId: string,
@@ -498,10 +507,7 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
-    const mergedAnswers = {
-      ...(application.answers ?? {}),
-      ...(answers ?? {}),
-    } as FormValue
+    const mergedAnswers = applyFlatAnswers(application.answers, answers)
 
     let workingApplication = {
       ...toApplicationSnapshot(application),
@@ -594,7 +600,7 @@ export class SdfScreenService {
     }
 
     const errors: ValidationErrorDto[] = []
-    const mergedAnswers = { ...application.answers, ...answers }
+    const mergedAnswers = applyFlatAnswers(application.answers, answers)
 
     if (template.dataSchema && fieldIds.length > 0) {
       try {
@@ -626,7 +632,7 @@ export class SdfScreenService {
 
     if (fieldIds.length > 0) {
       const validatorErrors = await helper.applyAnswerValidators(
-        answers as FormValue,
+        applyFlatAnswers({}, answers),
         (descriptor, values) => formatResolver.resolve(descriptor as any),
       )
       if (validatorErrors) {
@@ -658,14 +664,10 @@ export class SdfScreenService {
   }
 
   /**
-   * Walks the current page's fields and, for every `FieldTypes.DISPLAY`,
-   * invokes the template-defined `value(answers, externalData)` closure
-   * against the supplied merged answers. The resulting string is run through
-   * the i18n resolver.
-   *
-   * Side-effect free (plan §2d, Constraint 1): no DB writes, no template APIs.
-   * Failures in individual closures are swallowed so a single broken display
-   * field cannot bring down the whole VALIDATE action.
+   * For every `FieldTypes.DISPLAY` field on the page, runs its `value(answers,
+   * externalData)` closure against the merged answers and resolves the result.
+   * Side-effect free; per-field failures are swallowed so one broken display
+   * field can't fail the whole VALIDATE action.
    */
   private async computeDisplayValues(
     application: ApplicationWithAttachments,
@@ -770,7 +772,9 @@ export class SdfScreenService {
       }
     }
 
-    const mergedAnswers = { ...application.answers, ...answers } as FormValue
+    // Expand the flat dotted-key payload into the nested shape the schema expects
+    // and deep-merge onto the persisted tree. See `applyFlatAnswers`.
+    const mergedAnswers = applyFlatAnswers(application.answers, answers)
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
 
@@ -781,6 +785,47 @@ export class SdfScreenService {
       locale,
       user,
     )
+
+    // Seed resolved field defaults for the page being left (legacy committed each
+    // field's `defaultValue` on submit). Runs before validation and page-advance
+    // so both see the values; mutates `mergedAnswers` in place.
+    applyResolvedFieldDefaults(
+      currentScreen,
+      mergedAnswers,
+      application as Application,
+      locale,
+    )
+
+    // Validate the page being left before any side effects. EDP screens validate
+    // the provider node's own id (e.g. `approveExternalData`), so an unchecked
+    // approval can't advance.
+    const validationErrors = await this.validateScreenAnswers(
+      currentScreen,
+      template,
+      application,
+      mergedAnswers,
+      answers,
+      locale,
+    )
+    if (validationErrors.length > 0) {
+      // Re-render against the just-submitted answers (not the persisted ones) so
+      // in-progress input is preserved behind the error. Rebuilding from the
+      // persisted application would drop unpersisted answers and collapse
+      // dependent options and computed display values.
+      const workingApplication = {
+        ...toApplicationSnapshot(application),
+        answers: mergedAnswers,
+      } as ApplicationWithAttachments
+      const screen = await this.getScreen(
+        applicationId,
+        currentPageIndex,
+        locale,
+        user,
+        { ephemeral: true, application: workingApplication },
+      )
+      screen.page.errors = validationErrors
+      return screen
+    }
 
     if (
       currentScreen &&
@@ -826,52 +871,49 @@ export class SdfScreenService {
         }
       }
 
-      const newPageIndex = currentPageIndex + 1
+      const newPageIndex = await this.resolveAdvancedPageIndex(
+        application,
+        template,
+        mergedAnswers,
+        currentPageIndex,
+        locale,
+        user,
+      )
       await this.applicationService.update(applicationId, {
-        answers: mergedAnswers,
+        // Strip empty strings on write to match legacy, which never persisted an
+        // untouched optional field. Only the write is normalized; validation above
+        // ran on the unstripped merge.
+        answers: stripEmptyFormValue(mergedAnswers),
         pageIndex: newPageIndex,
       })
 
       return this.getScreen(applicationId, undefined, locale, user)
     }
 
-    const validationErrors = await this.validateAnswersForPage(
+    const newPageIndex = await this.resolveAdvancedPageIndex(
       application,
       template,
       mergedAnswers,
-      answers,
       currentPageIndex,
       locale,
       user,
     )
-
-    if (validationErrors.length > 0) {
-      const screen = await this.getScreen(
-        applicationId,
-        undefined,
-        locale,
-        user,
-      )
-      screen.page.errors = validationErrors
-      return screen
-    }
-
-    const newPageIndex = currentPageIndex + 1
     await this.applicationService.update(applicationId, {
-      answers: mergedAnswers,
+      // Strip empty strings on write to match legacy; validation above ran on the
+      // unstripped merge. See the EDP branch above.
+      answers: stripEmptyFormValue(mergedAnswers),
       pageIndex: newPageIndex,
     })
 
     return this.getScreen(applicationId, undefined, locale, user)
   }
 
-  private async getCurrentScreen(
+  private async buildScreens(
     application: ApplicationWithAttachments,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    pageIndex: number,
     locale: Locale,
     user: User,
-  ): Promise<FormScreen | undefined> {
+  ): Promise<FormScreen[] | undefined> {
     const role = template.mapUserToRole(
       user.nationalId,
       application as Application,
@@ -896,14 +938,54 @@ export class SdfScreenService {
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application as Application, roleInState)
 
-    const screens = convertFormToScreens(
+    return convertFormToScreens(
       form,
       filteredAnswers,
       filteredExternalData,
       bffUser as any,
     )
+  }
+
+  private async getCurrentScreen(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    pageIndex: number,
+    locale: Locale,
+    user: User,
+  ): Promise<FormScreen | undefined> {
+    const screens = await this.buildScreens(application, template, locale, user)
+    if (!screens) return undefined
+
     const resolvedIndex = moveToScreen(screens, pageIndex, true)
     return screens[resolvedIndex]
+  }
+
+  // Index of the next *navigable* screen after `currentPageIndex`, computed
+  // against the just-submitted answers (which can flip page visibility). The
+  // persisted cursor must land on a navigable screen, otherwise it desyncs from
+  // the client's echoed `lastKnownPageIndex` and breaks the idempotency check.
+  private async resolveAdvancedPageIndex(
+    application: ApplicationWithAttachments,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    mergedAnswers: FormValue,
+    currentPageIndex: number,
+    locale: Locale,
+    user: User,
+  ): Promise<number> {
+    const target = currentPageIndex + 1
+    const workingApplication = {
+      ...toApplicationSnapshot(application),
+      answers: mergedAnswers,
+    } as ApplicationWithAttachments
+    const screens = await this.buildScreens(
+      workingApplication,
+      template,
+      locale,
+      user,
+    )
+    if (!screens) return target
+
+    return moveToScreen(screens, target, true)
   }
 
   async goToPreviousPage(
@@ -928,82 +1010,102 @@ export class SdfScreenService {
     return this.getScreen(applicationId, undefined, locale, user)
   }
 
-  private async validateAnswersForPage(
-    application: ApplicationWithAttachments,
-    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    mergedAnswers: FormValue,
-    newAnswers: Record<string, unknown>,
-    pageIndex: number,
+  // Jump directly to a page by id (overview "Breyta"/edit button), landing on the
+  // nearest navigable screen and persisting the cursor like NEXT_PAGE/PREV_PAGE.
+  async goToPage(
+    applicationId: string,
+    targetPageId: string,
     locale: Locale,
     user: User,
+  ): Promise<ScreenDto> {
+    const application = await this.requireApplicationForUser(
+      applicationId,
+      user,
+    )
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+
+    const screens = await this.buildScreens(application, template, locale, user)
+    if (screens) {
+      const targetIndex = screens.findIndex(
+        (screen) => screen.id === targetPageId,
+      )
+      if (targetIndex >= 0) {
+        const newPageIndex = moveToScreen(screens, targetIndex, false)
+        const currentPageIndex: number = (application as any).pageIndex ?? 0
+        if (newPageIndex !== currentPageIndex) {
+          await this.applicationService.update(applicationId, {
+            pageIndex: newPageIndex,
+          })
+        }
+      }
+    }
+
+    return this.getScreen(applicationId, undefined, locale, user)
+  }
+
+  /**
+   * Validates a screen's answers against the template `dataSchema` and answer
+   * validators, scoped to that screen's fields.
+   *
+   * EXTERNAL_DATA_PROVIDER screens carry their required answer (e.g.
+   * `approveExternalData`) on the node's own `id` rather than in `children`, so
+   * we validate the node id directly to block an unchecked approval.
+   */
+  private async validateScreenAnswers(
+    currentScreen: FormScreen | undefined,
+    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    newAnswers: Record<string, unknown> | undefined,
+    locale: Locale,
   ): Promise<ValidationErrorDto[]> {
     const errors: ValidationErrorDto[] = []
+    if (!currentScreen) return errors
 
-    const role = template.mapUserToRole(
-      user.nationalId,
-      application as Application,
-    )
-    if (!role) return errors
+    const isExternalDataProvider =
+      'type' in currentScreen &&
+      currentScreen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+
+    const fieldIds = isExternalDataProvider
+      ? currentScreen.id
+        ? [currentScreen.id]
+        : []
+      : getFormNodeFieldIds(currentScreen as any)
+
+    if (fieldIds.length === 0) return errors
+
+    if (template.dataSchema) {
+      try {
+        const result = template.dataSchema.safeParse(mergedAnswers)
+        if (!result.success) {
+          for (const issue of result.error.issues) {
+            const path = issue.path.join('.')
+            if (fieldIds.includes(path)) {
+              errors.push({ componentId: path, message: issue.message })
+            }
+          }
+        }
+      } catch (e) {
+        this.logger.error('Zod validation error during screen validation', e)
+      }
+    }
 
     const helper = new ApplicationTemplateHelper(
       application as Application,
       template,
     )
-    const roleInState = helper.getRoleInState(role)
-    if (!roleInState?.formLoader) return errors
-
-    const form = await roleInState.formLoader({
-      featureFlagClient: this.featureFlagService,
-    } as any)
-
-    const bffUser = {
-      nationalId: user.nationalId,
-      profile: { nationalId: user.nationalId, name: '', locale },
-    }
-    const { answers: filteredAnswers, externalData: filteredExternalData } =
-      this.filterDataByRole(application as Application, roleInState)
-
-    const screens = convertFormToScreens(
-      form,
-      filteredAnswers,
-      filteredExternalData,
-      bffUser as any,
+    const formatResolver = await this.i18nResolverService.createResolver(
+      application as Application,
+      locale,
     )
-    const resolvedIndex = moveToScreen(screens, pageIndex, true)
-    const currentScreen = screens[resolvedIndex]
-
-    if (currentScreen) {
-      const fieldIds = getFormNodeFieldIds(currentScreen as any)
-
-      if (template.dataSchema && fieldIds.length > 0) {
-        try {
-          const result = template.dataSchema.safeParse(mergedAnswers)
-          if (!result.success) {
-            for (const issue of result.error.issues) {
-              const path = issue.path.join('.')
-              if (fieldIds.includes(path)) {
-                errors.push({ componentId: path, message: issue.message })
-              }
-            }
-          }
-        } catch (e) {
-          this.logger.error('Zod validation error during NEXT_PAGE', e)
-        }
-      }
-
-      const formatResolver = await this.i18nResolverService.createResolver(
-        application as Application,
-        locale,
-      )
-      const validatorErrors = await helper.applyAnswerValidators(
-        newAnswers as FormValue,
-        (descriptor, values) => formatResolver.resolve(descriptor as any),
-      )
-      if (validatorErrors) {
-        for (const [path, message] of Object.entries(validatorErrors)) {
-          if (fieldIds.includes(path)) {
-            errors.push({ componentId: path, message })
-          }
+    const validatorErrors = await helper.applyAnswerValidators(
+      applyFlatAnswers({}, newAnswers),
+      (descriptor, values) => formatResolver.resolve(descriptor as any),
+    )
+    if (validatorErrors) {
+      for (const [path, message] of Object.entries(validatorErrors)) {
+        if (fieldIds.includes(path)) {
+          errors.push({ componentId: path, message })
         }
       }
     }
@@ -1030,22 +1132,68 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
+    // Validate the originating screen before transitioning, so e.g. an unchecked
+    // prerequisites approval can't trigger `changeState`. Non-input screens (e.g.
+    // the overview) have no schema-backed field ids, so this is a no-op for them.
+    const currentPageIndex: number =
+      (application as ApplicationWithPageIndex).pageIndex ?? 0
+    const submitMergedAnswers = applyFlatAnswers(application.answers, answers)
+    const currentScreen = await this.getCurrentScreen(
+      application,
+      template,
+      currentPageIndex,
+      locale,
+      user,
+    )
+    const validationErrors = await this.validateScreenAnswers(
+      currentScreen,
+      template,
+      application,
+      submitMergedAnswers,
+      answers,
+      locale,
+    )
+    if (validationErrors.length > 0) {
+      const workingApplication = {
+        ...toApplicationSnapshot(application),
+        answers: submitMergedAnswers,
+      } as ApplicationWithAttachments
+      const screen = await this.getScreen(
+        applicationId,
+        currentPageIndex,
+        locale,
+        user,
+        { ephemeral: true, application: workingApplication },
+      )
+      screen.page.errors = validationErrors
+      return screen
+    }
+
     if (answers && Object.keys(answers).length > 0) {
-      const mergedAnswers = { ...application.answers, ...answers }
+      const mergedAnswers = applyFlatAnswers(application.answers, answers)
       await this.applicationService.update(applicationId, {
-        answers: mergedAnswers,
+        // Strip empty strings on write to match legacy; see persistAnswersAndAdvance.
+        answers: stripEmptyFormValue(mergedAnswers),
       })
       application = await this.requireApplicationForUser(applicationId, user)
     }
 
+    // `requireApplicationForUser` returns a Sequelize model whose attributes live
+    // behind prototype getters. `changeState` spreads the application, which drops
+    // those getters (leaving `typeId` undefined and crashing `CreateChargeApi`).
+    // Pass a plain snapshot so the spread preserves every field.
+    const applicationSnapshot = toApplicationSnapshot(
+      application,
+    ) as ApplicationWithAttachments
+
     const helper = new ApplicationTemplateHelper(
-      application as Application,
+      applicationSnapshot as Application,
       template,
     )
     const apisFromRole = helper.getApisFromRoleInState(role)
     if (apisFromRole.length > 0) {
       await this.applicationActionService.performActionOnApplication(
-        application,
+        applicationSnapshot,
         template,
         user,
         apisFromRole,
@@ -1057,7 +1205,7 @@ export class SdfScreenService {
     const eventStr = event || 'SUBMIT'
 
     const result = await this.applicationActionService.changeState(
-      application,
+      applicationSnapshot,
       template,
       eventStr,
       user,
@@ -1065,10 +1213,17 @@ export class SdfScreenService {
     )
 
     if (result.hasError) {
-      throw new Error(
+      // A failed `onEntry` action (e.g. `CreateChargeApi`) aborts the transition.
+      // Log the full reason server-side and propagate it to the client.
+      const reason =
         typeof result.error === 'string'
           ? result.error
-          : 'State transition failed',
+          : JSON.stringify(result.error ?? {})
+      this.logger.error(
+        `SDF SUBMIT failed to transition application ${applicationId} on event "${eventStr}": ${reason}`,
+      )
+      throw new Error(
+        `State transition failed for event "${eventStr}": ${reason}`,
       )
     }
 

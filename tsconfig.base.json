@@ -687,6 +687,9 @@
       "@island.is/application/templates/v2/examples/example-inputs": [
         "libs/application/templates/v2/examples/example-inputs/src/index.ts"
       ],
+      "@island.is/application/templates/v2/hms/fire-compensation-appraisal": [
+        "libs/application/templates/v2/hms/fire-compensation-appraisal/src/index.ts"
+      ],
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],

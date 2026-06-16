@@ -20,8 +20,10 @@ import { mapInformationCardField } from './information-card.mapper'
 import { mapKeyValueField } from './key-value.mapper'
 import { mapLinkField } from './link.mapper'
 import { mapMessageWithLinkButtonField } from './message-with-link-button-field.mapper'
+import { mapOverviewField } from './overview.mapper'
 import { mapPaymentChargeOverviewField } from './payment-charge-overview.mapper'
 import { mapPdfLinkButtonField } from './pdf-link-button.mapper'
+import { mapPhoneField } from './phone.mapper'
 import { mapSearchField } from './search.mapper'
 import { mapSelectField } from './select.mapper'
 import { mapSliderField } from './slider.mapper'
@@ -49,8 +51,10 @@ const fieldMappers: Partial<Record<FieldTypes, FieldMapper>> = {
   [FieldTypes.KEY_VALUE]: mapKeyValueField,
   [FieldTypes.LINK]: mapLinkField,
   [FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD]: mapMessageWithLinkButtonField,
+  [FieldTypes.OVERVIEW]: mapOverviewField,
   [FieldTypes.PAYMENT_CHARGE_OVERVIEW]: mapPaymentChargeOverviewField,
   [FieldTypes.PDF_LINK_BUTTON]: mapPdfLinkButtonField,
+  [FieldTypes.PHONE]: mapPhoneField,
   [FieldTypes.SEARCH]: mapSearchField,
   [FieldTypes.SELECT]: mapSelectField,
   [FieldTypes.SLIDER]: mapSliderField,

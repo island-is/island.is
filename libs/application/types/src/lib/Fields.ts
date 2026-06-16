@@ -1120,9 +1120,20 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  clientValueExpression?: FormExpression
+  clientValueExpression?: DisplayFieldClientValueExpression
   value: (answers: FormValue, externalData: ExternalData) => string
 }
+
+/**
+ * `clientValueExpression` is normally a static expression tree. It may also be a
+ * resolver `(answers, externalData) => FormExpression` so an author can bake
+ * `externalData`-derived literals (which the client evaluator cannot read) into
+ * the tree at screen-build time. The SDF display mapper resolves the function
+ * to a static tree before it reaches the client.
+ */
+export type DisplayFieldClientValueExpression =
+  | FormExpression
+  | ((answers: FormValue, externalData: ExternalData) => FormExpression)
 
 export type FormExpressionOperator =
   | 'GET'
@@ -1138,6 +1149,7 @@ export type FormExpressionOperator =
   | 'OR'
   | 'AND'
   | 'IF'
+  | 'CONTAINS'
 
 export type FormExpression =
   | string

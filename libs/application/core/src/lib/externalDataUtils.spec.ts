@@ -17,7 +17,7 @@ const isPlotDetailsData = (data: unknown): data is PlotDetailsData => {
 }
 
 describe('externalDataUtils', () => {
-  const externalData = {
+  const externalData: ExternalData = {
     getPlotDetails: {
       status: 'success',
       date: new Date(),
@@ -33,7 +33,7 @@ describe('externalDataUtils', () => {
       date: new Date(),
       data: {},
     },
-  } satisfies ExternalData
+  }
 
   it('returns typed data for successful external data with a valid payload', () => {
     expect(

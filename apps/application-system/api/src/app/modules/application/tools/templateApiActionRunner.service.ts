@@ -78,7 +78,6 @@ export class TemplateApiActionRunner {
     formatMessage: FormatMessage,
   ): Promise<ApplicationWithAttachments> {
     const newExternalData = { data: {} }
-    this.formatMessage = formatMessage
 
     const groupedActions = this.groupByOrder(this.sortActions(actions))
 

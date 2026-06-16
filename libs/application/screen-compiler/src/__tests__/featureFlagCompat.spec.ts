@@ -16,6 +16,7 @@ describe('FeatureFlagClient type compatibility with FormLoaderArgs', () => {
       dispose: () => {},
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       getValue: async () => '' as any,
+      getAllValues: async () => ({}),
     }
 
     const args: FormLoaderArgs = {

@@ -7,6 +7,7 @@ import {
   RoleInState,
   StateLifeCycle,
   Application,
+  ScheduledNotificationConfig,
   TemplateApi,
 } from '@island.is/application/types'
 import type { EventObject } from 'xstate'
@@ -25,7 +26,10 @@ interface TransitionTarget {
 
 type TransitionDef = string | TransitionTarget | TransitionTarget[]
 
-interface PhaseDefinition<TEvent extends EventObject = EventObject, R = unknown> {
+interface PhaseDefinition<
+  TEvent extends EventObject = EventObject,
+  R = unknown,
+> {
   name: string
   status: PhaseStatus
   lifecycle: StateLifeCycle
@@ -50,6 +54,11 @@ interface PhaseDefinition<TEvent extends EventObject = EventObject, R = unknown>
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onDelete?: TemplateApi<R>[] | TemplateApi<R>
 
+  scheduledNotifications?:
+    | ScheduledNotificationConfig[]
+    | ScheduledNotificationConfig
+    | ((application: Application) => ScheduledNotificationConfig)
+
   entry?: string | string[]
   exit?: string | string[]
 
@@ -58,7 +67,10 @@ interface PhaseDefinition<TEvent extends EventObject = EventObject, R = unknown>
 
 type GuardFn = (context: ApplicationContext) => boolean
 
-interface WorkflowDefinition<TEvent extends EventObject = EventObject, R = unknown> {
+interface WorkflowDefinition<
+  TEvent extends EventObject = EventObject,
+  R = unknown,
+> {
   initialPhase: string
   phases: Record<string, PhaseDefinition<TEvent, R>>
   guards?: Record<string, GuardFn>
@@ -76,7 +88,10 @@ interface StateNode<TEvent extends EventObject = EventObject, R = unknown> {
   >
 }
 
-interface WorkflowOutput<TEvent extends EventObject = EventObject, R = unknown> {
+interface WorkflowOutput<
+  TEvent extends EventObject = EventObject,
+  R = unknown,
+> {
   stateMachineConfig: {
     initial: string
     states: Record<string, StateNode<TEvent, R>>
@@ -88,7 +103,10 @@ interface WorkflowOutput<TEvent extends EventObject = EventObject, R = unknown> 
 
 const compileTransition = (
   def: TransitionDef,
-): string | { target: string; cond?: string } | Array<{ target: string; cond?: string }> => {
+):
+  | string
+  | { target: string; cond?: string }
+  | Array<{ target: string; cond?: string }> => {
   if (typeof def === 'string') {
     return def
   }
@@ -148,6 +166,10 @@ export const defineWorkflow = <
 
     if (phase.onDelete) {
       meta.onDelete = phase.onDelete
+    }
+
+    if (phase.scheduledNotifications) {
+      meta.scheduledNotifications = phase.scheduledNotifications
     }
 
     const stateNode: StateNode<TEvent, R> = { meta }

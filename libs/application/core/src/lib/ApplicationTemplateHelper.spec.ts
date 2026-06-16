@@ -14,6 +14,7 @@ import {
   TemplateApi,
   defineTemplateApi,
   PendingAction,
+  FormatMessage,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'
@@ -366,7 +367,8 @@ describe('ApplicationTemplate', () => {
   })
 
   describe('applyAnswerValidators', () => {
-    const formatMessage = (message: string) => message
+    const formatMessage = ((message) =>
+      typeof message === 'string' ? message : message.id) as FormatMessage
 
     it('runs validators for flat dotted SDF answer keys', async () => {
       const template = {

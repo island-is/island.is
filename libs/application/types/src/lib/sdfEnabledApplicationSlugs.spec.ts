@@ -5,7 +5,7 @@ describe('SDF_ENABLED_APPLICATION_SLUGS', () => {
   it('matches every ApplicationConfigurations entry with useSdf: true', () => {
     const expected = new Set(
       Object.values(ApplicationConfigurations)
-        .filter((c) => c.useSdf)
+        .filter((c) => 'useSdf' in c && c.useSdf)
         .map((c) => c.slug),
     )
     const actual = new Set(SDF_ENABLED_APPLICATION_SLUGS)

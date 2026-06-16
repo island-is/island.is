@@ -23,7 +23,7 @@ import {
   PendingAction,
   HistoryEventMessage,
 } from '@island.is/application/types'
-import { formatText } from './formUtils'
+import { formatText, mergeAnswers } from './formUtils'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -247,7 +247,7 @@ export class ApplicationTemplateHelper<
     const validatorPaths = Object.keys(validators)
     const applicationWithNewAnswers: Application = {
       ...this.application,
-      answers: merge({}, this.application.answers, newAnswers) as FormValue,
+      answers: mergeAnswers(this.application.answers, newAnswers),
     }
 
     for (const validatorPath of validatorPaths) {
