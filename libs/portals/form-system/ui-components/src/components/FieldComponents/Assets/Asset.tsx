@@ -1,14 +1,23 @@
 import { FormSystemField } from 'libs/api/schema/src/lib/schema'
-import { ApplicationState } from '../../../lib'
+import { ApplicationState, Action } from '../../../lib'
 import { Vehicle } from './Vehicle'
+import { Dispatch } from 'react'
 
 interface Props {
   state?: ApplicationState
   item: FormSystemField
   valueIndex?: number
+  dispatch?: Dispatch<Action>
 }
-export const Asset = ({ state, item, valueIndex }: Props) => {
+export const Asset = ({ state, item, valueIndex, dispatch }: Props) => {
   if (item?.fieldSettings?.assetType === 'VEHICLE') {
-    return <Vehicle state={state} item={item} valueIndex={valueIndex} />
+    return (
+      <Vehicle
+        state={state}
+        item={item}
+        valueIndex={valueIndex}
+        dispatch={dispatch}
+      />
+    )
   }
 }

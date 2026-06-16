@@ -1,13 +1,12 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
   Box,
-  Checkbox,
   Select,
   Stack,
   GridColumn as Column,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { AssetTypes } from '@island.is/form-system/enums'
@@ -22,11 +21,9 @@ export const AssetsSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
   const { isReadOnly, activeItem } = control
-
   const currentItem = activeItem.data as FormSystemField
-  const [isDropdown, setIsDropdown] = useState(
-    currentItem.fieldSettings?.isDropdown ?? false,
-  )
+  const isDropdown = currentItem.fieldSettings?.isDropdown ?? false
+
   const selected =
     assetTypeOptions.find(
       (option) => option.value === currentItem.fieldSettings?.assetType,
@@ -81,7 +78,6 @@ export const AssetsSettings = () => {
               disabled={isReadOnly}
               checked={isDropdown}
               onChange={() => {
-                setIsDropdown(true)
                 controlDispatch({
                   type: 'SET_ANY_FIELD_SETTING',
                   payload: {
@@ -101,7 +97,6 @@ export const AssetsSettings = () => {
               disabled={isReadOnly}
               checked={!isDropdown}
               onChange={() => {
-                setIsDropdown(false)
                 controlDispatch({
                   type: 'SET_ANY_FIELD_SETTING',
                   payload: {

@@ -100,9 +100,9 @@ export class ValueTypeFactory {
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.ASSETS:
         keys = [
-          'value',
-          'label',
-          'name',
+          'registrationNumber',
+          'model',
+          'color',
           'propertyNumber',
           'address',
           'postalCode',

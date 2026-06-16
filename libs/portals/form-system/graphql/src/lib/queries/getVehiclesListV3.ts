@@ -10,6 +10,10 @@ export const GET_VEHICLES_LIST_V3 = gql`
       vehicleList {
         vehicleId
         make
+        color {
+          code
+          name
+        }
         registration {
           number
         }

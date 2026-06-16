@@ -111,6 +111,12 @@ export const Summary = ({ state }: Props) => {
       s.sectionType !== SectionTypes.SUMMARY,
   )
 
+  console.log(
+    'hasAnyMissingRequired',
+    hasAnyMissingRequired,
+    'sections',
+    sections,
+  )
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">

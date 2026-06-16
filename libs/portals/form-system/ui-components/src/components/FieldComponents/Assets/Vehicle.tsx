@@ -1,9 +1,17 @@
-import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemLanguageType,
+  FormSystemListItem,
+} from '@island.is/api/schema'
 import {
   Box,
+  GridColumn,
+  GridRow,
+  Input,
   LoadingDots,
   Select,
   SkeletonLoader,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useMemo, useState } from 'react'
@@ -16,6 +24,7 @@ import { Action, ApplicationState } from '../../../lib'
 import {
   removeTypename,
   GET_VEHICLES_LIST_V3,
+  GET_PUBLIC_VEHICLE_SEARCH,
 } from '@island.is/form-system/graphql'
 
 interface Props {
@@ -33,12 +42,18 @@ type SelectItem = {
   }
 }
 
+type Color = {
+  code: string
+  name: string
+}
+
 type VehiclesListV3Query = {
   vehiclesListV3?: {
     totalPages: number
     vehicleList?: Array<{
       vehicleId: string
       make?: string | null
+      color?: Color | null
       registration?: { number: string } | null
     }> | null
   } | null
@@ -52,32 +67,109 @@ type VehiclesListV3Vars = {
   }
 }
 
+type PublicVehicleSearchQuery = {
+  publicVehicleSearch?: {
+    permno?: string | null
+    regno?: string | null
+    vin?: string | null
+    make?: string | null
+    vehicleCommercialName?: string | null
+    color?: string | null
+    vehicleStatus?: string | null
+  } | null
+}
+
+type PublicVehicleSearchVars = {
+  input: {
+    search: string
+  }
+}
+
 const VEHICLES_PAGE_SIZE = 100
 
 export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { lang, formatMessage } = useLocale()
-  const { control, trigger, setValue, getValues } = useFormContext()
+  const { control, trigger, setValue, setError, clearErrors } = useFormContext()
   const client = useApolloClient()
 
-  const fieldName = item.id + '.' + valueIndex
+  const registrationNumberField = `${item.id}.${valueIndex}_registrationNumber`
+  const modelField = `${item.id}.${valueIndex}_model`
+  const colorField = `${item.id}.${valueIndex}_color`
+
   const shouldFetch = item.fieldSettings?.isDropdown ?? false
+  const cached = (item.list?.length ?? 0) > 0
+
+  const toLanguage = (value: string): FormSystemLanguageType => ({
+    is: value,
+    en: value,
+  })
+
+  const dispatchAssetValue = (
+    registrationNumber: string,
+    model: string,
+    color: FormSystemLanguageType,
+  ) => {
+    dispatch?.({
+      type: 'SET_ASSET_VALUE',
+      payload: {
+        id: item.id,
+        valueIndex,
+        registrationNumber,
+        model,
+        color,
+      },
+    })
+  }
+
+  const parseModelAndColorFromLabel = (label: string) => {
+    const separator = ' - '
+    const separatorIndex = label.indexOf(separator)
+
+    if (separatorIndex < 0) {
+      return { model: '', color: '' }
+    }
+
+    let modelPart = label.slice(separatorIndex + separator.length).trim()
+    let color = ''
+
+    const colorMatch = modelPart.match(/\(([^()]*)\)\s*$/)
+    if (colorMatch) {
+      color = colorMatch[1].trim()
+      modelPart = modelPart.slice(0, colorMatch.index).trim()
+    }
+
+    return {
+      model: modelPart,
+      color,
+    }
+  }
 
   const [vehicleList, setVehicleList] = useState<(FormSystemListItem | null)[]>(
     item.list ?? [],
   )
-  const [isLoading, setIsLoading] = useState(
-    shouldFetch && (item.list?.length ?? 0) === 0,
+  const [selectedOption, setSelectedOption] = useState<SelectItem | undefined>(
+    undefined,
   )
+  const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
   const [vehiclesFetchHasError, setVehiclesFetchHasError] = useState(false)
+
+  const [searchLoading, setSearchLoading] = useState(false)
+  // const [searchResult, setSearchResult] = useState<
+  //   PublicVehicleSearchQuery['publicVehicleSearch'] | null
+  // >(null)
 
   const buildListItem = (vehicle: {
     vehicleId: string
     make?: string | null
     registration?: { number: string } | null
+    color?: Color | null
   }): FormSystemListItem => {
     const registrationNumber = vehicle.registration?.number ?? vehicle.vehicleId
     const labelText = vehicle.make
-      ? registrationNumber + ' - ' + vehicle.make
+      ? registrationNumber +
+        ' - ' +
+        vehicle.make +
+        (vehicle.color ? ' (' + vehicle.color.name + ')' : '')
       : registrationNumber
 
     return {
@@ -125,6 +217,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
         if (!vehicle || seen.has(vehicle.vehicleId)) {
           continue
         }
+
         seen.add(vehicle.vehicleId)
         allItems.push(buildListItem(vehicle))
       }
@@ -135,11 +228,105 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
     return allItems
   }
 
+  const searchPublicVehicle = async (search: string) => {
+    const normalized = search.trim().toUpperCase()
+
+    if (!normalized) {
+      // setSearchResult(null)
+      setValue(registrationNumberField, '')
+      setValue(modelField, '')
+      setValue(colorField, '')
+      clearErrors(registrationNumberField)
+      clearErrors(modelField)
+      clearErrors(colorField)
+      return
+    }
+
+    setSearchLoading(true)
+    // setSearchResult(null)
+
+    try {
+      const result = await client.query<
+        PublicVehicleSearchQuery,
+        PublicVehicleSearchVars
+      >({
+        query: GET_PUBLIC_VEHICLE_SEARCH,
+        variables: {
+          input: { search: normalized },
+        },
+        fetchPolicy: 'network-only',
+      })
+
+      const vehicleData = result.data?.publicVehicleSearch
+
+      if (vehicleData) {
+        const registrationNumber = vehicleData.permno ?? vehicleData.regno ?? ''
+        const model = `${vehicleData.make ?? ''} ${
+          vehicleData.vehicleCommercialName ?? ''
+        }`.trim()
+        const color = vehicleData.color ?? ''
+
+        // setSearchResult(vehicleData)
+        setValue(registrationNumberField, registrationNumber)
+        setValue(modelField, model)
+        setValue(colorField, color)
+
+        dispatchAssetValue(registrationNumber, model, toLanguage(color))
+
+        clearErrors(registrationNumberField)
+        clearErrors(modelField)
+        clearErrors(colorField)
+      } else {
+        // setSearchResult(null)
+        setValue(modelField, '')
+        setValue(colorField, '')
+        setError(registrationNumberField, {
+          type: 'validate',
+          message: 'Vehicle not found',
+        })
+        setError(modelField, {
+          type: 'validate',
+          message: 'Vehicle not found',
+        })
+        setError(colorField, {
+          type: 'validate',
+          message: 'Vehicle not found',
+        })
+      }
+    } catch (_error) {
+      // setSearchResult(null)
+      setValue(modelField, '')
+      setValue(colorField, '')
+      setError(registrationNumberField, {
+        type: 'validate',
+        message: 'Vehicle not found',
+      })
+      setError(modelField, {
+        type: 'validate',
+        message: 'Vehicle not found',
+      })
+      setError(colorField, {
+        type: 'validate',
+        message: 'Vehicle not found',
+      })
+    } finally {
+      setSearchLoading(false)
+    }
+  }
+
   useEffect(() => {
     let cancelled = false
 
     if (!shouldFetch) {
       setIsLoading(false)
+      return
+    }
+
+    if (cached) {
+      const list = item.list ?? []
+      setVehicleList(list)
+      setIsLoading(false)
+      setVehiclesFetchHasError(false)
       return
     }
 
@@ -178,13 +365,57 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
     return () => {
       cancelled = true
     }
-  }, [client, dispatch, item.id, shouldFetch])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!shouldFetch || isLoading || vehiclesFetchHasError) {
+      return
+    }
+
+    const storedRegistration = getValue(item, 'registrationNumber', valueIndex)
+    if (!storedRegistration) {
+      return
+    }
+
+    const options = mapToSelectItems(vehicleList)
+    const initial = options.find(
+      (opt) => opt.value.value === storedRegistration,
+    )
+
+    if (initial) {
+      setSelectedOption(initial)
+      setValue(registrationNumberField, initial.label)
+    }
+  }, [
+    shouldFetch,
+    isLoading,
+    vehiclesFetchHasError,
+    item,
+    valueIndex,
+    vehicleList,
+    registrationNumberField,
+    setValue,
+    lang,
+  ])
 
   useEffect(() => {
     if (!shouldFetch) return
     if (isLoading) return
-    if (vehiclesFetchHasError) trigger(fieldName)
-  }, [shouldFetch, isLoading, vehiclesFetchHasError, trigger, fieldName])
+    if (vehiclesFetchHasError) {
+      trigger(registrationNumberField)
+      trigger(modelField)
+      trigger(colorField)
+    }
+  }, [
+    shouldFetch,
+    isLoading,
+    vehiclesFetchHasError,
+    trigger,
+    registrationNumberField,
+    modelField,
+    colorField,
+  ])
 
   const mapToSelectItems = (
     items: (FormSystemListItem | null)[],
@@ -199,135 +430,181 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
         },
       }))
 
-  const selected = useMemo(
-    () => vehicleList.find((listItem) => listItem?.isSelected === true),
-    [vehicleList],
+  const selectOptions = useMemo(
+    () => mapToSelectItems(vehicleList),
+    [vehicleList, lang],
   )
 
-  const selectedLabel = selected?.label?.[lang] ?? ''
-
-  useEffect(() => {
-    if (!selected) return
-
-    if (dispatch && !getValue(item, 'label', valueIndex)) {
-      dispatch({
-        type: 'SET_LIST_VALUE',
-        payload: {
-          id: item.id,
-          value: {
-            label: removeTypename(selected.label),
-            value: removeTypename(selected.value),
+  if (shouldFetch) {
+    return (
+      <Controller
+        key={item.id + '-' + valueIndex}
+        name={registrationNumberField}
+        control={control}
+        defaultValue={selectedOption?.label ?? ''}
+        rules={{
+          required: {
+            value: item?.isRequired ?? false,
+            message: formatMessage(m.required),
           },
-          valueIndex,
-        },
-      })
-    }
+          validate: () => {
+            if (shouldFetch && vehiclesFetchHasError) {
+              return formatMessage(m.listFetchFailed)
+            }
+            return true
+          },
+        }}
+        render={({ field, fieldState }) =>
+          isLoading ? (
+            <Box>
+              <SkeletonLoader
+                height={48}
+                display="block"
+                borderRadius="large"
+              />
+              <Box marginLeft={1}>
+                <LoadingDots />
+              </Box>
+            </Box>
+          ) : (
+            <Select
+              name="list"
+              label={item.name?.[lang] ?? ''}
+              options={selectOptions}
+              required={item.isRequired ?? false}
+              placeholder={formatMessage(m.select)}
+              backgroundColor="blue"
+              onChange={(option) => {
+                const selectedLabel = option?.label ?? ''
+                const registrationNumber = option?.value?.value ?? ''
+                const { model, color } =
+                  parseModelAndColorFromLabel(selectedLabel)
 
-    const current = getValues(fieldName)
-    if (!current) {
-      setValue(fieldName, selectedLabel, { shouldValidate: true })
-    }
-  }, [
-    selected,
-    dispatch,
-    item,
-    valueIndex,
-    getValues,
-    fieldName,
-    setValue,
-    selectedLabel,
-  ])
+                field.onChange(selectedLabel)
+                trigger(field.name)
+                setSelectedOption(option ?? undefined)
 
-  const currentValue = () => {
-    const storedLabel = getValue(item, 'label', valueIndex)
-    const storedValue = getValue(item, 'value', valueIndex)
-
-    const hasValue =
-      storedLabel !== undefined &&
-      storedLabel !== null &&
-      storedValue !== undefined &&
-      storedValue !== null
-
-    if (!hasValue) {
-      return undefined
-    }
-
-    return {
-      label: storedLabel?.[lang] ?? '',
-      value: {
-        label: storedLabel,
-        value: storedValue,
-      },
-    }
+                dispatchAssetValue(registrationNumber, model, {
+                  is: color,
+                  en: color,
+                })
+              }}
+              value={selectedOption}
+              hasError={Boolean(fieldState.error)}
+              errorMessage={fieldState.error?.message}
+            />
+          )
+        }
+      />
+    )
   }
 
   return (
-    <Controller
-      key={item.id + '-' + valueIndex}
-      name={fieldName}
-      control={control}
-      defaultValue={
-        getValue(item, 'label', valueIndex)?.[lang] ?? selectedLabel
-      }
-      rules={{
-        required:
-          item.isRequired &&
-          !isLoading &&
-          !(shouldFetch && vehiclesFetchHasError)
-            ? { value: true, message: formatMessage(m.required) }
-            : false,
-        validate: () => {
-          if (shouldFetch && vehiclesFetchHasError) {
-            return formatMessage(m.listFetchFailed)
-          }
-          return true
-        },
-      }}
-      render={({ field, fieldState }) =>
-        shouldFetch && isLoading ? (
-          <Box>
-            <SkeletonLoader height={48} display="block" borderRadius="large" />
-            <Box marginLeft={1}>
-              <LoadingDots />
-            </Box>
-          </Box>
-        ) : (
-          <Select
-            name="list"
-            label={item.name?.[lang] ?? ''}
-            options={mapToSelectItems(vehicleList)}
-            required={item.isRequired ?? false}
-            defaultValue={
-              selected
-                ? {
-                    label: selected.label?.[lang] ?? '',
-                    value: { label: selected.label, value: selected.value },
-                  }
-                : undefined
-            }
-            placeholder={formatMessage(m.select)}
-            backgroundColor="blue"
-            onChange={(option) => {
-              field.onChange(option?.label ?? '')
-              trigger(field.name)
+    <Stack space={2}>
+      <Controller
+        key={`${item.id}-${valueIndex}_registrationNumber`}
+        name={registrationNumberField}
+        control={control}
+        defaultValue={getValue(item, 'registrationNumber', valueIndex) ?? ''}
+        rules={{
+          required: {
+            value: item?.isRequired ?? false,
+            message: formatMessage(m.required),
+          },
+        }}
+        render={({ field, fieldState }) => (
+          <GridRow>
+            <GridColumn span="6/10">
+              <Input
+                label={item.name?.[lang] ?? ''}
+                name="vehicleSearch"
+                value={field.value}
+                onChange={(e) => {
+                  const upper = e.target.value.toUpperCase()
+                  field.onChange(upper)
 
-              if (!dispatch) return
+                  // Clear derived fields immediately when registration changes
+                  setValue(modelField, '')
+                  setValue(colorField, '')
+                  clearErrors(registrationNumberField)
+                  clearErrors(modelField)
+                  clearErrors(colorField)
 
-              dispatch({
-                type: 'SET_LIST_VALUE',
-                payload: {
-                  id: item.id,
-                  value: option?.value,
-                  valueIndex,
-                },
-              })
+                  // Keep application state from showing stale model/color
+                  dispatchAssetValue('', '', toLanguage(''))
+                }}
+                onBlur={() => {
+                  searchPublicVehicle(field.value)
+                }}
+                placeholder="Enter registration number or VIN"
+                required={item.isRequired ?? false}
+                hasError={Boolean(fieldState.error)}
+                errorMessage={fieldState.error?.message}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+      />
+
+      {searchLoading && <LoadingDots />}
+
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/1', '7/10']}>
+          <Controller
+            key={`${item.id}-${valueIndex}_model`}
+            name={modelField}
+            control={control}
+            defaultValue={getValue(item, 'model', valueIndex) ?? ''}
+            rules={{
+              required: {
+                value: item?.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
             }}
-            value={currentValue()}
-            hasError={Boolean(fieldState.error)}
-            errorMessage={fieldState.error?.message}
+            render={({ field, fieldState }) => (
+              <Input
+                label={formatMessage(m.model)}
+                name="vehicleModel"
+                value={field.value}
+                required={item?.isRequired ?? false}
+                readOnly
+                backgroundColor="blue"
+                loading={searchLoading}
+                hasError={Boolean(fieldState.error)}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
           />
-        )
-      }
-    />
+        </GridColumn>
+
+        <GridColumn span={['1/1', '1/1', '1/1', '3/10']}>
+          <Controller
+            key={`${item.id}-${valueIndex}_color`}
+            name={colorField}
+            control={control}
+            defaultValue={getValue(item, 'color', valueIndex)?.[lang] ?? ''}
+            rules={{
+              required: {
+                value: item?.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <Input
+                label={formatMessage(m.color)}
+                name="vehicleColor"
+                value={field.value}
+                required={item?.isRequired ?? false}
+                readOnly
+                backgroundColor="blue"
+                loading={searchLoading}
+                hasError={Boolean(fieldState.error)}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
+          />
+        </GridColumn>
+      </GridRow>
+    </Stack>
   )
 }

@@ -74,9 +74,9 @@ export type FieldTypeMapping = {
     number?: FormSystemValue['number']
   }
   [FieldTypesEnum.ASSETS]: {
-    value?: FormSystemValue['value']
-    label?: FormSystemValue['label']
-    name?: FormSystemValue['name']
+    registrationNumber?: FormSystemValue['registrationNumber']
+    model?: FormSystemValue['model']
+    color?: FormSystemValue['color']
     propertyNumber?: FormSystemValue['propertyNumber']
     address?: FormSystemValue['address']
     postalCode?: FormSystemValue['postalCode']
@@ -141,9 +141,9 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
       return { number: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.ASSETS:
       return {
-        value: undefined,
-        label: undefined,
-        name: undefined,
+        registrationNumber: undefined,
+        model: undefined,
+        color: undefined,
         propertyNumber: undefined,
         address: undefined,
         postalCode: undefined,
