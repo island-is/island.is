@@ -18,6 +18,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  AppealDecisionPartyRole,
   CaseFileCategory,
   CourtSessionRulingType,
   IndictmentCaseNotificationType,
@@ -25,12 +26,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  AppealDecision,
+  AppealDecisionRepositoryService,
   Case,
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
   UpdateCourtSession,
 } from '../repository'
+import { CourtSessionAppealDecisionDto } from './dto/courtSessionAppealDecision.dto'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 
@@ -38,6 +42,7 @@ import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
 export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     // TODO: Move to a repository service - models should only be used in repository services
     // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
@@ -248,6 +253,85 @@ export class CourtSessionService {
     }
 
     return update
+  }
+
+  // Records a party's in-court appeal decision (Ákvörðun um kæru) against the
+  // ruling order pronounced in the session. The ruling file comes from the
+  // session, never the client, so a decision can only attach to this case's own
+  // ruling. decision/announcement are both optional - an announcement may be
+  // entered before the decision radio is picked.
+  async upsertAppealDecision(
+    theCase: Case,
+    courtSession: CourtSession,
+    update: CourtSessionAppealDecisionDto,
+    transaction: Transaction,
+  ): Promise<AppealDecision> {
+    if (
+      courtSession.rulingType !== CourtSessionRulingType.ORDER ||
+      !courtSession.rulingFileId
+    ) {
+      throw new BadRequestException(
+        'Appeal decisions can only be recorded on a court session with a pronounced ruling order',
+      )
+    }
+
+    this.validateAppealDecisionParty(theCase, update)
+
+    return this.appealDecisionRepositoryService.upsert(
+      {
+        caseId: theCase.id,
+        rulingFileId: courtSession.rulingFileId,
+        partyRole: update.partyRole,
+        defendantId: update.defendantId,
+        civilClaimantId: update.civilClaimantId,
+      },
+      {
+        decision: update.decision ?? null,
+        announcement: update.announcement ?? null,
+      },
+      { transaction },
+    )
+  }
+
+  private validateAppealDecisionParty(
+    theCase: Case,
+    update: CourtSessionAppealDecisionDto,
+  ): void {
+    const { partyRole, defendantId, civilClaimantId } = update
+
+    switch (partyRole) {
+      case AppealDecisionPartyRole.PROSECUTOR:
+        if (defendantId || civilClaimantId) {
+          throw new BadRequestException(
+            'A prosecution appeal decision must not reference a defendant or civil claimant',
+          )
+        }
+        break
+      case AppealDecisionPartyRole.DEFENDANT:
+        if (!defendantId || civilClaimantId) {
+          throw new BadRequestException(
+            'A defendant appeal decision must reference a defendant only',
+          )
+        }
+        if (!theCase.defendants?.some((d) => d.id === defendantId)) {
+          throw new NotFoundException(
+            `Defendant ${defendantId} does not belong to case ${theCase.id}`,
+          )
+        }
+        break
+      case AppealDecisionPartyRole.CIVIL_CLAIMANT:
+        if (!civilClaimantId || defendantId) {
+          throw new BadRequestException(
+            'A civil claimant appeal decision must reference a civil claimant only',
+          )
+        }
+        if (!theCase.civilClaimants?.some((c) => c.id === civilClaimantId)) {
+          throw new NotFoundException(
+            `Civil claimant ${civilClaimantId} does not belong to case ${theCase.id}`,
+          )
+        }
+        break
+    }
   }
 
   async delete(

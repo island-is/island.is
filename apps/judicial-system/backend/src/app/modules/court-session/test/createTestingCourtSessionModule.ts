@@ -7,6 +7,7 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  AppealDecisionRepositoryService,
   CourtSessionRepositoryService,
   CourtSessionString,
 } from '../../repository'
@@ -14,12 +15,14 @@ import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
 
 jest.mock('../../repository/services/courtSessionRepository.service')
+jest.mock('../../repository/services/appealDecisionRepository.service')
 
 export const createTestingCourtSessionModule = async () => {
   const courtSessionModule = await Test.createTestingModule({
     controllers: [CourtSessionController],
     providers: [
       CourtSessionRepositoryService,
+      AppealDecisionRepositoryService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -55,11 +58,21 @@ export const createTestingCourtSessionModule = async () => {
       CourtSessionRepositoryService,
     )
 
+  const appealDecisionRepositoryService =
+    courtSessionModule.get<AppealDecisionRepositoryService>(
+      AppealDecisionRepositoryService,
+    )
+
   const courtSessionController = courtSessionModule.get<CourtSessionController>(
     CourtSessionController,
   )
 
   courtSessionModule.close()
 
-  return { sequelize, courtSessionRepositoryService, courtSessionController }
+  return {
+    sequelize,
+    courtSessionRepositoryService,
+    appealDecisionRepositoryService,
+    courtSessionController,
+  }
 }
