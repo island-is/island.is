@@ -47,8 +47,8 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
     }
-    indictmentSubtypes
     state
+    indictmentSubtypes
     description
     policeCaseNumbers
     defendants {
