@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { ConfigModule } from '@island.is/nest/config'
 
 import { AppealCase } from './models/appealCase.model'
+import { AppealDecision } from './models/appealDecision.model'
 import { AppealEventLog } from './models/appealEventLog.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
@@ -25,6 +26,7 @@ import { Subpoena } from './models/subpoena.model'
 import { Verdict } from './models/verdict.model'
 import { Victim } from './models/victim.model'
 import { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+import { AppealDecisionRepositoryService } from './services/appealDecisionRepository.service'
 import { AppealEventLogRepositoryService } from './services/appealEventLogRepository.service'
 import { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './services/caseDefendantPoliceCaseNumber.repository.service'
@@ -44,6 +46,7 @@ import { repositoryModuleConfig } from './repository.config'
   imports: [
     SequelizeModule.forFeature([
       AppealCase,
+      AppealDecision,
       AppealEventLog,
       Case,
       CaseArchive,
@@ -68,8 +71,9 @@ import { repositoryModuleConfig } from './repository.config'
     ConfigModule.forFeature(repositoryModuleConfig),
   ],
   providers: [
-    AppealEventLogRepositoryService,
     AppealCaseRepositoryService,
+    AppealDecisionRepositoryService,
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
@@ -84,8 +88,9 @@ import { repositoryModuleConfig } from './repository.config'
     VerdictRepositoryService,
   ],
   exports: [
-    AppealEventLogRepositoryService,
     AppealCaseRepositoryService,
+    AppealDecisionRepositoryService,
+    AppealEventLogRepositoryService,
     CaseArchiveRepositoryService,
     CaseDefendantPoliceCaseNumberRepositoryService,
     CaseRepositoryService,
