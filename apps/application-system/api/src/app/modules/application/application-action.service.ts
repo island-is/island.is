@@ -146,8 +146,11 @@ export class ApplicationActionService {
     )
 
     for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
+      const resolvedId = api.resolveExternalDataId(
+        updatedApplication,
+        auth.nationalId,
+      )
+      const result = updatedApplication.externalData[resolvedId]
 
       this.logger.debug(
         `Performing ephemeral action ${api.action} on ${JSON.stringify(
