@@ -1,3 +1,5 @@
+import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
+import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
 import { SubmitDocumentsService } from './vmst/submit-documents/submit-documents.service'
 import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
@@ -283,6 +285,7 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
+  HousingBenefitsModule,
   ConfirmJobSearchModule,
   EditUnemploymentInformationModule,
   DeRegisterUnemploymentBenefitsModule,
@@ -381,6 +384,7 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
+  HousingBenefitsService,
   ConfirmJobSearchService,
   EditUnemploymentInformationService,
   DeRegisterUnemploymentBenefitsService,

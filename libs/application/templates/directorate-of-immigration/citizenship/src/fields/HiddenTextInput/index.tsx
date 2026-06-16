@@ -18,7 +18,7 @@ export const HiddenTextInput: FC<HiddenTextInputProps & FieldBaseProps> = ({
 
   return (
     <Box hidden={true}>
-      <InputController id={field.id} defaultValue={nationalId} />
+      <InputController id={field.id as string} defaultValue={nationalId} />
     </Box>
   )
 }

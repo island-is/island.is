@@ -382,23 +382,16 @@ export const handleScheduledNotifications = async (
 
   // 3. Prepare the new schedules with robustness
   const notificationsToSchedule = []
-  const configArray = Array.isArray(configs) ? configs : [configs]
-
-  for (const configItem of configArray) {
-    let config: ScheduledNotificationConfig
-    try {
-      if (typeof configItem === 'function') {
-        config = configItem(application)
-      } else {
-        config = configItem
-      }
-    } catch (error) {
-      console.error(
-        `Failed to evaluate schedule configuration for application ${application.id} in state ${newState}`,
-        error,
-      )
-      continue
+  const configArray = (() => {
+    if (typeof configs === 'function') {
+      const result = configs(application)
+      return Array.isArray(result) ? result : [result]
     }
+
+    return Array.isArray(configs) ? configs : [configs]
+  })()
+
+  for (const config of configArray) {
     try {
       let time: Date
 

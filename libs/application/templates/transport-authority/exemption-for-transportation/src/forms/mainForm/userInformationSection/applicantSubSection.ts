@@ -38,7 +38,7 @@ export const applicantSubSection = buildSubSection({
           const getOrder = (id: string): number => {
             return order[id as keyof typeof order] ?? 999
           }
-          return getOrder(a.id) - getOrder(b.id)
+          return getOrder(a.id as string) - getOrder(b.id as string)
         }),
       ],
     }),
