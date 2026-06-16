@@ -1,0 +1,76 @@
+query GetHealthConversationDetail($id: ID!) {
+  healthDirectorateHealthConversation(id: $id) {
+    id
+    title
+    status
+    isStarred
+    isArchived
+    patientCanReply
+    isRead
+    lastSenderGroupName
+    messages {
+      id
+      direction
+      messageSentAt
+      messageTextContent
+      senderGroupName
+      attachments {
+        id
+        fileName
+        description
+        downloadServiceURL
+      }
+    }
+  }
+}
+
+mutation MarkHealthConversationAsRead(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateMarkHealthConversationAsRead(input: $input)
+}
+
+mutation StarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateStarHealthConversation(input: $input)
+}
+
+mutation UnstarHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnstarHealthConversation(input: $input)
+}
+
+mutation ArchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateArchiveHealthConversation(input: $input)
+}
+
+mutation UnarchiveHealthConversationDetail(
+  $input: HealthDirectorateConversationIdInput!
+) {
+  healthDirectorateUnarchiveHealthConversation(input: $input)
+}
+
+mutation ReplyToHealthConversation(
+  $input: HealthDirectorateReplyToConversationInput!
+) {
+  healthDirectorateReplyToHealthConversation(input: $input) {
+    id
+    messages {
+      id
+      direction
+      messageSentAt
+      messageTextContent
+      senderGroupName
+      attachments {
+        id
+        fileName
+        description
+        downloadServiceURL
+      }
+    }
+  }
+}

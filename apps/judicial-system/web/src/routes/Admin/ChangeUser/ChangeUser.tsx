@@ -1,14 +1,19 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertBanner, Box, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
   Skeleton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
@@ -21,6 +26,7 @@ export const ChangeUser = () => {
   const router = useRouter()
   const id = router.query.id as string // We know it is a string
   const { formatMessage } = useIntl()
+  const { user: currentUser } = useContext(UserContext)
   const {
     allInstitutions,
     loading: institutionsLoading,
@@ -34,7 +40,7 @@ export const ChangeUser = () => {
 
   const [updateUserMutation, { loading: userUpdating }] = useUpdateUserMutation(
     {
-      onCompleted: () => router.push(constants.USERS_ROUTE),
+      onCompleted: () => router.push(ADMIN_USERS_ROUTE),
       onError: () => {
         toast.error(formatMessage(strings.updateError))
       },
@@ -43,6 +49,10 @@ export const ChangeUser = () => {
 
   const saveUser = async (user: User) => {
     if (!userUpdating && user.institution) {
+      // Only the super admin may set this flag - the backend rejects the field
+      // from anyone else, so we omit it entirely for other admins.
+      const isSuperAdmin = currentUser?.role === UserRole.ADMIN
+
       await updateUserMutation({
         variables: {
           input: {
@@ -53,6 +63,11 @@ export const ChangeUser = () => {
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,
+            ...(isSuperAdmin
+              ? {
+                  canManageMessageSuspension: user.canManageMessageSuspension,
+                }
+              : {}),
           },
         },
       })
@@ -66,7 +81,7 @@ export const ChangeUser = () => {
       title={formatMessage(strings.alertTitle)}
       description={formatMessage(strings.alertMessage)}
       variant="error"
-      link={{ href: constants.USERS_ROUTE, title: 'Fara á yfirlitssíðu' }}
+      link={{ href: ADMIN_USERS_ROUTE, title: 'Fara á yfirlitssíðu' }}
     />
   ) : (
     <Box background="purple100">

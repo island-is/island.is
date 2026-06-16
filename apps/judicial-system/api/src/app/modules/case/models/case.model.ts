@@ -436,6 +436,9 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly penalties?: string
 
+  @Field(() => String, { nullable: true })
+  readonly reopenReason?: string
+
   @Field(() => Case, { nullable: true })
   readonly splitCase?: Case
 
@@ -447,4 +450,7 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  @Field(() => ID, { nullable: true })
+  readonly originalAncestorId?: string
 }

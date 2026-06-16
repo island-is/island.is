@@ -7,6 +7,11 @@ import { ValidationService } from './validation.service'
 import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
+import { ZendeskListService } from './dataFromUrl/zendeskList.service'
+import { DataFromUrlService } from './dataFromUrl/dataFromUrl.service'
+import { AuthService } from './auth.service'
+import { ApplicationMapper } from '../applications/models/application.mapper'
+import { FileModule } from '../file/file.module'
 
 @Module({
   imports: [
@@ -15,7 +20,17 @@ import { XRoadConfig } from '@island.is/nest/config'
       isGlobal: true,
       load: [XRoadConfig],
     }),
+    FileModule,
   ],
-  providers: [ServiceManager, ZendeskService, NotifyService, ValidationService],
+  providers: [
+    ServiceManager,
+    AuthService,
+    ZendeskService,
+    NotifyService,
+    ValidationService,
+    ZendeskListService,
+    DataFromUrlService,
+    ApplicationMapper,
+  ],
 })
 export class ServicesModule {}

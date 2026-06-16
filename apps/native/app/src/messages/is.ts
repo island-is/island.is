@@ -198,7 +198,7 @@ export const is = {
   'homeOptions.heading.title': 'Stilla heimaskjá',
   'homeOptions.heading.subtitle':
     'Hér er hægt að stilla hvað birtist á heimaskjá.',
-  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.notifications': 'Nýjustu tilkynningar',
   'homeOptions.inbox': 'Nýjast í pósthólfinu',
   'homeOptions.licenses': 'Skírteini',
   'homeOptions.applications': 'Umsóknir',
@@ -498,7 +498,7 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara til útlanda?',
   'licenseDetail.driversLicense.alert.description':
     'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
@@ -761,7 +761,7 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
-  'health.overview.medicine': 'Lyfin mín',
+  'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
 
   // health: categories
@@ -920,7 +920,7 @@ export const is = {
   'health.medicineDelegation.form.xMonths': '{months} mán',
 
   // health - prescriptions & drug certificates
-  'health.prescriptionsAndCertificates.screenTitle': 'Lyfin mín',
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
   'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
   'health.prescriptionsAndCertificates.expired': 'Útrunnið',
   'health.prescriptionsAndCertificates.rejected': 'Hafnað',

@@ -732,6 +732,16 @@ export class NotificationsWorkerService {
     nationalId: string,
     messageId: string,
   ): Promise<boolean> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isUserNotificationDeceasedCheckEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
     try {
       const individual =
         await this.nationalRegistryService.getAllDataIndividual(nationalId)
@@ -749,6 +759,16 @@ export class NotificationsWorkerService {
     nationalId: string,
     messageId: string,
   ): Promise<boolean> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isUserNotificationInactiveCompanyCheckEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      return false
+    }
+
     try {
       const company = await this.companyRegistryService.getCompany(nationalId)
       return company !== null && company.status === INACTIVE_COMPANY_STATUS

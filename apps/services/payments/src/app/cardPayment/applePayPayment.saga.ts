@@ -66,6 +66,10 @@ export const createApplePayPaymentSaga = (
 
       const { totalPrice } = requireStepResult(ctx, 'VALIDATE')
 
+      logger.info(
+        `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging Apple Pay`,
+      )
+
       const paymentResult = await cardPaymentService.chargeApplePay(
         ctx.input,
         ctx.trackingData,

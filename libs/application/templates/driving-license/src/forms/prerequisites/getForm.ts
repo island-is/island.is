@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { TheIcelandicPoliceLogo } from '@island.is/application/assets/institution-logos'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
@@ -14,6 +14,8 @@ interface DrivingLicenseFormConfig {
   allowPickLicense?: boolean
   allowBELicense?: boolean
   allow65Renewal?: boolean
+  allow65RenewalRedesign?: boolean
+  allowBTempRedesign?: boolean
   allowAdvanced?: boolean
 }
 
@@ -22,11 +24,13 @@ export const getForm = ({
   allowPickLicense = false,
   allowBELicense = false,
   allow65Renewal = false,
+  allow65RenewalRedesign = false,
+  allowBTempRedesign = false,
   allowAdvanced = false,
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
-    logo: TheIcelandicPoliceLogo,
+    logo: DistrictCommissionersLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -48,7 +52,7 @@ export const getForm = ({
               ]
             : []),
           ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
-          sectionRequirements,
+          sectionRequirements(allow65RenewalRedesign, allowBTempRedesign),
         ],
       }),
       buildSection({

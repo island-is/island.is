@@ -55,6 +55,7 @@ export interface ZendeskChatPanelProps {
   pushUp?: boolean
   chatBubbleVariant?: 'default' | 'circle'
   urlTrackingTicketId?: string
+  chatBubbleTitle?: string
 }
 
 export type WatsonIntegration =

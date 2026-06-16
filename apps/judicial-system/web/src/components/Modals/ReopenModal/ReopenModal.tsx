@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 
 import {
   COURT_OF_APPEAL_CASE_ROUTE,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCourtOfAppealsUser,
@@ -45,17 +45,19 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           workingCase.appealCase?.id ?? '',
           AppealCaseTransition.REOPEN_APPEAL,
         )
-      : await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : isRequestCase(workingCase.type)
+      ? await transitionCase(workingCase.id, CaseTransition.REOPEN)
+      : await transitionCase(workingCase.id, CaseTransition.CORRECT)
 
     if (caseTransitioned) {
       router.push(
         isCourtOfAppealsUser(user)
           ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
           : isRestrictionCase(workingCase.type)
-          ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+          ? `${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
           : isInvestigationCase(workingCase.type)
-          ? `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
-          : `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          ? `${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
+          : `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
       )
     }
   }

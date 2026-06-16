@@ -4,9 +4,9 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     created
     modified
     type
-    indictmentSubtypes
     description
     state
+    indictmentSubtypes
     policeCaseNumbers
     defendants {
       id

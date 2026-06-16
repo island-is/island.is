@@ -36,13 +36,14 @@ import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
-import { NotificationService } from '../notification.service'
-import { NotificationDispatchService } from '../notificationDispatch.service'
+import { AppealCaseNotificationService } from '../services/appealCaseNotification/appealCaseNotification.service'
 import { CaseNotificationService } from '../services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from '../services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from '../services/defendantNotification/defendantNotification.service'
 import { IndictmentCaseNotificationService } from '../services/indictmentCaseNotification/indictmentCaseNotification.service'
 import { InstitutionNotificationService } from '../services/institutionNotification/institutionNotification.service'
+import { NotificationService } from '../services/notification.service'
+import { NotificationDispatchService } from '../services/notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
 
@@ -109,12 +110,14 @@ export const createTestingNotificationModule = async () => {
         provide: InternalCaseService,
         useValue: {
           countIndictmentsWaitingForConfirmation: jest.fn(),
+          getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate: jest.fn(),
         },
       },
       {
         provide: UserService,
         useValue: {
           getUsersWhoCanConfirmIndictments: jest.fn(),
+          getProsecutorUsers: jest.fn(),
         },
       },
       {
@@ -138,6 +141,7 @@ export const createTestingNotificationModule = async () => {
       { provide: InstitutionService, useValue: { getAll: jest.fn() } },
       EventService,
       NotificationService,
+      AppealCaseNotificationService,
       CaseNotificationService,
       NotificationDispatchService,
       InstitutionNotificationService,

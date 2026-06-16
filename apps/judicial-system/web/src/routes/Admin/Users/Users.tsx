@@ -10,7 +10,12 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  ADMIN_CHANGE_USER_ROUTE,
+  ADMIN_CREATE_USER_ROUTE,
+  ADMIN_MESSAGE_SUSPENSION_ROUTE,
+  ADMIN_STATISTICS_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   formatDate,
   formatNationalId,
@@ -22,7 +27,10 @@ import {
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { userRoleToString } from '../userRoleToString'
@@ -56,7 +64,7 @@ export const Users = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
+    router.push(`${ADMIN_CHANGE_USER_ROUTE}/${user.id}`)
   }
 
   return (
@@ -66,20 +74,34 @@ export const Users = () => {
         <Button
           icon="add"
           onClick={() => {
-            router.push(constants.CREATE_USER_ROUTE)
+            router.push(ADMIN_CREATE_USER_ROUTE)
           }}
         >
           Nýr notandi
         </Button>
-        <Button
-          variant="ghost"
-          icon="calculator"
-          onClick={() => {
-            router.push(constants.STATISTICS_ROUTE)
-          }}
-        >
-          Tölfræði
-        </Button>
+        <Box display="flex" columnGap={2}>
+          {(user?.role === UserRole.ADMIN ||
+            user?.canManageMessageSuspension) && (
+            <Button
+              variant="ghost"
+              icon="settings"
+              onClick={() => {
+                router.push(ADMIN_MESSAGE_SUSPENSION_ROUTE)
+              }}
+            >
+              Biðröð
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            icon="calculator"
+            onClick={() => {
+              router.push(ADMIN_STATISTICS_ROUTE)
+            }}
+          >
+            Tölfræði
+          </Button>
+        </Box>
       </Box>
 
       <Box

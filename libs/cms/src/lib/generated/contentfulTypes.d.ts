@@ -1477,7 +1477,7 @@ export interface IFeaturedArticlesFields {
   image?: Asset | undefined
 
   /** Articles */
-  articles?: IArticle[] | undefined
+  articles?: (IArticle | IManual)[] | undefined
 
   /** Link */
   link?: ILink | undefined
@@ -3663,6 +3663,9 @@ export interface IOrganizationPageFields {
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
 
@@ -4995,6 +4998,12 @@ export interface ISubArticleFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Content Last Reviewed */
+  contentLastReviewed?: string | undefined
+
+  /** Show date of the most recent review */
+  showDateOfTheMostRecentReview?: boolean | undefined
 
   /** Stepper */
   stepper?: IStepper | undefined

@@ -30,7 +30,7 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'preview.contentful.com'
-  HIDDEN_FEATURES: 'APPEAL_RULING_ORDER'
+  HIDDEN_FEATURES: ''
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -109,6 +109,7 @@ resources:
 secrets:
   AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
   AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+  AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
   BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'

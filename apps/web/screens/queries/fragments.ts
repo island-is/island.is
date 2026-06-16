@@ -392,6 +392,7 @@ export const slices = gql`
       id
       slug
       title
+      type
       processEntry {
         ...ProcessEntryFields
       }
@@ -873,6 +874,49 @@ export const slices = gql`
     }
   }
 
+  fragment LastCallsForGrantsFields on LastCallsForGrants {
+    __typename
+    id
+    title
+    namespace
+    resolvedGrantsList {
+      total
+      items {
+        id
+        name
+        description
+        applicationId
+        dateFrom
+        dateTo
+        status
+        statusText
+        categoryTags {
+          id
+          title
+          genericTagGroup {
+            title
+          }
+        }
+        fund {
+          id
+          title
+          featuredImage {
+            id
+            url
+          }
+          parentOrganization {
+            id
+            title
+            logo {
+              url
+              title
+            }
+          }
+        }
+      }
+    }
+  }
+
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
     events {
@@ -1145,6 +1189,7 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...LastCallsForGrantsFields
     ...OrganizationParentSubpageListFields
     ...IntroLinkImageFields
     ...FeaturedGenericListItemsFields

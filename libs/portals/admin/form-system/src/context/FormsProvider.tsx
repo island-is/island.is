@@ -1,15 +1,14 @@
+import { useLazyQuery } from '@apollo/client'
+import { FormSystemForm } from '@island.is/api/schema'
 import {
   FormsLoaderResponse,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
-import { useEffect, useState } from 'react'
 import { Option } from '@island.is/island-ui/core'
-import { FormsContext, IFormsContext } from './FormsContext'
-import { FormSystemForm } from '@island.is/api/schema'
-import { useLazyQuery } from '@apollo/client'
+import { useEffect, useMemo, useState } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
-import { useMemo } from 'react'
+import { FormsContext, IFormsContext } from './FormsContext'
 
 interface Props {
   children: React.ReactNode
@@ -48,6 +47,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     useState<string[]>(selectedField)
 
   const handleOrganizationChange = async (selected: { value: string }) => {
+    setOrganizationNationalId(selected.value)
     const updatedOrganizations = organizations.map((org) => ({
       ...org,
       isSelected: org.value === selected.value,

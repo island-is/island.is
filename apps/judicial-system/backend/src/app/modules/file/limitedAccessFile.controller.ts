@@ -31,7 +31,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,
@@ -216,7 +215,6 @@ export class LimitedAccessFileController {
       ...indictmentCases,
     ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
     CaseFileExistsGuard,
     LimitedAccessDeleteCaseFileGuard,
   )

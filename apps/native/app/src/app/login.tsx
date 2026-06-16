@@ -84,7 +84,7 @@ export default function LoginScreen() {
     }
 
     const isCognitoAuth =
-      cognito?.accessToken && cognito?.expiresAt > Date.now() / 1000
+      cognito?.accessToken && cognito?.expiresAt > Date.now()
     if (
       environment.idsIssuer !== environments.prod.idsIssuer &&
       !isCognitoAuth

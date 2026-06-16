@@ -78,6 +78,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { districtCourtJudgeConfirmRulingOrderRule } from './guards/rolesRules'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
@@ -92,7 +93,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, CaseExistsGuard, RolesGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -198,7 +199,11 @@ export class FileController {
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
-  @RolesRules() // This endpoint is not used by any role at the moment
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('civilClaimant/:civilClaimantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -353,6 +358,30 @@ export class FileController {
   }
 
   @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(districtCourtJudgeConfirmRulingOrderRule)
+  @Post('file/:fileId/confirm')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Confirms a ruling order uploaded during the course of a case',
+  })
+  confirmRulingOrder(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Confirming ruling order ${fileId} of case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.confirmRulingOrder(theCase, caseFile, transaction),
+    )
+  }
+
+  @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -466,6 +495,11 @@ export class FileController {
 
     return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
       caseId,
+      theCase.type,
+      theCase.state,
+      theCase.courtCaseNumber,
+      theCase.withCourtSessions,
+      theCase.prosecutor?.name,
       theCase.policeCaseNumbers,
       user,
     )

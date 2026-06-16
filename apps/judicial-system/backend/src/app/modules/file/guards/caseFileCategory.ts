@@ -1,4 +1,3 @@
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseState,
@@ -13,7 +12,27 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
+import {
+  CivilClaimant,
+  CourtSession,
+  Defendant,
+  DefendantEventLog,
+} from '../../repository'
+import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
+
+// A ruling order uploaded during the course of a case is only visible to
+// parties (everyone except district-court users) once it has been added to a
+// court session that has been confirmed. The court session's end date is used
+// for the ruling time and deadlines.
+export const isRulingOrderInConfirmedCourtSession = (
+  fileId: string,
+  courtSessions?: CourtSession[],
+): boolean =>
+  Boolean(
+    courtSessions?.some(
+      (session) => session.isConfirmed && session.rulingFileId === fileId,
+    ),
+  )
 
 const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -30,7 +49,6 @@ const defenderCaseFileCategoriesForRequestCases = [
 const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
-  CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
 ]
 
 const defenderCaseFileCategoriesForIndictmentCases =
@@ -89,10 +107,7 @@ export const getDefenceUserCutoffDate = (
   const myDefendants = defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === nationalId,
   )
 
   if (!myDefendants?.length) {
@@ -177,7 +192,9 @@ const canDefenceUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  civilClaimantId,
   fileCreated,
+  isRulingOrderInConfirmedCourtSession,
 }: {
   nationalId: string
   userName: string
@@ -189,7 +206,9 @@ const canDefenceUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  civilClaimantId?: string | null
   fileCreated?: Date
+  isRulingOrderInConfirmedCourtSession?: boolean
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -204,6 +223,12 @@ const canDefenceUserViewCaseFile = ({
 
     if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
       return false
+    }
+
+    // A ruling order uploaded during the course of a case is only visible once
+    // it has been added to a confirmed court session.
+    if (caseFileCategory === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      return Boolean(isRulingOrderInConfirmedCourtSession)
     }
 
     if (
@@ -229,14 +254,24 @@ const canDefenceUserViewCaseFile = ({
       (submittedBy || fileRepresentative) &&
       (userName === submittedBy || userName === fileRepresentative)
 
-    return (
+    const categoryAllowed =
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,
         caseFileCategory,
         defendants,
         civilClaimants,
       ) || hasUserSubmittedCaseFile
-    )
+
+    if (!categoryAllowed) {
+      return false
+    }
+
+    return canDefenceUserViewCivilClaimCaseFile(nationalId, {
+      category: caseFileCategory,
+      civilClaimantId,
+      defendants,
+      civilClaimants,
+    })
   }
 
   return false
@@ -272,7 +307,9 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants,
   civilClaimants,
   defendantId,
+  civilClaimantId,
   fileCreated,
+  isRulingOrderInConfirmedCourtSession,
 }: {
   user: User
   caseType: CaseType
@@ -283,7 +320,9 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
   defendantId?: string
+  civilClaimantId?: string | null
   fileCreated?: Date
+  isRulingOrderInConfirmedCourtSession?: boolean
 }) => {
   if (!caseFileCategory) {
     return false
@@ -301,7 +340,9 @@ export const canLimitedAccessUserViewCaseFile = ({
       defendants,
       civilClaimants,
       defendantId,
+      civilClaimantId,
       fileCreated,
+      isRulingOrderInConfirmedCourtSession,
     })
   }
 
@@ -348,11 +389,7 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   const myDefendants = (defendants ?? []).filter(
     (d) =>
-      d.isDefenderChoiceConfirmed &&
-      d.defenderNationalId &&
-      normalizeAndFormatNationalId(userNationalId).includes(
-        d.defenderNationalId,
-      ),
+      d.isDefenderChoiceConfirmed && d.defenderNationalId === userNationalId,
   )
 
   const assignedToMe = new Set(
@@ -363,3 +400,23 @@ export const getDefenderVisiblePoliceCaseNumbers = (
     (pcn) => assignedToMe.has(pcn) || !allAssigned.has(pcn),
   )
 }
+
+export const getConfirmedDefendantsForDefender = (
+  userNationalId: string,
+  defendants?: Defendant[],
+): Defendant[] => {
+  return (defendants ?? []).filter(
+    (defendant) =>
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.defenderNationalId === userNationalId,
+  )
+}
+
+export const isConfirmedDefenderOfSpecificDefendant = (
+  userNationalId: string,
+  defendantId: string,
+  defendants?: Defendant[],
+): boolean =>
+  getConfirmedDefendantsForDefender(userNationalId, defendants).some(
+    (defendant) => defendant.id === defendantId,
+  )

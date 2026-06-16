@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Icon, Text, toast } from '@island.is/island-ui/core'
-import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import {
   formatDate,
   getServiceRequirementText,
@@ -322,7 +322,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
                   onClick: () => {
                     router.push(
-                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
                     )
                   },
                 },

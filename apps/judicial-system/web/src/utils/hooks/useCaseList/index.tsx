@@ -4,10 +4,24 @@ import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+  courtInvestigationCasesRoutes,
+  courtRestrictionCasesRoutes,
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
+  PRISON_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
@@ -16,6 +30,7 @@ import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
@@ -34,15 +49,24 @@ import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHel
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'
+import { resolveTargetAppealCaseByAppealCaseId } from '../useTargetAppealCaseByAppealCaseId'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The case and row (defendant ids) that's about to be opened - used for loading state only
+  // The case and row (defendant ids + appeal case id) that's about to be opened
+  // — used for loading state only. `appealCaseId` distinguishes the case-level
+  // row from each ruling-order-appeal row on the same case in COA tables.
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
     defendantIds?: string[] | null
+    appealCaseId?: string | null
     showLoading: boolean
-  }>({ id: null, defendantIds: null, showLoading: false })
+  }>({
+    id: null,
+    defendantIds: null,
+    appealCaseId: null,
+    showLoading: false,
+  })
   const { user, limitedAccess } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -50,55 +74,67 @@ const useCaseList = () => {
   const router = useRouter()
 
   const openCase = useCallback(
-    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
+    (
+      caseToOpen: Case,
+      openCaseInNewTab?: boolean,
+      appealCaseId?: string | null,
+    ) => {
       let routeTo = null
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
-          routeTo = DEFENDER_ROUTE
+          routeTo = DEFENDER_REQUEST_CASE_ROUTE
         } else {
-          routeTo = DEFENDER_INDICTMENT_ROUTE
+          routeTo = DEFENDER_INDICTMENT_CASE_ROUTE
         }
       } else if (isPublicProsecutionOfficeUser(user)) {
         // Public prosecutor users can only see completed indictments
-        routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
+        routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        // Court of appeals users can only see appealed request cases
-        if (caseToOpen.appealCase?.appealState === AppealCaseState.COMPLETED) {
-          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+        // Court of appeals users see one row per appeal — case-level or
+        // ruling-order. Pick OVERVIEW vs RESULT based on the *target* appeal's
+        // state, falling back to the case-level appeal when no appealCaseId is
+        // supplied.
+        const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
+          caseToOpen,
+          appealCaseId ?? undefined,
+        )
+
+        if (targetAppealCase?.appealState === AppealCaseState.COMPLETED) {
+          routeTo = COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+          routeTo = COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.courtRestrictionCasesRoutes,
+              courtRestrictionCasesRoutes,
               caseToOpen,
             )
           }
         } else if (isInvestigationCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+            routeTo = SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.courtInvestigationCasesRoutes,
+              courtInvestigationCasesRoutes,
               caseToOpen,
             )
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
             if (caseToOpen.state === CaseState.CORRECTING) {
-              routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+              routeTo = DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE
             } else {
-              routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+              routeTo = DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE
             }
           } else {
             // Route to Indictment Overview section since it always a valid step and
             // would be skipped if we route to the last valid step
-            routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+            routeTo = DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE
           }
         }
       } else {
@@ -106,44 +142,54 @@ const useCaseList = () => {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
-              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+              ? PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorRestrictionCasesRoutes,
+              prosecutorRestrictionCasesRoutes,
               caseToOpen,
             )
           }
         } else if (isInvestigationCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE
-              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+              ? PRISON_REQUEST_CASE_SIGNED_VERDICT_OVERVIEW_ROUTE
+              : SIGNED_VERDICT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorInvestigationCasesRoutes,
+              prosecutorInvestigationCasesRoutes,
               caseToOpen,
             )
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
             routeTo = isPrisonSystemUser(user)
-              ? constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
-              : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+              ? PRISON_INDICTMENT_CASE_OVERVIEW_ROUTE
+              : PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
+          } else if (
+            caseToOpen.state === CaseState.RECEIVED &&
+            isProsecutionUser(user)
+          ) {
+            // Prosecutor cannot edit earlier steps once the court has received
+            // the case — same rule as in useSections.
+            routeTo = PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorIndictmentRoutes,
+              prosecutorIndictmentRoutes,
               caseToOpen,
             )
           }
         }
       }
 
-      const url = `${routeTo}/${caseToOpen.id}`
-
       if (!routeTo) {
         return
       }
+
+      const url =
+        isCourtOfAppealsUser(user) && appealCaseId
+          ? `${routeTo}/${caseToOpen.id}?appealCaseId=${appealCaseId}`
+          : `${routeTo}/${caseToOpen.id}`
 
       if (openCaseInNewTab) {
         window.open(url, '_blank')
@@ -159,6 +205,7 @@ const useCaseList = () => {
       id: string,
       openInNewTab?: boolean,
       defendantIds?: string[] | null,
+      appealCaseId?: string | null,
     ) => {
       const clearTimeouts = () => {
         timeouts.map((timeout) => clearTimeout(timeout))
@@ -166,16 +213,23 @@ const useCaseList = () => {
 
       clearTimeouts()
 
-      if (
-        (clickedCase.id !== id ||
-          !compareArrays(clickedCase.defendantIds, defendantIds)) &&
-        !openInNewTab
-      ) {
-        setClickedCase({ id, defendantIds, showLoading: false })
+      const isSameRow =
+        clickedCase.id === id &&
+        compareArrays(clickedCase.defendantIds, defendantIds) &&
+        clickedCase.appealCaseId === appealCaseId
+
+      if (!isSameRow && !openInNewTab) {
+        setClickedCase({ id, defendantIds, appealCaseId, showLoading: false })
 
         timeouts.push(
           setTimeout(
-            () => setClickedCase({ id, defendantIds, showLoading: true }),
+            () =>
+              setClickedCase({
+                id,
+                defendantIds,
+                appealCaseId,
+                showLoading: true,
+              }),
             2000,
           ),
         )
@@ -184,16 +238,22 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab),
+          (caseData) => openCase(caseData, openInNewTab, appealCaseId),
           () => {
             setClickedCase((prev) => {
               if (
                 prev.id === id &&
-                compareArrays(prev.defendantIds, defendantIds)
+                compareArrays(prev.defendantIds, defendantIds) &&
+                prev.appealCaseId === appealCaseId
               ) {
                 clearTimeouts()
 
-                return { id: null, defendantIds: null, showLoading: false }
+                return {
+                  id: null,
+                  defendantIds: null,
+                  appealCaseId: null,
+                  showLoading: false,
+                }
               }
 
               return prev
@@ -206,8 +266,7 @@ const useCaseList = () => {
       if (
         isTransitioningCase ||
         isSendingNotification ||
-        (clickedCase.id === id &&
-          compareArrays(clickedCase.defendantIds, defendantIds)) ||
+        isSameRow ||
         limitedAccess === undefined
       ) {
         return
@@ -230,7 +289,7 @@ const useCaseList = () => {
   const LoadingIndicator = () => {
     return (
       <motion.div
-        key={`${clickedCase.id}-${clickedCase.defendantIds}-loading`}
+        key={`${clickedCase.id}-${clickedCase.defendantIds}-${clickedCase.appealCaseId}-loading`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -243,6 +302,7 @@ const useCaseList = () => {
   return {
     isOpeningCaseId: clickedCase.id,
     isOpeningDefendantIds: clickedCase.defendantIds,
+    isOpeningAppealCaseId: clickedCase.appealCaseId,
     showLoading: clickedCase.showLoading,
     handleOpenCase,
     LoadingIndicator,

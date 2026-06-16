@@ -6,6 +6,7 @@ import {
   CaseState,
   CaseTableColumnKey,
   ContextMenuCaseActionType,
+  isCourtOfAppealsUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -142,7 +143,7 @@ const getIncludeAndOrder = (
 
             return {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              attributes: sv!.attributes ?? [],
+              attributes: mergeAttributes(['id'], sv!.attributes ?? []),
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               required: sv!.required,
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -161,7 +162,7 @@ const getIncludeAndOrder = (
     }
 
     return {
-      attributes: v.attributes,
+      attributes: mergeAttributes(['id'], v.attributes),
       required: v.required,
       where: v.where,
       model: modelDef.model,
@@ -254,6 +255,10 @@ export const getActionOnRowClick = (
     return CaseActionType.COMPLETE_CANCELLED_CASE
   }
 
+  if (isCourtOfAppealsUser(user)) {
+    return CaseActionType.OPEN_APPEAL_CASE
+  }
+
   return CaseActionType.OPEN_CASE
 }
 
@@ -330,7 +335,11 @@ export const getContextMenuActions = (
     return []
   }
 
-  const actions = [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
+  const actions = [
+    isCourtOfAppealsUser(user)
+      ? ContextMenuCaseActionType.OPEN_APPEAL_CASE_IN_NEW_TAB
+      : ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB,
+  ]
 
   if (canDeleteCase(theCase, user)) {
     actions.push(ContextMenuCaseActionType.DELETE_CASE)

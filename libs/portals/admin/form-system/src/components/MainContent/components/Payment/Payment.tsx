@@ -97,10 +97,15 @@ export const Payment = () => {
 
   return (
     <>
-      <Box paddingBottom={2}>
+      <Box
+        paddingBottom={2}
+        background="blue100"
+        padding={2}
+        borderRadius="large"
+      >
         <Column span="12/12">
           <Box width="full" justifyContent="flexEnd" display="flex">
-            <Button variant="primary" preTextIcon="add" onClick={addField}>
+            <Button variant="primary" icon="add" onClick={addField}>
               Bæta við greiðslu
             </Button>
           </Box>

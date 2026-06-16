@@ -41,7 +41,7 @@ export const Prerequisites = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: coreMessages.buttonNext,
+                name: coreMessages.externalDataAgreement,
                 type: 'primary',
               },
             ],

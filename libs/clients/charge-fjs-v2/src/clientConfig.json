@@ -3,7 +3,7 @@
   "info": {
     "title": "FJS Charge  FJS  v2",
     "description": "FJS Charge service  V2 for Xroad",
-    "version": "2.1"
+    "version": "2.5"
   },
   "servers": [{ "url": "/rad/TbrLeyfisgatt.api.v2x._chargeFJS:FJSCharge_v2x" }],
   "paths": {
@@ -321,26 +321,20 @@
         }
       },
       "payInfo": {
-        "required": [
-          "PAN",
-          "RRN",
-          "authCode",
-          "cardType",
-          "payableAmount",
-          "paymentMeans"
-        ],
+        "required": ["RRN", "payableAmount", "paymentMeans"],
         "type": "object",
         "properties": {
           "RRN": { "type": "string" },
           "cardType": { "type": "string" },
           "paymentMeans": {
             "type": "string",
-            "description": "Grei slum ti  debet/Kredit kort",
-            "enum": ["Kreditkort", "Debetkort"]
+            "description": "Greiðslumáti  debet/Kredit kort",
+            "enum": ["Kreditkort", "Debetkort", "Milli"]
           },
-          "authCode": { "type": "string", "description": "Heimildarn mer" },
-          "PAN": { "type": "string", "description": "S  ustu stafir korts" },
-          "payableAmount": { "type": "integer", "format": "int64" }
+          "authCode": { "type": "string", "description": "Heimildarnúmer" },
+          "PAN": { "type": "string", "description": "Síðustu stafir korts" },
+          "payableAmount": { "type": "integer", "format": "int64" },
+          "correlationId": { "type": "string" }
         }
       },
       "charge": {

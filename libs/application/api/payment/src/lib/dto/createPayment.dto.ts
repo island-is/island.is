@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsDate, IsObject } from 'class-validator'
+import { IsString, IsNumber, IsObject } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreatePaymentDto {
@@ -21,8 +21,4 @@ export class CreatePaymentDto {
   @IsNumber()
   @ApiProperty()
   readonly amount!: number
-
-  @IsDate()
-  @ApiProperty()
-  readonly expires_at?: Date
 }

@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   NotificationCommands,
   SectionTypes,
 } from '@island.is/form-system/shared'
@@ -15,8 +16,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -28,7 +31,6 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Form } from '../forms/models/form.model'
@@ -50,10 +52,6 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import {
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './models/dto/application.xroad.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -62,6 +60,9 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { Value } from './models/value.model'
 import { escapeLike } from './utils/escapeLike'
+import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
+import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
+import { Payment } from '../payment/payment.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -76,6 +77,10 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    @InjectModel(Payment)
+    private readonly paymentModel: typeof Payment,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
@@ -105,93 +110,108 @@ export class ApplicationsService {
 
     const nationalId = user.actor?.nationalId || user.nationalId
 
-    await this.sequelize.transaction(async (transaction) => {
-      const newApplication: Application = await this.applicationModel.create(
-        {
-          formId: form.id,
-          organizationId: form.organizationId,
-          isTest: isTest,
-          dependencies: form.dependencies,
-          status: ApplicationStatus.DRAFT,
-          nationalId,
-          draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.draftDaysToLive),
-        } as Application,
-        { transaction },
-      )
+    this.logger.info(
+      'Creating application for user with nationalId:',
+      nationalId,
+    )
 
-      await this.applicationEventModel.create(
-        {
-          applicationId: newApplication.id,
-          eventType: ApplicationEvents.APPLICATION_CREATED,
-          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
-        } as ApplicationEvent,
-        { transaction },
-      )
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        const newApplication: Application = await this.applicationModel.create(
+          {
+            formId: form.id,
+            organizationId: form.organizationId,
+            isTest: isTest,
+            dependencies: form.dependencies,
+            status: ApplicationStatus.DRAFT,
+            nationalId,
+            draftTotalSteps: form.draftTotalSteps,
+            pruneAt: calculatePruneAt(form.draftDaysToLive),
+          } as Application,
+          { transaction },
+        )
 
-      await Promise.all(
-        form.sections.map((section) =>
-          Promise.all(
-            section.screens?.map((screen) =>
-              Promise.all(
-                screen.fields?.map(async (field) => {
-                  if (
-                    field.fieldType === FieldTypesEnum.APPLICANT &&
-                    field.fieldSettings?.applicantType &&
-                    !loginTypes.includes(field.fieldSettings.applicantType)
-                  ) {
-                    return
-                  }
-                  const valueJson =
-                    ValueTypeFactory.getClass(
-                      field.fieldType,
-                      new ValueType(),
-                    ) ?? {}
-                  if (field.fieldType === FieldTypesEnum.APPLICANT) {
-                    const type = field.fieldSettings?.applicantType
-                    if (type === ApplicantTypesEnum.INDIVIDUAL) {
-                      valueJson['nationalId'] = nationalId
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+        await this.applicationEventModel.create(
+          {
+            applicationId: newApplication.id,
+            eventType: ApplicationEvents.APPLICATION_CREATED,
+            eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
+          } as ApplicationEvent,
+          { transaction },
+        )
+
+        await Promise.all(
+          form.sections.map((section) =>
+            Promise.all(
+              section.screens?.map((screen) =>
+                Promise.all(
+                  screen.fields?.map(async (field) => {
+                    if (
+                      field.fieldType === FieldTypesEnum.APPLICANT &&
+                      field.fieldSettings?.applicantType &&
+                      !loginTypes.includes(field.fieldSettings.applicantType)
                     ) {
-                      valueJson['nationalId'] = user.actor?.nationalId || ''
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type === ApplicantTypesEnum.LEGAL_ENTITY ||
-                      type ===
-                        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
-                    ) {
-                      valueJson['nationalId'] = user.nationalId
-                      valueJson['applicantType'] = type
+                      return
                     }
-                  }
-                  return this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId: newApplication.id,
-                      json: valueJson,
-                    } as Value,
-                    { transaction },
-                  )
-                }) || [],
-              ),
-            ) || [],
+                    const valueJson =
+                      ValueTypeFactory.getClass(
+                        field.fieldType,
+                        new ValueType(),
+                      ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                      const type = field.fieldSettings?.applicantType
+                      if (type === ApplicantTypesEnum.INDIVIDUAL) {
+                        valueJson['nationalId'] = nationalId
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+                      ) {
+                        valueJson['nationalId'] = user.actor?.nationalId || ''
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type === ApplicantTypesEnum.LEGAL_ENTITY ||
+                        type ===
+                          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
+                      ) {
+                        valueJson['nationalId'] = user.nationalId
+                        valueJson['applicantType'] = type
+                      }
+                    }
+                    return this.valueModel.create(
+                      {
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId: newApplication.id,
+                        json: valueJson,
+                      } as Value,
+                      { transaction },
+                    )
+                  }) || [],
+                ),
+              ) || [],
+            ),
           ),
-        ),
-      )
+        )
 
-      newApplicationId = newApplication.id
-    })
+        newApplicationId = newApplication.id
+      })
+    } catch (error) {
+      this.logger.error('Error creating application', error)
+      throw error
+    }
+
+    this.logger.info('got this far with applicationId:', newApplicationId)
+
     const applicationDto = await this.getApplication(newApplicationId, '', null)
+
+    this.logger.info('getting applicationDto')
 
     return applicationDto
   }
@@ -276,13 +296,22 @@ export class ApplicationsService {
     return form.slug
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
+  async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
+    }
+
+    if (user) {
+      const loginTypes = await this.getLoginTypes(user)
+      if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+        throw new ForbiddenException(
+          `User does not have permission to submit application '${id}'`,
+        )
+      }
     }
 
     const form = await this.formModel.findByPk(application.formId)
@@ -300,6 +329,40 @@ export class ApplicationsService {
     }
 
     const applicationDto = applicationResponseDto.application
+
+    let paymentIsValid = false
+
+    if (form.hasPayment === true) {
+      const paymentSection = (applicationDto.sections ?? []).find(
+        (s) => s.sectionType === SectionTypes.PAYMENT,
+      )
+
+      const hasVisiblePayment =
+        !!paymentSection &&
+        paymentSection.isHidden === false &&
+        (paymentSection.screens ?? []).some(
+          (screen) => screen.isHidden === false,
+        )
+
+      if (hasVisiblePayment) {
+        const payment = await this.paymentModel.findOne({
+          where: { applicationId: id, fulfilled: true },
+        })
+        if (!payment) {
+          throw new ForbiddenException(
+            `Payment not fulfilled for application '${id}'`,
+          )
+        }
+        paymentIsValid = true
+      }
+    }
+
+    if (!user && !paymentIsValid) {
+      throw new ForbiddenException(
+        `Submitting application '${id}' without user context is only allowed when a visible payment exists and has been fulfilled.`,
+      )
+    }
+
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
     const applicationEvent = await this.applicationEventModel.create({
@@ -315,7 +378,26 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success = await this.serviceManager.send(applicationDto)
+    let zendeskInstance = ''
+    let zendeskBrandId = ''
+    if (applicationDto.submissionServiceUrl === 'zendesk') {
+      const organization = await this.organizationModel.findByPk(
+        application.organizationId,
+      )
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with id '${application.organizationId}' not found.`,
+        )
+      }
+      zendeskInstance = organization.zendeskInstance ?? ''
+      zendeskBrandId = organization.zendeskBrandId ?? ''
+    }
+
+    const success = await this.serviceManager.send(
+      applicationDto,
+      zendeskInstance,
+      zendeskBrandId,
+    )
 
     if (success) {
       try {
@@ -418,57 +500,74 @@ export class ApplicationsService {
     slug: string,
     user: User | null,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationModel.findOne({
-      where: { id: applicationId },
-      include: [
-        {
-          model: ApplicationEvent,
-          as: 'events',
-        },
-        {
-          model: Value,
-          as: 'values',
-        },
-      ],
-      order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
-    })
+    try {
+      const application = await this.applicationModel.findOne({
+        where: { id: applicationId },
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+          },
+          {
+            model: Value,
+            as: 'values',
+          },
+        ],
+        order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
+      })
 
-    if (!application) {
-      throw new NotFoundException(
-        `Application with id '${applicationId}' not found`,
+      if (!application) {
+        throw new NotFoundException(
+          `Application with id '${applicationId}' not found`,
+        )
+      }
+
+      const form = await this.getApplicationForm(
+        application.formId,
+        applicationId,
+        slug,
+      )
+
+      const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+      if (user) {
+        const loginTypes = await this.getLoginTypes(user)
+        if (
+          !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
+          !this.doesUserMatchApplication(application, user, loginTypes)
+        ) {
+          const responseDto = new ApplicationResponseDto()
+          responseDto.isLoginTypeAllowed = false
+          return responseDto
+        }
+      }
+
+      const applicationDto = this.applicationMapper.mapFormToApplicationDto(
+        form,
+        application,
+      )
+
+      applicationDto.organizationName = form.organizationDisplayName
+      const responseDto = new ApplicationResponseDto()
+      responseDto.application = applicationDto
+      responseDto.isLoginTypeAllowed = true
+
+      return responseDto
+    } catch (error) {
+      if (error instanceof HttpException) {
+        this.logger.warn(
+          `getApplication failed with ${error.getStatus()} for application '${applicationId}'`,
+        )
+        throw error
+      }
+
+      this.logger.error(
+        `Unexpected error getting application '${applicationId}'`,
+        error,
+      )
+      throw new InternalServerErrorException(
+        `Unexpected error while getting application '${applicationId}'`,
       )
     }
-
-    const form = await this.getApplicationForm(
-      application.formId,
-      applicationId,
-      slug,
-    )
-
-    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (
-        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-        !this.doesUserMatchApplication(application, user, loginTypes)
-      ) {
-        const responseDto = new ApplicationResponseDto()
-        responseDto.isLoginTypeAllowed = false
-        return responseDto
-      }
-    }
-
-    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
-      form,
-      application,
-    )
-
-    applicationDto.organizationName = form.organizationDisplayName
-    const responseDto = new ApplicationResponseDto()
-    responseDto.application = applicationDto
-    responseDto.isLoginTypeAllowed = true
-
-    return responseDto
   }
 
   async findAllBySlugAndUser(
@@ -1047,6 +1146,109 @@ export class ApplicationsService {
     })
   }
 
+  async getDataFromUrl(
+    dataFromUrlRequestDto: DataFromUrlReqDto,
+    user: User,
+  ): Promise<DataFromUrlResDto> {
+    const fieldId = dataFromUrlRequestDto.fieldId?.trim()
+    if (!fieldId) {
+      throw new BadRequestException(`fieldId is required`)
+    }
+    const slug = dataFromUrlRequestDto.slug?.trim()
+    if (!slug) {
+      throw new BadRequestException(`slug is required`)
+    }
+
+    const field = await this.fieldModel.findByPk(fieldId)
+
+    if (!field) {
+      throw new NotFoundException(`Field with id '${fieldId}' not found`)
+    }
+
+    const fieldSettings = field.fieldSettings
+
+    if (!fieldSettings) {
+      throw new NotFoundException(
+        `Field settings for field with id '${fieldId}' not found`,
+      )
+    }
+    const fieldType = field.fieldType
+
+    // Ownership + access check: field must belong to the requested form,
+    // and the current user's loginTypes must be allowed for that form.
+    const form = await this.getForm(slug)
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for form '${slug}'`,
+      )
+    }
+
+    const fieldBelongsToForm = (form.sections ?? []).some((section) =>
+      (section.screens ?? []).some((screen) =>
+        (screen.fields ?? []).some((f) => f.id === field.id),
+      ),
+    )
+    if (!fieldBelongsToForm) {
+      throw new ForbiddenException(
+        `User does not have permission to fetch external data for field '${field.id}'`,
+      )
+    }
+
+    let response = new DataFromUrlResDto()
+
+    if (
+      fieldType === FieldTypesEnum.DROPDOWN_LIST &&
+      fieldSettings.listType &&
+      (fieldSettings.listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+        fieldSettings.listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
+    ) {
+      const orgNationalId = dataFromUrlRequestDto.orgNationalId?.trim()
+      if (!orgNationalId) {
+        throw new BadRequestException(
+          `orgNationalId is required for Zendesk list lookups`,
+        )
+      }
+      if (orgNationalId !== form.organizationNationalId) {
+        throw new ForbiddenException(
+          `User does not have permission to fetch Zendesk data for organization '${orgNationalId}'`,
+        )
+      }
+
+      const organizationInstance = await this.getOrganizationZendeskInfo(
+        orgNationalId,
+      )
+
+      dataFromUrlRequestDto.zendeskInstance =
+        organizationInstance.zendeskInstance
+
+      response = await this.serviceManager.getListFromZendesk(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    } else {
+      dataFromUrlRequestDto.loggedInUserNationalId =
+        user.actor?.nationalId || user.nationalId
+
+      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
+        ? user.nationalId
+        : undefined
+
+      dataFromUrlRequestDto.fieldType = fieldType
+      dataFromUrlRequestDto.identifier = field.identifier
+      dataFromUrlRequestDto.fieldId = undefined
+      dataFromUrlRequestDto.orgNationalId = undefined
+
+      response = await this.serviceManager.getDataFromUrl(
+        fieldSettings,
+        dataFromUrlRequestDto,
+      )
+    }
+
+    return response
+  }
+
   async notifyExternalService(
     notificationDto: NotificationDto,
     user: User,
@@ -1087,6 +1289,7 @@ export class ApplicationsService {
     const nationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
+    notificationDto.organizationNationalId = form.organizationNationalId
 
     if (!notificationDto.screenDto) {
       throw new BadRequestException(
@@ -1100,9 +1303,10 @@ export class ApplicationsService {
       notificationDto.command !== NotificationCommands.SUBMIT &&
       notificationDto.screenDto
     ) {
-      notificationDto.fields = this.mapScreenToNotificationFields(
-        notificationDto.screenDto,
-      )
+      notificationDto.fields =
+        this.applicationMapper.mapScreenToApplicationJsonFields(
+          notificationDto.screenDto,
+        )
       notificationDto.screenDto = undefined
     }
 
@@ -1111,7 +1315,6 @@ export class ApplicationsService {
       submissionUrl,
     )
 
-    screen.fields = this.mergeMissing(response.fields, screen.fields)
     response.screen = screen
 
     response.screen.screenError = {
@@ -1123,8 +1326,6 @@ export class ApplicationsService {
     if (!response.operationSuccessful) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
         response.screen.screenError = this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError = this.getDefaultScreenErrorPopulate()
       }
     } else if (response.screenError?.hasError) {
       if (notificationDto.command === NotificationCommands.VALIDATE) {
@@ -1132,11 +1333,6 @@ export class ApplicationsService {
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
-      } else if (notificationDto.command === NotificationCommands.POPULATE) {
-        response.screen.screenError =
-          response.screenError.title?.is || response.screenError.message?.is
-            ? response.screenError
-            : this.getDefaultScreenErrorPopulate()
       }
     }
 
@@ -1147,47 +1343,6 @@ export class ApplicationsService {
     }
 
     return response
-  }
-
-  private mergeMissing(
-    responseFields: ApplicationXroadFieldDto[] | undefined,
-    screenFields: FieldDto[] | undefined,
-  ): FieldDto[] | undefined {
-    if (!screenFields?.length) return screenFields
-    if (!responseFields?.length) return screenFields
-
-    const byIdentifier = new Map(responseFields.map((f) => [f.identifier, f]))
-
-    return screenFields.map((field) => {
-      const override = byIdentifier.get(field.identifier)
-      if (!override) return field
-
-      const existingValueIdByOrder = new Map(
-        (field.values ?? []).map((v: any) => [v.order, v.id]),
-      )
-
-      const merged: any = { ...field, ...override }
-
-      if (Array.isArray(override.values)) {
-        merged.values = override.values.map((v: any) => ({
-          ...v,
-          id:
-            typeof v.id === 'string' && v.id.length > 0
-              ? v.id
-              : existingValueIdByOrder.get(v.order),
-        }))
-      }
-
-      // id is required for list items but is not used for populated lists
-      if (Array.isArray(override.list)) {
-        merged.list = override.list.map((li: any) => ({
-          ...li,
-          id: '1',
-        }))
-      }
-
-      return merged
-    })
   }
 
   private getDefaultScreenErrorValidate(): ValidationErrorDto {
@@ -1204,36 +1359,22 @@ export class ApplicationsService {
     }
   }
 
-  private getDefaultScreenErrorPopulate(): ValidationErrorDto {
-    return {
-      hasError: true,
-      title: {
-        is: 'Ekki tókst að sækja gögn frá ytri þjónustu',
-        en: 'Could not fetch data from external service',
-      },
-      message: {
-        is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
-        en: 'Please try to refresh the page or send an email to island@island.is',
-      },
-    }
-  }
-
-  private mapScreenToNotificationFields(
-    screen: ScreenDto,
-  ): ApplicationXroadFieldDto[] {
-    return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationXroadFieldDto()
-      xroadField.identifier = field.identifier
-      xroadField.screenIdentifier = screen.identifier
-      xroadField.fieldType = field.fieldType
-      xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationXroadValueDto()
-        xroadValue.order = value.order
-        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-        return xroadValue
-      })
-      return xroadField
+  private async getOrganizationZendeskInfo(
+    organizationNationalId: string,
+  ): Promise<{ zendeskInstance: string; zendeskBrandId: string }> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
     })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${organizationNationalId}' not found`,
+      )
+    }
+
+    const zendeskInstance = organization.zendeskInstance ?? ''
+    const zendeskBrandId = organization.zendeskBrandId ?? ''
+    return { zendeskInstance, zendeskBrandId }
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
@@ -1579,7 +1720,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified >= :startDate AND a.modified <= :endDate
+    WHERE a.created >= :startDate AND a.created <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;

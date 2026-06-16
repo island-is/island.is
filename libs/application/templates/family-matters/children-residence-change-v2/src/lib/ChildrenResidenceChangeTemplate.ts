@@ -158,9 +158,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'confirmContract',
                 ],
                 externalData: [
-                  NationalRegistryV3UserApi.externalDataId,
-                  ChildrenCustodyInformationApiV3.externalDataId,
-                  UserProfileApi.externalDataId,
+                  NationalRegistryV3UserApi.externalDataId as string,
+                  ChildrenCustodyInformationApiV3.externalDataId as string,
+                  UserProfileApi.externalDataId as string,
                 ],
               },
             },
@@ -216,7 +216,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 NotificationConfig[
                   NotificationType.ChildrenResidenceChangePruned
                 ].templateId,
-              ...(internalBody && { internalBody }),
+              ...(internalBody && {
+                args: [{ key: 'internalBody', value: internalBody }],
+              }),
             }
           }),
           onEntry: defineTemplateApi({

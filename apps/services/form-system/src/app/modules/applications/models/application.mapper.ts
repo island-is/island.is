@@ -16,13 +16,16 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
 import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 import { ApplicationDto } from './dto/application.dto'
+import {
+  ApplicationJsonDto,
+  ApplicationJsonFieldDto,
+  ApplicationJsonFieldSettingsDto,
+  ApplicationJsonValueDto,
+} from './dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { ValueDto } from './dto/value.dto'
-import {
-  ApplicationXroadDto,
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './dto/application.xroad.dto'
+import { SectionInfo } from '../../../../app/dataTypes/sectionInfo.model'
+import { LanguageType } from '../../../../app/dataTypes/languageType.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -30,6 +33,20 @@ export class ApplicationMapper {
     form: Form,
     application: Application,
   ): ApplicationDto {
+    const normalizedSectionInfo: SectionInfo = {
+      title: form.sectionInfo?.title ?? { is: '', en: '' },
+      confirmationHeader: form.sectionInfo?.confirmationHeader ?? {
+        is: '',
+        en: '',
+      },
+      confirmationText: form.sectionInfo?.confirmationText ?? {
+        is: '',
+        en: '',
+      },
+      additionalInfo: form.sectionInfo?.additionalInfo ?? [],
+      additionalPremises: form.sectionInfo?.additionalPremises ?? [],
+    }
+
     const applicationDto: ApplicationDto = {
       id: application.id,
       nationalId: application.nationalId,
@@ -45,7 +62,6 @@ export class ApplicationMapper {
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
       useValidate: form.useValidate,
-      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
@@ -54,7 +70,7 @@ export class ApplicationMapper {
       events: application.events,
       sections: [],
       certificationTypes: form.formCertificationTypes,
-      completedSectionInfo: form.completedSectionInfo,
+      sectionInfo: normalizedSectionInfo,
       organizationNationalId: form.organizationNationalId,
     }
 
@@ -90,7 +106,6 @@ export class ApplicationMapper {
               multiMax: screen.multiMax,
               isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
-              shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
                 hasError: false,
                 title: { is: '', en: '' },
@@ -176,43 +191,75 @@ export class ApplicationMapper {
     return applicationMinimalDto
   }
 
-  mapApplicationDtoToApplicationXroadDto(
+  mapApplicationDtoToApplicationJsonDto(
     applicationDto: ApplicationDto,
-  ): ApplicationXroadDto {
-    const fields: ApplicationXroadFieldDto[] = (applicationDto.sections ?? [])
+  ): ApplicationJsonDto {
+    const fields: ApplicationJsonFieldDto[] = (applicationDto.sections ?? [])
       .flatMap((section) => section.screens ?? [])
-      .flatMap((screen) =>
-        (screen.fields ?? []).map((field) => ({
+      .flatMap((screen) => this.mapScreenToApplicationJsonFields(screen))
+
+    const jsonDto = new ApplicationJsonDto()
+    jsonDto.id = applicationDto.id ?? ''
+    jsonDto.organizationNationalId = applicationDto.organizationNationalId ?? ''
+    jsonDto.slug = applicationDto.slug ?? ''
+    jsonDto.isTest = applicationDto.isTest ?? false
+    jsonDto.status = applicationDto.status ?? ''
+    jsonDto.submittedAt = applicationDto.submittedAt ?? null
+    jsonDto.fields = fields
+
+    return jsonDto
+  }
+
+  mapScreenToApplicationJsonFields(
+    screen: ScreenDto,
+  ): ApplicationJsonFieldDto[] {
+    return (screen.fields ?? [])
+      .filter((field) => !field.isHidden)
+      .filter((field) => field.fieldType !== FieldTypesEnum.MESSAGE)
+      .filter((field) => (field.values?.length ?? 0) > 0)
+      .map((field) =>
+        this.mapFieldToApplicationJsonField(
           field,
-          screenIdentifier: screen.identifier,
-        })),
+          screen.identifier,
+          screen.name,
+        ),
       )
-      .filter(({ field }) => !field.isHidden)
-      .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .filter(({ field }) => (field.values?.length ?? 0) > 0)
-      .map(({ field, screenIdentifier }) => {
-        const xroadField = new ApplicationXroadFieldDto()
-        xroadField.identifier = field.identifier
-        xroadField.screenIdentifier = screenIdentifier
-        xroadField.fieldType = field.fieldType
-        xroadField.values = (field.values ?? []).map((value) => {
-          const xroadValue = new ApplicationXroadValueDto()
-          xroadValue.order = value.order
-          xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-          return xroadValue
-        })
-        return xroadField
-      })
+  }
 
-    const xroadDto = new ApplicationXroadDto()
-    xroadDto.id = applicationDto.id ?? ''
-    xroadDto.slug = applicationDto.slug ?? ''
-    xroadDto.isTest = applicationDto.isTest ?? false
-    xroadDto.status = applicationDto.status ?? ''
-    xroadDto.submittedAt = applicationDto.submittedAt ?? null
-    xroadDto.fields = fields
+  private mapFieldToApplicationJsonField(
+    field: FieldDto,
+    screenIdentifier: string,
+    screenTitle: LanguageType,
+  ): ApplicationJsonFieldDto {
+    const jsonField = new ApplicationJsonFieldDto()
+    jsonField.identifier = field.identifier
+    jsonField.screenIdentifier = screenIdentifier
+    jsonField.screenTitle = screenTitle
+    jsonField.fieldTitle = field.name
+    jsonField.fieldType = field.fieldType
 
-    return xroadDto
+    const settings = new ApplicationJsonFieldSettingsDto()
+    if (field.fieldType === FieldTypesEnum.NUMBERBOX) {
+      settings.isDecimal = field.fieldSettings?.isDecimal ?? false
+    }
+    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+      settings.applicantType = field.fieldSettings?.applicantType
+    }
+    if (
+      settings.isDecimal !== undefined ||
+      settings.applicantType !== undefined
+    ) {
+      jsonField.fieldSettings = settings
+    }
+
+    jsonField.values = (field.values ?? []).map((value) => {
+      const jsonValue = new ApplicationJsonValueDto()
+      jsonValue.order = value.order
+      jsonValue.json = value.json ?? {}
+      return jsonValue
+    })
+
+    return jsonField
   }
 
   private isHidden(

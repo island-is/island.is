@@ -31,6 +31,7 @@ export const mapResult = (
   downloadServiceBaseUrl: string,
 ): PrimarySchoolAssessmentResult | null => {
   if (!item.id || item.gradeLevel == null) return null
+
   return {
     id: item.id,
     schoolYear: item.schoolYear ?? undefined,

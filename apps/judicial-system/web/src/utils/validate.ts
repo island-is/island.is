@@ -4,6 +4,7 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 import {
+  AppealCase,
   AppealCaseRulingDecision,
   AppealCaseState,
   Case,
@@ -24,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
+import { isCivilClaimantDefendantSelectionValid } from './civilClaimantUtils'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -310,6 +312,11 @@ export const isProcessingStepValidIndictments = (
     ? workingCase.civilClaimants?.every(
         (civilClaimant) =>
           civilClaimant.name &&
+          (civilClaimant.policeCaseNumbers?.length ?? 0) > 0 &&
+          isCivilClaimantDefendantSelectionValid(
+            civilClaimant,
+            workingCase.defendants ?? [],
+          ) &&
           validate([
             [
               civilClaimant.nationalId,
@@ -329,6 +336,95 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
+const hasIndictmentCountOffenses = (count: IndictmentCount) =>
+  Boolean(count.offenses && count.offenses.length > 0)
+
+const isSpeedingIndictmentCount = (count: IndictmentCount) =>
+  count.offenses?.some((o) => o.offense === IndictmentCountOffense.SPEEDING) ??
+  false
+
+const isIndictmentCountTrafficViolation = (
+  count: IndictmentCount,
+  workingCase: Case,
+) =>
+  isTrafficViolationIndictmentCount(
+    count.indictmentCountSubtypes,
+    count.policeCaseNumber
+      ? workingCase.indictmentSubtypes?.[count.policeCaseNumber]
+      : undefined,
+  )
+
+type IndictmentCountFieldCheck = {
+  isMissing: (count: IndictmentCount) => boolean
+  warningMessage: string
+}
+
+const indictmentCountFieldChecks = (
+  workingCase: Case,
+): IndictmentCountFieldCheck[] => {
+  const isTrafficViolation = (count: IndictmentCount) =>
+    isIndictmentCountTrafficViolation(count, workingCase)
+
+  return [
+    {
+      isMissing: (count) => !count.policeCaseNumber,
+      warningMessage: 'Vantar LÖKE málsnúmer',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) && !hasIndictmentCountOffenses(count),
+      warningMessage: 'Vantar brot',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) && !count.vehicleRegistrationNumber,
+      warningMessage: 'Vantar skráningarnúmer ökutækis',
+    },
+    {
+      isMissing: (count) => isTrafficViolation(count) && !count.lawsBroken,
+      warningMessage: 'Vantar lagaákvæði',
+    },
+    {
+      isMissing: (count) => !count.incidentDescription,
+      warningMessage: 'Vantar atvikalýsingu',
+    },
+    {
+      isMissing: (count) => !count.legalArguments,
+      warningMessage: 'Vantar heimfærslu',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) &&
+        isSpeedingIndictmentCount(count) &&
+        !count.recordedSpeed,
+      warningMessage: 'Vantar mældan hraða',
+    },
+    {
+      isMissing: (count) =>
+        isTrafficViolation(count) &&
+        isSpeedingIndictmentCount(count) &&
+        !count.speedLimit,
+      warningMessage: 'Vantar hámarkshraða',
+    },
+  ]
+}
+
+export const getIndictmentCountWarningMessage = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): string | undefined =>
+  indictmentCountFieldChecks(workingCase).find((check) =>
+    check.isMissing(indictmentCount),
+  )?.warningMessage
+
+export const isIndictmentCountComplete = (
+  indictmentCount: IndictmentCount,
+  workingCase: Case,
+): boolean =>
+  !indictmentCountFieldChecks(workingCase).some((check) =>
+    check.isMissing(indictmentCount),
+  )
+
 export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
@@ -339,49 +435,12 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
-    return indictmentCount.offenses?.some(
-      (o) => o.offense === IndictmentCountOffense.SPEEDING,
-    )
-      ? Boolean(indictmentCount.recordedSpeed) &&
-          Boolean(indictmentCount.speedLimit)
-      : true
-  }
-
-  const hasOffenses = (indictmentCount: IndictmentCount) => {
-    return Boolean(
-      indictmentCount.offenses && indictmentCount.offenses?.length > 0,
-    )
-  }
-
-  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.policeCaseNumber) &&
-    hasOffenses(indictmentCount) &&
-    Boolean(indictmentCount.vehicleRegistrationNumber) &&
-    Boolean(indictmentCount.lawsBroken) &&
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments) &&
-    isValidSpeedingIndictmentCount(indictmentCount)
-
-  const isValidNonTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.incidentDescription) &&
-    Boolean(indictmentCount.legalArguments)
-
-  const isTrafficViolation = (indictmentCount: IndictmentCount) =>
-    isTrafficViolationIndictmentCount(
-      indictmentCount.indictmentCountSubtypes,
-      indictmentCount.policeCaseNumber &&
-        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
-    )
-
   if (!workingCase.indictmentCounts?.length) {
     return false
   }
 
-  return workingCase.indictmentCounts.every((indictmentCount) =>
-    isTrafficViolation(indictmentCount)
-      ? isValidTrafficViolation(indictmentCount)
-      : isValidNonTrafficViolation(indictmentCount),
+  return workingCase.indictmentCounts.every((count) =>
+    isIndictmentCountComplete(count, workingCase),
   )
 }
 
@@ -695,38 +754,39 @@ export const isAdminUserFormValid = (user: User): boolean => {
   )
 }
 
-export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealCaseStepValid = (
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (workingCase.appealCase?.appealJudge1 &&
-        workingCase.appealCase?.appealJudge2 &&
-        workingCase.appealCase?.appealJudge3 &&
-        workingCase.appealCase?.appealAssistant)) &&
+    (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
+      (appealCase?.appealJudge1 &&
+        appealCase?.appealJudge2 &&
+        appealCase?.appealJudge3 &&
+        appealCase?.appealAssistant)) &&
       validate([
-        [
-          workingCase.appealCase?.appealCaseNumber,
-          ['empty', 'appeal-case-number-format'],
-        ],
+        [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
   )
 }
 
 export const isCourtOfAppealRulingStepFieldsValid = (
-  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
 ): boolean => {
   return Boolean(
-    workingCase.appealCase?.appealRulingDecision &&
-      (workingCase.appealCase?.appealRulingDecision ===
+    appealCase?.appealRulingDecision &&
+      (appealCase.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
-          .isValid),
+        validate([[appealCase.appealConclusion, ['empty']]]).isValid),
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+export const isCourtOfAppealRulingStepValid = (
+  workingCase: Case,
+  appealCase: AppealCase | undefined | null,
+): boolean => {
   return Boolean(
-    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
-      (workingCase.appealCase?.appealRulingDecision ===
+    isCourtOfAppealRulingStepFieldsValid(appealCase) &&
+      (appealCase?.appealRulingDecision ===
         AppealCaseRulingDecision.DISCONTINUED ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.APPEAL_RULING,

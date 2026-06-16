@@ -32,7 +32,8 @@ type OtherAssetsRepeaterProps = {
 export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & OtherAssetsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id, props } = field
+  const id = field.id as string
+  const { props } = field
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
   const otherAssets =

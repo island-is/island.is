@@ -371,11 +371,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
@@ -506,6 +501,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
   },
+  [ApplicationTypes.HOUSING_BENEFITS]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
@@ -517,6 +517,16 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,

@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
 import { CivilClaimant } from '../../repository'
@@ -43,9 +42,7 @@ export class LimitedAccessCreateCivilClaimantCaseFileGuard
       !civilClaimant.hasSpokesperson ||
       !civilClaimant.isSpokespersonConfirmed ||
       !civilClaimant.spokespersonNationalId ||
-      !normalizeAndFormatNationalId(user.nationalId).includes(
-        civilClaimant.spokespersonNationalId,
-      )
+      civilClaimant.spokespersonNationalId !== user.nationalId
     ) {
       return false
     }

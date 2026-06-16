@@ -1,4 +1,5 @@
-import { map } from 'rxjs/operators'
+import { from } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -7,7 +8,6 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   AppealEventType,
   CaseAppealDecision,
@@ -22,6 +22,7 @@ import {
   getStatementDeadline,
   isCompletedCase,
   isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
@@ -32,11 +33,14 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
   AppealEventLog,
   Case,
   CaseFile,
+  CaseRepositoryService,
   CaseString,
   CivilClaimant,
   Defendant,
@@ -292,10 +296,16 @@ export const getRulingOrderAppealInfo = (
   // Soft deadline — does not gate canBeAppealed; frontend warns visually.
   const canBeAppealed = !hasBeenAppealed && !isCompletedCase(theCase.state)
 
+  // The ruling time and appeal deadline are based on the end date of the
+  // confirmed court session the ruling order was added to.
+  const confirmedCourtSession = theCase.courtSessions?.find(
+    (session) => session.isConfirmed && session.rulingFileId === caseFile.id,
+  )
+
   let appealDeadline: Date | undefined
   let isAppealDeadlineExpired: boolean | undefined
-  if (caseFile.submissionDate) {
-    appealDeadline = getAppealDeadlineDate(caseFile.submissionDate)
+  if (confirmedCourtSession?.endDate) {
+    appealDeadline = getAppealDeadlineDate(confirmedCourtSession.endDate)
     isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
   }
 
@@ -384,6 +394,7 @@ export const transformDefendants = ({
         defendant.eventLogs,
       ),
       indictmentCancelledOrDismissedState,
+      connectedCases: defendant.connectedCases ?? [],
     }
   })
 }
@@ -458,9 +469,7 @@ const getDefenceUserDefendants = (
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
       defendant.defenderNationalId &&
-      normalizeAndFormatNationalId(user.nationalId).includes(
-        defendant.defenderNationalId,
-      ),
+      defendant.defenderNationalId === user.nationalId,
   )
 
   if (!myDefendants?.length) {
@@ -500,6 +509,7 @@ const getDefenceUserDefendants = (
 const transformCase = (
   theCase: Case,
   user: User | undefined,
+  originalAncestorId?: string,
 ): Record<string, unknown> => {
   const isDefence = isDefenceUser(user)
   const {
@@ -593,6 +603,25 @@ const transformCase = (
                 theCase.civilClaimants,
               ))),
       )
+      .filter(
+        (file) =>
+          !isDefence ||
+          canDefenceUserViewCivilClaimCaseFile(user?.nationalId, {
+            category: file.category,
+            civilClaimantId: file.civilClaimantId,
+            defendants: theCase.defendants,
+            civilClaimants: theCase.civilClaimants,
+          }),
+      )
+      // A ruling order uploaded during the course of a case is hidden from
+      // everyone except district-court users until it has been added to a
+      // confirmed court session.
+      .filter(
+        (file) =>
+          file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+          isDistrictCourtUser(user) ||
+          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
+      )
       .map((file) => ({
         ...file.toJSON(),
         ...getRulingOrderAppealInfo(file, theCase),
@@ -605,18 +634,37 @@ const transformCase = (
       user && isProsecutionUser(user)
         ? CaseString.penalties(theCase.caseStrings)
         : null,
+    reopenReason: CaseString.reopenReason(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.INDICTMENT_REVIEWED,
-      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
-    ),
-    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      theCase.eventLogs,
-    ),
+    indictmentReviewedDate: (() => {
+      const reviewedDate = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.INDICTMENT_REVIEWED,
+        theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+      )
+      if (!reviewedDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > reviewedDate
+        ? undefined
+        : reviewedDate
+    })(),
+    indictmentSentToPublicProsecutorDate: (() => {
+      const sentDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        theCase.eventLogs,
+      )
+      if (!sentDate) return undefined
+      const reopenedDate = EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_REOPENED,
+        theCase.eventLogs,
+      )
+      return reopenedDate && reopenedDate > sentDate ? undefined : sentDate
+    })(),
     defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
       EventType.APPEAL_RESULT_ACCESSED,
       theCase.eventLogs,
@@ -657,17 +705,30 @@ const transformCase = (
     splitCases:
       theCase.splitCases &&
       theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
+    originalAncestorId,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
     const user: User | undefined = request.user?.currentUser
 
-    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
+    return next
+      .handle()
+      .pipe(
+        switchMap((theCase: Case) =>
+          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+            map((originalAncestorId) =>
+              transformCase(theCase, user, originalAncestorId),
+            ),
+          ),
+        ),
+      )
   }
 }
 

@@ -11,12 +11,14 @@ import {
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
   EventType,
+  Feature,
   hasIndictmentCaseBeenSubmittedToCourt,
   isCompletedCase,
   isDistrictCourtUser,
@@ -52,6 +54,7 @@ import {
   Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
+import { caseModuleConfig } from './case.config'
 
 @Injectable()
 export class PdfService {
@@ -65,6 +68,8 @@ export class PdfService {
     private readonly subpoenaService: SubpoenaService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
   ) {}
 
   private formatMessage: FormatMessage = () => {
@@ -206,9 +211,12 @@ export class PdfService {
       }
     }
 
+    const useTinyMCE = !this.config.hiddenFeatures?.includes(Feature.TINY_MCE)
+
     const generatedPdf = await createIndictmentCourtRecordPdf(
       theCase,
       isDistrictCourtUser(user),
+      useTinyMCE,
       confirmation,
     )
 

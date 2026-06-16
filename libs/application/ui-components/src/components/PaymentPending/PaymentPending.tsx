@@ -9,6 +9,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  getTextStyles,
   LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,6 +17,9 @@ import { Markdown } from '@island.is/shared/components'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
+import cn from 'classnames'
+
+const divWithSmallText = cn(getTextStyles({ variant: 'small' }))
 
 export interface PaymentPendingProps {
   application: Application
@@ -104,7 +108,15 @@ export const PaymentPending: FC<
           <AlertMessage
             type="error"
             title={msg(coreErrorMessages.paymentSubmitFailed)}
-            message={msg(coreErrorMessages.paymentSubmitFailedDescription)}
+            message={
+              <Box className={divWithSmallText}>
+                <Markdown>
+                  {msg(
+                    coreErrorMessages.paymentSubmitFailedDescriptionMarkdown,
+                  )}
+                </Markdown>
+              </Box>
+            }
           />
         </Box>
         <Box display="flex" justifyContent="spaceBetween" marginTop={2}>

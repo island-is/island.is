@@ -75,6 +75,7 @@ export interface TUploadFile extends UploadFile {
   isKeyAccessible?: boolean | null
   defendantId?: string | null
   civilClaimantId?: string | null
+  rulingFileId?: string | null
 }
 
 export interface UploadFileState {
@@ -101,6 +102,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   isKeyAccessible: file.isKeyAccessible,
   defendantId: file.defendantId,
   civilClaimantId: file.civilClaimantId,
+  rulingFileId: file.rulingFileId,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
@@ -230,6 +232,7 @@ const useS3Upload = (
   caseId: string,
   defendantId?: string,
   civilClaimantId?: string,
+  rulingFileId?: string | null,
 ) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -366,6 +369,7 @@ const useS3Upload = (
         submissionDate: file.submissionDate,
         fileRepresentative: file.fileRepresentative,
         isKeyAccessible: file.isKeyAccessible,
+        rulingFileId: file.rulingFileId ?? rulingFileId,
       }
 
       const fileDefendantId = file.defendantId ?? defendantId
@@ -384,6 +388,7 @@ const useS3Upload = (
       caseId,
       defendantId,
       civilClaimantId,
+      rulingFileId,
       limitedAccess,
       limitedAccessCreateFile,
       createFile,

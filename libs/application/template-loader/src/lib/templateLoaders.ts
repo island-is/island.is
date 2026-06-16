@@ -215,8 +215,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/university'),
   [ApplicationTypes.DEREGISTER_MACHINE]: () =>
     import('@island.is/application/templates/aosh/deregister-machine'),
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: () =>
-    import('@island.is/application/templates/grindavik-housing-buyout'),
   [ApplicationTypes.STREET_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
@@ -279,6 +277,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/transport-authority/mile-car'),
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
     import('@island.is/application/templates/hh/courses'),
+  [ApplicationTypes.HOUSING_BENEFITS]: () =>
+    import('@island.is/application/templates/hms/housing-benefits'),
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: () =>
     import(
       '@island.is/application/templates/vmst/edit-unemployment-information'
@@ -289,6 +289,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/vmst/de-register-unemployment-benefits'
     ),
+  [ApplicationTypes.VMST_SUBMIT_DOCUMENTS]: () =>
+    import('@island.is/application/templates/vmst/submit-documents'),
+  [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
+    import('@island.is/application/templates/vmst/confirm-travel'),
 }
 
 export default templates
