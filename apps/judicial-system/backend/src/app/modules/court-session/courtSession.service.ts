@@ -18,7 +18,10 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
+  AppealCaseState,
   AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
   IndictmentCaseNotificationType,
@@ -26,6 +29,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  AppealCaseRepositoryService,
   AppealDecision,
   AppealDecisionRepositoryService,
   Case,
@@ -43,6 +47,7 @@ export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
+    private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     // TODO: Move to a repository service - models should only be used in repository services
     // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
@@ -168,6 +173,32 @@ export class CourtSessionService {
       update,
     )
 
+    // Pre-check: confirming an ORDER session requires a decision from every
+    // party. Runs before the session is written so confirmation is rejected
+    // wholesale if any decision is missing.
+    const becomingConfirmed =
+      update.isConfirmed === true && existingCourtSession.isConfirmed !== true
+    const effectiveRulingType =
+      'rulingType' in update
+        ? update.rulingType
+        : existingCourtSession.rulingType
+    const effectiveRulingFileId =
+      'rulingFileId' in normalizedUpdate
+        ? normalizedUpdate.rulingFileId
+        : existingCourtSession.rulingFileId
+
+    if (
+      becomingConfirmed &&
+      effectiveRulingType === CourtSessionRulingType.ORDER &&
+      effectiveRulingFileId
+    ) {
+      await this.validateAppealDecisionsComplete(
+        theCase,
+        effectiveRulingFileId,
+        transaction,
+      )
+    }
+
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
       theCase.id,
       existingCourtSession.id,
@@ -181,9 +212,127 @@ export class CourtSessionService {
         updatedCourtSession,
         user,
       )
+
+      if (
+        updatedCourtSession.rulingType === CourtSessionRulingType.ORDER &&
+        updatedCourtSession.rulingFileId
+      ) {
+        await this.reconcileInCourtRulingOrderAppeal(
+          theCase,
+          updatedCourtSession,
+          user,
+          transaction,
+        )
+      }
     }
 
     return updatedCourtSession
+  }
+
+  // Every party (each defendant, each civil claimant and the prosecution) must
+  // have recorded a decision before an ORDER session can be confirmed.
+  private async validateAppealDecisionsComplete(
+    theCase: Case,
+    rulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const decisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+
+    const hasDecision = (
+      predicate: (decision: AppealDecision) => boolean,
+    ): boolean => decisions.some((d) => d.decision !== null && predicate(d))
+
+    if (
+      !hasDecision((d) => d.partyRole === AppealDecisionPartyRole.PROSECUTOR)
+    ) {
+      throw new BadRequestException(
+        'The prosecution must take a position on the ruling before the court session can be confirmed',
+      )
+    }
+
+    for (const defendant of theCase.defendants ?? []) {
+      if (
+        !hasDecision(
+          (d) =>
+            d.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+            d.defendantId === defendant.id,
+        )
+      ) {
+        throw new BadRequestException(
+          `Defendant ${defendant.id} must take a position on the ruling before the court session can be confirmed`,
+        )
+      }
+    }
+
+    for (const civilClaimant of theCase.civilClaimants ?? []) {
+      if (
+        !hasDecision(
+          (d) =>
+            d.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+            d.civilClaimantId === civilClaimant.id,
+        )
+      ) {
+        throw new BadRequestException(
+          `Civil claimant ${civilClaimant.id} must take a position on the ruling before the court session can be confirmed`,
+        )
+      }
+    }
+  }
+
+  // When a ruling order is confirmed with at least one in-court appeal
+  // (decision = APPEAL), create the appeal case it produces. The decision rows
+  // are themselves the record of who appealed, so no event or link is written.
+  // Idempotent: skips if an appeal case already exists for the ruling.
+  private async reconcileInCourtRulingOrderAppeal(
+    theCase: Case,
+    courtSession: CourtSession,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<void> {
+    const rulingFileId = courtSession.rulingFileId
+    if (!rulingFileId) {
+      return
+    }
+
+    const existingAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === rulingFileId,
+    )
+    if (existingAppealCase) {
+      return
+    }
+
+    const decisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId },
+      transaction,
+    })
+    const someoneAppealedInCourt = decisions.some(
+      (d) => d.decision === CaseAppealDecision.APPEAL,
+    )
+    if (!someoneAppealedInCourt) {
+      return
+    }
+
+    const appealCase = await this.appealCaseRepositoryService.create(
+      theCase.id,
+      {
+        appealState: AppealCaseState.APPEALED,
+        rulingFileId,
+        // The in-court appeal happened when the court session ended
+        appealDate: courtSession.endDate,
+      },
+      { transaction },
+    )
+
+    addMessagesToQueue({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+    })
   }
 
   private async validateAndNormalizeRulingFile(
