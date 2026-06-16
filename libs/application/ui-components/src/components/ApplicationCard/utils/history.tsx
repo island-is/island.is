@@ -20,12 +20,15 @@ export const buildHistoryItems = (
   const lastHistoryItem = actionCardHistory ? actionCardHistory[0] : undefined
   const lastHistoryDate = lastHistoryItem?.date
   if (application.actionCard?.pendingAction?.title) {
+    const pendingRowComplete =
+      application.status !== ApplicationStatus.IN_PROGRESS
     historyItems.push({
       date: format(
         lastHistoryDate ? new Date(lastHistoryDate) : new Date(),
         dateFormat,
       ),
       title: formatMessage(application.actionCard.pendingAction.title ?? ''),
+      isComplete: pendingRowComplete,
       content: application.actionCard.pendingAction.content ? (
         <AlertMessage
           type={application.actionCard?.pendingAction?.displayStatus}
@@ -60,6 +63,7 @@ export const buildHistoryItems = (
         date: format(new Date(x.date), dateFormat),
         title: formatMessage(x.log),
         subjectAndActor: x.subLog,
+        isComplete: true,
       })),
     )
   }

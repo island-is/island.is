@@ -9,7 +9,7 @@ import {
 import { CRCFieldBaseProps } from '../../types'
 
 const MockChildren = ({ application, field }: CRCFieldBaseProps) => {
-  const { id } = field
+  const id = field.id as string
   const { answers } = application
   const parents = answers.mockData?.parents
   const children = answers.mockData?.children

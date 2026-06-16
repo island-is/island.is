@@ -23,7 +23,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { Locale } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
 import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
@@ -34,6 +34,9 @@ export type MaybeWithApplicationAndField<T> =
 export type MaybeWithApplicationAndFieldAndLocale<T> =
   | T
   | ((application: Application, field: Field, locale: Locale) => T)
+export type MaybeWithApplicationAndUser<T> =
+  | T
+  | ((application: Application, user: BffUser) => T)
 
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
@@ -364,9 +367,8 @@ export type DataTableRow = {
     rows: DataTableEditableRow[]
   }
 }
-
-export interface BaseField extends FormItem {
-  readonly id: string
+export interface BaseField extends Omit<FormItem, 'id'> {
+  readonly id: MaybeWithApplicationAndUser<string>
   readonly component: FieldComponents | string
   readonly title?: FormTextWithLocale
   readonly description?: FormTextWithLocale
@@ -381,7 +383,8 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
-  clearOnChange?: string[]
+  /** Static paths or `(application) => paths` when using a dynamic `id`. */
+  clearOnChange?: MaybeWithApplication<string[]>
   clearOnChangeDefaultValue?:
     | string
     | string[]
@@ -547,6 +550,7 @@ export interface RadioField extends InputField {
   space?: BoxProps['paddingTop']
   hasIllustration?: boolean
   widthWithIllustration?: '1/1' | '1/2' | '1/3'
+  titleVariant?: TitleVariants
   onSelect?(s: string): void
 }
 
@@ -640,6 +644,7 @@ export interface PhoneField extends InputField {
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
+  readonly titleVariant?: TitleVariants
   readonly introduction?: FormText
   readonly uploadHeader?: FormText
   readonly uploadDescription?: FormText
@@ -891,14 +896,20 @@ export type TableRepeaterField = BaseField & {
   table?: {
     /**
      * List of strings to render,
-     * if not provided it will be auto generated from the fields
+     * or a function (answers, externalData) => StaticText[] for dynamic headers.
+     * If not provided it will be auto generated from the fields.
      */
-    header?: StaticText[]
+    header?:
+      | StaticText[]
+      | ((answers: FormValue, externalData: ExternalData) => StaticText[])
     /**
      * List of field id's to render,
-     * if not provided it will be auto generated from the fields
+     * or a function (answers, externalData) => string[] for dynamic rows.
+     * If not provided it will be auto generated from the fields.
      */
-    rows?: string[]
+    rows?:
+      | string[]
+      | ((answers: FormValue, externalData: ExternalData) => string[])
     format?: Record<
       string,
       (

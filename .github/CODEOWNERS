@@ -262,6 +262,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
 /libs/application/templates/hms/rental-agreement/                                                                            @island-is/norda
+/libs/application/templates/hms/housing-benefits/                                                                            @island-is/norda
 /libs/application/templates/home-support/                                                                                    @island-is/norda
 /libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
 /libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/norda
@@ -284,6 +285,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/rental-agreement/                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/housing-benefits/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/norda

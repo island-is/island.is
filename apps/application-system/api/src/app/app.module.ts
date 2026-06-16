@@ -77,6 +77,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsConfig } from '@island.is/clients/hms'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
@@ -154,6 +155,7 @@ import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
         VmstUnemploymentClientConfig,
         HmsConfig,
         HmsRentalAgreementClientConfig,
+        HousingBenefitsConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
         RecyclingFundClientConfig,

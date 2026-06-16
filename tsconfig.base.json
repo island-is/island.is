@@ -483,6 +483,9 @@
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
+      "@island.is/application/templates/hms/housing-benefits": [
+        "libs/application/templates/hms/housing-benefits/src/index.ts"
+      ],
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
       ],
