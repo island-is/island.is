@@ -27,7 +27,7 @@ export const uploadDocuments = defineMessages({
   multiFieldDescription: {
     id: 'vmst.vsd.application:uploadDocuments.multiFieldDescription',
     defaultMessage:
-      'Vinsamlegast skilaðu þeim gögnum sem vantar upp á hér að neðan. Hægt er að hlaða upp einu í einu en þú getur bætt við línu ef þú ætlar að skila fleiri gögnum í einu.',
+      'Velkomin í almenna gagnagátt Vinnumálastofnunar. Í fellilistanum hér að neðan sérðu hvaða gögnum er hægt að skila inn. Hægt er að hlaða upp einu skjali í einu en þú getur bætt við línu ef þú ætlar að skila fleiri gögnum. Passaðu upp á að skjalið sem er hlaðið inn sé sama skjal og er valið í tegund gagna.',
     description: 'Upload documents description',
   },
   sectionStepTitle: {
