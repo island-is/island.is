@@ -26,9 +26,12 @@ const renewalStatusMessageMap: Record<
   HealthDirectoratePrescriptionRenewalStatus,
   keyof typeof messages
 > = {
-  [HealthDirectoratePrescriptionRenewalStatus.Approved]: 'renewalStatusApproved',
-  [HealthDirectoratePrescriptionRenewalStatus.Rejected]: 'renewalStatusRejected',
-  [HealthDirectoratePrescriptionRenewalStatus.Dismissed]: 'renewalStatusDismissed',
+  [HealthDirectoratePrescriptionRenewalStatus.Approved]:
+    'renewalStatusApproved',
+  [HealthDirectoratePrescriptionRenewalStatus.Rejected]:
+    'renewalStatusRejected',
+  [HealthDirectoratePrescriptionRenewalStatus.Dismissed]:
+    'renewalStatusDismissed',
   [HealthDirectoratePrescriptionRenewalStatus.Unknown]: 'renewalStatusUnknown',
   [HealthDirectoratePrescriptionRenewalStatus.Pending]: 'renewalInProgress',
 }
