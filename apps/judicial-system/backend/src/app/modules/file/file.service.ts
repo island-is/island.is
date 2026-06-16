@@ -484,10 +484,7 @@ export class FileService {
     transaction: Transaction,
   ): Promise<CaseFile> {
     let finalOrderWithinChapter = createFile.orderWithinChapter
-    if (
-      createFile.orderWithinChapter === undefined &&
-      !createFile.category
-    ) {
+    if (createFile.orderWithinChapter === undefined && !createFile.category) {
       // Lock existing uncategorized files so concurrent creates cannot read the
       // same max orderWithinChapter before either insert commits.
       await this.fileModel.findAll({
