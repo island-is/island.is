@@ -59,7 +59,10 @@ describe('AppealCaseController - transition withdrawal rules', () => {
       (rule) => {
         const request = buildRequest(
           { type: CaseType.INDICTMENT },
-          { rulingFileId: 'ruling-file-id', appealedByNationalId: '0000000000' },
+          {
+            rulingFileId: 'ruling-file-id',
+            appealedByNationalId: '0000000000',
+          },
         )
 
         expect(rule.canActivate?.(request)).toBe(false)
