@@ -137,6 +137,169 @@ import { defineTemplateApi } from '@island.is/application/types'
   },
 ```
 
+# Handling server side errors
+
+In the logs we see several instances of errors caused by user input or user ineligibility being repeated. This would seem to point to user frustration and misunderstanding of what is going on.
+
+A good way to help alleviate this problem is clear error messages that notify the user of why an error happened and what needs to happen to resolve it. This is likely to not only help with user sentiment but also lessen the load on support channels.
+
+When a template-api action fails, the goal is to tell the user *why* it failed and *what they can do about it*, in their own language. The way to do that is to throw a `TemplateApiError` carrying an `errorReason` made of **message descriptors** rather than pre-formatted strings. The application UI shell receives the problem and translates the `title`/`summary` on the client in the user's locale, interpolating runtime values like an id or a name where useful.
+This turns an opaque error into a clear, localized explanation, which tends to both improve user sentiment and reduce repeat attempts.
+
+## 1. Define translatable messages
+
+Start in your template's `messages.ts` and define the messages with `defineMessages` from `react-intl`. Keeping the text here (rather than in the service) is what lets it be translated, so add `{placeholders}` for any runtime values you'll want to fill in later.
+
+```typescript
+import { defineMessages } from 'react-intl'
+
+export const serviceErrors = {
+  missingEntry: defineMessages({
+    title: {
+      id: 'xx.application:serviceErrors.missingEntry.title',
+      defaultMessage: 'Missing entry',
+      description: 'Title shown when an entry is missing',
+    },
+    summary: {
+      id: 'xx.application:serviceErrors.missingEntry.summary',
+      // {vehicleId} is interpolated at format time on the client
+      defaultMessage: 'No entry found for vehicle {vehicleId}',
+      description: 'Summary shown when an entry is missing',
+    },
+  }),
+}
+```
+
+Each entry is a `StaticTextObject` (`MessageDescriptor & { values? }`), which is why values can be attached later, at the point where you actually throw.
+
+## 2. Throw `TemplateApiError` with an `errorReason`
+
+In the service, import the error and your messages and throw where the failure is detected. The `errorReason` is a `ProviderErrorReason`: an object with a `title` and `summary`. Spread the descriptor and attach `values` so the runtime data lands in the translated string:
+
+```typescript
+import { TemplateApiError } from '@island.is/nest/problem'
+import { messages } from '@island.is/application/templates/your-template'
+
+if (!entryId) {
+  throw new TemplateApiError(
+    {
+      title: messages.serviceErrors.missingEntry.title,
+      summary: {
+        ...messages.serviceErrors.missingEntry.summary,
+        values: { vehicleId: record.vehicleId },
+      },
+    },
+    400, // HTTP status
+  )
+}
+```
+
+The constructor is flexible: it accepts a single `ProviderErrorReason`, a bare `StaticText`/string, or an array of reasons.
+
+```typescript
+constructor(
+  errorReason:
+    | ProviderErrorReason
+    | StaticText
+    | string
+    | ProviderErrorReason[],
+  status: number,
+  options?: ProblemOptions,
+)
+```
+
+```typescript
+interface ProviderErrorReason {
+  title: StaticText
+  summary: StaticText
+}
+```
+
+Prefer the `{ title, summary }` object, since it gives the user a clear heading plus the detail explaining what to do next.
+
+## 3. The client translates it automatically
+
+No additional client code is needed for this. The UI shell detects `errorReason` on the problem and formats it with the user's `formatMessage`, which resolves the translation and interpolates your `values`:
+
+```typescript
+  const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+  const formattedMessage = `${formatMessage(title)}: ${formatMessage(summary)}`
+```
+
+## 4. How the error reaches the user
+
+Once thrown, the error travels back as a problem response and the UI shell decides how to surface it. There are two display paths, and which one you get depends on the `buildSubmitField` configuration on the screen the user submitted from.
+
+### The default: a toaster
+
+By default, any failed update or submit is shown as a toast notification. The shell calls `handleServerError`, which pulls the `errorReason` off the problem, formats it as `title: summary` in the user's locale, and shows it:
+
+```typescript
+if ('errorReason' in problem) {
+  const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+  const message = `${formatMessage(title)}: ${formatMessage(summary)}`
+  toast.error(message)
+  return
+}
+```
+
+This is the right choice for most cases: short, single-line messages that confirm what went wrong. You don't need to configure anything to get it.
+
+### Errors that need more attention: `renderLongErrors`
+
+Some submission errors deserve a more prominent treatment than a transient toast. They tend to share two traits: they are often long or multi-line (for example, one line per invalid vehicle), or they may signal something the user cannot fix by simply going back and editing their application.
+
+Think of a user trying to sell a car before paying licensing fees, or trying to start a new driving-license application while one is already in progress. Retrying the submit won't help, so the user needs a clear, persistent explanation rather than a message that disappears on its own. 
+
+The same applies when the error itself is a multiline list the user has to act on — for example, a set of entries that must be removed before resubmitting. That kind of message won't fit in a toaster and needs to stay on screen so the user can refer back to it while fixing each item.
+
+For these cases, opt in to an inline error box on the `buildSubmitField`:
+
+```typescript
+buildSubmitField({
+  id: 'submit',
+  refetchApplicationAfterSubmit: true,
+  renderLongErrors: true,
+  formatLongErrorMessage: formatMyApiErrorMessages,
+  actions: [
+    { event: 'SUBMIT', name: m.submitButton, type: 'primary' },
+  ],
+})
+```
+
+With `renderLongErrors: true`, the shell skips the toast container entirely and instead renders the message in a red, full-width box that preserves line breaks (`whiteSpace="preLine"`), so multi-line output stays readable. Note this applies to the **submit** flow specifically.
+
+`formatLongErrorMessage` is an optional hook that receives the already-formatted `title: summary` string and returns a cleaned-up version to display. Use it to reshape noisy backend output, for example grouping repeated messages and collecting the affected ids:
+
+```typescript
+export const formatMyApiErrorMessages = (message: string) => {
+  // Turn:
+  //   Permno: EOH53 - An active entry already exists.
+  //   Permno: HKS27 - An active entry already exists.
+  // into:
+  //   An active entry already exists. (EOH53, HKS27)
+  const lines = message
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  // ...group by message text, collect ids, then join with '\n'
+  return formatted
+}
+```
+
+In short: rely on the default toaster for concise messages, and reach for `renderLongErrors` (with an optional `formatLongErrorMessage`) when the message is long, lists multiple problems, or needs to stay on screen because a retry alone won't resolve it.
+
+## Key recommendations
+
+- Avoid putting a finished, hard-coded string in `errorReason`. Instead pass message descriptors so the locale is resolved on the client, not the server.
+- Put runtime data in `values` and reference it as `{placeholder}` in `defaultMessage`; don't string-concatenate it into the message. This ensures that the `value` is placed in the correct spot if the translation is changed later.
+- Register the new message ids in your translation namespace so non-default locales (e.g. `en`) resolve correctly.
+- Pick a meaningful HTTP status (e.g. `400` for bad user input); it propagates through the problem response.
+- Map out as many error responses from the services you are using as possible and have error messages that either handle each one or more generic ones that accept `values` which explain each one. This avoids the dreaded "error something happened" situation.
+
+This pattern (descriptor + `values`, translated by the shell) keeps the failure reason user-facing and localized end to end, instead of surfacing a generic error.
+
 # Add a dataprovider to your application
 
 This describes how you can add a shared and custom dataproviders to your application Template
