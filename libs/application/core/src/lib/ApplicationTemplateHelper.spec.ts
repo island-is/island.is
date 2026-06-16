@@ -397,40 +397,6 @@ describe('ApplicationTemplate', () => {
         'propertyInfo.categoryClassGroup': 'Group required',
       })
     })
-
-    it('passes validators an application with new answers merged in', async () => {
-      const template = {
-        ...createTestApplicationTemplate(),
-        answerValidators: {
-          'propertyInfo.categoryClassGroup': (
-            _newAnswer: unknown,
-            application: Application,
-          ) => {
-            return application.answers['propertyInfo.categoryClass'] ===
-              'special'
-              ? undefined
-              : {
-                  path: 'propertyInfo.categoryClass',
-                  message: 'Class missing',
-                }
-          },
-        },
-      }
-      const helper = new ApplicationTemplateHelper(
-        createMockApplication(),
-        template,
-      )
-
-      await expect(
-        helper.applyAnswerValidators(
-          {
-            'propertyInfo.categoryClass': 'special',
-            'propertyInfo.categoryClassGroup': 'students',
-          },
-          formatMessage,
-        ),
-      ).resolves.toBeUndefined()
-    })
   })
 
   describe('getting template api actions', () => {

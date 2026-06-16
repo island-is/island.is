@@ -23,7 +23,7 @@ import {
   PendingAction,
   HistoryEventMessage,
 } from '@island.is/application/types'
-import { formatText, mergeAnswers } from './formUtils'
+import { formatText } from './formUtils'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -245,10 +245,6 @@ export class ApplicationTemplateHelper<
     let hasError = false
     const errorMap: Record<string, string> = {}
     const validatorPaths = Object.keys(validators)
-    const applicationWithNewAnswers: Application = {
-      ...this.application,
-      answers: mergeAnswers(this.application.answers, newAnswers),
-    }
 
     for (const validatorPath of validatorPaths) {
       const hasDirectAnswer = Object.prototype.hasOwnProperty.call(
@@ -264,7 +260,7 @@ export class ApplicationTemplateHelper<
 
         const result = await validators[validatorPath](
           newAnswer,
-          applicationWithNewAnswers,
+          this.application,
         )
 
         if (result) {
