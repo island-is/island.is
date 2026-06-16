@@ -97,7 +97,10 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
 
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
     decisions = [
-      { partyRole: AppealDecisionPartyRole.PROSECUTOR, decision: CaseAppealDecision.ACCEPT },
+      {
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.ACCEPT,
+      },
       {
         partyRole: AppealDecisionPartyRole.DEFENDANT,
         defendantId,

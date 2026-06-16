@@ -187,7 +187,10 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     beforeEach(async () => {
       then = await givenWhenThen(
         theCase,
-        { id: courtSessionId, rulingType: CourtSessionRulingType.NONE } as CourtSession,
+        {
+          id: courtSessionId,
+          rulingType: CourtSessionRulingType.NONE,
+        } as CourtSession,
         { partyRole: AppealDecisionPartyRole.PROSECUTOR },
       )
     })
@@ -204,7 +207,10 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     beforeEach(async () => {
       then = await givenWhenThen(
         theCase,
-        { id: courtSessionId, rulingType: CourtSessionRulingType.ORDER } as CourtSession,
+        {
+          id: courtSessionId,
+          rulingType: CourtSessionRulingType.ORDER,
+        } as CourtSession,
         { partyRole: AppealDecisionPartyRole.PROSECUTOR },
       )
     })
