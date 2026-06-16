@@ -831,6 +831,7 @@ export class CaseRepositoryService {
         'description',
         'crimeScenes',
         'courtId',
+        'comments',
         'indictmentIntroduction',
         'requestDriversLicenseSuspension',
         'hasCivilClaims',
@@ -975,6 +976,25 @@ export class CaseRepositoryService {
         promises.push(
           this.victimModel.create(
             { ...victim.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction },
+          ),
+        )
+      }
+
+      // Copy the prosecutor entered case strings (civil demands and penalties)
+      // to the new case. Other string types are court/process data.
+      const caseStringsToCopy = await this.caseStringModel.findAll({
+        where: {
+          caseId,
+          stringType: [StringType.CIVIL_DEMANDS, StringType.PENALTIES],
+        },
+        transaction,
+      })
+
+      for (const caseString of caseStringsToCopy) {
+        promises.push(
+          this.caseStringModel.create(
+            { ...caseString.toJSON(), id: undefined, caseId: newCaseId },
             { transaction },
           ),
         )

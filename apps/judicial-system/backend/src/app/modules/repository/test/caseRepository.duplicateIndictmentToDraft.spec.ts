@@ -28,6 +28,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       victimModel,
       civilClaimantModel,
       caseFileModel,
+      caseStringModel,
       awsS3Service,
       caseDefendantPoliceCaseNumberRepositoryService,
     } = await createTestingRepositoryModule()
@@ -86,6 +87,12 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     }
     mockCaseFileModel.findAll.mockResolvedValue([])
 
+    const mockCaseStringModel = caseStringModel as unknown as {
+      findAll: jest.Mock
+      create: jest.Mock
+    }
+    mockCaseStringModel.findAll.mockResolvedValue([])
+
     const mockAwsS3Service = awsS3Service as unknown as {
       copyObject: jest.Mock
     }
@@ -108,6 +115,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         create: jest.Mock
       },
       caseFileModel: mockCaseFileModel,
+      caseStringModel: mockCaseStringModel,
       awsS3Service: mockAwsS3Service,
       policeService:
         caseDefendantPoliceCaseNumberRepositoryService as unknown as {
@@ -135,6 +143,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       type: CaseType.INDICTMENT,
       description: 'Some description',
       courtId,
+      comments: 'Some comment',
       indictmentIntroduction: 'Intro',
       hasCivilClaims: true,
       // Court data that must NOT be copied
@@ -148,7 +157,6 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       // Request-case data that must NOT be copied to an indictment
       defenderName: 'Defender',
       leadInvestigator: 'Investigator',
-      comments: 'Some comment',
       caseFilesComments: 'Some case files comment',
     } as Case
 
@@ -170,6 +178,7 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         type: CaseType.INDICTMENT,
         description: 'Some description',
         courtId,
+        comments: 'Some comment',
         indictmentIntroduction: 'Intro',
         hasCivilClaims: true,
         state: CaseState.DRAFT,
@@ -189,7 +198,6 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     // Request-case data is not carried over to the indictment draft
     expect(createdWith).not.toHaveProperty('defenderName')
     expect(createdWith).not.toHaveProperty('leadInvestigator')
-    expect(createdWith).not.toHaveProperty('comments')
     expect(createdWith).not.toHaveProperty('caseFilesComments')
     // No lineage link to the original case
     expect(createdWith).not.toHaveProperty('parentCaseId')
@@ -258,6 +266,16 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         }),
       },
     ])
+    ctx.caseStringModel.findAll.mockResolvedValue([
+      {
+        toJSON: () => ({
+          id: uuid(),
+          caseId,
+          stringType: 'CIVIL_DEMANDS',
+          value: 'Some demands',
+        }),
+      },
+    ])
 
     await ctx.caseRepositoryService.duplicateIndictmentToDraft(caseId, {
       transaction,
@@ -321,6 +339,27 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         id: undefined,
         caseId: ctx.newCaseId,
         defendantIds: [ctx.newDefendantId],
+      }),
+      { transaction },
+    )
+
+    // Only the prosecutor entered case strings are looked up
+    expect(ctx.caseStringModel.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          caseId,
+          stringType: ['CIVIL_DEMANDS', 'PENALTIES'],
+        }),
+      }),
+    )
+
+    // The case string is copied to the new case
+    expect(ctx.caseStringModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: undefined,
+        caseId: ctx.newCaseId,
+        stringType: 'CIVIL_DEMANDS',
+        value: 'Some demands',
       }),
       { transaction },
     )

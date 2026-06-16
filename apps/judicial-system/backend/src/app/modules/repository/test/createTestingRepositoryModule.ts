@@ -115,6 +115,10 @@ export const createTestingRepositoryModule = async () => {
     getModelToken(CaseFile),
   )
 
+  const caseStringModel = repositoryModule.get<typeof CaseString>(
+    getModelToken(CaseString),
+  )
+
   const awsS3Service = repositoryModule.get<AwsS3Service>(AwsS3Service)
 
   const caseDefendantPoliceCaseNumberRepositoryService =
@@ -138,6 +142,7 @@ export const createTestingRepositoryModule = async () => {
     victimModel,
     civilClaimantModel,
     caseFileModel,
+    caseStringModel,
     awsS3Service,
     caseDefendantPoliceCaseNumberRepositoryService,
   }
