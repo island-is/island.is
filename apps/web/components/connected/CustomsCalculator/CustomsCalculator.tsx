@@ -9,8 +9,6 @@ import {
   Button,
   Icon,
   Inline,
-  Input,
-  Select,
   Stack,
   type StringOption,
   Tag,
@@ -27,7 +25,6 @@ import {
 
 import { CategoryModal } from './CategoryModal'
 import { translation as translationStrings } from './translation.strings'
-import { UnitInput } from './UnitInput'
 import { Units } from './Units'
 import * as styles from './CustomsCalculator.css'
 
@@ -191,8 +188,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     variables: { tariffNumber: selectedBottomLevelCategory?.tariffNumber },
   })
 
-  console.log(unitsResponse.data)
-
   return (
     <Stack space={3}>
       {shortcuts.length > 0 && (
@@ -266,14 +261,16 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               setSelectedBottomLevelCategory(bottomLevelCategory)
           }}
         />
-        <Text variant="small">
-          <span
-            className={styles.description}
-            dangerouslySetInnerHTML={{
-              __html: selectedBottomLevelCategory?.description ?? '',
-            }}
-          />
-        </Text>
+        <Box paddingX={1}>
+          <Text variant="small">
+            <span
+              className={styles.description}
+              dangerouslySetInnerHTML={{
+                __html: selectedBottomLevelCategory?.description ?? '',
+              }}
+            />
+          </Text>
+        </Box>
       </Stack>
 
       <CategoryModal
@@ -346,38 +343,12 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         }
       />
 
-      <Inline space={1}>
-        <Box className={styles.currencySelect}>
-          <Select
-            options={currencyOptions}
-            size="sm"
-            label={formatMessage(translationStrings.currencyLabel)}
-            backgroundColor="blue"
-            value={inputState.currency}
-            onChange={(option) => {
-              if (option) setInputState({ ...inputState, currency: option })
-            }}
-          />
-        </Box>
-        <UnitInput
-          name="priceWithShipping"
-          label={formatMessage(translationStrings.priceWithShippingLabel)}
-          description={formatMessage(
-            translationStrings.priceWithShippingDescription,
-          )}
-          value={inputState.priceWithShipping}
-          onChange={(event) => {
-            setInputState({
-              ...inputState,
-              priceWithShipping: event.target.value,
-            })
-          }}
+      {Boolean(unitsResponse.data?.customsCalculatorUnits?.units) && (
+        <Units
+          unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
+          currencyOptions={currencyOptions}
         />
-      </Inline>
-
-      <Units
-        unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
-      />
+      )}
 
       <Box className={styles.buttonContainer}>
         <Button fluid={true} disabled={!selectedBottomLevelCategory}>

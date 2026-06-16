@@ -1,6 +1,46 @@
 import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
+  nedcDescription: {
+    id: 'web.customsCalculator:nedcDescription',
+    defaultMessage: ' ',
+    description: 'Description for the nedc input',
+  },
+  nedcWeightedEmissionDescription: {
+    id: 'web.customsCalculator:nedcWeightedEmissionDescription',
+    defaultMessage: ' ',
+    description: 'Description for the nedc weighted emission input',
+  },
+  wltpEmissionDescription: {
+    id: 'web.customsCalculator:wltpEmissionDescription',
+    defaultMessage: ' ',
+    description: 'Description for the wltp emission input',
+  },
+  wltpWeightedEmissionDescription: {
+    id: 'web.customsCalculator:wltpWeightedEmissionDescription',
+    defaultMessage: ' ',
+    description: 'Description for the wltp weighted emission input',
+  },
+  unitCountDescription: {
+    id: 'web.customsCalculator:unitCountDescription',
+    defaultMessage: ' ',
+    description: 'Description for the unit count input',
+  },
+  percentageDescription: {
+    id: 'web.customsCalculator:percentageDescription',
+    defaultMessage: 'Skráið áfengisprósentu',
+    description: 'Description for the percentage input',
+  },
+  netWeightDescription: {
+    id: 'web.customsCalculator:netWeightDescription',
+    defaultMessage: ' ',
+    description: 'Description for the net weight input',
+  },
+  litersDescription: {
+    id: 'web.customsCalculator:litersDescription',
+    defaultMessage: 'Skráið heildarmagn í lítrum',
+    description: 'Description for the liters input',
+  },
   productSearchInputPlaceholder: {
     id: 'web.customsCalculator:productSearchInputPlaceholder',
     defaultMessage: 'Leitaðu eftir vöruheiti',
@@ -71,6 +111,11 @@ export const translation = defineMessages({
     defaultMessage: 'Gjaldmiðill',
     description: 'Label for currency input',
   },
+  currenctSuffix: {
+    id: 'web.customsCalculator:currenctSuffix',
+    defaultMessage: ' kr.',
+    description: 'Suffix for currency input',
+  },
   netWeightLabel: {
     id: 'web.customsCalculator:netWeightLabel',
     defaultMessage: 'Nettóþyngd (kg)',
@@ -78,7 +123,7 @@ export const translation = defineMessages({
   },
   unitCountLabel: {
     id: 'web.customsCalculator:stkWeightLabel',
-    defaultMessage: 'Stykkjatala',
+    defaultMessage: 'Fjöldi (stykkjatala)',
     description: 'Label for unit count input',
   },
   litersLabel: {
@@ -88,7 +133,7 @@ export const translation = defineMessages({
   },
   percentageLabel: {
     id: 'web.customsCalculator:percentageLabel',
-    defaultMessage: 'Hlutfall',
+    defaultMessage: 'Styrkleiki (%)',
     description: 'Label for percentage input',
   },
   nedcEmissionLabel: {
