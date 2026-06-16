@@ -112,7 +112,6 @@ export class NotificationService {
         break
       case UserInitiatedNotificationType.HEADS_UP:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
-      case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:
