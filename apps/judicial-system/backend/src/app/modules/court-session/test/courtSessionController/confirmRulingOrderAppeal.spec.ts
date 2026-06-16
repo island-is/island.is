@@ -54,7 +54,11 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let transaction: Transaction
-  let decisions: Partial<AppealDecision>[]
+  // decision can be null for a row that holds only an announcement, matching
+  // what the nullable DB column returns.
+  let decisions: (Partial<AppealDecision> & {
+    decision?: CaseAppealDecision | null
+  })[]
   let givenWhenThen: GivenWhenThen
 
   const baseCase = {
@@ -241,7 +245,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      decisions[0].decision = undefined
+      decisions[0].decision = null
       decisions[0].announcement = 'Yfirlýsing án afstöðu'
       then = await givenWhenThen(baseCase)
     })
