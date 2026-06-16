@@ -145,6 +145,11 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
       registrarId: uuid(),
       rulingDate: new Date(),
       parentCaseId: uuid(),
+      // Request-case data that must NOT be copied to an indictment
+      defenderName: 'Defender',
+      leadInvestigator: 'Investigator',
+      comments: 'Some comment',
+      caseFilesComments: 'Some case files comment',
     } as Case
 
     const ctx = await setup(sourceCase)
@@ -181,6 +186,11 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     expect(createdWith).not.toHaveProperty('judgeId')
     expect(createdWith).not.toHaveProperty('registrarId')
     expect(createdWith).not.toHaveProperty('rulingDate')
+    // Request-case data is not carried over to the indictment draft
+    expect(createdWith).not.toHaveProperty('defenderName')
+    expect(createdWith).not.toHaveProperty('leadInvestigator')
+    expect(createdWith).not.toHaveProperty('comments')
+    expect(createdWith).not.toHaveProperty('caseFilesComments')
     // No lineage link to the original case
     expect(createdWith).not.toHaveProperty('parentCaseId')
   })
