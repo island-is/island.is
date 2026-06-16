@@ -22,6 +22,7 @@ import {
   LimitedAccessUpdateCaseMutation,
   useLimitedAccessUpdateCaseMutation,
 } from './limitedAccessUpdateCase.generated'
+import { useSendAppealNotificationMutation } from './sendAppealNotification.generated'
 import { useSendNotificationMutation } from './sendNotification.generated'
 import { useSplitDefendantFromCaseMutation } from './splitDefendantFromCase.generated'
 import {
@@ -64,6 +65,14 @@ const useCase = () => {
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
   ] = useSendNotificationMutation()
+
+  const [
+    sendAppealNotificationMutation,
+    {
+      loading: isSendingAppealNotification,
+      error: sendAppealNotificationError,
+    },
+  ] = useSendAppealNotificationMutation()
 
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useExtendCaseMutation()
@@ -252,7 +261,6 @@ const useCase = () => {
         id: string,
         notificationType: TrackedNotificationType,
         eventOnly?: boolean,
-        properties?: { [key: string]: string },
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -261,7 +269,6 @@ const useCase = () => {
                 caseId: id,
                 type: notificationType,
                 eventOnly,
-                properties,
               },
             },
           })
@@ -271,6 +278,31 @@ const useCase = () => {
         }
       },
     [sendNotificationMutation],
+  )
+
+  const sendAppealNotification = useMemo(
+    () =>
+      async (
+        id: string,
+        notificationType: TrackedNotificationType,
+        appealCaseId: string,
+      ): Promise<boolean> => {
+        try {
+          const { data } = await sendAppealNotificationMutation({
+            variables: {
+              input: {
+                caseId: id,
+                type: notificationType,
+                appealCaseId,
+              },
+            },
+          })
+          return Boolean(data?.sendAppealNotification?.notificationSent)
+        } catch (e) {
+          return false
+        }
+      },
+    [sendAppealNotificationMutation],
   )
 
   const extendCase = useMemo(
@@ -353,6 +385,9 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     sendNotificationError,
+    sendAppealNotification,
+    isSendingAppealNotification,
+    sendAppealNotificationError,
     extendCase,
     isExtendingCase,
     splitDefendantFromCase,

@@ -399,6 +399,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/notification`, sendNotification)
   }
 
+  sendAppealNotification(
+    caseId: string,
+    appealCaseId: string,
+    sendAppealNotification: unknown,
+  ): Promise<SendNotificationResponse> {
+    return this.post(
+      `case/${caseId}/appeal/${appealCaseId}/notification`,
+      sendAppealNotification,
+    )
+  }
+
   extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/extend`,
