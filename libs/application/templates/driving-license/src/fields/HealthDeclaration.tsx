@@ -19,6 +19,7 @@ const HealthDeclaration = ({
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
+  const id = field.id as string
 
   const { setValue, getValues } = useFormContext()
 
@@ -34,7 +35,7 @@ const HealthDeclaration = ({
       ...formValues,
       healthDeclaration: {
         ...formValues.healthDeclaration,
-        [field.id.replace('healthDeclaration.', '')]: value,
+        [id.replace('healthDeclaration.', '')]: value,
       },
     }
 
@@ -50,8 +51,8 @@ const HealthDeclaration = ({
 
   const checkForVisionMismatch = (value: string) => {
     if (
-      field.id !== 'healthDeclaration.usesContactGlasses' &&
-      field.id !== 'healthDeclaration.hasReducedPeripheralVision'
+      id !== 'healthDeclaration.usesContactGlasses' &&
+      id !== 'healthDeclaration.hasReducedPeripheralVision'
     ) {
       return
     }
@@ -60,11 +61,11 @@ const HealthDeclaration = ({
 
     // Get the current value of the other question
     const q1Value =
-      field.id === 'healthDeclaration.usesContactGlasses'
+      id === 'healthDeclaration.usesContactGlasses'
         ? value
         : (getValues('healthDeclaration.usesContactGlasses') as string)
     const q2Value =
-      field.id === 'healthDeclaration.hasReducedPeripheralVision'
+      id === 'healthDeclaration.hasReducedPeripheralVision'
         ? value
         : (getValues('healthDeclaration.hasReducedPeripheralVision') as string)
 
@@ -96,13 +97,13 @@ const HealthDeclaration = ({
       </Box>
       <Box style={{ maxWidth: '200px' }}>
         <RadioController
-          id={field.id}
+          id={id}
           split="1/2"
           smallScreenSplit="1/2"
           largeButtons={false}
           error={error}
           defaultValue={
-            getValueViaPath<string>(application.answers, field.id) ?? undefined
+            getValueViaPath<string>(application.answers, id) ?? undefined
           }
           options={[
             {
