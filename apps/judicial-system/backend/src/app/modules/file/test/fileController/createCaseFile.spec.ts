@@ -201,6 +201,9 @@ describe('FileController - Create case file', () => {
       let then: Then
 
       beforeEach(async () => {
+        const mockFindAll = mockFileModel.findAll as jest.Mock
+        mockFindAll.mockResolvedValueOnce([])
+
         const mockMax = mockFileModel.max as jest.Mock
         mockMax.mockResolvedValueOnce(2)
 
@@ -211,6 +214,12 @@ describe('FileController - Create case file', () => {
       })
 
       it('should append orderWithinChapter after existing ordered files', () => {
+        expect(mockFileModel.findAll).toHaveBeenCalledWith({
+          where: { caseId, category: null },
+          attributes: ['id'],
+          lock: Transaction.LOCK.UPDATE,
+          transaction,
+        })
         expect(mockFileModel.create).toHaveBeenCalledWith(
           expect.objectContaining({ orderWithinChapter: 3 }),
           { transaction },

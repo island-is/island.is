@@ -3,7 +3,7 @@ import { sortCaseFilesByOrder } from './sortCaseFiles'
 describe('sortCaseFilesByOrder', () => {
   const file = (
     id: string,
-    orderWithinChapter: number | null,
+    orderWithinChapter: number | null | undefined,
     created: string,
   ) => ({
     id,
@@ -42,6 +42,20 @@ describe('sortCaseFilesByOrder', () => {
   it('should place unordered files after ordered files', () => {
     const files = [
       file('unordered', null, '2024-01-01T00:00:00.000Z'),
+      file('first', 0, '2024-01-03T00:00:00.000Z'),
+      file('second', 1, '2024-01-02T00:00:00.000Z'),
+    ]
+
+    expect(sortCaseFilesByOrder(files).map((f) => f.id)).toEqual([
+      'first',
+      'second',
+      'unordered',
+    ])
+  })
+
+  it('should treat undefined orderWithinChapter like null', () => {
+    const files = [
+      file('unordered', undefined, '2024-01-01T00:00:00.000Z'),
       file('first', 0, '2024-01-03T00:00:00.000Z'),
       file('second', 1, '2024-01-02T00:00:00.000Z'),
     ]

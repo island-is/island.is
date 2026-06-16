@@ -3,7 +3,7 @@ import { sortCaseFiles } from './sortCaseFiles'
 describe('sortCaseFiles', () => {
   const file = (
     id: string,
-    orderWithinChapter: number | null,
+    orderWithinChapter: number | null | undefined,
     created: string,
   ) => ({
     id,
@@ -25,7 +25,7 @@ describe('sortCaseFiles', () => {
     ])
   })
 
-  it('should sort by orderWithinChapter when all files have order', () => {
+  it('should sort by orderWithinChapter when any file has order', () => {
     const files = [
       file('second', 1, '2024-01-02T00:00:00.000Z'),
       file('first', 0, '2024-01-03T00:00:00.000Z'),
@@ -39,15 +39,31 @@ describe('sortCaseFiles', () => {
     ])
   })
 
-  it('should preserve input order when only some files have orderWithinChapter', () => {
+  it('should place unordered files after ordered files', () => {
     const files = [
       file('unordered', null, '2024-01-01T00:00:00.000Z'),
-      file('ordered', 0, '2024-01-03T00:00:00.000Z'),
+      file('first', 0, '2024-01-03T00:00:00.000Z'),
+      file('second', 1, '2024-01-02T00:00:00.000Z'),
     ]
 
     expect(sortCaseFiles(files).map((f) => f.id)).toEqual([
+      'first',
+      'second',
       'unordered',
-      'ordered',
+    ])
+  })
+
+  it('should treat undefined orderWithinChapter like null', () => {
+    const files = [
+      file('unordered', undefined, '2024-01-01T00:00:00.000Z'),
+      file('first', 0, '2024-01-03T00:00:00.000Z'),
+      file('second', 1, '2024-01-02T00:00:00.000Z'),
+    ]
+
+    expect(sortCaseFiles(files).map((f) => f.id)).toEqual([
+      'first',
+      'second',
+      'unordered',
     ])
   })
 })

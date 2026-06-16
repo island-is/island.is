@@ -21,15 +21,21 @@ export const sortCaseFilesByOrder = <T extends CaseFileOrderFields>(
   }
 
   return [...files].sort((a, b) => {
-    if (a.orderWithinChapter === null && b.orderWithinChapter === null) {
+    const aOrder = a.orderWithinChapter
+    const bOrder = b.orderWithinChapter
+
+    if (
+      (aOrder === null || aOrder === undefined) &&
+      (bOrder === null || bOrder === undefined)
+    ) {
       return new Date(a.created).getTime() - new Date(b.created).getTime()
     }
-    if (a.orderWithinChapter === null) {
+    if (aOrder === null || aOrder === undefined) {
       return 1
     }
-    if (b.orderWithinChapter === null) {
+    if (bOrder === null || bOrder === undefined) {
       return -1
     }
-    return (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0)
+    return aOrder - bOrder
   })
 }

@@ -199,6 +199,10 @@ export const CaseFiles = () => {
       updateUploadFile({ ...fileToUpdate, userGeneratedFilename: newName })
     }
 
+    if (!validateUuid(fileId)) {
+      return
+    }
+
     try {
       const { errors: mutationErrors } = await updateFilesMutation({
         variables: {

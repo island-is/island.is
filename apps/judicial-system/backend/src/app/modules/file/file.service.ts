@@ -488,6 +488,15 @@ export class FileService {
       createFile.orderWithinChapter === undefined &&
       !createFile.category
     ) {
+      // Lock existing uncategorized files so concurrent creates cannot read the
+      // same max orderWithinChapter before either insert commits.
+      await this.fileModel.findAll({
+        where: { caseId: theCase.id, category: null },
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+
       const maxOrder = await this.fileModel.max<number | null, CaseFile>(
         'orderWithinChapter',
         {

@@ -20,6 +20,7 @@ import { Box, Button, FileUploadStatus, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 
 import { TUploadFile } from '../../utils/hooks'
+import { sortCaseFiles } from '../../utils/sortCaseFiles'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import * as styles from './ReorderableFileUpload.css'
 
@@ -47,7 +48,7 @@ const useRaisedShadow = (value: MotionValue<number>) => {
 
   useEffect(() => {
     let isActive = false
-    value.on('change', (latest) => {
+    const unsubscribe = value.on('change', (latest) => {
       const wasActive = isActive
       if (latest !== 0) {
         isActive = true
@@ -61,6 +62,8 @@ const useRaisedShadow = (value: MotionValue<number>) => {
         }
       }
     })
+
+    return unsubscribe
   }, [value, boxShadow])
 
   return boxShadow
@@ -174,13 +177,7 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
   const orderBeforeDragRef = useRef<string>('')
 
   useEffect(() => {
-    const sorted = [...files].sort((a, b) => {
-      if (a.orderWithinChapter === null && b.orderWithinChapter === null)
-        return 0
-      if (a.orderWithinChapter === null) return 1
-      if (b.orderWithinChapter === null) return -1
-      return (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0)
-    })
+    const sorted = sortCaseFiles(files)
     reorderableFilesRef.current = sorted
     setReorderableFiles(sorted)
   }, [files])
