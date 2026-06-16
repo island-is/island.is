@@ -1,4 +1,7 @@
-import { OccupationalLicenseStatus, ShipRegistryValueUnit } from '@island.is/api/schema'
+import {
+  OccupationalLicenseStatus,
+  ShipRegistryValueUnit,
+} from '@island.is/api/schema'
 import { FormatMessage } from '@island.is/localization'
 import { olMessage } from './messages'
 import { TagVariant } from '@island.is/island-ui/core'

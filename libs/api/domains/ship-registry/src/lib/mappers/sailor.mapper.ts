@@ -63,15 +63,43 @@ const mapCrewRegistrationLabels = (
   labels: CrewRegistrationLabelsDto,
   locale: LocaleEnum,
 ): ShipRegistrySailorCrewRegistrationLabel[] => [
-  { entryField: ShipRegistrySailorCrewRegistrationField.SHIP_NAME, label: pickLabel(labels.shipName, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.LENGTH, label: pickLabel(labels.length, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.GROSS_TONNAGE, label: pickLabel(labels.grossTonnage, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.MAIN_ENGINE, label: pickLabel(labels.mainEngine, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.SHIP_REGISTRATION_NUMBER, label: pickLabel(labels.shipRegistrationNo, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.RANK, label: pickLabel(labels.rankNameAndCode, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.START_DATE, label: pickLabel(labels.startDate, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.END_DATE, label: pickLabel(labels.endDate, locale) },
-  { entryField: ShipRegistrySailorCrewRegistrationField.NUMBER_OF_DAYS, label: pickLabel(labels.numberOfDays, locale) },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.SHIP_NAME,
+    label: pickLabel(labels.shipName, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.LENGTH,
+    label: pickLabel(labels.length, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.GROSS_TONNAGE,
+    label: pickLabel(labels.grossTonnage, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.MAIN_ENGINE,
+    label: pickLabel(labels.mainEngine, locale),
+  },
+  {
+    entryField:
+      ShipRegistrySailorCrewRegistrationField.SHIP_REGISTRATION_NUMBER,
+    label: pickLabel(labels.shipRegistrationNo, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.RANK,
+    label: pickLabel(labels.rankNameAndCode, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.START_DATE,
+    label: pickLabel(labels.startDate, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.END_DATE,
+    label: pickLabel(labels.endDate, locale),
+  },
+  {
+    entryField: ShipRegistrySailorCrewRegistrationField.NUMBER_OF_DAYS,
+    label: pickLabel(labels.numberOfDays, locale),
+  },
 ]
 
 // --- Mappers ---
@@ -118,14 +146,18 @@ export const mapToSailorSeagoingTime = (
   response: SeagoingTimeResponseDto,
   locale: LocaleEnum,
 ): ShipRegistrySailorSeagoingTimeCollection => ({
-  data: response.entries.map((entry, index) => mapCrewRegistration(entry, index, locale)),
+  data: response.entries.map((entry, index) =>
+    mapCrewRegistration(entry, index, locale),
+  ),
   totalCount: response.totalCount,
   pageInfo: { hasNextPage: response.hasNextPage },
   totalCrewRegistrationDayCount: response.totalCrewRegistrationDayCount,
   seaServiceDayCount: response.seaServiceDayCount,
   workAshoreDayCount: response.workAshoreDayCount,
   totalWorkDays: response.totalWorkDays,
-  valueLabels: response.header ? mapCrewRegistrationLabels(response.header, locale) : [],
+  valueLabels: response.header
+    ? mapCrewRegistrationLabels(response.header, locale)
+    : [],
 })
 
 export const mapToRanks = (

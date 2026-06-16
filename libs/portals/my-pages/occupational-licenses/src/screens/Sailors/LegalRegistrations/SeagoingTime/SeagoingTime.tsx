@@ -92,7 +92,8 @@ export const SeagoingTime = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor('shipName', {
-        header: valueLabels[ShipRegistrySailorCrewRegistrationField.SHIP_NAME] ?? '',
+        header:
+          valueLabels[ShipRegistrySailorCrewRegistrationField.SHIP_NAME] ?? '',
         cell: ({ getValue }) => getValue() ?? '-',
       }),
       columnHelper.accessor('rank', {
@@ -100,21 +101,25 @@ export const SeagoingTime = () => {
         cell: ({ getValue }) => getValue() ?? '-',
       }),
       columnHelper.accessor('startDate', {
-        header: valueLabels[ShipRegistrySailorCrewRegistrationField.START_DATE] ?? '',
+        header:
+          valueLabels[ShipRegistrySailorCrewRegistrationField.START_DATE] ?? '',
         cell: ({ getValue }) => {
           const v = getValue()
           return v ? formatDate(new Date(v)) : '-'
         },
       }),
       columnHelper.accessor('endDate', {
-        header: valueLabels[ShipRegistrySailorCrewRegistrationField.END_DATE] ?? '',
+        header:
+          valueLabels[ShipRegistrySailorCrewRegistrationField.END_DATE] ?? '',
         cell: ({ getValue }) => {
           const v = getValue()
           return v ? formatDate(new Date(v)) : '-'
         },
       }),
       columnHelper.accessor('numberOfDays', {
-        header: valueLabels[ShipRegistrySailorCrewRegistrationField.NUMBER_OF_DAYS] ?? '',
+        header:
+          valueLabels[ShipRegistrySailorCrewRegistrationField.NUMBER_OF_DAYS] ??
+          '',
         cell: ({ getValue }) => getValue() ?? '-',
       }),
     ],
@@ -122,9 +127,7 @@ export const SeagoingTime = () => {
     [valueLabels],
   )
 
-  const renderExpanded = (
-    row: Row<ShipRegistrySailorCrewRegistration>,
-  ) => {
+  const renderExpanded = (row: Row<ShipRegistrySailorCrewRegistration>) => {
     const { shipRegistrationNumber, length, grossTonnage, mainEngine } =
       row.original
 
@@ -269,7 +272,10 @@ export const SeagoingTime = () => {
                 page={state.page ?? 1}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
-                  <button className={className} onClick={() => patchState({ page })}>
+                  <button
+                    className={className}
+                    onClick={() => patchState({ page })}
+                  >
                     {children}
                   </button>
                 )}

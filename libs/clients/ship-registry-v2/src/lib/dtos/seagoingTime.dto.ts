@@ -91,10 +91,16 @@ export const mapCrewRegistration = (
     ? { value: entry.length.value, unit: entry.length.unit ?? undefined }
     : undefined,
   grossTonnage: entry.bruttoGrossTonnage
-    ? { value: entry.bruttoGrossTonnage.value, unit: entry.bruttoGrossTonnage.unit ?? undefined }
+    ? {
+        value: entry.bruttoGrossTonnage.value,
+        unit: entry.bruttoGrossTonnage.unit ?? undefined,
+      }
     : undefined,
   mainEngine: entry.mainEngineKw
-    ? { value: entry.mainEngineKw.value, unit: entry.mainEngineKw.unit ?? undefined }
+    ? {
+        value: entry.mainEngineKw.value,
+        unit: entry.mainEngineKw.unit ?? undefined,
+      }
     : undefined,
 })
 
