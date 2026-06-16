@@ -9,6 +9,7 @@ import {
   GridColumn,
   GridRow,
   Select,
+  SkeletonLoader,
   Stack,
   StringOption,
   Text,
@@ -109,9 +110,10 @@ export const Units = ({
     },
   })
 
-  const [calculate, { data }] = useLazyQuery<CustomsCalculatorCalculateQuery>(
-    GET_CUSTOMS_CALCULATOR_CALCULATE,
-  )
+  const [calculate, { data, loading, called }] =
+    useLazyQuery<CustomsCalculatorCalculateQuery>(
+      GET_CUSTOMS_CALCULATOR_CALCULATE,
+    )
 
   let columnSpanIndex = 0
 
@@ -263,6 +265,7 @@ export const Units = ({
         <Button
           fluid={true}
           disabled={false}
+          loading={loading}
           onClick={() => {
             const values = getValues()
             calculate({
@@ -287,8 +290,9 @@ export const Units = ({
           {formatMessage(translationStrings.runCalculation)}
         </Button>
       </Box>
-      {data?.customsCalculatorCalculate && (
-        <Box background="purple100" padding={3}>
+      {called && loading && <SkeletonLoader height={480} />}
+      {data?.customsCalculatorCalculate && !loading && (
+        <Box background="purple100" padding={[2, 2, 3]}>
           <Stack space={3}>
             <Stack space={2}>
               <Text variant="h5">
@@ -302,75 +306,85 @@ export const Units = ({
             </Stack>
             <Stack space={3}>
               <Divider thickness="thick" weight="purple300" />
-              <GridRow>
-                <GridColumn span={['4/12']}>
+              <GridRow alignItems="center">
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
                   <Text variant="h5">
                     {formatMessage(translationStrings.additionalAmountLabel)}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['4/12']}>
-                  <Text variant="h5">
-                    {formatCurrency(
-                      Number(
-                        data?.customsCalculatorCalculate?.additionalAmount,
-                      ),
-                    )}
-                  </Text>
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                  <Box paddingLeft={1}>
+                    <Text variant="h5">
+                      {formatCurrency(
+                        Number(
+                          data?.customsCalculatorCalculate?.additionalAmount,
+                        ),
+                      )}
+                    </Text>
+                  </Box>
                 </GridColumn>
               </GridRow>
               <Divider thickness="thick" weight="purple300" />
             </Stack>
             <Stack space={2}>
-              <GridRow>
-                <GridColumn span={['4/12']}>
+              <GridRow alignItems="center">
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
                   <Text variant="h5">
                     {formatMessage(translationStrings.breakdownLabel)}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['4/12']}>
-                  <Text variant="h5">
-                    {formatMessage(translationStrings.amountLabel)}
-                  </Text>
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                  <Box paddingLeft={1}>
+                    <Text variant="h5">
+                      {formatMessage(translationStrings.amountLabel)}
+                    </Text>
+                  </Box>
                 </GridColumn>
               </GridRow>
-              <GridRow>
-                <GridColumn span={['4/12']}>
+              <GridRow alignItems="center">
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
                   <Text>
                     {formatMessage(translationStrings.startAmountLabel)}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['4/12']}>
-                  <Text>
-                    {formatCurrency(
-                      Number(data?.customsCalculatorCalculate?.startAmount),
-                    )}
-                  </Text>
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                  <Box paddingLeft={1}>
+                    <Text>
+                      {formatCurrency(
+                        Number(data?.customsCalculatorCalculate?.startAmount),
+                      )}
+                    </Text>
+                  </Box>
                 </GridColumn>
               </GridRow>
               {data?.customsCalculatorCalculate?.charges?.map((charge) => (
-                <GridRow>
-                  <GridColumn span={['4/12']}>
+                <GridRow alignItems="center">
+                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
                     <Text>{charge.description}</Text>
                   </GridColumn>
-                  <GridColumn span={['4/12']}>
-                    <Text>{formatCurrency(Number(charge.amount))}</Text>
+                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                    <Box paddingLeft={1}>
+                      <Text>{formatCurrency(Number(charge.amount))}</Text>
+                    </Box>
                   </GridColumn>
                 </GridRow>
               ))}
             </Stack>
             <Divider thickness="standard" weight="purple300" />
-            <GridRow>
-              <GridColumn span={['4/12']}>
+            <GridRow alignItems="center">
+              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
                 <Text variant="h5">
                   {formatMessage(translationStrings.totalAmountBreakdownLabel)}
                 </Text>
               </GridColumn>
-              <GridColumn span={['4/12']}>
-                <Text>
-                  {formatCurrency(
-                    Number(data?.customsCalculatorCalculate?.totalAmount),
-                  )}
-                </Text>
+              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                <Box paddingLeft={1}>
+                  <Text>
+                    {formatCurrency(
+                      Number(data?.customsCalculatorCalculate?.totalAmount),
+                    )}
+                  </Text>
+                </Box>
               </GridColumn>
             </GridRow>
           </Stack>
