@@ -13,11 +13,16 @@ const Vehicles = z
     latestMileage: z.number().optional().nullable(),
   })
   .refine(
-    ({ requiresMileageRegistration, fuelCode, mileage }) =>
-      requiresMileageRegistration ||
-      Object.values(FuelCodes).includes(fuelCode as FuelCodes)
-        ? Boolean(mileage && mileage !== '' && mileage !== '0 ')
-        : true,
+    ({ requiresMileageRegistration, fuelCode, mileage }) => {
+      if (
+        requiresMileageRegistration ||
+        Object.values(FuelCodes).includes(fuelCode as FuelCodes)
+      ) {
+        const parsed = +(mileage ?? '0').trim().replace(/[.,\s]/g, '')
+        return Number.isFinite(parsed) && parsed > 0
+      }
+      return true
+    },
     { path: ['mileage'], params: errorMessages.mileageMissing },
   )
   .refine(
