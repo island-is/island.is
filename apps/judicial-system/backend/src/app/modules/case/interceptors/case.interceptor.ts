@@ -22,6 +22,7 @@ import {
   getStatementDeadline,
   isCompletedCase,
   isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
   isPrisonSystemUser,
   isProsecutionUser,
@@ -32,6 +33,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
@@ -294,10 +296,16 @@ export const getRulingOrderAppealInfo = (
   // Soft deadline — does not gate canBeAppealed; frontend warns visually.
   const canBeAppealed = !hasBeenAppealed && !isCompletedCase(theCase.state)
 
+  // The ruling time and appeal deadline are based on the end date of the
+  // confirmed court session the ruling order was added to.
+  const confirmedCourtSession = theCase.courtSessions?.find(
+    (session) => session.isConfirmed && session.rulingFileId === caseFile.id,
+  )
+
   let appealDeadline: Date | undefined
   let isAppealDeadlineExpired: boolean | undefined
-  if (caseFile.submissionDate) {
-    appealDeadline = getAppealDeadlineDate(caseFile.submissionDate)
+  if (confirmedCourtSession?.endDate) {
+    appealDeadline = getAppealDeadlineDate(confirmedCourtSession.endDate)
     isAppealDeadlineExpired = Date.now() >= appealDeadline.getTime()
   }
 
@@ -604,6 +612,15 @@ const transformCase = (
             defendants: theCase.defendants,
             civilClaimants: theCase.civilClaimants,
           }),
+      )
+      // A ruling order uploaded during the course of a case is hidden from
+      // everyone except district-court users until it has been added to a
+      // confirmed court session.
+      .filter(
+        (file) =>
+          file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+          isDistrictCourtUser(user) ||
+          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
       )
       .map((file) => ({
         ...file.toJSON(),

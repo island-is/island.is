@@ -38,6 +38,7 @@ import {
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
   getDefenderVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../file'
 import {
   AppealCase,
@@ -775,6 +776,15 @@ export class LimitedAccessCaseService {
       theCase.caseFiles?.filter((file) => {
         if (!file.isKeyAccessible || !file.category) {
           return false
+        }
+
+        // A ruling order uploaded during the course of a case is only visible
+        // once it has been added to a confirmed court session.
+        if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+          return isRulingOrderInConfirmedCourtSession(
+            file.id,
+            theCase.courtSessions,
+          )
         }
 
         if (!allowedCaseFileCategories.includes(file.category)) {
