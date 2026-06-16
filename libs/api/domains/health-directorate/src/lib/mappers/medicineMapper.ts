@@ -30,6 +30,7 @@ export const mapPrescriptionRenewalBlockedReason = (
     case PrescriptionRenewalBlockedReason.IS_REGIMENT:
       return PrescribedItemRenewalBlockedReasonEnum.IsRegiment
     case PrescriptionRenewalBlockedReason.DRUG_NOT_ON_MED_CARD:
+    case PrescriptionRenewalBlockedReason.NO_MED_CARD:
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
     case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
       return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists

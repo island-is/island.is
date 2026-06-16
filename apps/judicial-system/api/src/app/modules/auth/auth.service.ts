@@ -151,6 +151,8 @@ export class AuthService {
   }
 
   async findEligibleUsersByNationalId(nationalId: string): Promise<User[]> {
+    nationalId = nationalId.replace(/-/g, '')
+
     try {
       return await this.backendService.findUsersByNationalId(nationalId)
     } catch (error) {

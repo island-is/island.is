@@ -31,7 +31,6 @@ import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
 import * as styles from './TableRow.css'
-import { removeTypename } from '../../../../lib/utils/removeTypename'
 
 interface Props {
   id?: string | null
@@ -89,6 +88,8 @@ export const TableRow = ({
   const dropdownItems = useMemo(() => {
     const copy = {
       title: formatMessage(m.copy),
+      icon: 'copy' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await copyForm({
@@ -110,6 +111,8 @@ export const TableRow = ({
 
     const changePublishedForm = {
       title: formatMessage(m.edit),
+      icon: 'pencil' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await updateFormStatus({
@@ -134,6 +137,8 @@ export const TableRow = ({
 
     const publish = {
       title: formatMessage(m.publish),
+      icon: 'star' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         const { data: formData } = await getForm({
           variables: { input: { id } },
@@ -165,6 +170,8 @@ export const TableRow = ({
 
     const publishChanged = {
       title: formatMessage(m.publish),
+      icon: 'star' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await updateFormStatus({
@@ -199,6 +206,24 @@ export const TableRow = ({
           })
         } catch (error) {
           console.error('Error publishing form:', error)
+        }
+      },
+    }
+
+    const test = {
+      title: formatMessage(m.tryOut),
+      icon: 'open' as const,
+      iconType: 'outline' as const,
+      onClick: () => {
+        if (slug) {
+          window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
+        } else {
+          toast.error(
+            formatMessage({
+              id: 'slugMissing',
+              defaultMessage: 'Það vantar slug',
+            }),
+          )
         }
       },
     }
@@ -259,8 +284,16 @@ export const TableRow = ({
       },
     }
 
+    const getDelIcon = () => {
+      if (status === FormStatus.PUBLISHED) return 'archive' as const
+      if (status === FormStatus.PUBLISHED_BEING_CHANGED) return 'trash' as const
+      return 'trash' as const
+    }
+
     const del = {
       title: formatMessage(m.delete),
+      icon: getDelIcon(),
+      iconType: 'outline' as const,
       render: () => (
         <DialogPrompt
           title={
@@ -279,10 +312,26 @@ export const TableRow = ({
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="center"
+              width="full"
+              marginRight={2}
               paddingY={2}
+              paddingLeft={1}
               cursor="pointer"
             >
+              <Box
+                marginX={2}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon
+                  icon={getDelIcon()}
+                  size="small"
+                  color="red600"
+                  type="outline"
+                />
+              </Box>
+
               <Text variant="eyebrow" color="red600">
                 {status === FormStatus.PUBLISHED
                   ? formatMessage(m.unpublish)
@@ -322,10 +371,10 @@ export const TableRow = ({
     if (status === FormStatus.PUBLISHED) {
       return [getJson, copy, changePublishedForm, del]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
-      return [getJson, publishChanged, del]
+      return [test, getJson, publishChanged, del]
     }
 
-    return [getJson, copy, publish, del]
+    return [test, getJson, copy, publish, del]
   }, [
     id,
     slug,
