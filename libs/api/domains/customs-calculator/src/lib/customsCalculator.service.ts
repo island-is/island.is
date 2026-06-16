@@ -75,13 +75,15 @@ export class CustomsCalculatorService {
   }
 
   async getProductCategoryUnits(tariffNumber: string) {
-    const referenceDate = new Date().toISOString()
-    const response = await this.customsCalculatorClient.getProductCategoryUnits(
+    const referenceDate = `${new Date().toISOString().split('.')[0]}Z`
+    const units = await this.customsCalculatorClient.getProductCategoryUnits(
       tariffNumber,
       referenceDate,
     )
 
-    return null
+    return {
+      units,
+    }
   }
 
   // async getUnits(

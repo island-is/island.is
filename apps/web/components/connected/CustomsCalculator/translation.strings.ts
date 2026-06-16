@@ -71,4 +71,44 @@ export const translation = defineMessages({
     defaultMessage: 'Gjaldmiðill',
     description: 'Label for currency input',
   },
+  netWeightLabel: {
+    id: 'web.customsCalculator:netWeightLabel',
+    defaultMessage: 'Nettóþyngd (kg)',
+    description: 'Label for net weight input',
+  },
+  unitCountLabel: {
+    id: 'web.customsCalculator:stkWeightLabel',
+    defaultMessage: 'Stykkjatala',
+    description: 'Label for unit count input',
+  },
+  litersLabel: {
+    id: 'web.customsCalculator:litersLabel',
+    defaultMessage: 'Litrar',
+    description: 'Label for liters input',
+  },
+  percentageLabel: {
+    id: 'web.customsCalculator:percentageLabel',
+    defaultMessage: 'Hlutfall',
+    description: 'Label for percentage input',
+  },
+  nedcEmissionLabel: {
+    id: 'web.customsCalculator:nedcEmissionLabel',
+    defaultMessage: 'CO2-gildi (NEDC)',
+    description: 'Label for nedc emission input',
+  },
+  nedcWeightedEmissionLabel: {
+    id: 'web.customsCalculator:nedcWeightedEmissionLabel',
+    defaultMessage: 'Vegið CO2-gildi (NEDC)',
+    description: 'Label for nedc weighted emission input',
+  },
+  wltpEmissionLabel: {
+    id: 'web.customsCalculator:wltpEmissionLabel',
+    defaultMessage: 'CO2-gildi (WLTP)',
+    description: 'Label for wltp emission input',
+  },
+  wltpWeightedEmissionLabel: {
+    id: 'web.customsCalculator:wltpWeightedEmissionLabel',
+    defaultMessage: 'Vegið CO2-gildi (WLTP)',
+    description: 'Label for wltp weighted emission input',
+  },
 })

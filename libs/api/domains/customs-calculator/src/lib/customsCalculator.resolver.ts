@@ -27,11 +27,10 @@ export class CustomsCalculatorResolver {
 
   @Query(() => CustomsCalculatorUnitsResponse, {
     name: 'customsCalculatorUnits',
-    nullable: true,
   })
   getUnits(
     @Args('tariffNumber') tariffNumber: string,
-  ): Promise<CustomsCalculatorUnitsResponse | null> {
+  ): Promise<CustomsCalculatorUnitsResponse> {
     return this.customsCalculatorService.getProductCategoryUnits(tariffNumber)
   }
 

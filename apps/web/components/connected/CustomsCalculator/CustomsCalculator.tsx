@@ -12,7 +12,7 @@ import {
   Input,
   Select,
   Stack,
-  StringOption,
+  type StringOption,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -27,6 +27,8 @@ import {
 
 import { CategoryModal } from './CategoryModal'
 import { translation as translationStrings } from './translation.strings'
+import { UnitInput } from './UnitInput'
+import { Units } from './Units'
 import * as styles from './CustomsCalculator.css'
 
 interface CustomsCalculatorProps {
@@ -37,29 +39,27 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const { formatMessage } = useIntl()
 
   const currencyOptions = useMemo<StringOption[]>(() => {
-    return (
-      slice.json?.currencyOptions ?? [
-        { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
-        { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
-        { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
-        { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
-        { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
-        { label: 'EUR', value: 'EUR', description: 'Evra' },
-        { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
-        { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
-        { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
-        { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
-        { label: 'NOK', value: 'NOK', description: 'Norsk króna' },
-        { label: 'NZD', value: 'NZD', description: 'Ný-Sjálenskur dalur' },
-        { label: 'PLN', value: 'PLN', description: 'Pólskt slot' },
-        { label: 'SEK', value: 'SEK', description: 'Sænsk króna' },
-        { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
-        { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
-        { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
-        { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
-      ]
-    )
-  }, [slice.json?.currencyOptions])
+    return [
+      { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
+      { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
+      { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
+      { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
+      { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
+      { label: 'EUR', value: 'EUR', description: 'Evra' },
+      { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
+      { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
+      { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
+      { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
+      { label: 'NOK', value: 'NOK', description: 'Norsk króna' },
+      { label: 'NZD', value: 'NZD', description: 'Ný-Sjálenskur dalur' },
+      { label: 'PLN', value: 'PLN', description: 'Pólskt slot' },
+      { label: 'SEK', value: 'SEK', description: 'Sænsk króna' },
+      { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
+      { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
+      { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
+      { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
+    ]
+  }, [])
 
   const [inputState, setInputState] = useState({
     searchInput: '',
@@ -359,20 +359,25 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             }}
           />
         </Box>
-        <Stack space={1}>
-          <Input
-            name="asdf"
-            size="sm"
-            label={formatMessage(translationStrings.priceWithShippingLabel)}
-            backgroundColor="blue"
-          />
-          <Box paddingLeft={1}>
-            <Text variant="small">
-              {formatMessage(translationStrings.priceWithShippingDescription)}
-            </Text>
-          </Box>
-        </Stack>
+        <UnitInput
+          name="priceWithShipping"
+          label={formatMessage(translationStrings.priceWithShippingLabel)}
+          description={formatMessage(
+            translationStrings.priceWithShippingDescription,
+          )}
+          value={inputState.priceWithShipping}
+          onChange={(event) => {
+            setInputState({
+              ...inputState,
+              priceWithShipping: event.target.value,
+            })
+          }}
+        />
       </Inline>
+
+      <Units
+        unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
+      />
 
       <Box className={styles.buttonContainer}>
         <Button fluid={true} disabled={!selectedBottomLevelCategory}>

@@ -1,15 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  getReiknivelVoruflokkar,
-  getReiknivelEiningar,
-} from '../../gen/fetch'
-import type { Client } from '../../gen/fetch/client.gen'
+import { getReiknivelVoruflokkar, getReiknivelEiningar } from '../../gen/fetch'
+import type { client as Client } from '../../gen/fetch/client.gen'
 import { CUSTOMS_CALCULATOR_CLIENT } from './customsCalculator.apiConfig'
 
 @Injectable()
 export class CustomsCalculatorClientService {
   constructor(
-    @Inject(CUSTOMS_CALCULATOR_CLIENT) private readonly client: Client,
+    @Inject(CUSTOMS_CALCULATOR_CLIENT)
+    private readonly client: typeof Client,
   ) {}
 
   async getProductCategories() {
@@ -56,6 +54,6 @@ export class CustomsCalculatorClientService {
       }
     }
 
-    return payload?.Response?.Einingar
+    return payload?.Response?.Einingar?.split(',') ?? []
   }
 }

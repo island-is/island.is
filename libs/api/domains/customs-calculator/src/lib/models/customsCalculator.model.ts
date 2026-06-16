@@ -60,14 +60,8 @@ export class CustomsCalculatorProductCategoriesResponse {
 
 @ObjectType()
 export class CustomsCalculatorUnitsResponse {
-  @Field(() => CustomsCalculatorStatus, { nullable: true })
-  status?: CustomsCalculatorStatus
-
-  @Field(() => [String], { nullable: true })
-  units?: string[]
-
-  @Field({ nullable: true })
-  errors?: string
+  @Field(() => [String])
+  units!: string[]
 }
 
 @ObjectType()
