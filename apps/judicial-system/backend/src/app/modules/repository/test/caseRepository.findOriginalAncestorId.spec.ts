@@ -120,6 +120,22 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
       expect(result).toBe('indictment-id')
       expect(caseModel.findByPk).not.toHaveBeenCalled()
     })
+
+    it('walks the parent chain for a duplicated indictment draft', async () => {
+      // duplicate -> original (root)
+      stubParentChain({ 'original-id': null })
+
+      const theCase = {
+        id: 'duplicate-id',
+        type: CaseType.INDICTMENT,
+        parentCaseId: 'original-id',
+      } as Case
+
+      const result = await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(result).toBe('original-id')
+      expect(caseModel.findByPk).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('request route (parent walk)', () => {

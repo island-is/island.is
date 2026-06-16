@@ -186,6 +186,9 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         creatingProsecutorId: prosecutorId,
         prosecutorId,
         prosecutorsOfficeId,
+        // The new draft links back to the original case so police system (LÖKE)
+        // communication can resolve the original ancestor
+        parentCaseId: caseId,
       }),
     )
 
@@ -199,8 +202,9 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
     expect(createdWith).not.toHaveProperty('defenderName')
     expect(createdWith).not.toHaveProperty('leadInvestigator')
     expect(createdWith).not.toHaveProperty('caseFilesComments')
-    // No lineage link to the original case
-    expect(createdWith).not.toHaveProperty('parentCaseId')
+    // The source's own parent link is not carried over - the new draft points
+    // at the case it was duplicated from
+    expect(createdWith.parentCaseId).toBe(caseId)
   })
 
   it('copies police case numbers, defendants, indictment counts, offenses, victims and civil claimants', async () => {

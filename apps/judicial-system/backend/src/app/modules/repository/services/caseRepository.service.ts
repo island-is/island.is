@@ -215,12 +215,13 @@ export class CaseRepositoryService {
   }
 
   async findOriginalAncestorId(theCase: Case): Promise<string> {
-    if (isIndictmentCase(theCase.type)) {
-      // indictment cases can be split
-      return theCase.splitCaseId ?? theCase.id
+    // Split indictment continuations point back to the original via splitCaseId
+    if (isIndictmentCase(theCase.type) && theCase.splitCaseId) {
+      return theCase.splitCaseId
     }
 
-    // request cases can be extended
+    // Extended request cases and duplicated indictment drafts point back to
+    // their origin via parentCaseId - walk the chain to the original ancestor
     let originalAncestorId = theCase.id
     let parentCaseId: string | null | undefined = theCase.parentCaseId
 
@@ -822,8 +823,10 @@ export class CaseRepositoryService {
 
       const { transaction, prosecutorId, prosecutorsOfficeId } = options
 
-      // Only data entered by the prosecution is copied - no court data and no
-      // parent/child link to the original case.
+      // Only data entered by the prosecution is copied - no court data. The new
+      // draft keeps a parentCaseId link to the original so that communication
+      // with the police system (LÖKE) resolves to the original ancestor case
+      // (see findOriginalAncestorId).
       const prosecutorFieldsToCopy: (keyof Case)[] = [
         'origin',
         'type',
@@ -855,6 +858,9 @@ export class CaseRepositoryService {
         {
           ...pick(caseToDuplicate, prosecutorFieldsToCopy),
           state: CaseState.DRAFT,
+          // Keep the link to the original case so the original ancestor can be
+          // resolved for police system (LÖKE) communication
+          parentCaseId: caseId,
           // The new case should have court session support
           withCourtSessions: true,
           // The current prosecutor owns the new draft case
