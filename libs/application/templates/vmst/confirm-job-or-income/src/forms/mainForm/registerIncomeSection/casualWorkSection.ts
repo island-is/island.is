@@ -2,6 +2,7 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { isCasualWork } from '../../../utils/conditions'
@@ -115,6 +116,14 @@ export const casualWorkSection = buildSubSection({
               },
             },
           },
+        }),
+        buildAlertMessageField({
+          id: 'contractWorkAlert',
+          title: 'Tímabil mega ekki skarast',
+          message:
+            'Tvö tímabil hjá Byko skarast. Þú getur eytt út línu eða breytt tímabilum til að geta haldið áfram með skráninguna.',
+          alertType: 'warning',
+          marginTop: 6,
         }),
       ],
     }),

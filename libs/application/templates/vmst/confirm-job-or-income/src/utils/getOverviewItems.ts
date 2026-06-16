@@ -59,7 +59,7 @@ export const getIncomeTypeOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: m.application.incomeTypeTitle,
+      keyText: m.application.overviewIncomeTypeLabel,
       valueText: types.map(
         (type) =>
           incomeTypeLabelMap[type as keyof typeof incomeTypeLabelMap] ?? type,
@@ -81,12 +81,12 @@ export const getCasualWorkOverviewItems = (
     ...buildEntryHeading(index, entries.length),
     {
       width: 'half',
-      keyText: m.application.companyNationalId,
+      keyText: m.application.overviewNationalId,
       valueText: formatKennitala(entry.company.nationalId),
     },
     {
       width: 'half',
-      keyText: m.application.companyName,
+      keyText: m.application.overviewCompany,
       valueText: entry.company.name ?? '',
       hideIfEmpty: true,
     },
@@ -102,7 +102,7 @@ export const getCasualWorkOverviewItems = (
     },
     {
       width: 'half',
-      keyText: m.application.estimatedMonthlyIncome,
+      keyText: m.application.overviewEstimatedAmount,
       valueText: formatCurrency(entry.estimatedIncome),
     },
   ])
@@ -121,12 +121,12 @@ export const getPartTimeOverviewItems = (
     ...buildEntryHeading(index, entries.length),
     {
       width: 'half',
-      keyText: m.application.companyNationalId,
+      keyText: m.application.overviewNationalId,
       valueText: formatKennitala(entry.company.nationalId),
     },
     {
       width: 'half',
-      keyText: m.application.companyName,
+      keyText: m.application.overviewCompany,
       valueText: entry.company.name ?? '',
       hideIfEmpty: true,
     },
@@ -142,7 +142,7 @@ export const getPartTimeOverviewItems = (
     },
     {
       width: 'half',
-      keyText: m.application.estimatedMonthlyIncome,
+      keyText: m.application.overviewEstimatedAmount,
       valueText: formatCurrency(entry.estimatedIncome),
     },
   ])
@@ -161,12 +161,12 @@ export const getContractWorkOverviewItems = (
     ...buildEntryHeading(index, entries.length),
     {
       width: 'half',
-      keyText: m.application.jobStart,
+      keyText: m.application.overviewContractWorkStart,
       valueText: formatDateStr(entry.contractJobStart),
     },
     {
       width: 'half',
-      keyText: m.application.workEnds,
+      keyText: m.application.overviewContractWorkEnd,
       valueText: formatDateStr(entry.workEnds),
     },
   ])
@@ -201,12 +201,12 @@ export const getPensionOverviewItems = (
     },
     {
       width: 'half',
-      keyText: m.application.paymentType,
+      keyText: m.application.overviewType,
       valueText: getOptionLabel(pensionTypes, entry.pensionType),
     },
     {
       width: 'half',
-      keyText: m.application.pensionAmountPerMonth,
+      keyText: m.application.overviewAmountPerMonth,
       valueText: formatCurrency(entry.amountPerMonth),
     },
   ])
@@ -231,12 +231,12 @@ export const getCapitalIncomeOverviewItems = (
     ...buildEntryHeading(index, entries.length),
     {
       width: 'full',
-      keyText: m.application.paymentType,
+      keyText: m.application.overviewCapitalIncomeType,
       valueText: getOptionLabel(capitalIncomeTypes, entry.paymentType),
     },
     {
       width: 'half',
-      keyText: m.application.amountPerMonth,
+      keyText: m.application.overviewCapitalIncomeAmount,
       valueText: formatCurrency(entry.amountPerMonth),
     },
     {
@@ -266,12 +266,12 @@ export const getSocialInsuranceOverviewItems = (
     ...buildEntryHeading(index, entries.length),
     {
       width: 'full',
-      keyText: m.application.paymentType,
+      keyText: m.application.overviewSocialInsuranceType,
       valueText: getOptionLabel(socialInsuranceTypes, entry.socialPaymentType),
     },
     {
       width: 'half',
-      keyText: m.application.amountPerMonth,
+      keyText: m.application.overviewSocialInsuranceAmount,
       valueText: formatCurrency(entry.amountPerMonth),
     },
     {

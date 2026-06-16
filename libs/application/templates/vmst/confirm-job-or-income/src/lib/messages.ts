@@ -86,7 +86,7 @@ export const application = defineMessages({
   },
   contractWorkHeading: {
     id: 'vmst.cjoi.application:contractWorkHeading',
-    defaultMessage: 'Vaktavinna',
+    defaultMessage: 'Verktakavinna',
     description: 'Repeater heading for contract work',
   },
   capitalIncomeHeading: {
@@ -380,15 +380,17 @@ export const application = defineMessages({
     defaultMessage: 'Tilkynna tekjur',
     description: 'Submit button label',
   },
+
+  // Overview
   overviewSectionTitle: {
     id: 'vmst.cjoi.application:overviewSectionTitle',
-    defaultMessage: 'Yfirlit',
+    defaultMessage: 'Yfirlit tilkynningar',
     description: 'Title for the overview section',
   },
   overviewSectionDescription: {
     id: 'vmst.cjoi.application:overviewSectionDescription',
     defaultMessage:
-      'Vinsamlegast farðu yfir að allar upplýsingar séu réttar áður en tilkynningin er send.',
+      'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
     description: 'Description for the overview section',
   },
   overviewEntryHeading: {
@@ -396,6 +398,72 @@ export const application = defineMessages({
     defaultMessage: 'Lína {index}',
     description: 'Heading for each repeater entry in the overview',
   },
+  overviewEditButton: {
+    id: 'vmst.cjoi.application:overviewEditButton',
+    defaultMessage: 'Breyta',
+    description: 'Edit button label in overview section',
+  },
+  overviewIncomeTypeLabel: {
+    id: 'vmst.cjoi.application:overviewIncomeTypeLabel',
+    defaultMessage: 'Tegund tekna',
+    description: 'Label for income type in overview',
+  },
+  overviewEstimatedAmount: {
+    id: 'vmst.cjoi.application:overviewEstimatedAmount',
+    defaultMessage: 'Áætluð upphæð',
+    description: 'Label for estimated amount in overview',
+  },
+  overviewNationalId: {
+    id: 'vmst.cjoi.application:overviewNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Label for national ID in overview',
+  },
+  overviewCompany: {
+    id: 'vmst.cjoi.application:overviewCompany',
+    defaultMessage: 'Fyrirtæki',
+    description: 'Label for company in overview',
+  },
+  overviewContractWorkStart: {
+    id: 'vmst.cjoi.application:overviewContractWorkStart',
+    defaultMessage: 'Dagsetning sem vinna hefst',
+    description: 'Label for contract work start date in overview',
+  },
+  overviewContractWorkEnd: {
+    id: 'vmst.cjoi.application:overviewContractWorkEnd',
+    defaultMessage: 'Dagsetning sem vinnu lýkur',
+    description: 'Label for contract work end date in overview',
+  },
+  overviewCapitalIncomeType: {
+    id: 'vmst.cjoi.application:overviewCapitalIncomeType',
+    defaultMessage: 'Tegund greiðslna',
+    description: 'Label for payment type in overview capital income',
+  },
+  overviewCapitalIncomeAmount: {
+    id: 'vmst.cjoi.application:overviewCapitalIncomeAmount',
+    defaultMessage: 'Upphæð (fyrir skatt)',
+    description: 'Label for amount in overview capital income',
+  },
+  overviewType: {
+    id: 'vmst.cjoi.application:overviewType',
+    defaultMessage: 'Tegund',
+    description: 'Label for type in overview',
+  },
+  overviewAmountPerMonth: {
+    id: 'vmst.cjoi.application:overviewAmountPerMonth',
+    defaultMessage: 'Upphæð á mánuði',
+    description: 'Label for amount per month in overview',
+  },
+  overviewSocialInsuranceType: {
+    id: 'vmst.cjoi.application:overviewSocialInsuranceType',
+    defaultMessage: 'Tegund greiðslna',
+    description: 'Label for payment type in overview social insurance',
+  },
+  overviewSocialInsuranceAmount: {
+    id: 'vmst.cjoi.application:overviewSocialInsuranceAmount',
+    defaultMessage: 'Upphæð (fyrir skatt)',
+    description: 'Label for amount in overview social insurance',
+  },
+
   paymentFrequency: {
     id: 'vmst.cjoi.application:paymentFrequency',
     defaultMessage: 'Greiðslutíðni',
