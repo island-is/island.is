@@ -1,5 +1,6 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
+import { ToastHost } from '@/components/toast'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
@@ -197,6 +198,7 @@ function RootLayoutNav({
                 />
               </Stack>
               <PromptModal />
+              <ToastHost />
             </OfflineProvider>
           </ApolloProvider>
         </FeatureFlagProvider>

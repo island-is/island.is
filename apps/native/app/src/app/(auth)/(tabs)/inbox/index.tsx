@@ -10,7 +10,6 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  ToastAndroid,
   TouchableNativeFeedback,
   useWindowDimensions,
   View,
@@ -50,13 +49,12 @@ import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { ActionBar } from '../../../../components/action-bar'
 import { PressableListItem } from '../../../../components/pressable-list-item'
-import { Toast, ToastVariant } from '../../../../components/toast'
+import { toast } from '../../../../components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
 import { Text } from 'react-native'
 import { StackScreen } from '../../../../components/stack-screen'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { uiStore } from '../../../../stores/ui-store'
-import * as Burnt from 'burnt'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -149,16 +147,6 @@ export default function InboxScreen() {
     dateFrom,
     dateTo,
   } = useInboxFilterStore()
-
-  const [toastInfo, setToastInfo] = useState<{
-    variant: ToastVariant
-    title: string
-    message?: string
-  }>({
-    variant: 'success',
-    title: '',
-  })
-  const [toastVisible, setToastVisible] = useState(false)
 
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
@@ -367,37 +355,12 @@ export default function InboxScreen() {
   const handleBulkActionError = (
     actionType: 'star' | 'archive' | 'markAsRead',
   ) => {
-    showToastForBulkSelectAction({
-      variant: 'error',
-      title: `${intl.formatMessage({
-        id: `inbox.bulkSelect.${actionType}Error`,
-      })}: ${intl.formatMessage({
-        id: 'inbox.bulkSelect.pleaseTryAgain',
-      })}`,
-    })
-  }
-
-  const showToastForBulkSelectAction = ({
-    variant,
-    title,
-  }: {
-    variant: ToastVariant
-    title: string
-  }) => {
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(title, ToastAndroid.SHORT)
-    } else {
-      Burnt.toast({
-        title,
-        preset:
-          variant === 'success'
-            ? 'done'
-            : variant === 'error'
-            ? 'error'
-            : 'none',
-        from: 'bottom',
-      })
-    }
+    toast.error(
+      intl.formatMessage({ id: `inbox.bulkSelect.${actionType}Error` }),
+      {
+        message: intl.formatMessage({ id: 'inbox.bulkSelect.pleaseTryAgain' }),
+      },
+    )
   }
 
   const renderItem = useCallback(
@@ -514,12 +477,9 @@ export default function InboxScreen() {
         })
       })
       resetSelectState()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.starSuccess',
-        }),
-      })
+      toast.success(
+        intl.formatMessage({ id: 'inbox.bulkSelect.starSuccess' }),
+      )
     } else {
       handleBulkActionError('star')
     }
@@ -534,12 +494,9 @@ export default function InboxScreen() {
     if (result.data?.postMailActionV2?.success) {
       resetSelectState()
       res.refetch()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.archiveSuccess',
-        }),
-      })
+      toast.success(
+        intl.formatMessage({ id: 'inbox.bulkSelect.archiveSuccess' }),
+      )
     } else {
       handleBulkActionError('archive')
     }
@@ -562,12 +519,9 @@ export default function InboxScreen() {
         })
       })
       resetSelectState()
-      showToastForBulkSelectAction({
-        variant: 'success',
-        title: intl.formatMessage({
-          id: 'inbox.bulkSelect.markAsReadSuccess',
-        }),
-      })
+      toast.success(
+        intl.formatMessage({ id: 'inbox.bulkSelect.markAsReadSuccess' }),
+      )
     } else {
       handleBulkActionError('markAsRead')
     }
