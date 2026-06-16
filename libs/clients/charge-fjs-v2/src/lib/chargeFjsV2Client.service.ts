@@ -99,6 +99,7 @@ export class ChargeFjsV2ClientService {
               authCode: upcomingPayment.payInfo.authCode,
               pAN: upcomingPayment.payInfo.PAN,
               payableAmount: upcomingPayment.payInfo.payableAmount,
+              correlationId: upcomingPayment.payInfo.correlationId,
             }
           : undefined,
         extraData: upcomingPayment.extraData

@@ -1267,4 +1267,9 @@ export const m = defineMessages({
     defaultMessage: 'Afrita innslátt',
     description: 'Copy field',
   },
+  missingValue: {
+    id: 'form.system:missing-value',
+    defaultMessage: 'Vantar gildi',
+    description: 'Missing value',
+  },
 })
