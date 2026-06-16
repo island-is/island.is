@@ -306,7 +306,6 @@ const IndictmentOverview: FC = () => {
             nextIsLoading={
               canDuplicateIndictment && isDuplicatingIndictmentCase
             }
-            nextButtonIcon={canDuplicateIndictment ? 'copy' : undefined}
             nextButtonText={
               canDuplicateIndictment
                 ? 'Afrita mál í drög'

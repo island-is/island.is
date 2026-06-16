@@ -210,9 +210,12 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         nationalId: '0000000000',
         name: 'Accused',
         gender: Gender.MALE,
+        // Prosecutor data that must be copied
+        defendantPlea: 'GUILTY',
         // Court/process data that must not be copied
         punishmentType: 'IMPRISONMENT',
-        defendantPlea: 'GUILTY',
+        defenderName: 'Defender',
+        defenderChoice: 'CHOOSE',
       },
     ])
 
@@ -262,12 +265,14 @@ describe('CaseRepositoryService — duplicateIndictmentToDraft', () => {
         nationalId: '0000000000',
         name: 'Accused',
         gender: Gender.MALE,
+        defendantPlea: 'GUILTY',
       }),
       { transaction },
     )
     const defendantCreatedWith = ctx.defendantModel.create.mock.calls[0][0]
     expect(defendantCreatedWith).not.toHaveProperty('punishmentType')
-    expect(defendantCreatedWith).not.toHaveProperty('defendantPlea')
+    expect(defendantCreatedWith).not.toHaveProperty('defenderName')
+    expect(defendantCreatedWith).not.toHaveProperty('defenderChoice')
 
     // Per-defendant police case number assignment is recreated for the new
     // defendant

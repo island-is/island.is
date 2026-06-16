@@ -910,11 +910,7 @@ export class CaseRepositoryService {
             gender: defendant.gender,
             address: defendant.address,
             citizenship: defendant.citizenship,
-            defenderName: defendant.defenderName,
-            defenderNationalId: defendant.defenderNationalId,
-            defenderEmail: defendant.defenderEmail,
-            defenderPhoneNumber: defendant.defenderPhoneNumber,
-            defenderChoice: defendant.defenderChoice,
+            defendantPlea: defendant.defendantPlea,
           },
           { transaction },
         )
