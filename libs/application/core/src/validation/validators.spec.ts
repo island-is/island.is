@@ -624,6 +624,51 @@ describe('validateAnswers', () => {
         anArray: defaultError,
       })
     })
+
+    it('should not surface nested sibling path errors on a screen that only shares the parent key', () => {
+      const schema = z
+        .object({
+          nested: z
+            .object({
+              fieldA: z.array(z.string()).optional(),
+              fieldB: z.array(z.string()).optional(),
+            })
+            .optional(),
+        })
+        .superRefine((data, ctx) => {
+          const n = data.nested
+          if (!n) return
+          if (!n.fieldA?.length) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['nested', 'fieldA'],
+              message: 'a required',
+            })
+          }
+          if (!n.fieldB?.length) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['nested', 'fieldB'],
+              message: 'b required',
+            })
+          }
+        })
+
+      const value = {
+        nested: { fieldA: [], fieldB: [] },
+      } as FormValue
+
+      expect(
+        validateAnswers({
+          dataSchema: schema,
+          answers: value,
+          formatMessage,
+          currentScreenFields: ['nested.fieldA'],
+        }),
+      ).toEqual({
+        nested: { fieldA: 'a required' },
+      })
+    })
   })
 })
 

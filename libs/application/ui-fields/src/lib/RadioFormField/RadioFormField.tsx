@@ -6,9 +6,12 @@ import {
   getValueViaPath,
   buildFieldOptions,
   formatTextWithLocale,
+  resolveFieldId,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import { FieldBaseProps, RadioField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   RadioController,
@@ -45,9 +48,11 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
     clearOnChange,
     clearOnChangeDefaultValue,
+    titleVariant = 'h4',
   } = field
   const { formatMessage, lang: locale } = useLocale()
-
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
   const finalOptions = useMemo(
     () => buildFieldOptions(options, application, field, locale),
     [options, application, locale],
@@ -61,10 +66,14 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
       marginBottom={marginBottom}
       paddingTop={paddingTop}
       role="region"
-      aria-labelledby={id + 'title'}
+      aria-labelledby={`${resolvedId}title`}
     >
       {showFieldName && (
-        <Text variant="h4" as="h4" id={id + 'title'}>
+        <Text
+          variant={titleVariant}
+          as={titleVariant}
+          id={`${resolvedId}title`}
+        >
           {formatTextWithLocale(
             title,
             application,
@@ -89,7 +98,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
         <RadioController
           largeButtons={largeButtons}
           backgroundColor={backgroundColor}
-          id={id}
+          id={resolvedId}
           disabled={disabled}
           error={error}
           split={
@@ -99,9 +108,9 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
               ? '1/2'
               : '1/1'
           }
-          name={id}
+          name={resolvedId}
           defaultValue={
-            ((getValueViaPath(application.answers, id) as string[]) ??
+            (getValueViaPath<string[]>(application.answers, resolvedId) ??
               getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
@@ -125,7 +134,10 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           hasIllustration={hasIllustration}
           paddingBottom={0}
           paddingTop={2}
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange: field.clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>

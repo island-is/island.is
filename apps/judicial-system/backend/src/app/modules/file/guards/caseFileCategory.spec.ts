@@ -1,8 +1,18 @@
-import { Defendant } from '../../repository'
 import {
+  CaseFileCategory,
+  CaseState,
+  CaseType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
+
+import { CourtSession, Defendant } from '../../repository'
+import {
+  canLimitedAccessUserViewCaseFile,
   getConfirmedDefendantsForDefender,
   getDefenderVisiblePoliceCaseNumbers,
   isConfirmedDefenderOfSpecificDefendant,
+  isRulingOrderInConfirmedCourtSession,
 } from './caseFileCategory'
 
 const makeDefendant = (
@@ -258,6 +268,78 @@ describe('getConfirmedDefendantsForDefender', () => {
     const result = getConfirmedDefendantsForDefender('1234567890', defendants)
 
     expect(result).toEqual([])
+  })
+})
+
+describe('isRulingOrderInConfirmedCourtSession', () => {
+  const fileId = 'ruling-order-file-id'
+
+  const makeSession = (
+    overrides: Partial<{ isConfirmed: boolean; rulingFileId: string | null }>,
+  ): CourtSession =>
+    ({
+      isConfirmed: overrides.isConfirmed ?? false,
+      rulingFileId: 'rulingFileId' in overrides ? overrides.rulingFileId : null,
+    } as unknown as CourtSession)
+
+  it('should return true when a confirmed session references the file', () => {
+    const courtSessions = [
+      makeSession({ isConfirmed: false, rulingFileId: 'other' }),
+      makeSession({ isConfirmed: true, rulingFileId: fileId }),
+    ]
+
+    expect(isRulingOrderInConfirmedCourtSession(fileId, courtSessions)).toBe(
+      true,
+    )
+  })
+
+  it('should return false when the referencing session is not confirmed', () => {
+    const courtSessions = [
+      makeSession({ isConfirmed: false, rulingFileId: fileId }),
+    ]
+
+    expect(isRulingOrderInConfirmedCourtSession(fileId, courtSessions)).toBe(
+      false,
+    )
+  })
+
+  it('should return false when no session references the file', () => {
+    const courtSessions = [
+      makeSession({ isConfirmed: true, rulingFileId: 'other' }),
+    ]
+
+    expect(isRulingOrderInConfirmedCourtSession(fileId, courtSessions)).toBe(
+      false,
+    )
+  })
+
+  it('should return false when there are no court sessions', () => {
+    expect(isRulingOrderInConfirmedCourtSession(fileId, undefined)).toBe(false)
+  })
+})
+
+describe('canLimitedAccessUserViewCaseFile - ruling order', () => {
+  const defenceUser = {
+    role: UserRole.DEFENDER,
+    nationalId: '1234567890',
+    name: 'Verjandi',
+  } as User
+
+  const viewRulingOrder = (isRulingOrderInConfirmedCourtSession: boolean) =>
+    canLimitedAccessUserViewCaseFile({
+      user: defenceUser,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.RECEIVED,
+      caseFileCategory: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      isRulingOrderInConfirmedCourtSession,
+    })
+
+  it('should hide a ruling order that is not in a confirmed court session', () => {
+    expect(viewRulingOrder(false)).toBe(false)
+  })
+
+  it('should show a ruling order that is in a confirmed court session', () => {
+    expect(viewRulingOrder(true)).toBe(true)
   })
 })
 

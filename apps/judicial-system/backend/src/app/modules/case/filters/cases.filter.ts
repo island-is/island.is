@@ -26,9 +26,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
           // defender per case
           [Op.and]: [
             { type: [...restrictionCases, ...investigationCases] },
-            {
-              defender_national_id: userNationalId,
-            },
+            { defender_national_id: userNationalId },
             {
               [Op.or]: [
                 {
