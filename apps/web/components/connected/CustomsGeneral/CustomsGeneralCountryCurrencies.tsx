@@ -12,8 +12,14 @@ const CustomsGeneralCountryCurrencies = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   const columns = [
-    { key: 'countryCode' as const, label: formatMessage(m.countryCurrencyCountryCode) },
-    { key: 'countryName' as const, label: formatMessage(m.countryCurrencyCountryName) },
+    {
+      key: 'countryCode' as const,
+      label: formatMessage(m.countryCurrencyCountryCode),
+    },
+    {
+      key: 'countryName' as const,
+      label: formatMessage(m.countryCurrencyCountryName),
+    },
     {
       key: 'currencyCode' as const,
       label: formatMessage(m.countryCurrencyCurrencyCode),

@@ -76,7 +76,10 @@ export class CustomsGeneralResolver {
   async customsGeneralTransportModes(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getTransportModes(input.date, input.system)
+    return this.customsGeneralService.getTransportModes(
+      input.date,
+      input.system,
+    )
   }
 
   @Query(() => [CustomsGeneralStorageLocation])
@@ -111,7 +114,10 @@ export class CustomsGeneralResolver {
   async customsGeneralClearanceTypes(
     @Args('input') input: CustomsGeneralInput,
   ): Promise<CustomsGeneralEntry[]> {
-    return this.customsGeneralService.getClearanceTypes(input.date, input.system)
+    return this.customsGeneralService.getClearanceTypes(
+      input.date,
+      input.system,
+    )
   }
 
   @Query(() => [CustomsGeneralEntry])

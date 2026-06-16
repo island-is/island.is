@@ -19,10 +19,19 @@ const CustomsGeneralStorageLocations = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   const columns = [
-    { key: 'nationalId' as const, label: formatMessage(m.storageLocationNationalId) },
+    {
+      key: 'nationalId' as const,
+      label: formatMessage(m.storageLocationNationalId),
+    },
     { key: 'code' as const, label: formatMessage(m.storageLocationCode) },
-    { key: 'companyName' as const, label: formatMessage(m.storageLocationCompanyName) },
-    { key: 'location' as const, label: formatMessage(m.storageLocationLocation) },
+    {
+      key: 'companyName' as const,
+      label: formatMessage(m.storageLocationCompanyName),
+    },
+    {
+      key: 'location' as const,
+      label: formatMessage(m.storageLocationLocation),
+    },
   ]
 
   const { data, loading, error } = useQuery(
@@ -33,7 +42,12 @@ const CustomsGeneralStorageLocations = () => {
   )
 
   const items: Item[] = (data?.customsGeneralStorageLocations ?? []).map(
-    (item: { nationalId?: string; code?: string; companyName?: string; location?: string }) => ({
+    (item: {
+      nationalId?: string
+      code?: string
+      companyName?: string
+      location?: string
+    }) => ({
       nationalId: item.nationalId ?? '',
       code: item.code ?? '',
       companyName: item.companyName ?? '',

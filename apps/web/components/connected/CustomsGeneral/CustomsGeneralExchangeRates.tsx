@@ -17,9 +17,12 @@ const CustomsGeneralExchangeRates = () => {
     { key: 'rate' as const, label: formatMessage(m.exchangeRateRate) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_EXCHANGE_RATES, {
-    variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
-  })
+  const { data, loading, error } = useQuery(
+    GET_CUSTOMS_GENERAL_EXCHANGE_RATES,
+    {
+      variables: { input: { date: toApiDate(selectedDate), system: 'I' } },
+    },
+  )
 
   const items = (data?.customsGeneralExchangeRates ?? []).map(
     (item: { code?: string; name?: string; rate?: number }) => ({

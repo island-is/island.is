@@ -10,7 +10,8 @@ export const m = defineMessages({
   errorMessage: {
     id: 'web.customsGeneral:errorMessage',
     defaultMessage: 'Ekki tókst að sækja gögn. Reyndu aftur síðar.',
-    description: 'Generic error message shown when a customs general query fails',
+    description:
+      'Generic error message shown when a customs general query fails',
   },
   dateLabel: {
     id: 'web.customsGeneral:dateLabel',

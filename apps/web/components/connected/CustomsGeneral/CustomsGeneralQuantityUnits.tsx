@@ -17,9 +17,12 @@ const CustomsGeneralQuantityUnits = () => {
     { key: 'name' as const, label: formatMessage(m.columnName) },
   ]
 
-  const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_QUANTITY_UNITS, {
-    variables: { input: { date: toApiDate(selectedDate), system } },
-  })
+  const { data, loading, error } = useQuery(
+    GET_CUSTOMS_GENERAL_QUANTITY_UNITS,
+    {
+      variables: { input: { date: toApiDate(selectedDate), system } },
+    },
+  )
 
   const items = (data?.customsGeneralQuantityUnits ?? []).map(
     (item: { code?: string; name?: string }) => ({
