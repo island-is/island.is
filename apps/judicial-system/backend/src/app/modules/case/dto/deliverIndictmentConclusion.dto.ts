@@ -1,6 +1,6 @@
 import {
+  IsDateString,
   IsEnum,
-  IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
@@ -24,7 +24,7 @@ export class DeliverIndictmentConclusionDto extends DeliverDto {
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 
   @IsOptional()
-  @IsISO8601()
+  @IsDateString()
   @ApiPropertyOptional()
   readonly rulingDate?: string
 
