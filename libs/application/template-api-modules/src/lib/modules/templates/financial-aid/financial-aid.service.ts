@@ -501,7 +501,7 @@ export class FinancialAidService extends BaseTemplateApiService {
             directTaxPayments: [JSON.stringify(directTaxPayments())],
             applicationSystemId: id,
           },
-          xTenantIdentifier: 'reykjavikurborg',
+          xTenantIdentifier: 'reykjavik',
           xUserPermissions: 'finaid:write',
         } as CreateApplicationOperationRequest)
         .then(() => {
