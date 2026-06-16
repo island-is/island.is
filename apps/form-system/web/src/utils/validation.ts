@@ -40,6 +40,12 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
       return !value?.iskNumber || value?.iskNumber.length === 0
     case FieldTypesEnum.PROPERTY_NUMBER:
       return !validatePropertyNumber(value)
+    case FieldTypesEnum.ASSETS:
+      return (
+        !value.registrationNumber ||
+        !value.model ||
+        !validateLanguageType(value.color)
+      )
     case FieldTypesEnum.RADIO_BUTTONS:
       return !value?.label?.is
     case FieldTypesEnum.DROPDOWN_LIST:
@@ -53,6 +59,13 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
     default:
       return false
   }
+}
+
+const validateLanguageType = (
+  value?: { is?: string | null; en?: string | null } | null,
+) => {
+  if (!value) return false
+  return !!value.is && !!value.en
 }
 
 const validateBanknumber = (value?: string) => {
