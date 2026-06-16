@@ -132,11 +132,12 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE_INPUTS,
+  type: ApplicationTypes.EXAMPLE_INPUTS_SDF,
   name: 'Example Inputs SDF',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  translationNamespaces: ApplicationConfigurations.ExampleInputs.translation,
+  translationNamespaces:
+    ApplicationConfigurations.ExampleInputsSdf.translation,
   dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,

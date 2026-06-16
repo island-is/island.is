@@ -10,6 +10,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/examples/example-folder-structure-and-conventions'
     ),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-inputs'),
+  [ApplicationTypes.EXAMPLE_INPUTS_SDF]: () =>
     import('@island.is/application/templates/v2/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-no-inputs'),

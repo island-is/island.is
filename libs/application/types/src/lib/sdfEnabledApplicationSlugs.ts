@@ -10,6 +10,6 @@
  * `slug` here — `sdfEnabledApplicationSlugs.spec.ts` enforces parity.
  */
 export const SDF_ENABLED_APPLICATION_SLUGS: readonly string[] = [
-  'example-inputs',
+  'example-inputs-sdf',
   'endurmat-brunabotamats2',
 ]

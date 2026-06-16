@@ -7,6 +7,7 @@ import { MainForm } from './mainForm'
 import { completedForm } from './completedForm'
 import { displayFieldSubsection } from './mainForm/simpleInputsSection/displayFieldSubsection'
 import { evaluateFormExpression } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/application/types'
 
 jest.mock('@island.is/island-ui/theme', () => ({
   theme: {
@@ -97,6 +98,36 @@ const normalizeMainFormParityAst = (value: unknown): unknown => {
   return normalized
 }
 
+// The SDF application is a distinct application type (`EXAMPLE_INPUTS_SDF`) but
+// reuses the legacy `ExampleInputsService` by namespacing its template-api
+// actions (e.g. `ExampleInputs.getReferenceData`). The legacy app does not
+// namespace (its own type IS the service id). Strip that namespace so the
+// data-provider items compare equal on everything that affects rendering.
+const NAMESPACE_PREFIX = `${ApplicationTypes.EXAMPLE_INPUTS}.`
+
+const normalizePrerequisitesParityAst = (value: unknown): unknown => {
+  const normalized = normalizeFormAst(value)
+
+  if (Array.isArray(normalized)) {
+    return normalized.map(normalizePrerequisitesParityAst)
+  }
+
+  if (normalized !== null && typeof normalized === 'object') {
+    return Object.fromEntries(
+      Object.entries(normalized as Record<string, unknown>).map(
+        ([entryKey, entryValue]) =>
+          (entryKey === 'action' || entryKey === 'actionId') &&
+          typeof entryValue === 'string' &&
+          entryValue.startsWith(NAMESPACE_PREFIX)
+            ? [entryKey, entryValue.slice(NAMESPACE_PREFIX.length)]
+            : [entryKey, normalizePrerequisitesParityAst(entryValue)],
+      ),
+    )
+  }
+
+  return normalized
+}
+
 const getDisplayValue = (
   subsection: unknown,
   id: string,
@@ -145,8 +176,8 @@ const expectDisplayFieldClientServerParity = (
 
 describe('example-inputs v2 form parity', () => {
   it('matches the legacy prerequisites form AST', () => {
-    expect(normalizeFormAst(Prerequisites)).toEqual(
-      normalizeFormAst(legacyPrerequisites),
+    expect(normalizePrerequisitesParityAst(Prerequisites)).toEqual(
+      normalizePrerequisitesParityAst(legacyPrerequisites),
     )
   })
 

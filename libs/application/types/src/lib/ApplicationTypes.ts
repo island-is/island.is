@@ -3,6 +3,7 @@ export enum ApplicationTypes {
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_INPUTS_SDF = 'ExampleInputsSdf',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
@@ -126,6 +127,10 @@ export const ApplicationConfigurations: Record<
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
+    translation: ['exi.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EXAMPLE_INPUTS_SDF]: {
+    slug: 'example-inputs-sdf',
     translation: ['exi.application', 'uiForms.application'],
     useSdf: true,
   },
