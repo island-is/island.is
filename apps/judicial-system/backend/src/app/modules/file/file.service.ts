@@ -484,10 +484,7 @@ export class FileService {
     transaction: Transaction,
   ): Promise<CaseFile> {
     let finalOrderWithinChapter = createFile.orderWithinChapter
-    if (
-      createFile.orderWithinChapter === undefined &&
-      !createFile.category
-    ) {
+    if (createFile.orderWithinChapter === undefined && !createFile.category) {
       const maxOrder = await this.fileModel.max<number | null, CaseFile>(
         'orderWithinChapter',
         {

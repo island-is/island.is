@@ -5,7 +5,9 @@ import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
  * - If ALL files have orderWithinChapter set: sort by that index.
  * - Otherwise (legacy cases): preserve backend order (created ASC) — return as-is.
  */
-export const sortCaseFiles = <T extends Pick<CaseFile, 'orderWithinChapter' | 'created'>>(
+export const sortCaseFiles = <
+  T extends Pick<CaseFile, 'orderWithinChapter' | 'created'>,
+>(
   files: T[],
 ): T[] => {
   const allHaveOrder = files.every(
