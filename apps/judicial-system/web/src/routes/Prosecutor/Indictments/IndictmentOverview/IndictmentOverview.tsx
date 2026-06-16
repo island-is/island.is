@@ -299,6 +299,7 @@ const IndictmentOverview: FC = () => {
               !shouldDisplayReviewDecision && !canDuplicateIndictment
             }
             nextIsDisabled={
+              !canDuplicateIndictment &&
               shouldDisplayReviewDecision &&
               (isReviewMissing || !hasReviewDecisionChanged)
             }
