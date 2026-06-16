@@ -91,7 +91,7 @@ export class NotificationController {
     @Body() appealNotificationDto: AppealNotificationDto,
   ): Promise<SendNotificationResponse> {
     this.logger.debug(
-      `Adding ${appealNotificationDto.type} appeal notification for case ${caseId} to queue`,
+      `Adding ${appealNotificationDto.type} appeal notification for appeal case ${appealCase.id} of case ${caseId} to queue`,
     )
 
     return this.notificationService.addMessagesForAppealNotificationToQueue(
