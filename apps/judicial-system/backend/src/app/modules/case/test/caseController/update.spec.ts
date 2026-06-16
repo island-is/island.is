@@ -191,6 +191,18 @@ describe('CaseController - Update', () => {
       )
     })
 
+    it('should not enqueue the completed for some notification', () => {
+      expect(mockQueuedMessages).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            body: {
+              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            },
+          }),
+        ]),
+      )
+    })
+
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
     })
@@ -251,6 +263,21 @@ describe('CaseController - Update', () => {
         user,
         transaction,
         undefined,
+      )
+    })
+
+    it('should enqueue the completed for some notification', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+            user,
+            caseId,
+            body: {
+              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            },
+          },
+        ]),
       )
     })
   })

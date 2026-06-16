@@ -17,9 +17,13 @@ import {
   PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  getHumanReadableCaseIndictmentRulingDecision,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
+  DefendantEventType,
   IndictmentCaseNotificationType,
   TrackedNotificationType,
   UserDescriptor,
@@ -36,6 +40,7 @@ import {
   Case,
   DateLog,
   Defendant,
+  DefendantEventLog,
   InstitutionContactRepositoryService,
   Notification,
   Recipient,
@@ -573,6 +578,90 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return result
   }
 
+  private async sendIndictmentCompletedForSomeNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtName = applyDativeCaseToCourtName(
+      theCase.court?.name || 'héraðsdómi',
+    )
+
+    // The notification reflects the decision(s) actually recorded on the
+    // concluded defendants. A defendant is concluded if it has a dismissed or
+    // cancelled event log.
+    const rulingDecisions = [
+      ...new Set(
+        (theCase.defendants ?? [])
+          .map((defendant) => {
+            const eventLog = DefendantEventLog.getEventLogByEventType(
+              [
+                DefendantEventType.INDICTMENT_CANCELLED,
+                DefendantEventType.INDICTMENT_DISMISSED,
+              ],
+              defendant.eventLogs,
+            )
+
+            if (!eventLog) {
+              return undefined
+            }
+
+            return getHumanReadableCaseIndictmentRulingDecision(
+              eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            )
+          })
+          .filter((decision) => decision !== undefined),
+      ),
+    ].join(' / ')
+
+    const subject = `Lyktir skráðar í máli ${theCase.courtCaseNumber}`
+    const body = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${rulingDecisions}<br>Skjöl málsins eru aðgengileg á yfirlitssíðu málsins í Réttarvörslugátt.`
+
+    // DEFENDERS
+    const defenders = _uniqBy(
+      theCase.defendants?.filter(
+        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
+      ) ?? [],
+      (defendant) => defendant.defenderEmail,
+    )
+
+    // CIVIL CLAIMANT SPOKESPERSONS
+    const spokespersons = _uniqBy(
+      theCase.civilClaimants?.filter(
+        ({ hasSpokesperson, isSpokespersonConfirmed }) =>
+          hasSpokesperson && isSpokespersonConfirmed,
+      ) ?? [],
+      (civilClaimant) => civilClaimant.spokespersonEmail,
+    )
+
+    const to: { name?: string; email?: string }[] = [
+      ...defenders.map((defendant) => ({
+        name: defendant.defenderName,
+        email: defendant.defenderEmail,
+      })),
+      ...spokespersons.map((civilClaimant) => ({
+        name: civilClaimant.spokespersonName,
+        email: civilClaimant.spokespersonEmail,
+      })),
+    ]
+
+    // PROSECUTOR
+    if (theCase.prosecutor) {
+      to.push({
+        name: theCase.prosecutor.name,
+        email: theCase.prosecutor.email,
+      })
+    }
+
+    return this.sendEmails(
+      theCase,
+      TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+      subject,
+      body,
+      to,
+    )
+  }
+
   private sendNotification(
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
@@ -587,6 +676,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME:
+        return this.sendIndictmentCompletedForSomeNotifications(theCase)
       case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION:
         return this.sendDrivingLicenseSuspensionNotifications(theCase)
       default:
