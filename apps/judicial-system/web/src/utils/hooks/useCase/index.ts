@@ -252,6 +252,7 @@ const useCase = () => {
         id: string,
         notificationType: TrackedNotificationType,
         eventOnly?: boolean,
+        properties?: { [key: string]: string },
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -260,6 +261,7 @@ const useCase = () => {
                 caseId: id,
                 type: notificationType,
                 eventOnly,
+                properties,
               },
             },
           })

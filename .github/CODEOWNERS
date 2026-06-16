@@ -540,7 +540,6 @@ libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/        
 # DevOps
 /.github/                                                                                                                    @island-is/devops
 /scripts/ci/                                                                                                                 @island-is/devops
-/packer/                                                                                                                     @island-is/devops
 /.githooks/                                                                                                                  @island-is/devops
 /apps/reference-backend/                                                                                                     @island-is/devops
 /apps/github-actions-cache/                                                                                                  @island-is/devops

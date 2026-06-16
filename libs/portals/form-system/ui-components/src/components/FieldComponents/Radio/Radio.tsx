@@ -71,7 +71,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
           <Inline space={1}>
             <Text variant="h4">{item?.name?.[lang]}</Text>
             {item?.isRequired && (
-              <Text variant="h4" as="span">
+              <Text variant="h4" as="span" fontWeight="medium" color="red600">
                 *
               </Text>
             )}

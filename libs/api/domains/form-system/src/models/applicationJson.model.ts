@@ -29,6 +29,12 @@ export class ApplicationJsonField {
   @Field(() => String)
   screenIdentifier!: string
 
+  @Field(() => LanguageType, { nullable: true })
+  screenTitle?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  fieldTitle?: LanguageType
+
   @Field(() => String)
   fieldType!: string
 
@@ -43,6 +49,9 @@ export class ApplicationJsonField {
 export class ApplicationJson {
   @Field(() => String)
   id!: string
+
+  @Field(() => String)
+  organizationNationalId!: string
 
   @Field(() => String)
   slug!: string

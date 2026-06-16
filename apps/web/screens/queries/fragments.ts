@@ -392,6 +392,7 @@ export const slices = gql`
       id
       slug
       title
+      type
       processEntry {
         ...ProcessEntryFields
       }
