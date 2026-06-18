@@ -98,14 +98,13 @@ export const Exemptions = () => {
       <Text>{formatMessage(om.sailorExemptionsIntro)}</Text>
       <Box marginTop={3}>
         <LinkButton
-          to="#"
+          to={formatMessage(om.sailorExemptionsLinkUrl)}
           text={formatMessage(om.sailorExemptionsLinkText)}
           icon="open"
           variant="utility"
-          disabled
         />
       </Box>
-      {loading && <CardLoader />}
+      {loading && <Box marginTop={6}><CardLoader /></Box>}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>

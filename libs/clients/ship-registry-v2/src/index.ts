@@ -23,7 +23,7 @@ export type {
   ShipRegistrationInfoParsedDto,
 } from './lib/dtos/ship.dto'
 export type {
-  RankDto,
+  GetRanksResponse,
   ShipBaseInfoDto,
   Translation,
   ValueMessageDto,

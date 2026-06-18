@@ -368,7 +368,15 @@
               "*/*": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/RankDto" }
+                  "items": {
+                    "type": "object",
+                    "required": ["rank_id", "rank", "rank_en"],
+                    "properties": {
+                      "rank_id": { "type": "integer", "format": "int32" },
+                      "rank": { "type": "string" },
+                      "rank_en": { "type": "string" }
+                    }
+                  }
                 }
               }
             }

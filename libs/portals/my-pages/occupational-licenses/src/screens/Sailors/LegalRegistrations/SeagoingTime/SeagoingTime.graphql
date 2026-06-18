@@ -39,10 +39,8 @@ query ShipRegistrySailorSeagoingTime(
       }
     }
   }
-  ... @defer {
-    shipRegistryRanks(locale: $locale) {
-      id
-      name
-    }
+  shipRegistryRanks(locale: $locale) {
+    id
+    name
   }
 }

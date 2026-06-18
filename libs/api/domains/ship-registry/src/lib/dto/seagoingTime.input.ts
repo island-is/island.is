@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, Float, InputType, Int } from '@nestjs/graphql'
 
 @InputType('ShipRegistrySeagoingTimeInput')
 export class SeagoingTimeInput {
@@ -10,6 +10,15 @@ export class SeagoingTimeInput {
 
   @Field(() => Int, { nullable: true })
   rankId?: number
+
+  @Field(() => Float, { nullable: true })
+  fromOrEqLength?: number
+
+  @Field(() => Float, { nullable: true })
+  fromOrEqMainEnginePower?: number
+
+  @Field(() => Float, { nullable: true })
+  fromOrEqBruttoWeight?: number
 
   @Field(() => Int)
   pageNumber!: number

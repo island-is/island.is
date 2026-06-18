@@ -58,17 +58,16 @@ export const SeaServiceBooks = () => {
 
   return (
     <Box>
-      <Text>{formatMessage(om.sailorMaritimeBooksIntro)}</Text>
+      <Text>{formatMessage(om.sailorSeaServiceBooksIntro)}</Text>
       <Box marginTop={3}>
         <LinkButton
-          to="#"
-          text={formatMessage(om.sailorMaritimeBooksLinkText)}
+          to={formatMessage(om.sailorSeaServiceBooksLinkUrl)}
+          text={formatMessage(om.sailorSeaServiceBooksLinkText)}
           icon="open"
           variant="utility"
-          disabled
         />
       </Box>
-      {loading && <CardLoader />}
+      {loading && <Box marginTop={6}><CardLoader /></Box>}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>
@@ -88,7 +87,7 @@ export const SeaServiceBooks = () => {
               <Table
                 columns={columns}
                 data={filtered}
-                emptyMessage={om.sailorMaritimeBooksEmpty}
+                emptyMessage={om.sailorSeaServiceBooksEmpty}
                 mobileTitleKey="id"
               />
             )}

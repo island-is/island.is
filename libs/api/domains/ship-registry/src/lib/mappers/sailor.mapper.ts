@@ -1,5 +1,5 @@
 import type {
-  RankDto,
+  GetRanksResponse,
   SailorMaritimeBookDto,
   SailorRegistrationExemptionDto,
   SailorRightCertificateDto,
@@ -161,10 +161,10 @@ export const mapToSailorSeagoingTime = (
 })
 
 export const mapToRanks = (
-  dtos: RankDto[],
+  dtos: GetRanksResponse,
   locale: LocaleEnum,
 ): ShipRegistryRank[] =>
   dtos.map((rank) => ({
-    id: String(rank.ID),
-    name: locale === LocaleEnum.En ? rank.RANK_EN : rank.RANK,
+    id: String(rank.rank_id),
+    name: locale === LocaleEnum.En ? rank.rank_en : rank.rank,
   }))

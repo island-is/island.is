@@ -11,7 +11,7 @@ import {
   getSailorSchoolCertificates as getSailorSchoolCertificatesApi,
   getShipInfoCertDetail,
   getShipsByOwnerAndFisherySsn,
-  RankDto,
+  GetRanksResponse,
   ShipBaseInfoDto,
 } from '../../gen/fetch'
 import {
@@ -116,9 +116,8 @@ export class ShipRegistryClientV2Service {
     return response ? mapSeagoingTimeResponse(response) : null
   }
 
-  async getRanks(): Promise<RankDto[]> {
+  async getRanks(): Promise<GetRanksResponse> {
     const response = await dataOr404Null(getRanksApi())
-
     return response ?? []
   }
 }

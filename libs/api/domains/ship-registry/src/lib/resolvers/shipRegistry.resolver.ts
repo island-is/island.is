@@ -5,8 +5,9 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { LocaleEnum } from '@island.is/nest/graphql'
 import { ShipSearch } from '../models/ship-search.model'
 import { ShipSearchInput } from '../dto/ship-search.input'
-import { ShipRegistryRank } from '../models/rank.model'
 import { SailorsService } from '../services/sailors.service'
+import { ShipRegistryRank } from '../models/rank.model'
+import { BypassAuth } from '@island.is/auth-nest-tools'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver(() => ShipSearch)
@@ -21,11 +22,9 @@ export class ShipRegistryResolver {
     return this.service.findShipByNameOrNumber(input)
   }
 
-  @Query(() => [ShipRegistryRank], {
-    name: 'shipRegistryRanks',
-    nullable: true,
-  })
-  async shipRegistryRanks(
+  @Query(() => [ShipRegistryRank], { name: 'shipRegistryRanks' })
+  @BypassAuth()
+  async getRanks(
     @Args('locale', {
       type: () => LocaleEnum,
       nullable: true,

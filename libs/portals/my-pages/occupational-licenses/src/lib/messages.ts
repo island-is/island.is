@@ -233,8 +233,8 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-tab-exemptions',
     defaultMessage: 'Undanþágur',
   },
-  sailorTabMaritimeBooks: {
-    id: 'sp.occupational-licenses:sailor-tab-maritime-books',
+  sailorTabSeaServiceBooks: {
+    id: 'sp.occupational-licenses:sailor-tab-sea-service-books',
     defaultMessage: 'Sjóferðabækur',
   },
   sailorCrewRegistrationsTabsLabel: {
@@ -253,6 +253,10 @@ export const olMessage = defineMessages({
   sailorExemptionsLinkText: {
     id: 'sp.occupational-licenses:sailor-exemptions-link-text',
     defaultMessage: 'Nánar um undanþágur',
+  },
+  sailorExemptionsLinkUrl: {
+    id: 'sp.occupational-licenses:sailor-exemptions-link-url',
+    defaultMessage: 'https://island.is/undanthagur',
   },
   sailorColumnShip: {
     id: 'sp.occupational-licenses:sailor-column-ship',
@@ -282,21 +286,25 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-crew-registrations-exemptions-empty',
     defaultMessage: 'Engar undanþágur fundust',
   },
-  sailorMaritimeBooksIntro: {
-    id: 'sp.occupational-licenses:sailor-maritime-books-intro',
+  sailorSeaServiceBooksIntro: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-intro',
     defaultMessage:
       'Hér finnur þú upplýsingar um útgefnar sjóferðabækur sjómanns.',
   },
-  sailorMaritimeBooksLinkText: {
-    id: 'sp.occupational-licenses:sailor-maritime-books-link-text',
+  sailorSeaServiceBooksLinkText: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-link-text',
     defaultMessage: 'Nánar um sjóferðabækur',
   },
-  sailorMaritimeBooksEmpty: {
-    id: 'sp.occupational-licenses:sailor-maritime-books-empty',
+  sailorSeaServiceBooksLinkUrl: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-link-url',
+    defaultMessage: 'https://island.is/sjoferdabok',
+  },
+  sailorSeaServiceBooksEmpty: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-empty',
     defaultMessage: 'Engar sjóferðabækur fundust',
   },
-  sailorMaritimeBooksType: {
-    id: 'sp.occupational-licenses:sailor-maritime-books-type',
+  sailorSeaServiceBooksType: {
+    id: 'sp.occupational-licenses:sailor-sea-service-books-type',
     defaultMessage: 'Tegund',
   },
   sailorSeaServiceRankAll: {
@@ -338,5 +346,29 @@ export const olMessage = defineMessages({
   sailorSeaServiceTotalWorkDays: {
     id: 'sp.occupational-licenses:sailor-sea-service-total-work-days',
     defaultMessage: 'Samtals',
+  },
+  sailorSeaServiceMinLength: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-length',
+    defaultMessage: 'Yfir lengd (m)',
+  },
+  sailorSeaServiceMinLengthPlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-length-placeholder',
+    defaultMessage: 'Skráðu metra',
+  },
+  sailorSeaServiceMinPower: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-power',
+    defaultMessage: 'Yfir afl (kW)',
+  },
+  sailorSeaServiceMinPowerPlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-power-placeholder',
+    defaultMessage: 'Skráðu kW',
+  },
+  sailorSeaServiceMinTonnage: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage',
+    defaultMessage: 'Yfir brúttotonn',
+  },
+  sailorSeaServiceMinTonnagePlaceholder: {
+    id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage-placeholder',
+    defaultMessage: 'Skráðu brúttotonn',
   },
 })

@@ -35,6 +35,7 @@ import {
 import { ShipRegistrySailorSeagoingTimeCollection } from '../models/sailorSeagoingTime.model'
 import { SeagoingTimeInput } from '../dto/seagoingTime.input'
 import { SailorsService } from '../services/sailors.service'
+import { ShipRegistryRank } from '../models/rank.model'
 
 const namespace = '@island.is/api/ship-registry'
 

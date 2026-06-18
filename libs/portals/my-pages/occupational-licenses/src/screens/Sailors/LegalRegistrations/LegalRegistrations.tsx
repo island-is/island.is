@@ -27,6 +27,7 @@ const LegalRegistrations = () => {
         <Tabs
           label={formatMessage(om.sailorCrewRegistrationsTabsLabel)}
           contentBackground="white"
+          selected="seagoing-service"
           onlyRenderSelectedTab
           tabs={[
             {
@@ -49,7 +50,7 @@ const LegalRegistrations = () => {
             },
             {
               id: 'sea-service-books',
-              label: formatMessage(om.sailorTabMaritimeBooks),
+              label: formatMessage(om.sailorTabSeaServiceBooks),
               content: (
                 <Box marginTop={6}>
                   <SeaServiceBooks />

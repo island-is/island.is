@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -6,6 +6,7 @@ import {
   DatePicker,
   GridColumn,
   GridRow,
+  Input,
   Pagination,
   Select,
   Stack,
@@ -27,41 +28,61 @@ import {
   ShipRegistrySailorCrewRegistration,
   ShipRegistrySailorCrewRegistrationField,
 } from '@island.is/api/schema'
-import { useShipRegistrySailorSeagoingTimeQuery } from './SeagoingTime.generated'
+import { useShipRegistrySailorSeagoingTimeLazyQuery } from './SeagoingTime.generated'
+import * as styles from './SeagoingTime.css'
 
 const PAGE_SIZE = 20
 
 type SeaServiceState = {
-  pendingDateFrom?: Date
-  pendingDateTo?: Date
-  pendingRankId?: string
-  activeDateFrom?: Date
-  activeDateTo?: Date
-  activeRankId?: string
+  dateFrom?: Date
+  dateTo?: Date
+  rankId?: string
+  length?: string
+  power?: string
+  tonnage?: string
   page?: number
+}
+
+const defaultState: SeaServiceState = {
+  dateFrom: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+  dateTo: new Date(),
 }
 
 const columnHelper = createColumnHelper<ShipRegistrySailorCrewRegistration>()
 
 export const SeagoingTime = () => {
   const { formatMessage, locale } = useLocale()
-  const [state, setState] = useState<SeaServiceState>({})
+  const [state, setState] = useState<SeaServiceState>(defaultState)
 
   const patchState = (patch: Partial<SeaServiceState>) =>
     setState((s) => ({ ...s, ...patch }))
 
-  const { data, loading, error } = useShipRegistrySailorSeagoingTimeQuery({
-    variables: {
-      input: {
-        pageNumber: state.page ?? 1,
-        pageSize: PAGE_SIZE,
-        dateFrom: state.activeDateFrom?.toISOString(),
-        dateTo: state.activeDateTo?.toISOString(),
-        rankId: state.activeRankId ? Number(state.activeRankId) : undefined,
-      },
-      locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
-    },
+  const [execute, { data, loading, error }] =
+    useShipRegistrySailorSeagoingTimeLazyQuery()
+
+  const buildInput = (s: SeaServiceState) => ({
+    pageNumber: s.page ?? 1,
+    pageSize: PAGE_SIZE,
+    dateFrom: s.dateFrom?.toISOString(),
+    dateTo: s.dateTo?.toISOString(),
+    rankId: s.rankId ? Number(s.rankId) : undefined,
+    fromOrEqLength:
+      s.length && !isNaN(Number(s.length)) ? Number(s.length) : undefined,
+    fromOrEqMainEnginePower:
+      s.power && !isNaN(Number(s.power)) ? Number(s.power) : undefined,
+    fromOrEqBruttoWeight:
+      s.tonnage && !isNaN(Number(s.tonnage)) ? Number(s.tonnage) : undefined,
   })
+
+  useEffect(() => {
+    execute({
+      variables: {
+        input: buildInput(defaultState),
+        locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale])
 
   const seagoingTime = data?.shipRegistrySailor?.seagoingTime
   const entries = seagoingTime?.data ?? []
@@ -80,14 +101,37 @@ export const SeagoingTime = () => {
     return [all, ...ranks]
   }, [data?.shipRegistryRanks, formatMessage])
 
-  const selectedRank = rankOptions.find(
-    (o) => o.value === (state.pendingRankId ?? ''),
-  )
+  const selectedRank = rankOptions.find((o) => o.value === (state.rankId ?? ''))
 
   const valueLabels = useMemo(() => {
     const labels = seagoingTime?.valueLabels ?? []
     return Object.fromEntries(labels.map((vl) => [vl.entryField, vl.label]))
   }, [seagoingTime?.valueLabels])
+
+  const statsItems = useMemo(
+    () =>
+      seagoingTime
+        ? [
+            {
+              label: formatMessage(om.sailorSeaServiceTotalCrewDays),
+              value: seagoingTime.totalCrewRegistrationDayCount,
+            },
+            {
+              label: formatMessage(om.sailorSeaServiceServiceDays),
+              value: seagoingTime.seaServiceDayCount,
+            },
+            {
+              label: formatMessage(om.sailorSeaServiceWorkAshoreDays),
+              value: seagoingTime.workAshoreDayCount,
+            },
+            {
+              label: formatMessage(om.sailorSeaServiceTotalWorkDays),
+              value: seagoingTime.totalWorkDays,
+            },
+          ]
+        : null,
+    [seagoingTime, formatMessage],
+  )
 
   const columns = useMemo(
     () => [
@@ -144,21 +188,21 @@ export const SeagoingTime = () => {
           {
             title:
               valueLabels[ShipRegistrySailorCrewRegistrationField.LENGTH] ?? '',
-            value: formatValueUnit(length),
+            value: formatValueUnit(length, { locale }),
           },
           {
             title:
               valueLabels[
                 ShipRegistrySailorCrewRegistrationField.GROSS_TONNAGE
               ] ?? '',
-            value: formatValueUnit(grossTonnage),
+            value: formatValueUnit(grossTonnage, { locale, omitUnit: true }),
           },
           {
             title:
               valueLabels[
                 ShipRegistrySailorCrewRegistrationField.MAIN_ENGINE
               ] ?? '',
-            value: formatValueUnit(mainEngine),
+            value: formatValueUnit(mainEngine, { locale }),
           },
         ]}
       />
@@ -168,90 +212,122 @@ export const SeagoingTime = () => {
   return (
     <Stack space={4}>
       {/* Stats card */}
-      <Box
-        border="standard"
-        borderRadius="large"
-        padding={3}
-        display="flex"
-        flexWrap="wrap"
-        columnGap={6}
-        rowGap={3}
-      >
-        {[
-          {
-            label: formatMessage(om.sailorSeaServiceTotalCrewDays),
-            value: seagoingTime?.totalCrewRegistrationDayCount,
-          },
-          {
-            label: formatMessage(om.sailorSeaServiceServiceDays),
-            value: seagoingTime?.seaServiceDayCount,
-          },
-          {
-            label: formatMessage(om.sailorSeaServiceWorkAshoreDays),
-            value: seagoingTime?.workAshoreDayCount,
-          },
-          {
-            label: formatMessage(om.sailorSeaServiceTotalWorkDays),
-            value: seagoingTime?.totalWorkDays,
-          },
-        ].map(({ label, value }) => (
-          <Box key={label} display="flex" flexDirection="column" rowGap={1}>
-            <Text variant="small">{label}</Text>
-            <Text variant="h3">{value ?? '-'}</Text>
-          </Box>
-        ))}
-      </Box>
-
+      {statsItems && (
+        <Box border="standard" borderRadius="large" padding={3} display="flex">
+          {statsItems.map(({ label, value }, index) => (
+            <Box
+              key={label}
+              display="flex"
+              flexDirection="column"
+              rowGap={1}
+              paddingLeft={index > 0 ? 4 : undefined}
+              paddingRight={4}
+              borderLeftWidth={index > 0 ? 'standard' : undefined}
+              borderColor="blue200"
+              style={{ flex: 1 }}
+            >
+              <Text variant="small">{label}</Text>
+              <Text variant="h3">{value ?? '-'}</Text>
+            </Box>
+          ))}
+        </Box>
+      )}
       {/* Filters */}
       <GridRow>
-        <GridColumn span={['12/12', '3/12']}>
-          <DatePicker
-            label={formatMessage(om.sailorSeaServiceDateFrom)}
-            placeholderText=""
-            locale="is"
-            backgroundColor="blue"
-            selected={state.pendingDateFrom}
-            handleChange={(d) => patchState({ pendingDateFrom: d })}
-          />
+        <GridColumn span={['12/12', '4/12']}>
+          <Box className={styles.datePicker}>
+            <DatePicker
+              label={formatMessage(om.sailorSeaServiceDateFrom)}
+              placeholderText=""
+              locale="is"
+              size="sm"
+              backgroundColor="blue"
+              selected={state.dateFrom}
+              handleChange={(d) => patchState({ dateFrom: d })}
+            />
+          </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '3/12']}>
-          <DatePicker
-            label={formatMessage(om.sailorSeaServiceDateTo)}
-            placeholderText=""
-            locale="is"
-            backgroundColor="blue"
-            selected={state.pendingDateTo}
-            handleChange={(d) => patchState({ pendingDateTo: d })}
-          />
+        <GridColumn span={['12/12', '4/12']}>
+          <Box className={styles.datePicker}>
+            <DatePicker
+              label={formatMessage(om.sailorSeaServiceDateTo)}
+              placeholderText=""
+              locale="is"
+              size="sm"
+              backgroundColor="blue"
+              selected={state.dateTo}
+              handleChange={(d) => patchState({ dateTo: d })}
+            />
+          </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '3/12']}>
+        <GridColumn span={['12/12', '4/12']}>
           <Select
             label={formatMessage(om.sailorSeaServiceRank)}
             name="seaServiceRank"
+            size="sm"
             options={rankOptions}
             value={selectedRank}
-            onChange={(opt) => patchState({ pendingRankId: opt?.value ?? '' })}
+            onChange={(opt) => patchState({ rankId: opt?.value ?? '' })}
             backgroundColor="blue"
           />
         </GridColumn>
-        <GridColumn span={['12/12', '3/12']}>
-          <Box display="flex" alignItems="flexEnd" height="full">
-            <Button
-              onClick={() =>
-                patchState({
-                  activeDateFrom: state.pendingDateFrom,
-                  activeDateTo: state.pendingDateTo,
-                  activeRankId: state.pendingRankId,
-                  page: 1,
-                })
-              }
-            >
-              {formatMessage(om.sailorSeaServiceSearchButton)}
-            </Button>
-          </Box>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '4/12']}>
+          <Input
+            label={formatMessage(om.sailorSeaServiceMinLength)}
+            placeholder={formatMessage(om.sailorSeaServiceMinLengthPlaceholder)}
+            name="seaServiceMinLength"
+            size="sm"
+            type="number"
+            backgroundColor="blue"
+            value={state.length ?? ''}
+            onChange={(e) => patchState({ length: e.target.value })}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '4/12']}>
+          <Input
+            label={formatMessage(om.sailorSeaServiceMinPower)}
+            placeholder={formatMessage(om.sailorSeaServiceMinPowerPlaceholder)}
+            name="seaServiceMinPower"
+            size="sm"
+            type="number"
+            backgroundColor="blue"
+            value={state.power ?? ''}
+            onChange={(e) => patchState({ power: e.target.value })}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '4/12']}>
+          <Input
+            label={formatMessage(om.sailorSeaServiceMinTonnage)}
+            placeholder={formatMessage(
+              om.sailorSeaServiceMinTonnagePlaceholder,
+            )}
+            name="seaServiceMinTonnage"
+            size="sm"
+            type="number"
+            backgroundColor="blue"
+            value={state.tonnage ?? ''}
+            onChange={(e) => patchState({ tonnage: e.target.value })}
+          />
         </GridColumn>
       </GridRow>
-
+      <Box className={styles.searchButton}>
+        <Button
+          fluid
+          onClick={() => {
+            patchState({ page: 1 })
+            execute({
+              variables: {
+                input: buildInput({ ...state, page: 1 }),
+                locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+              },
+            })
+          }}
+        >
+          {formatMessage(om.sailorSeaServiceSearchButton)}
+        </Button>
+      </Box>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && entries.length === 0 && (
@@ -272,12 +348,24 @@ export const SeagoingTime = () => {
                 page={state.page ?? 1}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
-                  <button
+                  <Box
+                    cursor="pointer"
                     className={className}
-                    onClick={() => patchState({ page })}
+                    component="button"
+                    onClick={() => {
+                      const newState = { ...state, page }
+                      patchState({ page })
+                      execute({
+                        variables: {
+                          input: buildInput(newState),
+                          locale:
+                            locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+                        },
+                      })
+                    }}
                   >
                     {children}
-                  </button>
+                  </Box>
                 )}
               />
             </Box>
