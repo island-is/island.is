@@ -25,7 +25,10 @@ import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
-import { DrivingLicenseCategory } from './drivingLicense.type'
+import {
+  DrivingLicenseApplicationType,
+  DrivingLicenseCategory,
+} from './drivingLicense.type'
 
 const daysOfResidency = 365
 
@@ -391,6 +394,43 @@ describe('DrivingLicenseService', () => {
         requirementMet: false,
         errorCode: 'SOME REASON',
       })
+    })
+
+    it('attaches the RLS description for a B-full denial code in the catalogue', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForCategoryFull')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        'B-full',
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_POINTS',
+      )
+      expect(canApply?.message).toBe('Þú ert með punkta á ökuskírteini')
+    })
+
+    it('does not attach RLS text for renewal-65 (unbounded codes); errorCode only', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getCanApplyForRenewal65')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER,
+        MOCK_NATIONAL_ID,
+        // Runtime value the GraphQL String field actually receives, even though
+        // it is outside the narrower DrivingLicenseApplicationType TS union.
+        'B-full-renewal-65' as DrivingLicenseApplicationType,
+      )
+
+      const canApply = response.requirements.find(
+        (r) => r.errorCode === 'HAS_POINTS',
+      )
+      expect(canApply).toBeDefined()
+      expect(canApply?.message).toBeUndefined()
     })
   })
 
