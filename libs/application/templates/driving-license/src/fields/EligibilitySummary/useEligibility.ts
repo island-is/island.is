@@ -29,7 +29,8 @@ const QUERY = gql`
         requirementMet
         daysOfResidency
         errorCode
-        message
+        messageIs
+        messageEn
       }
     }
   }

@@ -413,9 +413,10 @@ describe('DrivingLicenseService', () => {
       const canApply = response.requirements.find(
         (r) => r.errorCode === 'HAS_NO_SIGNATURE',
       )
-      expect(canApply?.message).toBe(
+      expect(canApply?.messageIs).toBe(
         'Einstaklingur hefur ekki undirskrift á skrá',
       )
+      expect(canApply?.messageEn).toBe('Person has no signature on file')
     })
 
     it('does not attach RLS text for renewal-65 (unbounded codes); errorCode only', async () => {
@@ -435,19 +436,18 @@ describe('DrivingLicenseService', () => {
         (r) => r.errorCode === 'HAS_POINTS',
       )
       expect(canApply).toBeDefined()
-      expect(canApply?.message).toBeUndefined()
+      expect(canApply?.messageIs).toBeUndefined()
+      expect(canApply?.messageEn).toBeUndefined()
     })
   })
 
   describe('describeErrorCode', () => {
-    it('returns the Icelandic description for a known code', async () => {
+    it('returns both language descriptions for a known code', async () => {
       const result = await service.describeErrorCode('HAS_POINTS')
-      expect(result).toBe('Þú ert með punkta á ökuskírteini')
-    })
-
-    it('returns the English description when locale is en', async () => {
-      const result = await service.describeErrorCode('HAS_POINTS', 'en')
-      expect(result).toBe('You have points on your license')
+      expect(result).toEqual({
+        is: 'Þú ert með punkta á ökuskírteini',
+        en: 'You have points on your license',
+      })
     })
 
     it('returns null for a code not in the catalogue', async () => {

@@ -18,5 +18,8 @@ export class ApplicationEligibilityRequirement {
   errorCode?: string
 
   @Field({ nullable: true })
-  message?: string
+  messageIs?: string
+
+  @Field({ nullable: true })
+  messageEn?: string
 }

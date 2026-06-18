@@ -285,12 +285,13 @@ export class DrivingLicenseService {
     // modelled as closed unions of confirmed eligibility reasons. Renewal-65
     // (and BE) codes are modelled as open strings, so we don't surface their
     // RLS text until RLS flags which codes are applicant-facing. errorCode is
-    // still attached for every denial (telemetry); only the message is gated.
+    // still attached for every denial (telemetry); only the messages are gated.
+    // Both languages are attached; the frontend renders the one for its locale.
     const rlsFallbackEnabledForType = type === 'B-full' || type === 'B-temp'
-    const canApplyMessage =
+    const canApplyMessages =
       rlsFallbackEnabledForType && !canApply.result && canApply.errorCode
-        ? (await this.describeErrorCode(canApply.errorCode)) ?? undefined
-        : undefined
+        ? await this.describeErrorCode(canApply.errorCode)
+        : null
 
     const requirements: ApplicationEligibilityRequirement[] = [
       ...(type === 'B-full'
@@ -325,7 +326,8 @@ export class DrivingLicenseService {
         key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
         requirementMet: canApply.result,
         ...(canApply.errorCode ? { errorCode: canApply.errorCode } : {}),
-        ...(canApplyMessage ? { message: canApplyMessage } : {}),
+        ...(canApplyMessages?.is ? { messageIs: canApplyMessages.is } : {}),
+        ...(canApplyMessages?.en ? { messageEn: canApplyMessages.en } : {}),
       },
     ]
 
@@ -374,15 +376,15 @@ export class DrivingLicenseService {
   }
 
   /**
-   * Resolve RLS's own human-readable description for an error code, from the
-   * cached error-code catalogue. Locale-aware (defaults to Icelandic), returns
-   * null for an unknown code. Reusable by any scope:api consumer; submission /
-   * practice-permit (other scopes) should call the client wrapper directly.
+   * Resolve RLS's own human-readable descriptions (both languages) for an error
+   * code, from the cached error-code catalogue. Returns null for an unknown
+   * code. The caller attaches both and the frontend picks by locale. Reusable
+   * by any scope:api consumer; submission / practice-permit (other scopes)
+   * should call the client wrapper directly.
    */
   async describeErrorCode(
     code: string,
-    locale: 'is' | 'en' = 'is',
-  ): Promise<string | null> {
+  ): Promise<{ is: string | null; en: string | null } | null> {
     try {
       const descriptions =
         await this.drivingLicenseApi.getErrorCodeDescriptions()
@@ -390,9 +392,10 @@ export class DrivingLicenseService {
       if (!match) {
         return null
       }
-      return (
-        (locale === 'en' ? match.descriptionEn : match.descriptionIs) ?? null
-      )
+      return {
+        is: match.descriptionIs ?? null,
+        en: match.descriptionEn ?? null,
+      }
     } catch (e) {
       // Best-effort fallback copy: a codetable outage must never fail the
       // caller (e.g. the whole eligibility query). Log and fall through so the

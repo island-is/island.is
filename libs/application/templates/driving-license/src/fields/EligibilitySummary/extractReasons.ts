@@ -3,15 +3,23 @@ import { requirementsMessages } from '../../lib/messages'
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
 import { ReviewSectionState, Step } from './ReviewSection'
 
-export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
+export const extractReasons = (
+  eligibility: ApplicationEligibility,
+  locale: 'is' | 'en' = 'is',
+): Step[] => {
   return eligibility.requirements.map(
-    ({ key, requirementMet, daysOfResidency, message }) => ({
-      ...requirementKeyToStep(key, requirementMet, message ?? undefined),
-      state: requirementMet
-        ? ReviewSectionState.complete
-        : ReviewSectionState.requiresAction,
-      daysOfResidency: daysOfResidency ?? undefined,
-    }),
+    ({ key, requirementMet, daysOfResidency, messageIs, messageEn }) => {
+      // RLS text is already translated; pick the current locale. For en with no
+      // English text, fall through to the generic message (not Icelandic).
+      const message = (locale === 'en' ? messageEn : messageIs) ?? undefined
+      return {
+        ...requirementKeyToStep(key, requirementMet, message),
+        state: requirementMet
+          ? ReviewSectionState.complete
+          : ReviewSectionState.requiresAction,
+        daysOfResidency: daysOfResidency ?? undefined,
+      }
+    },
   )
 }
 

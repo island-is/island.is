@@ -127,8 +127,10 @@ export interface ApplicationEligibilityRequirement {
   daysOfResidency?: number
   // Raw RLS error code (when the unmet requirement came from a can-apply denial)
   errorCode?: string
-  // RLS's own human-readable description for that code, resolved by locale
-  message?: string
+  // RLS's own human-readable description for that code, both languages; the
+  // frontend renders the one matching the current locale.
+  messageIs?: string
+  messageEn?: string
 }
 
 export interface ApplicationEligibility {
