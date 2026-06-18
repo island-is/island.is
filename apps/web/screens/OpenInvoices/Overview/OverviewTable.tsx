@@ -71,7 +71,7 @@ export const OverviewTable = ({
       },
       {
         Header: formatMessage(m.overview.customer),
-        accessor: (row) => row.customer.name,
+        accessor: (row) => row.debtor.name,
         sortType: 'basic',
       },
       {
@@ -176,8 +176,8 @@ export const OverviewTable = ({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (row as any).isExpanded && (
                   <NestedLines
-                    supplierId={row.original.supplier.id}
-                    customerId={row.original.customer.id}
+                    supplierLegalId={row.original.supplier.id}
+                    debtorLegalId={row.original.debtor.id}
                     total={row.original.totalSum}
                     dateFrom={dateFrom}
                     dateTo={dateTo}

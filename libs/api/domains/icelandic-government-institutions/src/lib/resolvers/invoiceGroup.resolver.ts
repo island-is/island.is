@@ -29,14 +29,13 @@ export class InvoiceGroupResolver {
     if (!group) return null
 
     return {
-      id: `${group.supplier.id}-${group.customer.id}`,
+      id: `${group.debtor.id}-${group.supplier.id}`,
       supplier: group.supplier,
-      customer: group.customer,
+      debtor: group.debtor,
       totalCount: group.totalCount,
       totalSum: group.totalSum,
       dateFrom: input.dateFrom,
       dateTo: input.dateTo,
-      types: input.types,
       invoices: group.invoices,
     }
   }

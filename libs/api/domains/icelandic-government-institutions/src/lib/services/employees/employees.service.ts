@@ -1,34 +1,20 @@
-import { GovernmentInvoicesClientService } from '@island.is/clients/government-invoices'
 import { Injectable } from '@nestjs/common'
 import { Employees } from '../../models/employees.model'
-import { mapEmployee } from '../../mappers/employeeMapper'
-import { isDefined } from '@island.is/shared/utils'
 import type { Locale } from '@island.is/shared/types'
 import { type IEmployeesService } from './employees.service.interface'
 
+// TODO: employee data requires a separate API endpoint not yet in the OpenAPI spec.
+// Returning empty until the endpoint is added to clientConfig.json and codegen re-run.
 @Injectable()
 export class EmployeesService implements IEmployeesService {
-  constructor(private govInvoicesService: GovernmentInvoicesClientService) {}
-
   async getEmployees(
-    organizationId: string,
-    locale: Locale,
+    _organizationId: string,
+    _locale: Locale,
   ): Promise<Employees> {
-    const data = await this.govInvoicesService.getOrganizationEmployees(
-      organizationId,
-    )
-
     return {
-      data: data
-        .map((e) => mapEmployee(e))
-        .filter(isDefined)
-        .sort((a, b) => a.name.localeCompare(b.name, locale)),
-      totalCount: data.length,
-      //until better
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-      },
+      data: [],
+      totalCount: 0,
+      pageInfo: { hasNextPage: false, hasPreviousPage: false },
     }
   }
 }

@@ -1,7 +1,17 @@
-import { EmployeeDto } from '@island.is/clients/government-invoices'
 import { Employee } from '../models/employee.model'
 
-export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {
+export interface EmployeeData {
+  employeeName?: string
+  jobName?: string
+  email?: string
+  workPhone?: string
+  locationAddress?: string
+  locationDescription?: string
+  locationPostalCode?: string
+  organizationName?: string
+}
+
+export const mapEmployee = (employee: EmployeeData): Employee | undefined => {
   if (!employee.employeeName) {
     return undefined
   }
@@ -9,7 +19,7 @@ export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {
     name: employee.employeeName,
     job: employee.jobName ?? undefined,
     email: employee.email ?? undefined,
-    phoneNumber: employee.workPhone ?? undefined,
+    phoneNumber: employee.workPhone ? parseInt(employee.workPhone) : undefined,
     location: employee.locationAddress
       ? {
           address: employee.locationAddress ?? undefined,
@@ -18,6 +28,6 @@ export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {
         }
       : undefined,
     department: employee.organizationName ?? undefined,
-    currentlyActive: undefined, //not sure what this should be
+    currentlyActive: undefined,
   }
 }

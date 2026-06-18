@@ -1,14 +1,14 @@
-import { CustomersInput } from '../../dtos/getCustomers.input'
+import { DebtorsInput } from '../../dtos/getDebtors.input'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
 import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
-import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
+import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
-import { Customers } from '../../models/customers.model'
+import { Debtors } from '../../models/debtors.model'
 import { InvoiceGroup } from '../../models/invoiceGroup.model'
 import { InvoiceGroupCollection } from '../../models/invoiceGroups.model'
 import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
-import { InvoiceTypes } from '../../models/invoiceTypes.model'
+import { Ministries } from '../../models/ministries.model'
 import { Suppliers } from '../../models/suppliers.model'
 
 export interface IInvoicesService {
@@ -17,8 +17,8 @@ export interface IInvoicesService {
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroupCollection | null>
   getSuppliers(input?: SuppliersInput): Promise<Suppliers | null>
-  getCustomers(input?: CustomersInput): Promise<Customers | null>
-  getInvoiceTypes(input?: InvoiceTypesInput): Promise<InvoiceTypes | null>
+  getDebtors(input?: DebtorsInput): Promise<Debtors | null>
+  getMinistries(input?: MinistriesInput): Promise<Ministries | null>
   getInvoicePaymentTypes(
     input?: InvoicePaymentTypesInput,
   ): Promise<InvoicePaymentTypes | null>

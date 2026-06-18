@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
   query IcelandicGovernmentInstitutionsInvoicesFilters {
     icelandicGovernmentInstitutionsInvoicesFilters {
-      customers {
+      debtors {
         totalCount
         data {
           id
@@ -37,6 +37,17 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
           hasNextPage
         }
       }
+      ministries {
+        totalCount
+        data {
+          code
+          name
+        }
+        pageInfo {
+          __typename
+          hasNextPage
+        }
+      }
     }
   }
 `
@@ -53,7 +64,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         isConfidential
         isPrivateProxy
       }
-      customer {
+      debtor {
         id
         name
       }
@@ -90,7 +101,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           isConfidential
           isPrivateProxy
         }
-        customer {
+        debtor {
           id
           name
         }

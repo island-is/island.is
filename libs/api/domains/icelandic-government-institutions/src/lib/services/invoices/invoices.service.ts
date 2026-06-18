@@ -2,14 +2,14 @@ import { GovernmentInvoicesClientService } from '@island.is/clients/government-i
 import { Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
-import { CustomersInput } from '../../dtos/getCustomers.input'
-import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
+import { DebtorsInput } from '../../dtos/getDebtors.input'
+import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
-import { Customers } from '../../models/customers.model'
-import { InvoiceTypes } from '../../models/invoiceTypes.model'
+import { Debtors } from '../../models/debtors.model'
+import { Ministries } from '../../models/ministries.model'
 import { Suppliers } from '../../models/suppliers.model'
-import { mapCustomers } from '../../mappers/customerMapper'
-import { mapInvoiceTypes } from '../../mappers/invoiceTypeMapper'
+import { mapDebtors } from '../../mappers/debtorMapper'
+import { mapMinistries } from '../../mappers/ministryMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
 import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
 import { InvoiceGroup } from '../../models/invoiceGroup.model'
@@ -49,21 +49,28 @@ export class InvoicesService implements IInvoicesService {
       totalPaymentsCount: data.totalPaymentsCount,
       totalPaymentsSum: data.totalPaymentsSum,
       totalCount: data.totalCount,
-      //temp page info
-      pageInfo: {
-        hasNextPage: false,
-      },
+      pageInfo: data.pageInfo ?? { hasNextPage: false },
     }
   }
 
-  async getCustomers(input?: CustomersInput): Promise<Customers | null> {
-    const data = await this.govInvoicesService.getCustomers(input)
+  async getDebtors(input?: DebtorsInput): Promise<Debtors | null> {
+    const data = await this.govInvoicesService.getDebtors(input)
 
     if (!data) {
       return null
     }
 
-    return mapCustomers(data)
+    return mapDebtors(data)
+  }
+
+  async getMinistries(input?: MinistriesInput): Promise<Ministries | null> {
+    const data = await this.govInvoicesService.getMinistries(input)
+
+    if (!data) {
+      return null
+    }
+
+    return mapMinistries(data)
   }
 
   async getInvoicePaymentTypes(
@@ -76,18 +83,6 @@ export class InvoicesService implements IInvoicesService {
     }
 
     return mapInvoicePaymentTypes(data)
-  }
-
-  async getInvoiceTypes(
-    input?: InvoiceTypesInput,
-  ): Promise<InvoiceTypes | null> {
-    const data = await this.govInvoicesService.getInvoiceTypes(input)
-
-    if (!data) {
-      return null
-    }
-
-    return mapInvoiceTypes(data)
   }
 
   async getSuppliers(input?: SuppliersInput): Promise<Suppliers | null> {

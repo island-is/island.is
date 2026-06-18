@@ -4,7 +4,7 @@ import { Supplier } from '../models/supplier.model'
 
 export const mapSuppliers = (data: SuppliersDto): Suppliers => {
   const suppliers: Supplier[] = data.suppliers.map((supplier) => ({
-    id: supplier.id,
+    id: supplier.legalId,
     name: supplier.name,
     isConfidential: supplier.isConfidential,
     isPrivateProxy: supplier.isPrivateProxy,

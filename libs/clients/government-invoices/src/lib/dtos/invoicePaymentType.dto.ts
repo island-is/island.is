@@ -1,4 +1,4 @@
-import { TegundResponseDto } from '../../../gen/fetch'
+import { PaymentTypeResponseDto } from '../../../gen/fetch'
 
 export interface InvoicePaymentTypeDto {
   code: string
@@ -8,16 +8,14 @@ export interface InvoicePaymentTypeDto {
 }
 
 export const mapInvoicePaymentTypeDto = (
-  invoiceType: TegundResponseDto,
+  paymentType: PaymentTypeResponseDto,
 ): InvoicePaymentTypeDto | null => {
-  if (!invoiceType.id || !invoiceType.code || !invoiceType.name) {
+  if (!paymentType.code || !paymentType.name) {
     return null
   }
 
   return {
-    code: invoiceType.code,
-    name: invoiceType.name,
-    accountType: invoiceType.accountType ?? undefined,
-    isConfidential: invoiceType.isConfidential ?? undefined,
+    code: paymentType.code,
+    name: paymentType.name,
   }
 }

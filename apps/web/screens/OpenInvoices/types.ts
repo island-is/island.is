@@ -1,7 +1,8 @@
 export interface OverviewFilters {
   suppliers?: Array<Filter>
-  customers?: Array<Filter>
+  debtors?: Array<Filter>
   invoicePaymentTypes?: Array<Filter>
+  ministries?: Array<Filter>
 }
 
 interface Filter {

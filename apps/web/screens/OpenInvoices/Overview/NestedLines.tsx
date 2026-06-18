@@ -11,16 +11,16 @@ import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP } from './Overview.
 import * as styles from './Overview.css'
 
 interface Props {
-  supplierId: string
-  customerId: string
+  supplierLegalId: string
+  debtorLegalId: string
   total: number
   dateFrom?: Date
   dateTo?: Date
 }
 
 export const NestedLines = ({
-  supplierId,
-  customerId,
+  supplierLegalId,
+  debtorLegalId,
   dateFrom,
   dateTo,
   total,
@@ -32,8 +32,8 @@ export const NestedLines = ({
     {
       variables: {
         input: {
-          supplier: +supplierId,
-          customer: +customerId,
+          supplierLegalId,
+          debtorLegalId,
           dateFrom: dateFrom,
           dateTo: dateTo,
         },

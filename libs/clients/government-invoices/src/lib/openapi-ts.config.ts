@@ -7,21 +7,6 @@ export default defineConfig({
     format: 'prettier',
     lint: 'eslint',
   },
-  parser: {
-    filters: {
-      operations: {
-        include: [
-          'GET /v1/openinvoices/invoices',
-          'GET /v1/openinvoices/invoices/{supplierId}/{customerId}',
-          'GET /v1/openinvoices/suppliers',
-          'GET /v1/openinvoices/customers',
-          'GET /v1/openinvoices/paymenttypes',
-          'GET /v1/openinvoices/types',
-          'GET /v1/organization_employee/get_employees_for_organization',
-        ],
-      },
-    },
-  },
   plugins: [
     '@hey-api/client-fetch',
     {

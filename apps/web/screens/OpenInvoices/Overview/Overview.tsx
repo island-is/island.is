@@ -4,7 +4,6 @@ import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import {
   parseAsArrayOf,
-  parseAsInteger,
   parseAsIsoDateTime,
   parseAsString,
   useQueryState,
@@ -118,11 +117,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   )
   const [suppliers, setSuppliers] = useQueryState(
     'suppliers',
-    parseAsArrayOf(parseAsInteger),
+    parseAsArrayOf(parseAsString),
   )
-  const [customers, setCustomers] = useQueryState(
-    'customers',
-    parseAsArrayOf(parseAsInteger),
+  const [debtors, setDebtors] = useQueryState(
+    'debtors',
+    parseAsArrayOf(parseAsString),
   )
 
   const totalHits = useMemo(() => {
@@ -146,9 +145,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     getInvoiceGroups({
       variables: {
         input: {
-          customers,
+          debtors,
           suppliers,
-          types: invoicePaymentTypes,
+          paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
           limit: PAGE_SIZE,
@@ -158,7 +157,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [
     getInvoiceGroups,
     initialRender,
-    customers,
+    debtors,
     suppliers,
     invoicePaymentTypes,
     dateRangeStart,
@@ -169,7 +168,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     fetchInvoiceGroups()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    customers,
+    debtors,
     locale,
     suppliers,
     invoicePaymentTypes,
@@ -197,9 +196,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     getInvoiceGroups({
       variables: {
         input: {
-          customers,
+          debtors,
           suppliers,
-          types: invoicePaymentTypes,
+          paymentTypeIds: invoicePaymentTypes,
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
           limit: PAGE_SIZE,
@@ -214,7 +213,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     setDateRangeEnd(null)
     setInvoiceTypes(null)
     setSuppliers(null)
-    setCustomers(null)
+    setDebtors(null)
   }
 
   const hitsMessage = useMemo(() => {
@@ -269,11 +268,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         break
       }
       case 'suppliers': {
-        setSuppliers(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
+        setSuppliers(filteredValues)
         break
       }
-      case 'customers': {
-        setCustomers(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
+      case 'debtors': {
+        setDebtors(filteredValues)
         break
       }
     }
@@ -326,8 +325,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 searchState={{
                   invoicePaymentTypes:
                     invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
-                  suppliers: suppliers?.map((s) => s.toString()) ?? undefined,
-                  customers: customers?.map((c) => c.toString()) ?? undefined,
+                  suppliers: suppliers ?? undefined,
+                  debtors: debtors ?? undefined,
                   dateRange: [
                     dateRangeStart.toISOString(),
                     dateRangeEnd.toISOString(),
@@ -358,10 +357,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                           })) ?? [],
                       },
                       {
-                        id: 'customers',
+                        id: 'debtors',
                         label: formatMessage(m.search.customers),
                         items:
-                          filters?.customers?.map((filter) => ({
+                          filters?.debtors?.map((filter) => ({
                             value: filter.value,
                             label: filter.name,
                           })) ?? [],
@@ -465,11 +464,11 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
                 value: supplier.id,
               }),
             ) ?? [],
-          customers:
-            icelandicGovernmentInstitutionsInvoicesFilters.customers?.data?.map(
-              (customer) => ({
-                name: customer.name,
-                value: customer.id,
+          debtors:
+            icelandicGovernmentInstitutionsInvoicesFilters.debtors?.data?.map(
+              (debtor) => ({
+                name: debtor.name,
+                value: debtor.id,
               }),
             ) ?? [],
           invoicePaymentTypes:
@@ -477,6 +476,13 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
               (invoiceType) => ({
                 name: invoiceType.name,
                 value: invoiceType.code,
+              }),
+            ) ?? undefined,
+          ministries:
+            icelandicGovernmentInstitutionsInvoicesFilters?.ministries?.data?.map(
+              (ministry) => ({
+                name: ministry.name,
+                value: ministry.code,
               }),
             ) ?? undefined,
         }
@@ -491,20 +497,14 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     return undefined
   }
 
-  const [customersFilter, suppliersFilter, invoicePaymentTypesFilter]: Array<
+  const [debtorsFilter, suppliersFilter, invoicePaymentTypesFilter]: Array<
     Array<string> | undefined
-  > = ['customers', 'suppliers', 'invoicePaymentTypes'].map((resource) =>
+  > = ['debtors', 'suppliers', 'invoicePaymentTypes'].map((resource) =>
     filterArray<string>(arrayParser.parseServerSide(query?.[resource])),
   )
 
-  const customersInput =
-    customersFilter
-      ?.map((customerId) => parseInt(customerId) ?? null)
-      .filter(isDefined) || undefined
-  const suppliersInput =
-    suppliersFilter
-      ?.map((supplierId) => parseInt(supplierId) ?? null)
-      .filter(isDefined) || undefined
+  const debtorsInput = debtorsFilter?.filter(isDefined) || undefined
+  const suppliersInput = suppliersFilter?.filter(isDefined) || undefined
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
 
   const dateToInput =
@@ -524,9 +524,9 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
       input: {
         dateFrom: dateFromInput,
         dateTo: dateToInput,
-        customers: customersInput,
+        debtors: debtorsInput,
         suppliers: suppliersInput,
-        types: invoicePaymentTypesInput,
+        paymentTypeIds: invoicePaymentTypesInput,
       },
     },
   })

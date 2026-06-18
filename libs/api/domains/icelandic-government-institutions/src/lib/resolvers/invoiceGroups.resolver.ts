@@ -32,7 +32,6 @@ export class InvoiceGroupsResolver {
       ...groups,
       dateFrom: input.dateFrom,
       dateTo: input.dateTo,
-      types: input.types,
     }
   }
 
@@ -42,16 +41,19 @@ export class InvoiceGroupsResolver {
   })
   @BypassAuth()
   async getInvoicesFilters(): Promise<InvoicesFilters | null> {
-    const [customers, suppliers, invoicePaymentTypes] = await Promise.all([
-      this.invoiceService.getCustomers({ limit: 1000 }),
-      this.invoiceService.getSuppliers({ limit: 1000 }),
-      this.invoiceService.getInvoicePaymentTypes({ limit: 1000 }),
-    ])
+    const [debtors, suppliers, invoicePaymentTypes, ministries] =
+      await Promise.all([
+        this.invoiceService.getDebtors({ limit: 1000 }),
+        this.invoiceService.getSuppliers({ limit: 1000 }),
+        this.invoiceService.getInvoicePaymentTypes({ limit: 1000 }),
+        this.invoiceService.getMinistries({ limit: 1000 }),
+      ])
 
     return {
-      customers: customers ?? undefined,
+      debtors: debtors ?? undefined,
       suppliers: suppliers ?? undefined,
       invoicePaymentTypes: invoicePaymentTypes ?? undefined,
+      ministries: ministries ?? undefined,
     }
   }
 }
