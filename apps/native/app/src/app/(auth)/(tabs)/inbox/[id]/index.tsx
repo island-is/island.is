@@ -147,14 +147,16 @@ export default function DocumentScreen() {
     if (!document.id) {
       return
     }
+    const action = document.archived ? 'unarchive' : 'archive'
     try {
-      const result = await toggleAction(
-        document.archived ? 'unarchive' : 'archive',
-        document.id,
-      )
+      const result = await toggleAction(action, document.id)
       if (!result.data?.postMailActionV2?.success) {
         showActionError('archive')
+        return
       }
+      toast.success(
+        intl.formatMessage({ id: `documentDetail.${action}Success` }),
+      )
     } catch {
       showActionError('archive')
     }
@@ -164,14 +166,16 @@ export default function DocumentScreen() {
     if (!document.id) {
       return
     }
+    const action = document.bookmarked ? 'unbookmark' : 'bookmark'
     try {
-      const result = await toggleAction(
-        document.bookmarked ? 'unbookmark' : 'bookmark',
-        document.id,
-      )
+      const result = await toggleAction(action, document.id)
       if (!result.data?.postMailActionV2?.success) {
         showActionError('bookmark')
+        return
       }
+      toast.success(
+        intl.formatMessage({ id: `documentDetail.${action}Success` }),
+      )
     } catch {
       showActionError('bookmark')
     }
