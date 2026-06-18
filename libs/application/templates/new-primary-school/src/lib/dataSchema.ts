@@ -192,9 +192,7 @@ export const dataSchema = z.object({
     .object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
-      selectedLanguages: z
-        .array(z.object({ code: z.string().optional().nullable() }))
-        .optional(),
+      selectedLanguages: z.array(z.object({ code: z.string() })).optional(),
       preferredLanguage: z.string().optional().nullable(),
     })
     .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {

@@ -56,6 +56,7 @@ const FriggOptionsAsyncSelectField: FC<
         placeholder,
         defaultValue,
         marginBottom,
+        setOnChange: [{ key: 'languages.selectedLanguages', value: [] }],
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
           const { data } = await apolloClient.query<
