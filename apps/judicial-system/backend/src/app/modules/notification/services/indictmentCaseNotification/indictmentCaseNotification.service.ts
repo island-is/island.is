@@ -580,34 +580,39 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendIndictmentCompletedForSomeNotifications(
     theCase: Case,
+    newDecisions?: CaseIndictmentRulingDecision[],
   ): Promise<DeliverResponse> {
     const courtName = applyDativeCaseToCourtName(
       theCase.court?.name || 'héraðsdómi',
     )
 
-    // One notification per concluded defendant — each carries only that
-    // defendant's ruling decision so recipients can distinguish between them.
-    const concludedDecisions = (theCase.defendants ?? [])
-      .map((defendant) => {
-        const eventLog = DefendantEventLog.getEventLogByEventType(
-          [
-            DefendantEventType.INDICTMENT_CANCELLED,
-            DefendantEventType.INDICTMENT_DISMISSED,
-          ],
-          defendant.eventLogs,
-        )
+    // One notification per newly concluded defendant — use the decisions passed
+    // in by the caller so previously concluded defendants are not re-notified
+    // on sequential partial completions. Fall back to deriving from case event
+    // logs only for in-flight messages that predate this parameter.
+    const concludedDecisions = newDecisions
+      ? newDecisions.map(getHumanReadableCaseIndictmentRulingDecision)
+      : (theCase.defendants ?? [])
+          .map((defendant) => {
+            const eventLog = DefendantEventLog.getEventLogByEventType(
+              [
+                DefendantEventType.INDICTMENT_CANCELLED,
+                DefendantEventType.INDICTMENT_DISMISSED,
+              ],
+              defendant.eventLogs,
+            )
 
-        if (!eventLog) {
-          return undefined
-        }
+            if (!eventLog) {
+              return undefined
+            }
 
-        return getHumanReadableCaseIndictmentRulingDecision(
-          eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
-            ? CaseIndictmentRulingDecision.CANCELLATION
-            : CaseIndictmentRulingDecision.DISMISSAL,
-        )
-      })
-      .filter((decision) => decision !== undefined)
+            return getHumanReadableCaseIndictmentRulingDecision(
+              eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            )
+          })
+          .filter((decision) => decision !== undefined)
 
     if (concludedDecisions.length === 0) {
       return { delivered: true }
@@ -693,6 +698,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
     user?: UserDescriptor,
+    concludedDecisions?: CaseIndictmentRulingDecision[],
   ): Promise<DeliverResponse> {
     switch (notificationType) {
       case IndictmentCaseNotificationType.COURT_DATE:
@@ -704,7 +710,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME:
-        return this.sendIndictmentCompletedForSomeNotifications(theCase)
+        return this.sendIndictmentCompletedForSomeNotifications(
+          theCase,
+          concludedDecisions,
+        )
       case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION:
         return this.sendDrivingLicenseSuspensionNotifications(theCase)
       default:
@@ -718,10 +727,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     type: IndictmentCaseNotificationType,
     theCase: Case,
     user?: UserDescriptor,
+    concludedDecisions?: CaseIndictmentRulingDecision[],
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
     try {
-      return await this.sendNotification(type, theCase, user)
+      return await this.sendNotification(type, theCase, user, concludedDecisions)
     } catch (error) {
       this.logger.error('Failed to send indictment case notification', error)
 

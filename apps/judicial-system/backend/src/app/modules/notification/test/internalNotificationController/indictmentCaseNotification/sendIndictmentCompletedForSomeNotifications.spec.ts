@@ -4,8 +4,8 @@ import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseIndictmentRulingDecision,
   CaseType,
-  DefendantEventType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
 import {
@@ -24,7 +24,10 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  theCase: Case,
+  concludedDecisions: CaseIndictmentRulingDecision[],
+) => Promise<Then>
 
 describe('IndictmentCaseService - send indictment completed for some', () => {
   const caseId = uuid()
@@ -45,13 +48,18 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     mockEmailService = emailService
     mockConfig = notificationConfig
 
-    givenWhenThen = async (theCase: Case) => {
+    givenWhenThen = async (
+      theCase: Case,
+      concludedDecisions: CaseIndictmentRulingDecision[],
+    ) => {
       const then = {} as Then
 
       await indictmentCaseNotificationService
         .sendIndictmentCaseNotification(
           IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
           theCase,
+          undefined,
+          concludedDecisions,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -76,12 +84,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
-          eventLogs: [
-            {
-              eventType: DefendantEventType.INDICTMENT_DISMISSED,
-              created: new Date('2026-02-23T23:59:59.999Z'),
-            },
-          ],
+          eventLogs: [],
         },
         {
           isDefenderChoiceConfirmed: true,
@@ -100,7 +103,9 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       ],
     } as Case
 
-    const then = await givenWhenThen(theCase)
+    const then = await givenWhenThen(theCase, [
+      CaseIndictmentRulingDecision.DISMISSAL,
+    ])
 
     const defenderUrl = `${mockConfig.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}`
     const prosecutorUrl = `${mockConfig.clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}`
@@ -153,12 +158,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           isDefenderChoiceConfirmed: false,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
-          eventLogs: [
-            {
-              eventType: DefendantEventType.INDICTMENT_CANCELLED,
-              created: new Date('2026-02-23T23:59:59.999Z'),
-            },
-          ],
+          eventLogs: [],
         },
       ],
       civilClaimants: [
@@ -171,7 +171,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       ],
     } as Case
 
-    await givenWhenThen(theCase)
+    await givenWhenThen(theCase, [CaseIndictmentRulingDecision.CANCELLATION])
 
     expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
   })
@@ -184,28 +184,21 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
-          eventLogs: [
-            {
-              eventType: DefendantEventType.INDICTMENT_DISMISSED,
-              created: new Date('2026-02-23T23:59:59.999Z'),
-            },
-          ],
+          eventLogs: [],
         },
         {
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
           defenderEmail: 'bb@defender.is',
-          eventLogs: [
-            {
-              eventType: DefendantEventType.INDICTMENT_CANCELLED,
-              created: new Date('2026-02-23T23:59:59.999Z'),
-            },
-          ],
+          eventLogs: [],
         },
       ],
     } as Case
 
-    await givenWhenThen(theCase)
+    await givenWhenThen(theCase, [
+      CaseIndictmentRulingDecision.DISMISSAL,
+      CaseIndictmentRulingDecision.CANCELLATION,
+    ])
 
     // 2 concluded defendants × 3 recipients (AA defender, BB defender, prosecutor)
     expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(6)
