@@ -297,10 +297,13 @@ jobs:
           BASE_REF: ${{ github.event.merge_group.base_ref || github.ref_name }}
         run: |
           set -euo pipefail
-          curl -L --fail "https://github.com/DataDog/datadog-ci/releases/latest/download/datadog-ci_linux-x64" \
+          DATADOG_CI_VERSION="v5.19.0"
+          curl -L --fail "https://github.com/DataDog/datadog-ci/releases/download/${DATADOG_CI_VERSION}/datadog-ci_linux-x64" \
             --output ./datadog-ci && chmod +x ./datadog-ci
 
           FINISHED_AT="$(date +%s)"
+          # started_at must be < finished_at per API contract.
+          # This value does not affect the four DORA metrics (lead time uses commit timestamp).
           STARTED_AT=$((FINISHED_AT - 1))
           REPO_URL="${{ github.server_url }}/${{ github.repository }}"
           COMMIT_SHA="${{ github.sha }}"
@@ -308,7 +311,7 @@ jobs:
           # Determine environment from base branch
           if [[ "$BASE_REF" == "refs/heads/main" || "$BASE_REF" == "main" ]]; then
             DEPLOY_ENV="dev"
-          elif [[ "$BASE_REF" =~ release/ ]]; then
+          elif [[ "$BASE_REF" =~ ^(refs/heads/)?release/ ]]; then
             DEPLOY_ENV="prod"
           else
             echo "Unknown base ref: $BASE_REF, skipping DORA events"
