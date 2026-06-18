@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, type JSX } from 'react';
 import {
   Controller,
   useFieldArray,

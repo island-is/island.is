@@ -10,7 +10,7 @@
  * - Opens EditChange/EditCancellation modals via local state
  * - No document.location.reload() — parent refreshes through state
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type JSX } from 'react';
 import {
   ActionCard,
   AlertMessage,

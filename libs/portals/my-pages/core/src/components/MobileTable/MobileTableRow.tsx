@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, type JSX } from 'react';
 import AnimateHeight from 'react-animate-height'
 import * as styles from './MobileTable.css'
 import cn from 'classnames'

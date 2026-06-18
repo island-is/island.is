@@ -73,8 +73,13 @@ export const BackgroundImage = ({
   },
   format,
 }: BaseProps & ExtraProps) => {
-  const intersectionRef = useRef(null)
-  const intersection = useIntersection(intersectionRef, intersectionOptions)
+  const intersectionRef = useRef<HTMLElement>(null)
+  // React 19 encodes ref nullability in the type arg; react-use's useIntersection wants a
+  // non-null RefObject<HTMLElement>, so narrow at the call site (Box accepts the nullable ref).
+  const intersection = useIntersection(
+    intersectionRef as React.RefObject<HTMLElement>,
+    intersectionOptions,
+  )
   const [shouldLoad, setShouldLoad] = useState<boolean>(false)
   const q = quality >= 0 && quality <= 100 ? quality : 80
   const src = `${image?.url}?w=${width}&q=${q}${format ? `&fm=${format}` : ''}`

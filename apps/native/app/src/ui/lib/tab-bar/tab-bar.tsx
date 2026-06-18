@@ -60,7 +60,7 @@ export function TabBar(props: TabBarProps) {
   const animatedIndex = useRef(new Animated.Value(selectedIndex))
   const indexes = useRef(new Map<number, Animated.Value>())
   const tabWidth = width / props.values.length
-  const animRef = useRef<Animated.CompositeAnimation>()
+  const animRef = useRef<Animated.CompositeAnimation>(undefined)
 
   const animateIndex = (toValue: number) => {
     animRef.current = Animated.spring(animatedIndex.current, {

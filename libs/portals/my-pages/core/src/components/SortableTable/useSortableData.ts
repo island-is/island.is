@@ -17,7 +17,8 @@ const extractTextFromHtml = (html: string): string => {
 
 const extractComparableString = (value: unknown): string => {
   if (isReactElement(value)) {
-    return value.props?.text?.toString?.() ?? ''
+    // React 19 types ReactElement.props as `unknown`; cast to read the optional text prop.
+    return (value.props as any)?.text?.toString?.() ?? ''
   }
   if (typeof value === 'string') {
     if (/<a\s/i.test(value)) {

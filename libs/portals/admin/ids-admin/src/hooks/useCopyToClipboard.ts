@@ -9,7 +9,7 @@ export const useCopyToClipboard = () => {
   const { formatMessage } = useLocale()
 
   const copyToClipboard = useCallback(
-    (ref: RefObject<HTMLInputElement>) => {
+    (ref: RefObject<HTMLInputElement | null>) => {
       if (!ref.current) return
 
       navigator.clipboard.writeText(ref.current.value).then(() => {

@@ -8,7 +8,9 @@ import { useSwipeable } from 'react-swipeable'
 
 type Props = {
   ariaLabel: string
-  disclosure: React.ReactElement
+  // React 19's stricter ReactElement typing makes `.props` `unknown`, breaking the
+  // cloneElement spread below; widen to keep the disclosure-cloning flow type-checked.
+  disclosure: React.ReactElement<any>
   initialVisibility?: boolean
   labelShowResult?: string
   labelClearAll?: string

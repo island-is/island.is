@@ -154,7 +154,7 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
   const saveDraftRef = useRef(saveDraft)
   saveDraftRef.current = saveDraft
 
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   // Near-immediate save for discrete changes (date pick, select).
   // Short delay lets React process the setState from updateDraftField.

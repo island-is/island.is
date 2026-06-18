@@ -10,6 +10,8 @@ import { CustomNextError, CustomNextRedirect } from '../units/errors'
 import { fetch404RedirectUrl } from './fetch404RedirectUrl'
 import { safelyExtractPathnameFromUrl } from './safelyExtractPathnameFromUrl'
 
+import type { JSX } from "react";
+
 // Taken from here: https://github.com/vercel/next.js/discussions/11209#discussioncomment-38480
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deleteUndefined = (obj: Record<string, any> | undefined): void => {

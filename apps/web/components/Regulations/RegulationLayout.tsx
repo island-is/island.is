@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, type JSX } from 'react';
 import { useIntersection } from 'react-use'
 
 import {
@@ -28,7 +28,9 @@ export const RegulationLayout = (props: RegulationLayoutProps) => {
   const mainElmRef = useRef<HTMLDivElement>(null)
   const isIntersecting =
     (
-      useIntersection(mainElmRef, {
+      // react-use wants a non-null RefObject<HTMLElement>; React 19 types the ref as
+      // nullable, so narrow here (same pattern as BackgroundImage).
+      useIntersection(mainElmRef as React.RefObject<HTMLElement>, {
         rootMargin: '0% 0% -100% 0%',
         threshold: 0,
       }) || {}
