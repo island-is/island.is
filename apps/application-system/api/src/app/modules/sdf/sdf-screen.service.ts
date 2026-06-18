@@ -11,6 +11,7 @@ import {
   ApplicationTemplateHelper,
   getFormExpressionDependencies,
   getValueViaPath,
+  resolveFormItemId,
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
@@ -42,6 +43,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ApplicationActionService } from '../application/application-action.service'
 import { ApplicationAccessService } from '../application/tools/applicationAccess.service'
 import { getApplicationNameTranslationString } from '../application/utils/application'
+import { isNewActor } from '../application/utils/delegationUtils'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
 import { applyResolvedFieldDefaults } from './field-default-persistence'
@@ -77,10 +79,6 @@ type ApplicationTemplate = Awaited<
   ReturnType<typeof getApplicationTemplateByTypeId>
 >
 
-type SdfBffUser = BffUser & {
-  nationalId: string
-}
-
 type ApplicationWithPageIndex = ApplicationWithAttachments & {
   pageIndex?: number
 }
@@ -96,7 +94,7 @@ interface ScreenRenderContext {
   form: Form
   filteredAnswers: FormValue
   filteredExternalData: ExternalData
-  bffUser: SdfBffUser
+  bffUser: BffUser
   screens: FormScreen[]
 }
 
@@ -203,6 +201,7 @@ export class SdfScreenService {
       resolvedIndex,
       resolver,
       application as Application,
+      bffUser,
     )
     this.logTiming('Step 7: Build Page', step7Start)
 
@@ -306,16 +305,19 @@ export class SdfScreenService {
     return roleInState
   }
 
-  private buildBffUser(user: User, locale: Locale): SdfBffUser {
+  private buildBffUser(user: User, locale: Locale): BffUser {
     return {
-      nationalId: user.nationalId,
-      scopes: [],
+      scopes: user.scope ?? [],
       profile: {
-        sid: '',
+        sid: user.sid ?? '',
         nationalId: user.nationalId,
         name: '',
         idp: '',
         subjectType: 'person',
+        delegationType: user.delegationType,
+        actor: user.actor
+          ? { nationalId: user.actor.nationalId, name: '' }
+          : undefined,
         locale,
         iss: '',
       },
@@ -827,6 +829,14 @@ export class SdfScreenService {
       return screen
     }
 
+    // Record the acting delegate on the application when answers are persisted,
+    // matching the legacy `PUT /applications/:id` update path. See
+    // ApplicationController.update.
+    const applicantActors: string[] =
+      isNewActor(application, user) && !!user.actor?.nationalId
+        ? [...application.applicantActors, user.actor.nationalId]
+        : application.applicantActors
+
     if (
       currentScreen &&
       'type' in currentScreen &&
@@ -884,6 +894,7 @@ export class SdfScreenService {
         // untouched optional field. Only the write is normalized; validation above
         // ran on the unstripped merge.
         answers: stripEmptyFormValue(mergedAnswers),
+        applicantActors,
         pageIndex: newPageIndex,
       })
 
@@ -902,6 +913,7 @@ export class SdfScreenService {
       // Strip empty strings on write to match legacy; validation above ran on the
       // unstripped merge. See the EDP branch above.
       answers: stripEmptyFormValue(mergedAnswers),
+      applicantActors,
       pageIndex: newPageIndex,
     })
 
@@ -931,10 +943,7 @@ export class SdfScreenService {
       featureFlagClient: this.featureFlagService,
     } as any)
 
-    const bffUser = {
-      nationalId: user.nationalId,
-      profile: { nationalId: user.nationalId, name: '', locale },
-    }
+    const bffUser = this.buildBffUser(user, locale)
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application as Application, roleInState)
 
@@ -942,7 +951,7 @@ export class SdfScreenService {
       form,
       filteredAnswers,
       filteredExternalData,
-      bffUser as any,
+      bffUser,
     )
   }
 
@@ -1026,8 +1035,10 @@ export class SdfScreenService {
 
     const screens = await this.buildScreens(application, template, locale, user)
     if (screens) {
+      const bffUser = this.buildBffUser(user, locale)
       const targetIndex = screens.findIndex(
-        (screen) => screen.id === targetPageId,
+        (screen) =>
+          resolveFormItemId(screen, application, bffUser) === targetPageId,
       )
       if (targetIndex >= 0) {
         const newPageIndex = moveToScreen(screens, targetIndex, false)
@@ -1317,10 +1328,11 @@ export class SdfScreenService {
     index: number,
     resolver: FormTextResolver,
     application: Application,
+    user?: BffUser,
   ): PageDto {
-    const components = mapScreenToComponents(screen, resolver, application)
+    const components = mapScreenToComponents(screen, resolver, application, user)
     return {
-      id: screen.id ?? `page-${index}`,
+      id: resolveFormItemId(screen, application, user) || `page-${index}`,
       index,
       sectionIndex: screen.sectionIndex ?? 0,
       subSectionIndex: screen.subSectionIndex ?? 0,

@@ -19,7 +19,9 @@ import {
 } from '@island.is/application/graphql'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
+import { ErrorShell } from '@island.is/application/ui-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
+import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
 import type { ApplicationCard } from '@island.is/application/types'
 import type { Organization } from '@island.is/shared/types'
 import { useHeaderInfo } from './HeaderInfoProvider'
@@ -38,13 +40,16 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
     clearInfo()
   }, [clearInfo])
 
-  const { data, loading, refetch } = useLocalizedQuery(APPLICATION_CARDS, {
-    variables: {
-      input: { typeId: type },
+  const { data, loading, error, refetch } = useLocalizedQuery(
+    APPLICATION_CARDS,
+    {
+      variables: {
+        input: { typeId: type },
+      },
+      skip: !type,
+      fetchPolicy: 'cache-and-network',
     },
-    skip: !type,
-    fetchPolicy: 'cache-and-network',
-  })
+  )
 
   const { data: orgData, loading: loadingOrg } = useLocalizedQuery(
     GET_ORGANIZATIONS,
@@ -118,6 +123,13 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
         <LoadingDots size="large" />
       </Box>
     )
+  }
+
+  if (error) {
+    const isBadSubject =
+      findProblemInApolloError(error, [ProblemType.BAD_SUBJECT])?.type ===
+      ProblemType.BAD_SUBJECT
+    return <ErrorShell errorType={isBadSubject ? 'badSubject' : 'notExist'} />
   }
 
   if (createError) {

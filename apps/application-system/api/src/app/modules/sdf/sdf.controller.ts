@@ -33,8 +33,9 @@ import { SdfScreenService } from './sdf-screen.service'
 import { ExecuteActionDto, SdfActionType } from './dto/action.dto'
 import { ScreenDto, ValidateResponseDto } from './dto/screen.dto'
 import { createSdfProblem, SdfProblemDetailsDto } from './problem-details'
+import { DelegationGuard } from '../application/guards/delegation.guard'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('sdf')
 @ApiBearerAuth()
 @Controller('sdf')

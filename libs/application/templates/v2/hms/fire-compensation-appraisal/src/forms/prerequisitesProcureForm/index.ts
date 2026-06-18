@@ -6,6 +6,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { propertiesApi } from '../../dataProviders'
 import { dataSchema } from '../../lib/dataSchema'
@@ -44,6 +45,18 @@ export const PrerequisitesProcureForm = new FormBuilder<typeof dataSchema>(
               },
             ],
           })
+
+        // Dev/local-only escape hatch so the submit flow can be tested without payments
+        if (!isRunningOnEnvironment('production')) {
+          page.addCheckboxField('shouldUseMockPayment', '', {
+            options: [
+              {
+                label: 'Enable mock payment (dev only)',
+                value: YES,
+              },
+            ],
+          })
+        }
       })
     },
     { tabTitle: m.confirmReadMessages.title },

@@ -13,7 +13,9 @@ export const addApplicantInfoSubsection = (
     (subSection) => {
       // Common form, fills automatically with applicant information.
       subSection.addPage(
-        applicantInformationPage.id ?? 'applicant',
+        typeof applicantInformationPage.id === 'string'
+          ? applicantInformationPage.id
+          : 'applicant',
         (applicantInformationPage.title ?? '') as FormText,
         (page) => {
           page

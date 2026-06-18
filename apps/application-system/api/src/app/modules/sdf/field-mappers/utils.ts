@@ -1,4 +1,5 @@
 import { FieldTypes } from '@island.is/application/types'
+import { resolveFormItemId } from '@island.is/application/core'
 import { FieldDef } from '@island.is/application/screen-compiler'
 
 import { ComponentDto } from '../dto/screen.dto'
@@ -65,9 +66,9 @@ export const applyRefetchMetadata = (
 export const createBaseComponent = (
   field: FieldDef,
   raw: FieldMapperRaw,
-  { application, resolver }: FieldMapperContext,
+  { application, resolver, user }: FieldMapperContext,
 ): ComponentDto => ({
-  id: field.id,
+  id: resolveFormItemId(field, application, user),
   type: mapFieldType(raw.type as string),
   label: resolver.resolve(raw.title),
   required: (resolveFieldProp(raw.required, application) as boolean) ?? false,

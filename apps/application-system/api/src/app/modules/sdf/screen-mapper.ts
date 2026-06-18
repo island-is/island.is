@@ -1,4 +1,5 @@
 import { Application, FormItemTypes } from '@island.is/application/types'
+import { resolveFieldId, resolveFormItemId } from '@island.is/application/core'
 import {
   FieldDef,
   FormScreen,
@@ -6,6 +7,7 @@ import {
   RepeaterScreen,
   ExternalDataProviderScreen,
 } from '@island.is/application/screen-compiler'
+import type { BffUser } from '@island.is/shared/types'
 import { ComponentDto } from './dto/screen.dto'
 import { FormTextResolver } from './i18n-resolver.service'
 import { asResolvableFormText, mapFieldToComponent } from './field-mappers'
@@ -18,10 +20,13 @@ const mapMultiFieldToComponents = (
   screen: MultiFieldScreen,
   resolver: FormTextResolver,
   application: Application,
+  user?: BffUser,
 ): ComponentDto[] => {
   return screen.children
     .filter(shouldIncludeMultiFieldChildForSdf)
-    .map((child) => mapFieldToComponent(child as FieldDef, resolver, application))
+    .map((child) =>
+      mapFieldToComponent(child as FieldDef, resolver, application, user),
+    )
 }
 
 type RepeaterScreenWithLabels = RepeaterScreen & {
@@ -35,6 +40,7 @@ const mapRepeaterToComponent = (
   screen: RepeaterScreen,
   resolver: FormTextResolver,
   application: Application,
+  user?: BffUser,
 ): ComponentDto => {
   const repeater = screen as RepeaterScreenWithLabels
   const itemGroups: ComponentDto[][] = []
@@ -46,11 +52,11 @@ const mapRepeaterToComponent = (
         (child as { type?: string }).type === FormItemTypes.MULTI_FIELD
       ) {
         const mf = child as MultiFieldScreen
-        const group = mapMultiFieldToComponents(mf, resolver, application)
+        const group = mapMultiFieldToComponents(mf, resolver, application, user)
         itemGroups.push(group)
       } else if ('type' in child) {
         const group = [
-          mapFieldToComponent(child as FieldDef, resolver, application),
+          mapFieldToComponent(child as FieldDef, resolver, application, user),
         ]
         itemGroups.push(group)
       }
@@ -75,15 +81,23 @@ const mapRepeaterToComponent = (
 const mapExternalDataProviderToComponent = (
   screen: ExternalDataProviderScreen,
   resolver: FormTextResolver,
+  application: Application,
+  user?: BffUser,
 ): ComponentDto => {
-  const dataProviders = screen.dataProviders?.map((dp) => ({
-    id: dp.id,
-    title: resolver.resolve(dp.title) || dp.id,
-    subTitle: dp.subTitle ? resolver.resolve(dp.subTitle) : undefined,
-  }))
+  // Data provider ids may be `(application, user) => string`. Resolve them
+  // server-side exactly like the legacy ui-shell does in
+  // `FormExternalDataProvider` via `resolveFieldId`.
+  const dataProviders = screen.dataProviders?.map((dp) => {
+    const id = dp.id ? resolveFieldId({ id: dp.id }, application, user) : ''
+    return {
+      id,
+      title: resolver.resolve(dp.title) || id,
+      subTitle: dp.subTitle ? resolver.resolve(dp.subTitle) : undefined,
+    }
+  })
 
   const component: ComponentDto = {
-    id: screen.id ?? 'external-data',
+    id: resolveFormItemId(screen, application, user) || 'external-data',
     type: 'EXTERNAL_DATA_PROVIDER',
     label: resolver.resolve(asResolvableFormText(screen.title)),
   }
@@ -112,6 +126,7 @@ export const mapScreenToComponents = (
   screen: FormScreen,
   resolver: FormTextResolver,
   application: Application,
+  user?: BffUser,
 ): ComponentDto[] => {
   if ('type' in screen) {
     switch (screen.type) {
@@ -120,6 +135,7 @@ export const mapScreenToComponents = (
           screen as MultiFieldScreen,
           resolver,
           application,
+          user,
         )
       case FormItemTypes.REPEATER:
         return [
@@ -127,6 +143,7 @@ export const mapScreenToComponents = (
             screen as RepeaterScreen,
             resolver,
             application,
+            user,
           ),
         ]
       case FormItemTypes.EXTERNAL_DATA_PROVIDER:
@@ -134,12 +151,16 @@ export const mapScreenToComponents = (
           mapExternalDataProviderToComponent(
             screen as ExternalDataProviderScreen,
             resolver,
+            application,
+            user,
           ),
         ]
       default:
-        return [mapFieldToComponent(screen as FieldDef, resolver, application)]
+        return [
+          mapFieldToComponent(screen as FieldDef, resolver, application, user),
+        ]
     }
   }
 
-  return [mapFieldToComponent(screen as FieldDef, resolver, application)]
+  return [mapFieldToComponent(screen as FieldDef, resolver, application, user)]
 }

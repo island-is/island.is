@@ -10,6 +10,10 @@ export const SdfCustomComponent = ({
   return (
     <CustomComponentRenderer
       componentName={componentName}
+      // Server-resolved id (dynamic `(application, user) => string` ids are
+      // resolved when the screen DTO is built). Passed as a flat prop, outside
+      // the template-controlled `props`.
+      id={component.id}
       rawProps={component.props ?? '{}'}
       onAnswerChange={onAnswerChange}
     />

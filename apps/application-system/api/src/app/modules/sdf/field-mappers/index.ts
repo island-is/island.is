@@ -67,11 +67,13 @@ export const mapFieldToComponent = (
   field: FieldDef,
   resolver: FormTextResolver,
   application: FieldMapperContext['application'],
+  user?: FieldMapperContext['user'],
 ): ComponentDto => {
   const raw = field as FieldMapperRaw
   const context: FieldMapperContext = {
     application,
     resolver,
+    user,
   }
   const component = createBaseComponent(field, raw, context)
 

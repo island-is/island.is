@@ -63,11 +63,14 @@ export class DelegationGuard implements CanActivate {
       // typeId is type of application / applications the user is trying to access
       // Directly accessible in request params or body
       // If the request has the application id in params or the body contains a coded token from the assign application function
-      // then we get the application to get its typeId
+      // then we get the application to get its typeId.
+      // The legacy controller exposes the id as `:id`; the SDF controller uses
+      // `:applicationId`, so we accept either.
+      const applicationId = request.params.id || request.params.applicationId
       const typeId =
         request.query.typeId ||
         request.body.typeId ||
-        (await this.getTypeIdFromApplicationId(request.params.id, user)) ||
+        (await this.getTypeIdFromApplicationId(applicationId, user)) ||
         (await this.getTypeIdFromToken(request.body.token, user))
 
       // Get the delegation types the application type supports

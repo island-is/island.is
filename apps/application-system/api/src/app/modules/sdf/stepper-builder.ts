@@ -29,11 +29,15 @@ export const buildStepper = (
       ) as SubSection[]
 
       return {
-        id: section.id ?? `section-${index}`,
+        id:
+          typeof section.id === 'string' ? section.id : `section-${index}`,
         title: resolver.resolve(section.title),
         isComplete: index < activeSectionIndex,
         children: subSections.map((sub, subIdx) => ({
-          id: sub.id ?? `subsection-${index}-${subIdx}`,
+          id:
+            typeof sub.id === 'string'
+              ? sub.id
+              : `subsection-${index}-${subIdx}`,
           title: resolver.resolve(sub.title),
         })),
       }

@@ -102,7 +102,7 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
       cityRequired: false,
     })
     section.addPage(
-      applicantPage.id ?? 'applicant',
+      typeof applicantPage.id === 'string' ? applicantPage.id : 'applicant',
       (applicantPage.title ?? '') as FormText,
       (page) => {
         page.setDescription(applicantPage.description).addFields(applicantPage.children)

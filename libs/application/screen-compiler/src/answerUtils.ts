@@ -45,7 +45,7 @@ export const screenHasBeenAnswered = (
     return true
   }
 
-  if (!screen.id) {
+  if (typeof screen.id !== 'string' || !screen.id) {
     return false
   }
 
