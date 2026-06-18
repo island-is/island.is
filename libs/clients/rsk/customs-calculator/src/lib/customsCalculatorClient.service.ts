@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   getReiknivelVoruflokkar,
@@ -132,7 +133,7 @@ export class CustomsCalculatorClientService {
       }
     }
 
-    let additionalAmount = 0
+    let additionalAmount = new Decimal(0)
 
     const charges: {
       code: string
@@ -144,25 +145,26 @@ export class CustomsCalculatorClientService {
 
     for (const line of data?.Response?.LinaGjald?.LinaGjaldLinur ?? []) {
       for (const charge of line?.LinaAlagningar ?? []) {
-        const amount = Number(charge.bruttoupphaed)
-        if (Number.isNaN(amount)) continue
-        additionalAmount += amount
-        charges.push({
-          code: charge.kodi,
-          description: charge.heiti,
-          percentage: charge.TaxtiPros,
-          unit: charge.TegTexti,
-          amount: charge.bruttoupphaed,
-        })
+        if (!charge.bruttoupphaed) continue
+        try {
+          additionalAmount = additionalAmount.plus(charge.bruttoupphaed)
+          charges.push({
+            code: charge.kodi,
+            description: charge.heiti,
+            percentage: charge.TaxtiPros,
+            unit: charge.TegTexti,
+            amount: charge.bruttoupphaed,
+          })
+        } catch {
+          continue
+        }
       }
     }
 
     return {
       startAmount: input.priceWithShipping,
       additionalAmount: additionalAmount.toString(),
-      totalAmount: (
-        additionalAmount + Number(input.priceWithShipping)
-      ).toString(),
+      totalAmount: additionalAmount.plus(input.priceWithShipping).toString(),
       charges,
     }
   }
