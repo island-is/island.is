@@ -25,6 +25,7 @@ import { DocumentV2 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useDocument } from '@/hooks/use-document'
 import { toggleAction } from '@/lib/post-mail-action'
+import { toast } from '@/components/toast'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
@@ -136,14 +137,44 @@ export default function DocumentScreen() {
       content: contentType !== 'pdf' ? document.content?.value : undefined,
     })
 
-  const onToggleArchive = () => {
-    if (document.id)
-      toggleAction(document.archived ? 'unarchive' : 'archive', document.id)
+  const showActionError = (kind: 'archive' | 'bookmark') => {
+    toast.error(intl.formatMessage({ id: `documentDetail.${kind}Error` }), {
+      message: intl.formatMessage({ id: 'documentDetail.pleaseTryAgain' }),
+    })
   }
 
-  const onToggleBookmark = () => {
-    if (document.id)
-      toggleAction(document.bookmarked ? 'unbookmark' : 'bookmark', document.id)
+  const onToggleArchive = async () => {
+    if (!document.id) {
+      return
+    }
+    try {
+      const result = await toggleAction(
+        document.archived ? 'unarchive' : 'archive',
+        document.id,
+      )
+      if (!result.data?.postMailActionV2?.success) {
+        showActionError('archive')
+      }
+    } catch {
+      showActionError('archive')
+    }
+  }
+
+  const onToggleBookmark = async () => {
+    if (!document.id) {
+      return
+    }
+    try {
+      const result = await toggleAction(
+        document.bookmarked ? 'unbookmark' : 'bookmark',
+        document.id,
+      )
+      if (!result.data?.postMailActionV2?.success) {
+        showActionError('bookmark')
+      }
+    } catch {
+      showActionError('bookmark')
+    }
   }
 
   const hasAlert =

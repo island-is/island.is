@@ -268,6 +268,9 @@ export const is = {
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.buttonReply': 'Svara pósti',
   'documentDetail.buttonCommunications': 'Samskipti',
+  'documentDetail.archiveError': 'Ekki tókst að setja skjöl í geymslu',
+  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjöl',
+  'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document reply
   'documentReply.to': 'Til',

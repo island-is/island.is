@@ -12,7 +12,6 @@ import infoIcon from '@/ui/assets/icons/info.png'
 import successIcon from '@/ui/assets/icons/check.png'
 import { screenWidth } from '@/utils/dimensions'
 import { Typography } from '@/ui'
-import { useUiStore } from '@/stores/ui-store'
 
 const TAB_BAR_CONTENT_HEIGHT = Platform.select({
   ios: 49,
@@ -224,7 +223,6 @@ const useKeyboardHeight = () => {
 
 export const ToastHost = () => {
   const current = useToastStore((state) => state.current)
-  const tabsHidden = useUiStore((state) => state.tabsHidden)
   const insets = useSafeAreaInsets()
   const pathname = usePathname()
   const keyboardHeight = useKeyboardHeight()
@@ -238,9 +236,10 @@ export const ToastHost = () => {
     TAB_ROUTE_PREFIXES.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
     )
-  const tabsVisible =
-    isOnTabRoute && !(tabsHidden && Platform.OS === 'ios')
-  const tabBarOffset = tabsVisible
+  // On tab routes, the tab bar OR a bottom toolbar that replaces it (e.g.
+  // bulk-select actions) sits at the bottom — both have roughly the same
+  // height, so we always offset by the tab-bar height when on a tab route.
+  const tabBarOffset = isOnTabRoute
     ? TAB_BAR_CONTENT_HEIGHT + insets.bottom
     : 0
   // Keyboard reports height from screen bottom (includes safe area on iOS).

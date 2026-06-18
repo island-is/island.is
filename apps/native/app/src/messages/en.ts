@@ -269,6 +269,9 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.buttonReply': 'Reply',
   'documentDetail.buttonCommunications': 'Communications',
+  'documentDetail.archiveError': 'Could not archive documents',
+  'documentDetail.bookmarkError': 'Could not star documents',
+  'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
   'documentReply.to': 'To',
