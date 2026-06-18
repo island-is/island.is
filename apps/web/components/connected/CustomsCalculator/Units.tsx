@@ -100,7 +100,7 @@ export const Units = ({
   const { control, getValues } = useForm<UnitsFormValues>({
     defaultValues: {
       net: '',
-      unitCount: '',
+      unitCount: '1',
       liters: '',
       percentage: '',
       nedc: '',
