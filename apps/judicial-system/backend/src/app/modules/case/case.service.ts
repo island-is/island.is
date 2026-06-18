@@ -2043,7 +2043,12 @@ export class CaseService {
     // When an indictment is concluded for some defendants (dismissal/
     // cancellation) the case state does not change, so notify defenders, civil
     // claimant spokespersons and the prosecutor that conclusions were recorded.
-    if (defendantEventLogDecisions && defendantEventLogDecisions.length > 0) {
+    if (
+      isIndictmentCase(theCase.type) &&
+      caseUpdate.indictmentDecision === IndictmentDecision.COMPLETING_FOR_SOME &&
+      defendantEventLogDecisions &&
+      defendantEventLogDecisions.length > 0
+    ) {
       addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         user,
