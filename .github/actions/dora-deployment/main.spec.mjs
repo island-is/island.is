@@ -51,6 +51,11 @@ describe('dora-deployment', () => {
       expect(getServices()).toEqual(['api', 'web'])
     })
 
+    it('strips surrounding quotes from service names', () => {
+      process.env.DORA_SERVICES = "'download-service','api-service'"
+      expect(getServices()).toEqual(['download-service', 'api-service'])
+    })
+
     it('reads from data file when DORA_SERVICES is not set', () => {
       delete process.env.DORA_SERVICES
       process.env.DORA_DATA_FILE = '/tmp/test-data.json'

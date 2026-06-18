@@ -14,7 +14,7 @@ const DATADOG_CI_PATH = './datadog-ci'
 export function getServices() {
   if (process.env.DORA_SERVICES) {
     return process.env.DORA_SERVICES.split(',')
-      .map((s) => s.trim())
+      .map((s) => s.trim().replace(/^['"]|['"]$/g, ''))
       .filter(Boolean)
   }
 
@@ -50,6 +50,10 @@ export function handleFinish() {
     ? parseInt(process.env.DORA_STARTED_AT)
     : finishedAt - 1
 
+  // API requires finished_at > started_at
+  const effectiveFinishedAt =
+    finishedAt <= startedAt ? startedAt + 1 : finishedAt
+
   const env = process.env.DORA_ENV
   const repoUrl = process.env.GIT_REPO_URL
   const commitSha = process.env.GIT_COMMIT_SHA
@@ -78,13 +82,16 @@ export function handleFinish() {
   for (const service of services) {
     console.log(`DORA: ${service} -> ${env}`)
     execSync(
-      `${DATADOG_CI_PATH} dora deployment` +
-        ` --service "${service}"` +
-        ` --started-at "${startedAt}"` +
-        ` --finished-at "${finishedAt}"` +
-        ` --git-repository-url "${repoUrl}"` +
-        ` --git-commit-sha "${commitSha}"` +
-        ` --env "${env}"`,
+      [
+        DATADOG_CI_PATH,
+        'dora deployment',
+        `--service "${service}"`,
+        `--started-at "${startedAt}"`,
+        `--finished-at "${effectiveFinishedAt}"`,
+        `--git-repository-url "${repoUrl}"`,
+        `--git-commit-sha "${commitSha}"`,
+        `--env "${env}"`,
+      ].join(' '),
       { stdio: 'inherit' },
     )
   }
