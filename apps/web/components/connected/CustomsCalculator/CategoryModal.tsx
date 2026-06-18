@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useClickAway } from 'react-use'
 
 import {
@@ -10,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
+import { translation as translationStrings } from './translation.strings'
 import * as styles from './CategoryModal.css'
 
 interface Option {
@@ -31,6 +33,7 @@ export const CategoryModal = ({
   onOptionSelect,
   topComponent,
 }: CategoryModalProps) => {
+  const { formatMessage } = useIntl()
   const [isVisible, setIsVisible] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -65,6 +68,7 @@ export const CategoryModal = ({
               <Box
                 tabIndex={0}
                 role="button"
+                aria-label={formatMessage(translationStrings.closeModal)}
                 cursor="pointer"
                 onKeyDown={(ev) => {
                   if (ev.key === 'Enter' || ev.key === ' ') {

@@ -156,4 +156,9 @@ export const translation = defineMessages({
     defaultMessage: 'Vegið CO2-gildi (WLTP)',
     description: 'Label for wltp weighted emission input',
   },
+  closeModal: {
+    id: 'web.customsCalculator:closeModal',
+    defaultMessage: 'Loka glugga',
+    description: 'Aria-label for the close button in the category modal',
+  },
 })

@@ -209,6 +209,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
   const unitsResponse = useQuery(GET_CUSTOMS_CALCULATOR_UNITS, {
     variables: { tariffNumber: selectedBottomLevelCategory?.tariffNumber },
+    skip: !selectedBottomLevelCategory?.tariffNumber,
   })
 
   return (
@@ -342,6 +343,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               background="purple100"
               paddingX={1}
               paddingY={2}
+              tabIndex={0}
               display="flex"
               justifyContent="flexStart"
               alignItems="center"
