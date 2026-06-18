@@ -45,6 +45,7 @@ import { testIDs } from '@/utils/test-ids'
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
+import { ToastHost } from '@/components/toast'
 import { SelectionMenu } from 'react-native-platform-components'
 import { openBrowserAsync } from 'expo-web-browser'
 
@@ -207,6 +208,7 @@ export default function SettingsScreen() {
   }
 
   return (
+    <>
     <ScrollView
       style={{ flex: 1 }}
       testID={testIDs.USER_SCREEN_SETTINGS}
@@ -604,5 +606,7 @@ export default function SettingsScreen() {
         </PressableHighlight>
       </TableViewGroup>
     </ScrollView>
+    <ToastHost />
+    </>
   )
 }
