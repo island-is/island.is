@@ -136,9 +136,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      ministries: (data.ministries ?? [])
-        .map(mapMinistryDto)
-        .filter(isDefined),
+      ministries: (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
