@@ -39,8 +39,8 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
     case FieldTypesEnum.ISK_NUMBERBOX:
       return !value?.iskNumber || value?.iskNumber.length === 0
-    case FieldTypesEnum.PROPERTY_NUMBER:
-      return !validatePropertyNumber(value)
+    // case FieldTypesEnum.PROPERTY_NUMBER:
+    //   return !validatePropertyNumber(value)
     case FieldTypesEnum.ASSETS:
       if (!field.fieldSettings?.assetType) return false
       return !validateAssetFields(value, field.fieldSettings?.assetType)
@@ -106,19 +106,24 @@ const validateAssetFields = (value: FormSystemValue, assetType: string) => {
 
 const validateVehicleFields = (value: FormSystemValue) => {
   const { registrationNumber, model, color } = value
+
   if (!registrationNumber || !model || !color) return false
   if (registrationNumber.length === 0 || model.length === 0) return false
+
   return validateLanguageType(color)
 }
 
 const validatePropertyNumber = (value: FormSystemValue) => {
   const { propertyNumber, address, municipality } = value
-  return (
-    !propertyNumber ||
-    !address ||
-    !municipality ||
-    propertyNumber === '' ||
-    address === '' ||
-    municipality === ''
-  )
+
+  if (!propertyNumber || !address || !municipality) return false
+  if (
+    propertyNumber.length === 0 ||
+    address.length === 0 ||
+    municipality.length === 0
+  ) {
+    return false
+  }
+
+  return true
 }
