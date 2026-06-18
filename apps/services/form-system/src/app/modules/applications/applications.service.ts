@@ -1289,7 +1289,6 @@ export class ApplicationsService {
     const nationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
-    notificationDto.organizationNationalId = form.organizationNationalId
 
     if (!notificationDto.screenDto) {
       throw new BadRequestException(
