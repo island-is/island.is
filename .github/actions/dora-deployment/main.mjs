@@ -81,15 +81,26 @@ export function handleFinish() {
   // Send events
   for (const service of services) {
     console.log(`DORA: ${service} -> ${env}`)
-    execFileSync(DATADOG_CI_PATH, [
-      'dora', 'deployment',
-      '--service', service,
-      '--started-at', String(startedAt),
-      '--finished-at', String(effectiveFinishedAt),
-      '--git-repository-url', repoUrl,
-      '--git-commit-sha', commitSha,
-      '--env', env,
-    ], { stdio: 'inherit' })
+    execFileSync(
+      DATADOG_CI_PATH,
+      [
+        'dora',
+        'deployment',
+        '--service',
+        service,
+        '--started-at',
+        String(startedAt),
+        '--finished-at',
+        String(effectiveFinishedAt),
+        '--git-repository-url',
+        repoUrl,
+        '--git-commit-sha',
+        commitSha,
+        '--env',
+        env,
+      ],
+      { stdio: 'inherit' },
+    )
   }
 
   console.log(`DORA: sent ${services.length} deployment event(s)`)
