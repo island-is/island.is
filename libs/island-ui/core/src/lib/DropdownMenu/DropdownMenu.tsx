@@ -95,10 +95,12 @@ export const DropdownMenu = ({
   return (
     <>
       {disclosure ? (
-        <MenuButton {...menu} {...disclosure.props} {...hoverProps}>
-          {(disclosureProps: any) =>
-            React.cloneElement(disclosure, disclosureProps)
-          }
+        // reakit's render-prop types predate React 19's stricter ReactElement typing
+        // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
+        // function child compiling. Remove when this migrates to ariakit.
+        <MenuButton {...menu} {...(disclosure.props as any)} {...hoverProps}>
+          {((disclosureProps: any) =>
+            React.cloneElement(disclosure, disclosureProps)) as any}
         </MenuButton>
       ) : (
         <MenuButton

@@ -6,7 +6,7 @@ export const useMockQuery = <T>(data: T, skip?: boolean) => {
   const [loading, setLoading] = useState(!skip)
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>()
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(undefined)
   useEffect(() => {
     const d = Math.random()
     timeout.current = setTimeout(() => {

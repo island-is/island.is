@@ -161,7 +161,7 @@ export default function InboxScreen() {
   const [toastVisible, setToastVisible] = useState(false)
 
   const pageRef = useRef(1)
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const isFilterApplied =
     opened ||

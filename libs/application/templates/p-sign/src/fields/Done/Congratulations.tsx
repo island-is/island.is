@@ -5,6 +5,8 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 
+import type { JSX } from "react";
+
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }

@@ -13,7 +13,7 @@ import {
   ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, type JSX } from 'react';
 import { useFormContext } from 'react-hook-form'
 import { SelectController } from '@island.is/shared/form-fields'
 import {

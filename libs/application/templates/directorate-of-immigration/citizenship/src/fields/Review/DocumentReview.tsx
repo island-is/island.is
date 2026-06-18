@@ -4,7 +4,7 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { FC } from 'react'
+import { FC, type JSX } from 'react';
 import { review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'

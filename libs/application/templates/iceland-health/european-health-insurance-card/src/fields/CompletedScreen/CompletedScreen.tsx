@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 
-import { FC } from 'react'
+import { FC, type JSX } from 'react';
 import { FieldBaseProps } from '@island.is/application/types'
 import { base64ToArrayBuffer } from '../../lib/helpers/applicantHelper'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../../lib/messages'
