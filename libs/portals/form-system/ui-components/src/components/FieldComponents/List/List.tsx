@@ -315,7 +315,8 @@ export const List = ({
         },
       }}
       render={({ field, fieldState }) =>
-        (shouldFetch && isLoading) || (isOrganizations && organizationsLoading) ? (
+        (shouldFetch && isLoading) ||
+        (isOrganizations && organizationsLoading) ? (
           <Box>
             <SkeletonLoader height={48} display="block" borderRadius="large" />
             <Box marginLeft={1}>
