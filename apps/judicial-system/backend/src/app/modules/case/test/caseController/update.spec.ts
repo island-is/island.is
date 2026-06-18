@@ -269,14 +269,50 @@ describe('CaseController - Update', () => {
     it('should enqueue the completed for some notification', () => {
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
-          {
+          expect.objectContaining({
             type: MessageType.INDICTMENT_CASE_NOTIFICATION,
             user,
             caseId,
-            body: {
+            body: expect.objectContaining({
               type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-            },
-          },
+            }),
+          }),
+        ]),
+      )
+    })
+  })
+
+  describe('indictment completed for some — last remaining defendant (indictmentDecision set to null by frontend)', () => {
+    const indictmentCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+    } as Case
+
+    const caseToUpdate = {
+      indictmentDecision: null,
+      defendantEventLogDecisions: [
+        {
+          defendantId: defendantId1,
+          rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+        },
+      ],
+    } as unknown as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
+    })
+
+    it('should enqueue the completed for some notification even when indictmentDecision is null', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+            user,
+            caseId,
+            body: expect.objectContaining({
+              type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+            }),
+          }),
         ]),
       )
     })

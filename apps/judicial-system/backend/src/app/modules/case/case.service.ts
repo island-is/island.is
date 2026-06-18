@@ -2045,8 +2045,6 @@ export class CaseService {
     // claimant spokespersons and the prosecutor that conclusions were recorded.
     if (
       isIndictmentCase(theCase.type) &&
-      caseUpdate.indictmentDecision ===
-        IndictmentDecision.COMPLETING_FOR_SOME &&
       defendantEventLogDecisions &&
       defendantEventLogDecisions.length > 0
     ) {
