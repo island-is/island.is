@@ -44,6 +44,7 @@ export class ServiceManager {
       const notificationDto = {
         applicationId: applicationDto.id ?? '',
         nationalId: applicationDto.nationalId ?? '',
+        organizationNationalId: applicationDto.organizationNationalId ?? '',
         slug: applicationDto.slug ?? '',
         isTest: applicationDto.isTest ?? false,
         command: NotificationCommands.SUBMIT,
