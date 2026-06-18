@@ -209,247 +209,174 @@ export default function SettingsScreen() {
 
   return (
     <>
-    <ScrollView
-      style={{ flex: 1 }}
-      testID={testIDs.USER_SCREEN_SETTINGS}
-      stickyHeaderIndices={[0]}
-      nestedScrollEnabled={true}
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ paddingBottom: 32 }}
-    >
-      <StackScreen closeable networkStatus={[userProfile.networkStatus]} />
-      <View>
-        <Alert
-          type="info"
-          visible={!isInfoDismissed}
-          message={intl.formatMessage({ id: 'settings.infoBoxText' })}
-          onClose={() => dismiss('userSettingsInformational')}
-          hideIcon
-        />
-        <View style={{ height: 32 }} />
-      </View>
-
-      {/* User settings */}
-      <TableViewGroup
-        header={intl.formatMessage({
-          id: 'settings.usersettings.groupTitle',
-        })}
+      <ScrollView
+        style={{ flex: 1 }}
+        testID={testIDs.USER_SCREEN_SETTINGS}
+        stickyHeaderIndices={[0]}
+        nestedScrollEnabled={true}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ paddingBottom: 32 }}
       >
-        <TableViewCell
-          title={intl.formatMessage({
-            id: 'settings.usersettings.telephone',
-          })}
-          subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
-          accessory={
-            <TouchableOpacity
-              onPress={() => router.navigate('/edit-phone')}
-              style={{
-                paddingLeft: 16,
-                paddingBottom: 10,
-                paddingTop: 10,
-                paddingRight: 16,
-                marginRight: -16,
-              }}
-            >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
-            </TouchableOpacity>
-          }
-        />
-        <TableViewCell
-          title={intl.formatMessage({ id: 'settings.usersettings.email' })}
-          subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
-          accessory={
-            <TouchableOpacity
-              onPress={() => router.navigate('/edit-email')}
-              style={{
-                paddingLeft: 16,
-                paddingBottom: 10,
-                paddingTop: 10,
-                paddingRight: 16,
-                marginRight: -16,
-              }}
-            >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
-            </TouchableOpacity>
-          }
-        />
-        <TableViewCell
-          title={intl.formatMessage({
-            id: 'settings.usersettings.bankinfo',
-          })}
-          subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
-          accessory={
-            <TouchableOpacity
-              onPress={() => router.navigate('/edit-bank-info')}
-              style={{
-                paddingLeft: 16,
-                paddingBottom: 10,
-                paddingTop: 10,
-                paddingRight: 16,
-                marginRight: -16,
-              }}
-            >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
-            </TouchableOpacity>
-          }
-        />
-      </TableViewGroup>
+        <StackScreen closeable networkStatus={[userProfile.networkStatus]} />
+        <View>
+          <Alert
+            type="info"
+            visible={!isInfoDismissed}
+            message={intl.formatMessage({ id: 'settings.infoBoxText' })}
+            onClose={() => dismiss('userSettingsInformational')}
+            hideIcon
+          />
+          <View style={{ height: 32 }} />
+        </View>
 
-      {/* Communication */}
-      <TableViewGroup
-        header={intl.formatMessage({
-          id: 'settings.communication.groupTitle',
-        })}
-      >
-        <TableViewCell
-          title={intl.formatMessage({
-            id: 'settings.communication.newNotificationsEmailLabel',
+        {/* User settings */}
+        <TableViewGroup
+          header={intl.formatMessage({
+            id: 'settings.usersettings.groupTitle',
           })}
-          subtitle={intl.formatMessage({
-            id: 'settings.communication.newNotificationsEmailDescription',
-          })}
-          accessory={
-            <View>
-              <Switch
-                onValueChange={(value) => {
-                  updateEmailNotifications(value)
-                  setEmailNotifications(value)
-                }}
-                disabled={userProfile.loading && !userProfile.data}
-                value={emailNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            </View>
-          }
-        />
-        <TableViewCell
-          title={intl.formatMessage({
-            id: 'settings.communication.newNotificationsInAppLabel',
-          })}
-          subtitle={intl.formatMessage({
-            id: 'settings.communication.newNotificationsInAppDescription',
-          })}
-          accessory={
-            <View>
-              <Switch
-                onValueChange={(value) => {
-                  updateDocumentNotifications(value)
-                  setDocumentNotifications(value)
-                }}
-                disabled={userProfile.loading && !userProfile.data}
-                value={documentNotifications}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            </View>
-          }
-        />
-      </TableViewGroup>
-
-      {/* Security */}
-      <TableViewGroup
-        header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
-      >
-        <PressableHighlight
-          onPress={() => router.navigate('/onboarding/pin?from=settings')}
         >
           <TableViewCell
             title={intl.formatMessage({
-              id: 'settings.security.changePinLabel',
+              id: 'settings.usersettings.telephone',
             })}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.changePinDescription',
-            })}
+            subtitle={
+              userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'
+            }
             accessory={
-              <Image
-                source={chevronForward}
-                style={{ width: 24, height: 24 }}
-              />
+              <TouchableOpacity
+                onPress={() => router.navigate('/edit-phone')}
+                style={{
+                  paddingLeft: 16,
+                  paddingBottom: 10,
+                  paddingTop: 10,
+                  paddingRight: 16,
+                  marginRight: -16,
+                }}
+              >
+                <Image
+                  source={editIcon as any}
+                  style={{ width: 19, height: 19 }}
+                />
+              </TouchableOpacity>
             }
           />
-        </PressableHighlight>
-        <TableViewCell
-          title={intl.formatMessage(
-            { id: 'settings.security.useBiometricsLabel' },
-            { biometricType: biometricType.text },
-          )}
-          subtitle={
-            authenticationTypes.length === 0
-              ? intl.formatMessage({
-                  id: 'onboarding.biometrics.noAuthenticationTypes',
-                })
-              : isEnrolledBiometrics
-              ? intl.formatMessage(
-                  { id: 'settings.security.useBiometricsDescription' },
-                  { biometricType: biometricType.text },
-                )
-              : intl.formatMessage(
-                  { id: 'onboarding.biometrics.notEnrolled' },
-                  { biometricType: biometricType.text },
-                )
-          }
-          accessory={
-            <View>
-              <Switch
-                onValueChange={(value) => {
-                  if (value && !hasAcceptedBiometrics) {
-                    authenticateAsync().then((result) => {
-                      if (result.success) {
-                        setUseBiometrics(true)
-                        preferencesStore.setState({
-                          hasAcceptedBiometrics: true,
-                        })
-                      }
-                    })
-                  } else {
-                    setUseBiometrics(value)
-                  }
+          <TableViewCell
+            title={intl.formatMessage({ id: 'settings.usersettings.email' })}
+            subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
+            accessory={
+              <TouchableOpacity
+                onPress={() => router.navigate('/edit-email')}
+                style={{
+                  paddingLeft: 16,
+                  paddingBottom: 10,
+                  paddingTop: 10,
+                  paddingRight: 16,
+                  marginRight: -16,
                 }}
-                disabled={!isEnrolledBiometrics}
-                value={useBiometrics}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
+              >
+                <Image
+                  source={editIcon as any}
+                  style={{ width: 19, height: 19 }}
+                />
+              </TouchableOpacity>
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.usersettings.bankinfo',
+            })}
+            subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
+            accessory={
+              <TouchableOpacity
+                onPress={() => router.navigate('/edit-bank-info')}
+                style={{
+                  paddingLeft: 16,
+                  paddingBottom: 10,
+                  paddingTop: 10,
+                  paddingRight: 16,
+                  marginRight: -16,
                 }}
-              />
-            </View>
-          }
-        />
-        {isPasskeyEnabled && (
+              >
+                <Image
+                  source={editIcon as any}
+                  style={{ width: 19, height: 19 }}
+                />
+              </TouchableOpacity>
+            }
+          />
+        </TableViewGroup>
+
+        {/* Communication */}
+        <TableViewGroup
+          header={intl.formatMessage({
+            id: 'settings.communication.groupTitle',
+          })}
+        >
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.communication.newNotificationsEmailLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsEmailDescription',
+            })}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) => {
+                    updateEmailNotifications(value)
+                    setEmailNotifications(value)
+                  }}
+                  disabled={userProfile.loading && !userProfile.data}
+                  value={emailNotifications}
+                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  trackColor={{
+                    false: theme.color.dark200,
+                    true: theme.color.blue400,
+                  }}
+                />
+              </View>
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppDescription',
+            })}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) => {
+                    updateDocumentNotifications(value)
+                    setDocumentNotifications(value)
+                  }}
+                  disabled={userProfile.loading && !userProfile.data}
+                  value={documentNotifications}
+                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  trackColor={{
+                    false: theme.color.dark200,
+                    true: theme.color.blue400,
+                  }}
+                />
+              </View>
+            }
+          />
+        </TableViewGroup>
+
+        {/* Security */}
+        <TableViewGroup
+          header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
+        >
           <PressableHighlight
-            onPress={() => {
-              hasCreatedPasskey
-                ? onRemovePasskeyPress()
-                : router.navigate('/passkey')
-            }}
+            onPress={() => router.navigate('/onboarding/pin?from=settings')}
           >
             <TableViewCell
               title={intl.formatMessage({
-                id: hasCreatedPasskey
-                  ? 'settings.security.removePasskeyLabel'
-                  : 'settings.security.createPasskeyLabel',
+                id: 'settings.security.changePinLabel',
               })}
               subtitle={intl.formatMessage({
-                id: hasCreatedPasskey
-                  ? 'settings.security.removePasskeyDescription'
-                  : 'settings.security.createPasskeyDescription',
+                id: 'settings.security.changePinDescription',
               })}
               accessory={
                 <Image
@@ -459,154 +386,229 @@ export default function SettingsScreen() {
               }
             />
           </PressableHighlight>
-        )}
-        <PressableHighlight
-          onPress={() => setScreenLockTimeDialogVisible(true)}
-        >
           <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutLabel',
-            })}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutDescription',
-            })}
+            title={intl.formatMessage(
+              { id: 'settings.security.useBiometricsLabel' },
+              { biometricType: biometricType.text },
+            )}
+            subtitle={
+              authenticationTypes.length === 0
+                ? intl.formatMessage({
+                    id: 'onboarding.biometrics.noAuthenticationTypes',
+                  })
+                : isEnrolledBiometrics
+                ? intl.formatMessage(
+                    { id: 'settings.security.useBiometricsDescription' },
+                    { biometricType: biometricType.text },
+                  )
+                : intl.formatMessage(
+                    { id: 'onboarding.biometrics.notEnrolled' },
+                    { biometricType: biometricType.text },
+                  )
+            }
             accessory={
-              <TableViewAccessory>
-                {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
-                  style: 'decimal',
-                  unitDisplay: 'short',
-                  unit: 'second',
-                })} ${intl.formatMessage({
-                  id: 'settings.security.appLockTimeoutSeconds',
-                })}`}
-                <SelectionMenu
-                  placeholder={intl.formatMessage({
-                    id: 'settings.security.appLockTimeoutLabel',
-                  })}
-                  options={[
-                    {
-                      data: '5000',
-                      label: `${intl.formatNumber(5, {
-                        style: 'decimal',
-                        unitDisplay: 'long',
-                        unit: 'second',
-                      })} ${intl.formatMessage({
-                        id: 'settings.security.appLockTimeoutSeconds',
-                      })}`,
-                    },
-                    {
-                      data: '10000',
-                      label: `${intl.formatNumber(10, {
-                        style: 'decimal',
-                        unitDisplay: 'long',
-                        unit: 'second',
-                      })} ${intl.formatMessage({
-                        id: 'settings.security.appLockTimeoutSeconds',
-                      })}`,
-                    },
-                    {
-                      data: '15000',
-                      label: `${intl.formatNumber(15, {
-                        style: 'decimal',
-                        unitDisplay: 'long',
-                        unit: 'second',
-                      })} ${intl.formatMessage({
-                        id: 'settings.security.appLockTimeoutSeconds',
-                      })}`,
-                    },
-                  ]}
-                  selected={String(appLockTimeout)}
-                  visible={screenLockTimeDialogVisible}
-                  onSelect={(data) => {
-                    preferencesStore.setState({
-                      appLockTimeout: Number(data),
-                    })
-                    setScreenLockTimeDialogVisible(false)
+              <View>
+                <Switch
+                  onValueChange={(value) => {
+                    if (value && !hasAcceptedBiometrics) {
+                      authenticateAsync().then((result) => {
+                        if (result.success) {
+                          setUseBiometrics(true)
+                          preferencesStore.setState({
+                            hasAcceptedBiometrics: true,
+                          })
+                        }
+                      })
+                    } else {
+                      setUseBiometrics(value)
+                    }
                   }}
-                  presentation="modal"
-                  onRequestClose={() => setScreenLockTimeDialogVisible(false)}
+                  disabled={!isEnrolledBiometrics}
+                  value={useBiometrics}
+                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  trackColor={{
+                    false: theme.color.dark200,
+                    true: theme.color.blue400,
+                  }}
                 />
-              </TableViewAccessory>
+              </View>
             }
           />
-        </PressableHighlight>
-        <PressableHighlight
-          onPress={() =>
-            openBrowserAsync(
-              'https://island.is/personuverndarstefna-stafraent-islands',
-            )
-          }
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.security.privacyTitle',
-            })}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.privacySubTitle',
-            })}
-            accessory={
-              <Image
-                source={chevronForward}
-                style={{ width: 24, height: 24 }}
+          {isPasskeyEnabled && (
+            <PressableHighlight
+              onPress={() => {
+                hasCreatedPasskey
+                  ? onRemovePasskeyPress()
+                  : router.navigate('/passkey')
+              }}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyLabel'
+                    : 'settings.security.createPasskeyLabel',
+                })}
+                subtitle={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyDescription'
+                    : 'settings.security.createPasskeyDescription',
+                })}
+                accessory={
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                  />
+                }
               />
+            </PressableHighlight>
+          )}
+          <PressableHighlight
+            onPress={() => setScreenLockTimeDialogVisible(true)}
+          >
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.security.appLockTimeoutLabel',
+              })}
+              subtitle={intl.formatMessage({
+                id: 'settings.security.appLockTimeoutDescription',
+              })}
+              accessory={
+                <TableViewAccessory>
+                  {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                    style: 'decimal',
+                    unitDisplay: 'short',
+                    unit: 'second',
+                  })} ${intl.formatMessage({
+                    id: 'settings.security.appLockTimeoutSeconds',
+                  })}`}
+                  <SelectionMenu
+                    placeholder={intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutLabel',
+                    })}
+                    options={[
+                      {
+                        data: '5000',
+                        label: `${intl.formatNumber(5, {
+                          style: 'decimal',
+                          unitDisplay: 'long',
+                          unit: 'second',
+                        })} ${intl.formatMessage({
+                          id: 'settings.security.appLockTimeoutSeconds',
+                        })}`,
+                      },
+                      {
+                        data: '10000',
+                        label: `${intl.formatNumber(10, {
+                          style: 'decimal',
+                          unitDisplay: 'long',
+                          unit: 'second',
+                        })} ${intl.formatMessage({
+                          id: 'settings.security.appLockTimeoutSeconds',
+                        })}`,
+                      },
+                      {
+                        data: '15000',
+                        label: `${intl.formatNumber(15, {
+                          style: 'decimal',
+                          unitDisplay: 'long',
+                          unit: 'second',
+                        })} ${intl.formatMessage({
+                          id: 'settings.security.appLockTimeoutSeconds',
+                        })}`,
+                      },
+                    ]}
+                    selected={String(appLockTimeout)}
+                    visible={screenLockTimeDialogVisible}
+                    onSelect={(data) => {
+                      preferencesStore.setState({
+                        appLockTimeout: Number(data),
+                      })
+                      setScreenLockTimeDialogVisible(false)
+                    }}
+                    presentation="modal"
+                    onRequestClose={() => setScreenLockTimeDialogVisible(false)}
+                  />
+                </TableViewAccessory>
+              }
+            />
+          </PressableHighlight>
+          <PressableHighlight
+            onPress={() =>
+              openBrowserAsync(
+                'https://island.is/personuverndarstefna-stafraent-islands',
+              )
             }
-          />
-        </PressableHighlight>
-      </TableViewGroup>
-
-      {/* About */}
-      <TableViewGroup
-        header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
-      >
-        <PressableHighlight onPress={() => setLocaleDialogVisible(true)}>
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.language',
-            })}
-            accessory={
-              <TableViewAccessory>
-                {locale === 'is-IS' ? 'Íslenska' : 'English'}
-                <SelectionMenu
-                  placeholder={intl.formatMessage({
-                    id: 'settings.accessibilityLayout.language',
-                  })}
-                  options={[
-                    { label: 'Íslenska', data: 'is-IS' },
-                    { label: 'English', data: 'en-US' },
-                  ]}
-                  selected={locale}
-                  visible={localeDialogVisible}
-                  onSelect={(data) => {
-                    setLocale(data as Locale)
-                    updateLocale(data === 'is-IS' ? 'is' : 'en')
-                    setLocaleDialogVisible(false)
-                  }}
-                  presentation="modal"
-                  onRequestClose={() => setLocaleDialogVisible(false)}
+          >
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.security.privacyTitle',
+              })}
+              subtitle={intl.formatMessage({
+                id: 'settings.security.privacySubTitle',
+              })}
+              accessory={
+                <Image
+                  source={chevronForward}
+                  style={{ width: 24, height: 24 }}
                 />
-              </TableViewAccessory>
-            }
-          />
-        </PressableHighlight>
+              }
+            />
+          </PressableHighlight>
+        </TableViewGroup>
 
-        <TableViewCell
-          title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
-          subtitle={`${Application.nativeApplicationVersion} build ${Application.nativeBuildVersion}`}
-        />
-        <PressableHighlight
-          onPress={onLogoutPress}
-          testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
+        {/* About */}
+        <TableViewGroup
+          header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
         >
+          <PressableHighlight onPress={() => setLocaleDialogVisible(true)}>
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.accessibilityLayout.language',
+              })}
+              accessory={
+                <TableViewAccessory>
+                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
+                  <SelectionMenu
+                    placeholder={intl.formatMessage({
+                      id: 'settings.accessibilityLayout.language',
+                    })}
+                    options={[
+                      { label: 'Íslenska', data: 'is-IS' },
+                      { label: 'English', data: 'en-US' },
+                    ]}
+                    selected={locale}
+                    visible={localeDialogVisible}
+                    onSelect={(data) => {
+                      setLocale(data as Locale)
+                      updateLocale(data === 'is-IS' ? 'is' : 'en')
+                      setLocaleDialogVisible(false)
+                    }}
+                    presentation="modal"
+                    onRequestClose={() => setLocaleDialogVisible(false)}
+                  />
+                </TableViewAccessory>
+              }
+            />
+          </PressableHighlight>
+
           <TableViewCell
-            title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
-            subtitle={intl.formatMessage({
-              id: 'settings.about.logoutDescription',
-            })}
+            title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
+            subtitle={`${Application.nativeApplicationVersion} build ${Application.nativeBuildVersion}`}
           />
-        </PressableHighlight>
-      </TableViewGroup>
-    </ScrollView>
-    <ToastHost />
+          <PressableHighlight
+            onPress={onLogoutPress}
+            testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
+          >
+            <TableViewCell
+              title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
+              subtitle={intl.formatMessage({
+                id: 'settings.about.logoutDescription',
+              })}
+            />
+          </PressableHighlight>
+        </TableViewGroup>
+      </ScrollView>
+      <ToastHost />
     </>
   )
 }

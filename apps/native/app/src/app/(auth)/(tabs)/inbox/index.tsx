@@ -477,9 +477,7 @@ export default function InboxScreen() {
         })
       })
       resetSelectState()
-      toast.success(
-        intl.formatMessage({ id: 'inbox.bulkSelect.starSuccess' }),
-      )
+      toast.success(intl.formatMessage({ id: 'inbox.bulkSelect.starSuccess' }))
     } else {
       handleBulkActionError('star')
     }

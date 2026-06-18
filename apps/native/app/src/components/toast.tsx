@@ -165,7 +165,7 @@ export const toastStore = create<ToastStore>(() => ({
   current: null,
 }))
 
-export const useToastStore = <U = ToastStore>(
+export const useToastStore = <U = ToastStore,>(
   selector?: (state: ToastStore) => U,
 ) => useStore(toastStore, selector!)
 
@@ -206,8 +206,10 @@ const useKeyboardHeight = () => {
   const [height, setHeight] = useState(0)
 
   useEffect(() => {
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow'
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide'
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow'
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide'
     const showSub = Keyboard.addListener(showEvent, (e) => {
       setHeight(e.endCoordinates?.height ?? 0)
     })
@@ -239,9 +241,7 @@ export const ToastHost = () => {
   // On tab routes, the tab bar OR a bottom toolbar that replaces it (e.g.
   // bulk-select actions) sits at the bottom — both have roughly the same
   // height, so we always offset by the tab-bar height when on a tab route.
-  const tabBarOffset = isOnTabRoute
-    ? TAB_BAR_CONTENT_HEIGHT + insets.bottom
-    : 0
+  const tabBarOffset = isOnTabRoute ? TAB_BAR_CONTENT_HEIGHT + insets.bottom : 0
   // Keyboard reports height from screen bottom (includes safe area on iOS).
   // When the keyboard is up it covers the tab bar, so we use whichever offset
   // pushes the toast higher.
