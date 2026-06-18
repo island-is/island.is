@@ -121,16 +121,6 @@ export const translation = defineMessages({
     defaultMessage: 'Annað',
     description: 'Fallback category label when category is missing',
   },
-  unitsResponse: {
-    id: 'web.customsCalculator:unitsResponse',
-    defaultMessage: 'Svar með einingum',
-    description: 'Heading for units response output',
-  },
-  calculationResponse: {
-    id: 'web.customsCalculator:calculationResponse',
-    defaultMessage: 'Svar við útreikningi',
-    description: 'Heading for calculation response output',
-  },
   priceWithShippingLabel: {
     id: 'web.customsCalculator:priceWithShippingLabel',
     defaultMessage: 'Verð með flutningi (tollverð)',
