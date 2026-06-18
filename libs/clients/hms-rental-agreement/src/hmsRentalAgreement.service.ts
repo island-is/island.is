@@ -64,7 +64,25 @@ export class HmsRentalAgreementService {
     return mapRentalAgreementDto(res) ?? undefined
   }
 
-  async getRentalAgreementPdf(
+  async getLatestRentalAgreementPdf(
+    user: User,
+    contractId: string,
+  ): Promise<ContractDocumentItemDto | undefined> {
+    const res = await this.apiWithAuth(user)
+      .contractContractIdLatestPdfGet({ contractId })
+      .catch(handle404)
+
+    if (!res) {
+      this.logger.warn('No rental agreement document found', {
+        contractId,
+      })
+      return undefined
+    }
+
+    return mapContractDocumentItemDto(res) ?? undefined
+  }
+
+  async getRentalAgreementDocumentPdf(
     user: User,
     contractId: number,
     documentId: number,

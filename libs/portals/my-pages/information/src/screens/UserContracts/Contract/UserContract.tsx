@@ -1,4 +1,4 @@
-import { Box, DropdownMenu, Tag } from '@island.is/island-ui/core'
+import { Box, Button, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroWrapper,
@@ -19,7 +19,6 @@ import { useUserContractQuery } from './UserContract.generated'
 import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
-import { isDefined } from '@island.is/shared/utils'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
@@ -52,8 +51,6 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
-  const documents = contract?.documents ?? []
-
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
@@ -64,25 +61,21 @@ const UserContract = () => {
       }}
       buttonGroup={{
         actions: [
-          <DropdownMenu
-            key="download-menu"
-            menuLabel={formatMessage(cm.downloadFilesMenu)}
-            title={formatMessage(cm.downloadFiles)}
+          <Button
+            key="download-button"
             icon="download"
             iconType="outline"
-            disabled={!!error || loading || documents.length === 0}
-            items={documents
-              .map(({ name, downloadUrl }) => {
-                if (downloadUrl) {
-                  return {
-                    title: name,
-                    onClick: () => formSubmit(downloadUrl),
-                  }
-                }
-                return null
-              })
-              .filter(isDefined)}
-          />,
+            variant="utility"
+            disabled={
+              !!error || loading || !contract?.latestDocumentDownloadUrl
+            }
+            onClick={() =>
+              contract?.latestDocumentDownloadUrl &&
+              formSubmit(contract.latestDocumentDownloadUrl)
+            }
+          >
+            {formatMessage(m.getDocument)}
+          </Button>,
           ...(contract?.status === HmsRentalAgreementStatusType.VALID
             ? [
                 <LinkButton

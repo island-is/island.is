@@ -32,10 +32,6 @@ query UserContract($id: ID!) {
       municipality
       postalCode
     }
-    documents {
-      id
-      name
-      downloadUrl
-    }
+    latestDocumentDownloadUrl
   }
 }

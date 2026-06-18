@@ -77,6 +77,7 @@ export class RentalAgreementsResolver {
 
     return {
       ...mapped,
+      latestDocumentDownloadUrl: baseUrl,
       documents: mapped.documents?.map((doc) => ({
         ...doc,
         downloadUrl: `${baseUrl}/${doc.id}`,

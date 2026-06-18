@@ -484,6 +484,52 @@
           }
         }
       }
+    },
+    "/contract/{contractId}/latest-pdf": {
+      "get": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -673,6 +719,10 @@
             "items": {
               "$ref": "#/components/schemas/ContractDocumentMetadata"
             },
+            "nullable": true
+          },
+          "organisation": {
+            "type": "string",
             "nullable": true
           }
         },
