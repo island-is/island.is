@@ -101,20 +101,10 @@ export const translation = defineMessages({
     defaultMessage: 'Tollnúmer',
     description: 'Tariff number input label',
   },
-  referenceDateLabel: {
-    id: 'web.customsCalculator:referenceDateLabel',
-    defaultMessage: 'Viðmiðunardagsetning (ISO)',
-    description: 'Reference date input label',
-  },
   runCalculation: {
     id: 'web.customsCalculator:runCalculation',
     defaultMessage: 'Reikna',
     description: 'Button label for running customs calculation',
-  },
-  otherCategory: {
-    id: 'web.customsCalculator:otherCategory',
-    defaultMessage: 'Annað',
-    description: 'Fallback category label when category is missing',
   },
   priceWithShippingLabel: {
     id: 'web.customsCalculator:priceWithShippingLabel',
