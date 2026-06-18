@@ -14,8 +14,8 @@ export const resultButton = style({
 })
 
 export const searchModal = style({
-  width: '90vw',
-  maxWidth: '634px',
+  width: '634px',
+  maxWidth: `calc(90vw - ${theme.spacing[3] * 2}px)`,
   overflow: 'hidden',
   margin: `${theme.spacing[3]}px`,
 })
