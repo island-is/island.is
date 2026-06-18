@@ -1,3 +1,11 @@
+// Global toast: a zustand-backed store + a presentational <Toast /> rendered by
+// <ToastHost />. Fire from anywhere with `toast.success/error/warning/info(...)`.
+//
+// Mount one <ToastHost /> at the app root (app/_layout.tsx). Native modal screens
+// (presentation: 'formSheet' / 'modal') sit above the root's React tree, so they
+// need their OWN <ToastHost /> inside the modal — otherwise toasts fire but
+// render behind the modal where they're invisible. See settings.tsx and the
+// reply screen for examples.
 import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { Image, Keyboard, Platform, View } from 'react-native'
@@ -13,12 +21,17 @@ import successIcon from '@/ui/assets/icons/check.png'
 import { screenWidth } from '@/utils/dimensions'
 import { Typography } from '@/ui'
 
+// Standard system tab-bar heights: iOS UITabBar = 49pt, Android
+// BottomNavigationView = 56dp. Safe-area is added separately via insets.bottom.
 const TAB_BAR_CONTENT_HEIGHT = Platform.select({
   ios: 49,
   android: 56,
   default: 0,
 })
 
+// Keep in sync with the <NativeTabs.Trigger name=... /> entries in
+// app/(auth)/(tabs)/_layout.tsx. Home (`index` route) resolves to '/' and is
+// handled separately below.
 const TAB_ROUTE_PREFIXES = ['/inbox', '/wallet', '/health', '/more']
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info'
@@ -165,9 +178,8 @@ export const toastStore = create<ToastStore>(() => ({
   current: null,
 }))
 
-export const useToastStore = <U = ToastStore,>(
-  selector?: (state: ToastStore) => U,
-) => useStore(toastStore, selector!)
+export const useToastStore = <U,>(selector: (state: ToastStore) => U) =>
+  useStore(toastStore, selector)
 
 let nextId = 1
 
