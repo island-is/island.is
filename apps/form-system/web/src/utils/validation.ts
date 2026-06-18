@@ -98,7 +98,7 @@ const validateAssetFields = (value: FormSystemValue, assetType: string) => {
     case AssetTypes.VEHICLE:
       return validateVehicleFields(value)
     case AssetTypes.REAL_ESTATE:
-      return validatePropertyNumber(value)
+      return validateRealEstateFields(value)
     default:
       return true
   }
@@ -113,7 +113,7 @@ const validateVehicleFields = (value: FormSystemValue) => {
   return validateLanguageType(color)
 }
 
-const validatePropertyNumber = (value: FormSystemValue) => {
+const validateRealEstateFields = (value: FormSystemValue) => {
   const { propertyNumber, address, municipality } = value
 
   if (!propertyNumber || !address || !municipality) return false
