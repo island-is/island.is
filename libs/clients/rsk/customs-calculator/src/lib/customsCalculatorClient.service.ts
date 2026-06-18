@@ -58,7 +58,11 @@ export class CustomsCalculatorClientService {
       }
     }
 
-    return payload?.Response?.Einingar?.split(',') ?? []
+    return (
+      payload?.Response?.Einingar?.split(',')
+        ?.map((u) => u?.trim() ?? '')
+        ?.filter(Boolean) ?? []
+    )
   }
 
   async calculate(input: {
@@ -107,7 +111,7 @@ export class CustomsCalculatorClientService {
       client: this.client,
     })
 
-    const data = response.data as {
+    const data = response?.data as {
       Response: {
         LinaGjald: {
           LinaGjaldLinur: [
@@ -138,8 +142,8 @@ export class CustomsCalculatorClientService {
       amount: string
     }[] = []
 
-    for (const line of data.Response.LinaGjald.LinaGjaldLinur) {
-      for (const charge of line.LinaAlagningar) {
+    for (const line of data?.Response?.LinaGjald?.LinaGjaldLinur ?? []) {
+      for (const charge of line?.LinaAlagningar ?? []) {
         const amount = Number(charge.bruttoupphaed)
         if (Number.isNaN(amount)) continue
         additionalAmount += amount
