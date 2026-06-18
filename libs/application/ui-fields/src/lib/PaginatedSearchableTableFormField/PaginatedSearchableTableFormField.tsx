@@ -3,8 +3,13 @@ import {
   PaginatedSearchableTableField,
   PaginatedSearchableTableRow,
 } from '@island.is/application/types'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   Box,
   Input,
@@ -80,6 +85,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
 }) => {
   const { register, setValue, unregister } = useFormContext<FormValues>()
   const { formatMessage } = useLocale()
+  const user = useUserInfo()
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
   const [changedRowsById, setChangedRowsById] = useState<
@@ -98,7 +104,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
         : field.headers,
     [application, field],
   )
-  const answerKey = field.id
+  const resolvedId = resolveFieldId({ id: field.id }, application, user)
   const rowIdKey = field.rowIdKey
   const pageSize = field.pageSize ?? DEFAULT_PAGE_SIZE
   const searchKeys = useMemo(
@@ -122,15 +128,15 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
   }, [rowIdKey, rows])
 
   useEffect(() => {
-    register(answerKey)
-    return () => unregister(answerKey)
-  }, [answerKey, register, unregister])
+    register(resolvedId)
+    return () => unregister(resolvedId)
+  }, [resolvedId, register, unregister])
 
   useEffect(() => {
     const existingRows =
       getValueViaPath<PaginatedSearchableTableRow[]>(
         application.answers,
-        answerKey,
+        resolvedId,
       ) ?? []
 
     if (!existingRows.length) {
@@ -157,7 +163,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
     }, {})
 
     setChangedRowsById(initialChangedRowsById)
-  }, [answerKey, application.answers, baseRowsById, rowIdKey])
+  }, [resolvedId, application.answers, baseRowsById, rowIdKey])
 
   const filteredRows = useMemo(() => {
     if (!searchTerm.trim()) {
@@ -219,7 +225,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           return pickProperties(row, propertiesToPersist)
         })
 
-        setValue(answerKey, rowsToPersist, {
+        setValue(resolvedId, rowsToPersist, {
           shouldDirty: true,
           shouldTouch: true,
         })
@@ -228,11 +234,11 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
       },
       {
         allowMultiple: true,
-        customCallbackId: field.callbackId ?? `${answerKey}Persist`,
+        customCallbackId: field.callbackId ?? `${resolvedId}Persist`,
       },
     )
   }, [
-    answerKey,
+    resolvedId,
     application,
     field.callbackId,
     field.savePropertyNames,
@@ -286,7 +292,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
   return (
     <Stack space={3}>
       <Input
-        name={`${answerKey}Search`}
+        name={`${resolvedId}Search`}
         label={formatText(field.searchLabel, application, formatMessage)}
         placeholder={formatText(
           field.searchPlaceholder,
@@ -333,7 +339,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                       return (
                         <T.Data key={header.key}>
                           <Input
-                            name={`${answerKey}.${rowKey}.${header.key}`}
+                            name={`${resolvedId}.${rowKey}.${header.key}`}
                             label=""
                             type={header.inputType ?? 'text'}
                             min={header.min}

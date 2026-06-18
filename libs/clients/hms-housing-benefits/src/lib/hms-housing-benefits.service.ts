@@ -2,6 +2,8 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiVversionPaymentPaymenthistoryPostRequest,
+  ApplicationApi,
+  HousingBenefitsApplicationModel,
   PaymentApi,
 } from '../../gen/fetch'
 import { handle204 } from '@island.is/clients/middlewares'
@@ -9,10 +11,25 @@ import { CalculationTypes, TransactionTypes } from './enums'
 
 @Injectable()
 export class HmsHousingBenefitsClientService {
-  constructor(private readonly paymentApi: PaymentApi) {}
+  constructor(
+    private readonly paymentApi: PaymentApi,
+    private readonly applicationApi: ApplicationApi,
+  ) {}
 
   private apiWithAuth = (user: User) =>
     this.paymentApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  async createHousingBenefitsApplication(
+    user: User,
+    model: HousingBenefitsApplicationModel,
+  ) {
+    return this.applicationApi
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiVversionApplicationCreateHousingBenefitsApplicationPost({
+        version: '1',
+        housingBenefitsApplicationModel: model,
+      })
+  }
 
   async hmsPaymentHistory(
     user: User,

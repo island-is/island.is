@@ -10,13 +10,19 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   EnergyFundVehicleDetailsWithGrant,
   MachineDetails,
 } from '@island.is/api/schema'
 import { VehicleDetails } from './types'
 import { FieldBaseProps, FindVehicleField } from '@island.is/application/types'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  resolveFieldClearOnChange,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
@@ -60,10 +66,16 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   } = field
 
   const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, `${field.id}.plate`, '') as string,
+    getValueViaPath<string>(
+      application.answers,
+      `${field.id}.plate`,
+      '',
+    ) as string,
   )
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id: field.id }, application, user)
   const [vehicleNotFound, setVehicleNotFound] = useState<boolean>()
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -291,7 +303,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
               },
             }}
             maxLength={isMachine ? 7 : 5}
-            clearOnChange={clearOnChange}
+            clearOnChange={resolveFieldClearOnChange(
+              { clearOnChange },
+              application,
+            )}
             clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           />
         </Box>
@@ -456,7 +471,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                 />
               </Box>
             )}
-            {!isLoading && !plate.length && !!errors?.[field.id] && (
+            {!isLoading && !plate.length && !!errors?.[resolvedId] && (
               <InputError
                 errorMessage={
                   requiredValidVehicleErrorMessage &&

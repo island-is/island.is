@@ -94,6 +94,7 @@ judicial-system-api:
   secrets:
     AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+    AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'

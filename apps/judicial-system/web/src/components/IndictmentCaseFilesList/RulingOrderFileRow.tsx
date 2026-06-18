@@ -43,6 +43,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
+import RulingOrderConfirmationStatus from './RulingOrderConfirmationStatus'
 
 interface Props {
   file: CaseFile
@@ -198,19 +199,19 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   } else if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
     statusText = 'Kæra afturkölluð'
   } else if (appealCase.appealState === AppealCaseState.COMPLETED) {
-    // No notification template for ruling-order appeal completion yet
-    // (open question #8). Use the row's modified timestamp as the proxy
-    // for "completion date" — the last write was the COMPLETE_APPEAL
-    // transition.
-    statusText = `Niðurstaða Landsréttar ${formatDate(
-      appealCase.modified,
-      'PPP',
-    )}`
+    statusText = appealCase.appealRulingDate
+      ? `Niðurstaða Landsréttar ${formatDate(
+          appealCase.appealRulingDate,
+          'PPP',
+        )}`
+      : 'Niðurstaða Landsréttar'
   } else if (currentUserStatementDate) {
     statusText = `Greinargerð send ${formatDate(
       currentUserStatementDate,
       'PPPp',
     )}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else if (
     (isProsecution || isDefence) &&
     appealCase.appealState === AppealCaseState.RECEIVED
@@ -218,6 +219,8 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     statusText = `Frestur til að skila greinargerð ${
       appealCase.isStatementDeadlineExpired ? 'rann' : 'rennur'
     } út ${formatDate(appealCase.statementDeadline, 'PPPp')}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else if (
     isDistrictCourt &&
     appealCase.appealState === AppealCaseState.RECEIVED
@@ -226,8 +229,12 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
       appealCase.appealReceivedByCourtDate,
       'PPPp',
     )}`
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   } else {
     statusText = getAppealActorText(workingCase, appealCase)
+    statusIcon = 'warning'
+    statusIconColor = 'yellow600'
   }
 
   const showCompletedPill =
@@ -247,6 +254,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
         >
+          <RulingOrderConfirmationStatus file={file} />
           {showCompletedPill && (
             <Box marginRight={1}>
               <TagAppealState

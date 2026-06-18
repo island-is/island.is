@@ -58,7 +58,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   // Optionally email a PDF copy of the application to the parties
   // (málsaðilar) when the applicant opted in via the overview checkbox.
-  // Triggered on entry to the post-submission state; must never block
+  // Triggered during the submission transition; must never block
   // submission (registered with throwOnError: false).
   async sendApplicationCopyToParties({
     application,
@@ -424,6 +424,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
+    if (
+      answers.selectedEstate === EstateTypes.officialDivision ||
+      answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ) {
+      this.logger.info(
+        '[estate]: Skipping getSignatories API for estate type without signatories',
+        { selectedEstate: answers.selectedEstate },
+      )
+      return {
+        success: true,
+        signatories: [],
+      }
+    }
 
     const syslumennData = application.externalData?.syslumennOnEntry?.data as
       | { estates: Array<EstateInfo> }
@@ -472,8 +485,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const estateTypeMap: Record<string, SignatoryEstateTypes> = {
       [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
       [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
-      [EstateTypes.officialDivision]: SignatoryEstateTypes.OpinberSkipti,
-      [EstateTypes.estateWithoutAssets]: SignatoryEstateTypes.Eignaleysi,
     }
 
     const estateType = estateTypeMap[selectedEstate]

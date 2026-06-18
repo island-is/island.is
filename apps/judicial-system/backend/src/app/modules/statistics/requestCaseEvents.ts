@@ -5,7 +5,6 @@ import {
   CaseType,
   courtSubtypes,
   EventType,
-  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case, EventLog } from '../repository'

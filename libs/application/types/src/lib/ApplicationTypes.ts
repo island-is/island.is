@@ -72,7 +72,6 @@ export enum ApplicationTypes {
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
-  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   ID_CARD = 'IdCard',
@@ -99,6 +98,7 @@ export enum ApplicationTypes {
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
   MILE_CAR = 'MileCar',
   HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
+  HOUSING_BENEFITS = 'HousingBenefits',
   EDIT_UNEMPLOYMENT_INFORMATION = 'EditUnemploymentInformation',
   CONFIRM_JOB_SEARCH = 'ConfirmJobSearch',
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
@@ -403,10 +403,6 @@ export const ApplicationConfigurations = {
     slug: 'afskraning-taekis',
     translation: 'aosh.drm.application',
   },
-  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
-    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
-    translation: ['ghb.application', 'uiForms.application'],
-  },
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',
     translation: 'aosh.rifm.application',
@@ -510,6 +506,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
     slug: 'hh-namskeid',
     translation: ['hh.courses.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HOUSING_BENEFITS]: {
+    slug: 'husnaedisbaetur',
+    translation: ['hb.application', 'uiForms.application'],
   },
   [ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION]: {
     slug: 'breyta-upplysingum-atvinnuleysisbaetur',
