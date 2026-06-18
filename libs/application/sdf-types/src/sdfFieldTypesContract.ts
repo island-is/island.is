@@ -16,10 +16,7 @@ export const ALL_SDF_FIELD_TYPES: FieldTypes[] = Object.values(
  * for `{ type: FieldTypes.X }`. Must stay aligned with
  * `libs/api/domains/application/src/lib/sdf.model.ts` (`resolveComponentTypeByName`).
  */
-export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<
-  FieldTypes,
-  string
-> = {
+export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<FieldTypes, string> = {
   [FieldTypes.TEXT]: 'SdfTextField',
   [FieldTypes.EMAIL]: 'SdfTextField',
   [FieldTypes.SEARCH]: 'SdfSearchField',
@@ -50,7 +47,8 @@ export const FIELD_TYPE_TO_GRAPHQL_TYPENAME: Record<
   [FieldTypes.STATIC_TABLE]: 'SdfStaticTableField',
   [FieldTypes.PAGINATED_SEARCHABLE_TABLE]: 'SdfPaginatedSearchableTableField',
   [FieldTypes.HIDDEN_INPUT]: 'SdfHiddenInputField',
-  [FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE]: 'SdfHiddenInputWithWatchedValueField',
+  [FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE]:
+    'SdfHiddenInputWithWatchedValueField',
   [FieldTypes.FIND_VEHICLE]: 'SdfFindVehicleField',
   [FieldTypes.VEHICLE_RADIO]: 'SdfRadioField',
   [FieldTypes.VEHICLE_SELECT]: 'SdfSelectField',

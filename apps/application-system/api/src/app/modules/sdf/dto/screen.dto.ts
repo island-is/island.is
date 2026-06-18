@@ -114,8 +114,7 @@ export class ComponentDto {
   width?: string
 
   @ApiPropertyOptional({
-    description:
-      'Client-evaluable visibility expression.',
+    description: 'Client-evaluable visibility expression.',
   })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 

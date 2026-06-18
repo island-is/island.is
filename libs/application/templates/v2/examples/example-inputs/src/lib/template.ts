@@ -136,8 +136,7 @@ const template: ApplicationTemplate<
   name: 'Example Inputs SDF',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  translationNamespaces:
-    ApplicationConfigurations.ExampleInputsSdf.translation,
+  translationNamespaces: ApplicationConfigurations.ExampleInputsSdf.translation,
   dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,

@@ -1,9 +1,6 @@
 import { SectionBuilder } from '@island.is/application/core'
 
-export const introSection = new SectionBuilder(
-  'introSection',
-  'Intro Section',
-)
+export const introSection = new SectionBuilder('introSection', 'Intro Section')
   .addPage('introMultiField', 'Example fields', (page) => {
     page
       .addDescriptionField('introDescription', '', {

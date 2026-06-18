@@ -12,7 +12,8 @@ export const mapSubmitField: FieldMapper = (
     | undefined
   component.actions = (actions ?? []).map((a) => ({
     event: a.event ?? '',
-    name: resolver.resolve(asResolvableFormText(a.name)) || String(a.name ?? ''),
+    name:
+      resolver.resolve(asResolvableFormText(a.name)) || String(a.name ?? ''),
     type: a.type ?? 'primary',
   }))
 }

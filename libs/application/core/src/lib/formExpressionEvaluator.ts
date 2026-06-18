@@ -91,19 +91,31 @@ export const evaluateFormExpression = (
     }
     case 'GT': {
       const [left, right] = expression.args
-      return parseNumericValue(evaluateArg(left)) > parseNumericValue(evaluateArg(right))
+      return (
+        parseNumericValue(evaluateArg(left)) >
+        parseNumericValue(evaluateArg(right))
+      )
     }
     case 'GTE': {
       const [left, right] = expression.args
-      return parseNumericValue(evaluateArg(left)) >= parseNumericValue(evaluateArg(right))
+      return (
+        parseNumericValue(evaluateArg(left)) >=
+        parseNumericValue(evaluateArg(right))
+      )
     }
     case 'LT': {
       const [left, right] = expression.args
-      return parseNumericValue(evaluateArg(left)) < parseNumericValue(evaluateArg(right))
+      return (
+        parseNumericValue(evaluateArg(left)) <
+        parseNumericValue(evaluateArg(right))
+      )
     }
     case 'LTE': {
       const [left, right] = expression.args
-      return parseNumericValue(evaluateArg(left)) <= parseNumericValue(evaluateArg(right))
+      return (
+        parseNumericValue(evaluateArg(left)) <=
+        parseNumericValue(evaluateArg(right))
+      )
     }
     case 'IS_EMPTY': {
       const [arg] = expression.args

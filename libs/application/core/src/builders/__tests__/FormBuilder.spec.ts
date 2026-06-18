@@ -63,7 +63,10 @@ describe('FormBuilder', () => {
           page
             .addTextField('hasSpouse', 'Has spouse?')
             .addTextField('spouseName', 'Spouse name', {
-              showWhen: serverExpr.equals(serverExpr.answer('hasSpouse'), 'yes'),
+              showWhen: serverExpr.equals(
+                serverExpr.answer('hasSpouse'),
+                'yes',
+              ),
             })
         })
       })
@@ -197,32 +200,36 @@ describe('FormBuilder', () => {
   it('supports external data providers', () => {
     const form = new FormBuilder('f', 'F')
       .addSection('s', 'S', (section) => {
-        section.addExternalDataProvider('approveExternalData', 'Data collection', {
-          checkboxLabel: 'I approve',
-          dataProviders: [
-            {
-              provider: {
-                action: 'searchAddresses',
-                actionId: 'searchAddresses',
-                externalDataId: 'searchAddresses',
-                order: 1,
-              },
-              title: 'Property information',
-              subTitle: 'Information from HMS.',
-            },
-          ],
-          submitField: {
-            id: 'submit',
-            refetchApplicationAfterSubmit: true,
-            actions: [
+        section.addExternalDataProvider(
+          'approveExternalData',
+          'Data collection',
+          {
+            checkboxLabel: 'I approve',
+            dataProviders: [
               {
-                event: DefaultEvents.SUBMIT,
-                name: 'Next',
-                type: 'primary',
+                provider: {
+                  action: 'searchAddresses',
+                  actionId: 'searchAddresses',
+                  externalDataId: 'searchAddresses',
+                  order: 1,
+                },
+                title: 'Property information',
+                subTitle: 'Information from HMS.',
               },
             ],
+            submitField: {
+              id: 'submit',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Next',
+                  type: 'primary',
+                },
+              ],
+            },
           },
-        })
+        )
       })
       .build()
 

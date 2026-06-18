@@ -11,10 +11,9 @@ type SchemaAnswers<TSchema> = TSchema extends z.ZodTypeAny
   ? z.infer<TSchema>
   : TSchema
 type AnswerKey<TSchema> = Extract<keyof SchemaAnswers<TSchema>, string>
-type SchemaAnswerValue<
-  TSchema,
-  TKey extends AnswerKey<TSchema>,
-> = NonNullable<SchemaAnswers<TSchema>[TKey]>
+type SchemaAnswerValue<TSchema, TKey extends AnswerKey<TSchema>> = NonNullable<
+  SchemaAnswers<TSchema>[TKey]
+>
 type NumericAnswerKey<TSchema> = {
   [TKey in AnswerKey<TSchema>]: Extract<
     SchemaAnswerValue<TSchema, TKey>,
@@ -23,11 +22,13 @@ type NumericAnswerKey<TSchema> = {
     ? never
     : TKey
 }[AnswerKey<TSchema>]
-type TypedFormExpression<TKey extends string = string, TValue = unknown> =
-  FormExpression & {
-    readonly __answerKey?: TKey
-    readonly __answerValue?: TValue
-  }
+type TypedFormExpression<
+  TKey extends string = string,
+  TValue = unknown,
+> = FormExpression & {
+  readonly __answerKey?: TKey
+  readonly __answerValue?: TValue
+}
 
 const normalizeFieldReference = (
   expression: FormExpression | string,
@@ -80,7 +81,9 @@ export const expr = {
     args,
   }),
   if: (
-    ...args: [IfExpressionOptions] | [FormExpression, FormExpression, FormExpression]
+    ...args:
+      | [IfExpressionOptions]
+      | [FormExpression, FormExpression, FormExpression]
   ): FormExpression => {
     if (args.length === 1) {
       const [options] = args
@@ -114,7 +117,7 @@ export const expr = {
     operator: 'MULTIPLY',
     args,
   }),
-  forSchema: <TSchema,>() => ({
+  forSchema: <TSchema>() => ({
     get: <TKey extends AnswerKey<TSchema>>(
       fieldId: TKey,
     ): TypedFormExpression<TKey, SchemaAnswerValue<TSchema, TKey>> =>

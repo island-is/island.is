@@ -350,9 +350,8 @@ export const mapAnswersToApplicationDtoSdf = (
     selectedRealEstate,
     selectedUsageUnits,
   ).toString()
-  const totalFireCompensation = sumTotalFireCompensation(
-    selectedRealEstate,
-  ).toString()
+  const totalFireCompensation =
+    sumTotalFireCompensation(selectedRealEstate).toString()
 
   const fileAnswers = getValueViaPath<Array<AnswerFile>>(
     application.answers,

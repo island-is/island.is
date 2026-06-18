@@ -9,4 +9,7 @@ export const useFormExpressionEvaluator = (
   expression: FormExpression | undefined,
   answers: Record<string, unknown>,
 ): unknown =>
-  useMemo(() => evaluateFormExpression(expression, answers), [answers, expression])
+  useMemo(
+    () => evaluateFormExpression(expression, answers),
+    [answers, expression],
+  )

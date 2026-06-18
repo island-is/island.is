@@ -19,6 +19,7 @@ mirrors an existing legacy app while leaving the legacy app's behaviour untouche
 (the few allowed legacy edits are additive — see DO 5, DO 7, DO 8).
 
 Read it in two modes:
+
 - **Building** — work top to bottom: orient on the surfaces, follow **DO**, and
   hold the **SDF rules** in mind (they shape how almost every step is written).
 - **Debugging** — jump to **Troubleshooting** and match the symptom you see.
@@ -38,6 +39,7 @@ Read it in two modes:
   and payment-pending fields.
 
 ### Reference implementations (read these first)
+
 - `libs/application/templates/v2/hms/fire-compensation-appraisal` — the app this
   skill was written from and the closest real analogue: HMS, `FormBuilder`,
   payment state, property search + `onSelectRefetch` → template API, and replaced
@@ -73,6 +75,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
 
 1. **Create a NEW `ApplicationType`** that coexists with the legacy one (e.g.
    `FIRE_COMPENSATION_APPRAISAL_SDF`). Register it in all of:
+
    - `libs/application/types/src/lib/ApplicationTypes.ts` — enum **and** an
      `ApplicationConfigurations` entry with a **new `slug`**, `useSdf: true`, and
      a `translation` namespace (you may reuse the legacy app's translation
@@ -97,8 +100,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
    default template, `getDataProviders = () => import('./dataProviders')`,
    `getFields = () => Promise.resolve({})`, and re-exports schema/constants.
 
-3. **Build forms with `FormBuilder`.** `new FormBuilder<typeof dataSchema>(id,
-   title, opts).addSection(id, title, (s) => s.addPage(...)).build()`. A **page =
+3. **Build forms with `FormBuilder`.** `new FormBuilder<typeof dataSchema>(id, title, opts).addSection(id, title, (s) => s.addPage(...)).build()`. A **page =
    one multiField screen**. Field methods live on `PageBuilder`
    (`libs/application/core/src/builders/PageBuilder.ts`): `addSelectField`,
    `addAsyncSelectField`, `addSearchField`, `addCheckboxField`, `addRadioField`,
@@ -106,11 +108,11 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
    `addDescriptionField`, `addSubmitField`, `addDataTableField`,
    `addStaticTableField`, etc. External-data screen:
    `section.addExternalDataProvider(...)`.
+
    - When wiring visibility and computed values, follow **SDF rules** below
      (client vs server `showWhen`, what `expr` can read, display values).
    - The shared applicant block works in SDF:
-     `const p = applicantInformationMultiField(); section.addPage(p.id, p.title,
-     (page) => page.setDescription(p.description).addFields(p.children))`.
+     `const p = applicantInformationMultiField(); section.addPage(p.id, p.title, (page) => page.setDescription(p.description).addFields(p.children))`.
    - **Role/delegation-based forms port verbatim.** If the legacy app serves a
      different form per role (e.g. `APPLICANT` vs a `DELEGATE`/ProcurationHolder
      with its own prerequisites form), keep the same `allowedDelegations`,
@@ -128,6 +130,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
    The legacy service's `serviceId` **is** that legacy type string, so the action
    runs on it. This is exactly how shared APIs (`UserProfile`, `Payment`,
    `Identity`, `NationalRegistry`) are shared. Notes:
+
    - `externalData` is keyed by `externalDataId || action`, and `externalDataId`
      defaults to the plain `action`. So namespacing does **not** change the key —
      forms still read e.g. `externalData.getProperties.data`.
@@ -149,6 +152,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
    from another template) and **never author a new React custom field** — compose
    from existing SDF fields + template-api actions instead. Patterns (mirror
    fire-compensation-appraisal-sdf):
+
    - Address/entity search → `addSearchField({ searchAction, options, ... })`
      backed by a `searchX` template API that returns `{ options, ...data }`.
    - "On select, load details" → a select/search with
@@ -158,7 +162,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
      `(answers, externalData)`, so legacy pure option/sum utils usually port
      verbatim.
    - **Composing covers search/select/checkbox/display/upload-style needs.** But
-     a few FormBuilder field *types* exist with **no renderer yet** (they sit in
+     a few FormBuilder field _types_ exist with **no renderer yet** (they sit in
      `ComponentSwitch`'s `unsupportedFieldTypes`). If your app needs one — this
      migration needed `addOverviewField`, and payment apps need the
      payment-pending field — you must implement it across **four layers**, not
@@ -173,6 +177,7 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
 
 7. **PAYMENT — only if your app charges a fee. Most apps don't; skip this whole
    step otherwise.** If it does:
+
    - Keep the hand-written `stateMachineConfig`; do **not** reach for
      `defineWorkflow` (the SDF sugar). `buildPaymentState` returns a raw XState
      node; `defineWorkflow` has no payment-phase affordance and just compiles to
@@ -187,8 +192,8 @@ data/config layer will **compile yet fail at runtime**. Keep all of these in vie
      / `SdfPaymentChargeOverviewField`) already exists. **Verify the full
      payment → done transition end-to-end early; it is the biggest unknown.**
    - **Watch the Sequelize-snapshot trap** (see Troubleshooting): the
-     `CreateChargeApi` `onEntry` action crashes with *"No template exists with id
-     undefined"* unless the application is snapshotted before `changeState`.
+     `CreateChargeApi` `onEntry` action crashes with _"No template exists with id
+     undefined"_ unless the application is snapshotted before `changeState`.
    - **Add a dev-only mock-payment escape hatch** so you can test the flow without
      a reachable charge-FJS service: a `shouldUseMockPayment` toggle gated to
      non-production (omit it in prod), read by `Payment.createCharge` to fabricate
@@ -218,10 +223,14 @@ one of them; each maps to a symptom in **Troubleshooting**.
 - **Visibility is split client vs server.** Use **`clientShowWhen`** (the `expr`
   DSL) for instant, answer-driven, same-page reveals — the browser already has
   the answers and reveals without a new fetch:
+
   ```ts
-  clientShowWhen: expr.or(expr.isNotEmpty('realEstate'),
-                          expr.isNotEmpty('selectedPropertyByCode'))
+  clientShowWhen: expr.or(
+    expr.isNotEmpty('realEstate'),
+    expr.isNotEmpty('selectedPropertyByCode'),
+  )
   ```
+
   Reserve server **`showWhen`** for visibility that depends on `externalData`/`user`
   or that must gate inclusion server-side — it **omits the field from the screen
   payload**, so it cannot reveal without a new screen fetch.
@@ -250,6 +259,7 @@ one of them; each maps to a symptom in **Troubleshooting**.
 - **externalData-dependent values must be server-computed.** There is no instant
   client path (client `expr` can't read externalData). Three options, in order of
   preference:
+
   1. **`clientValueExpression` as a resolver function**
      `(answers, externalData) => FormExpression`. The display mapper resolves it
      to a static tree at screen-build time, so externalData-derived **literals**
@@ -271,8 +281,9 @@ one of them; each maps to a symptom in **Troubleshooting**.
   SDF inputs are controlled and the server stores answers with a spread-merge that
   never deletes keys, so behaviour diverges from legacy in two ways the shared
   pipeline now corrects at the persistence boundary:
+
   - **Empty strings are stripped on write** (`strip-empty-answers.ts`) so an
-    optional field left blank reads as *absent* (like legacy), not `''`. Don't
+    optional field left blank reads as _absent_ (like legacy), not `''`. Don't
     re-introduce `''` leaks in your submit DTO/overview by reading a raw answer
     that may have been cleared.
   - **Value-bearing field defaults are persisted** on page-leave
@@ -281,7 +292,7 @@ one of them; each maps to a symptom in **Troubleshooting**.
     which must never persist (their `NON_VALUE_BEARING_FIELD_TYPES` set is the
     source of truth). If you add a new non-value-bearing field type, add it there.
 
-- **The persisted page cursor must land on a *navigable* screen.** The next
+- **The persisted page cursor must land on a _navigable_ screen.** The next
   `pageIndex` is computed against the just-submitted answers
   (`resolveAdvancedPageIndex`), because those answers can flip the visibility of
   upcoming pages (page-level server `showWhen`). Persisting a raw
@@ -295,24 +306,25 @@ one of them; each maps to a symptom in **Troubleshooting**.
 
 ## Troubleshooting (match the symptom)
 
-| Symptom | Cause | Fix |
-| --- | --- | --- |
-| New app silently opens the **old** app / redirect `:4250` → `:4242` | slug not on the routing allowlist | add the slug to `SDF_ENABLED_APPLICATION_SLUGS` (DO 1) |
-| Screen won't load; GraphQL **`String cannot represent value: { id, defaultMessage }`** | a `MessageDescriptor` reached a schema `String` field unresolved (the one we hit: option `label`s on checkbox/radio/select) | resolve every text prop the schema types as `String`; option labels resolve in `applySharedFieldProps` (`apps/application-system/api/.../sdf/field-mappers/utils.ts`); `SdfSelectOption.label` is `String` in the SDF model |
-| Fields **appear only after navigating away and back** | a same-page reveal used server `showWhen`, which omits the field from the payload | switch that reveal to `clientShowWhen` (SDF rules → visibility) |
-| A server-computed **display value never updates** | relying on the client for an externalData-dependent value (impossible) | use the server `value` closure; ensure it updates via VALIDATE recompute or drive a REFETCH (SDF rules) |
-| Backend reads **`undefined`** for a display field | display fields don't persist into answers | recompute from `answers` + `externalData` in the SDF submit-mapper (DO 5) |
-| A ported util reads stale/missing custom-component data | SDF puts fetched data in `externalData`, not answers | read `externalData.<action>.data` |
-| An imported legacy React field, or a new custom field, **renders nothing** | `ComponentSwitch` supports only the fixed field set | compose from existing SDF fields + template-api actions (DO 6) |
-| A **FormBuilder field type** (e.g. overview) renders nothing | the type has no renderer yet — it's in `unsupportedFieldTypes` | implement it across the four layers (DO 6); don't author a one-off React field |
-| Payment state crashes with **"No template exists with id undefined"** | `changeState` spread `{ ...application }` dropped the Sequelize prototype getters, so `typeId` is `undefined` and `CreateChargeApi`'s translation lookup fails | snapshot the application to a plain object (`toApplicationSnapshot`) before `changeState`/action-perform (`sdf-screen.service.ts`) |
-| An **empty optional field leaks `''`** into the submit DTO / overview / notification | SDF's controlled inputs + spread-merge persist `''` forever; legacy never wrote it | rely on the central empty-string strip on write (`strip-empty-answers.ts`); don't read a possibly-cleared raw answer downstream (SDF rules → answer persistence) |
-| A field's **`defaultValue` never reaches answers** (or a display default wrongly persists) | default persistence only seeds value-bearing fields | value-bearing defaults persist via `field-default-persistence.ts`; if it's a new non-value-bearing type, add it to `NON_VALUE_BEARING_FIELD_TYPES` |
-| Overview **"Breyta"/edit jumps to the wrong page**, or the cursor desyncs after a conditional page | persisted `pageIndex` pointed at a hidden/non-navigable screen | set the overview `backId` to the page id and let `goToPage`/`resolveAdvancedPageIndex` resolve to the nearest navigable screen (SDF rules → page cursor) |
-| Header **app/institution name is blank** or logo missing | read from `form.title` (empty on NOT_STARTED) instead of the template | take `applicationName`/`institutionName` from the template (`getApplicationNameTranslationString`) and send `form.logo.name` for the client to resolve |
-| A footer **state-transition button no-ops** on the final screen | it dispatched `NEXT_PAGE` (page cursor) instead of a state event | role/state-transition buttons must dispatch `SUBMIT` carrying the event name (`footer-builder.ts`) |
+| Symptom                                                                                            | Cause                                                                                                                                                          | Fix                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| New app silently opens the **old** app / redirect `:4250` → `:4242`                                | slug not on the routing allowlist                                                                                                                              | add the slug to `SDF_ENABLED_APPLICATION_SLUGS` (DO 1)                                                                                                                                                                      |
+| Screen won't load; GraphQL **`String cannot represent value: { id, defaultMessage }`**             | a `MessageDescriptor` reached a schema `String` field unresolved (the one we hit: option `label`s on checkbox/radio/select)                                    | resolve every text prop the schema types as `String`; option labels resolve in `applySharedFieldProps` (`apps/application-system/api/.../sdf/field-mappers/utils.ts`); `SdfSelectOption.label` is `String` in the SDF model |
+| Fields **appear only after navigating away and back**                                              | a same-page reveal used server `showWhen`, which omits the field from the payload                                                                              | switch that reveal to `clientShowWhen` (SDF rules → visibility)                                                                                                                                                             |
+| A server-computed **display value never updates**                                                  | relying on the client for an externalData-dependent value (impossible)                                                                                         | use the server `value` closure; ensure it updates via VALIDATE recompute or drive a REFETCH (SDF rules)                                                                                                                     |
+| Backend reads **`undefined`** for a display field                                                  | display fields don't persist into answers                                                                                                                      | recompute from `answers` + `externalData` in the SDF submit-mapper (DO 5)                                                                                                                                                   |
+| A ported util reads stale/missing custom-component data                                            | SDF puts fetched data in `externalData`, not answers                                                                                                           | read `externalData.<action>.data`                                                                                                                                                                                           |
+| An imported legacy React field, or a new custom field, **renders nothing**                         | `ComponentSwitch` supports only the fixed field set                                                                                                            | compose from existing SDF fields + template-api actions (DO 6)                                                                                                                                                              |
+| A **FormBuilder field type** (e.g. overview) renders nothing                                       | the type has no renderer yet — it's in `unsupportedFieldTypes`                                                                                                 | implement it across the four layers (DO 6); don't author a one-off React field                                                                                                                                              |
+| Payment state crashes with **"No template exists with id undefined"**                              | `changeState` spread `{ ...application }` dropped the Sequelize prototype getters, so `typeId` is `undefined` and `CreateChargeApi`'s translation lookup fails | snapshot the application to a plain object (`toApplicationSnapshot`) before `changeState`/action-perform (`sdf-screen.service.ts`)                                                                                          |
+| An **empty optional field leaks `''`** into the submit DTO / overview / notification               | SDF's controlled inputs + spread-merge persist `''` forever; legacy never wrote it                                                                             | rely on the central empty-string strip on write (`strip-empty-answers.ts`); don't read a possibly-cleared raw answer downstream (SDF rules → answer persistence)                                                            |
+| A field's **`defaultValue` never reaches answers** (or a display default wrongly persists)         | default persistence only seeds value-bearing fields                                                                                                            | value-bearing defaults persist via `field-default-persistence.ts`; if it's a new non-value-bearing type, add it to `NON_VALUE_BEARING_FIELD_TYPES`                                                                          |
+| Overview **"Breyta"/edit jumps to the wrong page**, or the cursor desyncs after a conditional page | persisted `pageIndex` pointed at a hidden/non-navigable screen                                                                                                 | set the overview `backId` to the page id and let `goToPage`/`resolveAdvancedPageIndex` resolve to the nearest navigable screen (SDF rules → page cursor)                                                                    |
+| Header **app/institution name is blank** or logo missing                                           | read from `form.title` (empty on NOT_STARTED) instead of the template                                                                                          | take `applicationName`/`institutionName` from the template (`getApplicationNameTranslationString`) and send `form.logo.name` for the client to resolve                                                                      |
+| A footer **state-transition button no-ops** on the final screen                                    | it dispatched `NEXT_PAGE` (page cursor) instead of a state event                                                                                               | role/state-transition buttons must dispatch `SUBMIT` carrying the event name (`footer-builder.ts`)                                                                                                                          |
 
 ### Deeper server/renderer gotchas
+
 - **Validation-error rebuild dropped in-progress answers.** On a failed
   `NEXT_PAGE`, `persistAnswersAndAdvance`
   (`apps/application-system/api/.../sdf/sdf-screen.service.ts`) rebuilt the error
@@ -321,7 +333,7 @@ one of them; each maps to a symptom in **Troubleshooting**.
   to "vanish behind the error." Fix: rebuild the error screen **ephemerally with
   the merged (submitted) answers**. General principle: every server
   recompute/rebuild path should reflect the user's in-progress answers.
-- **A checkbox renders its validation error *below* its options** — but only if
+- **A checkbox renders its validation error _below_ its options** — but only if
   it has options. Empty options (because the property context was lost) make it
   look like the error "replaced" the checkboxes.
 - **Making a checkbox trigger a REFETCH** (so a server-computed display updates on
@@ -335,16 +347,16 @@ one of them; each maps to a symptom in **Troubleshooting**.
 
 ## Concrete file map (per migration)
 
-| Concern | Files |
-| --- | --- |
-| Register the type | `ApplicationTypes.ts`, `InstitutionMapper.ts`, `template-loader/.../templateLoaders.ts`, `tsconfig.base.json`, feature flag |
-| Enable SDF routing | `libs/application/types/src/lib/sdfEnabledApplicationSlugs.ts` (add slug to `SDF_ENABLED_APPLICATION_SLUGS`) |
-| New lib | `libs/application/templates/.../<name>/` (project.json, tsconfig*, eslintrc, jest, babelrc, `src/index.ts`) |
-| Forms | `src/forms/{prerequisitesForm,mainForm,completedForm,...}/index.ts` (FormBuilder) |
-| State machine | `src/lib/template.ts` (keep `stateMachineConfig` + `buildPaymentState` if payment) |
-| Schema / messages / utils | `src/lib/dataSchema.ts`, `src/lib/messages/*`, `src/utils/*` (port; adapt externalData reads + recompute display values) |
-| Data providers | `src/dataProviders/index.ts` (namespace app-specific APIs to the legacy type) |
-| Template API | Legacy `.../templates/<inst>/<legacy-app>/{service,module,utils}.ts` — **add** new actions + an SDF submit-mapper variant; no new module if reusing via namespace |
+| Concern                                                                              | Files                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Register the type                                                                    | `ApplicationTypes.ts`, `InstitutionMapper.ts`, `template-loader/.../templateLoaders.ts`, `tsconfig.base.json`, feature flag                                                                                                                                                                                                                                                                              |
+| Enable SDF routing                                                                   | `libs/application/types/src/lib/sdfEnabledApplicationSlugs.ts` (add slug to `SDF_ENABLED_APPLICATION_SLUGS`)                                                                                                                                                                                                                                                                                             |
+| New lib                                                                              | `libs/application/templates/.../<name>/` (project.json, tsconfig\*, eslintrc, jest, babelrc, `src/index.ts`)                                                                                                                                                                                                                                                                                             |
+| Forms                                                                                | `src/forms/{prerequisitesForm,mainForm,completedForm,...}/index.ts` (FormBuilder)                                                                                                                                                                                                                                                                                                                        |
+| State machine                                                                        | `src/lib/template.ts` (keep `stateMachineConfig` + `buildPaymentState` if payment)                                                                                                                                                                                                                                                                                                                       |
+| Schema / messages / utils                                                            | `src/lib/dataSchema.ts`, `src/lib/messages/*`, `src/utils/*` (port; adapt externalData reads + recompute display values)                                                                                                                                                                                                                                                                                 |
+| Data providers                                                                       | `src/dataProviders/index.ts` (namespace app-specific APIs to the legacy type)                                                                                                                                                                                                                                                                                                                            |
+| Template API                                                                         | Legacy `.../templates/<inst>/<legacy-app>/{service,module,utils}.ts` — **add** new actions + an SDF submit-mapper variant; no new module if reusing via namespace                                                                                                                                                                                                                                        |
 | Implement a missing SDF field type (**only if your app needs one not yet rendered**) | server mapper `apps/application-system/api/.../sdf/field-mappers/<x>.mapper.ts` (+ `field-mappers/index.ts`); GraphQL `libs/api/domains/application/.../sdf.model.ts` + `sdf/dto/screen.dto.ts`; client query `application-system-next/lib/graphql.ts`; renderer `application-system-next/components/form-renderer/fields/Sdf<X>Field.tsx` (+ remove from `ComponentSwitch.tsx` `unsupportedFieldTypes`) |
-| Payment (**only if your app charges a fee**) | `template.ts` (`buildPaymentState`); shared `SdfPaymentPendingField`/charge-overview field; `toApplicationSnapshot` guard before `changeState`; dev-only `shouldUseMockPayment` toggle in the legacy form + schema |
-| Answer parity & navigation (shared infra — usually no per-app change) | `sdf/strip-empty-answers.ts`, `sdf/field-default-persistence.ts`, `sdf-screen.service.ts` (`resolveAdvancedPageIndex`, `goToPage`) |
+| Payment (**only if your app charges a fee**)                                         | `template.ts` (`buildPaymentState`); shared `SdfPaymentPendingField`/charge-overview field; `toApplicationSnapshot` guard before `changeState`; dev-only `shouldUseMockPayment` toggle in the legacy form + schema                                                                                                                                                                                       |
+| Answer parity & navigation (shared infra — usually no per-app change)                | `sdf/strip-empty-answers.ts`, `sdf/field-default-persistence.ts`, `sdf-screen.service.ts` (`resolveAdvancedPageIndex`, `goToPage`)                                                                                                                                                                                                                                                                       |

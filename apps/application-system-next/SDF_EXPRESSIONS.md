@@ -14,12 +14,12 @@ import { FormBuilder, expr, serverExpr } from '@island.is/application/core'
 
 ## Naming cheat sheet
 
-| You write in a template | Stored on the field | Sent over GraphQL | Evaluated by |
-| --- | --- | --- | --- |
-| `showWhen` | `condition` | *(omitted)* | Server — `shouldShowFormItem` |
-| `clientShowWhen` | `clientShowWhen` | `clientShowWhen` | Client — `useFormExpressionEvaluator` |
-| `value` (on display fields) | `value` closure | `value` (queried as `displayValue`) | Server — screen fetch + VALIDATE recompute |
-| `clientValueExpression` | `clientValueExpression` | `clientValueExpression` | Client — `useFormExpressionEvaluator` |
+| You write in a template     | Stored on the field     | Sent over GraphQL                   | Evaluated by                               |
+| --------------------------- | ----------------------- | ----------------------------------- | ------------------------------------------ |
+| `showWhen`                  | `condition`             | _(omitted)_                         | Server — `shouldShowFormItem`              |
+| `clientShowWhen`            | `clientShowWhen`        | `clientShowWhen`                    | Client — `useFormExpressionEvaluator`      |
+| `value` (on display fields) | `value` closure         | `value` (queried as `displayValue`) | Server — screen fetch + VALIDATE recompute |
+| `clientValueExpression`     | `clientValueExpression` | `clientValueExpression`             | Client — `useFormExpressionEvaluator`      |
 
 Server rules never cross the wire as `condition`. The browser only receives `clientShowWhen` and `clientValueExpression` as JSON expression trees.
 
@@ -95,9 +95,7 @@ For real `showWhen` closures, see `showOwnedProperty` / `showOtherProperty` in
 Use `getSuccessfulExternalData` when the template also needs the typed payload:
 
 ```ts
-const getPlotDetailsData = (
-  app: Application,
-): PlotDetailsData | null =>
+const getPlotDetailsData = (app: Application): PlotDetailsData | null =>
   getSuccessfulExternalData(
     app.externalData,
     PlotDetailsApi.action,
@@ -129,22 +127,22 @@ page.addSelectField('irrigationType', 'Irrigation type', {
 
 #### Available `expr` operators
 
-| Helper | Operator | Purpose |
-| --- | --- | --- |
-| `expr.get('fieldId')` | `GET` | Read an answer value |
-| `expr.isEmpty(x)` | `IS_EMPTY` | True when value is missing/empty |
-| `expr.isNotEmpty(x)` | `NOT` + `IS_EMPTY` | Inverse of `isEmpty` |
-| `expr.equals(a, b)` | `EQUALS` | Equality check |
-| `expr.gt(a, b)` | `GT` | Numeric greater-than check |
-| `expr.gte(a, b)` | `GTE` | Numeric greater-than-or-equal check |
-| `expr.lt(a, b)` | `LT` | Numeric less-than check |
-| `expr.lte(a, b)` | `LTE` | Numeric less-than-or-equal check |
-| `expr.and(...)` | `AND` | All conditions true |
-| `expr.or(...)` | `OR` | Any condition true |
-| `expr.not(x)` | `NOT` | Negation |
-| `expr.if({ condition, then, otherwise })` | `IF` | Conditional value/visibility |
-| `expr.sum(...)` | `SUM` | Numeric sum |
-| `expr.multiply(...)` | `MULTIPLY` | Numeric product |
+| Helper                                    | Operator           | Purpose                             |
+| ----------------------------------------- | ------------------ | ----------------------------------- |
+| `expr.get('fieldId')`                     | `GET`              | Read an answer value                |
+| `expr.isEmpty(x)`                         | `IS_EMPTY`         | True when value is missing/empty    |
+| `expr.isNotEmpty(x)`                      | `NOT` + `IS_EMPTY` | Inverse of `isEmpty`                |
+| `expr.equals(a, b)`                       | `EQUALS`           | Equality check                      |
+| `expr.gt(a, b)`                           | `GT`               | Numeric greater-than check          |
+| `expr.gte(a, b)`                          | `GTE`              | Numeric greater-than-or-equal check |
+| `expr.lt(a, b)`                           | `LT`               | Numeric less-than check             |
+| `expr.lte(a, b)`                          | `LTE`              | Numeric less-than-or-equal check    |
+| `expr.and(...)`                           | `AND`              | All conditions true                 |
+| `expr.or(...)`                            | `OR`               | Any condition true                  |
+| `expr.not(x)`                             | `NOT`              | Negation                            |
+| `expr.if({ condition, then, otherwise })` | `IF`               | Conditional value/visibility        |
+| `expr.sum(...)`                           | `SUM`              | Numeric sum                         |
+| `expr.multiply(...)`                      | `MULTIPLY`         | Numeric product                     |
 
 Client evaluation uses **flat `answers` only**. There is no access to `externalData` or `user`. `expr.get('propertyInfo.categoryClass')` reads the literal answer key `answers['propertyInfo.categoryClass']`; it does not traverse nested objects.
 
@@ -170,10 +168,7 @@ Example: show an \"other amount\" input when a radio field selects `other`:
 
 ```ts
 page.addTextField('input4', 'Upphæð leigu', {
-  clientShowWhen: expr.equals(
-    expr.get('radioFieldForDisplayField'),
-    'other',
-  ),
+  clientShowWhen: expr.equals(expr.get('radioFieldForDisplayField'), 'other'),
 })
 ```
 
@@ -216,11 +211,11 @@ flowchart TD
 
 ### Visibility decision guide
 
-| Situation | Use |
-| --- | --- |
-| Rule needs `externalData` or `user` | `showWhen` (server) |
-| Instant toggle from other answers | `clientShowWhen` |
-| Server gates inclusion, client refines on page | Both |
+| Situation                                      | Use                 |
+| ---------------------------------------------- | ------------------- |
+| Rule needs `externalData` or `user`            | `showWhen` (server) |
+| Instant toggle from other answers              | `clientShowWhen`    |
+| Server gates inclusion, client refines on page | Both                |
 
 ---
 
@@ -232,7 +227,7 @@ Display fields (`addDisplayField`) show read-only computed output. Every display
 page.addDisplayField(
   'displayField',
   'Display Field',
-  (answers) => `${sumAnswers(answers)}`,  // required server closure
+  (answers) => `${sumAnswers(answers)}`, // required server closure
   {
     variant: 'currency',
     clientValueExpression: expr.sum(
@@ -361,13 +356,13 @@ Full examples: `libs/application/templates/v2/examples/example-inputs/src/forms/
 
 ### Display value decision guide
 
-| Situation | Use |
-| --- | --- |
-| Needs `externalData` or i18n | Server `value` |
-| Answer-only math, instant updates | `clientValueExpression` |
+| Situation                                | Use                                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| Needs `externalData` or i18n             | Server `value`                                                                      |
+| Answer-only math, instant updates        | `clientValueExpression`                                                             |
 | Server snapshot + client instant updates | Both, but keep calculations equivalent because the client result wins while editing |
 
---- 
+---
 
 ## Limitations
 
@@ -390,10 +385,7 @@ Server `showWhen` / `condition` never appears in the screen payload. Client expr
   "id": "irrigationType",
   "clientShowWhen": {
     "operator": "EQUALS",
-    "args": [
-      { "operator": "GET", "args": ["needsWaterAccess"] },
-      "yes"
-    ]
+    "args": [{ "operator": "GET", "args": ["needsWaterAccess"] }, "yes"]
   }
 }
 ```
@@ -432,21 +424,21 @@ GraphQL schema: `libs/application/sdf-types/src/sdf.graphql`. Client queries: `a
 
 ## Related code
 
-| Area | Path |
-| --- | --- |
-| FormBuilder / field options | `libs/application/core/src/builders/PageBuilder.ts` |
-| Client expression DSL | `libs/application/core/src/lib/formExpressionHelper.ts` |
-| Server expression DSL | `libs/application/core/src/lib/serverExpressionHelper.ts` |
-| Shared evaluator | `libs/application/core/src/lib/formExpressionEvaluator.ts` |
-| Server condition runtime | `libs/application/core/src/lib/conditionUtils.ts` |
-| Screen compilation | `libs/application/screen-compiler/src/convertFormToScreens.ts` |
-| Display field mapping | `apps/application-system/api/src/app/modules/sdf/field-mappers/display.mapper.ts` |
-| Screen mapper (visibility inclusion) | `apps/application-system/api/src/app/modules/sdf/screen-mapper.ts` |
-| Server display recompute | `apps/application-system/api/src/app/modules/sdf/sdf-screen.service.ts` |
-| Client visibility gate | `apps/application-system-next/components/form-renderer/ComponentSwitch.tsx` |
-| Client display field | `apps/application-system-next/components/form-renderer/fields/SdfDisplayField.tsx` |
-| Client display recompute hook | `apps/application-system-next/hooks/useDisplayRecompute.ts` |
-| Client expression hook | `apps/application-system-next/hooks/useFormExpressionEvaluator.ts` |
-| Example templates | `libs/application/templates/v2/examples/example-inputs/`, `libs/application/templates/v2/hms/fire-compensation-appraisal/` |
+| Area                                 | Path                                                                                                                       |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| FormBuilder / field options          | `libs/application/core/src/builders/PageBuilder.ts`                                                                        |
+| Client expression DSL                | `libs/application/core/src/lib/formExpressionHelper.ts`                                                                    |
+| Server expression DSL                | `libs/application/core/src/lib/serverExpressionHelper.ts`                                                                  |
+| Shared evaluator                     | `libs/application/core/src/lib/formExpressionEvaluator.ts`                                                                 |
+| Server condition runtime             | `libs/application/core/src/lib/conditionUtils.ts`                                                                          |
+| Screen compilation                   | `libs/application/screen-compiler/src/convertFormToScreens.ts`                                                             |
+| Display field mapping                | `apps/application-system/api/src/app/modules/sdf/field-mappers/display.mapper.ts`                                          |
+| Screen mapper (visibility inclusion) | `apps/application-system/api/src/app/modules/sdf/screen-mapper.ts`                                                         |
+| Server display recompute             | `apps/application-system/api/src/app/modules/sdf/sdf-screen.service.ts`                                                    |
+| Client visibility gate               | `apps/application-system-next/components/form-renderer/ComponentSwitch.tsx`                                                |
+| Client display field                 | `apps/application-system-next/components/form-renderer/fields/SdfDisplayField.tsx`                                         |
+| Client display recompute hook        | `apps/application-system-next/hooks/useDisplayRecompute.ts`                                                                |
+| Client expression hook               | `apps/application-system-next/hooks/useFormExpressionEvaluator.ts`                                                         |
+| Example templates                    | `libs/application/templates/v2/examples/example-inputs/`, `libs/application/templates/v2/hms/fire-compensation-appraisal/` |
 
 For adding new SDF field components to the renderer, see [README.md](./README.md).

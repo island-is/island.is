@@ -3,11 +3,7 @@
   "name": "application-sdf-types",
   "sourceRoot": "libs/application/sdf-types/src",
   "projectType": "library",
-  "tags": [
-    "scope:application-system",
-    "lib:js",
-    "type:types"
-  ],
+  "tags": ["scope:application-system", "lib:js", "type:types"],
   "generators": {},
   "targets": {
     "lint": {

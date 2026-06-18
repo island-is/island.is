@@ -69,10 +69,10 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
       throw new Error('Expected page1 multi field screen')
     }
 
-    const resolver = ({
+    const resolver = {
       resolve: (v: unknown) =>
         typeof v === 'string' ? v : v != null ? String(v) : '',
-    } as unknown) as FormTextResolver
+    } as unknown as FormTextResolver
 
     const components = mapScreenToComponents(multi, resolver, {} as Application)
     const byId = (id: string) => components.find((c) => c.id === id)

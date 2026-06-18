@@ -104,9 +104,7 @@ export const getApplicationStateInformation = async (
 export const flattenTranslationNamespaces = (
   ...namespaces: (TranslationNamespaces | undefined)[]
 ): string[] =>
-  namespaces.flatMap((ns) =>
-    Array.isArray(ns) ? ns.flat() : ns ? [ns] : [],
-  )
+  namespaces.flatMap((ns) => (Array.isArray(ns) ? ns.flat() : ns ? [ns] : []))
 
 export const getApplicationTranslationNamespaces = async (
   application: Application,

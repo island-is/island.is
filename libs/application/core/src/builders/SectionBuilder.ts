@@ -128,7 +128,11 @@ export class SectionBuilder<TSchema = unknown> {
   private _title: FormTextWithLocale
   private opts?: SectionBuilderOptions
 
-  constructor(id: string, title: FormTextWithLocale, opts?: SectionBuilderOptions) {
+  constructor(
+    id: string,
+    title: FormTextWithLocale,
+    opts?: SectionBuilderOptions,
+  ) {
     this._id = id
     this._title = title
     this.opts = opts

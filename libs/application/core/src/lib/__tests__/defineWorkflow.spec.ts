@@ -35,10 +35,13 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           roles: [
             {
               id: 'applicant',
-              formLoader: () =>
-                Promise.resolve({} as any),
+              formLoader: () => Promise.resolve({} as any),
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Submit', type: 'primary' as const },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary' as const,
+                },
               ],
               write: 'all',
               delete: true,
@@ -72,10 +75,13 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           roles: [
             {
               id: 'applicant',
-              formLoader: () =>
-                Promise.resolve({} as any),
+              formLoader: () => Promise.resolve({} as any),
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Submit', type: 'primary' as const },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary' as const,
+                },
               ],
               write: 'all',
               delete: true,
@@ -83,7 +89,10 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           ],
           transitions: {
             SUBMIT: [
-              { target: 'otherParentApproval', guard: 'needsOtherParentApproval' },
+              {
+                target: 'otherParentApproval',
+                guard: 'needsOtherParentApproval',
+              },
               { target: 'employerWaitingToAssign', guard: 'hasEmployer' },
               { target: 'vinnumalastofnunApproval' },
             ],
@@ -99,8 +108,14 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
               title: 'Waiting for other parent',
             },
             historyLogs: [
-              { onEvent: DefaultEvents.APPROVE, logMessage: 'Other parent approved' },
-              { onEvent: DefaultEvents.REJECT, logMessage: 'Other parent rejected' },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: 'Other parent approved',
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: 'Other parent rejected',
+              },
             ],
           },
           roles: [
@@ -108,8 +123,16 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
               id: 'assignee',
               formLoader: () => Promise.resolve({} as any),
               actions: [
-                { event: DefaultEvents.APPROVE, name: 'Approve', type: 'primary' as const },
-                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' as const },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary' as const,
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject' as const,
+                },
               ],
               read: { answers: ['requestRights', 'periods'] },
               write: { answers: ['requestRights', 'periods'] },
@@ -157,7 +180,10 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           roles: [],
           transitions: {
             [DefaultEvents.APPROVE]: [
-              { target: 'vinnumalastofnunApproval', guard: 'allEmployersHaveApproved' },
+              {
+                target: 'vinnumalastofnunApproval',
+                guard: 'allEmployersHaveApproved',
+              },
               { target: 'employerWaitingToAssign' },
             ],
             [DefaultEvents.REJECT]: 'employerRequiresAction',
@@ -214,7 +240,10 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           roles: [],
           transitions: {
             [DefaultEvents.SUBMIT]: [
-              { target: 'employerWaitingToAssignForEdits', guard: 'hasEmployer' },
+              {
+                target: 'employerWaitingToAssignForEdits',
+                guard: 'hasEmployer',
+              },
               { target: 'vinnumalastofnunApproveEdits' },
             ],
           },
@@ -279,7 +308,10 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           lifecycle: pruneAfterDays(30),
           transitions: {
             SUBMIT: [
-              { target: 'otherParentApproval', guard: 'needsOtherParentApproval' },
+              {
+                target: 'otherParentApproval',
+                guard: 'needsOtherParentApproval',
+              },
               { target: 'employerWaitingToAssign', guard: 'hasEmployer' },
               { target: 'vinnumalastofnunApproval' },
             ],
@@ -325,9 +357,7 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
           lifecycle: { shouldBeListed: true, shouldBePruned: false },
           progress: 0.5,
           actionCard: {
-            historyLogs: [
-              { onEvent: 'SUBMIT', logMessage: 'Submitted' },
-            ],
+            historyLogs: [{ onEvent: 'SUBMIT', logMessage: 'Submitted' }],
             pendingAction: {
               displayStatus: 'info',
               title: 'In progress',
@@ -342,7 +372,9 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
               write: 'all',
               delete: true,
               formLoader: () => Promise.resolve({} as any),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' as const }],
+              actions: [
+                { event: 'SUBMIT', name: 'Submit', type: 'primary' as const },
+              ],
             },
           ],
           onEntry: [{ action: 'fetchData' } as any],
@@ -356,7 +388,10 @@ describe('defineWorkflow — golden-file parity with XState parental-leave', () 
     expect(meta.name).toBe('Draft')
     expect(meta.status).toBe('draft')
     expect(meta.progress).toBe(0.5)
-    expect(meta.lifecycle).toEqual({ shouldBeListed: true, shouldBePruned: false })
+    expect(meta.lifecycle).toEqual({
+      shouldBeListed: true,
+      shouldBePruned: false,
+    })
     expect(meta.roles).toHaveLength(1)
     expect(meta.actionCard?.pendingAction).toEqual({
       displayStatus: 'info',

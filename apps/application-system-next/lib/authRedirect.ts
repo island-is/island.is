@@ -17,7 +17,9 @@ export const buildProtectedApplicationUrl = ({
   id,
   step,
 }: ProtectedApplicationUrlInput): string => {
-  const path = `/umsoknir/${slug}/${id}${step !== undefined ? `?step=${step}` : ''}`
+  const path = `/umsoknir/${slug}/${id}${
+    step !== undefined ? `?step=${step}` : ''
+  }`
 
   if (!host) {
     return path

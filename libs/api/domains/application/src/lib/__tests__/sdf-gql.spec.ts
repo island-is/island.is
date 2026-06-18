@@ -18,9 +18,7 @@ const mockUser: User = {
   client: 'test-client',
 } as User
 
-const createMockScreenDto = (
-  overrides: Partial<ScreenDto> = {},
-): ScreenDto => {
+const createMockScreenDto = (overrides: Partial<ScreenDto> = {}): ScreenDto => {
   return {
     applicationId: MOCK_APP_ID,
     locale: 'is',
@@ -169,16 +167,11 @@ describe('SDF GraphQL Layer', () => {
               disabled: false,
               clientShowWhen: {
                 operator: 'EQUALS',
-                args: [
-                  { operator: 'GET', args: ['hasSpouse'] },
-                  'yes',
-                ],
+                args: [{ operator: 'GET', args: ['hasSpouse'] }, 'yes'],
               },
             } as ComponentDto,
           ],
-          errors: [
-            { componentId: 'applicantName', message: 'Required field' },
-          ],
+          errors: [{ componentId: 'applicantName', message: 'Required field' }],
         },
       })
       sdfService.getScreen.mockResolvedValue(dto)
@@ -193,7 +186,10 @@ describe('SDF GraphQL Layer', () => {
       expect(result.page.errors[0].componentId).toBe('applicantName')
       expect(result.page.errors[0].message).toBe('Required field')
 
-      const comp = result.page.components[0] as unknown as Record<string, unknown>
+      const comp = result.page.components[0] as unknown as Record<
+        string,
+        unknown
+      >
       expect(comp.clientShowWhen).toBeDefined()
     })
   })
@@ -532,9 +528,7 @@ describe('SDF GraphQL Layer', () => {
 
 describe('SdfService', () => {
   it('should call sdfApi.sdfControllerGetScreen with auth middleware', async () => {
-    const mockGetScreen = jest.fn().mockResolvedValue(
-      createMockScreenDto(),
-    )
+    const mockGetScreen = jest.fn().mockResolvedValue(createMockScreenDto())
     const mockWithMiddleware = jest.fn().mockReturnValue({
       sdfControllerGetScreen: mockGetScreen,
       sdfControllerExecuteAction: jest.fn(),
@@ -557,9 +551,7 @@ describe('SdfService', () => {
   })
 
   it('should call sdfApi.sdfControllerExecuteAction with auth middleware', async () => {
-    const mockExecuteAction = jest.fn().mockResolvedValue(
-      createMockScreenDto(),
-    )
+    const mockExecuteAction = jest.fn().mockResolvedValue(createMockScreenDto())
     const mockWithMiddleware = jest.fn().mockReturnValue({
       sdfControllerGetScreen: jest.fn(),
       sdfControllerExecuteAction: mockExecuteAction,

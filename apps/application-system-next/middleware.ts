@@ -17,8 +17,7 @@ import { SDF_ENABLED_APPLICATION_SLUGS } from '@island.is/application/types'
 
 const SDF_ENABLED_SLUGS = new Set(SDF_ENABLED_APPLICATION_SLUGS)
 
-const LEGACY_SPA_BASE =
-  process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'
+const LEGACY_SPA_BASE = process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'
 
 export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl

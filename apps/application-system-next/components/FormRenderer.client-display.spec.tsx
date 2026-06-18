@@ -9,9 +9,13 @@ jest.mock('@island.is/island-ui/core', () => ({
   GridColumn: ({ children }: { children?: React.ReactNode }) => (
     <div>{children}</div>
   ),
-  GridRow: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  GridRow: ({ children }: { children?: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   Input: (props: Record<string, unknown>) => <input {...props} />,
-  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
 }))
 
 jest.mock('@island.is/shared/form-fields', () => ({
@@ -35,7 +39,9 @@ jest.mock('react-number-format', () => ({
     suffix?: string
   }) => {
     numberFormatProps.push({ ...props, value, suffix })
-    return <CustomInput {...props} value={suffix ? `${value}${suffix}` : value} />
+    return (
+      <CustomInput {...props} value={suffix ? `${value}${suffix}` : value} />
+    )
   },
 }))
 
@@ -108,21 +114,27 @@ describe('FormRenderer client display fields', () => {
     expect(renderer.root.findAllByType('input')[3].props.value).toBe('0 kr.')
 
     act(() => {
-      ;(numberFormatProps[0].onValueChange as (values: { value: string }) => void)(
-        {
-          value: '23',
-        },
-      )
-      ;(numberFormatProps[1].onValueChange as (values: { value: string }) => void)(
-        {
-          value: '34',
-        },
-      )
-      ;(numberFormatProps[2].onValueChange as (values: { value: string }) => void)(
-        {
-          value: '23',
-        },
-      )
+      ;(
+        numberFormatProps[0].onValueChange as (values: {
+          value: string
+        }) => void
+      )({
+        value: '23',
+      })
+      ;(
+        numberFormatProps[1].onValueChange as (values: {
+          value: string
+        }) => void
+      )({
+        value: '34',
+      })
+      ;(
+        numberFormatProps[2].onValueChange as (values: {
+          value: string
+        }) => void
+      )({
+        value: '23',
+      })
     })
 
     expect(renderer.root.findAllByType('input')[3].props.value).toBe('80 kr.')

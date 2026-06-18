@@ -107,9 +107,7 @@ describe('formExpressionHelper', () => {
             },
             {
               operator: 'IS_EMPTY',
-              args: [
-                { operator: 'GET', args: ['radioFieldForDisplayField'] },
-              ],
+              args: [{ operator: 'GET', args: ['radioFieldForDisplayField'] }],
             },
           ],
         },
@@ -161,18 +159,18 @@ describe('formExpressionHelper', () => {
   })
 
   it('builds and evaluates numeric comparison expressions', () => {
-    expect(evaluateFormExpression(expr.gt(expr.get('amount'), 0), { amount: 1 })).toBe(
-      true,
-    )
-    expect(evaluateFormExpression(expr.gte(expr.get('amount'), 0), { amount: 0 })).toBe(
-      true,
-    )
-    expect(evaluateFormExpression(expr.lt(expr.get('amount'), 0), { amount: -1 })).toBe(
-      true,
-    )
-    expect(evaluateFormExpression(expr.lte(expr.get('amount'), 0), { amount: 0 })).toBe(
-      true,
-    )
+    expect(
+      evaluateFormExpression(expr.gt(expr.get('amount'), 0), { amount: 1 }),
+    ).toBe(true)
+    expect(
+      evaluateFormExpression(expr.gte(expr.get('amount'), 0), { amount: 0 }),
+    ).toBe(true)
+    expect(
+      evaluateFormExpression(expr.lt(expr.get('amount'), 0), { amount: -1 }),
+    ).toBe(true)
+    expect(
+      evaluateFormExpression(expr.lte(expr.get('amount'), 0), { amount: 0 }),
+    ).toBe(true)
   })
 
   it('builds CONTAINS expressions, keeping the searched value as a literal', () => {
@@ -192,9 +190,9 @@ describe('formExpressionHelper', () => {
     expect(
       evaluateFormExpression(membership, { usageUnits: ['123', '456'] }),
     ).toBe(true)
-    expect(
-      evaluateFormExpression(membership, { usageUnits: ['456'] }),
-    ).toBe(false)
+    expect(evaluateFormExpression(membership, { usageUnits: ['456'] })).toBe(
+      false,
+    )
     expect(evaluateFormExpression(membership, { usageUnits: undefined })).toBe(
       false,
     )

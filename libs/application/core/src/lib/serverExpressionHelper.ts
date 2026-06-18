@@ -15,14 +15,13 @@ export type SchemaAnswers<TSchema> = TSchema extends z.ZodTypeAny
   ? z.infer<TSchema>
   : TSchema
 export type AnswerKey<TSchema> = Extract<keyof SchemaAnswers<TSchema>, string>
-type SchemaAnswerValue<
-  TSchema,
-  TKey extends AnswerKey<TSchema>,
-> = NonNullable<SchemaAnswers<TSchema>[TKey]>
-export type AnswerValue<
-  TSchema,
-  TKey extends AnswerKey<TSchema>,
-> = Extract<SchemaAnswerValue<TSchema, TKey>, ServerExpressionValue>
+type SchemaAnswerValue<TSchema, TKey extends AnswerKey<TSchema>> = NonNullable<
+  SchemaAnswers<TSchema>[TKey]
+>
+export type AnswerValue<TSchema, TKey extends AnswerKey<TSchema>> = Extract<
+  SchemaAnswerValue<TSchema, TKey>,
+  ServerExpressionValue
+>
 export type NumericAnswerKey<TSchema> = {
   [TKey in AnswerKey<TSchema>]: Extract<
     SchemaAnswerValue<TSchema, TKey>,
@@ -124,7 +123,7 @@ export const serverExpr = {
   any: (...conditions: SimpleCondition[]): ServerShowWhen => ({
     any: conditions,
   }),
-  forSchema: <TSchema,>(): TypedServerExpressionHelper<TSchema> => ({
+  forSchema: <TSchema>(): TypedServerExpressionHelper<TSchema> => ({
     answer: (field) => ({ field }),
     equals: (answer, value) => ({ field: answer.field, equals: value }),
     notEquals: (answer, value) => ({

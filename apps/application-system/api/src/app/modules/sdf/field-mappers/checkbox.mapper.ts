@@ -14,6 +14,8 @@ export const mapCheckboxField: FieldMapper = (component, raw, { resolver }) => {
   }
 
   if (raw.description) {
-    component.description = resolver.resolve(asResolvableFormText(raw.description))
+    component.description = resolver.resolve(
+      asResolvableFormText(raw.description),
+    )
   }
 }

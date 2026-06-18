@@ -40,7 +40,8 @@ const buildPaymentChargeOverviewFields = (
 > => {
   const heading =
     resolver.resolve(asResolvableFormText(raw.forPaymentLabel)) || ''
-  const totalLabel = resolver.resolve(asResolvableFormText(raw.totalLabel)) || ''
+  const totalLabel =
+    resolver.resolve(asResolvableFormText(raw.totalLabel)) || ''
   const getSelected = raw.getSelectedChargeItems
   if (typeof getSelected !== 'function') {
     return {
@@ -51,11 +52,15 @@ const buildPaymentChargeOverviewFields = (
     }
   }
 
-  const selectedChargeList = getSelected(application) as SelectedChargeListItem[]
+  const selectedChargeList = getSelected(
+    application,
+  ) as SelectedChargeListItem[]
 
   const allChargeWithInfoList =
-    getValueViaPath<PaymentCatalogRow[]>(application.externalData, 'payment.data') ??
-    []
+    getValueViaPath<PaymentCatalogRow[]>(
+      application.externalData,
+      'payment.data',
+    ) ?? []
 
   const merged = selectedChargeList.map((charge) => {
     const chargeWithInfo = allChargeWithInfoList.find(

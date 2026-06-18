@@ -62,7 +62,8 @@ export const SdfPaymentPendingField = ({ dispatch }: FieldRendererProps) => {
   const stopPolling = useCallback(() => setContinuePolling(false), [])
 
   const paymentStatus: ApplicationPayment = useMemo(
-    () => data?.applicationPaymentStatus ?? { fulfilled: false, paymentUrl: '' },
+    () =>
+      data?.applicationPaymentStatus ?? { fulfilled: false, paymentUrl: '' },
     [data],
   )
 

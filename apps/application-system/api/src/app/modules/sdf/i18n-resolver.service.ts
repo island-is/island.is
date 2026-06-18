@@ -59,9 +59,13 @@ export class FormTextResolver {
       if (result === undefined || result === null) return ''
       if (typeof result === 'string') return result
       const resolved = formatText(result, this.application, this.formatMessage)
-      return Array.isArray(resolved) ? resolved.join('') : (resolved ?? '')
+      return Array.isArray(resolved) ? resolved.join('') : resolved ?? ''
     }
-    const resolved = formatText(text as any, this.application, this.formatMessage)
-    return Array.isArray(resolved) ? resolved.join('') : (resolved ?? '')
+    const resolved = formatText(
+      text as any,
+      this.application,
+      this.formatMessage,
+    )
+    return Array.isArray(resolved) ? resolved.join('') : resolved ?? ''
   }
 }

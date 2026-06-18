@@ -1,14 +1,17 @@
 jest.mock('@nx/next', () => ({
   composePlugins:
-    (...plugins: Array<(config: Record<string, unknown>) => Record<string, unknown>>) =>
+    (
+      ...plugins: Array<
+        (config: Record<string, unknown>) => Record<string, unknown>
+      >
+    ) =>
     (config: Record<string, unknown>) =>
       plugins.reduce((acc, plugin) => plugin(acc), config),
   withNx: (config: Record<string, unknown>) => config,
 }))
 
 jest.mock('@vanilla-extract/next-plugin', () => ({
-  createVanillaExtractPlugin:
-    () => (config: Record<string, unknown>) => config,
+  createVanillaExtractPlugin: () => (config: Record<string, unknown>) => config,
 }))
 
 describe('application-system-next next config', () => {

@@ -6,7 +6,9 @@ import { SdfDisplayField } from './SdfDisplayField'
 jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   Input: (props: Record<string, unknown>) => <input {...props} />,
-  Text: ({ children }: { children?: React.ReactNode }) => <span>{children}</span>,
+  Text: ({ children }: { children?: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
 }))
 
 jest.mock('react-number-format', () => ({

@@ -21,7 +21,10 @@ import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
-import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 import type { ApplicationCard } from '@island.is/application/types'
 import type { Organization } from '@island.is/shared/types'
 import { useHeaderInfo } from './HeaderInfoProvider'

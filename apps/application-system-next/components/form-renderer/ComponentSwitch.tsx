@@ -38,7 +38,10 @@ import { SdfSubmitField } from './fields/SdfSubmitField'
 import { SdfTextField } from './fields/SdfTextField'
 import { SdfUnsupportedField } from './fields/SdfUnsupportedField'
 
-const fieldRenderers: Record<string, React.ComponentType<FieldRendererProps>> = {
+const fieldRenderers: Record<
+  string,
+  React.ComponentType<FieldRendererProps>
+> = {
   SdfAccordionField,
   SdfAlertMessageField,
   SdfBankAccountField,

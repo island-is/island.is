@@ -52,7 +52,11 @@ describe('mapScreenToComponents — text field parity props', () => {
         typeof v === 'string' ? v : v != null ? String(v) : '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(multi!, resolver, {} as Application)
+    const components = mapScreenToComponents(
+      multi!,
+      resolver,
+      {} as Application,
+    )
 
     const byId = (id: string) => components.find((c) => c.id === id)
 

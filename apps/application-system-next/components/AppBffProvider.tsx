@@ -24,11 +24,7 @@ import { ShellSkeleton } from './ShellSkeleton'
  * (`next.config.js` sets `basePath: ''`). The default BFF global prefix (`/bff`)
  * already matches the existing `/bff/*` endpoints.
  */
-export const AppBffProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+export const AppBffProvider = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {

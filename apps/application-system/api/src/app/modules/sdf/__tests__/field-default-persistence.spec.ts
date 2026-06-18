@@ -30,7 +30,12 @@ describe('applyResolvedFieldDefaults', () => {
     const merged: FormValue = {}
     applyResolvedFieldDefaults(
       page([
-        { id: 'foo', type: FieldTypes.TEXT, isNavigable: true, defaultValue: 'bar' },
+        {
+          id: 'foo',
+          type: FieldTypes.TEXT,
+          isNavigable: true,
+          defaultValue: 'bar',
+        },
       ]),
       merged,
       makeApplication(),
@@ -145,7 +150,12 @@ describe('applyResolvedFieldDefaults', () => {
     const merged: FormValue = {}
     applyResolvedFieldDefaults(
       page([
-        { id: 'hidden', type: FieldTypes.TEXT, isNavigable: false, defaultValue: 'x' },
+        {
+          id: 'hidden',
+          type: FieldTypes.TEXT,
+          isNavigable: false,
+          defaultValue: 'x',
+        },
       ]),
       merged,
       makeApplication(),

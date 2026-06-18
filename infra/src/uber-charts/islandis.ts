@@ -8,7 +8,7 @@ import {
   serviceSetup as appSystemApiSetup,
   workerSetup as appSystemApiWorkerSetup,
 } from '../../../apps/application-system/api/infra/application-system-api'
-import { serviceSetup as appSystemNextSetup, } from '../../../apps/application-system-next/infra/application-system-next'
+import { serviceSetup as appSystemNextSetup } from '../../../apps/application-system-next/infra/application-system-next'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 // Portals
@@ -153,7 +153,7 @@ const api = apiSetup({
 })
 
 const appSystemNext = appSystemNextSetup({
-  api
+  api,
 })
 
 const adminPortal = adminPortalSetup()

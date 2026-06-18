@@ -101,8 +101,10 @@ function filterDataByRole(
   const filteredAnswers: FormValue = {}
   const filteredExternalData: ExternalData = {}
 
-  const readAnswerKeys = (read && read !== 'all' ? read.answers : undefined) ?? []
-  const writeAnswerKeys = (write && write !== 'all' ? write.answers : undefined) ?? []
+  const readAnswerKeys =
+    (read && read !== 'all' ? read.answers : undefined) ?? []
+  const writeAnswerKeys =
+    (write && write !== 'all' ? write.answers : undefined) ?? []
   const answerKeys = [...new Set([...readAnswerKeys, ...writeAnswerKeys])]
 
   for (const key of answerKeys) {
@@ -111,8 +113,10 @@ function filterDataByRole(
     }
   }
 
-  const readExtKeys = (read && read !== 'all' ? read.externalData : undefined) ?? []
-  const writeExtKeys = (write && write !== 'all' ? write.externalData : undefined) ?? []
+  const readExtKeys =
+    (read && read !== 'all' ? read.externalData : undefined) ?? []
+  const writeExtKeys =
+    (write && write !== 'all' ? write.externalData : undefined) ?? []
   const externalDataKeys = [...new Set([...readExtKeys, ...writeExtKeys])]
 
   for (const key of externalDataKeys) {
@@ -230,7 +234,10 @@ describe('Phase 2 Gate #2: Role-based data filtering', () => {
     const roleInState = {
       id: 'reviewer',
       read: { answers: ['periods', 'payments'], externalData: ['children'] },
-      write: { answers: ['payments', 'employers'], externalData: ['children', 'navId'] },
+      write: {
+        answers: ['payments', 'employers'],
+        externalData: ['children', 'navId'],
+      },
     }
 
     const filtered = filterDataByRole(application, roleInState)
@@ -387,7 +394,11 @@ describe('NEXT_PAGE validates before persisting', () => {
         errors: [{ componentId: 'name', message: 'Required' }],
       },
       header: { title: 'Test' },
-      stepper: { sections: [], activeSectionIndex: 0, activeSubSectionIndex: 0 },
+      stepper: {
+        sections: [],
+        activeSectionIndex: 0,
+        activeSubSectionIndex: 0,
+      },
       footer: { buttons: [], canGoBack: false },
       locale: 'is',
     }
@@ -417,10 +428,10 @@ describe('Phase 2 Gate #5: Answer-shape invariant', () => {
   })
 
   it('SDF merge matches legacy mergeAnswers behavior', () => {
-    const sdfMerge = (
-      existing: FormValue,
-      incoming: FormValue,
-    ): FormValue => ({ ...existing, ...incoming })
+    const sdfMerge = (existing: FormValue, incoming: FormValue): FormValue => ({
+      ...existing,
+      ...incoming,
+    })
 
     const existing = { a: 1, b: { nested: true } }
     const incoming = { c: 3, a: 2 }

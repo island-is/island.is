@@ -72,5 +72,7 @@ export const InitialScreenGate = ({
     )
   }
 
-  return <ApplicationShell applicationId={applicationId} initialScreen={screen} />
+  return (
+    <ApplicationShell applicationId={applicationId} initialScreen={screen} />
+  )
 }

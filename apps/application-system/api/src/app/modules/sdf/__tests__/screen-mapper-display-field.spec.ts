@@ -13,10 +13,7 @@ const stubResolver = {
     typeof v === 'string' ? v : v != null ? String(v) : '',
 } as unknown as FormTextResolver
 
-const makeDisplayChild = (
-  id: string,
-  extra: Record<string, unknown>,
-) => ({
+const makeDisplayChild = (id: string, extra: Record<string, unknown>) => ({
   id,
   type: FieldTypes.DISPLAY,
   component: 'DisplayFormField',

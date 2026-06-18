@@ -936,9 +936,7 @@ type GraphqlPayload = {
   errors?: Array<{ message?: string }>
 } & Record<string, unknown>
 
-const parseGraphqlResponse = async (
-  res: Response,
-): Promise<GraphqlPayload> => {
+const parseGraphqlResponse = async (res: Response): Promise<GraphqlPayload> => {
   const text = await res.text()
 
   if (text.trim() === '') {

@@ -310,7 +310,7 @@ interface MessageWithLinkButtonFieldOptions extends FieldOptions {
 const normalizeOptionList = (options: OptionList) =>
   options.map((o) => (typeof o === 'string' ? { label: o, value: o } : o))
 
-const normalizeOptions = <TSchema,>(
+const normalizeOptions = <TSchema>(
   options: OptionList | DynamicOptions<TSchema> | RadioField['options'],
 ): RadioField['options'] => {
   if (typeof options === 'function') {
@@ -322,7 +322,11 @@ const normalizeOptions = <TSchema,>(
 
     return (application, field, locale) =>
       normalizeOptionList(
-        resolveOptions(application as ApplicationForSchema<TSchema>, field, locale),
+        resolveOptions(
+          application as ApplicationForSchema<TSchema>,
+          field,
+          locale,
+        ),
       )
   }
 
@@ -364,7 +368,9 @@ const toStaticCheck = (condition: SimpleCondition): StaticCheck => {
   return { questionId: condition.field, comparator, value }
 }
 
-const resolveServerShowWhen = (showWhen?: ServerShowWhen): Condition | undefined => {
+const resolveServerShowWhen = (
+  showWhen?: ServerShowWhen,
+): Condition | undefined => {
   if (showWhen === undefined) {
     return undefined
   }
@@ -530,7 +536,11 @@ export class PageBuilder<TSchema = unknown> {
   private opts: PageBuilderOptions
   private readonly _schema?: TSchema
 
-  constructor(id: string, title: FormTextWithLocale, opts?: PageBuilderOptions) {
+  constructor(
+    id: string,
+    title: FormTextWithLocale,
+    opts?: PageBuilderOptions,
+  ) {
     this._id = id
     this._title = title
     this.opts = opts ?? {}

@@ -45,7 +45,8 @@ const fieldMappers: Partial<Record<FieldTypes, FieldMapper>> = {
   [FieldTypes.DISPLAY]: mapDisplayField,
   [FieldTypes.EXPANDABLE_DESCRIPTION]: mapExpandableDescriptionField,
   [FieldTypes.FILEUPLOAD]: mapFileUploadField,
-  [FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE]: mapHiddenInputWithWatchedValueField,
+  [FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE]:
+    mapHiddenInputWithWatchedValueField,
   [FieldTypes.IMAGE]: mapImageField,
   [FieldTypes.INFORMATION_CARD]: mapInformationCardField,
   [FieldTypes.KEY_VALUE]: mapKeyValueField,

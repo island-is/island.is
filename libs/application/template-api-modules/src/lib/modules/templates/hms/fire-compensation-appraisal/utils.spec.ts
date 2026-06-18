@@ -1,6 +1,9 @@
 import { Application } from '@island.is/application/types'
 import { Fasteign } from '@island.is/clients/assets'
-import { getSelectedRealEstate, sumSelectedUnitsFireCompensation } from './utils'
+import {
+  getSelectedRealEstate,
+  sumSelectedUnitsFireCompensation,
+} from './utils'
 
 const YES = 'yes'
 

@@ -52,9 +52,7 @@ export const mapOverviewField: FieldMapper = (
       ? itemsFn(answers, externalData, nationalId, locale)
       : []
 
-  const resolveValueText = (
-    valueText: KeyValueItem['valueText'],
-  ): string => {
+  const resolveValueText = (valueText: KeyValueItem['valueText']): string => {
     if (Array.isArray(valueText)) {
       return valueText
         .map((part) => resolver.resolve(asResolvableFormText(part)))

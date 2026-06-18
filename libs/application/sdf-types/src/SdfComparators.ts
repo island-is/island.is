@@ -19,7 +19,7 @@ export const SdfComparators: Record<Comparators, string> = {
 } as const
 
 export type SdfComparatorValue =
-  (typeof SdfComparators)[keyof typeof SdfComparators]
+  typeof SdfComparators[keyof typeof SdfComparators]
 
 /**
  * Named exports for each comparator wire-format string.

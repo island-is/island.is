@@ -45,6 +45,7 @@ export const getSelectedProperty = (
 ): Fasteign | undefined => {
   const selectedRealEstateId = toDigits(getSelectedRealEstateId(answers))
   return getRelevantProperties(answers, externalData)?.find(
-    (property) => toDigits(property.fasteignanumer ?? '') === selectedRealEstateId,
+    (property) =>
+      toDigits(property.fasteignanumer ?? '') === selectedRealEstateId,
   )
 }

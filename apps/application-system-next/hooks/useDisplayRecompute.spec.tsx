@@ -49,8 +49,9 @@ describe('useDisplayRecompute', () => {
   })
 
   it('ignores stale validate responses after answers change while debounce is pending', async () => {
-    let resolveFirst: (value: { displayValues: Record<string, string> }) => void =
-      () => undefined
+    let resolveFirst: (value: {
+      displayValues: Record<string, string>
+    }) => void = () => undefined
 
     ;(validateAction as jest.Mock)
       .mockReturnValueOnce(

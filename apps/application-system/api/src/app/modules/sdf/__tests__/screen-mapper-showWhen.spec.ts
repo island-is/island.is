@@ -1,10 +1,7 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import {
-  Application,
-  FormItemTypes,
-} from '@island.is/application/types'
+import { Application, FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
@@ -46,15 +43,11 @@ describe('mapScreenToComponents — clientShowWhen children', () => {
       resolve: () => '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(
-      multi,
-      resolver,
-      {} as Application,
-    )
+    const components = mapScreenToComponents(multi, resolver, {} as Application)
 
-    expect(components.some((c) => c.id === 'irrigationType' && c.type === 'SELECT')).toBe(
-      true,
-    )
+    expect(
+      components.some((c) => c.id === 'irrigationType' && c.type === 'SELECT'),
+    ).toBe(true)
     expect(
       components.find((c) => c.id === 'irrigationType')?.clientShowWhen,
     ).toEqual({
@@ -100,11 +93,7 @@ describe('mapScreenToComponents — clientShowWhen children', () => {
       resolve: () => '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(
-      multi,
-      resolver,
-      {} as Application,
-    )
+    const components = mapScreenToComponents(multi, resolver, {} as Application)
 
     expect(components.some((c) => c.id === 'irrigationType')).toBe(false)
   })

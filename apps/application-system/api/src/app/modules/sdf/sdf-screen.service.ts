@@ -1330,7 +1330,12 @@ export class SdfScreenService {
     application: Application,
     user?: BffUser,
   ): PageDto {
-    const components = mapScreenToComponents(screen, resolver, application, user)
+    const components = mapScreenToComponents(
+      screen,
+      resolver,
+      application,
+      user,
+    )
     return {
       id: resolveFormItemId(screen, application, user) || `page-${index}`,
       index,

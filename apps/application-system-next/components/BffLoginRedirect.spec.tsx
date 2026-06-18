@@ -28,9 +28,7 @@ describe('BffLoginRedirect', () => {
     })
 
     render(
-      <BffLoginRedirect
-        targetLinkUri="http://localhost:4250/umsoknir/example-inputs/app-1?step=2"
-      />,
+      <BffLoginRedirect targetLinkUri="http://localhost:4250/umsoknir/example-inputs/app-1?step=2" />,
     )
 
     await waitFor(() => {
@@ -40,9 +38,9 @@ describe('BffLoginRedirect', () => {
     })
 
     expect(
-      screen.getByRole('link', { name: 'continue manually' }).getAttribute(
-        'href',
-      ),
+      screen
+        .getByRole('link', { name: 'continue manually' })
+        .getAttribute('href'),
     ).toBe(
       '/bff/login?target_link_uri=http%3A%2F%2Flocalhost%3A4250%2Fumsoknir%2Fexample-inputs%2Fapp-1%3Fstep%3D2',
     )

@@ -67,7 +67,10 @@ describe('useFormExpressionEvaluator', () => {
         {
           operator: 'OR',
           args: [
-            { operator: 'EQUALS', args: [{ operator: 'GET', args: ['x'] }, 'a'] },
+            {
+              operator: 'EQUALS',
+              args: [{ operator: 'GET', args: ['x'] }, 'a'],
+            },
             { operator: 'IS_EMPTY', args: [{ operator: 'GET', args: ['y'] }] },
           ],
         },

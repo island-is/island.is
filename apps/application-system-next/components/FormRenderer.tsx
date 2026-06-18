@@ -8,10 +8,7 @@ import {
   groupComponentsIntoRows,
   isHalfWidthCandidate,
 } from './form-renderer/layout'
-import type {
-  FormRendererProps,
-  SdfFormDispatch,
-} from './form-renderer/types'
+import type { FormRendererProps, SdfFormDispatch } from './form-renderer/types'
 
 export type { SdfFormDispatch }
 

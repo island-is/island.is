@@ -1,13 +1,5 @@
-import {
-  expr,
-  FormBuilder,
-  getValueViaPath,
-} from '@island.is/application/core'
-import {
-  Application,
-  FormModes,
-  FormText,
-} from '@island.is/application/types'
+import { expr, FormBuilder, getValueViaPath } from '@island.is/application/core'
+import { Application, FormModes, FormText } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { Fasteign } from '@island.is/clients/assets'
@@ -96,19 +88,25 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
   renderLastScreenButton: true,
 })
   // Personal information
-  .addSection('personalInformationSection', m.personalInformationMessages.title, (section) => {
-    const applicantPage = applicantInformationMultiField({
-      postalCodeRequired: false,
-      cityRequired: false,
-    })
-    section.addPage(
-      typeof applicantPage.id === 'string' ? applicantPage.id : 'applicant',
-      (applicantPage.title ?? '') as FormText,
-      (page) => {
-        page.setDescription(applicantPage.description).addFields(applicantPage.children)
-      },
-    )
-  })
+  .addSection(
+    'personalInformationSection',
+    m.personalInformationMessages.title,
+    (section) => {
+      const applicantPage = applicantInformationMultiField({
+        postalCodeRequired: false,
+        cityRequired: false,
+      })
+      section.addPage(
+        typeof applicantPage.id === 'string' ? applicantPage.id : 'applicant',
+        (applicantPage.title ?? '') as FormText,
+        (page) => {
+          page
+            .setDescription(applicantPage.description)
+            .addFields(applicantPage.children)
+        },
+      )
+    },
+  )
   // Real estate (owned property)
   .addSection('realEstateSection', m.realEstateMessages.title, (section) => {
     section.addPage(
@@ -145,17 +143,12 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
               rightAlign: true,
             },
           )
-          .addDisplayField(
-            'totalFireCompensation',
-            '',
-            totalFireCompensation,
-            {
-              clientShowWhen: usageUnitsClientShowWhen,
-              label: m.realEstateMessages.totalFireCompensation,
-              variant: 'currency',
-              rightAlign: true,
-            },
-          )
+          .addDisplayField('totalFireCompensation', '', totalFireCompensation, {
+            clientShowWhen: usageUnitsClientShowWhen,
+            label: m.realEstateMessages.totalFireCompensation,
+            variant: 'currency',
+            rightAlign: true,
+          })
       },
       { showWhen: showOwnedProperty },
     )
@@ -163,75 +156,88 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
   // Real estate search (applying for a property the applicant does not own).
   // Dormant until `otherPropertiesThanIOwnCheckbox` is re-enabled in the
   // prerequisites form, mirroring the legacy app.
-  .addSection('realEstateSearchSection', m.realEstateMessages.title, (section) => {
-    section.addPage(
-      'realEstateSearch',
-      m.realEstateMessages.multifieldTitle,
-      (page) => {
-        page
-          .setDescription(m.realEstateMessages.description)
-          .addSearchField('anyonesProperty', '', {
-            searchAction: SearchPropertiesApi.action,
-            options: addressSearchOptions,
-            minQueryLength: 3,
-          })
-          .addSelectField('selectedPropertyByCode', m.realEstateMessages.units, {
-            options: propertyByCodeOptions,
-            onSelectRefetch: [FetchPropertiesByCodeApi.action],
-            refetchTargets: ['usageUnits'],
-            clearOnChange: ['usageUnits'],
-            marginBottom: 4,
-          })
-          .addCheckboxField('usageUnits', m.realEstateMessages.usageUnit, {
-            clientShowWhen: usageUnitsClientShowWhen,
-            description: m.realEstateMessages.usageUnitDescription,
-            options: notkunareiningarOptions,
-          })
-          .addDisplayField(
-            'usageUnitsFireCompensation',
-            '',
-            sumUsageUnitsFireCompensation,
-            {
+  .addSection(
+    'realEstateSearchSection',
+    m.realEstateMessages.title,
+    (section) => {
+      section.addPage(
+        'realEstateSearch',
+        m.realEstateMessages.multifieldTitle,
+        (page) => {
+          page
+            .setDescription(m.realEstateMessages.description)
+            .addSearchField('anyonesProperty', '', {
+              searchAction: SearchPropertiesApi.action,
+              options: addressSearchOptions,
+              minQueryLength: 3,
+            })
+            .addSelectField(
+              'selectedPropertyByCode',
+              m.realEstateMessages.units,
+              {
+                options: propertyByCodeOptions,
+                onSelectRefetch: [FetchPropertiesByCodeApi.action],
+                refetchTargets: ['usageUnits'],
+                clearOnChange: ['usageUnits'],
+                marginBottom: 4,
+              },
+            )
+            .addCheckboxField('usageUnits', m.realEstateMessages.usageUnit, {
               clientShowWhen: usageUnitsClientShowWhen,
-              clientValueExpression: usageUnitsFireCompensationClientExpression,
-              label: m.realEstateMessages.usageUnitsFireCompensation,
-              variant: 'currency',
-              rightAlign: true,
-            },
-          )
-          .addDisplayField(
-            'totalFireCompensation',
-            '',
-            totalFireCompensation,
-            {
-              clientShowWhen: usageUnitsClientShowWhen,
-              label: m.realEstateMessages.totalFireCompensation,
-              variant: 'currency',
-              rightAlign: true,
-            },
-          )
-      },
-      { showWhen: showOtherProperty },
-    )
-  })
+              description: m.realEstateMessages.usageUnitDescription,
+              options: notkunareiningarOptions,
+            })
+            .addDisplayField(
+              'usageUnitsFireCompensation',
+              '',
+              sumUsageUnitsFireCompensation,
+              {
+                clientShowWhen: usageUnitsClientShowWhen,
+                clientValueExpression:
+                  usageUnitsFireCompensationClientExpression,
+                label: m.realEstateMessages.usageUnitsFireCompensation,
+                variant: 'currency',
+                rightAlign: true,
+              },
+            )
+            .addDisplayField(
+              'totalFireCompensation',
+              '',
+              totalFireCompensation,
+              {
+                clientShowWhen: usageUnitsClientShowWhen,
+                label: m.realEstateMessages.totalFireCompensation,
+                variant: 'currency',
+                rightAlign: true,
+              },
+            )
+        },
+        { showWhen: showOtherProperty },
+      )
+    },
+  )
   // Changes / appraisal method
   .addSection('appraisalMethodSection', m.changesMessages.title, (section) => {
     section.addPage('appraisalMethod', m.changesMessages.title, (page) => {
       page
         .setDescription(m.changesMessages.description)
-        .addCheckboxField('appraisalMethod', m.changesMessages.appraisalMethod, {
-          width: 'half',
-          options: [
-            {
-              label: m.changesMessages.becauseOfRenovations,
-              value: 'renovations',
-            },
-            {
-              label: m.changesMessages.becauseOfAdditions,
-              value: 'additions',
-            },
-          ],
-        })
+        .addCheckboxField(
+          'appraisalMethod',
+          m.changesMessages.appraisalMethod,
+          {
+            width: 'half',
+            options: [
+              {
+                label: m.changesMessages.becauseOfRenovations,
+                value: 'renovations',
+              },
+              {
+                label: m.changesMessages.becauseOfAdditions,
+                value: 'additions',
+              },
+            ],
+          },
+        )
         .addDescriptionField(
           'descriptionDescription',
           m.changesMessages.descriptionOfChanges,
@@ -283,11 +289,16 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
           items: changesOverviewItems,
         })
         .addDividerField()
-        .addDisplayField('amountToPay', m.overviewMessages.amountToPay, getAmountToPay, {
-          titleVariant: 'h3',
-          rightAlign: true,
-          variant: 'currency',
-        })
+        .addDisplayField(
+          'amountToPay',
+          m.overviewMessages.amountToPay,
+          getAmountToPay,
+          {
+            titleVariant: 'h3',
+            rightAlign: true,
+            variant: 'currency',
+          },
+        )
       // The "Greiða" call-to-action is rendered by the screen footer from the
       // DRAFT state's role action (event: PAYMENT) — see `buildFooter` /
       // `footer-builder`. An inline `addSubmitField` here would render a second,

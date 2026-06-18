@@ -479,7 +479,8 @@ describe('SdfScreenService handleRefetch', () => {
               roles: [
                 {
                   id: 'applicant',
-                  formLoader: () => Promise.resolve(createDependencyScreenForm()),
+                  formLoader: () =>
+                    Promise.resolve(createDependencyScreenForm()),
                   read: 'all',
                   write: 'all',
                   api: [lookupApi],
@@ -511,12 +512,9 @@ describe('SdfScreenService handleRefetch', () => {
       },
     )
 
-    const screen = await service.getScreen(
-      application.id,
-      undefined,
-      'is',
-      { nationalId: application.applicant },
-    )
+    const screen = await service.getScreen(application.id, undefined, 'is', {
+      nationalId: application.applicant,
+    })
 
     expect(screen.page.index).toBe(1)
     expect(screen.answers).toMatchObject({
@@ -541,7 +539,8 @@ describe('SdfScreenService handleRefetch', () => {
               roles: [
                 {
                   id: 'applicant',
-                  formLoader: () => Promise.resolve(createDisplayRecomputeForm()),
+                  formLoader: () =>
+                    Promise.resolve(createDisplayRecomputeForm()),
                   read: 'all',
                   write: 'all',
                   api: [lookupApi],

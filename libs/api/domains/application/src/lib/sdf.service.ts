@@ -3,10 +3,7 @@ import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 
-import {
-  SdfApi,
-  ExecuteActionDtoActionTypeEnum,
-} from '../../gen/fetch'
+import { SdfApi, ExecuteActionDtoActionTypeEnum } from '../../gen/fetch'
 import type { ScreenDto } from '../../gen/fetch'
 
 import type { SdfValidateResponseShape } from './sdf.model'

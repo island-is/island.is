@@ -19,8 +19,8 @@ import { z } from 'zod'
  * server-validated writes for that escape hatch.
  */
 
-const FallbackComponent = dynamic(
-  () => import('./custom/FallbackCustomComponent'),
+const FallbackComponent = dynamic(() =>
+  import('./custom/FallbackCustomComponent'),
 )
 
 interface RegistryEntry {
@@ -47,9 +47,8 @@ const registry: Record<string, RegistryEntry> = {
 /** Escape hatches allowed to receive `onAnswerChange` (server round-trips only). */
 export const ALLOWED_CUSTOM_COMPONENT_NAMES = new Set<string>([])
 
-export const isCustomComponentWriteAllowed = (
-  componentName: string,
-): boolean => ALLOWED_CUSTOM_COMPONENT_NAMES.has(componentName)
+export const isCustomComponentWriteAllowed = (componentName: string): boolean =>
+  ALLOWED_CUSTOM_COMPONENT_NAMES.has(componentName)
 
 export const getCustomComponent = (componentName: string): RegistryEntry => {
   return (
@@ -80,11 +79,10 @@ export const validateCustomComponentProps = (
   const result = entry.propsSchema.safeParse(parsed)
   if (!result.success) {
     const errorMsg =
-      'error' in result ? (result.error as { message: string }).message : 'unknown'
-    reportPropsMismatch(
-      componentName,
-      `Props validation failed: ${errorMsg}`,
-    )
+      'error' in result
+        ? (result.error as { message: string }).message
+        : 'unknown'
+    reportPropsMismatch(componentName, `Props validation failed: ${errorMsg}`)
     return { valid: false, parsed }
   }
 
@@ -97,7 +95,8 @@ const reportPropsMismatch = (componentName: string, message: string) => {
   if (process.env.NODE_ENV === 'development') {
     console.warn(fullMessage)
   } else if (typeof window !== 'undefined' && 'Sentry' in window) {
-    ;(window as unknown as { Sentry: { captureMessage: (m: string) => void } })
-      .Sentry.captureMessage(fullMessage)
+    ;(
+      window as unknown as { Sentry: { captureMessage: (m: string) => void } }
+    ).Sentry.captureMessage(fullMessage)
   }
 }

@@ -22,9 +22,7 @@ jest.mock('./ApplicationShell', () => ({
   }: {
     applicationId: string
     initialScreen: { header: { title: string } }
-  }) => (
-    <div>{`shell:${applicationId}:${initialScreen.header.title}`}</div>
-  ),
+  }) => <div>{`shell:${applicationId}:${initialScreen.header.title}`}</div>,
 }))
 
 jest.mock('./BffLoginRedirect', () => ({

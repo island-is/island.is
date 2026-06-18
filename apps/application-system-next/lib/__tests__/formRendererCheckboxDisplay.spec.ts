@@ -38,7 +38,7 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
       expect(block).toContain('component.description')
     })
 
-    it('lays out options in a GridRow of GridColumn span={[\'1/1\', split]} with paddingBottom spacing', () => {
+    it("lays out options in a GridRow of GridColumn span={['1/1', split]} with paddingBottom spacing", () => {
       expect(block).toContain('<GridRow>')
       expect(block).toContain("span={['1/1', split]}")
       expect(block).toContain('paddingBottom={spacing}')
@@ -79,7 +79,9 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
     it('evaluates clientValueExpression before backend overlay or static value', () => {
       expect(block).toContain('useFormExpressionEvaluator')
       expect(block).toMatch(/clientValueExpressionValue\s*\?\?/)
-      expect(block).toMatch(/clientValueExpressionValue\s*\?\?[^]*overlayValue\s*\?\?/)
+      expect(block).toMatch(
+        /clientValueExpressionValue\s*\?\?[^]*overlayValue\s*\?\?/,
+      )
     })
 
     it('wraps currency/number variants in NumberFormat with Input as the custom input', () => {
@@ -109,7 +111,9 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
       expect(block).toContain(
         "alignItems={component.halfWidthOwnline ? 'flexEnd' : undefined}",
       )
-      expect(block).toMatch(/width=\{component\.halfWidthOwnline \? 'half' : 'full'\}/)
+      expect(block).toMatch(
+        /width=\{component\.halfWidthOwnline \? 'half' : 'full'\}/,
+      )
     })
 
     it('passes rightAlign through to the Input', () => {

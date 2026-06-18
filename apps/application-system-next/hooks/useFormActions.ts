@@ -19,7 +19,9 @@ export const useFormActions = (
   )
   const pageIndexRef = useRef(initialScreen.page.index)
   const pendingTargetCountsRef = useRef<Record<string, number>>({})
-  const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>([])
+  const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>(
+    [],
+  )
   const [, forceRender] = useState(0)
 
   // When the page index changes, merge the server snapshot for that screen.
@@ -136,20 +138,14 @@ export const useFormActions = (
     [dispatch, screen.page.index],
   )
 
-  const prevPage = useCallback(
-    () => dispatch('PREV_PAGE'),
-    [dispatch],
-  )
+  const prevPage = useCallback(() => dispatch('PREV_PAGE'), [dispatch])
 
   const submit = useCallback(
     (event?: string) => dispatch('SUBMIT', undefined, undefined, event),
     [dispatch],
   )
 
-  const refetch = useCallback(
-    () => dispatch('REFETCH'),
-    [dispatch],
-  )
+  const refetch = useCallback(() => dispatch('REFETCH'), [dispatch])
 
   const validate = useCallback(
     (fieldIds: string[]) => dispatch('VALIDATE', undefined, fieldIds),

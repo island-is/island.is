@@ -21,7 +21,9 @@ describe('serverExpressionHelper', () => {
   })
 
   it('builds contains conditions', () => {
-    expect(serverExpr.contains(serverExpr.answer('selectedItems'), 'child')).toEqual({
+    expect(
+      serverExpr.contains(serverExpr.answer('selectedItems'), 'child'),
+    ).toEqual({
       field: 'selectedItems',
       contains: 'child',
     })

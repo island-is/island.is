@@ -165,36 +165,16 @@ describe('conditions', () => {
         })
 
       expect(
-        shouldShowFormItem(
-          field(Comparators.GTE, 0),
-          { amount: 0 },
-          {},
-          null,
-        ),
+        shouldShowFormItem(field(Comparators.GTE, 0), { amount: 0 }, {}, null),
       ).toBeTruthy()
       expect(
-        shouldShowFormItem(
-          field(Comparators.LTE, 0),
-          { amount: 0 },
-          {},
-          null,
-        ),
+        shouldShowFormItem(field(Comparators.LTE, 0), { amount: 0 }, {}, null),
       ).toBeTruthy()
       expect(
-        shouldShowFormItem(
-          field(Comparators.LT, 0),
-          { amount: -1 },
-          {},
-          null,
-        ),
+        shouldShowFormItem(field(Comparators.LT, 0), { amount: -1 }, {}, null),
       ).toBeTruthy()
       expect(
-        shouldShowFormItem(
-          field(Comparators.GT, 0),
-          {},
-          {},
-          null,
-        ),
+        shouldShowFormItem(field(Comparators.GT, 0), {}, {}, null),
       ).toBeFalsy()
     })
 

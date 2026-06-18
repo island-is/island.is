@@ -46,8 +46,7 @@ export class ExecuteActionDto {
   @IsArray()
   @IsString({ each: true })
   @ApiPropertyOptional({
-    description:
-      'Field IDs to validate (only used with VALIDATE actionType).',
+    description: 'Field IDs to validate (only used with VALIDATE actionType).',
     type: [String],
   })
   readonly fieldIds?: string[]

@@ -92,7 +92,9 @@ export const SdfSearchField = ({
             <InputError errorMessage={error} />
           </Box>
         )}
-        {selectedValue && <input type="hidden" value={selectedValue} readOnly />}
+        {selectedValue && (
+          <input type="hidden" value={selectedValue} readOnly />
+        )}
       </Box>
     </Box>
   )

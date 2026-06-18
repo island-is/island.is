@@ -15,7 +15,9 @@ describe('FormRenderer — DataTable parity structure', () => {
   })
 
   it('writes selected data-table rows as a units array', () => {
-    expect(block).toContain('const selectedUnits = getDataTableUnits(tableValue)')
+    expect(block).toContain(
+      'const selectedUnits = getDataTableUnits(tableValue)',
+    )
     expect(block).toContain('const setSelectedUnits')
     expect(block).toContain('units: nextUnits')
   })

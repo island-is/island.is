@@ -1,10 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  validateAction,
-  type SdfComponentData,
-} from '../lib/graphql'
+import { validateAction, type SdfComponentData } from '../lib/graphql'
 
 const DEBOUNCE_MS = 300
 
@@ -94,7 +91,13 @@ export const useDisplayRecompute = (
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [serializedCurrentPageAnswers, applicationId, locale, pageIndex, shouldRecompute])
+  }, [
+    serializedCurrentPageAnswers,
+    applicationId,
+    locale,
+    pageIndex,
+    shouldRecompute,
+  ])
 
   return overlay
 }

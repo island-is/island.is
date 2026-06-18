@@ -149,9 +149,11 @@ describe('graphql SDF queries', () => {
           },
         }),
     } as Response)
-    ;(globalThis as typeof globalThis & {
-      fetch: typeof fetch
-    }).fetch = fetchMock as typeof fetch
+    ;(
+      globalThis as typeof globalThis & {
+        fetch: typeof fetch
+      }
+    ).fetch = fetchMock as typeof fetch
     const windowDescriptor = Object.getOwnPropertyDescriptor(
       globalThis,
       'window',
@@ -194,9 +196,11 @@ describe('graphql SDF queries', () => {
           detail: 'Missing sid cookie',
         }),
     } as Response)
-    ;(globalThis as typeof globalThis & {
-      fetch: typeof fetch
-    }).fetch = fetchMock as typeof fetch
+    ;(
+      globalThis as typeof globalThis & {
+        fetch: typeof fetch
+      }
+    ).fetch = fetchMock as typeof fetch
 
     await expect(fetchScreen('app-1')).rejects.toMatchObject({
       message: 'Unauthorized',
@@ -219,9 +223,11 @@ describe('graphql SDF queries', () => {
           },
         }),
     } as Response)
-    ;(globalThis as typeof globalThis & {
-      fetch: typeof fetch
-    }).fetch = fetchMock as typeof fetch
+    ;(
+      globalThis as typeof globalThis & {
+        fetch: typeof fetch
+      }
+    ).fetch = fetchMock as typeof fetch
 
     await validateAction(
       'app-1',

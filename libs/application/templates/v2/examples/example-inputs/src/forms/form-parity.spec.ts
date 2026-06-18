@@ -68,7 +68,9 @@ const normalizeMainFormParityAst = (value: unknown): unknown => {
   }
 
   if (normalized !== null && typeof normalized === 'object') {
-    const entries = Object.entries(normalized as Record<string, unknown>).filter(
+    const entries = Object.entries(
+      normalized as Record<string, unknown>,
+    ).filter(
       ([entryKey, entryValue]) =>
         !(
           entryKey === 'clientValueExpression' &&
@@ -148,9 +150,11 @@ const getDisplayValue = (
 }
 
 const getDisplayField = (id: string) => {
-  const children = (displayFieldSubsection as {
-    children: Array<{ children?: unknown[] }>
-  }).children[0].children as Array<{
+  const children = (
+    displayFieldSubsection as {
+      children: Array<{ children?: unknown[] }>
+    }
+  ).children[0].children as Array<{
     id?: string
     clientValueExpression?: unknown
     value?: (answers: Record<string, unknown>) => string
@@ -169,9 +173,9 @@ const expectDisplayFieldClientServerParity = (
   answers: Record<string, unknown>,
 ) => {
   const field = getDisplayField(id)
-  expect(String(evaluateFormExpression(field.clientValueExpression, answers))).toBe(
-    field.value(answers),
-  )
+  expect(
+    String(evaluateFormExpression(field.clientValueExpression, answers)),
+  ).toBe(field.value(answers))
 }
 
 describe('example-inputs v2 form parity', () => {
@@ -238,24 +242,27 @@ describe('example-inputs v2 form parity', () => {
       input3: '322 kr.',
     }
 
-    expect(getDisplayValue(displayFieldSubsection, 'displayField', answers)).toBe(
-      '356',
-    )
+    expect(
+      getDisplayValue(displayFieldSubsection, 'displayField', answers),
+    ).toBe('356')
     expect(
       getDisplayValue(legacyDisplayFieldSubsection, 'displayField', answers),
     ).toBe('356')
   })
 
   it('marks the summed display field as client-computed', () => {
-    const children = (displayFieldSubsection as {
-      children: Array<{ children?: unknown[] }>
-    }).children[0].children as Array<{
+    const children = (
+      displayFieldSubsection as {
+        children: Array<{ children?: unknown[] }>
+      }
+    ).children[0].children as Array<{
       id?: string
       clientValueExpression?: unknown
     }>
 
     expect(
-      children.find((child) => child.id === 'displayField')?.clientValueExpression,
+      children.find((child) => child.id === 'displayField')
+        ?.clientValueExpression,
     ).toEqual({
       operator: 'SUM',
       args: [
@@ -267,15 +274,18 @@ describe('example-inputs v2 form parity', () => {
   })
 
   it('marks the rental amount display field as client-computed', () => {
-    const children = (displayFieldSubsection as {
-      children: Array<{ children?: unknown[] }>
-    }).children[0].children as Array<{
+    const children = (
+      displayFieldSubsection as {
+        children: Array<{ children?: unknown[] }>
+      }
+    ).children[0].children as Array<{
       id?: string
       clientValueExpression?: unknown
     }>
 
     expect(
-      children.find((child) => child.id === 'displayField2')?.clientValueExpression,
+      children.find((child) => child.id === 'displayField2')
+        ?.clientValueExpression,
     ).toEqual({
       operator: 'IF',
       args: [
@@ -288,9 +298,7 @@ describe('example-inputs v2 form parity', () => {
             },
             {
               operator: 'IS_EMPTY',
-              args: [
-                { operator: 'GET', args: ['radioFieldForDisplayField'] },
-              ],
+              args: [{ operator: 'GET', args: ['radioFieldForDisplayField'] }],
             },
           ],
         },
@@ -327,9 +335,11 @@ describe('example-inputs v2 form parity', () => {
   })
 
   it('adds a multiplied plus added value display field example', () => {
-    const children = (displayFieldSubsection as {
-      children: Array<{ children?: unknown[] }>
-    }).children[0].children as Array<{
+    const children = (
+      displayFieldSubsection as {
+        children: Array<{ children?: unknown[] }>
+      }
+    ).children[0].children as Array<{
       id?: string
       clientShowWhen?: unknown
       clientValueExpression?: unknown
