@@ -58,7 +58,8 @@ const Host = styled(Animated.View)<{
 }>`
   height: 52px;
   position: absolute;
-  bottom: ${({ theme, bottomOffset }) => theme.spacing[3] + bottomOffset}px;
+  bottom: ${({ theme, bottomOffset }) =>
+    (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) + bottomOffset}px;
   right: ${({ theme }) => theme.spacing[2]}px;
   border: 1px solid ${({ borderColor }) => borderColor};
   background-color: ${({ backgroundColor }) => backgroundColor};
