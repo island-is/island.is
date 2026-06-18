@@ -27,6 +27,30 @@ import { translation as translationStrings } from './translation.strings'
 import { Units } from './Units'
 import * as styles from './CustomsCalculator.css'
 
+interface CategoryNode {
+  id: string
+  label: string
+  children?: CategoryNode[]
+}
+
+const findCategoryPath = (
+  categories: CategoryNode[],
+  targetId: string,
+  path: { label: string; value: string }[] = [],
+): { label: string; value: string }[] | null => {
+  for (const category of categories) {
+    if (category.id === targetId) return path
+    if (category.children?.length) {
+      const result = findCategoryPath(category.children, targetId, [
+        ...path,
+        { label: category.label, value: category.id },
+      ])
+      if (result !== null) return result
+    }
+  }
+  return null
+}
+
 interface CustomsCalculatorProps {
   slice: ConnectedComponent
 }
@@ -258,6 +282,18 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               )
             if (bottomLevelCategory) {
               setSelectedBottomLevelCategory(bottomLevelCategory)
+              const topLevel =
+                productCategoriesResponse.data
+                  ?.customsCalculatorProductCategories?.topLevel ?? []
+              const path =
+                findCategoryPath(
+                  topLevel as CategoryNode[],
+                  bottomLevelCategory.id,
+                ) ?? []
+              setSelectedCategory({
+                current: path.length > 0 ? path[path.length - 1] : null,
+                breadcrumbs: path.slice(0, -1),
+              })
             }
           }}
         />
