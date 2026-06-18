@@ -1,4 +1,10 @@
-import { IsArray, IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 

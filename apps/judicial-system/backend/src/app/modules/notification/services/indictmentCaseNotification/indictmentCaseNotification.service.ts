@@ -737,7 +737,12 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
     try {
-      return await this.sendNotification(type, theCase, user, concludedDecisions)
+      return await this.sendNotification(
+        type,
+        theCase,
+        user,
+        concludedDecisions,
+      )
     } catch (error) {
       this.logger.error('Failed to send indictment case notification', error)
 
