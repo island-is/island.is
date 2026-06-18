@@ -104,7 +104,11 @@ export const Exemptions = () => {
           variant="utility"
         />
       </Box>
-      {loading && <Box marginTop={6}><CardLoader /></Box>}
+      {loading && (
+        <Box marginTop={6}>
+          <CardLoader />
+        </Box>
+      )}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>

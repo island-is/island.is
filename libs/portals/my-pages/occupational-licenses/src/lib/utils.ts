@@ -16,7 +16,9 @@ export const formatValueUnit = (
   options?: { locale?: string; omitUnit?: boolean },
 ): string => {
   if (!vu) return '-'
-  const value = options?.locale ? formatNumber(vu.value, options.locale) : vu.value
+  const value = options?.locale
+    ? formatNumber(vu.value, options.locale)
+    : vu.value
   const unit = !options?.omitUnit && vu.unit ? ` ${vu.unit}` : ''
   return `${value}${unit}`
 }
