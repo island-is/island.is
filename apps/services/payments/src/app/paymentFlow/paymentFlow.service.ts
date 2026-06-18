@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import { InferAttributes, Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
-import { isCompany, isValid } from 'kennitala'
+import { isCompany, isPerson, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
@@ -120,7 +120,15 @@ export class PaymentFlowService {
 
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
-      if (paymentMethods.length === 0) {
+      // Bank transfer is offered to individuals only — i.e. real persons.
+      // Companies and temporary kennitalas are excluded.
+      const availableMethods =
+        paymentMethods.includes(PaymentMethod.BANK_TRANSFER) &&
+        !isPerson(paymentInfo.payerNationalId)
+          ? paymentMethods.filter((m) => m !== PaymentMethod.BANK_TRANSFER)
+          : paymentMethods
+
+      if (availableMethods.length === 0) {
         throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
       }
 
@@ -139,7 +147,7 @@ export class PaymentFlowService {
         const paymentFlow = await this.paymentFlowModel.create(
           {
             ...paymentInfo,
-            availablePaymentMethods: paymentMethods,
+            availablePaymentMethods: availableMethods,
             id: paymentFlowId,
             charges: [],
           },

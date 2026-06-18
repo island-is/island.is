@@ -346,6 +346,9 @@ function PaymentPage({
       methods.push('invoice')
     }
 
+    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
+    // Once testing is done this flag is removed and the backend controls
+    // availability via availablePaymentMethods.
     if (isBankTransferPaymentEnabledForUser) {
       methods.push('bank_transfer')
     }

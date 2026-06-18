@@ -7,7 +7,7 @@ import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
 
 import { setupTestApp } from '../../../test/setup'
-import { PaymentMethod, PaymentStatus } from '../../types'
+import { CatalogItemWithQuantity, PaymentMethod, PaymentStatus } from '../../types'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
@@ -77,6 +77,63 @@ describe('PaymentFlowService', () => {
       const result = await service.createPaymentUrl(paymentInfo)
 
       expect(result.urls).toBeDefined()
+    })
+
+    const bankTransferCharges = [
+      {
+        chargeItemCode: '123',
+        chargeType: 'A',
+        quantity: 1,
+        price: 100,
+        reference: 'charge-ref-xyz',
+        paymentOptions: ['CARD', 'TRANSFER'],
+      },
+    ]
+
+    const createFlowAndReadMethods = async (payerNationalId: string) => {
+      jest
+        .spyOn(service, 'getPaymentFlowChargeDetails')
+        .mockResolvedValue({
+          firstProductTitle: 'Test product',
+          totalPrice: 0,
+          catalogItems:
+            bankTransferCharges as unknown as CatalogItemWithQuantity[],
+        })
+
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+
+      const { id } = await service.createPaymentUrl({
+        charges: bankTransferCharges,
+        payerNationalId,
+        onUpdateUrl: 'http://localhost:3333/update',
+        organisationId: '5534567890',
+      })
+
+      const created = await paymentFlowModel.findByPk(id)
+      return created?.availablePaymentMethods
+    }
+
+    it('should offer bank transfer to an individual payer', async () => {
+      const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala
+
+      expect(methods).toEqual([
+        PaymentMethod.CARD,
+        PaymentMethod.BANK_TRANSFER,
+      ])
+    })
+
+    it('should not offer bank transfer to a company payer', async () => {
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD])
+    })
+
+    it('should not offer bank transfer to a temporary kennitala payer', async () => {
+      const methods = await createFlowAndReadMethods('8123456789') // temporary kennitala (starts with 8)
+
+      expect(methods).toEqual([PaymentMethod.CARD])
     })
   })
 
