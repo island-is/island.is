@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
@@ -10,8 +11,6 @@ import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './Login.string'
 import * as styles from './Login.css'
-
-import type { JSX } from 'react'
 
 const Login = () => {
   const router = useRouter()

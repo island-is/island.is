@@ -1,4 +1,4 @@
-import React, { useRef, type JSX } from 'react'
+import React, { type JSX,useRef } from 'react'
 import { useIntersection } from 'react-use'
 
 import {
