@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
@@ -72,11 +72,11 @@ export class CustomsCalculatorCharge {
   @Field({ nullable: true })
   description?: string
 
-  @Field({ nullable: true })
-  amount?: string
+  @Field(() => Int, { nullable: true })
+  amount?: number
 
-  @Field({ nullable: true })
-  percentage?: string
+  @Field(() => Float, { nullable: true })
+  percentage?: number
 
   @Field({ nullable: true })
   unit?: string
@@ -87,12 +87,12 @@ export class CustomsCalculatorCalculationResponse {
   @Field(() => [CustomsCalculatorCharge])
   charges!: CustomsCalculatorCharge[]
 
-  @Field()
-  startAmount!: string
+  @Field(() => Int)
+  startAmount!: number
 
-  @Field()
-  additionalAmount!: string
+  @Field(() => Int)
+  additionalAmount!: number
 
-  @Field()
-  totalAmount!: string
+  @Field(() => Int)
+  totalAmount!: number
 }

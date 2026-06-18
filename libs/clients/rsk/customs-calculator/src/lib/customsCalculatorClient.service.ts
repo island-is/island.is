@@ -138,9 +138,9 @@ export class CustomsCalculatorClientService {
     const charges: {
       code: string
       description: string
-      percentage: string
+      percentage: number
       unit: string
-      amount: string
+      amount: number
     }[] = []
 
     for (const line of data?.Response?.LinaGjald?.LinaGjaldLinur ?? []) {
@@ -151,9 +151,9 @@ export class CustomsCalculatorClientService {
           charges.push({
             code: charge.kodi,
             description: charge.heiti,
-            percentage: charge.TaxtiPros,
+            percentage: Number(charge.TaxtiPros),
             unit: charge.TegTexti,
-            amount: charge.bruttoupphaed,
+            amount: Math.round(Number(charge.bruttoupphaed)),
           })
         } catch {
           continue
@@ -161,10 +161,13 @@ export class CustomsCalculatorClientService {
       }
     }
 
+    const startAmount =
+      data?.Response?.LinaGjald?.LinaGjaldLinur?.[0]?.Tollverd_ISK
+
     return {
-      startAmount: input.priceWithShipping,
-      additionalAmount: additionalAmount.toString(),
-      totalAmount: additionalAmount.plus(input.priceWithShipping).toString(),
+      startAmount: Math.round(Number(startAmount ?? '0')),
+      additionalAmount: Math.round(additionalAmount.toNumber()),
+      totalAmount: Math.round(additionalAmount.plus(startAmount).toNumber()),
       charges,
     }
   }
