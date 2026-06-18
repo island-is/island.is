@@ -272,8 +272,10 @@ export const is = {
   'documentDetail.unarchiveSuccess': 'Skjal tekið úr geymslu',
   'documentDetail.bookmarkSuccess': 'Skjal stjörnumerkt',
   'documentDetail.unbookmarkSuccess': 'Stjörnumerking fjarlægð',
-  'documentDetail.archiveError': 'Ekki tókst að setja skjöl í geymslu',
-  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjöl',
+  'documentDetail.archiveError': 'Ekki tókst að setja skjal í geymslu',
+  'documentDetail.unarchiveError': 'Ekki tókst að taka skjal úr geymslu',
+  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
+  'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
   'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document reply

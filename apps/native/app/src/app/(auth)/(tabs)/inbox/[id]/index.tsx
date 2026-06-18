@@ -137,8 +137,10 @@ export default function DocumentScreen() {
       content: contentType !== 'pdf' ? document.content?.value : undefined,
     })
 
-  const showActionError = (kind: 'archive' | 'bookmark') => {
-    toast.error(intl.formatMessage({ id: `documentDetail.${kind}Error` }), {
+  const showActionError = (
+    action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
+  ) => {
+    toast.error(intl.formatMessage({ id: `documentDetail.${action}Error` }), {
       message: intl.formatMessage({ id: 'documentDetail.pleaseTryAgain' }),
     })
   }
@@ -151,14 +153,14 @@ export default function DocumentScreen() {
     try {
       const result = await toggleAction(action, document.id)
       if (!result.data?.postMailActionV2?.success) {
-        showActionError('archive')
+        showActionError(action)
         return
       }
       toast.success(
         intl.formatMessage({ id: `documentDetail.${action}Success` }),
       )
     } catch {
-      showActionError('archive')
+      showActionError(action)
     }
   }
 
@@ -170,14 +172,14 @@ export default function DocumentScreen() {
     try {
       const result = await toggleAction(action, document.id)
       if (!result.data?.postMailActionV2?.success) {
-        showActionError('bookmark')
+        showActionError(action)
         return
       }
       toast.success(
         intl.formatMessage({ id: `documentDetail.${action}Success` }),
       )
     } catch {
-      showActionError('bookmark')
+      showActionError(action)
     }
   }
 

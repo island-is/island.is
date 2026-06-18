@@ -273,8 +273,10 @@ export const en: TranslatedMessages = {
   'documentDetail.unarchiveSuccess': 'Document unarchived',
   'documentDetail.bookmarkSuccess': 'Document starred',
   'documentDetail.unbookmarkSuccess': 'Star removed',
-  'documentDetail.archiveError': 'Could not archive documents',
-  'documentDetail.bookmarkError': 'Could not star documents',
+  'documentDetail.archiveError': 'Could not archive document',
+  'documentDetail.unarchiveError': 'Could not unarchive document',
+  'documentDetail.bookmarkError': 'Could not star document',
+  'documentDetail.unbookmarkError': 'Could not unstar document',
   'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
