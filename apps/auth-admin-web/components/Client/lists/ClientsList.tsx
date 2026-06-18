@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, type JSX } from 'react';
+import React, { useState, type JSX } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'

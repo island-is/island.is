@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, type JSX } from 'react';
+import React, { useEffect, useState, type JSX } from 'react'
 
 interface Props {
   helpText: string

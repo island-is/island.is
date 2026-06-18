@@ -1,4 +1,4 @@
-import React, { createContext, type JSX } from 'react';
+import React, { createContext, type JSX } from 'react'
 
 export interface LinkContextInterface {
   linkRenderer?: (href: string, children: React.ReactNode) => JSX.Element

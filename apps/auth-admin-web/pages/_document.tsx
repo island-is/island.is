@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react';
+import React, { type JSX } from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 interface Props {

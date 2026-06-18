@@ -11,7 +11,7 @@ import { useGetApplicantOverviewQuery } from './Status.generated'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { Problem } from '@island.is/react-spa/shared'
 
-import type { JSX } from "react";
+import type { JSX } from 'react'
 
 export const ApplicantOverview = () => {
   const { formatMessage, locale } = useLocale()

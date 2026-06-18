@@ -99,8 +99,10 @@ export const DropdownMenu = ({
         // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
         // function child compiling. Remove when this migrates to ariakit.
         <MenuButton {...menu} {...(disclosure.props as any)} {...hoverProps}>
-          {((disclosureProps: any) =>
-            React.cloneElement(disclosure, disclosureProps)) as any}
+          {
+            ((disclosureProps: any) =>
+              React.cloneElement(disclosure, disclosureProps)) as any
+          }
         </MenuButton>
       ) : (
         <MenuButton
