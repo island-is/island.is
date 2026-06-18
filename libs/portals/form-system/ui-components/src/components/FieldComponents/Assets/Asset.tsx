@@ -1,4 +1,4 @@
-import { FormSystemField } from 'libs/api/schema/src/lib/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { ApplicationState, Action } from '../../../lib'
 import { Vehicle } from './Vehicle'
 import { Dispatch } from 'react'

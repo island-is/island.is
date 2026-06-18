@@ -14,7 +14,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useEffect, useMemo, useState } from 'react'
+import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useApolloClient } from '@apollo/client'
 
@@ -368,6 +368,20 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const mapToSelectItems = useCallback(
+    (items: (FormSystemListItem | null)[]): SelectItem[] =>
+      items
+        .filter((listItem): listItem is FormSystemListItem => listItem !== null)
+        .map((listItem) => ({
+          label: listItem.label?.[lang] ?? '',
+          value: {
+            label: listItem.label ?? null,
+            value: listItem.value ?? null,
+          },
+        })),
+    [lang],
+  )
+
   useEffect(() => {
     if (!shouldFetch || isLoading || vehiclesFetchHasError) {
       return
@@ -396,7 +410,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
     vehicleList,
     registrationNumberField,
     setValue,
-    lang,
+    mapToSelectItems,
   ])
 
   useEffect(() => {
@@ -417,22 +431,9 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
     colorField,
   ])
 
-  const mapToSelectItems = (
-    items: (FormSystemListItem | null)[],
-  ): SelectItem[] =>
-    items
-      .filter((listItem): listItem is FormSystemListItem => listItem !== null)
-      .map((listItem) => ({
-        label: listItem.label?.[lang] ?? '',
-        value: {
-          label: listItem.label ?? null,
-          value: listItem.value ?? null,
-        },
-      }))
-
   const selectOptions = useMemo(
     () => mapToSelectItems(vehicleList),
-    [vehicleList, lang],
+    [vehicleList, mapToSelectItems],
   )
 
   if (shouldFetch) {
@@ -474,6 +475,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
               required={item.isRequired ?? false}
               placeholder={formatMessage(m.select)}
               backgroundColor="blue"
+              isClearable={item.isRequired ? false : true}
               onChange={(option) => {
                 const selectedLabel = option?.label ?? ''
                 const registrationNumber = option?.value?.value ?? ''
