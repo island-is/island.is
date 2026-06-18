@@ -609,6 +609,42 @@ jobs:
         if: '!needs.pre-checks.outputs.PRE_CHECK'
         run: echo "Build was skipped"
 
+  dora-deployment-event:
+    runs-on: arc-shared
+    if: ${{ needs.prepare.outputs.IMAGES && needs.docker-build.result == 'success' }}
+    needs:
+      - prepare
+      - docker-build
+    steps:
+      - name: Send DORA deployment events
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+        run: |
+          set -euo pipefail
+          curl -L --fail "https://github.com/DataDog/datadog-ci/releases/latest/download/datadog-ci_linux-x64" \
+            --output /usr/local/bin/datadog-ci && chmod +x /usr/local/bin/datadog-ci
+
+          FINISHED_AT="$(date +%s)"
+          REPO_URL="${{ github.server_url }}/${{ github.repository }}"
+          COMMIT_SHA="${{ github.sha }}"
+
+          # IMAGES is comma-separated from the prepare step
+          IFS=',' read -ra SERVICE_LIST <<< "$IMAGES"
+
+          for service in "${SERVICE_LIST[@]}"; do
+            service="$(echo "$service" | xargs)"
+            echo "DORA: reporting deployment for $service"
+            datadog-ci dora deployment \
+              --service "$service" \
+              --started-at "$FINISHED_AT" \
+              --finished-at "$FINISHED_AT" \
+              --git-repository-url "$REPO_URL" \
+              --git-commit-sha "$COMMIT_SHA" \
+              --env dev
+          done
+
   failure-notification:
     runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
