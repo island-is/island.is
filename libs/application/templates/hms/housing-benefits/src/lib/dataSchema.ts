@@ -208,10 +208,6 @@ const baseSchema = z
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
     incomeNoTaxReturnDescription: z.string().optional(),
-    incomeNoTaxReturnFiles: z
-      .union([z.array(fileSchema), z.literal('')])
-      .optional()
-      .transform((v) => (v === '' ? undefined : v)),
     payment: z
       .object({
         paymentRadio: z.enum(['me', 'landlord']).optional(),

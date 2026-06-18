@@ -555,22 +555,6 @@ export const incomeNoTaxReturnOverviewItems = (
   ]
 }
 
-export const incomeNoTaxReturnOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<AttachmentItem> => {
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    'incomeNoTaxReturnFiles',
-  )
-  if (!Array.isArray(files)) return []
-  return files.map((file) => ({
-    width: 'full' as const,
-    fileName: file.name,
-    fileType: file.name?.split('.').pop(),
-  }))
-}
-
 export const assetsDeclarationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,

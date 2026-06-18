@@ -207,7 +207,6 @@ const getApplicationFilesForSubmission = (
     'incomeContractorFiles',
     'incomeForeignFiles',
     'incomeOtherFiles',
-    'incomeNoTaxReturnFiles',
   ]
   simpleFilePaths.forEach((path) => {
     const files = getValueViaPath<UploadedFile[]>(answers, path)

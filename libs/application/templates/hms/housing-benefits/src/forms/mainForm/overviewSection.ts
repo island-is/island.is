@@ -20,7 +20,6 @@ import {
   incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
-  incomeNoTaxReturnOverviewAttachments,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
@@ -120,7 +119,6 @@ export const overviewSection = buildSection({
           backId: 'incomeNoTaxReturnMultiField',
           condition: isTaxReturnNotFiled,
           items: incomeNoTaxReturnOverviewItems,
-          attachments: incomeNoTaxReturnOverviewAttachments,
         }),
         buildOverviewField({
           id: 'assetsDeclarationOverview',

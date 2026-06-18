@@ -20,7 +20,6 @@ import {
   incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
-  incomeNoTaxReturnOverviewAttachments,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
   applicantSubmitAccessAgreementOverviewAttachments,
@@ -98,7 +97,6 @@ export const applicantOverviewSection = buildSection({
           title: m.draftMessages.incomeNoTaxReturnSection.title,
           condition: isTaxReturnNotFiled,
           items: incomeNoTaxReturnOverviewItems,
-          attachments: incomeNoTaxReturnOverviewAttachments,
         }),
         buildOverviewField({
           id: 'submitAssetsDeclarationOverview',
