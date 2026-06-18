@@ -6282,8 +6282,6 @@
         "required": [
           "id",
           "startTime",
-          "endTime",
-          "duration",
           "status",
           "modality",
           "description",
