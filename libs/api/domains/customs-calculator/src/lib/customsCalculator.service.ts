@@ -55,16 +55,20 @@ export class CustomsCalculatorService {
 
     for (const bottomLevelCategory of bottomLevelCategories) {
       let currentLabel = bottomLevelCategory.parentLabels[0]
-      while (currentLabel)
+      while (currentLabel) {
+        let found = false
         for (const category of allCategories) {
           if (category.id === bottomLevelCategory.id) continue
           if (category.label === currentLabel) {
             currentLabel = category.parentLabel
             if (currentLabel)
               bottomLevelCategory.parentLabels.unshift(currentLabel)
+            found = true
             break
           }
         }
+        if (!found) break
+      }
     }
 
     bottomLevelCategories.sort(sortAlpha('label'))
