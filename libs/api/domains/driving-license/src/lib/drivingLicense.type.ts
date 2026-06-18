@@ -125,6 +125,10 @@ export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
   daysOfResidency?: number
+  // Raw RLS error code (when the unmet requirement came from a can-apply denial)
+  errorCode?: string
+  // RLS's own human-readable description for that code, resolved by locale
+  message?: string
 }
 
 export interface ApplicationEligibility {

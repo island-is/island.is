@@ -5,8 +5,8 @@ import { ReviewSectionState, Step } from './ReviewSection'
 
 export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
   return eligibility.requirements.map(
-    ({ key, requirementMet, daysOfResidency }) => ({
-      ...requirementKeyToStep(key, requirementMet),
+    ({ key, requirementMet, daysOfResidency, message }) => ({
+      ...requirementKeyToStep(key, requirementMet, message ?? undefined),
       state: requirementMet
         ? ReviewSectionState.complete
         : ReviewSectionState.requiresAction,
@@ -17,7 +17,8 @@ export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
 
 const getDeniedByServiceMessageDescription = (
   key: RequirementKey,
-): MessageDescriptor => {
+  message?: string,
+): MessageDescriptor | string => {
   switch (key) {
     case RequirementKey.noLicenseFound:
     case RequirementKey.noTempLicense:
@@ -28,7 +29,9 @@ const getDeniedByServiceMessageDescription = (
     case RequirementKey.noExtendedDrivingLicense:
       return requirementsMessages.noExtendedDrivingLicenseTitle
     default:
-      return requirementsMessages.rlsDefaultDeniedDescription
+      // Prefer RLS's own description for codes we don't curate ourselves; fall
+      // back to the generic "contact sýslumaður" message when RLS has none.
+      return message ?? requirementsMessages.rlsDefaultDeniedDescription
   }
 }
 
@@ -39,6 +42,7 @@ const getDeniedByServiceMessageDescription = (
 const requirementKeyToStep = (
   key: RequirementKey,
   requirementMet: boolean,
+  message?: string,
 ): Omit<Step, 'state'> => {
   switch (key) {
     case RequirementKey.drivingSchoolMissing:
@@ -63,7 +67,7 @@ const requirementKeyToStep = (
         title: requirementsMessages.rlsTitle,
         description: requirementMet
           ? requirementsMessages.rlsAcceptedDescription
-          : getDeniedByServiceMessageDescription(key),
+          : getDeniedByServiceMessageDescription(key, message),
       }
     case RequirementKey.localResidency:
       return {
@@ -86,6 +90,13 @@ const requirementKeyToStep = (
         description: requirementsMessages.noExtendedDrivingLicenseDescription,
       }
     default:
-      throw new Error('Unknown requirement reason - should not happen')
+      // An unmapped requirement key: prefer RLS's own description if present,
+      // otherwise the generic denied message. (Previously this threw.)
+      return {
+        title: requirementsMessages.rlsTitle,
+        description: requirementMet
+          ? requirementsMessages.rlsAcceptedDescription
+          : message ?? requirementsMessages.rlsDefaultDeniedDescription,
+      }
   }
 }

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
 import {
+  DrivingLicenseApi,
   DrivingLicenseApiConfig,
   DrivingLicenseApiModule,
 } from '@island.is/clients/driving-license'
@@ -31,6 +32,7 @@ const daysOfResidency = 365
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
+  let drivingLicenseApi: DrivingLicenseApi
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -60,6 +62,7 @@ describe('DrivingLicenseService', () => {
     }).compile()
 
     service = module.get(DrivingLicenseService)
+    drivingLicenseApi = module.get(DrivingLicenseApi)
   })
 
   describe('Module', () => {
@@ -358,9 +361,62 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DeniedByService',
             requirementMet: false,
+            errorCode: 'SOME REASON',
           },
         ],
       })
+    })
+
+    it('still returns eligibility when the RLS codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
+
+      const response = await service.getApplicationEligibility(
+        MOCK_USER_COPY,
+        MOCK_NATIONAL_ID_EXPIRED,
+        'B-full',
+      )
+
+      // The denial reason (errorCode) is still attached; only the RLS message
+      // is omitted because the lookup failed — the query does not throw.
+      expect(response.isEligible).toBe(false)
+      expect(
+        response.requirements.find((r) => r.key === 'DeniedByService'),
+      ).toStrictEqual({
+        key: 'DeniedByService',
+        requirementMet: false,
+        errorCode: 'SOME REASON',
+      })
+    })
+  })
+
+  describe('describeErrorCode', () => {
+    it('returns the Icelandic description for a known code', async () => {
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toBe('Þú ert með punkta á ökuskírteini')
+    })
+
+    it('returns the English description when locale is en', async () => {
+      const result = await service.describeErrorCode('HAS_POINTS', 'en')
+      expect(result).toBe('You have points on your license')
+    })
+
+    it('returns null for a code not in the catalogue', async () => {
+      const result = await service.describeErrorCode('TOTALLY_UNKNOWN_CODE')
+      expect(result).toBeNull()
+    })
+
+    it('returns null (best-effort) when the codetable lookup fails', async () => {
+      jest
+        .spyOn(drivingLicenseApi, 'getErrorCodeDescriptions')
+        .mockRejectedValueOnce(new Error('codetable down'))
+
+      const result = await service.describeErrorCode('HAS_POINTS')
+      expect(result).toBeNull()
     })
   })
 

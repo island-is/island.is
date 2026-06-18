@@ -165,6 +165,21 @@ export const requestHandlers = [
     )
   }),
 
+  // Error-code catalogue. Deliberately omits 'SOME REASON' so an unknown code
+  // resolves to no description (matching the eligibility denial test).
+  rest.get(/api\/codetables\/error-codes/, (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          code: 'HAS_POINTS',
+          descriptionIs: 'Þú ert með punkta á ökuskírteini',
+          descriptionEn: 'You have points on your license',
+        },
+      ]),
+    )
+  }),
+
   rest.get(
     /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
     (req, res, ctx) => {

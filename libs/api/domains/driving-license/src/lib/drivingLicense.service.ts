@@ -277,6 +277,14 @@ export class DrivingLicenseService {
 
     const canApply = await this.canApplyFor(type, token)
 
+    // For an unmet can-apply denial, resolve RLS's own description for the raw
+    // error code (Icelandic for now) so the UI can surface it instead of the
+    // generic fallback for codes we don't curate ourselves.
+    const canApplyMessage =
+      !canApply.result && canApply.errorCode
+        ? (await this.describeErrorCode(canApply.errorCode)) ?? undefined
+        : undefined
+
     const requirements: ApplicationEligibilityRequirement[] = [
       ...(type === 'B-full'
         ? [
@@ -309,6 +317,8 @@ export class DrivingLicenseService {
       {
         key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
         requirementMet: canApply.result,
+        ...(canApply.errorCode ? { errorCode: canApply.errorCode } : {}),
+        ...(canApplyMessage ? { message: canApplyMessage } : {}),
       },
     ]
 
@@ -353,6 +363,38 @@ export class DrivingLicenseService {
         this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 
         return RequirementKey.deniedByService
+    }
+  }
+
+  /**
+   * Resolve RLS's own human-readable description for an error code, from the
+   * cached error-code catalogue. Locale-aware (defaults to Icelandic), returns
+   * null for an unknown code. Reusable by any scope:api consumer; submission /
+   * practice-permit (other scopes) should call the client wrapper directly.
+   */
+  async describeErrorCode(
+    code: string,
+    locale: 'is' | 'en' = 'is',
+  ): Promise<string | null> {
+    try {
+      const descriptions =
+        await this.drivingLicenseApi.getErrorCodeDescriptions()
+      const match = descriptions.find((d) => d.code === code)
+      if (!match) {
+        return null
+      }
+      return (
+        (locale === 'en' ? match.descriptionEn : match.descriptionIs) ?? null
+      )
+    } catch (e) {
+      // Best-effort fallback copy: a codetable outage must never fail the
+      // caller (e.g. the whole eligibility query). Log and fall through so the
+      // curated/generic message still renders.
+      this.logger.warn(
+        `${LOGTAG} failed to resolve RLS error-code description`,
+        e,
+      )
+      return null
     }
   }
 

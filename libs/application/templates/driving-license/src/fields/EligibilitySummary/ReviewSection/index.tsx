@@ -19,7 +19,9 @@ export enum ReviewSectionState {
 
 export interface Step {
   title: MessageDescriptor
-  description: MessageDescriptor
+  // string = RLS's own already-translated description (bypasses react-intl);
+  // MessageDescriptor = our curated/Contentful copy.
+  description: MessageDescriptor | string
   residenceRequirement?: MessageDescriptor
   state: ReviewSectionState
   daysOfResidency?: number
@@ -97,7 +99,9 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
       </Box>
       <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
         <Text marginTop={1} variant="default">
-          {formatMessage(description)}
+          {typeof description === 'string'
+            ? description
+            : formatMessage(description)}
         </Text>
         {showLocalRequirementDays && (
           <Text

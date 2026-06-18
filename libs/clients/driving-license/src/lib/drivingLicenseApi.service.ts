@@ -73,6 +73,45 @@ export class DrivingLicenseApi {
       name: c.heiti ?? '',
     }))
   }
+
+  // Static, shared reference data (no jwttoken / national ID), so the full
+  // catalogue is memoised once per instance. Failures are not cached.
+  private errorCodeDescriptionsCache?: Promise<v5.DtoErrorCodeDescriptionDto[]>
+
+  public async getErrorCodeDescriptions(): Promise<
+    v5.DtoErrorCodeDescriptionDto[]
+  > {
+    if (!this.errorCodeDescriptionsCache) {
+      this.errorCodeDescriptionsCache = this.v5CodeTable
+        .apiCodetablesErrorCodesGet({
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        })
+        .catch((e) => {
+          this.errorCodeDescriptionsCache = undefined
+          throw e
+        })
+    }
+    return this.errorCodeDescriptionsCache
+  }
+
+  public async getErrorCodeDescription(
+    code: string,
+  ): Promise<v5.DtoErrorCodeDescriptionDto | null> {
+    try {
+      return await this.v5CodeTable.apiCodetablesErrorCodesCodeGet({
+        code,
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      })
+    } catch (e) {
+      if ((e as { status: number })?.status === 404) {
+        return null
+      }
+      throw e
+    }
+  }
+
   public async getCurrentLicenseV5(input: {
     nationalId: string
     token?: string
