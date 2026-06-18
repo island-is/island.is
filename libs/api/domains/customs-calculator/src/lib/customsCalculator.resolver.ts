@@ -36,7 +36,6 @@ export class CustomsCalculatorResolver {
 
   @Query(() => CustomsCalculatorCalculationResponse, {
     name: 'customsCalculatorCalculate',
-    nullable: true,
   })
   calculate(
     @Args('input') input: CustomsCalculatorCalculationInput,

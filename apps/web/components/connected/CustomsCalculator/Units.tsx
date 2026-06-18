@@ -36,7 +36,6 @@ interface UnitInputProps {
   description?: string
   inputMode?: 'decimal' | 'numeric'
   control: Control<UnitsFormValues>
-  currency?: boolean
 }
 
 export const UnitInput = ({
@@ -152,7 +151,6 @@ export const Units = ({
                   translationStrings.priceWithShippingDescription,
                 )}
                 control={control}
-                currency={true}
               />
             </GridColumn>
           </GridRow>
@@ -160,7 +158,9 @@ export const Units = ({
         <GridColumn span="1/1">
           <GridRow rowGap={3}>
             {unitStrings.includes('STK') && (
-              <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+              <GridColumn
+                span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+              >
                 <UnitInput
                   name="unitCount"
                   label={formatMessage(translationStrings.unitCountLabel)}
@@ -172,7 +172,9 @@ export const Units = ({
               </GridColumn>
             )}
             {unitStrings.includes('NET') && (
-              <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+              <GridColumn
+                span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+              >
                 <UnitInput
                   name="net"
                   label={formatMessage(translationStrings.netWeightLabel)}
@@ -184,7 +186,9 @@ export const Units = ({
               </GridColumn>
             )}
             {unitStrings.includes('LIT') && (
-              <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+              <GridColumn
+                span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+              >
                 <UnitInput
                   name="liters"
                   label={formatMessage(translationStrings.litersLabel)}
@@ -196,7 +200,9 @@ export const Units = ({
               </GridColumn>
             )}
             {unitStrings.includes('PRO') && (
-              <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+              <GridColumn
+                span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+              >
                 <UnitInput
                   name="percentage"
                   label={formatMessage(translationStrings.percentageLabel)}
@@ -210,7 +216,9 @@ export const Units = ({
             {unitStrings.includes('UT*') && (
               <GridColumn span="1/1">
                 <GridRow rowGap={3}>
-                  <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+                  <GridColumn
+                    span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+                  >
                     <UnitInput
                       name="nedc"
                       label={formatMessage(
@@ -222,7 +230,9 @@ export const Units = ({
                       )}
                     />
                   </GridColumn>
-                  <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+                  <GridColumn
+                    span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+                  >
                     <UnitInput
                       name="nedcWeighted"
                       label={formatMessage(
@@ -234,7 +244,9 @@ export const Units = ({
                       )}
                     />
                   </GridColumn>
-                  <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+                  <GridColumn
+                    span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+                  >
                     <UnitInput
                       name="wltp"
                       label={formatMessage(
@@ -246,7 +258,9 @@ export const Units = ({
                       )}
                     />
                   </GridColumn>
-                  <GridColumn span={COLUMN_SPANS[columnSpanIndex++]}>
+                  <GridColumn
+                    span={COLUMN_SPANS[columnSpanIndex++ % COLUMN_SPANS.length]}
+                  >
                     <UnitInput
                       name="wltpWeighted"
                       label={formatMessage(
@@ -375,22 +389,27 @@ export const Units = ({
                       </Box>
                     </GridColumn>
                   </GridRow>
-                  {data?.customsCalculatorCalculate?.charges?.map((charge) => (
-                    <GridRow alignItems="center">
-                      <GridColumn
-                        span={['6/12', '6/12', '6/12', '6/12', '4/12']}
+                  {data?.customsCalculatorCalculate?.charges?.map(
+                    (charge, index) => (
+                      <GridRow
+                        key={`${charge.code}-${index}`}
+                        alignItems="center"
                       >
-                        <Text>{charge.description}</Text>
-                      </GridColumn>
-                      <GridColumn
-                        span={['6/12', '6/12', '6/12', '6/12', '4/12']}
-                      >
-                        <Box paddingLeft={1}>
-                          <Text>{formatCurrency(Number(charge.amount))}</Text>
-                        </Box>
-                      </GridColumn>
-                    </GridRow>
-                  ))}
+                        <GridColumn
+                          span={['6/12', '6/12', '6/12', '6/12', '4/12']}
+                        >
+                          <Text>{charge.description}</Text>
+                        </GridColumn>
+                        <GridColumn
+                          span={['6/12', '6/12', '6/12', '6/12', '4/12']}
+                        >
+                          <Box paddingLeft={1}>
+                            <Text>{formatCurrency(Number(charge.amount))}</Text>
+                          </Box>
+                        </GridColumn>
+                      </GridRow>
+                    ),
+                  )}
                 </Stack>
                 <Divider thickness="standard" weight="purple300" />
                 <GridRow alignItems="center">
