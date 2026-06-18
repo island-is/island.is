@@ -131,11 +131,6 @@ export const translation = defineMessages({
     defaultMessage: 'Gjaldmiðill',
     description: 'Label for currency input',
   },
-  currenctSuffix: {
-    id: 'web.customsCalculator:currenctSuffix',
-    defaultMessage: ' kr.',
-    description: 'Suffix for currency input',
-  },
   netWeightLabel: {
     id: 'web.customsCalculator:netWeightLabel',
     defaultMessage: 'Nettóþyngd (kg)',
