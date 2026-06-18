@@ -4,6 +4,7 @@ import {
   Banknumber,
   Checkbox,
   CurrencyField,
+  CurrencySumField,
   Email,
   FileUpload,
   List,
@@ -41,12 +42,7 @@ export const Preview = ({ data, screenOrSection }: Props) => {
         )}
 
         {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
-        {type === FieldTypesEnum.BANK_ACCOUNT && (
-          <div>
-            <Text variant="h5">{data?.name?.is}</Text>
-            <Banknumber item={data} />
-          </div>
-        )}
+        {type === FieldTypesEnum.BANK_ACCOUNT && <Banknumber item={data} />}
         {type === FieldTypesEnum.EMAIL && <Email item={data} />}
         {type === FieldTypesEnum.DATE_PICKER && (
           <Box marginTop={2} width="half">
@@ -76,6 +72,7 @@ export const Preview = ({ data, screenOrSection }: Props) => {
         {type === FieldTypesEnum.PAYMENT_QUANTITY && (
           <PaymentQuantity item={data} />
         )}
+        {type === FieldTypesEnum.ISK_SUMBOX && <CurrencySumField item={data} />}
       </Box>
     </FormProvider>
   )

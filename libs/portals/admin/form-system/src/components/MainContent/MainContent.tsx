@@ -65,6 +65,10 @@ export const MainContent = () => {
   const disableAllowMultiple =
     (activeScreen?.isMulti ?? false) && screenHasMultisetFields
 
+  if (!activeItem.data) {
+    return null
+  }
+
   return (
     <Box>
       {activeItem.type === 'Field' ? (

@@ -50,7 +50,9 @@ export const BaseInput = () => {
           form.hasPayment || fieldType.id !== FieldTypesEnum.PAYMENT_QUANTITY,
       )
       .filter(
-        (fieldType) => fieldType.id !== FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+        (fieldType) =>
+          fieldType.id !== FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS &&
+          fieldType.id !== FieldTypesEnum.PAYMENT,
       )
       .map((fieldType) => ({
         value: fieldType.id ?? '',
