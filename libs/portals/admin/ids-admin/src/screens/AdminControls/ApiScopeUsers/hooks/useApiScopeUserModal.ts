@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useFetcher } from 'react-router-dom'
+import { useFetcher, useRevalidator } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/client'
 import { MultiValue } from 'react-select'
 
@@ -70,6 +70,7 @@ export const useApiScopeUserModal = ({
 }: UseApiScopeUserModalParams) => {
   const { formatMessage } = useLocale()
   const fetcher = useFetcher<ApiScopeUsersActionResult>()
+  const revalidator = useRevalidator()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -387,6 +388,8 @@ export const useApiScopeUserModal = ({
           scopes: [...activeScopes],
         },
       ])
+
+      revalidator.revalidate()
 
       setLoadingScopes(true)
       try {
