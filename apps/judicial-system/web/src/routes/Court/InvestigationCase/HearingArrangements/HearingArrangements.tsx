@@ -83,6 +83,11 @@ const HearingArrangements = () => {
     useState<ModalButtonLoading>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
+  const handleCloseModal = () => {
+    setNavigateTo(undefined)
+    setModalButtonLoading(undefined)
+  }
+
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
       setWorkingCase((theCase) => ({
@@ -358,6 +363,7 @@ const HearingArrangements = () => {
       {navigateTo !== undefined && (
         <Modal
           title={formatMessage(m.modal.heading)}
+          onClose={handleCloseModal}
           text={formatMessage(
             workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
               ? m.modal.allPresentText
@@ -405,7 +411,7 @@ const HearingArrangements = () => {
               modalButtonLoading === ModalButtonLoading.SECONDARY,
           }}
           errorMessage={
-            sendNotificationError
+            modalButtonLoading && sendNotificationError
               ? formatMessage(errors.sendNotification)
               : undefined
           }
