@@ -1,8 +1,8 @@
 import { AsyncSearch, Box, InputError } from '@island.is/island-ui/core'
 import { useRef } from 'react'
 import {
-  SDF_FIELD_BLOCK_MARGIN_BOTTOM,
   SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
 } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 import { getObjectAnswer, getStringAnswerValue } from '../utils'
@@ -26,11 +26,7 @@ export const SdfSearchField = ({
   )
 
   return (
-    <Box
-      marginBottom={
-        component.refetchTargets?.length ? 0 : SDF_FIELD_BLOCK_MARGIN_BOTTOM
-      }
-    >
+    <Box {...getSdfFieldMargins(component)}>
       <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
         <AsyncSearch
           options={component.options ?? []}

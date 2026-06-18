@@ -1,8 +1,14 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfRepeaterComponent = ({ component }: FieldRendererProps) => (
-  <Box marginBottom={3} border="standard" borderRadius="large" padding={3}>
+  <Box
+    {...getSdfFieldMargins(component)}
+    border="standard"
+    borderRadius="large"
+    padding={3}
+  >
     <Text fontWeight="semiBold" marginBottom={2}>
       {component.addItemLabel ?? 'Items'}
     </Text>

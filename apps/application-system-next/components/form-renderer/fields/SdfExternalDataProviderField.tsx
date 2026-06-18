@@ -1,4 +1,5 @@
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfExternalDataProviderField = ({
@@ -9,7 +10,7 @@ export const SdfExternalDataProviderField = ({
 }: FieldRendererProps) => {
   const isApproved = currentValue === true
   return (
-    <Box>
+    <Box {...getSdfFieldMargins(component)}>
       <Box marginTop={2} marginBottom={5}>
         <Box display="flex" alignItems="center" justifyContent="flexStart">
           <Box marginRight={1}>

@@ -11,6 +11,7 @@ import type {
   SdfDataTableRow,
 } from '../../../lib/graphql'
 import type { FieldRendererProps } from '../types'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import { getObjectAnswer, isRecord } from '../utils'
 
 const getDataTableUnits = (
@@ -174,7 +175,7 @@ export const SdfDataTableField = ({
   }
 
   return (
-    <Box marginBottom={3}>
+    <Box {...getSdfFieldMargins(component)}>
       {component.label && (
         <Text variant="h3" marginBottom={2}>
           {component.label}

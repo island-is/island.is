@@ -161,6 +161,12 @@ export class SdfTextField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -190,6 +196,12 @@ export class SdfSelectField {
 
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -229,6 +241,12 @@ export class SdfSearchField {
 
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -323,6 +341,12 @@ export class SdfDataTableField {
   @Field(() => [SdfDataTableRow])
   rows!: SdfDataTableRow[]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -346,6 +370,12 @@ export class SdfRadioField {
 
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -390,6 +420,12 @@ export class SdfCheckboxField {
   @Field({ nullable: true })
   checkboxBackgroundColor?: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -419,6 +455,12 @@ export class SdfDateField {
 
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -471,6 +513,12 @@ export class SdfFileUploadField {
   @Field({ nullable: true })
   introduction?: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -504,6 +552,12 @@ export class SdfPhoneField {
   @Field(() => [String], { nullable: true })
   allowedCountryCodes?: string[]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -521,6 +575,12 @@ export class SdfNationalIdField {
 
   @Field()
   disabled!: boolean
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -543,6 +603,12 @@ export class SdfCompanySearchField {
   @Field()
   disabled!: boolean
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -563,6 +629,12 @@ export class SdfAsyncSelectField {
 
   @Field()
   disabled!: boolean
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -594,6 +666,12 @@ export class SdfSubmitField {
   @Field(() => [SdfSubmitAction])
   actions!: SdfSubmitAction[]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -602,6 +680,12 @@ export class SdfSubmitField {
 export class SdfDividerField {
   @Field()
   id!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -639,6 +723,12 @@ export class SdfKeyValueField {
   @Field()
   value!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -657,6 +747,12 @@ export class SdfAlertMessageField {
   @Field({ nullable: true })
   message?: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -672,6 +768,12 @@ export class SdfLinkField {
   @Field()
   url!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -681,6 +783,12 @@ export class SdfRedirectToServicePortalField {
   @Field()
   id!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -689,6 +797,12 @@ export class SdfRedirectToServicePortalField {
 export class SdfPaymentPendingField {
   @Field()
   id!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -708,6 +822,12 @@ export class SdfMessageWithLinkButtonField {
   @Field()
   buttonTitle!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -725,6 +845,12 @@ export class SdfExpandableDescriptionField {
 
   @Field()
   description!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -750,6 +876,12 @@ export class SdfAccordionField {
   @Field(() => [SdfAccordionItem])
   items!: SdfAccordionItem[]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -762,6 +894,12 @@ export class SdfActionCardListField {
   @Field()
   label!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -773,6 +911,12 @@ export class SdfTableRepeaterField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -792,6 +936,12 @@ export class SdfStaticTableField {
   @Field(() => [[String]])
   rows!: string[][]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -800,6 +950,12 @@ export class SdfStaticTableField {
 export class SdfHiddenInputField {
   @Field()
   id!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -813,6 +969,12 @@ export class SdfHiddenInputWithWatchedValueField {
   @Field()
   watchValue!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -824,6 +986,12 @@ export class SdfFindVehicleField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -872,6 +1040,12 @@ export class SdfDisplayField {
   @Field(() => SdfComponentWidth, { nullable: true })
   width?: SdfComponentWidth
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -887,6 +1061,12 @@ export class SdfImageField {
   @Field({ nullable: true })
   imageUrl?: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -898,6 +1078,12 @@ export class SdfBankAccountField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -919,6 +1105,12 @@ export class SdfSliderField {
 
   @Field(() => Int, { nullable: true })
   step?: number
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -955,6 +1147,12 @@ export class SdfExternalDataProviderField {
 
   @Field(() => [SdfExternalDataProviderItem], { nullable: true })
   dataProviders?: SdfExternalDataProviderItem[]
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 }
 
 @ObjectType('SdfTitleField')
@@ -964,6 +1162,12 @@ export class SdfTitleField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -977,6 +1181,12 @@ export class SdfPaginatedSearchableTableField {
   @Field()
   label!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -989,6 +1199,12 @@ export class SdfNationalIdWithNameField {
   @Field()
   label!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -1000,6 +1216,12 @@ export class SdfFieldsRepeaterField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -1071,6 +1293,12 @@ export class SdfOverviewField {
   @Field(() => [SdfOverviewAttachment], { nullable: true })
   overviewAttachments?: SdfOverviewAttachment[]
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -1082,6 +1310,12 @@ export class SdfVehiclePermnoWithInfoField {
 
   @Field()
   label!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -1106,6 +1340,12 @@ export class SdfInformationCardField {
 
   @Field(() => [SdfInformationCardItem])
   informationCardItems!: SdfInformationCardItem[]
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -1140,6 +1380,12 @@ export class SdfPaymentChargeOverviewField {
   @Field()
   paymentChargeTotalAmount!: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -1157,6 +1403,12 @@ export class SdfPdfLinkButtonField {
 
   @Field()
   pdfLinkUrl!: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
@@ -1176,6 +1428,12 @@ export class SdfCopyLinkField {
   @Field({ nullable: true })
   copyButtonTitle?: string
 
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
+
   @Field(() => graphqlTypeJson, { nullable: true })
   clientShowWhen?: Record<string, unknown> | string | number | boolean | null
 }
@@ -1187,6 +1445,12 @@ export class SdfCustomComponent {
 
   @Field({ nullable: true })
   props?: string
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 }
 
 // Declared before the union to avoid forward-reference errors; the circular
@@ -1216,6 +1480,12 @@ export class SdfRepeaterComponent {
     description: 'JSON-serialized rows of components. Parsed by the frontend.',
   })
   items!: string[]
+
+  @Field(() => Int, { nullable: true })
+  marginTop?: number
+
+  @Field(() => Int, { nullable: true })
+  marginBottom?: number
 }
 
 const allComponentTypes = () =>

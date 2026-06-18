@@ -1,8 +1,9 @@
 import { Box, LinkV2 } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfLinkField = ({ component }: FieldRendererProps) => (
-  <Box marginBottom={2}>
+  <Box {...getSdfFieldMargins(component)}>
     <LinkV2
       href={component.url ?? '#'}
       newTab

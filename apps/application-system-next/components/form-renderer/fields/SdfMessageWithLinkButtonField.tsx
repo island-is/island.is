@@ -1,10 +1,11 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfMessageWithLinkButtonField = ({
   component,
 }: FieldRendererProps) => (
-  <Box marginTop={2} marginBottom={2}>
+  <Box {...getSdfFieldMargins(component)}>
     <Box
       borderRadius="standard"
       padding={4}

@@ -1,8 +1,9 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfImageField = ({ component }: FieldRendererProps) => (
-  <Box marginBottom={3}>
+  <Box {...getSdfFieldMargins(component)}>
     <Text fontWeight="semiBold" marginBottom={1}>
       {component.label}
     </Text>

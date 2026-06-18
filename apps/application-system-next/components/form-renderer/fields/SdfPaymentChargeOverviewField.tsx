@@ -1,5 +1,5 @@
 import { Box, Divider, Text } from '@island.is/island-ui/core'
-import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from '../../sdfLayoutTokens'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfPaymentChargeOverviewField = ({
@@ -7,7 +7,7 @@ export const SdfPaymentChargeOverviewField = ({
 }: FieldRendererProps) => {
   const lines = component.paymentChargeLines ?? []
   return (
-    <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+    <Box {...getSdfFieldMargins(component)}>
       <Text variant="h3" as="h4" marginY={2}>
         {component.paymentChargeHeading}
       </Text>

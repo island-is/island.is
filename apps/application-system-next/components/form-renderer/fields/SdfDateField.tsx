@@ -1,5 +1,8 @@
 import { Box, DatePicker } from '@island.is/island-ui/core'
-import { SDF_FIELD_CONTROL_PADDING_TOP } from '../../sdfLayoutTokens'
+import {
+  SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
+} from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfDateField = ({
@@ -8,7 +11,7 @@ export const SdfDateField = ({
   error,
   handleChange,
 }: FieldRendererProps) => (
-  <Box marginBottom={3}>
+  <Box {...getSdfFieldMargins(component)}>
     <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
       <DatePicker
         id={component.id ?? ''}

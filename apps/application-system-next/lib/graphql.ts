@@ -322,6 +322,8 @@ export const GET_SCREEN_QUERY = `
             textStep
             defaultValue
             width
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfSelectField {
@@ -335,6 +337,8 @@ export const GET_SCREEN_QUERY = `
             width
             onSelectRefetchTemplateApis
             refetchTargets
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfSearchField {
@@ -349,6 +353,8 @@ export const GET_SCREEN_QUERY = `
             width
             onSelectRefetchTemplateApis
             refetchTargets
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfDataTableField {
@@ -379,6 +385,8 @@ export const GET_SCREEN_QUERY = `
                 }
               }
             }
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfRadioField {
@@ -388,6 +396,8 @@ export const GET_SCREEN_QUERY = `
             disabled
             options { label value }
             width
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfCheckboxField {
@@ -402,6 +412,8 @@ export const GET_SCREEN_QUERY = `
             large
             spacing
             checkboxBackgroundColor
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfDateField {
@@ -413,6 +425,8 @@ export const GET_SCREEN_QUERY = `
             minDate
             maxDate
             width
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfFileUploadField {
@@ -431,6 +445,8 @@ export const GET_SCREEN_QUERY = `
             forImageUpload
             maxSizeErrorText
             introduction
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfPhoneField {
@@ -443,6 +459,8 @@ export const GET_SCREEN_QUERY = `
             width
             enableCountrySelector
             allowedCountryCodes
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfNationalIdField {
@@ -450,6 +468,8 @@ export const GET_SCREEN_QUERY = `
             label
             required
             disabled
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfDescriptionField {
@@ -465,16 +485,22 @@ export const GET_SCREEN_QUERY = `
             label
             placement
             actions { event name type }
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfDividerField {
             id
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfKeyValueField {
             id
             label
             value
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfAlertMessageField {
@@ -482,12 +508,16 @@ export const GET_SCREEN_QUERY = `
             alertType
             title
             message
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfLinkField {
             id
             label
             url
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfDisplayField {
@@ -502,6 +532,8 @@ export const GET_SCREEN_QUERY = `
             titleVariant
             halfWidthOwnline
             width
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfSliderField {
@@ -510,6 +542,8 @@ export const GET_SCREEN_QUERY = `
             min
             max
             step
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfExternalDataProviderField {
@@ -519,29 +553,41 @@ export const GET_SCREEN_QUERY = `
             description
             checkboxLabel
             dataProviders { id title subTitle }
+            marginTop
+            marginBottom
           }
           ... on SdfTitleField {
             id
             label
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfPaymentPendingField {
             id
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfPaginatedSearchableTableField {
             id
             label
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfNationalIdWithNameField {
             id
             label
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfFieldsRepeaterField {
             id
             label
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfOverviewField {
@@ -566,17 +612,23 @@ export const GET_SCREEN_QUERY = `
               fileType
               fileSize
             }
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfVehiclePermnoWithInfoField {
             id
             label
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfInformationCardField {
             id
             label
             informationCardItems { label value }
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfPaymentChargeOverviewField {
@@ -585,6 +637,8 @@ export const GET_SCREEN_QUERY = `
             paymentChargeLines { description quantity amount }
             paymentChargeTotalLabel
             paymentChargeTotalAmount
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfPdfLinkButtonField {
@@ -592,6 +646,8 @@ export const GET_SCREEN_QUERY = `
             pdfDescription
             pdfLinkTitle
             pdfLinkUrl
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfCopyLinkField {
@@ -599,6 +655,8 @@ export const GET_SCREEN_QUERY = `
             copyLinkTitle
             copyLinkText
             copyButtonTitle
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfExpandableDescriptionField {
@@ -606,6 +664,8 @@ export const GET_SCREEN_QUERY = `
             label
             introText
             expandableDescription: description
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfMessageWithLinkButtonField {
@@ -613,12 +673,16 @@ export const GET_SCREEN_QUERY = `
             linkMessage: message
             url
             buttonTitle
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfAccordionField {
             id
             label
             accordionItems: items { label content }
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfStaticTableField {
@@ -626,11 +690,15 @@ export const GET_SCREEN_QUERY = `
             label
             header
             staticTableRows: rows
+            marginTop
+            marginBottom
             clientShowWhen
           }
           ... on SdfCustomComponent {
             componentName
             props
+            marginTop
+            marginBottom
           }
           ... on SdfRepeaterComponent {
             id
@@ -640,6 +708,8 @@ export const GET_SCREEN_QUERY = `
             minItems
             maxItems
             items
+            marginTop
+            marginBottom
           }
         }
         errors {
@@ -679,42 +749,42 @@ export const EXECUTE_ACTION_MUTATION = `
         subSectionIndex
         components {
           __typename
-          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width clientShowWhen }
-          ... on SdfSelectField { id label placeholder required disabled isMulti options { label value } width onSelectRefetchTemplateApis refetchTargets clientShowWhen }
-          ... on SdfSearchField { id label placeholder required disabled options { label value } searchAction minQueryLength width onSelectRefetchTemplateApis refetchTargets clientShowWhen }
-          ... on SdfDataTableField { id label header rows { id cells expandable { rows { id label cells hasCheckbox checkboxKey inputs { key label type min max format suffix } payload defaultValues } } } clientShowWhen }
-          ... on SdfRadioField { id label required disabled options { label value } width clientShowWhen }
-          ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor clientShowWhen }
-          ... on SdfDateField { id label placeholder required disabled minDate maxDate width clientShowWhen }
-          ... on SdfFileUploadField { id label required disabled maxSize accept uploadHeader uploadDescription uploadButtonLabel uploadMultiple totalMaxSize maxFileCount forImageUpload maxSizeErrorText introduction clientShowWhen }
-          ... on SdfPhoneField { id label placeholder required disabled defaultValue width enableCountrySelector allowedCountryCodes clientShowWhen }
-          ... on SdfNationalIdField { id label required disabled clientShowWhen }
+          ... on SdfTextField { id label placeholder required disabled maxLength inputVariant textareaRows inputBackgroundColor readOnly rightAlign textFormat textSuffix showMaxLength thousandSeparator allowNegative textNumberMin textNumberMax textStep defaultValue width marginTop marginBottom clientShowWhen }
+          ... on SdfSelectField { id label placeholder required disabled isMulti options { label value } width onSelectRefetchTemplateApis refetchTargets marginTop marginBottom clientShowWhen }
+          ... on SdfSearchField { id label placeholder required disabled options { label value } searchAction minQueryLength width onSelectRefetchTemplateApis refetchTargets marginTop marginBottom clientShowWhen }
+          ... on SdfDataTableField { id label header rows { id cells expandable { rows { id label cells hasCheckbox checkboxKey inputs { key label type min max format suffix } payload defaultValues } } } marginTop marginBottom clientShowWhen }
+          ... on SdfRadioField { id label required disabled options { label value } width marginTop marginBottom clientShowWhen }
+          ... on SdfCheckboxField { id label description required disabled options { label value } width strong large spacing checkboxBackgroundColor marginTop marginBottom clientShowWhen }
+          ... on SdfDateField { id label placeholder required disabled minDate maxDate width marginTop marginBottom clientShowWhen }
+          ... on SdfFileUploadField { id label required disabled maxSize accept uploadHeader uploadDescription uploadButtonLabel uploadMultiple totalMaxSize maxFileCount forImageUpload maxSizeErrorText introduction marginTop marginBottom clientShowWhen }
+          ... on SdfPhoneField { id label placeholder required disabled defaultValue width enableCountrySelector allowedCountryCodes marginTop marginBottom clientShowWhen }
+          ... on SdfNationalIdField { id label required disabled marginTop marginBottom clientShowWhen }
           ... on SdfDescriptionField { id label description marginTop marginBottom clientShowWhen }
-          ... on SdfSubmitField { id label placement actions { event name type } clientShowWhen }
-          ... on SdfDividerField { id clientShowWhen }
-          ... on SdfKeyValueField { id label value clientShowWhen }
-          ... on SdfAlertMessageField { id alertType title message clientShowWhen }
-          ... on SdfLinkField { id label url clientShowWhen }
-          ... on SdfDisplayField { id label displayValue: value displayInputLabel clientValueExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width clientShowWhen }
-          ... on SdfSliderField { id label min max step clientShowWhen }
-          ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } }
-          ... on SdfTitleField { id label clientShowWhen }
-          ... on SdfPaymentPendingField { id clientShowWhen }
-          ... on SdfPaginatedSearchableTableField { id label clientShowWhen }
-          ... on SdfNationalIdWithNameField { id label clientShowWhen }
-          ... on SdfFieldsRepeaterField { id label clientShowWhen }
-          ... on SdfOverviewField { id label description titleVariant backId bottomLine displayTitleAsAccordion overviewItems { width keyText valueText inlineKeyText boldValueText lineAboveKeyText } overviewAttachments { width fileName fileType fileSize } clientShowWhen }
-          ... on SdfVehiclePermnoWithInfoField { id label clientShowWhen }
-          ... on SdfInformationCardField { id label informationCardItems { label value } clientShowWhen }
-          ... on SdfPaymentChargeOverviewField { id paymentChargeHeading paymentChargeLines { description quantity amount } paymentChargeTotalLabel paymentChargeTotalAmount clientShowWhen }
-          ... on SdfPdfLinkButtonField { id pdfDescription pdfLinkTitle pdfLinkUrl clientShowWhen }
-          ... on SdfCopyLinkField { id copyLinkTitle copyLinkText copyButtonTitle clientShowWhen }
-          ... on SdfExpandableDescriptionField { id label introText expandableDescription: description clientShowWhen }
-          ... on SdfMessageWithLinkButtonField { id linkMessage: message url buttonTitle clientShowWhen }
-          ... on SdfAccordionField { id label accordionItems: items { label content } clientShowWhen }
-          ... on SdfStaticTableField { id label header staticTableRows: rows clientShowWhen }
-          ... on SdfCustomComponent { componentName props }
-          ... on SdfRepeaterComponent { id arrayPath addItemLabel removeItemLabel minItems maxItems items }
+          ... on SdfSubmitField { id label placement actions { event name type } marginTop marginBottom clientShowWhen }
+          ... on SdfDividerField { id marginTop marginBottom clientShowWhen }
+          ... on SdfKeyValueField { id label value marginTop marginBottom clientShowWhen }
+          ... on SdfAlertMessageField { id alertType title message marginTop marginBottom clientShowWhen }
+          ... on SdfLinkField { id label url marginTop marginBottom clientShowWhen }
+          ... on SdfDisplayField { id label displayValue: value displayInputLabel clientValueExpression inputVariant textSuffix rightAlign titleVariant halfWidthOwnline width marginTop marginBottom clientShowWhen }
+          ... on SdfSliderField { id label min max step marginTop marginBottom clientShowWhen }
+          ... on SdfExternalDataProviderField { id label subTitle description checkboxLabel dataProviders { id title subTitle } marginTop marginBottom }
+          ... on SdfTitleField { id label marginTop marginBottom clientShowWhen }
+          ... on SdfPaymentPendingField { id marginTop marginBottom clientShowWhen }
+          ... on SdfPaginatedSearchableTableField { id label marginTop marginBottom clientShowWhen }
+          ... on SdfNationalIdWithNameField { id label marginTop marginBottom clientShowWhen }
+          ... on SdfFieldsRepeaterField { id label marginTop marginBottom clientShowWhen }
+          ... on SdfOverviewField { id label description titleVariant backId bottomLine displayTitleAsAccordion overviewItems { width keyText valueText inlineKeyText boldValueText lineAboveKeyText } overviewAttachments { width fileName fileType fileSize } marginTop marginBottom clientShowWhen }
+          ... on SdfVehiclePermnoWithInfoField { id label marginTop marginBottom clientShowWhen }
+          ... on SdfInformationCardField { id label informationCardItems { label value } marginTop marginBottom clientShowWhen }
+          ... on SdfPaymentChargeOverviewField { id paymentChargeHeading paymentChargeLines { description quantity amount } paymentChargeTotalLabel paymentChargeTotalAmount marginTop marginBottom clientShowWhen }
+          ... on SdfPdfLinkButtonField { id pdfDescription pdfLinkTitle pdfLinkUrl marginTop marginBottom clientShowWhen }
+          ... on SdfCopyLinkField { id copyLinkTitle copyLinkText copyButtonTitle marginTop marginBottom clientShowWhen }
+          ... on SdfExpandableDescriptionField { id label introText expandableDescription: description marginTop marginBottom clientShowWhen }
+          ... on SdfMessageWithLinkButtonField { id linkMessage: message url buttonTitle marginTop marginBottom clientShowWhen }
+          ... on SdfAccordionField { id label accordionItems: items { label content } marginTop marginBottom clientShowWhen }
+          ... on SdfStaticTableField { id label header staticTableRows: rows marginTop marginBottom clientShowWhen }
+          ... on SdfCustomComponent { componentName props marginTop marginBottom }
+          ... on SdfRepeaterComponent { id arrayPath addItemLabel removeItemLabel minItems maxItems items marginTop marginBottom }
         }
         errors { componentId message }
       }

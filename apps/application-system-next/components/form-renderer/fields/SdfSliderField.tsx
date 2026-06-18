@@ -1,4 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfSliderField = ({
@@ -6,7 +7,7 @@ export const SdfSliderField = ({
   currentValue,
   handleChange,
 }: FieldRendererProps) => (
-  <Box marginBottom={3}>
+  <Box {...getSdfFieldMargins(component)}>
     <Text variant="h5" marginBottom={1}>
       {component.label}
     </Text>

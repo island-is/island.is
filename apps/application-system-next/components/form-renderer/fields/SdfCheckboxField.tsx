@@ -7,6 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfCheckboxField = ({
@@ -28,7 +29,7 @@ export const SdfCheckboxField = ({
     ? (currentValue as string[])
     : []
   return (
-    <Box marginBottom={3}>
+    <Box {...getSdfFieldMargins(component)}>
       {component.label && (
         <Text variant="h4">
           {component.label}

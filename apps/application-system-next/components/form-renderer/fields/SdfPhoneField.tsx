@@ -1,5 +1,8 @@
 import { Box, PhoneInput } from '@island.is/island-ui/core'
-import { SDF_FIELD_CONTROL_PADDING_TOP } from '../../sdfLayoutTokens'
+import {
+  SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
+} from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfPhoneField = ({
@@ -16,7 +19,7 @@ export const SdfPhoneField = ({
   const enableCountrySelector = component.enableCountrySelector === true
 
   return (
-    <Box marginBottom={3}>
+    <Box {...getSdfFieldMargins(component)}>
       <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
         <PhoneInput
           id={component.id ?? ''}

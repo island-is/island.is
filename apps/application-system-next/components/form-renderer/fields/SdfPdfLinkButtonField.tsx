@@ -1,9 +1,9 @@
 import { Box, LinkV2, Text } from '@island.is/island-ui/core'
-import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from '../../sdfLayoutTokens'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfPdfLinkButtonField = ({ component }: FieldRendererProps) => (
-  <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+  <Box {...getSdfFieldMargins(component)}>
     <Text variant="small" marginBottom={1}>
       {component.pdfDescription}
     </Text>

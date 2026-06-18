@@ -1,8 +1,8 @@
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import NumberFormat from 'react-number-format'
 import {
-  SDF_FIELD_BLOCK_MARGIN_BOTTOM,
   SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
 } from '../../sdfLayoutTokens'
 import { useFormExpressionEvaluator } from '../../../hooks/useFormExpressionEvaluator'
 import type { FieldRendererProps } from '../types'
@@ -89,7 +89,7 @@ export const SdfDisplayField = ({
   )
   return (
     <Box
-      marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}
+      {...getSdfFieldMargins(component)}
       display="flex"
       flexDirection="column"
       alignItems={component.halfWidthOwnline ? 'flexEnd' : undefined}

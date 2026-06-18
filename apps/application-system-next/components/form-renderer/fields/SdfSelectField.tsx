@@ -1,5 +1,8 @@
 import { Box, Select } from '@island.is/island-ui/core'
-import { SDF_FIELD_CONTROL_PADDING_TOP } from '../../sdfLayoutTokens'
+import {
+  SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
+} from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 const getSelectedOptions = (
@@ -28,7 +31,7 @@ export const SdfSelectField = ({
     })) ?? []
 
   return (
-    <Box marginBottom={5}>
+    <Box {...getSdfFieldMargins(component)}>
       <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
         <Select
           name={component.id ?? ''}

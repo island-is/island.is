@@ -3,8 +3,8 @@ import type { InputBackgroundColor } from '@island.is/island-ui/core/types'
 import NumberFormat from 'react-number-format'
 import type { SdfComponentData } from '../../../lib/graphql'
 import {
-  SDF_FIELD_BLOCK_MARGIN_BOTTOM,
   SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
 } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
@@ -60,7 +60,7 @@ export const SdfTextField = ({
 
   if (isTextarea) {
     return (
-      <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+      <Box {...getSdfFieldMargins(component)}>
         <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
           <Input
             {...inputCommon}
@@ -88,7 +88,7 @@ export const SdfTextField = ({
 
   if (useNumericFormat) {
     return (
-      <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+      <Box {...getSdfFieldMargins(component)}>
         <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
           <NumberFormat
             customInput={Input}
@@ -127,7 +127,7 @@ export const SdfTextField = ({
       inputVariant === 'email')
   ) {
     return (
-      <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+      <Box {...getSdfFieldMargins(component)}>
         <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
           <NumberFormat
             customInput={Input}
@@ -149,7 +149,7 @@ export const SdfTextField = ({
   }
 
   return (
-    <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+    <Box {...getSdfFieldMargins(component)}>
       <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
         <Input
           {...inputCommon}

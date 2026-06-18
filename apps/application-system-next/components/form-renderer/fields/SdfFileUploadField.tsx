@@ -21,7 +21,10 @@ import { useLocale } from '@island.is/localization'
 import { MalwareScanStatus } from '@island.is/shared/types'
 
 import { useApplicationId } from '../../ApplicationContext'
-import { SDF_FIELD_CONTROL_PADDING_TOP } from '../../sdfLayoutTokens'
+import {
+  SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
+} from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 const DEFAULT_TOTAL_MAX_SIZE = 100_000_000
@@ -426,7 +429,7 @@ export const SdfFileUploadField = ({
   )
 
   return (
-    <Box marginBottom={3}>
+    <Box {...getSdfFieldMargins(component)}>
       {component.introduction && (
         <FieldDescription description={component.introduction} />
       )}

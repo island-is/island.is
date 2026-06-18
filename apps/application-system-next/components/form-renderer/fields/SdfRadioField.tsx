@@ -6,6 +6,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfRadioField = ({
@@ -22,7 +23,7 @@ export const SdfRadioField = ({
   const optionList = component.options ?? []
 
   return (
-    <Box marginBottom={1} paddingTop={0} width="full">
+    <Box {...getSdfFieldMargins(component)} paddingTop={0} width="full">
       {radioLabel ? (
         <Text variant="h4" as="h4" marginBottom={2}>
           {component.label}

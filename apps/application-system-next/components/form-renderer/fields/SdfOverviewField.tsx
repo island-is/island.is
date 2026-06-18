@@ -13,7 +13,7 @@ import type { SpanType } from '@island.is/island-ui/core/types'
 import { coreMessages } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
-import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from '../../sdfLayoutTokens'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 type OverviewItem = NonNullable<
@@ -85,7 +85,7 @@ export const SdfOverviewField = ({
   }
 
   return (
-    <Box marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}>
+    <Box {...getSdfFieldMargins(component)}>
       <Divider />
       <Box position="relative" paddingY={4}>
         {isEditable && (

@@ -1,10 +1,11 @@
 import { AccordionCard, Box, BulletList, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfExpandableDescriptionField = ({
   component,
 }: FieldRendererProps) => (
-  <Box marginTop={2} marginBottom={2}>
+  <Box {...getSdfFieldMargins(component)}>
     <AccordionCard
       id={`expandable-${component.id}`}
       label={component.label ?? ''}

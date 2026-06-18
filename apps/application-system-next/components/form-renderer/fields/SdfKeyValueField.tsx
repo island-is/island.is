@@ -1,9 +1,10 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfKeyValueField = ({ component }: FieldRendererProps) => (
   <Box
-    marginBottom={2}
+    {...getSdfFieldMargins(component)}
     display="flex"
     justifyContent="spaceBetween"
     paddingY={2}

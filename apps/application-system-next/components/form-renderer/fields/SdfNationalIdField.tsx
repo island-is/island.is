@@ -1,5 +1,8 @@
 import { Box, Input } from '@island.is/island-ui/core'
-import { SDF_FIELD_CONTROL_PADDING_TOP } from '../../sdfLayoutTokens'
+import {
+  SDF_FIELD_CONTROL_PADDING_TOP,
+  getSdfFieldMargins,
+} from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfNationalIdField = ({
@@ -8,7 +11,7 @@ export const SdfNationalIdField = ({
   error,
   handleChange,
 }: FieldRendererProps) => (
-  <Box marginBottom={3}>
+  <Box {...getSdfFieldMargins(component)}>
     <Box paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}>
       <Input
         id={component.id ?? ''}

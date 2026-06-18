@@ -1,4 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfStaticTableField = ({ component }: FieldRendererProps) => {
@@ -7,7 +8,7 @@ export const SdfStaticTableField = ({ component }: FieldRendererProps) => {
     return null
   }
   return (
-    <Box marginBottom={3}>
+    <Box {...getSdfFieldMargins(component)}>
       {component.label && (
         <Text variant="h3" marginBottom={2}>
           {component.label}

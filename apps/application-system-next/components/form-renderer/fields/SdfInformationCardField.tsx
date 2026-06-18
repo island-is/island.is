@@ -1,12 +1,12 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import { SDF_FIELD_BLOCK_MARGIN_BOTTOM } from '../../sdfLayoutTokens'
+import { getSdfFieldMargins } from '../../sdfLayoutTokens'
 import type { FieldRendererProps } from '../types'
 
 export const SdfInformationCardField = ({ component }: FieldRendererProps) => {
   const rows = component.informationCardItems ?? []
   return (
     <Box
-      marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}
+      {...getSdfFieldMargins(component)}
       border="standard"
       borderColor="blue200"
       borderWidth="standard"
