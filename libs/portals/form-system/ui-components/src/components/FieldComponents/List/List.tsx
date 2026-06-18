@@ -11,7 +11,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getValue } from '../../../lib/getValue'
 import { countriesAsListItems } from '../../../lib/lists/countries.list'
@@ -20,8 +20,12 @@ import { getMunicipalitiesList } from '../../../lib/lists/municipalities.list'
 import { getPostalCodesList } from '../../../lib/lists/postalCodes.list'
 import { m } from '../../../lib/messages'
 import { Action, ApplicationState } from '../../../lib'
-import { DATA_FROM_URL, removeTypename } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
+import {
+  DATA_FROM_URL,
+  GET_ORGANIZATIONS,
+  removeTypename,
+} from '@island.is/form-system/graphql'
+import { useMutation, useQuery } from '@apollo/client'
 
 interface Props {
   item: FormSystemField
@@ -56,6 +60,10 @@ const listTypePlaceholder = {
     is: 'Veldu gjaldmiðil',
     en: 'Select currency',
   },
+  [ListTypesEnum.ORGANIZATIONS]: {
+    is: 'Veldu stofnun',
+    en: 'Select organization',
+  },
 } as const
 
 export const List = ({
@@ -84,6 +92,29 @@ export const List = ({
     listType === ListTypesEnum.LIST_FROM_URL ||
     listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
     listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+
+  const isOrganizations = listType === ListTypesEnum.ORGANIZATIONS
+
+  const { data: organizationsData, loading: organizationsLoading } = useQuery(
+    GET_ORGANIZATIONS,
+    { skip: !isOrganizations },
+  )
+
+  const organizationsList = useMemo<FormSystemListItem[]>(
+    () =>
+      [...(organizationsData?.getOrganizations?.items ?? [])]
+        .sort((a: { title: string }, b: { title: string }) =>
+          a.title.localeCompare(b.title, 'is'),
+        )
+        .map((org: { id: string; title: string }, index: number) => ({
+          id: org.id,
+          label: { is: org.title, en: org.title },
+          value: org.title,
+          displayOrder: index,
+          isSelected: false,
+        })),
+    [organizationsData],
+  )
 
   const cached = (item.list?.length ?? 0) > 0
 
@@ -198,6 +229,8 @@ export const List = ({
         return getPostalCodesList()
       case ListTypesEnum.CURRENCIES:
         return getCurrenciesList()
+      case ListTypesEnum.ORGANIZATIONS:
+        return organizationsList
       case ListTypesEnum.LIST_FROM_URL:
         return listFromUrl()
       default:
@@ -282,7 +315,7 @@ export const List = ({
         },
       }}
       render={({ field, fieldState }) =>
-        shouldFetch && isLoading ? (
+        (shouldFetch && isLoading) || (isOrganizations && organizationsLoading) ? (
           <Box>
             <SkeletonLoader height={48} display="block" borderRadius="large" />
             <Box marginLeft={1}>

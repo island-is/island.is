@@ -56,6 +56,7 @@ export const ListSettings = () => {
     { label: 'Sveitarfélög', value: ListTypesEnum.MUNICIPALITIES },
     { label: 'Póstnúmer', value: ListTypesEnum.POSTAL_CODES },
     { label: 'Gjaldmiðlar', value: ListTypesEnum.CURRENCIES },
+    { label: 'Stofnanir', value: ListTypesEnum.ORGANIZATIONS },
     { label: 'Listi frá slóð', value: ListTypesEnum.LIST_FROM_URL },
     {
       label: 'Zendesk forhlaðinn listi',
