@@ -14,16 +14,10 @@ export const resultButton = style({
 })
 
 export const searchModal = style({
-  minWidth: '90vw',
+  width: '90vw',
   maxWidth: '634px',
   overflow: 'hidden',
   margin: `${theme.spacing[3]}px`,
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      minWidth: '634px',
-    },
-  },
 })
 
 export const searchResultsContainer = style({
