@@ -95,10 +95,11 @@ export const List = ({
 
   const isOrganizations = listType === ListTypesEnum.ORGANIZATIONS
 
-  const { data: organizationsData, loading: organizationsLoading } = useQuery(
-    GET_ORGANIZATIONS,
-    { skip: !isOrganizations },
-  )
+  const {
+    data: organizationsData,
+    loading: organizationsLoading,
+    error: organizationsError,
+  } = useQuery(GET_ORGANIZATIONS, { skip: !isOrganizations })
 
   const organizationsList = useMemo<FormSystemListItem[]>(
     () =>
@@ -119,6 +120,13 @@ export const List = ({
   const cached = (item.list?.length ?? 0) > 0
 
   const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
+
+  // Covers every list type whose options are loaded asynchronously
+  const isFetching =
+    (shouldFetch && isLoading) || (isOrganizations && organizationsLoading)
+  const fetchHasError =
+    (shouldFetch && dataFromUrlHasError) ||
+    (isOrganizations && Boolean(organizationsError))
 
   const handleFetchListFromUrl = async (): Promise<{
     list: (FormSystemListItem | null)[]
@@ -281,10 +289,9 @@ export const List = ({
   ])
 
   useEffect(() => {
-    if (!shouldFetch) return
-    if (isLoading) return
-    if (dataFromUrlHasError) trigger(fieldName)
-  }, [shouldFetch, isLoading, dataFromUrlHasError, trigger, fieldName])
+    if (isFetching) return
+    if (fetchHasError) trigger(fieldName)
+  }, [isFetching, fetchHasError, trigger, fieldName])
 
   const externalPlaceholder = state?.externalListPlaceholders?.find(
     (p) => p.fieldId === item.id,
@@ -305,17 +312,16 @@ export const List = ({
       }
       rules={{
         required:
-          item.isRequired && !isLoading && !(shouldFetch && dataFromUrlHasError)
+          item.isRequired && !isFetching && !fetchHasError
             ? { value: true, message: formatMessage(m.required) }
             : false,
         validate: () => {
-          if (shouldFetch && dataFromUrlHasError)
-            return formatMessage(m.listFetchFailed)
+          if (fetchHasError) return formatMessage(m.listFetchFailed)
           return true
         },
       }}
       render={({ field, fieldState }) =>
-        (shouldFetch && isLoading) || (isOrganizations && organizationsLoading) ? (
+        isFetching ? (
           <Box>
             <SkeletonLoader height={48} display="block" borderRadius="large" />
             <Box marginLeft={1}>
