@@ -645,7 +645,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
         const promises: Promise<Recipient>[] = [
           ...defenders
-            .filter(({ defenderName, defenderEmail }) => defenderName && defenderEmail)
+            .filter(
+              ({ defenderName, defenderEmail }) =>
+                defenderName && defenderEmail,
+            )
             .map(({ defenderName, defenderEmail }) =>
               this.sendEmail({
                 subject,
@@ -655,7 +658,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
               }),
             ),
           ...spokespersons
-            .filter(({ spokespersonName, spokespersonEmail }) => spokespersonName && spokespersonEmail)
+            .filter(
+              ({ spokespersonName, spokespersonEmail }) =>
+                spokespersonName && spokespersonEmail,
+            )
             .map(({ spokespersonName, spokespersonEmail }) =>
               this.sendEmail({
                 subject,
