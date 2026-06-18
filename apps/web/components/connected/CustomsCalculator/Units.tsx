@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Control, Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
@@ -73,6 +74,7 @@ interface UnitsProps {
   unitStrings: string[]
   currencyOptions: StringOption[]
   tariffNumber: string
+  allowCalculation: boolean
 }
 
 interface UnitsFormValues {
@@ -92,6 +94,7 @@ export const Units = ({
   unitStrings,
   currencyOptions,
   tariffNumber,
+  allowCalculation,
 }: UnitsProps) => {
   const { formatMessage } = useIntl()
 
@@ -116,6 +119,7 @@ export const Units = ({
     )
 
   let columnSpanIndex = 0
+  const breakdownRef = useRef<HTMLDivElement>(null)
 
   return (
     <Stack space={3}>
@@ -261,135 +265,157 @@ export const Units = ({
         </GridColumn>
       </GridRow>
 
-      <Box className={styles.buttonContainer}>
-        <Button
-          fluid={true}
-          disabled={false}
-          loading={loading}
-          onClick={() => {
-            const values = getValues()
-            calculate({
-              variables: {
-                input: {
-                  tariffNumber,
-                  currencyCode: values.currency?.value,
-                  priceWithShipping: values.priceWithShipping,
-                  unitCount: values.unitCount,
-                  netWeightKg: values.net,
-                  liters: values.liters,
-                  percentage: values.percentage,
-                  nedcEmission: values.nedc,
-                  nedcWeightedEmission: values.nedcWeighted,
-                  wltpEmission: values.wltp,
-                  wltpWeightedEmission: values.wltpWeighted,
+      <Stack space={8}>
+        <Box className={styles.buttonContainer}>
+          <Button
+            fluid={true}
+            disabled={!allowCalculation}
+            loading={loading}
+            onClick={() => {
+              const values = getValues()
+              calculate({
+                variables: {
+                  input: {
+                    tariffNumber,
+                    currencyCode: values.currency?.value,
+                    priceWithShipping: values.priceWithShipping,
+                    unitCount: values.unitCount,
+                    netWeightKg: values.net,
+                    liters: values.liters,
+                    percentage: values.percentage,
+                    nedcEmission: values.nedc,
+                    nedcWeightedEmission: values.nedcWeighted,
+                    wltpEmission: values.wltp,
+                    wltpWeightedEmission: values.wltpWeighted,
+                  },
                 },
-              },
-            })
-          }}
-        >
-          {formatMessage(translationStrings.runCalculation)}
-        </Button>
-      </Box>
-      {called && loading && <SkeletonLoader height={480} />}
-      {data?.customsCalculatorCalculate && !loading && (
-        <Box background="purple100" padding={[2, 2, 3]}>
-          <Stack space={3}>
-            <Stack space={2}>
-              <Text variant="h5">
-                {formatMessage(translationStrings.totalAmountLabel)}
-              </Text>
-              <Text variant="h2">
-                {formatCurrency(
-                  Number(data?.customsCalculatorCalculate?.totalAmount),
-                )}
-              </Text>
-            </Stack>
-            <Stack space={3}>
-              <Divider thickness="thick" weight="purple300" />
-              <GridRow alignItems="center">
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+              })
+              if (breakdownRef.current) {
+                const top =
+                  breakdownRef.current.getBoundingClientRect().top +
+                  window.scrollY -
+                  80
+                window.scrollTo({ top, behavior: 'smooth' })
+              }
+            }}
+          >
+            {formatMessage(translationStrings.runCalculation)}
+          </Button>
+        </Box>
+        <Box ref={breakdownRef}>
+          {called && loading && <SkeletonLoader height={480} />}
+          {data?.customsCalculatorCalculate && !loading && (
+            <Box background="purple100" padding={[2, 2, 3]}>
+              <Stack space={3}>
+                <Stack space={2}>
                   <Text variant="h5">
-                    {formatMessage(translationStrings.additionalAmountLabel)}
+                    {formatMessage(translationStrings.totalAmountLabel)}
                   </Text>
-                </GridColumn>
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                  <Box paddingLeft={1}>
-                    <Text variant="h5">
-                      {formatCurrency(
-                        Number(
-                          data?.customsCalculatorCalculate?.additionalAmount,
-                        ),
-                      )}
-                    </Text>
-                  </Box>
-                </GridColumn>
-              </GridRow>
-              <Divider thickness="thick" weight="purple300" />
-            </Stack>
-            <Stack space={2}>
-              <GridRow alignItems="center">
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                  <Text variant="h5">
-                    {formatMessage(translationStrings.breakdownLabel)}
-                  </Text>
-                </GridColumn>
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                  <Box paddingLeft={1}>
-                    <Text variant="h5">
-                      {formatMessage(translationStrings.amountLabel)}
-                    </Text>
-                  </Box>
-                </GridColumn>
-              </GridRow>
-              <GridRow alignItems="center">
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                  <Text>
-                    {formatMessage(translationStrings.startAmountLabel)}
-                  </Text>
-                </GridColumn>
-                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                  <Box paddingLeft={1}>
-                    <Text>
-                      {formatCurrency(
-                        Number(data?.customsCalculatorCalculate?.startAmount),
-                      )}
-                    </Text>
-                  </Box>
-                </GridColumn>
-              </GridRow>
-              {data?.customsCalculatorCalculate?.charges?.map((charge) => (
-                <GridRow alignItems="center">
-                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                    <Text>{charge.description}</Text>
-                  </GridColumn>
-                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                    <Box paddingLeft={1}>
-                      <Text>{formatCurrency(Number(charge.amount))}</Text>
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              ))}
-            </Stack>
-            <Divider thickness="standard" weight="purple300" />
-            <GridRow alignItems="center">
-              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                <Text variant="h5">
-                  {formatMessage(translationStrings.totalAmountBreakdownLabel)}
-                </Text>
-              </GridColumn>
-              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-                <Box paddingLeft={1}>
-                  <Text>
+                  <Text variant="h2">
                     {formatCurrency(
                       Number(data?.customsCalculatorCalculate?.totalAmount),
                     )}
                   </Text>
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </Stack>
+                </Stack>
+                <Stack space={3}>
+                  <Divider thickness="thick" weight="purple300" />
+                  <GridRow alignItems="center">
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Text variant="h5">
+                        {formatMessage(
+                          translationStrings.additionalAmountLabel,
+                        )}
+                      </Text>
+                    </GridColumn>
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Box paddingLeft={1}>
+                        <Text variant="h5">
+                          {formatCurrency(
+                            Number(
+                              data?.customsCalculatorCalculate
+                                ?.additionalAmount,
+                            ),
+                          )}
+                        </Text>
+                      </Box>
+                    </GridColumn>
+                  </GridRow>
+                  <Divider thickness="thick" weight="purple300" />
+                </Stack>
+                <Stack space={2}>
+                  <GridRow alignItems="center">
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Text variant="h5">
+                        {formatMessage(translationStrings.breakdownLabel)}
+                      </Text>
+                    </GridColumn>
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Box paddingLeft={1}>
+                        <Text variant="h5">
+                          {formatMessage(translationStrings.amountLabel)}
+                        </Text>
+                      </Box>
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow alignItems="center">
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Text>
+                        {formatMessage(translationStrings.startAmountLabel)}
+                      </Text>
+                    </GridColumn>
+                    <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                      <Box paddingLeft={1}>
+                        <Text>
+                          {formatCurrency(
+                            Number(
+                              data?.customsCalculatorCalculate?.startAmount,
+                            ),
+                          )}
+                        </Text>
+                      </Box>
+                    </GridColumn>
+                  </GridRow>
+                  {data?.customsCalculatorCalculate?.charges?.map((charge) => (
+                    <GridRow alignItems="center">
+                      <GridColumn
+                        span={['6/12', '6/12', '6/12', '6/12', '4/12']}
+                      >
+                        <Text>{charge.description}</Text>
+                      </GridColumn>
+                      <GridColumn
+                        span={['6/12', '6/12', '6/12', '6/12', '4/12']}
+                      >
+                        <Box paddingLeft={1}>
+                          <Text>{formatCurrency(Number(charge.amount))}</Text>
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  ))}
+                </Stack>
+                <Divider thickness="standard" weight="purple300" />
+                <GridRow alignItems="center">
+                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                    <Text variant="h5">
+                      {formatMessage(
+                        translationStrings.totalAmountBreakdownLabel,
+                      )}
+                    </Text>
+                  </GridColumn>
+                  <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
+                    <Box paddingLeft={1}>
+                      <Text>
+                        {formatCurrency(
+                          Number(data?.customsCalculatorCalculate?.totalAmount),
+                        )}
+                      </Text>
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              </Stack>
+            </Box>
+          )}
         </Box>
-      )}
+      </Stack>
     </Stack>
   )
 }

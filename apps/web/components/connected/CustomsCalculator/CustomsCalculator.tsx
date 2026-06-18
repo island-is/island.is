@@ -256,8 +256,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
                 (category) => category.id === option?.value,
               )
-            if (bottomLevelCategory)
+            if (bottomLevelCategory) {
               setSelectedBottomLevelCategory(bottomLevelCategory)
+            }
           }}
         />
         <Box paddingX={1}>
@@ -347,6 +348,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
           currencyOptions={currencyOptions}
           tariffNumber={selectedBottomLevelCategory?.tariffNumber ?? ''}
+          allowCalculation={!!selectedBottomLevelCategory}
         />
       )}
     </Stack>
