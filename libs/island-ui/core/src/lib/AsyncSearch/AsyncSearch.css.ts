@@ -148,6 +148,51 @@ export const loadingIconSizes = styleVariants({
   },
 })
 
+export const clearIcon = style({
+  position: 'absolute',
+  lineHeight: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  outline: 0,
+  cursor: 'pointer',
+  selectors: {
+    '&:focus-visible': {
+      outline: `3px solid ${theme.color.mint400}`,
+      outlineOffset: 2,
+      borderRadius: 4,
+    },
+  },
+  '::after': {
+    content: '""',
+    position: 'absolute',
+    right: -8,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: 1,
+    backgroundColor: theme.color.blue200,
+  },
+})
+
+export const clearIconSizes = styleVariants({
+  medium: {
+    right: 48,
+    '::after': {
+      height: 28,
+    },
+    ...themeUtils.responsiveStyle({
+      md: {
+        right: 53,
+      },
+    }),
+  },
+  large: {
+    right: 74,
+    '::after': {
+      height: 40,
+    },
+  },
+})
+
 export const white = style({
   backgroundColor: theme.color.transparent,
   ':before': {
