@@ -11,7 +11,7 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
-  VmstApplicationsApplicantAttachment,
+  VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
@@ -139,7 +139,7 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.getApplicantActions(applicantId)
   }
 
-  @Query(() => [VmstApplicationsApplicantAttachment], {
+  @Query(() => VmstApplicationsApplicantAttachmentsResponse, {
     name: 'vmstApplicantAttachments',
   })
   @Audit()
@@ -148,7 +148,10 @@ export class VMSTApplicationsResolver {
       auth,
     )
 
-    return this.vmstApplicationsService.getApplicantAttachments(applicantId)
+    return this.vmstApplicationsService.getApplicantAttachments(
+      applicantId,
+      auth.nationalId,
+    )
   }
 
   @Query(() => VmstApplicationsAttachmentTypeList, {

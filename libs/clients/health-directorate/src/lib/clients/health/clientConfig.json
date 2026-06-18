@@ -330,9 +330,102 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewPrescriptionRequestDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/{id}/renewal-targets": {
+      "get": {
+        "description": "List the healthcare providers that will accept a renewal for this prescription.",
+        "operationId": "MePrescriptionController_getRenewalTargets_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The prescription id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RenewalTargetDto"
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "",
@@ -2087,6 +2180,1301 @@
         },
         "tags": ["Patient consent"]
       }
+    },
+    "/v1/me/conversations": {
+      "get": {
+        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override and ?starred= to filter by star.",
+        "operationId": "MeConversationController_getConversations_v1",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by patient-side status. 'active' (default) excludes archived/deleted. 'archived' returns only archived. 'all' returns both active and archived (deleted is always excluded).",
+            "schema": {
+              "$ref": "#/components/schemas/ConversationStatusFilter"
+            }
+          },
+          {
+            "name": "starred",
+            "required": false,
+            "in": "query",
+            "description": "Filter by starred flag.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      },
+      "post": {
+        "description": "Create a new patient-initiated conversation with an initial message and optional attachments.",
+        "operationId": "MeConversationController_createConversation_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConversationRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}": {
+      "get": {
+        "description": "Get a single conversation by id, including the full message thread and attachment metadata.",
+        "operationId": "MeConversationController_getConversationById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/messages/{messageId}/attachments/{attachmentId}": {
+      "get": {
+        "description": "Stream an attachment from a message in the patient's conversation thread. When the message carries a gated certificate (HEILSUVERA + merchant config) that hasn't been paid for, responds 402 with `{ resourceType, resourceId }` the FE can use to start a payment intent.",
+        "operationId": "MeConversationController_getMessageAttachment_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "description": "Message id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "required": true,
+            "in": "path",
+            "description": "Attachment id",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/messages": {
+      "post": {
+        "description": "Append a patient reply to an existing conversation.",
+        "operationId": "MeConversationController_replyToConversation_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReplyRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/read": {
+      "patch": {
+        "description": "Mark a conversation as read by stamping patientLastReadAt = now().",
+        "operationId": "MeConversationController_markConversationAsRead_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/archive": {
+      "patch": {
+        "description": "Archive a conversation. Hides it from the patient's default inbox view; remains accessible via ?status=archived.",
+        "operationId": "MeConversationController_archiveConversation_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/unarchive": {
+      "patch": {
+        "description": "Move an archived conversation back to the active inbox.",
+        "operationId": "MeConversationController_unarchiveConversation_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/star": {
+      "patch": {
+        "description": "Mark a conversation as starred.",
+        "operationId": "MeConversationController_starConversation_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/conversations/{id}/unstar": {
+      "patch": {
+        "description": "Remove the star from a conversation.",
+        "operationId": "MeConversationController_unstarConversation_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Conversation id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v1/me/messaging-recipients": {
+      "get": {
+        "description": "List the healthcare providers the patient can send messages to, with effective per-HCP messaging settings and allowed conversation types.",
+        "operationId": "MeMessagingRecipientController_getMessagingRecipients_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "Locale for conversation-type titles and descriptions. Defaults to is.",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessagingRecipientDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["MessagingRecipients"]
+      }
+    },
+    "/v1/me/payments/{id}": {
+      "get": {
+        "description": "Fetch a payment intent the patient owns. FE polls this after browser-return from the payment page until status becomes SUCCEEDED.",
+        "operationId": "MePaymentController_getById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Payment id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Payments"]
+      }
+    },
+    "/v1/me/certificates": {
+      "post": {
+        "description": "Submit a certificate request.",
+        "operationId": "MeCertificateController_createCertificateRequest_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCertificateRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRequestDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Certificates"]
+      }
+    },
+    "/v1/me/certificates/{id}": {
+      "get": {
+        "description": "Get a single issued certificate by id, including whether it requires payment and whether it has been paid for.",
+        "operationId": "MeCertificateController_getCertificate_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Certificates"]
+      }
+    },
+    "/v1/me/certificates/{id}/payment-intent": {
+      "post": {
+        "description": "Open a payment intent for a paid certificate.",
+        "operationId": "MeCertificateController_createPaymentIntent_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCertificatePaymentIntentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Certificates"]
+      }
+    },
+    "/v1/me/certificates/{id}/pdf": {
+      "get": {
+        "description": "Stream the certificate PDF. Returns 402 with `{ resourceType, resourceId }` when the cert is gated behind an unpaid payment.",
+        "operationId": "MeCertificateController_getCertificatePdf_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Certificate id",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Certificates"]
+      }
     }
   },
   "info": {
@@ -2326,14 +3714,15 @@
           "isRegiment",
           "drugNotOnMedCard",
           "noMedCard",
-          "noPrimaryCareClinic",
-          "moreRecentPrescriptionExists",
-          "specialistOnlyPrescription"
+          "noRenewalTargets",
+          "invalidRenewalTarget",
+          "recipientExcludesAtc",
+          "moreRecentPrescriptionExists"
         ]
       },
       "PrescriptionRenewalStatusDisplay": {
         "type": "string",
-        "enum": ["pending", "approved", "rejected", "dismissed"]
+        "enum": ["pending", "approved", "rejected", "dismissed", "unknown"]
       },
       "RenewalDto": {
         "type": "object",
@@ -2478,10 +3867,6 @@
           "isRegiment": {
             "type": "boolean"
           },
-          "isSpecialistOnlyPrescription": {
-            "type": "boolean",
-            "description": "Indicates whether this prescription requires specialist-only care (z-marked)"
-          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2526,6 +3911,37 @@
           }
         },
         "required": ["typeId", "path", "name"]
+      },
+      "RenewPrescriptionRequestDto": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Hekla nodeId of the recipient. Defaults to the patient primary care."
+          },
+          "groupId": {
+            "type": "number",
+            "description": "Hekla groupId of the recipient. Defaults to the patient primary care sagaGroupId."
+          }
+        }
+      },
+      "RenewalTargetDto": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "number"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["groupId", "nodeId", "name"]
       },
       "DispensationHistoryProductDto": {
         "type": "object",
@@ -3414,40 +4830,70 @@
         },
         "required": ["type", "triggerId", "targetId", "visible"]
       },
-      "AttachmentReplyDto": {
+      "AttachmentReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
-          },
-          "answer": {
-            "type": "string"
-          }
-        },
-        "required": ["questionId", "answer"]
-      },
-      "BooleanReplyDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "type": "string"
-          },
-          "answer": {
-            "type": "boolean"
-          }
-        },
-        "required": ["questionId", "answer"]
-      },
-      "DateReplyDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "type": "string"
-          },
-          "answer": {
             "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "BooleanReplyViewDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "DateReplyViewDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
@@ -3476,35 +4922,56 @@
         },
         "required": ["questionId", "values"]
       },
-      "NumberReplyDto": {
+      "NumberReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "answer": {
-            "type": "number"
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
       },
-      "StringReplyDto": {
+      "StringReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "answer": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
         },
         "required": ["questionId", "answer"]
       },
-      "TableReplyDto": {
+      "TableReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
-            "type": "string"
+            "type": "string",
+            "x-nestjs_zod-has-null": true
           },
           "rows": {
             "type": "array",
@@ -3519,7 +4986,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3531,7 +5005,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "number"
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3543,7 +5024,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "boolean"
+                        "anyOf": [
+                          {
+                            "type": "boolean"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3555,9 +5043,16 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string",
-                        "format": "date",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3569,7 +5064,14 @@
                         "type": "string"
                       },
                       "answer": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       }
                     },
                     "required": ["questionId", "answer"]
@@ -3600,7 +5102,8 @@
                   }
                 ]
               }
-            }
+            },
+            "x-nestjs_zod-has-null": true
           }
         },
         "required": ["questionId", "rows"]
@@ -3789,25 +5292,25 @@
             "items": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                  "$ref": "#/components/schemas/AttachmentReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/BooleanReplyDto"
+                  "$ref": "#/components/schemas/BooleanReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/DateReplyDto"
+                  "$ref": "#/components/schemas/DateReplyViewDto"
                 },
                 {
                   "$ref": "#/components/schemas/ListReplyDto"
                 },
                 {
-                  "$ref": "#/components/schemas/NumberReplyDto"
+                  "$ref": "#/components/schemas/NumberReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/StringReplyDto"
+                  "$ref": "#/components/schemas/StringReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/TableReplyDto"
+                  "$ref": "#/components/schemas/TableReplyViewDto"
                 }
               ]
             }
@@ -4089,40 +5592,280 @@
               "$ref": "#/components/schemas/QuestionGroupDto"
             }
           },
+          "submission": {
+            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+          },
           "replies": {
             "type": "array",
             "items": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/BooleanReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/DateReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/ListReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/NumberReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["questionId", "answer"]
                 },
                 {
-                  "$ref": "#/components/schemas/StringReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "answer": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["id", "answer"]
+                      }
+                    }
+                  },
+                  "required": ["questionId", "values"]
                 },
                 {
-                  "$ref": "#/components/schemas/TableReplyDto"
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "date",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "values": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "answer": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["id", "answer"]
+                                  }
+                                }
+                              },
+                              "required": ["questionId", "values"]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "required": ["questionId", "rows"]
                 }
               ]
             },
-            "description": "Draft replies for the questionnaire"
-          },
-          "submission": {
-            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+            "x-nestjs_zod-has-null": true
           }
         },
-        "required": ["canSubmit", "groups", "submission"]
+        "required": ["canSubmit", "groups", "submission", "replies"]
       },
       "AllergyClinicalStatus": {
         "type": "string",
@@ -4206,7 +5949,7 @@
       },
       "UserVisibleAppointmentStatuses": {
         "type": "string",
-        "enum": ["booked", "cancelled", "fulfilled", "arrived", "checked-in"]
+        "enum": ["BOOKED", "CANCELLED", "FULFILLED", "ARRIVED", "CHECKED_IN"]
       },
       "AppointmentLocationBaseDto": {
         "type": "object",
@@ -4234,7 +5977,22 @@
             "description": "Geographic longitude of the location"
           }
         },
-        "required": ["name", "address"]
+        "required": ["name"]
+      },
+      "AssigneeDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER"],
+            "description": "Assignee type. PERSON assignees are surfaced under practitioners, not here."
+          },
+          "name": {
+            "type": "string",
+            "description": "The assignee display name"
+          }
+        },
+        "required": ["type", "name"]
       },
       "AppointmentBaseDto": {
         "type": "object",
@@ -4255,6 +6013,11 @@
             "type": "string",
             "description": "The status of the appointment"
           },
+          "modality": {
+            "type": "string",
+            "enum": ["IN_PERSON", "VIDEO"],
+            "description": "Whether the appointment is in person or over video"
+          },
           "patientInstruction": {
             "type": "string",
             "description": "Patient-facing instructions",
@@ -4273,6 +6036,13 @@
             "items": {
               "type": "string"
             }
+          },
+          "assignees": {
+            "description": "Non-person assignees (role, room, equipment, service, other). PERSON assignees appear under practitioners.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssigneeDto"
+            }
           }
         },
         "required": [
@@ -4280,7 +6050,9 @@
           "startTime",
           "description",
           "status",
-          "practitioners"
+          "modality",
+          "practitioners",
+          "assignees"
         ]
       },
       "OpeningHoursSlotDto": {
@@ -4329,6 +6101,21 @@
             }
           }
         }
+      },
+      "LocationLinkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["WEBSITE"],
+            "description": "The type of link"
+          },
+          "url": {
+            "type": "string",
+            "description": "The link URL"
+          }
+        },
+        "required": ["type", "url"]
       },
       "AppointmentLocationDto": {
         "type": "object",
@@ -4393,6 +6180,13 @@
             "type": "string",
             "description": "The link to the location"
           },
+          "links": {
+            "description": "Typed links associated with the location",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationLinkDto"
+            }
+          },
           "latitude": {
             "type": "number",
             "description": "The latitude of the location"
@@ -4402,7 +6196,27 @@
             "description": "The longitude of the location"
           }
         },
-        "required": ["name", "address"]
+        "required": ["name"]
+      },
+      "AppointmentLinkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PATIENT_INSTRUCTIONS",
+              "PREPARATION",
+              "ORGANIZATION_INFO",
+              "VIDEO_CALL"
+            ],
+            "description": "The type of link"
+          },
+          "url": {
+            "type": "string",
+            "description": "The link URL"
+          }
+        },
+        "required": ["type", "url"]
       },
       "AppointmentDetailDto": {
         "type": "object",
@@ -4428,6 +6242,11 @@
             "type": "string",
             "description": "The status of the appointment"
           },
+          "modality": {
+            "type": "string",
+            "enum": ["IN_PERSON", "VIDEO"],
+            "description": "Whether the appointment is in person or over video"
+          },
           "description": {
             "type": "string",
             "description": "The brief description of the appointment"
@@ -4439,10 +6258,24 @@
           "location": {
             "$ref": "#/components/schemas/AppointmentLocationDto"
           },
+          "links": {
+            "description": "Typed links associated with the appointment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppointmentLinkDto"
+            }
+          },
           "practitioners": {
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "assignees": {
+            "description": "Non-person assignees (role, room, equipment, service, other). PERSON assignees appear under practitioners.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssigneeDto"
             }
           }
         },
@@ -4452,8 +6285,10 @@
           "endTime",
           "duration",
           "status",
+          "modality",
           "description",
-          "practitioners"
+          "practitioners",
+          "assignees"
         ]
       },
       "ConsentCountryDto": {
@@ -4599,6 +6434,542 @@
           }
         },
         "required": ["codes", "countryCodes"]
+      },
+      "ConversationStatusFilter": {
+        "type": "string",
+        "enum": ["active", "archived", "all"]
+      },
+      "ConversationBaseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "messageCount": {
+            "type": "number"
+          },
+          "lastMessageSentAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastSenderGroupName": {
+            "type": "string"
+          },
+          "hasAttachment": {
+            "type": "boolean"
+          },
+          "isStarred": {
+            "type": "boolean"
+          },
+          "isArchived": {
+            "type": "boolean",
+            "description": "True when the patient has archived this conversation from their inbox."
+          },
+          "unread": {
+            "type": "boolean",
+            "description": "True when there is a message newer than the patient last-read marker."
+          }
+        },
+        "required": [
+          "id",
+          "messageCount",
+          "hasAttachment",
+          "isStarred",
+          "isArchived",
+          "unread"
+        ]
+      },
+      "ConversationAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "fileName"]
+      },
+      "ConversationMessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["PATIENT", "STAFF", "SYSTEM"],
+            "description": "Author of the message."
+          },
+          "messageSentAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "messageTextContent": {
+            "type": "string"
+          },
+          "senderGroupName": {
+            "type": "string"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Set when this message has an issued certificate attached. FE follows this id to the certificate download endpoint."
+          },
+          "requiresPayment": {
+            "type": "boolean",
+            "description": "True when the attached certificate is gated behind a successful payment. Combine with `paid` to decide whether to render a 'pay to download' affordance."
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "True when the attached certificate has been paid for. Only meaningful when `requiresPayment` is true."
+          },
+          "amountIsk": {
+            "type": "number",
+            "description": "Price the patient would be charged, in ISK. Populated only when `requiresPayment` is true."
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationAttachmentDto"
+            }
+          }
+        },
+        "required": ["id", "direction", "messageSentAt", "attachments"]
+      },
+      "ConversationDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "conversationStartDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "patientLastReadAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "messageCount": {
+            "type": "number"
+          },
+          "lastMessageSentAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastSenderGroupName": {
+            "type": "string"
+          },
+          "hasAttachment": {
+            "type": "boolean"
+          },
+          "isStarred": {
+            "type": "boolean"
+          },
+          "isArchived": {
+            "type": "boolean",
+            "description": "True when the patient has archived this conversation from their inbox."
+          },
+          "patientCanReply": {
+            "type": "boolean",
+            "description": "Whether the patient is allowed to reply on this conversation. Null when no staff has set it yet — replies are allowed unless explicitly false."
+          },
+          "unread": {
+            "type": "boolean",
+            "description": "True when there is a message newer than the patient last-read marker."
+          },
+          "messages": {
+            "description": "Messages in chronological order (oldest first).",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMessageDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "messageCount",
+          "hasAttachment",
+          "isStarred",
+          "isArchived",
+          "unread",
+          "messages"
+        ]
+      },
+      "ConversationAttachmentRequestDto": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "application/pdf",
+              "image/jpeg",
+              "image/png",
+              "image/heic",
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ],
+            "description": "Declared MIME type. Server verifies the declared value against the bytes via a magic-byte check and rejects on mismatch."
+          },
+          "contentBase64": {
+            "type": "string",
+            "description": "Base64-encoded file content."
+          }
+        },
+        "required": ["fileName", "contentType", "contentBase64"]
+      },
+      "CreateConversationRequestDto": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "number"
+          },
+          "patientInitiatedTypeCode": {
+            "type": "string",
+            "description": "PatientInitiatedConversationType code, e.g. TREATMENT_FOLLOWUP."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "messageTextContent": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationAttachmentRequestDto"
+            }
+          }
+        },
+        "required": [
+          "nodeId",
+          "groupId",
+          "patientInitiatedTypeCode",
+          "title",
+          "messageTextContent"
+        ]
+      },
+      "CreateReplyRequestDto": {
+        "type": "object",
+        "properties": {
+          "messageTextContent": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationAttachmentRequestDto"
+            }
+          }
+        },
+        "required": ["messageTextContent"]
+      },
+      "AllowedConversationTypeDto": {
+        "type": "object",
+        "properties": {
+          "patientInitiatedTypeCode": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isCertificate": {
+            "type": "boolean",
+            "description": "True for certificate-request types (POST /me/certificates); false for regular messages (POST /me/conversations)."
+          }
+        },
+        "required": ["patientInitiatedTypeCode", "title", "isCertificate"]
+      },
+      "MessagingRecipientDto": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string",
+            "description": "HCP / care team display name."
+          },
+          "allowsMessaging": {
+            "type": "boolean"
+          },
+          "messagingWindowOpen": {
+            "type": "string",
+            "description": "Effective window open time (HH:mm:ss, UTC)."
+          },
+          "messagingWindowClose": {
+            "type": "string",
+            "description": "Effective window close time (HH:mm:ss, UTC)."
+          },
+          "isCurrentlyWithinWindow": {
+            "type": "boolean",
+            "description": "True when the current UTC time is within the messaging window."
+          },
+          "patientReplyWindowDays": {
+            "type": "number"
+          },
+          "allowedConversationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllowedConversationTypeDto"
+            }
+          }
+        },
+        "required": [
+          "nodeId",
+          "groupId",
+          "name",
+          "allowsMessaging",
+          "messagingWindowOpen",
+          "messagingWindowClose",
+          "isCurrentlyWithinWindow",
+          "patientReplyWindowDays",
+          "allowedConversationTypes"
+        ]
+      },
+      "PaymentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "SUCCEEDED"]
+          },
+          "resourceType": {
+            "type": "string",
+            "enum": ["CERTIFICATE"]
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountIsk": {
+            "type": "number"
+          },
+          "paidAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["id", "status", "resourceType", "resourceId", "amountIsk"]
+      },
+      "CertificateTypeCode": {
+        "type": "string",
+        "enum": ["work", "school"],
+        "description": "Certificate type code."
+      },
+      "CreateCertificateRequestDto": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "number"
+          },
+          "certificateType": {
+            "description": "Certificate type code.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CertificateTypeCode"
+              }
+            ]
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Name the certificate is addressed to. Employer for work, school for school."
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO date (YYYY-MM-DD)."
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO date (YYYY-MM-DD). Must be on or after startDate."
+          },
+          "note": {
+            "type": "string",
+            "description": "Patient-supplied free-text description."
+          }
+        },
+        "required": [
+          "nodeId",
+          "groupId",
+          "certificateType",
+          "recipientName",
+          "startDate",
+          "endDate"
+        ]
+      },
+      "CertificateRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CertificateTypeCode"
+              }
+            ]
+          },
+          "recipientName": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "note": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "isAutomatic": {
+            "type": "boolean",
+            "description": "True when the request was submitted as an automatic certificate request."
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "conversationId",
+          "certificateType",
+          "startDate",
+          "endDate",
+          "status",
+          "isAutomatic",
+          "requestedAt"
+        ]
+      },
+      "CertificateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "messageId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversationTypeCode": {
+            "type": "string"
+          },
+          "certificateRequestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "issuedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "requiresPayment": {
+            "type": "boolean",
+            "description": "True when the HCP charges patients for this certificate and the cert is gated behind a successful payment."
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "True when the certificate has been paid for."
+          },
+          "amountIsk": {
+            "type": "number",
+            "description": "Price the patient would be charged, in ISK. Populated only when `requiresPayment` is true."
+          }
+        },
+        "required": [
+          "id",
+          "conversationId",
+          "messageId",
+          "conversationTypeCode",
+          "issuedAt",
+          "requiresPayment",
+          "paid"
+        ]
+      },
+      "CreateCertificatePaymentIntentDto": {
+        "type": "object",
+        "properties": {
+          "returnUrl": {
+            "type": "string",
+            "description": "FE-owned URL the gateway redirects the patient's browser to after a successful charge. Forwarded to the gateway as PaymentSuccessfulURL."
+          }
+        },
+        "required": ["returnUrl"]
+      },
+      "PaymentIntentDto": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentPageUrl": {
+            "type": "string"
+          }
+        },
+        "required": ["paymentId", "paymentPageUrl"]
       }
     }
   }

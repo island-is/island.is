@@ -1,13 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { PaymentService } from '@island.is/application/api/payment'
+import {
+  PaymentService,
+  PaymentMethod,
+  PaymentModuleConfig,
+} from '@island.is/application/api/payment'
 import { PaymentsApi } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
 import { ApplicationStatus } from '@island.is/application/types'
+import { getSlugFromType } from '@island.is/application/core'
+import { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class ApplicationChargeService {
@@ -16,6 +22,8 @@ export class ApplicationChargeService {
     private logger: Logger,
     private paymentService: PaymentService,
     private readonly paymentsApi: PaymentsApi,
+    @Inject(PaymentModuleConfig.KEY)
+    private config: ConfigType<typeof PaymentModuleConfig>,
   ) {
     this.logger = logger.child({ context: 'ApplicationChargeService' })
   }
@@ -111,5 +119,43 @@ export class ApplicationChargeService {
 
       throw error
     }
+  }
+
+  async getApplicationLink(application: Pick<Application, 'id' | 'typeId'>) {
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${application.id}`,
+      )
+    }
+
+    const baseUrl = new URL(this.config.clientLocationOrigin)
+    baseUrl.pathname = `umsoknir/${applicationSlug}/${application.id}`
+    const baseUrlString = baseUrl.toString()
+
+    return baseUrlString
+  }
+
+  async getInvoicePaymentApplicationIds(
+    applicationIds: string[],
+  ): Promise<Set<string>> {
+    if (applicationIds.length === 0) {
+      return new Set<string>()
+    }
+    const payments = await this.paymentService.findPaymentsByApplicationIds(
+      applicationIds,
+    )
+
+    const invoiceAppIds = new Set<string>()
+
+    for (const payment of payments) {
+      if (payment.payment_method === PaymentMethod.INVOICE) {
+        invoiceAppIds.add(payment.application_id)
+      }
+    }
+
+    return invoiceAppIds
   }
 }

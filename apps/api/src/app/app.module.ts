@@ -36,6 +36,7 @@ import {
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
 import { FarmersModule } from '@island.is/api/domains/farmers'
+import { FeatureFlagsApiModule } from '@island.is/api/domains/feature-flags'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -105,6 +106,10 @@ import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import {
+  DirectorateOfEqualityClientModule,
+  DirectorateOfEqualityClientConfig,
+} from '@island.is/clients/directorate-of-equality'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -311,7 +316,9 @@ const environment = getConfig
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
+    DirectorateOfEqualityClientModule,
     DirectorateOfLabourModule,
+    FeatureFlagsApiModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -425,6 +432,7 @@ const environment = getConfig
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
+        DirectorateOfEqualityClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,

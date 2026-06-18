@@ -21,8 +21,20 @@ const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
   return Array.isArray(paymentData) && paymentData.length > 0
 }
 
-const isReviewEnabled = (externalData: Record<string, unknown>): boolean =>
-  getValueViaPath(externalData, 'checkReviewFlag.data.reviewEnabled') === true
+// Optional checkbox offered for the payment-bearing estate types: email a copy
+// of the application to the parties (málsaðilar).
+const sendCopyToPartiesCheckbox = buildCheckboxField({
+  id: 'sendCopyToParties',
+  backgroundColor: 'blue',
+  marginTop: 'containerGutter',
+  defaultValue: [],
+  options: [
+    {
+      value: YES,
+      label: m.sendCopyToPartiesLabel,
+    },
+  ],
+})
 
 export const overview = buildSection({
   id: 'overviewEstateDivision',
@@ -32,21 +44,21 @@ export const overview = buildSection({
     buildMultiField({
       id: 'overviewPrivateDivisionWithPayment',
       title: m.overviewTitle,
+      nextButtonText: m.saveAndContinue,
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
-          EstateTypes.divisionOfEstateByHeirs &&
-        isPaymentEnabled(externalData) &&
-        !isReviewEnabled(externalData),
+          EstateTypes.divisionOfEstateByHeirs && isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
+        sendCopyToPartiesCheckbox,
       ],
     }),
 
-    /* Einkaskipti WITHOUT payment, or with review before payment */
+    /* Einkaskipti WITHOUT payment (feature flag off) */
     buildMultiField({
       id: 'overviewPrivateDivisionNoPayment',
       title: m.overviewTitle,
@@ -54,12 +66,13 @@ export const overview = buildSection({
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.divisionOfEstateByHeirs &&
-        (!isPaymentEnabled(externalData) || isReviewEnabled(externalData)),
+        !isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
+        sendCopyToPartiesCheckbox,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
           refetchApplicationAfterSubmit: true,
@@ -78,21 +91,22 @@ export const overview = buildSection({
     buildMultiField({
       id: 'overviewUndividedEstateWithPayment',
       title: m.overviewTitle,
+      nextButtonText: m.saveAndContinue,
       description: m.overviewSubtitlePermitToPostpone,
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.permitForUndividedEstate &&
-        isPaymentEnabled(externalData) &&
-        !isReviewEnabled(externalData),
+        isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...overviewConfirmAction,
+        sendCopyToPartiesCheckbox,
       ],
     }),
 
-    /* Seta í óskiptu búi WITHOUT payment, or with review before payment */
+    /* Seta í óskiptu búi WITHOUT payment (feature flag off) */
     buildMultiField({
       id: 'overviewUndividedEstateNoPayment',
       title: m.overviewTitle,
@@ -100,12 +114,13 @@ export const overview = buildSection({
       condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.permitForUndividedEstate &&
-        (!isPaymentEnabled(externalData) || isReviewEnabled(externalData)),
+        !isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...overviewConfirmAction,
+        sendCopyToPartiesCheckbox,
         buildSubmitField({
           id: 'estateDivisionSubmit.submit',
           refetchApplicationAfterSubmit: true,

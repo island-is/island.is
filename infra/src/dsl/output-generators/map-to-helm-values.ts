@@ -155,6 +155,27 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
   }
+
+  // scheduled job — merge cron fields into extra so they land as top-level Helm values
+  if (serviceDef.scheduledJob) {
+    const {
+      schedule,
+      concurrencyPolicy,
+      startingDeadlineSeconds,
+      successfulJobsHistoryLimit,
+      failedJobsHistoryLimit,
+    } = serviceDef.scheduledJob
+    const cronExtra: Record<string, string | number | boolean> = { schedule }
+    if (concurrencyPolicy !== undefined)
+      cronExtra['concurrencyPolicy'] = concurrencyPolicy
+    if (startingDeadlineSeconds !== undefined)
+      cronExtra['startingDeadlineSeconds'] = startingDeadlineSeconds
+    if (successfulJobsHistoryLimit !== undefined)
+      cronExtra['successfulJobsHistoryLimit'] = successfulJobsHistoryLimit
+    if (failedJobsHistoryLimit !== undefined)
+      cronExtra['failedJobsHistoryLimit'] = failedJobsHistoryLimit
+    result.extra = { ...(result.extra ?? {}), ...cronExtra }
+  }
   // target port
   if (typeof serviceDef.port !== 'undefined') {
     result.service = { targetPort: serviceDef.port }
@@ -240,20 +261,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
-  // ingress
+  // httpRoute (Envoy Gateway)
   if (Object.keys(serviceDef.ingress).length > 0) {
-    result.ingress = Object.entries(serviceDef.ingress).reduce(
-      (acc, [ingressName, ingressConf]) => {
-        const ingress = serializeIngress(serviceDef, ingressConf, env1)
-        return {
-          ...acc,
-          [`${ingressName}-alb`]: ingress,
-        }
-      },
-      {},
-    )
-
-    // httpRoute (Envoy Gateway - parallel to ingress during migration)
     result.httpRoute = Object.entries(serviceDef.ingress).reduce(
       (acc, [ingressName, ingressConf]) => {
         const route = serializeHTTPRoute(ingressConf, env1)
@@ -364,39 +373,6 @@ function serializePostgres(
   secrets['DB_PASS'] =
     postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
   return { env, secrets, errors }
-}
-
-function serializeIngress(
-  _serviceDef: ServiceDefinitionForEnv,
-  ingressConf: IngressForEnv,
-  env: EnvironmentConfig,
-): NonNullable<HelmService['ingress']>[string] {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
-  ).map((host) =>
-    ingressConf.public ?? true
-      ? hostFullName(host, env)
-      : internalHostFullName(host, env),
-  )
-
-  const className =
-    ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
-  const pathTypeOverride = ingressConf.pathTypeOverride
-    ? { pathTypeOverride: ingressConf.pathTypeOverride }
-    : null
-  return {
-    annotations: {
-      'kubernetes.io/ingress.class': className,
-      'nginx.ingress.kubernetes.io/service-upstream':
-        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
-      ...ingressConf.extraAnnotations,
-    },
-    hosts: hosts.map((host) => ({
-      host: host,
-      ...pathTypeOverride,
-      paths: ingressConf.paths,
-    })),
-  }
 }
 
 function serializeVolumes(

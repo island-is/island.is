@@ -16,8 +16,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -50,10 +52,6 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import {
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './models/dto/application.xroad.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -112,93 +110,108 @@ export class ApplicationsService {
 
     const nationalId = user.actor?.nationalId || user.nationalId
 
-    await this.sequelize.transaction(async (transaction) => {
-      const newApplication: Application = await this.applicationModel.create(
-        {
-          formId: form.id,
-          organizationId: form.organizationId,
-          isTest: isTest,
-          dependencies: form.dependencies,
-          status: ApplicationStatus.DRAFT,
-          nationalId,
-          draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.draftDaysToLive),
-        } as Application,
-        { transaction },
-      )
+    this.logger.info(
+      'Creating application for user with nationalId:',
+      nationalId,
+    )
 
-      await this.applicationEventModel.create(
-        {
-          applicationId: newApplication.id,
-          eventType: ApplicationEvents.APPLICATION_CREATED,
-          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
-        } as ApplicationEvent,
-        { transaction },
-      )
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        const newApplication: Application = await this.applicationModel.create(
+          {
+            formId: form.id,
+            organizationId: form.organizationId,
+            isTest: isTest,
+            dependencies: form.dependencies,
+            status: ApplicationStatus.DRAFT,
+            nationalId,
+            draftTotalSteps: form.draftTotalSteps,
+            pruneAt: calculatePruneAt(form.draftDaysToLive),
+          } as Application,
+          { transaction },
+        )
 
-      await Promise.all(
-        form.sections.map((section) =>
-          Promise.all(
-            section.screens?.map((screen) =>
-              Promise.all(
-                screen.fields?.map(async (field) => {
-                  if (
-                    field.fieldType === FieldTypesEnum.APPLICANT &&
-                    field.fieldSettings?.applicantType &&
-                    !loginTypes.includes(field.fieldSettings.applicantType)
-                  ) {
-                    return
-                  }
-                  const valueJson =
-                    ValueTypeFactory.getClass(
-                      field.fieldType,
-                      new ValueType(),
-                    ) ?? {}
-                  if (field.fieldType === FieldTypesEnum.APPLICANT) {
-                    const type = field.fieldSettings?.applicantType
-                    if (type === ApplicantTypesEnum.INDIVIDUAL) {
-                      valueJson['nationalId'] = nationalId
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-                      type ===
-                        ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+        await this.applicationEventModel.create(
+          {
+            applicationId: newApplication.id,
+            eventType: ApplicationEvents.APPLICATION_CREATED,
+            eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
+          } as ApplicationEvent,
+          { transaction },
+        )
+
+        await Promise.all(
+          form.sections.map((section) =>
+            Promise.all(
+              section.screens?.map((screen) =>
+                Promise.all(
+                  screen.fields?.map(async (field) => {
+                    if (
+                      field.fieldType === FieldTypesEnum.APPLICANT &&
+                      field.fieldSettings?.applicantType &&
+                      !loginTypes.includes(field.fieldSettings.applicantType)
                     ) {
-                      valueJson['nationalId'] = user.actor?.nationalId || ''
-                      valueJson['isLoggedInUser'] = true
-                      valueJson['applicantType'] = type
-                    } else if (
-                      type === ApplicantTypesEnum.LEGAL_ENTITY ||
-                      type ===
-                        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
-                      type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
-                    ) {
-                      valueJson['nationalId'] = user.nationalId
-                      valueJson['applicantType'] = type
+                      return
                     }
-                  }
-                  return this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId: newApplication.id,
-                      json: valueJson,
-                    } as Value,
-                    { transaction },
-                  )
-                }) || [],
-              ),
-            ) || [],
+                    const valueJson =
+                      ValueTypeFactory.getClass(
+                        field.fieldType,
+                        new ValueType(),
+                      ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                      const type = field.fieldSettings?.applicantType
+                      if (type === ApplicantTypesEnum.INDIVIDUAL) {
+                        valueJson['nationalId'] = nationalId
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+                      ) {
+                        valueJson['nationalId'] = user.actor?.nationalId || ''
+                        valueJson['isLoggedInUser'] = true
+                        valueJson['applicantType'] = type
+                      } else if (
+                        type === ApplicantTypesEnum.LEGAL_ENTITY ||
+                        type ===
+                          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
+                        type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
+                      ) {
+                        valueJson['nationalId'] = user.nationalId
+                        valueJson['applicantType'] = type
+                      }
+                    }
+                    return this.valueModel.create(
+                      {
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId: newApplication.id,
+                        json: valueJson,
+                      } as Value,
+                      { transaction },
+                    )
+                  }) || [],
+                ),
+              ) || [],
+            ),
           ),
-        ),
-      )
+        )
 
-      newApplicationId = newApplication.id
-    })
+        newApplicationId = newApplication.id
+      })
+    } catch (error) {
+      this.logger.error('Error creating application', error)
+      throw error
+    }
+
+    this.logger.info('got this far with applicationId:', newApplicationId)
+
     const applicationDto = await this.getApplication(newApplicationId, '', null)
+
+    this.logger.info('getting applicationDto')
 
     return applicationDto
   }
@@ -487,57 +500,74 @@ export class ApplicationsService {
     slug: string,
     user: User | null,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationModel.findOne({
-      where: { id: applicationId },
-      include: [
-        {
-          model: ApplicationEvent,
-          as: 'events',
-        },
-        {
-          model: Value,
-          as: 'values',
-        },
-      ],
-      order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
-    })
+    try {
+      const application = await this.applicationModel.findOne({
+        where: { id: applicationId },
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+          },
+          {
+            model: Value,
+            as: 'values',
+          },
+        ],
+        order: [[{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC']],
+      })
 
-    if (!application) {
-      throw new NotFoundException(
-        `Application with id '${applicationId}' not found`,
+      if (!application) {
+        throw new NotFoundException(
+          `Application with id '${applicationId}' not found`,
+        )
+      }
+
+      const form = await this.getApplicationForm(
+        application.formId,
+        applicationId,
+        slug,
+      )
+
+      const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+      if (user) {
+        const loginTypes = await this.getLoginTypes(user)
+        if (
+          !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
+          !this.doesUserMatchApplication(application, user, loginTypes)
+        ) {
+          const responseDto = new ApplicationResponseDto()
+          responseDto.isLoginTypeAllowed = false
+          return responseDto
+        }
+      }
+
+      const applicationDto = this.applicationMapper.mapFormToApplicationDto(
+        form,
+        application,
+      )
+
+      applicationDto.organizationName = form.organizationDisplayName
+      const responseDto = new ApplicationResponseDto()
+      responseDto.application = applicationDto
+      responseDto.isLoginTypeAllowed = true
+
+      return responseDto
+    } catch (error) {
+      if (error instanceof HttpException) {
+        this.logger.warn(
+          `getApplication failed with ${error.getStatus()} for application '${applicationId}'`,
+        )
+        throw error
+      }
+
+      this.logger.error(
+        `Unexpected error getting application '${applicationId}'`,
+        error,
+      )
+      throw new InternalServerErrorException(
+        `Unexpected error while getting application '${applicationId}'`,
       )
     }
-
-    const form = await this.getApplicationForm(
-      application.formId,
-      applicationId,
-      slug,
-    )
-
-    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-    if (user) {
-      const loginTypes = await this.getLoginTypes(user)
-      if (
-        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-        !this.doesUserMatchApplication(application, user, loginTypes)
-      ) {
-        const responseDto = new ApplicationResponseDto()
-        responseDto.isLoginTypeAllowed = false
-        return responseDto
-      }
-    }
-
-    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
-      form,
-      application,
-    )
-
-    applicationDto.organizationName = form.organizationDisplayName
-    const responseDto = new ApplicationResponseDto()
-    responseDto.application = applicationDto
-    responseDto.isLoginTypeAllowed = true
-
-    return responseDto
   }
 
   async findAllBySlugAndUser(
@@ -1272,9 +1302,10 @@ export class ApplicationsService {
       notificationDto.command !== NotificationCommands.SUBMIT &&
       notificationDto.screenDto
     ) {
-      notificationDto.fields = this.mapScreenToNotificationFields(
-        notificationDto.screenDto,
-      )
+      notificationDto.fields =
+        this.applicationMapper.mapScreenToApplicationJsonFields(
+          notificationDto.screenDto,
+        )
       notificationDto.screenDto = undefined
     }
 
@@ -1325,24 +1356,6 @@ export class ApplicationsService {
         en: 'Please try again later or send an email to island@island.is',
       },
     }
-  }
-
-  private mapScreenToNotificationFields(
-    screen: ScreenDto,
-  ): ApplicationXroadFieldDto[] {
-    return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationXroadFieldDto()
-      xroadField.identifier = field.identifier
-      xroadField.screenIdentifier = screen.identifier
-      xroadField.fieldType = field.fieldType
-      xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationXroadValueDto()
-        xroadValue.order = value.order
-        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-        return xroadValue
-      })
-      return xroadField
-    })
   }
 
   private async getOrganizationZendeskInfo(
@@ -1706,7 +1719,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified >= :startDate AND a.modified <= :endDate
+    WHERE a.created >= :startDate AND a.created <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;

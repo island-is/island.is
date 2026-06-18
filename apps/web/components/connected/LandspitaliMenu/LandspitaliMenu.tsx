@@ -117,7 +117,19 @@ export const LandspitaliMenu = ({ slice: _slice }: LandspitaliMenuProps) => {
     WebLandspitaliMenuQueryVariables
   >(GET_LANDSPITALI_MENU, {
     onCompleted(a) {
-      setData(a)
+      setData({
+        ...a,
+        webLandspitaliMenu: {
+          ...a.webLandspitaliMenu,
+          meals: a.webLandspitaliMenu.meals.map((meal) => ({
+            ...meal,
+            courses: meal.courses.map((course) => ({
+              ...course,
+              optionName: course.optionName?.replace(' - ', ', '),
+            })),
+          })),
+        },
+      })
       setHasError(false)
       isLoading.current = false
     },

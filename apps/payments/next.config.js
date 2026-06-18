@@ -11,7 +11,6 @@ const {
   API_INTERNAL_BASEPATH = 'http://localhost:4444',
   API_EXTERNAL_BASEPATH = 'http://localhost:4444',
   APP_EXTERNAL_BASEPATH = 'http://localhost:4200',
-  CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
   ALLOW_APPLE_PAY,
@@ -50,7 +49,6 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
-    configCatSdkKey: CONFIGCAT_SDK_KEY,
     basepath: BASEPATH,
     allowApplePay: ALLOW_APPLE_PAY || 'false',
   },

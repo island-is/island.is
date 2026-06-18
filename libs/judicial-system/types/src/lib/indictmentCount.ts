@@ -44,9 +44,22 @@ export const isTrafficViolationIndictmentCount = (
 }
 
 interface IndictmentCount {
+  id?: string
+  displayOrder?: number | null
   created?: string | Date | null
   policeCaseNumber?: string | null
 }
+
+export const sortIndictmentCounts = <T extends IndictmentCount>(
+  counts: T[],
+): T[] =>
+  [...counts].sort((a, b) => {
+    const orderDiff = (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+    if (orderDiff !== 0) return orderDiff
+    const aCreated = a.created ? new Date(a.created).getTime() : 0
+    const bCreated = b.created ? new Date(b.created).getTime() : 0
+    return aCreated - bCreated
+  })
 
 export const getIndictmentCountCompare =
   (crimeScenes: CrimeSceneMap | undefined | null) =>

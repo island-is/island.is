@@ -71,10 +71,12 @@ export const userInformation = buildSection({
               'currentHealthcenter.data.healthCenter',
             ),
           defaultValue: (application: Application) =>
-            getValueViaPath(
-              application.externalData,
-              'currentHealthcenter.data.healthCenter',
-            ),
+            !isCourseForProfessionals(application.answers)
+              ? getValueViaPath(
+                  application.externalData,
+                  'currentHealthcenter.data.healthCenter',
+                )
+              : '',
         }),
         buildAlertMessageField({
           id: 'userInformation.noHealthcenterAlert',

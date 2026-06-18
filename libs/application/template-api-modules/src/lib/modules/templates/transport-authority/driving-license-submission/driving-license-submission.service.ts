@@ -661,6 +661,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           contentList,
           photoBiometricsId,
           signatureBiometricsId,
+          sendPlasticToPerson: deliveryMethod === Pickup.POST,
           healthDeclarationModel,
         },
       )

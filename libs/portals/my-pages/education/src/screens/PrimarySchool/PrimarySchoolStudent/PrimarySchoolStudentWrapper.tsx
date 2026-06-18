@@ -57,7 +57,7 @@ export const PrimarySchoolStudentWrapper = ({
         <>
           <Hidden print>
             <TabNavigation
-              label={formatMessage(psm.studentLabel)}
+              label={formatMessage(m.menu)}
               pathname={location.pathname}
               items={[
                 {

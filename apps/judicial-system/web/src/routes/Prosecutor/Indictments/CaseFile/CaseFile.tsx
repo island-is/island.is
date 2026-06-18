@@ -4,7 +4,10 @@ import { LayoutGroup } from 'motion/react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -30,10 +33,7 @@ const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { digitalCaseFiles } = usePoliceDigitalCaseFile(
-    workingCase.id,
-    workingCase.origin,
-  )
+  const { digitalCaseFiles } = usePoliceDigitalCaseFile()
 
   const caseFiles = useMemo(() => {
     return new Map<string, TCaseFile[]>(
@@ -132,9 +132,9 @@ const CaseFile = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={editCount > 0}

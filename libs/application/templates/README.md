@@ -8,7 +8,7 @@ When executed, the function will be passed an argument that is a `PruningApplica
 The `notificationTemplateId` is the id of the notification template that will be used to send the notification.
 It is up to the user whether to use the body variables or not.
 
-For example an application might want to send a notification when an application that was in the draft stage was pruned. Here is an example of how that might be accomplished in the application template:
+For example an application might want to send a notification when an application that was in the draft state was pruned. Here is an example of how that might be accomplished in the application template:
 
 ```typescript
 stateMachineConfig: {
@@ -45,7 +45,7 @@ Here's how to do that:
 
 - You can then log into the [notifications page](https://beta.dev01.devland.is/minarsidur/min-gogn/tilkynningar) for the user you used to create the application to check if the message has arrived.
 
-Please note that messages can sometimes take severaly minutes to make their way through the system so just because you don't see your message right away that does not necessarily mean there was a problem.
+Please note that messages can sometimes take several minutes to make their way through the system so just because you don't see your message right away that does not necessarily mean there was a problem.
 
 Finally here is a link to the [HNIPP section on devland](https://docs.devland.is/products/notifications-hnipp)
 

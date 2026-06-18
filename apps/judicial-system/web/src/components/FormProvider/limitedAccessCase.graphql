@@ -333,6 +333,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     indictmentCounts {
       id
+      displayOrder
       caseId
       policeCaseNumber
       created

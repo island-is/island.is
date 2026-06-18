@@ -7,11 +7,15 @@ import {
   SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
+import {
+  getFakeData,
+  roundMonetaryFieldsDeep,
+  stringifyObject,
+  transformInheritanceReportToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  ApplicationConfigurations,
   ApplicationTypes,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
@@ -26,11 +30,12 @@ import { expandAnswers } from './utils/mappers'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
-import set from 'lodash/set'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { Features } from '@island.is/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -64,80 +69,80 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
 
-  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
-    const rawValue = await this.featureFlagService.getValue(
-      Features.inheritanceReportReviewEnabled,
-      false,
-      auth,
-    )
-    const reviewEnabled = !!rawValue
-    this.logger.info('[inheritance-report]: checkReviewFlag result', {
-      rawValue,
-      rawValueType: typeof rawValue,
-      reviewEnabled,
-    })
-    return { reviewEnabled }
-  }
-
-  async notifyAssignees({
+  // Optionally email a PDF copy of the application to the parties (málsaðilar)
+  // when the applicant opted in via the overview checkbox. Triggered during
+  // the submission transition; must never block submission (registered with
+  // throwOnError: false).
+  async sendApplicationCopyToParties({
     application,
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as InheritanceSchema
-    const assigneeNationalIds = new Set(application.assignees ?? [])
-    const heirs = answers?.heirs?.data ?? []
-    // Track who has already been emailed so re-entering inReview (e.g. on every
-    // APPROVE self-transition) does not re-notify the same assignees.
-    const alreadyNotified = new Set(
-      getValueViaPath<string[]>(
-        application.externalData,
-        'notifyAssignees.data.notifiedNationalIds',
-        [],
-      ) ?? [],
+
+    const sendCopy = getValueViaPath<string[]>(
+      application.answers,
+      'sendCopyToParties',
+      [],
     )
-    const pendingAssignees = heirs.filter(
+    if (!sendCopy?.includes(YES)) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Idempotency: do not re-send when the state is re-entered/refreshed.
+    const alreadySent = getValueViaPath<boolean>(
+      application.externalData,
+      'sendApplicationCopyToParties.data.sent',
+      false,
+    )
+    if (alreadySent) {
+      return { sent: true, recipients: 0 }
+    }
+
+    const recipients = (answers?.heirs?.data ?? []).filter(
       (heir) =>
         heir.enabled !== false &&
-        !heir.approved &&
         !!heir.email &&
         !!heir.nationalId &&
-        assigneeNationalIds.has(heir.nationalId) &&
-        !alreadyNotified.has(heir.nationalId),
+        !nationalIdsMatch(heir.nationalId, application.applicant),
     )
 
-    await Promise.all(
-      pendingAssignees.map((heir) =>
-        this.sharedTemplateAPIService.sendEmail(
-          ({ application, options }) => {
-            const isIcelandic = options.locale !== 'en'
+    if (recipients.length === 0) {
+      return { sent: false, recipients: 0 }
+    }
+
+    const pdfBuffer = await transformInheritanceReportToPDFStream(
+      answers,
+      application.id,
+      'Afrit af erfðafjárskýrslu',
+    )
+    const fileContent = pdfBuffer.toString('binary')
+
+    const results = await Promise.allSettled(
+      recipients.map((heir) =>
+        this.sharedTemplateAPIService.sendEmailWithAttachment(
+          (props, attachment, recipientEmail) => {
+            const isIcelandic = props.options.locale !== 'en'
             const subject = isIcelandic
-              ? 'Yfirferð á erfðafjárskýrslu'
-              : 'Review of inheritance report'
-            const greeting = isIcelandic ? 'Góðan dag.' : 'Hello.'
+              ? 'Afrit af erfðafjárskýrslu'
+              : 'Copy of inheritance report'
             const intro = isIcelandic
-              ? 'Óskað er eftir að þú farir yfir erfðafjárskýrslu.'
-              : 'You are requested to review an inheritance report.'
-            const buttonCopy = isIcelandic ? 'Skoða umsókn' : 'View application'
-            const link = `${options.clientLocationOrigin}/${
-              ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
-                .slug
-            }/${application.id}`
+              ? 'Meðfylgjandi er afrit af erfðafjárskýrslu sem þú ert málsaðili að.'
+              : 'Attached is a copy of an inheritance report you are a party to.'
 
             return {
               from: {
-                name: options.email.sender,
-                address: options.email.address,
+                name: props.options.email.sender,
+                address: props.options.email.address,
               },
               to: [
                 {
                   name: heir.name ?? '',
-                  address: heir.email ?? '',
+                  address: recipientEmail,
                 },
               ],
               subject,
@@ -145,77 +150,40 @@ export class InheritanceReportService extends BaseTemplateApiService {
                 title: subject,
                 body: [
                   { component: 'Heading', context: { copy: subject } },
-                  { component: 'Copy', context: { copy: greeting } },
-                  {
-                    component: 'Copy',
-                    context: {
-                      copy: intro,
-                    },
-                  },
-                  {
-                    component: 'Button',
-                    context: {
-                      copy: buttonCopy,
-                      href: link,
-                    },
-                  },
+                  { component: 'Copy', context: { copy: intro } },
                 ],
               },
+              attachments: [
+                {
+                  filename: 'Afrit_af_erfdafjarskyrslu.pdf',
+                  content: attachment,
+                  encoding: 'binary',
+                },
+              ],
             }
           },
           application,
+          fileContent,
+          heir.email ?? '',
           currentUserLocale,
         ),
       ),
     )
 
-    const notifiedNationalIds = [
-      ...alreadyNotified,
-      ...pendingAssignees
-        .map((heir) => heir.nationalId)
-        .filter((nationalId): nationalId is string => !!nationalId),
-    ]
-
-    return {
-      success: true,
-      notified: pendingAssignees.length,
-      notifiedNationalIds,
-    }
-  }
-
-  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
-    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
-    const answers = application.answers as InheritanceSchema
-
-    const heirs = answers?.heirs?.data ?? []
-    const updatedHeirs = heirs.map((heir) => {
-      if (!nationalIdsMatch(heir?.nationalId, actorNationalId)) {
-        return heir
-      }
-
-      return {
-        ...heir,
-        approved: true,
-        approvedDate: new Date().toISOString(),
-      }
-    })
-
-    const didUpdate = heirs.some((heir) =>
-      nationalIdsMatch(heir?.nationalId, actorNationalId),
-    )
-    if (!didUpdate) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProviderSubmit,
-          summary: 'Approving user is not a listed heir on this application.',
-        },
-        400,
+    const failed = results.filter((r) => r.status === 'rejected').length
+    if (failed > 0) {
+      this.logger.error(
+        `[inheritance-report]: Failed to email application copy to ${failed}/${recipients.length} parties`,
       )
     }
 
-    set(application.answers, 'heirs.data', updatedHeirs)
-
-    return { success: true }
+    // Persist sent:true on partial success so re-entry does not re-send to
+    // parties that already received the copy. Only mark sent:false when every
+    // send failed, leaving the door open to retry.
+    return {
+      sent: failed < recipients.length,
+      recipients: recipients.length - failed,
+    }
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {

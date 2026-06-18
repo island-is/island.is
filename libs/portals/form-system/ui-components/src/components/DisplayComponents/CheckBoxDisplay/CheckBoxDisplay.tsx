@@ -49,7 +49,7 @@ export const CheckBoxDisplay = ({
         {requiredMissing && (
           <>
             {' '}
-            <Text as="span" fontWeight="semiBold" color="red600">
+            <Text as="span" fontWeight="medium" color="red600">
               *
             </Text>
           </>
@@ -57,7 +57,17 @@ export const CheckBoxDisplay = ({
       </Text>
 
       <Box marginLeft={2}>
-        <Text fontWeight="light">{ANSWER_MAP[lang][value] ?? ''}</Text>
+        {requiredMissing && (
+          <>
+            {' '}
+            <Text as="span" fontWeight="light" color="red600">
+              {ANSWER_MAP[lang][value] ?? ''}
+            </Text>
+          </>
+        )}
+        {!requiredMissing && (
+          <Text fontWeight="light">{ANSWER_MAP[lang][value] ?? ''}</Text>
+        )}
       </Box>
     </Box>
   )

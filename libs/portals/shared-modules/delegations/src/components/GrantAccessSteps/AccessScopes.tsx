@@ -11,7 +11,7 @@ import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useMemo, useState } from 'react'
 import * as styles from './GrantAccessSteps.css'
 
-import { AuthApiScope } from '@island.is/api/schema'
+import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import {
   Box,
   Filter,
@@ -45,12 +45,12 @@ export const AccessScopes = () => {
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang },
+    variables: { lang, direction: AuthDelegationDirection.outgoing },
   })
   const { data: tagsData } = useQuery<AuthScopeTagsQuery>(
     AuthScopeTagsDocument,
     {
-      variables: { lang },
+      variables: { lang, direction: AuthDelegationDirection.outgoing },
     },
   )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
