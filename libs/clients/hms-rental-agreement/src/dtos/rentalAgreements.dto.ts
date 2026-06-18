@@ -37,8 +37,12 @@ export const mapRentalAgreementDto = (
     terminationDate: contract.dateManualEnd
       ? new Date(contract.dateManualEnd)
       : undefined,
-    signatureDate: contract.signatureDate ? new Date(contract.signatureDate) : undefined,
-    receivedDate: contract.receivedDate ? new Date(contract.receivedDate) : undefined,
+    signatureDate: contract.signatureDate
+      ? new Date(contract.signatureDate)
+      : undefined,
+    receivedDate: contract.receivedDate
+      ? new Date(contract.receivedDate)
+      : undefined,
     contractType: mapTemporalType(contract.contractTypeUseCode),
     contractParty:
       contract.contractParty?.map(mapContractPartyDto).filter(isDefined) ??

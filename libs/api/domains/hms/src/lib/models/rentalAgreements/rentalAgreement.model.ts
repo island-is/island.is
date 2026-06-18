@@ -1,4 +1,10 @@
-import { Field, GraphQLISODateTime, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
 import { ContractDocument } from './contractDocument.model'
