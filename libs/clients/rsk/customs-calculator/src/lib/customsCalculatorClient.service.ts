@@ -167,7 +167,9 @@ export class CustomsCalculatorClientService {
     return {
       startAmount: Math.round(Number(startAmount ?? '0')),
       additionalAmount: Math.round(additionalAmount.toNumber()),
-      totalAmount: Math.round(additionalAmount.plus(startAmount ?? '0').toNumber()),
+      totalAmount: Math.round(
+        additionalAmount.plus(startAmount ?? '0').toNumber(),
+      ),
       charges,
     }
   }
