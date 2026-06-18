@@ -61,6 +61,7 @@ export interface AsyncSearchProps {
   errorMessage?: string
   hasError?: boolean
   white?: boolean
+  onClear?: () => void
   onSubmit?: (
     inputValue: string,
     selectedOption: AsyncSearchOption | null,
@@ -92,6 +93,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       onChange,
       onSubmit,
       onInputValueChange,
+      onClear,
       showDividerIfActive,
       ...props
     },
@@ -201,6 +203,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               loading={loading}
               hasError={hasError}
               errorMessage={errorMessage}
+              onClear={onClear}
               rootProps={getRootProps(
                 { refKey: 'ref' },
                 { suppressRefError: true },
@@ -313,6 +316,7 @@ export interface AsyncSearchInputProps {
   loading?: boolean
   children?: ReactNode
   skipContext?: boolean
+  onClear?: () => void
 }
 
 export const AsyncSearchInput = forwardRef<
@@ -336,6 +340,7 @@ export const AsyncSearchInput = forwardRef<
       errorMessage,
       skipContext,
       dataTestId,
+      onClear,
     },
     ref,
   ) => {
@@ -426,6 +431,7 @@ export const AsyncSearchInput = forwardRef<
               color={inputColor}
               isOpen={isOpen}
               hasError={hasError}
+              hasClearButton={!!onClear}
               placeholder={
                 effectiveValue ? undefined : restInputProps.placeholder
               }
@@ -444,11 +450,26 @@ export const AsyncSearchInput = forwardRef<
               isOpen={isOpen}
               ref={ref}
               hasError={hasError}
+              hasClearButton={!!onClear}
               placeholder={
                 effectiveValue ? undefined : restInputProps.placeholder
               }
             />
           )}
+          {onClear && effectiveValue ? (
+            <button
+              type="button"
+              aria-label="Clear"
+              tabIndex={0}
+              className={cn(
+                styles.clearIcon,
+                styles.clearIconSizes[normalizedSize],
+              )}
+              onClick={onClear}
+            >
+              <Icon size={normalizedSize} icon={'close'} color={iconColor} />
+            </button>
+          ) : null}
           {!loading ? (
             <button
               className={cn(styles.icon, styles.iconSizes[normalizedSize], {
@@ -457,7 +478,7 @@ export const AsyncSearchInput = forwardRef<
                   blueberryColorScheme ||
                   darkColorScheme ||
                   blueColorScheme,
-                [styles.focusable]: effectiveValue,
+                [styles.focusable]: effectiveValue && !onClear,
               })}
               tabIndex={effectiveValue ? 0 : -1}
               {...buttonProps}

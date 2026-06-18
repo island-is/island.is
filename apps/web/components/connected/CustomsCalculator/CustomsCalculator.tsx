@@ -247,6 +247,17 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         </Text>
 
         <AsyncSearch
+          onClear={() => {
+            setSelectedBottomLevelCategory(null)
+            setSelectedCategory({
+              current: null,
+              breadcrumbs: [],
+            })
+            setInputState({
+              ...inputState,
+              searchInput: '',
+            })
+          }}
           options={searchOptions}
           filter={(option) =>
             option.label
