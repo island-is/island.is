@@ -106,11 +106,6 @@ export const translation = defineMessages({
     defaultMessage: 'Viðmiðunardagsetning (ISO)',
     description: 'Reference date input label',
   },
-  fetchUnits: {
-    id: 'web.customsCalculator:fetchUnits',
-    defaultMessage: 'Sækja einingar',
-    description: 'Button label for fetching units',
-  },
   runCalculation: {
     id: 'web.customsCalculator:runCalculation',
     defaultMessage: 'Reikna',
