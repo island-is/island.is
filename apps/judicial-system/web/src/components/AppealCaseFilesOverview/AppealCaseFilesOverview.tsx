@@ -4,10 +4,13 @@ import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE,
+  PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -31,6 +34,7 @@ import {
   TUploadFile,
   useFileList,
   useS3Upload,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAppealFileCategoryVisible,
@@ -105,6 +109,9 @@ const AppealCaseFilesOverview = () => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
   const [allFiles, setAllFiles] = useState<CaseFile[]>([])
+  // Resolves to the case-level appeal by default, or to the ruling-order
+  // appeal selected by `?appealCaseId=…` on COA detail pages.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const deleteCategories = isProsecutionUser(user)
     ? prosecutorDeleteCategories
@@ -120,17 +127,16 @@ const AppealCaseFilesOverview = () => {
         workingCase.caseFiles.filter((caseFile) =>
           isAppealFileCategoryVisible(
             workingCase,
-            workingCase.appealCase,
+            targetAppealCase,
             caseFile,
             user,
           ),
         ),
       )
     }
-  }, [user, workingCase])
+  }, [user, workingCase, targetAppealCase])
 
   return (
-    isCompletedCase(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 && (
       <div className={grid({ gap: 3 })}>
@@ -161,7 +167,7 @@ const AppealCaseFilesOverview = () => {
                     <Text whiteSpace="nowrap">
                       {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
                         file.created,
-                        constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </Text>
                     {file.category &&
@@ -215,21 +221,20 @@ const AppealCaseFilesOverview = () => {
           })}
         </Box>
         {(isProsecutionUser(user) || isDefenceUser(user)) &&
-          workingCase.appealCase?.appealState &&
-          workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED && (
+          targetAppealCase?.appealState &&
+          targetAppealCase.appealState !== AppealCaseState.COMPLETED && (
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 icon="add"
                 onClick={() => {
                   router.push(
                     limitedAccess
-                      ? `${constants.DEFENDER_APPEAL_FILES_ROUTE}/${workingCase.id}`
-                      : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
+                      ? `${DEFENDER_APPEAL_CASE_ADD_FILES_ROUTE}/${workingCase.id}`
+                      : `${PROSECUTION_APPEAL_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }}
                 disabled={
-                  workingCase.appealCase?.appealState ===
-                  AppealCaseState.WITHDRAWN
+                  targetAppealCase.appealState === AppealCaseState.WITHDRAWN
                 }
               >
                 {formatMessage(strings.addFiles)}

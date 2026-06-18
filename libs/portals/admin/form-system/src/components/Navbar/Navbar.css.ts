@@ -6,6 +6,7 @@ const MOBILE = `screen and (max-width: ${theme.breakpoints.md}px)`
 export const minimalScrollbar = style({
   height: 'calc(100vh - 200px)',
   overflowY: 'auto',
+  scrollbarGutter: 'stable',
 
   // Firefox
   scrollbarWidth: 'thin',
@@ -18,7 +19,6 @@ export const minimalScrollbar = style({
   },
 
   selectors: {
-    // Chrome, Safari, Edge
     '&::-webkit-scrollbar': {
       width: '3px',
     },

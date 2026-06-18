@@ -155,6 +155,27 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
   }
+
+  // scheduled job — merge cron fields into extra so they land as top-level Helm values
+  if (serviceDef.scheduledJob) {
+    const {
+      schedule,
+      concurrencyPolicy,
+      startingDeadlineSeconds,
+      successfulJobsHistoryLimit,
+      failedJobsHistoryLimit,
+    } = serviceDef.scheduledJob
+    const cronExtra: Record<string, string | number | boolean> = { schedule }
+    if (concurrencyPolicy !== undefined)
+      cronExtra['concurrencyPolicy'] = concurrencyPolicy
+    if (startingDeadlineSeconds !== undefined)
+      cronExtra['startingDeadlineSeconds'] = startingDeadlineSeconds
+    if (successfulJobsHistoryLimit !== undefined)
+      cronExtra['successfulJobsHistoryLimit'] = successfulJobsHistoryLimit
+    if (failedJobsHistoryLimit !== undefined)
+      cronExtra['failedJobsHistoryLimit'] = failedJobsHistoryLimit
+    result.extra = { ...(result.extra ?? {}), ...cronExtra }
+  }
   // target port
   if (typeof serviceDef.port !== 'undefined') {
     result.service = { targetPort: serviceDef.port }

@@ -258,10 +258,10 @@ codemagic.yaml                                                                  
 /libs/application/templates/financial-aid/                                                                                   @island-is/norda
 /libs/application/templates/funding-government-projects/                                                                     @island-is/norda
 /libs/application/templates/general-fishing-license/                                                                         @island-is/norda
-/libs/application/templates/grindavik-housing-buyout/                                                                        @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
 /libs/application/templates/hms/rental-agreement/                                                                            @island-is/norda
+/libs/application/templates/hms/housing-benefits/                                                                            @island-is/norda
 /libs/application/templates/home-support/                                                                                    @island-is/norda
 /libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
 /libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/norda
@@ -281,10 +281,10 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                                              @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/                                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                                    @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/rental-agreement/                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/housing-benefits/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/norda
@@ -433,6 +433,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
 /libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
 /libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
+/libs/application/templates/vmst/submit-documents                                                                            @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
@@ -487,6 +488,7 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
+/libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 
 /libs/application/templates/aosh/change-machine-supervisor                                                                   @island-is/origo
@@ -532,14 +534,13 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
-
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
 
 libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops
 /scripts/ci/                                                                                                                 @island-is/devops
-/packer/                                                                                                                     @island-is/devops
 /.githooks/                                                                                                                  @island-is/devops
 /apps/reference-backend/                                                                                                     @island-is/devops
 /apps/github-actions-cache/                                                                                                  @island-is/devops

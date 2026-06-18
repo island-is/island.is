@@ -12,7 +12,7 @@ import { CourtDocumentFolder, CourtService } from '../../../court'
 import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../../formatters/caseFilesRecordPdf')
+jest.mock('../../../../formatters/generatedPdfs/caseFilesRecordPdf')
 
 interface Then {
   result: DeliverResponse

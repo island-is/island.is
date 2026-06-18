@@ -10,8 +10,10 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -91,7 +93,7 @@ export const Overview = () => {
   } = useInfoCardItems()
 
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
-    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
+    usePoliceDigitalCaseFile()
 
   const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
@@ -337,7 +339,7 @@ export const Overview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

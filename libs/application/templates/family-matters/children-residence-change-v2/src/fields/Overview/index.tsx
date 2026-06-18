@@ -22,7 +22,8 @@ export const confirmContractIds = [
 ]
 
 const Overview = ({ field, error, errors, application }: CRCFieldBaseProps) => {
-  const { id, disabled } = field
+  const id = field.id as string
+  const { disabled } = field
   const { answers, externalData } = application
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(

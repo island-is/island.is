@@ -99,6 +99,9 @@
       "@island.is/api/domains/farmers": [
         "libs/api/domains/farmers/src/index.ts"
       ],
+      "@island.is/api/domains/feature-flags": [
+        "libs/api/domains/feature-flags/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -462,9 +465,6 @@
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
-      "@island.is/application/templates/grindavik-housing-buyout": [
-        "libs/application/templates/grindavik-housing-buyout/src/index.ts"
-      ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
@@ -476,6 +476,9 @@
       ],
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/housing-benefits": [
+        "libs/application/templates/hms/housing-benefits/src/index.ts"
       ],
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
@@ -684,6 +687,9 @@
       "@island.is/application/templates/vmst/edit-unemployment-information": [
         "libs/application/templates/vmst/edit-unemployment-information/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/submit-documents": [
+        "libs/application/templates/vmst/submit-documents/src/index.ts"
+      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -758,6 +764,9 @@
       ],
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
+      ],
+      "@island.is/clients/directorate-of-equality": [
+        "libs/clients/directorate-of-equality/src/index.ts"
       ],
       "@island.is/clients/directorate-of-immigration": [
         "libs/clients/directorate-of-immigration/src/index.ts"
@@ -862,10 +871,10 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
-      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/lyfjastofnun-pharmacies": [
         "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
       ],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],

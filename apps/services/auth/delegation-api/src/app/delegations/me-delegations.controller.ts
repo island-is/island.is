@@ -22,6 +22,7 @@ import {
   DelegationsOutgoingService,
   DelegationsService,
   DelegationValidity,
+  DeleteDelegationScopesDTO,
   PatchDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -33,6 +34,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { NoContentException } from '@island.is/nest/problem'
 
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
@@ -204,32 +206,43 @@ export class MeDelegationsController {
       },
     },
   })
-  @Audit<DelegationDTO>({
-    resources: (delegation) => delegation?.id ?? undefined,
-  })
-  patch(
+  async patch(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
     @Body() patchDelegation: PatchDelegationDTO,
   ): Promise<DelegationDTO> {
-    return this.auditService.auditPromise<DelegationDTO>(
-      {
-        auth: user,
-        namespace,
-        action: 'update',
-        resources: (delegation) => delegation?.id ?? undefined,
-        meta: (delegation) => ({
-          updateScopes: patchDelegation.updateScopes?.map((s) => s.name),
-          deleteScopes: patchDelegation.deleteScopes,
-          scopes: delegation?.scopes?.map((s) => s.scopeName),
-        }),
-      },
-      this.delegationsOutgoingService.patch(
-        user,
-        delegationId,
-        patchDelegation,
-      ),
+    const result = await this.delegationsOutgoingService.patch(
+      user,
+      delegationId,
+      patchDelegation,
     )
+
+    if (result.kind === 'notFound') {
+      // Nothing happened — 204, no audit.
+      throw new NoContentException()
+    }
+
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: result.kind === 'destroyed' ? 'destroy' : 'update',
+      resources: delegationId,
+      meta: {
+        updateScopes: patchDelegation.updateScopes?.map((s) => s.name),
+        deleteScopes: patchDelegation.deleteScopes,
+        destroyed: result.kind === 'destroyed',
+        scopes:
+          result.kind === 'updated'
+            ? result.delegation.scopes?.map((s) => s.scopeName)
+            : undefined,
+      },
+    })
+
+    if (result.kind === 'destroyed') {
+      throw new NoContentException()
+    }
+
+    return result.delegation
   }
 
   @Delete(':delegationId')
@@ -257,5 +270,53 @@ export class MeDelegationsController {
       },
       this.delegationsOutgoingService.delete(user, delegationId),
     )
+  }
+
+  @Delete(':delegationId/scopes')
+  @Documentation({
+    includeNoContentResponse: true,
+    response: { status: 200, type: DelegationDTO },
+    request: {
+      params: {
+        delegationId,
+      },
+    },
+  })
+  async deleteScopes(
+    @CurrentUser() user: User,
+    @Param('delegationId') delegationId: string,
+    @Body() body: DeleteDelegationScopesDTO,
+  ): Promise<DelegationDTO> {
+    const result = await this.delegationsIncomingService.deleteScopes(
+      user,
+      delegationId,
+      body.scopeNames,
+    )
+
+    if (result.kind === 'notFound') {
+      // Nothing happened — 204, no audit.
+      throw new NoContentException()
+    }
+
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: result.kind === 'destroyed' ? 'destroy' : 'deleteScopes',
+      resources: delegationId,
+      meta: {
+        deleteScopes: body.scopeNames,
+        destroyed: result.kind === 'destroyed',
+        scopes:
+          result.kind === 'updated'
+            ? result.delegation.scopes?.map((s) => s.scopeName)
+            : undefined,
+      },
+    })
+
+    if (result.kind === 'destroyed') {
+      throw new NoContentException()
+    }
+
+    return result.delegation
   }
 }

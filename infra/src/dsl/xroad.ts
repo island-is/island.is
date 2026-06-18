@@ -539,23 +539,23 @@ export const NationalRegistryB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '8f4c5411-9caf-40a1-8764-bbe05fd6de50',
       staging: '138478ef-b078-4cfa-b322-fecdaced96e8',
-      prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
+      prod: '636b16a3-7f61-4eca-84cb-71e2ad106adb',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
         'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
-      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
       staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default',
       staging: 'https://skraidstaging.onmicrosoft.com/midlunUmsoknir/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
@@ -575,18 +575,18 @@ export const NationalRegistryAuthB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '5a452d0d-395d-4e52-bef0-7ae07ecb2388',
       staging: 'c090fd41-9893-46f5-8962-86bd48788570',
-      prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
+      prod: '4b24e151-0aac-4b88-8d32-301ef7fe9d54',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
         'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
-      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraiddev.onmicrosoft.com/midlun/.default',
       staging: 'https://skraidstaging.onmicrosoft.com/midlun/.default',
-      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraid.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
@@ -1015,6 +1015,16 @@ export const ArborgWorkpoint = new XroadConf({
       dev: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1',
       staging: 'IS-TEST/MUN/10036/Arborg-Protected/tengill-application-v1',
       prod: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1',
+    },
+  },
+})
+
+export const DirectorateOfEquality = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
+      prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
     },
   },
 })

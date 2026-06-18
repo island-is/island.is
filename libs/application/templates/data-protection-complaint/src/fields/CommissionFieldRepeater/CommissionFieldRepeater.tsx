@@ -22,7 +22,8 @@ import { Locale } from '@island.is/shared/types'
 export const CommissionFieldRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, errors, field }) => {
-  const { id, title = '' } = field
+  const id = field.id as string
+  const { title = '' } = field
   const { formatMessage, lang: locale } = useLocale()
   const { fields, append, remove } = useFieldArray({ name: id })
 

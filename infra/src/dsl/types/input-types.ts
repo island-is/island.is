@@ -11,7 +11,7 @@ export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
 
 // Input types
-export type Hash = { [name: string]: Hash | string | number }
+export type Hash = { [name: string]: Hash | string | number | boolean }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
@@ -138,6 +138,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   redis?: RedisInfo
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
+  scheduledJob?: ScheduledJobConfig
 }
 
 /**
@@ -150,6 +151,7 @@ export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   postgres?: PostgresInfoForEnv
   redis?: RedisInfoForEnv
   extraAttributes?: ExtraValuesForEnv
+  scheduledJob?: ScheduledJobConfigForEnv
 }
 
 export interface Ingress {
@@ -255,3 +257,57 @@ export interface Context {
 
 export type ExtraValuesForEnv = Hash
 export type ExtraValues = { [env in OpsEnv]: Hash | MissingSettingType }
+
+/**
+ * Kubernetes CronJob concurrency policy.
+ * Controls how concurrent executions of the job are handled.
+ * See: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+ */
+export type ConcurrencyPolicy = 'Allow' | 'Forbid' | 'Replace'
+
+/**
+ * A cron schedule expression. Can be either:
+ * - A 5-field cron expression: `'0 3 * * *'`
+ * - A Kubernetes shorthand: `'@hourly'`, `'@daily'`, `'@midnight'`, `'@weekly'`, `'@monthly'`, `'@yearly'`
+ * - A per-environment object with different schedules per env
+ */
+export type CronSchedule =
+  | string
+  | { [env in OpsEnv]: string | MissingSettingType }
+
+/**
+ * Configuration for a scheduled (CronJob) service.
+ * All fields except `schedule` are optional and use Kubernetes defaults if not set.
+ */
+export type ScheduledJobConfig = {
+  /**
+   * Cron schedule expression. Supports 5-field syntax and Kubernetes shorthands.
+   * Can be a single string (applies to all envs) or a per-env object.
+   * Required — a scheduled job without a schedule is invalid.
+   */
+  schedule: CronSchedule
+  /**
+   * How to handle concurrent job executions. Default: 'Allow' (Helm chart default)
+   * See: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+   */
+  concurrencyPolicy?: ConcurrencyPolicy
+  /**
+   * Deadline in seconds for starting the job if it misses its scheduled time.
+   */
+  startingDeadlineSeconds?: number
+  /**
+   * Number of successful completed job pods to retain. Default: 3 (Helm chart default)
+   */
+  successfulJobsHistoryLimit?: number
+  /**
+   * Number of failed job pods to retain. Default: 1 (Helm chart default)
+   */
+  failedJobsHistoryLimit?: number
+}
+
+/**
+ * Resolved scheduled job config for a specific environment (schedule resolved to a string).
+ */
+export type ScheduledJobConfigForEnv = Omit<ScheduledJobConfig, 'schedule'> & {
+  schedule: string
+}

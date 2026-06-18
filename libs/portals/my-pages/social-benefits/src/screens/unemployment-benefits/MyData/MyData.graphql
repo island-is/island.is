@@ -30,21 +30,23 @@ query getAttachmentTypes {
   }
 }
 
-query getAttachment($id: String!) {
-  vmstAttachment(id: $id) {
-    id
-    name
-    contentType
-    data
-    size
-  }
-}
-
 query getApplicantAttachments {
   vmstApplicantAttachments {
-    id
-    typeId
-    name
-    contentType
+    userSubmitted {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
+    letters {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
   }
 }

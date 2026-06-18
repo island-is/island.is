@@ -89,6 +89,16 @@ export class FormsResolver {
   }
 
   @Query(() => FormResponse, {
+    name: 'formSystemApplicationJsonSample',
+  })
+  async getJsonSample(
+    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.getJsonSample(user, id)
+  }
+
+  @Query(() => FormResponse, {
     name: 'formSystemForms',
   })
   async getAllForms(

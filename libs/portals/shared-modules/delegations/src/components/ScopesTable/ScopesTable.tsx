@@ -21,6 +21,7 @@ import { m } from '../../lib/messages'
 
 type ScopesTableProps = {
   scopes?: AuthApiScope[]
+  removedScopes?: AuthApiScope[]
   showCheckbox?: boolean
   showSelectAll?: boolean
   onSelectScope?: (scope: AuthApiScope) => void
@@ -30,6 +31,7 @@ type ScopesTableProps = {
 
 export const ScopesTable = ({
   scopes: scopesProp,
+  removedScopes,
   showCheckbox,
   showSelectAll,
   onSelectScope,
@@ -200,6 +202,73 @@ export const ScopesTable = ({
             </Fragment>
           )
         })}
+        {removedScopes && removedScopes.length > 0 && (
+          <>
+            {scopes.length > 0 && (
+              <Box paddingTop={2}>
+                <Divider />
+              </Box>
+            )}
+            {removedScopes.map((scope, index) => (
+              <Fragment key={`removed-${scope.name}-${index}`}>
+                <Box
+                  paddingTop={2}
+                  paddingBottom={index < removedScopes.length - 1 ? 2 : 0}
+                  style={{ opacity: 0.65 }}
+                >
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    <div>
+                      <Box
+                        display="flex"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
+                        columnGap={2}
+                      >
+                        <Text
+                          variant="h5"
+                          fontWeight="semiBold"
+                          color="dark300"
+                          strikethrough
+                        >
+                          {scope.displayName}
+                        </Text>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={1}
+                          flexShrink={0}
+                        >
+                          {scope.domain?.organisationLogoUrl && (
+                            <img
+                              src={scope.domain.organisationLogoUrl}
+                              width="12"
+                              alt=""
+                              aria-hidden
+                            />
+                          )}
+                          <Text variant="small" color="dark300" strikethrough>
+                            {scope.domain?.displayName ||
+                              scope.domain?.name ||
+                              '-'}
+                          </Text>
+                        </Box>
+                      </Box>
+                      <Text variant="medium" color="dark300" strikethrough>
+                        {scope.description || '-'}
+                      </Text>
+                    </div>
+                  </Box>
+                </Box>
+                {index < removedScopes.length - 1 && <Divider />}
+              </Fragment>
+            ))}
+          </>
+        )}
       </Box>
     )
   }
@@ -315,6 +384,67 @@ export const ScopesTable = ({
             </T.Row>
           )
         })}
+        {removedScopes &&
+          removedScopes.length > 0 &&
+          removedScopes.map((scope) => {
+            const permissionType = scope.allowsWrite
+              ? formatMessage(m.readAndWrite)
+              : formatMessage(m.read)
+
+            return (
+              <T.Row key={`removed-${scope.name}`}>
+                {showCheckbox && (
+                  <T.Data style={{ paddingLeft: 16, paddingRight: 0 }} />
+                )}
+                <T.Data style={{ paddingInline: 16, opacity: 0.65 }}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    style={{ rowGap: 4, minWidth: 160 }}
+                  >
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexStart"
+                      columnGap={1}
+                    >
+                      {scope.domain?.organisationLogoUrl && (
+                        <img
+                          src={scope.domain.organisationLogoUrl}
+                          width="16"
+                          alt=""
+                          aria-hidden
+                        />
+                      )}
+                      <Text variant="small" color="dark300" strikethrough>
+                        {scope.domain?.displayName || scope.domain?.name || '-'}
+                      </Text>
+                    </Box>
+                    <Text variant="medium" color="dark300" strikethrough>
+                      {scope.displayName}
+                    </Text>
+                  </Box>
+                </T.Data>
+                <T.Data style={{ paddingInline: 16, opacity: 0.65 }}>
+                  <Text variant="medium" color="dark300" strikethrough>
+                    {scope.description || '-'}
+                  </Text>
+                </T.Data>
+                {showDate && (
+                  <T.Data style={{ paddingInline: 16, opacity: 0.65 }}>
+                    <Text variant="medium" color="dark300">
+                      —
+                    </Text>
+                  </T.Data>
+                )}
+                <T.Data style={{ paddingInline: 16, opacity: 0.65 }}>
+                  <Text variant="medium" color="dark300" strikethrough>
+                    {permissionType}
+                  </Text>
+                </T.Data>
+              </T.Row>
+            )
+          })}
       </T.Body>
     </T.Table>
   )

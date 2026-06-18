@@ -1,0 +1,73 @@
+import {
+  buildForm,
+  buildSection,
+  buildMultiField,
+  buildImageField,
+  buildDescriptionField,
+} from '@island.is/application/core'
+import { FormModes } from '@island.is/application/types'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
+import { MovingSearching } from '@island.is/application/assets/graphics'
+import {
+  assigneeWaitingApprovedDescription,
+  assigneeWaitingPendingDescription,
+  assigneeWaitingRejectedDescription,
+} from '../../../utils/assigneeWaitingUtils'
+import { hasRejectedAssigneesInAnswers } from '../../../utils/assigneeRejectionUtils'
+import * as m from '../../../lib/messages'
+
+export const AssigneeWaitingForm = buildForm({
+  id: 'AssigneeWaiting',
+  mode: FormModes.IN_PROGRESS,
+  logo: HmsLogo,
+  children: [
+    buildSection({
+      id: 'assigneeWaitingSection',
+      tabTitle: m.assigneeWaiting.title,
+      children: [
+        buildMultiField({
+          id: 'assigneeWaitingMultiField',
+          title: m.assigneeWaiting.title,
+          children: [
+            buildDescriptionField({
+              id: 'assigneeWaitingDescription',
+              description: m.assigneeWaiting.introDescription,
+              marginBottom: 2,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingDescription2',
+              description: m.assigneeWaiting.introDescription2,
+              marginBottom: 2,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingDescription3',
+              description: m.assigneeWaiting.introDescription3,
+              marginBottom: 4,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingApproved',
+              description: assigneeWaitingApprovedDescription,
+              marginBottom: 4,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingPending',
+              description: assigneeWaitingPendingDescription,
+              marginBottom: 4,
+            }),
+            buildDescriptionField({
+              id: 'assigneeWaitingRejected',
+              description: assigneeWaitingRejectedDescription,
+              condition: (answers) => hasRejectedAssigneesInAnswers(answers),
+              marginBottom: 8,
+            }),
+            buildImageField({
+              id: 'assigneeWaitingImage',
+              image: MovingSearching,
+              marginTop: 4,
+            }),
+          ],
+        }),
+      ],
+    }),
+  ],
+})

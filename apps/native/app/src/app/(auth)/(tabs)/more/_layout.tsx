@@ -6,7 +6,7 @@ import {
 } from '../../../../constants/screen-options'
 
 export const unstable_settings = {
-  initalRouteName: 'index',
+  initialRouteName: 'index',
   'vehicles/[id]/index': {
     initialRouteName: 'vehicles',
   },
