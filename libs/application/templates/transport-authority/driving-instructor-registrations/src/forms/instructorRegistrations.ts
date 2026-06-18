@@ -10,7 +10,7 @@ import {
   FormModes,
   GetTeacherRightsApi,
   HasTeachingRightsApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
@@ -38,7 +38,7 @@ export const getInstructorRegistrations = (allowBELicense = false): Form => {
                 subTitle: m.dataCollectionTeachersRightsSubtitle,
               }),
               buildDataProviderItem({
-                provider: NationalRegistryUserApi,
+                provider: NationalRegistryV3UserApi,
                 title: '',
                 subTitle: '',
               }),

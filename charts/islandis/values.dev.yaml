@@ -402,6 +402,7 @@ api:
     XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
     XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis'
@@ -1195,7 +1196,6 @@ application-system-form:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1309,6 +1309,7 @@ cms-importer-energy-fund-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1363,6 +1364,7 @@ cms-importer-fsre-buildings-import:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 8 * * 1'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1746,6 +1748,7 @@ download-service:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
+    VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1756,6 +1759,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCES_V3_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
@@ -1853,6 +1857,8 @@ download-service:
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
     XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+    XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2048,7 +2054,6 @@ form-system-web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2544,7 +2549,6 @@ payments:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
@@ -2629,7 +2633,6 @@ portals-admin:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2989,7 +2992,6 @@ service-portal:
       memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false

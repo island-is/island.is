@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
@@ -15,14 +15,22 @@ import {
   VmstApplicationsUnemploymentApplicationOverview,
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsApplicantAttachment,
+  VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
+import { maskString } from '@island.is/shared/utils'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class VMSTApplicationsService {
   constructor(
     private readonly vmstUnemploymentService: VmstUnemploymentClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   async validateBankInformation(
@@ -169,25 +177,51 @@ export class VMSTApplicationsService {
 
   async getApplicantAttachments(
     applicantId: string,
-  ): Promise<VmstApplicationsApplicantAttachment[]> {
-    const items = await this.vmstUnemploymentService.getApplicantAttachments(
+    nationalId: string,
+  ): Promise<VmstApplicationsApplicantAttachmentsResponse> {
+    const response = await this.vmstUnemploymentService.getApplicantAttachments(
       applicantId,
     )
 
-    return items.flatMap((item) => {
-      if (!item.id || !item.name || !item.contentType || !item.created) {
-        return []
-      }
-      return [
-        {
-          id: item.id,
-          typeId: item.typeId ?? null,
-          name: item.name,
-          contentType: item.contentType,
-          created: item.created,
-        },
-      ]
-    })
+    const mapItems = async (
+      items: Array<{
+        id?: string
+        typeId?: string | null
+        name?: string
+        contentType?: string
+        created?: string
+      }>,
+    ): Promise<VmstApplicationsApplicantAttachment[]> => {
+      return Promise.all(
+        items.flatMap((item) => {
+          if (!item.id || !item.name || !item.contentType || !item.created) {
+            return []
+          }
+
+          const { id, typeId, name, contentType, created } = item
+
+          return [
+            maskString(id, nationalId).then((maskedId) => ({
+              id,
+              typeId: typeId ?? null,
+              name,
+              contentType,
+              created,
+              downloadServiceUrl: maskedId
+                ? `${this.downloadServiceConfig.baseUrl}/download/v1/vmst/attachment/${maskedId}`
+                : null,
+            })),
+          ]
+        }),
+      )
+    }
+
+    const [userSubmitted, letters] = await Promise.all([
+      mapItems(response.userSubmitted ?? []),
+      mapItems(response.letters ?? []),
+    ])
+
+    return { userSubmitted, letters }
   }
 
   async getAttachmentTypes(): Promise<GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel> {

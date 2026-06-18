@@ -171,6 +171,7 @@ export const mockTransitionAppealCaseMutation = (
           id: appealCaseId,
           appealState: AppealCaseState.COMPLETED,
           appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
+          appealRulingDate: '2021-09-09T12:00:00.000Z',
         },
       },
     },

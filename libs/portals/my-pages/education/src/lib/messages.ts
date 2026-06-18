@@ -129,6 +129,10 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:view-results',
     defaultMessage: 'Sjá niðurstöður',
   },
+  downloadResults: {
+    id: 'sp.education-primary-school:download-results',
+    defaultMessage: 'Niðurstöður',
+  },
   child: {
     id: 'sp.education-primary-school:child',
     defaultMessage: 'Barn',

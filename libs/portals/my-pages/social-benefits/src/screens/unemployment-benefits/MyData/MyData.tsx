@@ -1,11 +1,16 @@
-import { IntroWrapper, UserInfoLine } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  UserInfoLine,
+  formSubmit,
+  m as coreMessages,
+  PdfModal,
+} from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import {
   useGetApplicantAvailableActionsQuery,
   useGetApplicantRequestedAttachmentsQuery,
   useGetApplicantAttachmentsQuery,
   useGetAttachmentTypesQuery,
-  useGetAttachmentLazyQuery,
 } from './MyData.generated'
 import {
   Box,
@@ -14,27 +19,18 @@ import {
   Stack,
   Tag,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useState } from 'react'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
-import { useCallback, useState } from 'react'
 
 const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 
-const base64ToBlob = (data: string, contentType: string): Blob => {
-  const byteCharacters = atob(data)
-  const byteNumbers = new Uint8Array(byteCharacters.length)
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i)
-  }
-  return new Blob([byteNumbers], { type: contentType })
-}
-
 const MyData = () => {
   useNamespaces('sp.social-benefits-unemployment')
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
   const { data: actionsData, loading: actionsLoading } =
     useGetApplicantAvailableActionsQuery()
@@ -63,13 +59,12 @@ const MyData = () => {
   const attachmentTypes =
     attachmentTypesData?.vmstAttachmentTypes?.attachmentTypes
 
-  const loading =
-    actionsLoading ||
-    attachmentsLoading ||
-    attachmentTypesLoading ||
-    applicantAttachmentsLoading
-  const attachmentsHasError =
-    !!attachmentsError || !!attachmentTypesError || !!applicantAttachmentsError
+  const coreLoading = actionsLoading || attachmentTypesLoading
+  const requestedLoading = coreLoading || attachmentsLoading
+  const applicantDataLoading = coreLoading || applicantAttachmentsLoading
+
+  const requestedAttachmentsHasError = !!attachmentsError
+  const submittedAttachmentsHasError = !!applicantAttachmentsError
 
   const attachmentTypeMap = new Map(
     attachmentTypes?.map((t) => [t.id, t]) ?? [],
@@ -79,63 +74,16 @@ const MyData = () => {
     requestedAttachments?.filter((a) => !a.attachmentId) ?? []
 
   const submittedAttachments =
-    applicantAttachmentsData?.vmstApplicantAttachments ?? []
+    applicantAttachmentsData?.vmstApplicantAttachments?.userSubmitted ?? []
+
+  const lettersAttachments =
+    applicantAttachmentsData?.vmstApplicantAttachments?.letters ?? []
 
   const getAttachmentName = (attachmentTypeId?: string | null) => {
     if (!attachmentTypeId) return ''
     const type = attachmentTypeMap.get(attachmentTypeId)
     return type?.name ?? ''
   }
-
-  const [fetchAttachment] = useGetAttachmentLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
-
-  const [loadingAttachmentId, setLoadingAttachmentId] = useState<string | null>(
-    null,
-  )
-
-  const openAttachment = useCallback(
-    (attachmentId: string) => {
-      if (loadingAttachmentId) return
-      setLoadingAttachmentId(attachmentId)
-
-      fetchAttachment({
-        variables: { id: attachmentId },
-        onCompleted: (result) => {
-          try {
-            const attachment = result.vmstAttachment
-            if (!attachment.data) return
-
-            const blob = base64ToBlob(attachment.data, attachment.contentType)
-            const blobUrl = URL.createObjectURL(blob)
-
-            if (VIEWABLE_CONTENT_TYPES.includes(attachment.contentType)) {
-              window.open(blobUrl, '_blank')
-              setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
-            } else {
-              const link = document.createElement('a')
-              link.href = blobUrl
-              link.download = attachment.name
-              document.body.appendChild(link)
-              link.click()
-              document.body.removeChild(link)
-              URL.revokeObjectURL(blobUrl)
-            }
-          } catch {
-            toast.error(formatMessage(um.myDataAttachmentError))
-          } finally {
-            setLoadingAttachmentId(null)
-          }
-        },
-        onError: () => {
-          toast.error(formatMessage(um.myDataAttachmentError))
-          setLoadingAttachmentId(null)
-        },
-      })
-    },
-    [fetchAttachment, formatMessage, loadingAttachmentId],
-  )
 
   return (
     <IntroWrapper
@@ -145,68 +93,168 @@ const MyData = () => {
         slug: 'vinnumalastofnun',
         tooltip: formatMessage(um.tooltip),
       }}
-      loading={loading}
+      loading={coreLoading}
     >
-      <ActionButtons availableActions={availableActions} loading={loading} />
-      {loading && (
+      <PdfModal
+        url={pdfUrl}
+        aria-label={formatMessage(um.myDataViewDocument)}
+        onClose={() => setPdfUrl(null)}
+      />
+
+      <ActionButtons
+        availableActions={availableActions}
+        loading={coreLoading}
+      />
+      {!coreLoading && !!attachmentTypesError && (
         <Box paddingTop={4}>
-          <SkeletonLoader repeat={5} space={2} />
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(coreMessages.noData)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
         </Box>
       )}
-      {!loading && attachmentsHasError && (
-        <Box paddingTop={4}>
-          <Problem type="no_data" noBorder={false} />
-        </Box>
-      )}
-      {!loading && !attachmentsHasError && missingAttachments.length > 0 && (
-        <Box paddingTop={4}>
-          <Text variant="eyebrow" color="purple600" marginBottom={2}>
-            {formatMessage(um.myDataMissingAttachmentsHeading)}
-          </Text>
-          <Stack space={0}>
-            {missingAttachments.map((attachment, index) => (
-              <Box key={attachment.id ?? index}>
-                <UserInfoLine
-                  label={getAttachmentName(attachment.attachmentTypeId)}
-                  renderContent={() => (
-                    <Tag variant="red" outlined disabled>
-                      {formatMessage(um.myDataMissingTag)}
-                    </Tag>
-                  )}
-                  editLink={{
-                    url: formatMessage(um.myDataSubmitDocumentsUrl),
-                    title: formatMessage(um.myDataSubmitDocuments),
-                    icon: 'arrowForward',
-                  }}
-                />
-                <Divider />
-              </Box>
-            ))}
-          </Stack>
-        </Box>
-      )}
-      {!loading && !attachmentsHasError && submittedAttachments.length > 0 && (
-        <Box paddingTop={4}>
-          <Text variant="eyebrow" color="purple600" marginBottom={2}>
-            {formatMessage(um.myDataSubmittedAttachmentsHeading)}
-          </Text>
-          <Stack space={0}>
-            {submittedAttachments.map((attachment) => (
-              <Box key={attachment.id}>
-                <UserInfoLine
-                  label={getAttachmentName(attachment.typeId)}
-                  button={{
-                    title: formatMessage(um.myDataViewDocument),
-                    onClick: () => {
-                      openAttachment(attachment.id)
-                    },
-                  }}
-                />
-                <Divider />
-              </Box>
-            ))}
-          </Stack>
-        </Box>
+      {!attachmentTypesError && (
+        <>
+          {/* Missing / requested attachments section */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataMissingAttachmentsHeading)}
+            </Text>
+            {requestedLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!requestedLoading && requestedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!requestedLoading &&
+              !requestedAttachmentsHasError &&
+              missingAttachments.length > 0 && (
+                <Stack space={0}>
+                  {missingAttachments.map((attachment, index) => (
+                    <Box key={attachment.id ?? index}>
+                      <UserInfoLine
+                        label={getAttachmentName(attachment.attachmentTypeId)}
+                        renderContent={() => (
+                          <Tag variant="red" outlined disabled>
+                            {formatMessage(um.myDataMissingTag)}
+                          </Tag>
+                        )}
+                        editLink={{
+                          url: formatMessage(um.myDataSubmitDocumentsUrl),
+                          title: formatMessage(um.myDataSubmitDocuments),
+                          icon: 'arrowForward',
+                        }}
+                      />
+                      <Divider />
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+          </Box>
+
+          {/* Submitted attachments section */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataSubmittedAttachmentsHeading)}
+            </Text>
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!applicantDataLoading &&
+              !submittedAttachmentsHasError &&
+              submittedAttachments.length > 0 && (
+                <Stack space={0}>
+                  {submittedAttachments.map((attachment) => {
+                    const isViewable = VIEWABLE_CONTENT_TYPES.includes(
+                      attachment.contentType,
+                    )
+                    return (
+                      <Box key={attachment.id}>
+                        <UserInfoLine
+                          label={
+                            getAttachmentName(attachment.typeId) || attachment
+                          }
+                          content={
+                            attachment.created
+                              ? formatDateFns(attachment.created, 'dd.MM.yyyy')
+                              : ''
+                          }
+                          button={
+                            attachment.downloadServiceUrl
+                              ? {
+                                  title: formatMessage(
+                                    isViewable
+                                      ? um.myDataViewDocument
+                                      : um.myDataDownloadDocument,
+                                  ),
+                                  icon: isViewable
+                                    ? 'arrowForward'
+                                    : 'download',
+                                  iconType: isViewable ? undefined : 'outline',
+                                  onClick: () => {
+                                    if (attachment.downloadServiceUrl) {
+                                      formSubmit(attachment.downloadServiceUrl)
+                                    }
+                                  },
+                                }
+                              : undefined
+                          }
+                        />
+                        <Divider />
+                      </Box>
+                    )
+                  })}
+                </Stack>
+              )}
+          </Box>
+
+          {/* Bref */}
+          <Box paddingTop={4}>
+            <Text variant="eyebrow" color="purple600" marginBottom={2}>
+              {formatMessage(um.myDataLettersHeading)}
+            </Text>
+            {applicantDataLoading && <SkeletonLoader repeat={3} space={2} />}
+            {!applicantDataLoading && submittedAttachmentsHasError && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+            {!applicantDataLoading &&
+              !submittedAttachmentsHasError &&
+              lettersAttachments.length > 0 && (
+                <Stack space={0}>
+                  {lettersAttachments.map((attachment) => {
+                    return (
+                      <Box key={attachment.id}>
+                        <UserInfoLine
+                          label={attachment.name}
+                          content={
+                            attachment.created
+                              ? formatDateFns(attachment.created, 'dd.MM.yyyy')
+                              : ''
+                          }
+                          button={
+                            attachment.downloadServiceUrl
+                              ? {
+                                  title: um.myDataViewDocument,
+                                  icon: 'arrowForward',
+                                  onClick: () => {
+                                    setPdfUrl(
+                                      attachment.downloadServiceUrl || '',
+                                    )
+                                  },
+                                }
+                              : undefined
+                          }
+                        />
+                        <Divider />
+                      </Box>
+                    )
+                  })}
+                </Stack>
+              )}
+          </Box>
+        </>
       )}
     </IntroWrapper>
   )

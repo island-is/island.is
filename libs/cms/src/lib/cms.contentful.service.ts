@@ -1868,8 +1868,8 @@ export class CmsContentfulService {
     const params = {
       content_type: 'course',
       limit: 1000,
-      include: 0,
-      select: 'fields.title,sys',
+      include: 1,
+      select: 'fields.title,sys,fields.courseListPage',
       'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
       'fields.courseListPage.fields.organization.sys.id': input.organizationId,
     }
@@ -1878,12 +1878,13 @@ export class CmsContentfulService {
       await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
         input.lang,
         params,
-        0,
+        1,
       )
 
     const items = response.items.map((item) => ({
       id: item.sys.id,
       title: item.fields.title,
+      courseListPageId: item.fields.courseListPage?.sys?.id,
     }))
 
     items.sort(sortAlpha('title'))

@@ -17,7 +17,7 @@ import {
 import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../../dataProviders'
 
@@ -50,7 +50,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

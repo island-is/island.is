@@ -22,6 +22,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
+import { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
 import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
@@ -30,6 +31,7 @@ import { IncomePlanEligbility } from './models/income/incomePlanEligibility.mode
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
+import { YearWithMonths } from './models/personalTaxCredit/taxCardMonthsAndYears.model'
 import { mapToTaxCardType } from './enums/taxCardType'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
@@ -41,7 +43,6 @@ import {
   mapPensionCalculationInput,
   toYearWithMonths,
 } from './utils'
-import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
@@ -357,10 +358,32 @@ export class SocialInsuranceService {
       .getSpouseInfo(user)
       .catch(handle404)
     if (!data?.nationalId) return null
+
+    let deceasedReasonNotAllowedCode: string | undefined
+    let deceasedMonthsAndYears: YearWithMonths[] | undefined = undefined
+
+    if (data.isDeceased) {
+      const deceasedData =
+        await this.personalTaxCreditClient.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
+          user,
+        )
+
+      if (deceasedData?.canApply === false) {
+        deceasedReasonNotAllowedCode =
+          deceasedData.reasonNotAllowed ?? undefined
+      }
+
+      deceasedMonthsAndYears = deceasedData?.allowedYearMonths
+        ? toYearWithMonths(deceasedData.allowedYearMonths) ?? undefined
+        : undefined
+    }
+
     return {
       nationalId: data.nationalId,
       name: data.name ?? undefined,
       isDeceased: data.isDeceased ?? undefined,
+      deceasedMonthsAndYears,
+      deceasedReasonNotAllowedCode,
     }
   }
 

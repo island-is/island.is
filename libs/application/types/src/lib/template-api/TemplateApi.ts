@@ -1,4 +1,6 @@
+import { BffUser } from '@island.is/shared/types'
 import { DefaultEvents } from '../StateMachine'
+import { Application } from '../Application'
 
 export class TemplateApi<TParams = unknown> {
   /** Name of the action that will be run on the API
@@ -11,7 +13,9 @@ export class TemplateApi<TParams = unknown> {
   shouldPersistToExternalData?: boolean
   /** Id inside application.externalData, value of apiModuleAction is used by default
    * */
-  private _externalDataId?: string
+  private _externalDataId?:
+    | string
+    | ((application: Application, user: BffUser) => string)
   /**
    * Should the state transition be blocked if this action errors out
    * defaults to true
@@ -61,6 +65,18 @@ export class TemplateApi<TParams = unknown> {
     return this._externalDataId ? this._externalDataId : this.action
   }
 
+  public resolveExternalDataId(
+    application: Application,
+    nationalId?: string,
+  ): string {
+    const id = this._externalDataId
+    if (typeof id === 'function') {
+      const user = { profile: { nationalId: nationalId ?? '' } } as BffUser
+      return id(application, user)
+    }
+    return id || this.action
+  }
+
   configure(config: ConfigureTemplateApi<TParams>): TemplateApi<TParams> {
     const {
       order,
@@ -89,8 +105,13 @@ export class TemplateApi<TParams = unknown> {
 }
 
 interface DefineTemplateApi<TParams = unknown>
-  extends Omit<TemplateApi, 'configure' | 'actionId' | 'externalDataId'> {
-  externalDataId?: string
+  extends Omit<
+    TemplateApi,
+    'configure' | 'actionId' | 'externalDataId' | 'resolveExternalDataId'
+  > {
+  externalDataId?:
+    | string
+    | ((application: Application, user: BffUser) => string)
   namespace?: string
   triggerEvent?: DefaultEvents
   params?: TParams

@@ -1,7 +1,6 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseNotificationType,
-  IndictmentCaseNotificationType,
   RequestCaseNotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -35,10 +34,7 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    RequestCaseNotificationType.COURT_DATE,
-    IndictmentCaseNotificationType.RULING_ORDER_ADDED,
-  ],
+  dtoFieldValues: [RequestCaseNotificationType.COURT_DATE],
 }
 
 // Allows district court registrars to send notifications
@@ -55,28 +51,4 @@ export const districtCourtAssistantNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [RequestCaseNotificationType.COURT_DATE],
-}
-
-// Allows court of appeals judges to send notifiications
-export const courtOfAppealsJudgeNotificationRule: RolesRule = {
-  role: UserRole.COURT_OF_APPEALS_JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED],
-}
-
-// Allows court of appeals registrars to send notifications
-export const courtOfAppealsRegistrarNotificationRule: RolesRule = {
-  role: UserRole.COURT_OF_APPEALS_REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED],
-}
-
-// Allows court of appeals assistants to send notifications
-export const courtOfAppealsAssistantNotificationRule: RolesRule = {
-  role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'type',
-  dtoFieldValues: [AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED],
 }

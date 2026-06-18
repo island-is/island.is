@@ -825,6 +825,14 @@
               "type": "boolean"
             },
             "x-position": 2
+          },
+          {
+            "name": "onlyCapitalTypes",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 3
           }
         ],
         "responses": {
@@ -2156,14 +2164,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Attachment List",
+            "description": "ApplicantAttachmentsResponse",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
-                  }
+                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_Applicant_ApplicantAttachmentsResponse"
                 }
               }
             }
@@ -2384,233 +2389,6 @@
             }
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
-      "get": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Gets applicant info for Reykjavikurborg based on ssn",
-        "operationId": "ApplicantInfo_GetApplicantInfoForRSK",
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "JSON",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ApplicantInfo/getApplicantInfoForSI/{ssn}": {
-      "get": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Gets applicant info for Sjukratryggingar islands based on ssn",
-        "operationId": "ApplicantInfo_GetApplicantInfoForSI",
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "JSON",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ApplicantInfo/getApplicantStatusForSI/{ssn}": {
-      "get": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Nær í stöðu umsækjanda hjá VMST - er til virk umsókn í mánuði, er til umsókn í vinnslu, dags. umsóknar",
-        "operationId": "ApplicantInfo_GetApplicantStatusForSI",
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "period",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "JSON",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ApplicantInfo/{ssn}": {
-      "get": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Sækir upplýsingar umsækjanda sem notaðar eru til að uppfæra applicant profile",
-        "operationId": "ApplicantInfo_GetApplicantInfo",
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "JSON",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ApplicantInfoResponse"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      },
-      "patch": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Uppfæra upplýsingar einstaklings",
-        "operationId": "ApplicantInfo_UpdateApplicant",
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          }
-        ],
-        "requestBody": {
-          "x-name": "applicantInformation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_UpdateApplicantRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": "ApplicantInfoResponse",
-            "content": {
-              "application/octet-stream": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
-    "/api/ApplicantInfo/supportData": {
-      "get": {
-        "tags": ["ApplicantInfo"],
-        "summary": "Sækir stoðgögn fyrir umsækjanda upplýsingar",
-        "operationId": "ApplicantInfo_GetApplicantInfoSupportData",
-        "responses": {
-          "200": {
-            "description": "JSON",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_XRoad_API_Models_ApplicantInfoSupportDataResponse"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true,
         "security": [
           {
             "JWT": []
@@ -3437,8 +3215,9 @@
             "type": "string",
             "format": "guid"
           },
-          "description": {
-            "type": "string"
+          "typeId": {
+            "type": "string",
+            "format": "guid"
           },
           "estimatedIncome": {
             "type": "number",
@@ -3459,8 +3238,9 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "description": {
-            "type": "string"
+          "incomeTypeId": {
+            "type": "string",
+            "format": "guid"
           },
           "estimatedIncome": {
             "type": "number",
@@ -3489,10 +3269,6 @@
             "type": "string",
             "format": "guid"
           },
-          "pensionFundId": {
-            "type": "string",
-            "format": "guid"
-          },
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"
@@ -3513,10 +3289,6 @@
         "additionalProperties": false,
         "properties": {
           "typeId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "pensionFundId": {
             "type": "string",
             "format": "guid"
           },
@@ -7814,6 +7586,10 @@
           "reason": {
             "type": "string",
             "nullable": true
+          },
+          "reasonEN": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -7873,6 +7649,10 @@
             "type": "boolean"
           },
           "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
             "type": "string",
             "nullable": true
           }
@@ -7972,6 +7752,9 @@
             "items": {
               "$ref": "#/components/schemas/Galdur_XRoad_API_Models_OverviewItem"
             }
+          },
+          "jobSearchConfirmationStatus": {
+            "$ref": "#/components/schemas/Galdur_XRoad_API_Models_JobSearchConfirmationStatusDTO"
           }
         }
       },
@@ -7990,6 +7773,18 @@
           }
         }
       },
+      "Galdur_XRoad_API_Models_JobSearchConfirmationStatusDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "hasConfirmed": {
+            "type": "boolean"
+          }
+        }
+      },
       "Galdur_External_Domain_Requests_WithdrawOverviewResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -7998,6 +7793,10 @@
             "type": "boolean"
           },
           "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "reasonEN": {
             "type": "string",
             "nullable": true
           },
@@ -8015,6 +7814,26 @@
             "type": "string",
             "format": "",
             "nullable": true
+          }
+        }
+      },
+      "Galdur_XRoad_API_Models_Applicant_ApplicantAttachmentsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userSubmitted": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
+            }
+          },
+          "letters": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Attachment_AttachmentListItem"
+            }
           }
         }
       },
@@ -8073,6 +7892,10 @@
           "attachmentId": {
             "type": "string",
             "format": "guid"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -8639,6 +8462,16 @@
               "errorCode": {
                 "type": "string",
                 "nullable": true
+              },
+              "applicationId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "applicantId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
               }
             }
           }
@@ -9019,6 +8852,12 @@
             "type": "string",
             "description": "Auðkenni fyrir skilmála staðfestingar umsækjanda",
             "format": "guid",
+            "nullable": true
+          },
+          "applicationPayloadHash": {
+            "type": "string",
+            "description": "SHA256 hash af payload-i umsóknarinnar, notað til að greina duplicate umsóknir",
+            "format": "byte",
             "nullable": true
           }
         }

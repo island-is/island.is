@@ -30,6 +30,7 @@ export const announcerInfo = buildSection({
           ? m.announcerPermitToPostpone
           : m.announcer,
       description: m.applicantsInfoSubtitle,
+      nextButtonText: m.saveAndContinue,
       children: [
         buildTextField({
           id: 'applicant.name',

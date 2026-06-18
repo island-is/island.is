@@ -9,9 +9,16 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDistrictCourtUser,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -56,8 +63,6 @@ const OverviewBody = ({
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-
-  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
 
   return (
     <>
@@ -121,7 +126,10 @@ const OverviewBody = ({
             </Accordion>
           )}
           <Box component="section">
-            <IndictmentCaseFilesList workingCase={workingCase} />
+            <IndictmentCaseFilesList
+              workingCase={workingCase}
+              forceDisplayAdditionalFiles={true}
+            />
           </Box>
           <Box
             component="section"
@@ -135,26 +143,26 @@ const OverviewBody = ({
               size="small"
               onClick={() => {
                 router.push(
-                  `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
+                  `${DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
                 )
               }}
               disabled={workingCase.state === CaseState.CORRECTING}
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
-            {isUserAssignedJudge && (
+            {isDistrictCourtUser(user) && (
               <Button
                 variant="primary"
                 icon="add"
                 size="small"
                 onClick={() => {
                   router.push(
-                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                    `${DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
                   )
                 }}
                 disabled={workingCase.state === CaseState.CORRECTING}
               >
-                Kveða upp úrskurð undir rekstri máls
+                Hlaða upp úrskurði undir rekstri máls
               </Button>
             )}
           </Box>
@@ -167,7 +175,7 @@ const OverviewBody = ({
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             handleNavigationTo(
-              constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+              DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
             )
           }
           nextButtonText={formatMessage(core.continue)}
