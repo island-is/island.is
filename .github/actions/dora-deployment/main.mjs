@@ -1,5 +1,5 @@
 // @ts-check
-import { execSync } from 'node:child_process'
+import { execSync, execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, appendFileSync } from 'node:fs'
 
 const DATADOG_CI_VERSION = 'v5.19.0'
@@ -81,19 +81,15 @@ export function handleFinish() {
   // Send events
   for (const service of services) {
     console.log(`DORA: ${service} -> ${env}`)
-    execSync(
-      [
-        DATADOG_CI_PATH,
-        'dora deployment',
-        `--service "${service}"`,
-        `--started-at "${startedAt}"`,
-        `--finished-at "${effectiveFinishedAt}"`,
-        `--git-repository-url "${repoUrl}"`,
-        `--git-commit-sha "${commitSha}"`,
-        `--env "${env}"`,
-      ].join(' '),
-      { stdio: 'inherit' },
-    )
+    execFileSync(DATADOG_CI_PATH, [
+      'dora', 'deployment',
+      '--service', service,
+      '--started-at', String(startedAt),
+      '--finished-at', String(effectiveFinishedAt),
+      '--git-repository-url', repoUrl,
+      '--git-commit-sha', commitSha,
+      '--env', env,
+    ], { stdio: 'inherit' })
   }
 
   console.log(`DORA: sent ${services.length} deployment event(s)`)
