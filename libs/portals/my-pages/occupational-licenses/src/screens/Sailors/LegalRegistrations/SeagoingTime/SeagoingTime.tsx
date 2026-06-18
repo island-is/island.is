@@ -43,10 +43,7 @@ type SeaServiceState = {
   page?: number
 }
 
-const defaultState: SeaServiceState = {
-  dateFrom: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-  dateTo: new Date(),
-}
+const defaultState: SeaServiceState = {}
 
 const columnHelper = createColumnHelper<ShipRegistrySailorCrewRegistration>()
 
