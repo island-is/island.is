@@ -62,7 +62,7 @@ describe('BlikkClientService', () => {
       items: [{ name: 'Vegabréf', quantity: 1, unitPrice: '14000' }],
     }
 
-    it('POSTs to /ecom/v3/payments with the API-Key header and returns the parsed response', async () => {
+    it('POSTs to /ecom/v3/payments/direct-debtor with the API-Key header and returns the parsed response', async () => {
       fetchMock.mockResolvedValue(
         okResponse({ id: 'prov-1', status: 'PENDING' }),
       )
@@ -71,7 +71,9 @@ describe('BlikkClientService', () => {
 
       expect(fetchMock).toHaveBeenCalledTimes(1)
       const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments')
+      expect(url).toBe(
+        'https://stage.blikk.tech/ecom/v3/payments/direct-debtor',
+      )
       expect(options.method).toBe('POST')
       expect(options.headers['API-Key']).toBe('test-key')
       expect(options.headers['Content-Type']).toBe('application/json')

@@ -145,7 +145,17 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         } else if (selectedPaymentMethod === 'bank_transfer') {
-          await bankTransferPayment.processBankTransferPayment()
+          const { bankAccountNumber } = data
+          if (!bankAccountNumber) {
+            setPaymentError({
+              code: BankTransferErrorCode.MissingBankAccountNumber,
+            })
+            setIsInitiatingSubmit(false)
+            return
+          }
+          await bankTransferPayment.processBankTransferPayment(
+            bankAccountNumber,
+          )
         }
       } catch (e: unknown) {
         if (

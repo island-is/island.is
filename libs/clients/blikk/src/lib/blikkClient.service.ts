@@ -34,13 +34,16 @@ export class BlikkClientService {
     private readonly logger: Logger,
   ) {}
 
-  /** `POST /ecom/v3/payments` — create a new payment attempt. */
+  /**
+   * `POST /ecom/v3/payments/direct-debtor` — create a direct-debtor payment attempt. The payer's
+   * national id (`debtorExternalId`) and bank account number (`debtorBban`) are supplied up front.
+   */
   createPayment(
     body: CreateBlikkPaymentRequest,
   ): Promise<BlikkCreatePaymentResponse> {
     return this.send(
       'POST',
-      '/ecom/v3/payments',
+      '/ecom/v3/payments/direct-debtor',
       blikkCreatePaymentResponseSchema,
       body,
     )

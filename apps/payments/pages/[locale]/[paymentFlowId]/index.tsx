@@ -252,6 +252,7 @@ function PaymentPage({
       card: '',
       cardExpiry: '',
       cardCVC: '',
+      bankAccountNumber: '',
     },
   })
   const { formatMessage } = useLocale()
@@ -360,9 +361,12 @@ function PaymentPage({
     isBankTransferPaymentEnabledForUser,
   ])
 
-  // Invoice payment or bank transfer doesn't have any input fields, so we don't need to check if it's valid
+  // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
     selectedPaymentMethod === 'card' && !methods.formState.isValid
+
+  const isBankTransferPaymentInvalid =
+    selectedPaymentMethod === 'bank_transfer' && !methods.formState.isValid
 
   const invalidFlowSetup =
     !organization ||
@@ -538,7 +542,11 @@ function PaymentPage({
                     type="submit"
                     loading={overallIsSubmitting}
                     fluid
-                    disabled={overallIsSubmitting || isCardPaymentInvalid}
+                    disabled={
+                      overallIsSubmitting ||
+                      isCardPaymentInvalid ||
+                      isBankTransferPaymentInvalid
+                    }
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)

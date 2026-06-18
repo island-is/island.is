@@ -196,6 +196,23 @@ export const paymentErrorToTitleAndMessage = (
         title: bankTransferError.expiredTitle,
         message: bankTransferError.expired,
       }
+    case BankTransferErrorCode.FailedToCreateBankTransfer:
+    case BankTransferErrorCode.BankTransferAlreadyInProgress:
+      return {
+        title: bankTransferError.failedToCreateTitle,
+        message: bankTransferError.failedToCreate,
+      }
+    case BankTransferErrorCode.MissingBankAccountNumber:
+      return {
+        title: bankTransferError.missingAccountNumberTitle,
+        message: bankTransferError.missingAccountNumber,
+      }
+    case BankTransferErrorCode.FailedToFetchBankTransfer:
+    case BankTransferErrorCode.UnknownBankTransferError:
+      return {
+        title: bankTransferError.genericTitle,
+        message: bankTransferError.generic,
+      }
     default:
       return {
         title: cardError.unknownTitle,

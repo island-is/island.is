@@ -58,7 +58,7 @@ sequenceDiagram
     FE->>GQL: paymentsCreateBankTransfer
     GQL->>SVC: create()
     SVC->>SVC: isEligibleToBePaid + find active row
-    SVC->>B: POST /ecom/v3/payments (amount, items, expiresAt, callbackUrl)
+    SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorBban)
     B-->>SVC: { id, status, scaRedirectUrl? }
     SVC->>SVC: persist row (PENDING), emit payment_started
     SVC-->>FE: { providerPaymentId, scaRedirectUrl, expiresAt }

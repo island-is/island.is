@@ -20,6 +20,10 @@ export interface CreateBlikkPaymentRequest {
   // Unix seconds.
   expiresAt?: number
   items?: BlikkItem[]
+  // Deptor -> payer
+  debtorExternalId?: string
+  debtorName?: string
+  debtorBban?: string
 }
 
 export const blikkCreatePaymentResponseSchema = z.object({

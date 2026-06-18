@@ -138,6 +138,8 @@ describe('BankTransferService', () => {
         callbackUrl: 'https://island.is/api/bank-transfer/callback',
         partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
         expiresAt: 1234567890,
+        debtorExternalId: '1234567890',
+        bankAccountNumber: '123456789012',
         items: [
           {
             performingOrgID: '5500000000',
@@ -156,6 +158,10 @@ describe('BankTransferService', () => {
       // The provider idempotency key is the per-attempt sourceReferenceId, not the paymentFlowId.
       expect(body.sourceReferenceId).toBe('btp-9b1c')
       expect(body.expiresAt).toBe(1234567890)
+      // Payer national id → debtorExternalId + debtorName; entered BBAN → debtorBban (raw digits).
+      expect(body.debtorExternalId).toBe('1234567890')
+      expect(body.debtorName).toBe('1234567890')
+      expect(body.debtorBban).toBe('123456789012')
       // Provider items: chargeItemName→name, priceAmount→string unitPrice, chargeItemCode→sku.
       expect(body.items).toEqual([
         { name: 'Vegabréf', quantity: 1, unitPrice: '14000', sku: 'AB123' },
@@ -235,6 +241,7 @@ describe('BankTransferService', () => {
     const createInput = {
       paymentFlowId: 'flow-1',
       locale: BankTransferLocale.IS,
+      bankAccountNumber: '123456789012',
     }
 
     const mockBlikkCreate = () =>
@@ -248,6 +255,19 @@ describe('BankTransferService', () => {
 
     beforeEach(() => {
       bankTransferPaymentModel.findOne.mockResolvedValue(null)
+    })
+
+    it('passes the payer national id and bank account number to the provider create', async () => {
+      const blikkSpy = mockBlikkCreate()
+
+      await service.create(createInput)
+
+      expect(blikkSpy).toHaveBeenCalledTimes(1)
+      expect(blikkSpy.mock.calls[0][0]).toMatchObject({
+        // payerNationalId from the getPaymentFlowDetails mock above.
+        debtorExternalId: '1234567890',
+        bankAccountNumber: '123456789012',
+      })
     })
 
     it('throws PaymentFlowAlreadyPaid when the flow is already PAID', async () => {

@@ -17,6 +17,27 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Hefja millifærslu',
     description: 'Primary button label that initiates the bank-transfer flow',
   },
+  accountNumber: {
+    id: 'payments:bankTransfer.accountNumber',
+    defaultMessage: 'Úttektarreikningur',
+    description: 'Label for the payer bank account number (BBAN) input',
+  },
+  accountNumberPlaceholder: {
+    id: 'payments:bankTransfer.accountNumberPlaceholder',
+    defaultMessage: '0000-00-000000',
+    description: 'Placeholder for the bank account number input (XXXX-XX-XXXXXX)',
+  },
+  accountNumberRequired: {
+    id: 'payments:bankTransfer.accountNumberRequired',
+    defaultMessage: 'Úttektarreikningur er nauðsynlegur',
+    description: 'Validation error when the bank account number is empty',
+  },
+  accountNumberInvalid: {
+    id: 'payments:bankTransfer.accountNumberInvalid',
+    defaultMessage: 'Sláðu inn gilt reikningsnúmer (0000-00-000000)',
+    description:
+      'Validation error when the bank account number is not 12 digits',
+  },
   cancel: {
     id: 'payments:bankTransfer.cancel',
     defaultMessage: 'Hætta við',
@@ -61,6 +82,31 @@ export const bankTransferError = defineMessages({
     id: 'payments:bankTransferError.generic',
     defaultMessage: 'Millifærsla mistókst',
     description: 'Generic error after a failed bank transfer',
+  },
+  failedToCreate: {
+    id: 'payments:bankTransferError.failedToCreate',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að hefja millifærslu. Vinsamlegast reynið aftur.',
+    description:
+      'Error shown when creating/initiating the bank transfer fails (e.g. provider rejected the create request)',
+  },
+  failedToCreateTitle: {
+    id: 'payments:bankTransferError.failedToCreateTitle',
+    defaultMessage: 'Ekki tókst að hefja millifærslu',
+    description:
+      'Header on the error view when creating/initiating the bank transfer fails',
+  },
+  missingAccountNumber: {
+    id: 'payments:bankTransferError.missingAccountNumber',
+    defaultMessage: 'Sláðu inn úttektarreikning til að hefja millifærslu.',
+    description:
+      'Error shown when the bank transfer is submitted without an account number',
+  },
+  missingAccountNumberTitle: {
+    id: 'payments:bankTransferError.missingAccountNumberTitle',
+    defaultMessage: 'Úttektarreikning vantar',
+    description:
+      'Header on the error view when the bank account number is missing',
   },
   genericTitle: {
     id: 'payments:bankTransferError.genericTitle',

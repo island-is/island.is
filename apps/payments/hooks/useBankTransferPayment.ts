@@ -31,56 +31,60 @@ export const useBankTransferPayment = ({
   const [createBankTransferMutation, { loading: createBankTransferLoading }] =
     useCreateBankTransferMutation()
 
-  const processBankTransferPayment = useCallback(async () => {
-    if (!paymentFlowId) {
-      onPaymentError({ code: CardErrorCode.GenericDecline })
-      return
-    }
+  const processBankTransferPayment = useCallback(
+    async (bankAccountNumber: string) => {
+      if (!paymentFlowId) {
+        onPaymentError({ code: CardErrorCode.GenericDecline })
+        return
+      }
 
-    try {
-      const response = await createBankTransferMutation({
-        variables: {
-          input: {
-            paymentFlowId,
-            locale: toLocale(lang),
+      try {
+        const response = await createBankTransferMutation({
+          variables: {
+            input: {
+              paymentFlowId,
+              locale: toLocale(lang),
+              bankAccountNumber,
+            },
           },
-        },
-      })
+        })
 
-      const scaRedirectUrl =
-        response.data?.paymentsCreateBankTransfer?.scaRedirectUrl
+        const scaRedirectUrl =
+          response.data?.paymentsCreateBankTransfer?.scaRedirectUrl
 
-      // Interactive SCA → redirect.
-      if (scaRedirectUrl) {
-        if (!isHttpsUrl(scaRedirectUrl)) {
-          onPaymentError({
-            code: BankTransferErrorCode.FailedToCreateBankTransfer,
-          })
+        // Interactive SCA → redirect.
+        if (scaRedirectUrl) {
+          if (!isHttpsUrl(scaRedirectUrl)) {
+            onPaymentError({
+              code: BankTransferErrorCode.FailedToCreateBankTransfer,
+            })
+            return
+          }
+          window.location.assign(scaRedirectUrl)
           return
         }
-        window.location.assign(scaRedirectUrl)
-        return
-      }
 
-      // No SCA redirect URL → reload so SSR lands on the dedicated waiting screen.
-      router.reload()
-    } catch (e: unknown) {
-      // The flow already settled (e.g. a callback/redirect race finalized it) — reload to land on
-      // the receipt instead of surfacing a generic error and looping back to payment selection.
-      if (
-        findProblemInApolloError(e as ApolloError)?.detail ===
-        PaymentServiceCode.PaymentFlowAlreadyPaid
-      ) {
+        // No SCA redirect URL → reload so SSR lands on the dedicated waiting screen.
         router.reload()
-        return
+      } catch (e: unknown) {
+        const detail = findProblemInApolloError(e as ApolloError)?.detail
+
+        // The flow already settled (e.g. a callback/redirect race finalized it) — reload to land on
+        // the receipt instead of surfacing a generic error and looping back to payment selection.
+        if (detail === PaymentServiceCode.PaymentFlowAlreadyPaid) {
+          router.reload()
+          return
+        }
+
+        onPaymentError({
+          code:
+            (detail as BankTransferErrorCode) ??
+            BankTransferErrorCode.FailedToCreateBankTransfer,
+        })
       }
-      onPaymentError({
-        code: (e instanceof Error
-          ? e.message
-          : CardErrorCode.UnknownCardError) as CardErrorCode,
-      })
-    }
-  }, [paymentFlowId, lang, createBankTransferMutation, onPaymentError, router])
+    },
+    [paymentFlowId, lang, createBankTransferMutation, onPaymentError, router],
+  )
 
   return {
     processBankTransferPayment,

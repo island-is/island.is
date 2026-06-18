@@ -128,6 +128,8 @@ export class BankTransferService {
         partnerRedirectUrl,
         expiresAt: expiresAtSeconds,
         items: catalogItems,
+        debtorExternalId: paymentFlow.payerNationalId,
+        bankAccountNumber: input.bankAccountNumber,
       })
     } catch (error) {
       const errorMessage = (error as Error)?.message ?? 'unknown'
@@ -534,6 +536,10 @@ export class BankTransferService {
       partnerRedirectUrl: input.partnerRedirectUrl,
       expiresAt: input.expiresAt,
       items: input.items?.map(toBlikkItem),
+      debtorExternalId: input.debtorExternalId,
+      // Blikk expects a debtor name; we send the national id.
+      debtorName: input.debtorExternalId,
+      debtorBban: input.bankAccountNumber,
     }
 
     try {

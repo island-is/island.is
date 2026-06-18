@@ -9,4 +9,7 @@ export class CreateBankTransferInput {
 
   @Field(() => String)
   locale!: Locale
+
+  @Field(() => String)
+  bankAccountNumber!: string
 }
