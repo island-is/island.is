@@ -271,7 +271,6 @@ describe('CaseController - Update', () => {
         expect.arrayContaining([
           expect.objectContaining({
             type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-            user,
             caseId,
             body: expect.objectContaining({
               type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
@@ -307,7 +306,6 @@ describe('CaseController - Update', () => {
         expect.arrayContaining([
           expect.objectContaining({
             type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-            user,
             caseId,
             body: expect.objectContaining({
               type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,

@@ -2050,7 +2050,6 @@ export class CaseService {
     ) {
       addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        user,
         caseId: updatedCase.id,
         body: {
           type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
