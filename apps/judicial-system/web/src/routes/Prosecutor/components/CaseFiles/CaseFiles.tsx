@@ -28,11 +28,15 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  PoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useDebouncedInput,
   useFileList,
+  usePoliceDigitalCaseFile,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -44,6 +48,7 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
+import { PoliceDigitalCaseFilesList } from '../PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
@@ -82,6 +87,13 @@ export const CaseFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
+
+  const {
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+    digitalCaseFilesError,
+    deletePoliceDigitalCaseFile,
+  } = usePoliceDigitalCaseFile()
 
   const caseFilesComments = useDebouncedInput('caseFilesComments', [])
 
@@ -224,6 +236,21 @@ export const CaseFiles = () => {
               policeCaseFileList={policeCaseFileList}
               policeCaseFiles={policeCaseFiles}
             />
+            {((digitalCaseFiles && digitalCaseFiles.length > 0) ||
+              digitalCaseFilesError) && (
+              <PoliceDigitalCaseFilesList
+                digitalCaseFiles={digitalCaseFiles ?? []}
+                onRemove={(file: PoliceDigitalCaseFile) => {
+                  deletePoliceDigitalCaseFile(file.id)
+                }}
+                isLoading={digitalCaseFilesLoading}
+                errorMessage={
+                  digitalCaseFilesError
+                    ? 'Ekki tókst að sækja rafræn skjöl í LÖKE.'
+                    : undefined
+                }
+              />
+            )}
           </section>
           <section>
             <SectionHeading

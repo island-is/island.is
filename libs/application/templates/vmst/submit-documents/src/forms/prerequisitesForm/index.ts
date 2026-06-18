@@ -11,6 +11,7 @@ import { FormModes } from '@island.is/application/types'
 import { prereq as pm, application as am } from '../../lib/messages'
 import {
   GetAttachmentTypesApi,
+  GetRequestedAttachments,
   SubmitDocumentsEligibilityApi,
 } from '../../dataProviders'
 
@@ -38,6 +39,9 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: SubmitDocumentsEligibilityApi,
+            }),
+            buildDataProviderItem({
+              provider: GetRequestedAttachments,
             }),
           ],
           submitField: buildSubmitField({

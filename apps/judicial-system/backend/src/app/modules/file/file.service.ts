@@ -33,6 +33,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
@@ -683,6 +684,32 @@ export class FileService {
     }
 
     return updatedCaseFiles[0]
+  }
+
+  async confirmRulingOrder(
+    theCase: Case,
+    caseFile: CaseFile,
+    transaction?: Transaction,
+  ): Promise<CaseFile> {
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'Only ruling orders uploaded during the course of a case can be confirmed',
+      )
+    }
+
+    if (caseFile.submissionDate) {
+      throw new BadRequestException('The ruling order is already confirmed')
+    }
+
+    // Setting the submission date marks the ruling order as confirmed by the
+    // registered judge. The RVG confirmation stamp is added lazily on download
+    // based on this date (see confirmIndictmentCaseFile).
+    return this.updateCaseFile(
+      theCase.id,
+      caseFile.id,
+      { submissionDate: nowFactory().toISOString() },
+      transaction,
+    )
   }
 
   async updateFiles(

@@ -17,7 +17,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -52,7 +52,7 @@ export const form: Form = buildForm({
           checkboxLabel: m.externalDataSectionCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: '',
               subTitle: '',
             }),

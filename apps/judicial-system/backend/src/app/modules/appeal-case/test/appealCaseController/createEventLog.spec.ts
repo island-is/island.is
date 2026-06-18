@@ -110,7 +110,7 @@ describe('AppealCaseController - Create event log', () => {
     it('should queue the appeal statement notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: { type: AppealCaseNotificationType.APPEAL_STATEMENT },
         }),

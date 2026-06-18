@@ -36,6 +36,7 @@ import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
+import { AppealCaseNotificationService } from '../services/appealCaseNotification/appealCaseNotification.service'
 import { CaseNotificationService } from '../services/caseNotification/caseNotification.service'
 import { CivilClaimantNotificationService } from '../services/civilClaimantNotification/civilClaimantNotification.service'
 import { DefendantNotificationService } from '../services/defendantNotification/defendantNotification.service'
@@ -140,6 +141,7 @@ export const createTestingNotificationModule = async () => {
       { provide: InstitutionService, useValue: { getAll: jest.fn() } },
       EventService,
       NotificationService,
+      AppealCaseNotificationService,
       CaseNotificationService,
       NotificationDispatchService,
       InstitutionNotificationService,

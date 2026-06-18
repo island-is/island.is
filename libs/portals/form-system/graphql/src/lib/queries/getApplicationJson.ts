@@ -6,6 +6,7 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
     formSystemApplicationJsonSample(input: $input) {
       jsonSample {
         id
+        organizationNationalId
         slug
         isTest
         status
@@ -13,6 +14,14 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
         fields {
           identifier
           screenIdentifier
+          screenTitle {
+            is
+            en
+          }
+          fieldTitle {
+            is
+            en
+          }
           fieldType
           fieldSettings {
             isDecimal
