@@ -164,11 +164,13 @@ export const ModalBase: FC<ModalBaseProps> = ({
         // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
         // function child compiling. Remove when this migrates to ariakit.
         <DialogDisclosure {...modal} {...(disclosure.props as any)}>
-          {((disclosureProps: DisclosureProps) =>
-            renderDisclosure(
-              React.cloneElement(disclosure, disclosureProps),
-              disclosureProps,
-            )) as any}
+          {
+            ((disclosureProps: DisclosureProps) =>
+              renderDisclosure(
+                React.cloneElement(disclosure, disclosureProps),
+                disclosureProps,
+              )) as any
+          }
         </DialogDisclosure>
       )}
 

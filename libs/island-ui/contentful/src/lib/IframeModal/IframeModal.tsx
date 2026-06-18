@@ -72,8 +72,10 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
         // (runtime unaffected); the `as any` casts keep the unknown-props spread and the
         // function child compiling. Remove when this migrates to ariakit.
         <DialogDisclosure {...dialog} {...(disclosure.props as any)}>
-          {((disclosureProps: any) =>
-            React.cloneElement(disclosure, disclosureProps)) as any}
+          {
+            ((disclosureProps: any) =>
+              React.cloneElement(disclosure, disclosureProps)) as any
+          }
         </DialogDisclosure>
       )}
       <DialogBackdrop {...dialog} as={IframeModalDiv}>

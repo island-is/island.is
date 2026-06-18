@@ -18,7 +18,7 @@ import cn from 'classnames'
 import { LinkButton } from '../LinkButton/LinkButton'
 import { GeneralButton } from '../GeneralButton/GeneralButton'
 
-import type { JSX } from "react";
+import type { JSX } from 'react'
 
 type ButtonProps =
   | {

@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react';
+import React, { type JSX } from 'react'
 import Modal from 'react-modal'
 
 const customStyles = {

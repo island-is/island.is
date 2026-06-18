@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, Fragment, useCallback, useEffect, useState, type JSX } from 'react';
+import { FC, Fragment, useCallback, useEffect, useState, type JSX } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'

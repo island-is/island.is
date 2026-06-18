@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react';
+import React, { type JSX } from 'react'
 import { Box, BulletList, Bullet } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'

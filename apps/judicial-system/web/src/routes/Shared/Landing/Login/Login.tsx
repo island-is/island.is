@@ -11,7 +11,7 @@ import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import { strings } from './Login.string'
 import * as styles from './Login.css'
 
-import type { JSX } from "react";
+import type { JSX } from 'react'
 
 const Login = () => {
   const router = useRouter()
