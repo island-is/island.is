@@ -215,6 +215,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              organizationNationalId: state.application.organizationNationalId,
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
