@@ -10,7 +10,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/customs-calculator"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/rsk/customs-calculator"
+      ],
       "options": {
         "jestConfig": "libs/clients/rsk/customs-calculator/jest.config.ts"
       }
