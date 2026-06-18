@@ -1,4 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  resolveFieldId,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   VehicleSelectField,
@@ -13,6 +17,7 @@ import {
   ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -41,18 +46,36 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   errors,
   setFieldLoadingState,
 }) => {
+  const {
+    id,
+    itemType,
+    itemList,
+    getDetails,
+    shouldValidateErrorMessages,
+    shouldValidateDebtStatus,
+    shouldValidateRenewal,
+    alertMessageErrorTitle,
+    validationErrorMessages,
+    validationErrorFallbackMessage,
+    inputErrorMessage,
+    debtStatusErrorMessage,
+    renewalExpiresAtTag,
+    validateRenewal,
+  } = field
   const { formatMessage, formatDateFns } = useLocale()
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id: field.id }, application, user)
   const { setValue } = useFormContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  let answersSelectedValueKey = field.id
-  let answersSelectedIndexKey = field.id
-  if (field.itemType === 'VEHICLE') {
-    answersSelectedValueKey = `${field.id}.plate`
-    answersSelectedIndexKey = `${field.id}.vehicle`
-  } else if (field.itemType === 'PLATE') {
-    answersSelectedValueKey = `${field.id}.regno`
-    answersSelectedIndexKey = `${field.id}.value`
+  let answersSelectedValueKey = resolvedId
+  let answersSelectedIndexKey = resolvedId
+  if (itemType === 'VEHICLE') {
+    answersSelectedValueKey = `${resolvedId}.plate`
+    answersSelectedIndexKey = `${resolvedId}.vehicle`
+  } else if (itemType === 'PLATE') {
+    answersSelectedValueKey = `${resolvedId}.regno`
+    answersSelectedIndexKey = `${resolvedId}.value`
   }
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
@@ -64,7 +87,7 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     VehicleDetails | undefined
   >(
     getItemAtIndex(
-      field.itemList as BasicVehicleDetails[],
+      itemList as BasicVehicleDetails[],
       getValueViaPath<string>(application.answers, answersSelectedIndexKey) ||
         '',
     ),
@@ -74,16 +97,16 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     PlateOwnership | undefined
   >(
     getItemAtIndex(
-      field.itemList as BasicPlateOwnership[],
+      itemList as BasicPlateOwnership[],
       getValueViaPath<string>(application.answers, answersSelectedIndexKey) ||
         '',
     ),
   )
 
   const onChange = async (option: Option) => {
-    if (field.itemType === 'VEHICLE') {
+    if (itemType === 'VEHICLE') {
       onChangeVehicle(option.value)
-    } else if (field.itemType === 'PLATE') {
+    } else if (itemType === 'PLATE') {
       onChangePlate(option.value)
     }
   }
@@ -91,17 +114,14 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const onChangeVehicle = async (index: string) => {
     setIsLoading(true)
     try {
-      const vehicle = getItemAtIndex(
-        field.itemList as BasicVehicleDetails[],
-        index,
-      )
+      const vehicle = getItemAtIndex(itemList as BasicVehicleDetails[], index)
       if (!vehicle?.permno) {
         throw new Error('Selected vehicle not found')
       }
 
       let vehicleDetails: VehicleDetails | undefined
-      if (field.getDetails) {
-        const response = await field.getDetails(vehicle.permno || '')
+      if (getDetails) {
+        const response = await getDetails?.(vehicle.permno || '')
         vehicleDetails = extractDetails(response)
       }
 
@@ -115,19 +135,19 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
       })
 
       const hasValidationError =
-        field.shouldValidateErrorMessages &&
+        shouldValidateErrorMessages &&
         !!vehicleDetails?.validationErrorMessages?.length
       const hasDebtError =
-        field.shouldValidateDebtStatus && !vehicleDetails?.isDebtLess
+        shouldValidateDebtStatus && !vehicleDetails?.isDebtLess
       const disabled = hasValidationError || hasDebtError
 
       const permno = disabled ? '' : vehicle.permno || ''
 
       setSelectedValue(permno)
 
-      setValue(`${field.id}.plate`, permno)
-      setValue(`${field.id}.type`, vehicle.make)
-      setValue(`${field.id}.color`, vehicle.color || undefined)
+      setValue(`${resolvedId}.plate`, permno)
+      setValue(`${resolvedId}.type`, vehicle.make)
+      setValue(`${resolvedId}.color`, vehicle.color || undefined)
 
       setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
       setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
@@ -144,17 +164,14 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const onChangePlate = async (index: string) => {
     setIsLoading(true)
     try {
-      const plate = getItemAtIndex(
-        field.itemList as BasicPlateOwnership[],
-        index,
-      )
+      const plate = getItemAtIndex(itemList as BasicPlateOwnership[], index)
       if (!plate?.regno) {
         throw new Error('Selected plate not found')
       }
 
       let plateDetails: PlateOwnershipValidation | undefined
-      if (field.getDetails) {
-        const response = await field.getDetails(plate.regno || '')
+      if (getDetails) {
+        const response = await getDetails(plate.regno || '')
         plateDetails = extractDetails(response)
       }
 
@@ -166,17 +183,16 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
       })
 
       const hasValidationError =
-        field.shouldValidateErrorMessages &&
+        shouldValidateErrorMessages &&
         !!plateDetails?.validationErrorMessages?.length
-      const canRenew =
-        !field.shouldValidateRenewal || field.validateRenewal?.(plate)
+      const canRenew = !shouldValidateRenewal || validateRenewal?.(plate)
       const disabled = hasValidationError || !canRenew
 
       const regno = disabled ? '' : plate.regno || ''
 
       setSelectedValue(regno)
 
-      setValue(`${field.id}.regno`, regno)
+      setValue(`${resolvedId}.regno`, regno)
     } catch (error) {
       console.error('error', error)
     } finally {
@@ -387,14 +403,16 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
         {isLoading ? <SkeletonLoader /> : selectedItemActionCard}
       </Box>
 
-      {!isLoading && !selectedValue?.length && !!errors?.[field.id] && (
-        <InputError
-          errorMessage={
-            field.inputErrorMessage &&
-            formatText(field.inputErrorMessage, application, formatMessage)
-          }
-        />
-      )}
+      {!isLoading &&
+        !selectedValue?.length &&
+        !!errors?.[field.id as string] && (
+          <InputError
+            errorMessage={
+              field.inputErrorMessage &&
+              formatText(field.inputErrorMessage, application, formatMessage)
+            }
+          />
+        )}
     </Box>
   )
 }

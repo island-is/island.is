@@ -33,7 +33,7 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
     case FieldTypesEnum.EMAIL:
       return !validateEmail(value?.email ?? '')
     case FieldTypesEnum.PHONE_NUMBER:
-      return !validatePhoneNumber(value?.phoneNumber ?? '')
+      return value?.phoneNumber === '' || !value.phoneNumber
     case FieldTypesEnum.NATIONAL_ID:
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
     case FieldTypesEnum.ISK_NUMBERBOX:
@@ -69,12 +69,6 @@ const validateEmail = (value?: string) => {
   if (!value) return false
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
   return emailRegex.test(value)
-}
-
-const validatePhoneNumber = (value?: string) => {
-  if (!value) return false
-  const phoneNumberRegex = /^\d{3}-\d{4}$/
-  return phoneNumberRegex.test(value)
 }
 
 // TODO: Currently only validates nationalId, needs implementation once connection has been made to the national registry

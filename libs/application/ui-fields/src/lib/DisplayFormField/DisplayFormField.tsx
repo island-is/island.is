@@ -1,7 +1,12 @@
-import { formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatTextWithLocale,
+  resolveFieldClearOnChange,
+  resolveFieldId,
+} from '@island.is/application/core'
 import { DisplayField, FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { InputController } from '@island.is/shared/form-fields'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -28,13 +33,15 @@ export const DisplayFormField = ({ field, application }: Props) => {
   const { watch, setValue } = useFormContext()
   const allValues = watch()
   const { formatMessage, lang: locale } = useLocale()
-  const [displayValue, setDisplayValue] = useState(allValues[id])
+  const user = useUserInfo()
+  const resolvedId = resolveFieldId({ id }, application, user)
+  const [displayValue, setDisplayValue] = useState(allValues[resolvedId])
 
   useEffect(() => {
     const newDisplayValue = value(allValues, application.externalData)
     if (newDisplayValue !== displayValue) {
       setDisplayValue(newDisplayValue)
-      setValue(id, newDisplayValue)
+      setValue(resolvedId, newDisplayValue)
     }
   }, [allValues])
 
@@ -63,8 +70,8 @@ export const DisplayFormField = ({ field, application }: Props) => {
         ) : null}
 
         <InputController
-          id={id}
-          name={id}
+          id={resolvedId}
+          name={resolvedId}
           label={
             label &&
             formatTextWithLocale(
@@ -92,7 +99,10 @@ export const DisplayFormField = ({ field, application }: Props) => {
               ? undefined
               : variant
           }
-          clearOnChange={clearOnChange}
+          clearOnChange={resolveFieldClearOnChange(
+            { clearOnChange },
+            application,
+          )}
           clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>
