@@ -1,23 +1,23 @@
 import { v4 as uuid } from 'uuid'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
 
+import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  ROUTE_HANDLER_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   CaseIndictmentRulingDecision,
   CaseType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_INDICTMENT_CASE_ROUTE,
-  ROUTE_HANDLER_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
-import { notificationModuleConfig } from '../../../notification.config'
 
 import { Case } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
+import { notificationModuleConfig } from '../../../notification.config'
 
 interface Then {
   result: DeliverResponse
