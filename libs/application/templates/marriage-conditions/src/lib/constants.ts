@@ -36,6 +36,7 @@ export type DistrictCommissionerAgencies = {
 
 export type Religion = {
   name: string
+  code: string
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2
