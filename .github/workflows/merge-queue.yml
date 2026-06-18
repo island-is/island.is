@@ -288,6 +288,46 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+
+      - name: Send DORA deployment events
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+          BASE_REF: ${{ github.event.merge_group.base_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          curl -L --fail "https://github.com/DataDog/datadog-ci/releases/latest/download/datadog-ci_linux-x64" \
+            --output ./datadog-ci && chmod +x ./datadog-ci
+
+          FINISHED_AT="$(date +%s)"
+          STARTED_AT=$((FINISHED_AT - 1))
+          REPO_URL="${{ github.server_url }}/${{ github.repository }}"
+          COMMIT_SHA="${{ github.sha }}"
+
+          # Determine environment from base branch
+          if [[ "$BASE_REF" == "refs/heads/main" || "$BASE_REF" == "main" ]]; then
+            DEPLOY_ENV="dev"
+          elif [[ "$BASE_REF" =~ release/ ]]; then
+            DEPLOY_ENV="prod"
+          else
+            echo "Unknown base ref: $BASE_REF, skipping DORA events"
+            exit 0
+          fi
+
+          # Read deployed services from build data
+          SERVICES=$(cat /tmp/data.json | jq -r '.[].project' | sort -u)
+
+          for service in $SERVICES; do
+            echo "DORA: $service -> $DEPLOY_ENV"
+            ./datadog-ci dora deployment \
+              --service "$service" \
+              --started-at "$STARTED_AT" \
+              --finished-at "$FINISHED_AT" \
+              --git-repository-url "$REPO_URL" \
+              --git-commit-sha "$COMMIT_SHA" \
+              --env "$DEPLOY_ENV"
+          done
       - name: Update judicial system
         id: judicial-system
         if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}
