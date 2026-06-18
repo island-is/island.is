@@ -266,7 +266,6 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
         }`.trim()
         const color = vehicleData.color ?? ''
 
-        // setSearchResult(vehicleData)
         setValue(registrationNumberField, registrationNumber)
         setValue(modelField, model)
         setValue(colorField, color)
@@ -277,37 +276,35 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
         clearErrors(modelField)
         clearErrors(colorField)
       } else {
-        // setSearchResult(null)
         setValue(modelField, '')
         setValue(colorField, '')
         setError(registrationNumberField, {
           type: 'validate',
-          message: 'Vehicle not found',
+          message: formatMessage(m.vehicleNotFoundError),
         })
         setError(modelField, {
           type: 'validate',
-          message: 'Vehicle not found',
+          message: '',
         })
         setError(colorField, {
           type: 'validate',
-          message: 'Vehicle not found',
+          message: '',
         })
       }
     } catch (_error) {
-      // setSearchResult(null)
       setValue(modelField, '')
       setValue(colorField, '')
       setError(registrationNumberField, {
         type: 'validate',
-        message: 'Vehicle not found',
+        message: formatMessage(m.vehicleNotFoundError),
       })
       setError(modelField, {
         type: 'validate',
-        message: 'Vehicle not found',
+        message: '',
       })
       setError(colorField, {
         type: 'validate',
-        message: 'Vehicle not found',
+        message: '',
       })
     } finally {
       setSearchLoading(false)
@@ -538,7 +535,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
                 onBlur={() => {
                   searchPublicVehicle(field.value)
                 }}
-                placeholder="Enter registration number or VIN"
+                placeholder={formatMessage(m.vehiclePlaceholder)}
                 required={item.isRequired ?? false}
                 hasError={Boolean(fieldState.error)}
                 errorMessage={fieldState.error?.message}

@@ -1,5 +1,6 @@
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
+import { AssetTypes } from '@island.is/form-system/enums'
 
 export const validateScreen = (state: ApplicationState): string[] => {
   const { currentScreen } = state
@@ -41,11 +42,8 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
     case FieldTypesEnum.PROPERTY_NUMBER:
       return !validatePropertyNumber(value)
     case FieldTypesEnum.ASSETS:
-      return (
-        !value.registrationNumber ||
-        !value.model ||
-        !validateLanguageType(value.color)
-      )
+      if (!field.fieldSettings?.assetType) return false
+      return !validateAssetFields(value, field.fieldSettings?.assetType)
     case FieldTypesEnum.RADIO_BUTTONS:
       return !value?.label?.is
     case FieldTypesEnum.DROPDOWN_LIST:
@@ -93,6 +91,24 @@ const validateNationalId = (nationalId?: string, name?: string) => {
   if (!nationalIdRegex.test(nationalId)) return false
   // if (name.length < 2) return false
   return true
+}
+
+const validateAssetFields = (value: FormSystemValue, assetType: string) => {
+  switch (assetType) {
+    case AssetTypes.VEHICLE:
+      return validateVehicleFields(value)
+    case AssetTypes.REAL_ESTATE:
+      return validatePropertyNumber(value)
+    default:
+      return true
+  }
+}
+
+const validateVehicleFields = (value: FormSystemValue) => {
+  const { registrationNumber, model, color } = value
+  if (!registrationNumber || !model || !color) return false
+  if (registrationNumber.length === 0 || model.length === 0) return false
+  return validateLanguageType(color)
 }
 
 const validatePropertyNumber = (value: FormSystemValue) => {

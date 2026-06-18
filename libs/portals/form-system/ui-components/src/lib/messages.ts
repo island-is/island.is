@@ -1287,4 +1287,14 @@ export const m = defineMessages({
     defaultMessage: 'Litur',
     description: 'Color',
   },
+  vehicleNotFoundError: {
+    id: 'form.system:vehicle-not-found-error',
+    defaultMessage: 'Ekkert ökutæki fannst með þessu skráningarnúmeri',
+    description: 'No vehicle found with this registration number',
+  },
+  vehiclePlaceholder: {
+    id: 'form.system:vehicle-placeholder',
+    defaultMessage: 'Sláðu inn skráningarnúmer',
+    description: 'Enter registration number',
+  },
 })
