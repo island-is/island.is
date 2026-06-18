@@ -585,37 +585,35 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       theCase.court?.name || 'héraðsdómi',
     )
 
-    // The notification reflects the decision(s) actually recorded on the
-    // concluded defendants. A defendant is concluded if it has a dismissed or
-    // cancelled event log.
-    const rulingDecisions = [
-      ...new Set(
-        (theCase.defendants ?? [])
-          .map((defendant) => {
-            const eventLog = DefendantEventLog.getEventLogByEventType(
-              [
-                DefendantEventType.INDICTMENT_CANCELLED,
-                DefendantEventType.INDICTMENT_DISMISSED,
-              ],
-              defendant.eventLogs,
-            )
+    // One notification per concluded defendant — each carries only that
+    // defendant's ruling decision so recipients can distinguish between them.
+    const concludedDecisions = (theCase.defendants ?? [])
+      .map((defendant) => {
+        const eventLog = DefendantEventLog.getEventLogByEventType(
+          [
+            DefendantEventType.INDICTMENT_CANCELLED,
+            DefendantEventType.INDICTMENT_DISMISSED,
+          ],
+          defendant.eventLogs,
+        )
 
-            if (!eventLog) {
-              return undefined
-            }
+        if (!eventLog) {
+          return undefined
+        }
 
-            return getHumanReadableCaseIndictmentRulingDecision(
-              eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
-                ? CaseIndictmentRulingDecision.CANCELLATION
-                : CaseIndictmentRulingDecision.DISMISSAL,
-            )
-          })
-          .filter((decision) => decision !== undefined),
-      ),
-    ].join(' / ')
+        return getHumanReadableCaseIndictmentRulingDecision(
+          eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
+            ? CaseIndictmentRulingDecision.CANCELLATION
+            : CaseIndictmentRulingDecision.DISMISSAL,
+        )
+      })
+      .filter((decision) => decision !== undefined)
+
+    if (concludedDecisions.length === 0) {
+      return { delivered: true }
+    }
 
     const subject = `Lyktir skráðar í máli ${theCase.courtCaseNumber}`
-    const body = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${rulingDecisions}<br>Skjöl málsins eru aðgengileg á yfirlitssíðu málsins í Réttarvörslugátt.`
 
     // DEFENDERS
     const defenders = _uniqBy(
@@ -634,32 +632,61 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       (civilClaimant) => civilClaimant.spokespersonEmail,
     )
 
-    const to: { name?: string; email?: string }[] = [
-      ...defenders.map((defendant) => ({
-        name: defendant.defenderName,
-        email: defendant.defenderEmail,
-      })),
-      ...spokespersons.map((civilClaimant) => ({
-        name: civilClaimant.spokespersonName,
-        email: civilClaimant.spokespersonEmail,
-      })),
-    ]
-
-    // PROSECUTOR
-    if (theCase.prosecutor) {
-      to.push({
-        name: theCase.prosecutor.name,
-        email: theCase.prosecutor.email,
-      })
-    }
-
-    return this.sendEmails(
-      theCase,
-      TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
-      subject,
-      body,
-      to,
+    const defenderUrl = formatDefenderRoute(
+      this.config.clientUrl,
+      theCase.type,
+      theCase.id,
     )
+    const prosecutorUrl = `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`
+
+    const results = await Promise.all(
+      concludedDecisions.map(async (rulingDecision) => {
+        const baseBody = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${rulingDecision}`
+
+        const promises: Promise<Recipient>[] = [
+          ...defenders
+            .filter(({ defenderName, defenderEmail }) => defenderName && defenderEmail)
+            .map(({ defenderName, defenderEmail }) =>
+              this.sendEmail({
+                subject,
+                html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+                recipientName: defenderName,
+                recipientEmail: defenderEmail,
+              }),
+            ),
+          ...spokespersons
+            .filter(({ spokespersonName, spokespersonEmail }) => spokespersonName && spokespersonEmail)
+            .map(({ spokespersonName, spokespersonEmail }) =>
+              this.sendEmail({
+                subject,
+                html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+                recipientName: spokespersonName,
+                recipientEmail: spokespersonEmail,
+              }),
+            ),
+        ]
+
+        if (theCase.prosecutor?.name && theCase.prosecutor?.email) {
+          promises.push(
+            this.sendEmail({
+              subject,
+              html: `${baseBody}<br>Sjá nánar á <a href="${prosecutorUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+              recipientName: theCase.prosecutor.name,
+              recipientEmail: theCase.prosecutor.email,
+            }),
+          )
+        }
+
+        const recipients = await Promise.all(promises)
+        return this.recordNotification(
+          theCase.id,
+          TrackedNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
+          recipients,
+        )
+      }),
+    )
+
+    return { delivered: results.some(({ delivered }) => delivered) }
   }
 
   private sendNotification(

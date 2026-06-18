@@ -1,13 +1,20 @@
 import { v4 as uuid } from 'uuid'
 
+import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseType,
   DefendantEventType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
+import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  ROUTE_HANDLER_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
+import { notificationModuleConfig } from '../../../notification.config'
 
 import { Case } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
@@ -25,13 +32,18 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
   const courtCaseNumber = 'S-275/2026'
 
   let mockEmailService: EmailService
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, indictmentCaseNotificationService } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationConfig,
+      indictmentCaseNotificationService,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
+    mockConfig = notificationConfig
 
     givenWhenThen = async (theCase: Case) => {
       const then = {} as Then
@@ -50,6 +62,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
 
   const baseCase = {
     id: caseId,
+    type: CaseType.INDICTMENT,
     court: { name: courtName },
     courtCaseNumber,
     prosecutor: { name: 'Ákærandi', email: 'prosecutor@omnitrix.is' },
@@ -89,41 +102,42 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
 
     const then = await givenWhenThen(theCase)
 
-    const expected = {
-      subject: `Lyktir skráðar í máli ${courtCaseNumber}`,
-      html: expect.stringContaining(
-        `Lyktir hafa verið skráðar á aðila í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur.`,
-      ),
-    }
+    const defenderUrl = `${mockConfig.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}`
+    const prosecutorUrl = `${mockConfig.clientUrl}${ROUTE_HANDLER_ROUTE}/${caseId}`
+    const subject = `Lyktir skráðar í máli ${courtCaseNumber}`
+    const defenderHtml = expect.stringContaining(
+      `Niðurstaða: Frávísun<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+    )
+    const prosecutorHtml = expect.stringContaining(
+      `Niðurstaða: Frávísun<br>Sjá nánar á <a href="${prosecutorUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+    )
 
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...expected,
+        subject,
+        html: defenderHtml,
         to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...expected,
+        subject,
+        html: defenderHtml,
         to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...expected,
+        subject,
+        html: defenderHtml,
         to: [{ name: 'Réttargæslumaður CC', address: 'cc@spokesperson.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...expected,
+        subject,
+        html: prosecutorHtml,
         to: [{ name: 'Ákærandi', address: 'prosecutor@omnitrix.is' }],
-      }),
-    )
-    // The recorded decision (Frávísun) is reflected in the body
-    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        html: expect.stringContaining('Niðurstaða: Frávísun'),
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
@@ -162,7 +176,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
   })
 
-  it('should reflect both decisions when defendants have mixed conclusions', async () => {
+  it('should send one notification per concluded defendant when decisions are mixed', async () => {
     const theCase = {
       ...baseCase,
       defendants: [
@@ -193,11 +207,21 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
 
     await givenWhenThen(theCase)
 
+    // 2 concluded defendants × 3 recipients (AA defender, BB defender, prosecutor)
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(6)
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining(
-          'Niðurstaða: Frávísun / Niðurfelling máls',
-        ),
+        html: expect.stringContaining('Niðurstaða: Frávísun'),
+      }),
+    )
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Niðurstaða: Niðurfelling máls'),
+      }),
+    )
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Frávísun / Niðurfelling máls'),
       }),
     )
   })
