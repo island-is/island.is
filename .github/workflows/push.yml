@@ -627,6 +627,7 @@ jobs:
             --output ./datadog-ci && chmod +x ./datadog-ci
 
           FINISHED_AT="$(date +%s)"
+          STARTED_AT=$((FINISHED_AT - 1))
           REPO_URL="${{ github.server_url }}/${{ github.repository }}"
           COMMIT_SHA="${{ github.sha }}"
 
@@ -638,7 +639,7 @@ jobs:
             echo "DORA: reporting deployment for $service"
             ./datadog-ci dora deployment \
               --service "$service" \
-              --started-at "$FINISHED_AT" \
+              --started-at "$STARTED_AT" \
               --finished-at "$FINISHED_AT" \
               --git-repository-url "$REPO_URL" \
               --git-commit-sha "$COMMIT_SHA" \
