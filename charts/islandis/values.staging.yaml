@@ -51,18 +51,6 @@ air-discount-scheme-api:
             - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.staging01.devland.is'
-          paths:
-            - '/api/graphql'
-        - host: 'loftbru-cf.staging01.devland.is'
-          paths:
-            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -153,21 +141,6 @@ air-discount-scheme-backend:
             - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.staging01.devland.is'
-          paths:
-            - '/api/swagger'
-            - '/api/public'
-        - host: 'loftbru-cf.staging01.devland.is'
-          paths:
-            - '/api/swagger'
-            - '/api/public'
   initContainer:
     containers:
       - args:
@@ -274,22 +247,6 @@ air-discount-scheme-web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
-        nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.staging01.devland.is'
-          paths:
-            - '/'
-        - host: 'loftbru-cf.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -539,15 +496,6 @@ api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -661,6 +609,10 @@ api:
     SKATTUR_TOLLUR_REIKNIVEL_API_KEY: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_API_KEY'
     SKATTUR_TOLLUR_REIKNIVEL_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_PASSWORD'
     SKATTUR_TOLLUR_REIKNIVEL_USERNAME: '/k8s/api/SKATTUR_TOLLUR_REIKNIVEL_USERNAME'
+    SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY'
+    SKATTUR_TOLLUR_ALMENNT_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL'
+    SKATTUR_TOLLUR_ALMENNT_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD'
+    SKATTUR_TOLLUR_ALMENNT_USERNAME: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
@@ -880,22 +832,6 @@ application-system-api:
             - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'application-payment-callback-xrd.internal.staging01.devland.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
-        - host: 'application-callback-xrd.internal.staging01.devland.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
   initContainer:
     containers:
       - args:
@@ -1160,17 +1096,6 @@ application-system-form:
             - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1477,17 +1402,6 @@ consultation-portal:
             - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1596,16 +1510,6 @@ download-service:
             - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'api.staging01.devland.is'
-          paths:
-            - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1806,17 +1710,6 @@ form-system-web:
             - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1995,15 +1888,6 @@ island-ui-storybook:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'ui.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'storybook'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2080,15 +1964,6 @@ license-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'license-api-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'license-api'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2215,18 +2090,6 @@ payments:
             - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2301,17 +2164,6 @@ portals-admin:
             - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2400,15 +2252,6 @@ regulations-admin-backend:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'regulations-admin-backend-xrd.internal.staging01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -2516,16 +2359,6 @@ search-indexer-service:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'search-indexer-service.staging01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -2660,17 +2493,6 @@ service-portal:
             - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2765,15 +2587,6 @@ service-portal-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'service-portal-api.internal.staging01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -2893,18 +2706,6 @@ services-bff-portals-admin:
             - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2991,18 +2792,6 @@ services-bff-portals-my-pages:
             - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3193,15 +2982,6 @@ services-form-system-api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-form-system-api.internal.staging01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -3394,15 +3174,6 @@ services-payment-flow-update-handler:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payment-flow-update-handler.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3502,25 +3273,6 @@ services-payments:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments.internal.staging01.devland.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -3735,15 +3487,6 @@ services-sessions:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'sessions-api.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4000,15 +3743,6 @@ services-university-gateway:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-university-gateway.internal.staging01.devland.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -4204,17 +3938,6 @@ skilavottord-web:
             - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4292,15 +4015,6 @@ skilavottord-ws:
             - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -4455,25 +4169,6 @@ user-notification:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification.internal.staging01.devland.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4913,17 +4608,6 @@ web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'beta.staging01.devland.is'
-          paths:
-            - '/'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'

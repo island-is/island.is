@@ -10,3 +10,4 @@ export * from './MailingListThumbnailCard/DigitalIcelandMailingListThumbnailCard
 export * from './logreglan/FineAndSpeedMeasurementCalculator'
 export * from './VerAnnouncementCalculator'
 export * from './CustomsCalculator'
+export * from './CustomsGeneral'
