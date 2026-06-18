@@ -624,7 +624,7 @@ jobs:
         run: |
           set -euo pipefail
           curl -L --fail "https://github.com/DataDog/datadog-ci/releases/latest/download/datadog-ci_linux-x64" \
-            --output /usr/local/bin/datadog-ci && chmod +x /usr/local/bin/datadog-ci
+            --output ./datadog-ci && chmod +x ./datadog-ci
 
           FINISHED_AT="$(date +%s)"
           REPO_URL="${{ github.server_url }}/${{ github.repository }}"
@@ -636,7 +636,7 @@ jobs:
           for service in "${SERVICE_LIST[@]}"; do
             service="$(echo "$service" | xargs)"
             echo "DORA: reporting deployment for $service"
-            datadog-ci dora deployment \
+            ./datadog-ci dora deployment \
               --service "$service" \
               --started-at "$FINISHED_AT" \
               --finished-at "$FINISHED_AT" \
