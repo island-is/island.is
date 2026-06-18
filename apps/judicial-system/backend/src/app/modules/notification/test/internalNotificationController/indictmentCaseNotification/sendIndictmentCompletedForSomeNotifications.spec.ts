@@ -10,6 +10,7 @@ import {
 import {
   CaseIndictmentRulingDecision,
   CaseType,
+  DefendantEventType,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -215,6 +216,50 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Frávísun / Niðurfelling máls'),
+      }),
+    )
+  })
+
+  it('should not re-notify for defendants concluded in a previous partial completion', async () => {
+    // Defendant AA was already concluded (CANCELLATION) in an earlier update and
+    // has an event log in the case. Defendant BB is newly concluded (DISMISSAL).
+    // The concludedDecisions argument carries only BB's new decision, so only one
+    // notification round should be sent — AA must not be re-notified.
+    const theCase = {
+      ...baseCase,
+      defendants: [
+        {
+          isDefenderChoiceConfirmed: true,
+          defenderName: 'Verjandi AA',
+          defenderEmail: 'aa@defender.is',
+          eventLogs: [
+            {
+              eventType: DefendantEventType.INDICTMENT_CANCELLED,
+              created: new Date('2026-02-20T12:00:00.000Z'),
+            },
+          ],
+        },
+        {
+          isDefenderChoiceConfirmed: true,
+          defenderName: 'Verjandi BB',
+          defenderEmail: 'bb@defender.is',
+          eventLogs: [],
+        },
+      ],
+    } as Case
+
+    await givenWhenThen(theCase, [CaseIndictmentRulingDecision.DISMISSAL])
+
+    // Only 1 decision (DISMISSAL for BB) × 3 recipients (AA defender, BB defender, prosecutor)
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Niðurstaða: Frávísun'),
+      }),
+    )
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining('Niðurstaða: Niðurfelling máls'),
       }),
     )
   })
