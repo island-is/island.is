@@ -87,6 +87,8 @@ export class DrivingLicenseApi {
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
+        // Guard a null body, mirroring getRemarksCodeTable above.
+        .then((codeTable) => codeTable ?? [])
         .catch((e) => {
           this.errorCodeDescriptionsCache = undefined
           throw e

@@ -396,21 +396,26 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('attaches the RLS description for a B-full denial code in the catalogue', async () => {
+    it('attaches the RLS description for an uncurated B-temp denial code (the case the UI actually shows)', async () => {
+      // HAS_NO_SIGNATURE maps to a key that falls through to the generic
+      // branch, so the resolved RLS message is what renders (unlike curated
+      // codes such as HAS_POINTS, whose own copy overrides `message`).
       jest
-        .spyOn(drivingLicenseApi, 'getCanApplyForCategoryFull')
-        .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
+        .spyOn(drivingLicenseApi, 'getCanApplyForCategoryTemporary')
+        .mockResolvedValue({ result: false, errorCode: 'HAS_NO_SIGNATURE' })
 
       const response = await service.getApplicationEligibility(
         MOCK_USER,
         MOCK_NATIONAL_ID,
-        'B-full',
+        'B-temp',
       )
 
       const canApply = response.requirements.find(
-        (r) => r.errorCode === 'HAS_POINTS',
+        (r) => r.errorCode === 'HAS_NO_SIGNATURE',
       )
-      expect(canApply?.message).toBe('Þú ert með punkta á ökuskírteini')
+      expect(canApply?.message).toBe(
+        'Einstaklingur hefur ekki undirskrift á skrá',
+      )
     })
 
     it('does not attach RLS text for renewal-65 (unbounded codes); errorCode only', async () => {

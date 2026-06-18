@@ -176,6 +176,13 @@ export const requestHandlers = [
           descriptionIs: 'Þú ert með punkta á ökuskírteini',
           descriptionEn: 'You have points on your license',
         },
+        {
+          // An uncurated code: maps to a key that surfaces the RLS message in
+          // the UI (unlike HAS_POINTS, which our own copy overrides).
+          code: 'HAS_NO_SIGNATURE',
+          descriptionIs: 'Einstaklingur hefur ekki undirskrift á skrá',
+          descriptionEn: 'Person has no signature on file',
+        },
       ]),
     )
   }),

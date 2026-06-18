@@ -35,10 +35,10 @@ const getDeniedByServiceMessageDescription = (
   }
 }
 
-// TODO: we need a better way of getting the translated string in here, outside
-// of react. Possibly we should just make a more flexible results screen.
-// This string ends up being used as the paramejter displayed as the error message
-// for the failed dataprovider
+// The returned description is rendered by ReviewSection. For uncurated RLS
+// codes it is an already-translated string (currently Icelandic-only — see the
+// eligibility resolver) rather than a MessageDescriptor; proper en/is handling
+// for those strings is still a TODO.
 const requirementKeyToStep = (
   key: RequirementKey,
   requirementMet: boolean,
