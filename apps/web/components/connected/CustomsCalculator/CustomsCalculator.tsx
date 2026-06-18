@@ -134,7 +134,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
             value: child.id,
             hasChildren: child.children.length > 0,
           }))
-        stack.push(...category.children)
+        stack.push(...(category.children as typeof stack))
       }
     }
 
