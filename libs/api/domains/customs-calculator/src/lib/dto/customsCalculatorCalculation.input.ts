@@ -8,30 +8,30 @@ export class CustomsCalculatorCalculationInput {
   @Field()
   currencyCode!: string
 
-  @Field()
-  priceWithShipping!: string
+  @Field(() => String, { nullable: true })
+  priceWithShipping?: string | null
 
-  @Field()
-  unitCount!: string
+  @Field(() => String, { nullable: true })
+  unitCount?: string | null
 
-  @Field()
-  netWeightKg!: string
+  @Field(() => String, { nullable: true })
+  netWeightKg?: string | null
 
-  @Field()
-  liters!: string
+  @Field(() => String, { nullable: true })
+  liters?: string | null
 
-  @Field()
-  percentage!: string
+  @Field(() => String, { nullable: true })
+  percentage?: string | null
 
-  @Field()
-  nedcEmission!: string
+  @Field(() => String, { nullable: true })
+  nedcEmission?: string | null
 
-  @Field()
-  nedcWeightedEmission!: string
+  @Field(() => String, { nullable: true })
+  nedcWeightedEmission?: string | null
 
-  @Field()
-  wltpEmission!: string
+  @Field(() => String, { nullable: true })
+  wltpEmission?: string | null
 
-  @Field()
-  wltpWeightedEmission!: string
+  @Field(() => String, { nullable: true })
+  wltpWeightedEmission?: string | null
 }

@@ -18,8 +18,8 @@ export class TopLevelProductCategory {
   @Field(() => ID)
   id!: string
 
-  @Field(() => String)
-  parentLabel!: string
+  @Field(() => String, { nullable: true })
+  parentLabel?: string | null
 
   @Field(() => String)
   label!: string
