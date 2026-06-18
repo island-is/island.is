@@ -2624,6 +2624,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
   },
+  renewalStatusUnknown: {
+    defaultMessage: 'Óþekkt',
+    id: 'sp.health:renewal-status-unknown',
+  },
   renewalSendTo: {
     defaultMessage: 'Sendist til',
     id: 'sp.health:renewal-send-to',
