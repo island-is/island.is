@@ -13,7 +13,11 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { Subtype, User, UserDescriptor } from '@island.is/judicial-system/types'
+import type {
+  Subtype,
+  User,
+  UserDescriptor,
+} from '@island.is/judicial-system/types'
 import {
   AppealCaseRulingDecision,
   CaseDecision,
