@@ -1,13 +1,26 @@
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
-import { DrivingLicenseApplicationFor, B_FULL, BE } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  DrivingLicenseApplicationFor,
+} from '../../lib/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
   daysOfResidency = 365,
   hasPhoto = true,
+  is65RenewalRedesignEnabled = false,
+  isBTempRedesignEnabled = false,
 ): ApplicationEligibility => {
+  const usesPhotoGate =
+    applicationFor === BE ||
+    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    (applicationFor === B_TEMP && isBTempRedesignEnabled)
+
   return {
-    isEligible: applicationFor === BE ? hasPhoto : true,
+    isEligible: usesPhotoGate ? hasPhoto : true,
     requirements: [
       ...(applicationFor === B_FULL
         ? [
@@ -20,7 +33,7 @@ export const fakeEligibility = (
               requirementMet: true,
             },
           ]
-        : applicationFor === BE
+        : usesPhotoGate
         ? [
             {
               key: RequirementKey.localResidency,

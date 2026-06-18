@@ -1,9 +1,11 @@
 import { Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -12,15 +14,22 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   addMessagesToQueue,
+  type Message,
   MessageType,
 } from '@island.is/judicial-system/message'
-import type { User as TUser } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CourtSessionRulingType,
+  IndictmentCaseNotificationType,
+  type User as TUser,
+} from '@island.is/judicial-system/types'
 
 import {
   Case,
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
+  UpdateCourtSession,
 } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
@@ -38,13 +47,29 @@ export class CourtSessionService {
 
   private addMessagesForConfirmedCourtRecordToQueue(
     caseId: string,
+    courtSession: CourtSession,
     user: TUser,
   ): void {
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
-      user,
-      caseId,
-    })
+    const messages: Message[] = [
+      {
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+        user,
+        caseId,
+      },
+    ]
+
+    // When a ruling order uploaded during the course of a case is pronounced
+    // in a confirmed court session, the parties are notified about the ruling.
+    if (courtSession.rulingType === CourtSessionRulingType.ORDER) {
+      messages.push({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        user,
+        caseId,
+        body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
+      })
+    }
+
+    addMessagesToQueue(...messages)
   }
 
   create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
@@ -126,31 +151,103 @@ export class CourtSessionService {
   }
 
   async update(
-    caseId: string,
-    courtSessionId: string,
+    theCase: Case,
+    existingCourtSession: CourtSession,
     update: UpdateCourtSessionDto,
     user: TUser,
     transaction: Transaction,
   ): Promise<CourtSession> {
-    const existingCourtSession =
-      await this.courtSessionRepositoryService.findById(caseId, courtSessionId)
+    const normalizedUpdate = await this.validateAndNormalizeRulingFile(
+      theCase,
+      existingCourtSession,
+      update,
+    )
 
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
-      caseId,
-      courtSessionId,
-      update,
+      theCase.id,
+      existingCourtSession.id,
+      normalizedUpdate,
       { transaction },
     )
 
-    if (
-      existingCourtSession &&
-      !existingCourtSession.isConfirmed &&
-      updatedCourtSession.isConfirmed === true
-    ) {
-      this.addMessagesForConfirmedCourtRecordToQueue(caseId, user)
+    if (!existingCourtSession.isConfirmed && updatedCourtSession.isConfirmed) {
+      this.addMessagesForConfirmedCourtRecordToQueue(
+        theCase.id,
+        updatedCourtSession,
+        user,
+      )
     }
 
     return updatedCourtSession
+  }
+
+  private async validateAndNormalizeRulingFile(
+    theCase: Case,
+    existingCourtSession: CourtSession,
+    update: UpdateCourtSessionDto,
+  ): Promise<UpdateCourtSession> {
+    const rulingTypeInUpdate = 'rulingType' in update
+    const rulingFileIdInUpdate = 'rulingFileId' in update
+
+    const effectiveRulingType = rulingTypeInUpdate
+      ? update.rulingType
+      : existingCourtSession.rulingType
+
+    // Auto-clear: when the ruling type moves away from ORDER, drop any ruling file link.
+    if (
+      rulingTypeInUpdate &&
+      update.rulingType !== CourtSessionRulingType.ORDER
+    ) {
+      return { ...update, rulingFileId: null }
+    }
+
+    // Validate a newly selected ruling file.
+    if (rulingFileIdInUpdate && update.rulingFileId) {
+      if (effectiveRulingType !== CourtSessionRulingType.ORDER) {
+        throw new BadRequestException(
+          'A ruling file can only be linked when the ruling type is ORDER',
+        )
+      }
+
+      const caseFile = theCase.caseFiles?.find(
+        (f) => f.id === update.rulingFileId,
+      )
+
+      if (!caseFile) {
+        throw new NotFoundException(
+          `Case file ${update.rulingFileId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      if (
+        caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+      ) {
+        throw new BadRequestException(
+          'The selected file is not a court indictment ruling order',
+        )
+      }
+    }
+
+    // Required-at-confirm: confirming an ORDER session requires a linked file.
+    const becomingConfirmed =
+      update.isConfirmed === true && existingCourtSession.isConfirmed !== true
+
+    if (
+      becomingConfirmed &&
+      effectiveRulingType === CourtSessionRulingType.ORDER
+    ) {
+      const effectiveRulingFileId = rulingFileIdInUpdate
+        ? update.rulingFileId
+        : existingCourtSession.rulingFileId
+
+      if (!effectiveRulingFileId) {
+        throw new BadRequestException(
+          'A ruling file must be selected before an ORDER court session can be confirmed',
+        )
+      }
+    }
+
+    return update
   }
 
   async delete(

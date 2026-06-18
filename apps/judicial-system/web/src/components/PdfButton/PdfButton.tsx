@@ -1,7 +1,7 @@
-import { FC, PropsWithChildren, useContext } from 'react'
+import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
 import cn from 'classnames'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -11,6 +11,9 @@ interface Props {
   caseId?: string
   connectedCaseParentId?: string
   title?: string | null
+  subtitle?: string | null
+  subtitleIcon?: IconMapIcon
+  subtitleIconColor?: ComponentProps<typeof Icon>['color']
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -36,6 +39,9 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   // For access control purposes, the data must be accessed through the parent case.
   connectedCaseParentId,
   title,
+  subtitle,
+  subtitleIcon,
+  subtitleIconColor,
   pdfType,
   disabled,
   renderAs = 'button',
@@ -93,16 +99,28 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
         }
       }}
     >
-      <span
-        className={cn(styles.fileNameContainer, {
-          [styles.fileNameContainerWithChildren]: !!children,
-        })}
-      >
-        <Text color="blue400" variant="h4">
-          {title}
-        </Text>
-      </span>
-      {children}
+      <Box className={styles.pdfRowMain}>
+        <span
+          className={cn(styles.fileNameContainer, {
+            [styles.fileNameContainerWithChildren]: !!children,
+          })}
+        >
+          <Text color="blue400" variant="h4">
+            {title}
+          </Text>
+        </span>
+        {children}
+      </Box>
+      {subtitle && (
+        <Box marginTop={1} display="flex" alignItems="center" columnGap={1}>
+          {subtitleIcon && (
+            <Icon icon={subtitleIcon} color={subtitleIconColor} />
+          )}
+          <Text variant="small" color="dark400">
+            {subtitle}
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }

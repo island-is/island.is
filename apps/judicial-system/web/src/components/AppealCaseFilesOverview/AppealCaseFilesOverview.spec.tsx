@@ -16,6 +16,14 @@ import { mockCaseFile } from '../../utils/mocks'
 import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      pathname: '',
+    }
+  },
+}))
+
 describe('<AppealCaseFilesOverview />', () => {
   test('should display a context menu for all files', async () => {
     const theCase = {
@@ -81,10 +89,10 @@ describe('<AppealCaseFilesOverview />', () => {
       type: CaseType.CUSTODY,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_BRIEF)],
       state: CaseState.ACCEPTED,
-      prosecutorPostponedAppealDate: '2021-09-01T00:00:00Z',
       appealCase: {
         id: 'test_appeal_case_id',
         appealState: AppealCaseState.COMPLETED,
+        appealedByRole: UserRole.PROSECUTOR,
       },
     } as Case
 
@@ -110,7 +118,7 @@ describe('<AppealCaseFilesOverview />', () => {
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a defender', async () => {
     const theCase = {
       id: 'asd',
-      type: CaseType.CUSTODY,
+      type: CaseType.INDICTMENT,
       caseFiles: [mockCaseFile(CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE)],
       state: CaseState.ACCEPTED,
       appealCase: {

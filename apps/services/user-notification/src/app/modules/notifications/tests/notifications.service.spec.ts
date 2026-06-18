@@ -7,6 +7,7 @@ import { CacheModule } from '@nestjs/cache-manager'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import { NotificationDelivery } from '../notification-delivery.model'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -67,6 +68,10 @@ describe('NotificationsService', () => {
         },
         {
           provide: getModelToken(ActorNotification),
+          useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: getModelToken(NotificationDelivery),
           useClass: jest.fn(() => ({})),
         },
         {
@@ -239,6 +244,44 @@ describe('NotificationsService', () => {
       expect(await service.getUnreadNotificationsCount(user)).toBe(
         mockedResponse,
       )
+    })
+  })
+
+  describe('findDeliveries', () => {
+    const deliveryRow = {
+      id: 1,
+      channel: 'email',
+      sentTo: 'user@example.com',
+      created: new Date('2026-04-15T10:00:00Z'),
+    }
+
+    it('returns only direct deliveries for a user notification', async () => {
+      const findAll = jest.fn().mockResolvedValue([deliveryRow])
+      // @ts-expect-error - replacing the injected model with a stub
+      service.notificationDeliveryModel = { findAll }
+
+      const result = await service.findDeliveries(42)
+
+      expect(findAll).toHaveBeenCalledWith({
+        where: { userNotificationId: 42, actorNotificationId: null },
+        order: [['created', 'ASC']],
+        attributes: ['id', 'channel', 'sentTo', 'created'],
+      })
+      expect(result).toEqual([deliveryRow])
+    })
+
+    it('filters by actorNotificationId when isActor is true', async () => {
+      const findAll = jest.fn().mockResolvedValue([])
+      // @ts-expect-error - replacing the injected model with a stub
+      service.notificationDeliveryModel = { findAll }
+
+      await service.findDeliveries(99, true)
+
+      expect(findAll).toHaveBeenCalledWith({
+        where: { actorNotificationId: 99 },
+        order: [['created', 'ASC']],
+        attributes: ['id', 'channel', 'sentTo', 'created'],
+      })
     })
   })
 })

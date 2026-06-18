@@ -10,13 +10,9 @@ export interface InstitutionProps {
   logoUrl?: string
 }
 
-export enum FileType {
-  COURSE_DESCRIPTIONS,
-  DIPLOMA,
-  DIPLOMA_SUPPLEMENT,
-  TRANSCRIPT,
-  MICRO_CREDENTIALS_SUPPLEMENT,
-  MICRO_CREDENTIALS_TRANSCRIPT,
+export enum StudyType {
+  UNIVERSITY_STUDIES = 'universityStudies',
+  MICRO_CREDENTIALS = 'microCredentials',
 }
 
 export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {

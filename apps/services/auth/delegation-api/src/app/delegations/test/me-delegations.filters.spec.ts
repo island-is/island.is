@@ -384,7 +384,7 @@ describe('MeDelegationsController filters', () => {
       .patch(`/v1/me/delegations/${delegations.incomingValid.id}`)
       .send(dto)
 
-    // Assert
+    // Assert:
     expect(res.status).toEqual(204)
   })
 
@@ -393,6 +393,54 @@ describe('MeDelegationsController filters', () => {
     const res = await server.delete(
       `/v1/me/delegations/${delegations.otherUsers.id}`,
     )
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when a scope is grantable in the domain but not on this delegation', async () => {
+    // Arrange
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainFuture] })
+
+    // Assert
+    expect(res.status).toEqual(400)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 400 when scopeNames is empty', async () => {
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [] })
+
+    // Assert
+    expect(res.status).toEqual(400)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient is not the to-user of the delegation', async () => {
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.validOutgoing.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 when the recipient revokes the only scope on an incoming delegation', async () => {
+    // Act
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.incomingValid.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
+
+    // Assert
+    expect(res.status).toEqual(204)
+  })
+
+  it('DELETE /v1/me/delegations/:id/scopes returns 204 if delegation does not belong to the user', async () => {
+    // Act
+    const res = await server
+      .delete(`/v1/me/delegations/${delegations.otherUsers.id}/scopes`)
+      .send({ scopeNames: [testScopes.mainValid] })
 
     // Assert
     expect(res.status).toEqual(204)

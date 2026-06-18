@@ -11,11 +11,11 @@ import {
 import { useRouter } from 'next/router'
 
 import {
-  CREATE_INDICTMENT_ROUTE,
-  CREATE_INVESTIGATION_CASE_ROUTE,
-  CREATE_RESTRICTION_CASE_ROUTE,
-  CREATE_TRAVEL_BAN_ROUTE,
-  USERS_ROUTE,
+  ADMIN_USERS_ROUTE,
+  PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
+  PROSECUTION_CREATE_INDICTMENT_ROUTE,
+  PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
+  PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   Case,
@@ -47,6 +47,7 @@ interface FormProvider {
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
+  isCreating: boolean
   refreshCase: () => void
   getCase: (
     id: string,
@@ -77,6 +78,7 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
+  isCreating: false,
   refreshCase: () => {
     return
   },
@@ -87,7 +89,7 @@ export const FormContext = createContext<FormProvider>({
 
 const MaybeFormProvider = ({ children }: Props) => {
   const router = useRouter()
-  return router.pathname.includes(USERS_ROUTE) ? (
+  return router.pathname.includes(ADMIN_USERS_ROUTE) ? (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>{children}</>
   ) : (
@@ -121,10 +123,10 @@ const FormProvider = ({ children }: Props) => {
   // Used in exported indicators
   const id = typeof router.query.id === 'string' ? router.query.id : undefined
   const isCreatingCase = [
-    CREATE_RESTRICTION_CASE_ROUTE,
-    CREATE_TRAVEL_BAN_ROUTE,
-    CREATE_INVESTIGATION_CASE_ROUTE,
-    CREATE_INDICTMENT_ROUTE,
+    PROSECUTION_CREATE_CUSTODY_CASE_ROUTE,
+    PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
+    PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE,
+    PROSECUTION_CREATE_INDICTMENT_ROUTE,
   ].includes(router.pathname)
   const replacingCase = id && id !== caseId
   const replacingPath = router.pathname !== pathname
@@ -248,6 +250,7 @@ const FormProvider = ({ children }: Props) => {
         isCaseUpToDate:
           isCreatingCase ||
           (!replacingCase && !replacingPath && state === 'up-to-date'),
+        isCreating: isCreatingCase,
         refreshCase: () => setState('refresh'),
         getCase,
       }}

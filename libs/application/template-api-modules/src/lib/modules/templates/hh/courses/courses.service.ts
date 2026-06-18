@@ -19,7 +19,9 @@ import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
   COURSE_LIST_PAGE_SLUG_MAP,
+  GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
+  ZENDESK_CUSTOM_OBJECT_KEYS,
   ZENDESK_TICKET_IDS,
 } from './constants'
 
@@ -153,6 +155,20 @@ export class CoursesService extends BaseTemplateApiService {
           },
         ],
       })
+
+      try {
+        await this.submitCustomObjects(
+          course,
+          courseInstance,
+          participantList,
+          auth.authorization,
+        )
+      } catch (error) {
+        this.logger.error(
+          'Failed to submit HH courses application to Zendesk custom objects',
+          { applicationId: application.id, error: error.message },
+        )
+      }
 
       return { success }
     } catch (error) {
@@ -379,6 +395,7 @@ export class CoursesService extends BaseTemplateApiService {
               maxRegistrations?: number
               chargeItemCode?: string | null
               location?: string | null
+              description?: string | null
             }[]
           }
         }
@@ -460,6 +477,80 @@ export class CoursesService extends BaseTemplateApiService {
     if (!slug) return null
 
     return `https://island.is/s/hh/${slug}/${courseId}`
+  }
+
+  private async submitCustomObjects(
+    course: { id: string; title: string },
+    courseInstance: {
+      id: string
+      displayedTitle?: string | null
+      startDate: string
+      startDateTimeDuration?: { startTime?: string; endTime?: string }
+      description?: string | null
+      chargeItemCode?: string | null
+    },
+    participantList: ApplicationAnswers['participantList'],
+    authorization: string,
+  ): Promise<void> {
+    let priceAmount: number | undefined
+    try {
+      const chargeItemsResponse = await this.sharedTemplateApiService
+        .makeGraphqlQuery<{
+          getChargeItemCodesByCourseId: {
+            items: Array<{ code: string; priceAmount: number }>
+          }
+        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
+          input: { courseId: course.id },
+        })
+        .then((r) => r.json())
+
+      priceAmount =
+        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
+          (item) => item.code === courseInstance.chargeItemCode,
+        )?.priceAmount
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch charge item codes for course, proceeding without price',
+        { error, courseId: course.id },
+      )
+    }
+
+    const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
+      ZENDESK_CUSTOM_OBJECT_KEYS.course,
+      { name: course.title, external_id: course.id },
+    )
+
+    const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
+      {
+        name: courseInstance.displayedTitle ?? course.title,
+        external_id: courseInstance.id,
+        custom_object_fields: {
+          upphafsdagsetning: courseInstance.startDate.split('T')[0],
+          upphafstímasetning:
+            courseInstance.startDateTimeDuration?.startTime ?? '',
+          lýsing: courseInstance.description ?? '',
+          verð_per_skráningu: priceAmount?.toString() ?? '',
+          course: courseRecord.id,
+        },
+      },
+    )
+
+    if (participantList.length === 0) return
+
+    await this.zendeskService.runCustomObjectJob(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      'create_or_update_by_external_id',
+      participantList.map((p) => ({
+        name: p.nationalIdWithName.name,
+        external_id: `${courseInstance.id}-${p.nationalIdWithName.nationalId}`,
+        custom_object_fields: {
+          kennitala: p.nationalIdWithName.nationalId,
+          email: p.nationalIdWithName.email,
+          course_instance: instanceRecord.id,
+        },
+      })),
+    )
   }
 
   private async formatApplicationMessage(

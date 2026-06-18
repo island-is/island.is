@@ -1,7 +1,7 @@
 import {
   CardLoader,
   formatNationalId,
-  IntroWrapperV2,
+  IntroWrapper,
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -13,19 +13,6 @@ import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolStudentsQuery } from './PrimarySchool.generated'
 import { EducationPrimarySchoolContactType } from '@island.is/api/schema'
-import { MessageDescriptor } from 'react-intl'
-
-const contactTypeMessages: Record<
-  EducationPrimarySchoolContactType,
-  MessageDescriptor
-> = {
-  [EducationPrimarySchoolContactType.PARENT]: psm.contactTypeParent,
-  [EducationPrimarySchoolContactType.GUARDIAN]: psm.contactTypeGuardian,
-  [EducationPrimarySchoolContactType.EMERGENCY_CONTACT]:
-    psm.contactTypeEmergencyContact,
-  [EducationPrimarySchoolContactType.RELATIVE]: psm.contactTypeRelative,
-  [EducationPrimarySchoolContactType.SIBLING]: psm.contactTypeSibling,
-}
 
 export const PrimarySchool = () => {
   useNamespaces('sp.education-primary-school')
@@ -36,7 +23,7 @@ export const PrimarySchool = () => {
   const students = data?.primarySchoolStudents ?? []
 
   return (
-    <IntroWrapperV2
+    <IntroWrapper
       title={psm.schoolLabel}
       intro={psm.studentListIntro}
       serviceProvider={{
@@ -72,11 +59,9 @@ export const PrimarySchool = () => {
             }
             avatar
             tag={
-              student.contactType
+              student.contactType === EducationPrimarySchoolContactType.GUARDIAN
                 ? {
-                    label: formatMessage(
-                      contactTypeMessages[student.contactType],
-                    ),
+                    label: formatMessage(psm.child),
                     variant: 'purple',
                     outlined: true,
                   }
@@ -95,7 +80,7 @@ export const PrimarySchool = () => {
           />
         ))}
       </Stack>
-    </IntroWrapperV2>
+    </IntroWrapper>
   )
 }
 

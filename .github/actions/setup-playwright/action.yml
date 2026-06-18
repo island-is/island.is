@@ -17,13 +17,14 @@ runs:
         echo "CACHE_KEY=${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Restore Playwright Cache
-      uses: actions/cache/restore@v4
+      uses: runs-on/cache/restore@v5
       id: restore-playwright-cache
       with:
         path: ~/.cache/ms-playwright
         key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+        RUNS_ON_S3_BUCKET_CACHE: shared-islandis-github-actions-cache
 
     - name: Install Playwright browsers
       working-directory: ${{ inputs.working-directory }}
@@ -31,10 +32,11 @@ runs:
       run: yarn playwright install
 
     - name: Cache Playwright
-      uses: actions/cache/save@v4
+      uses: runs-on/cache/save@v5
       if: steps.restore-playwright-cache.outputs.cache-hit != 'true'
       with:
         path: ~/.cache/ms-playwright
         key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+        RUNS_ON_S3_BUCKET_CACHE: shared-islandis-github-actions-cache

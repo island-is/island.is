@@ -1780,7 +1780,7 @@ export const m = defineMessages({
   },
   submitReport: {
     id: 'ir.application:submitReport',
-    defaultMessage: 'Senda inn skýrslu',
+    defaultMessage: 'Senda til samþykktar',
     description: '',
   },
   doneTitleEFS: {
@@ -1921,5 +1921,133 @@ export const m = defineMessages({
     defaultMessage:
       'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmer, 7 tölustafi eða F + 7 fyrir fasteignanúmer',
     description: 'Property number is invalid',
+  },
+
+  // InReview state messages
+  inReviewGeneralTitle: {
+    id: 'ir.application:inReview.general.title',
+    defaultMessage: 'Yfirlit undirskrifta',
+    description: 'InReview state title',
+  },
+  inReviewGeneralDescription: {
+    id: 'ir.application:inReview.general.description',
+    defaultMessage:
+      'Erfðafjárskýrslan hefur verið send til sýslumanns. Hér að neðan má sjá stöðu undirskrifta allra aðila.',
+    description: 'InReview state description',
+  },
+  inReviewSignatoriesTitle: {
+    id: 'ir.application:inReview.signatories.title',
+    defaultMessage: 'Yfirlit undirskrifta',
+    description: 'Signatories section title',
+  },
+  inReviewSignatoriesDescription: {
+    id: 'ir.application:inReview.signatories.description',
+    defaultMessage:
+      'Erfðafjárskýrslan hefur verið send til sýslumanns. Allir erfingjar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Signatories section description',
+  },
+  inReviewSignatoriesTableTitle: {
+    id: 'ir.application:inReview.signatories.tableTitle',
+    defaultMessage: 'Erfingjar sem þurfa að undirrita',
+    description: 'Signatories table title',
+  },
+  inReviewSignatoriesNameLabel: {
+    id: 'ir.application:inReview.signatories.nameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inReviewSignatoriesNationalIdLabel: {
+    id: 'ir.application:inReview.signatories.nationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National ID label',
+  },
+  inReviewSignatoriesStatusLabel: {
+    id: 'ir.application:inReview.signatories.statusLabel',
+    defaultMessage: 'Staða undirskriftar',
+    description: 'Status label',
+  },
+  inReviewStatusSigned: {
+    id: 'ir.application:inReview.status.signed',
+    defaultMessage: 'Undirritað',
+    description: 'Signed status',
+  },
+  inReviewStatusPending: {
+    id: 'ir.application:inReview.status.pending',
+    defaultMessage: 'Í bið',
+    description: 'Pending status',
+  },
+  inReviewActionsComplete: {
+    id: 'ir.application:inReview.actions.complete',
+    defaultMessage: 'Ljúka umsókn',
+    description: 'Complete button',
+  },
+
+  // Send a copy of the application to the parties (málsaðilar)
+  sendCopyToPartiesLabel: {
+    id: 'ir.application:sendCopyToParties.label',
+    defaultMessage: 'Senda afrit af umsókn til málsaðila',
+    description:
+      'Checkbox label to email a copy of the application to the parties',
+  },
+  applicationSubmittedTitle: {
+    id: 'ir.application:application.submittedTitle',
+    defaultMessage: 'Umsókn send til sýslumanns',
+    description: 'Title shown after the application has been submitted',
+  },
+  applicationSubmittedDescription: {
+    id: 'ir.application:application.submittedDescription',
+    defaultMessage: 'Erfðafjárskýrslan hefur verið send til sýslumanns.',
+    description: 'Description shown after the application has been submitted',
+  },
+
+  // Signing State Messages
+  signingTitle: {
+    id: 'ir.application:signing.title',
+    defaultMessage: 'Undirritun',
+    description: 'Signing title',
+  },
+  signingDescription: {
+    id: 'ir.application:signing.description',
+    defaultMessage:
+      'Erfðafjárskýrslan hefur verið send til sýslumanns. Allir erfingjar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Signing description',
+  },
+  signingTableTitle: {
+    id: 'ir.application:signing.tableTitle',
+    defaultMessage: 'Erfingjar sem þurfa að undirrita',
+    description: 'Signing table title',
+  },
+  signingActionsInfoTitle: {
+    id: 'ir.application:signing.actionsInfoTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Next steps title',
+  },
+  signingActionsInfoDescription: {
+    id: 'ir.application:signing.actionsInfoDescription',
+    defaultMessage:
+      'Þegar allir erfingjar hafa undirritað birtist hnappur hér að neðan til að ljúka umsókn. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
+    description: 'Next steps description',
+  },
+  signingPendingTitle: {
+    id: 'ir.application:signing.pendingTitle',
+    defaultMessage: 'Beðið eftir undirskriftum',
+    description: 'Title when signatures are pending',
+  },
+  signingPendingDescription: {
+    id: 'ir.application:signing.pendingDescription',
+    defaultMessage:
+      'Erfðafjárskýrslan hefur verið send til sýslumanns. Allir erfingjar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Description when signatures are pending',
+  },
+  signingCompleteTitle: {
+    id: 'ir.application:signing.completeTitle',
+    defaultMessage: 'Allar undirskriftir komnar',
+    description: 'Title when all signatures are complete',
+  },
+  signingCompleteDescription: {
+    id: 'ir.application:signing.completeDescription',
+    defaultMessage:
+      'Allir erfingjar hafa undirritað. Þú getur núna lokið umsókninni.',
+    description: 'Description when all signatures are complete',
   },
 })

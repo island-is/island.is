@@ -32,7 +32,6 @@ export enum ApplicationTypes {
 export enum Routes {
   REQUIREMENTS = 'requirements',
   INVOLVED_PARTY = 'involvedParty',
-  ADDITIONAL_PARTIES = 'additionalParties',
   TYPE_SELECTION = 'typeSelection',
   COMMENTS = 'comments',
   ADVERT = 'advert',
@@ -70,6 +69,9 @@ export const SIGNATURE_INDEX = '{institutionIndex}'
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
 
+// Gateway (apps/api) enforces a 100kb JSON body limit. Leave headroom for other metadata.
+export const MAX_APPLICATION_PAYLOAD_BYTES = 90 * 1024
+
 export enum FileNames {
   DOCUMENT = 'document',
   ADDITIONS = 'additions',
@@ -86,5 +88,5 @@ export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
 export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10
-export const MAXIMUM_ADDITIONS_COUNT = 10
+export const MAXIMUM_ADDITIONS_COUNT = 25
 export const DEFAULT_ADDITIONS_COUNT = 1

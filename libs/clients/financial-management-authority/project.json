@@ -20,7 +20,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl --fail --show-error --location https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl --fail --show-error --location https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net/swagger/vacancy__v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

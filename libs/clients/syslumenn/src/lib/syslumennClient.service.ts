@@ -15,6 +15,7 @@ import {
   Skilabod,
   SvarSkeyti,
   SyslumennApi,
+  EstateType,
   VedbandayfirlitRegluverkGeneralSvar,
   VedbondTegundAndlags,
   VirkLeyfiGetRequest,
@@ -34,6 +35,7 @@ import {
   EstateRelations,
   Homestay,
   InheritanceReportInfo,
+  InheritanceSignatory,
   InheritanceTax,
   Lawyer,
   ManyPropertyDetail,
@@ -332,6 +334,11 @@ export class SyslumennService {
       uploadDataName,
       uploadDataId,
     )
+
+    logger.info('Syslumenn-client: calling uploadData', {
+      url: `${this.clientConfig.url}/api/v1/SyslMottakaGogn`,
+      uploadDataName,
+    })
 
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
@@ -647,6 +654,47 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  async getInheritanceReportSignatories(
+    deceasedNationalId: string,
+    estateType: string,
+  ): Promise<InheritanceSignatory[]> {
+    const { id, api } = await this.createApi()
+
+    try {
+      const queryParams = new URLSearchParams()
+      if (deceasedNationalId) queryParams.set('kennitala', deceasedNationalId)
+      if (estateType) queryParams.set('typa', estateType)
+      queryParams.set('audkenni', id)
+      logger.info('Syslumenn-client: calling getSignatories', {
+        endpoint: '/api/v1/AdilarMalsUndirritanir',
+        estateType,
+      })
+
+      const response = await api.adilarMalsUndirritanirGet({
+        kennitala: deceasedNationalId,
+        typa: estateType as unknown as EstateType,
+        audkenni: id,
+      })
+
+      logger.info('Syslumenn-client: getSignatories response received', {
+        signatoryCount: response.length,
+      })
+
+      // Map the response to InheritanceSignatory format
+      return response.map((item) => ({
+        name: item.nafn || '',
+        nationalId: item.kennitala || '',
+        signed: item.undirritad || false,
+      }))
+    } catch (error) {
+      logger.warn('Failed to get inheritance report signatories', {
+        error,
+        estateType,
+      })
+      throw error
+    }
   }
 
   async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {

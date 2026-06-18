@@ -53,6 +53,8 @@ enum RobotEmailType {
   INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
+  INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
+  REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -106,6 +108,15 @@ export class CourtService {
     return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
       valueIsFileName ? `.${fileNameEnding}` : ''
     }`
+  }
+
+  private validateCourtRobotEmailParams(
+    courtName?: string,
+    courtCaseNumber?: string,
+  ): void {
+    if (!courtName || !courtCaseNumber) {
+      throw new Error('Missing court name or court case number')
+    }
   }
 
   private getCourtSubtype(
@@ -324,22 +335,18 @@ export class CourtService {
           return ''
         }
 
-        // Temporarily disabled because of a bug in court system communication
-        // this.eventService.postErrorEvent(
-        //   'Failed to create an email at court',
-        //   {
-        //     caseId,
-        //     actor: user.name,
-        //     institution: user.institution?.name,
-        //     courtId,
-        //     courtCaseNumber,
-        //     subject: this.mask(subject),
-        //     recipients,
-        //     fromEmail,
-        //     fromName,
-        //   },
-        //   reason,
-        // )
+        this.eventService.postErrorEvent(
+          'Failed to create an email at court',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject: this.mask(subject),
+          },
+          reason,
+        )
 
         throw reason
       })
@@ -564,6 +571,95 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentCaseWithSpokespersonInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    civilClaimantNationalId?: string,
+    civilClaimantName?: string,
+    spokespersonNationalId?: string,
+    spokespersonIsLawyer?: boolean,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subjectSuffix = spokespersonNationalId
+        ? spokespersonIsLawyer
+          ? 'lögmaður brotaþola'
+          : 'réttargæslumaður brotaþola'
+        : 'brotaþoli'
+      const subject = `${courtName} - ${courtCaseNumber} - ${subjectSuffix}`
+      const content = JSON.stringify({
+        civilClaimantNationalId,
+        civilClaimantName,
+        spokespersonNationalId,
+        spokespersonIsLawyer,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_SPOKESPERSON_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with spokesperson info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateRequestCaseWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
+  ): Promise<unknown> {
+    try {
+      this.validateCourtRobotEmailParams(courtName, courtCaseNumber)
+
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
+
+      return await this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.REQUEST_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update request case with defender info',
         {
           caseId,
           actor: user.name,

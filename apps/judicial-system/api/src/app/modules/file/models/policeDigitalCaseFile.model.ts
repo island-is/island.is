@@ -28,4 +28,7 @@ export class PoliceDigitalCaseFile {
 
   @Field(() => Boolean)
   readonly isDeletable!: boolean
+
+  @Field(() => Boolean)
+  readonly isNew!: boolean
 }

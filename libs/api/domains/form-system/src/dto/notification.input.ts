@@ -10,6 +10,9 @@ export class NotificationInput {
   nationalId!: string
 
   @Field(() => String, { nullable: false })
+  organizationNationalId!: string
+
+  @Field(() => String, { nullable: false })
   slug!: string
 
   @Field(() => Boolean, { nullable: false })
@@ -19,5 +22,5 @@ export class NotificationInput {
   command!: string
 
   @Field(() => ScreenInput, { nullable: true })
-  screen?: ScreenInput
+  screenDto?: ScreenInput
 }

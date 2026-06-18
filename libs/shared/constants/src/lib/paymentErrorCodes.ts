@@ -57,6 +57,9 @@ export enum CardErrorCode {
   RefundFailedAfterPaymentError = 'RefundFailedAfterPaymentError',
   UnknownCardError = 'UnknownCardError',
   ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
+  ApplePayNotConfigured = 'ApplePayNotConfigured',
+  ApplePayReplayDetected = 'ApplePayReplayDetected',
+  ApplePaySignatureVerificationFailed = 'ApplePaySignatureVerificationFailed',
 }
 
 export enum InvoiceErrorCode {

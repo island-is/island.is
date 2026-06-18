@@ -6,12 +6,16 @@ import {
 import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AppState, Image, SafeAreaView, View } from 'react-native'
+import { AppState, BackHandler, Image, SafeAreaView, View } from 'react-native'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
 
 import { PinKeypad } from '@/components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-pin-code'
+import {
+  clearPendingDeepLink,
+  consumePendingDeepLink,
+} from '@/app/+native-intent'
 import { authStore, useAuthStore } from '@/stores/auth-store'
 import {
   preferencesStore,
@@ -78,16 +82,17 @@ export default function AppLockScreen() {
   const biometricType = useBiometricType()
   const intl = useIntl()
 
-  const resetLockScreen = () => {
-    authStore.setState(() => ({
-      lockScreenActivatedAt: undefined,
-      lockScreenComponentId: undefined,
-    }))
-  }
-
+  // Clear state before router.back so the layout's re-push subscriber
+  // doesn't fire during unmount. Defer the deep-link replay until back has
+  // settled — replaying with the lock still on top would push the link
+  // above it, then back would pop the link instead of the lock.
   const unlockApp = () => {
-    resetLockScreen()
+    authStore.setState({
+      lockScreenActivatedAt: undefined,
+      biometricAutoPromptedForCurrentLock: false,
+    })
     router.back()
+    setTimeout(consumePendingDeepLink, 0)
   }
 
   const authenticateWithBiometrics = async () => {
@@ -108,7 +113,11 @@ export default function AppLockScreen() {
 
   const handleLogout = async () => {
     await logout()
-    resetLockScreen()
+    authStore.setState({
+      lockScreenActivatedAt: undefined,
+      biometricAutoPromptedForCurrentLock: false,
+    })
+    clearPendingDeepLink()
     router.replace('/login')
   }
 
@@ -162,29 +171,55 @@ export default function AppLockScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
-  // On mount: wait for the app to become active, then decide whether to auto-dismiss
-  // (within timeout) or stay locked and prompt biometrics.
+  // Swallow Android hardware back.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => true)
+    return () => sub.remove()
+  }, [])
+
+  // Own a componentId so the layout can detect external pops and re-push.
+  // Also clears lockScreenPushPending — the synchronous dedup flag set by the
+  // pusher to prevent racing pushes before this mount commits.
+  useEffect(() => {
+    const id = `app-lock-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    authStore.setState({
+      lockScreenComponentId: id,
+      lockScreenPushPending: false,
+    })
+    return () => {
+      if (authStore.getState().lockScreenComponentId === id) {
+        authStore.setState({ lockScreenComponentId: undefined })
+      }
+    }
+  }, [])
+
+  // On mount and each → active: undefined → dismiss, within grace → unlock,
+  // else → require auth (biometric prompted once per lock).
   useEffect(() => {
     const tryUnlockOrPrompt = () => {
-      const { lockScreenActivatedAt } = authStore.getState()
+      const { lockScreenActivatedAt, biometricAutoPromptedForCurrentLock } =
+        authStore.getState()
       const { appLockTimeout } = preferencesStore.getState()
 
-      const withinTimeout =
-        lockScreenActivatedAt !== undefined &&
-        lockScreenActivatedAt + appLockTimeout > Date.now()
-
-      if (withinTimeout) {
-        resetLockScreen()
+      if (lockScreenActivatedAt === undefined) {
         router.back()
         return
       }
 
-      // Timeout expired or cold start — prompt biometrics
+      const elapsed = Date.now() - lockScreenActivatedAt
+      if (elapsed < appLockTimeout) {
+        unlockApp()
+        return
+      }
+
+      if (biometricAutoPromptedForCurrentLock) {
+        return
+      }
+      authStore.setState({ biometricAutoPromptedForCurrentLock: true })
       void authenticateWithBiometrics()
     }
 
     if (AppState.currentState === 'active') {
-      // Already active (cold start) — decide immediately
       tryUnlockOrPrompt()
     }
 

@@ -4,7 +4,10 @@ import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -25,6 +28,7 @@ import {
 import {
   CaseFile,
   CaseOrigin,
+  Defendant,
   PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -51,6 +55,7 @@ interface PoliceUploadListMenuProps {
   caseFiles?: CaseFile[] | null
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
   caseOrigin?: CaseOrigin | null
+  defendants?: Pick<Defendant, 'name' | 'policeCaseNumbers' | 'gender'>[] | null
 }
 
 /* We need to make sure this list is not rerenderd unless the props are changing.
@@ -66,6 +71,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     caseFiles,
     setAllUploaded,
     caseOrigin,
+    defendants,
   }) => {
     const { formatMessage } = useIntl()
 
@@ -85,7 +91,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       digitalCaseFilesLoading,
       digitalCaseFilesError,
       deletePoliceDigitalCaseFile,
-    } = usePoliceDigitalCaseFile(caseId, caseOrigin)
+    } = usePoliceDigitalCaseFile()
 
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
@@ -193,6 +199,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
                   policeCaseNumber={policeCaseNumber}
                   subtypes={subtypes}
                   crimeScenes={crimeScenes}
+                  defendants={defendants}
                 />
               </Box>
               <UploadFilesToPoliceCase
@@ -300,15 +307,16 @@ const PoliceCaseFilesRoute = () => {
             setAllUploaded={setAllUploadedForPoliceCaseNumber}
             policeCaseNumbers={workingCase.policeCaseNumbers}
             caseOrigin={workingCase.origin}
+            defendants={workingCase.defendants}
           />
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILE_ROUTE)
+            handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

@@ -7,7 +7,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { applyUpdateToCase } from '../../formHelper'
@@ -250,8 +250,9 @@ const useCase = () => {
     () =>
       async (
         id: string,
-        notificationType: NotificationType,
+        notificationType: TrackedNotificationType,
         eventOnly?: boolean,
+        properties?: { [key: string]: string },
       ): Promise<boolean> => {
         try {
           const { data } = await sendNotificationMutation({
@@ -260,6 +261,7 @@ const useCase = () => {
                 caseId: id,
                 type: notificationType,
                 eventOnly,
+                properties,
               },
             },
           })

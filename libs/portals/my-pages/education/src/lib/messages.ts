@@ -123,32 +123,24 @@ export const primarySchoolMessages = defineMessages({
   },
   examSitting: {
     id: 'sp.education-primary-school:exam-sitting',
-    defaultMessage: 'Fyrirlögn',
+    defaultMessage: 'Lagt fyrir',
+  },
+  viewResults: {
+    id: 'sp.education-primary-school:view-results',
+    defaultMessage: 'Sjá niðurstöður',
   },
   downloadResults: {
     id: 'sp.education-primary-school:download-results',
-    defaultMessage: 'Sækja niðurstöður',
+    defaultMessage: 'Niðurstöður',
   },
-  // Contact type labels
-  contactTypeParent: {
-    id: 'sp.education-primary-school:contact-type-parent',
-    defaultMessage: 'Foreldri',
+  child: {
+    id: 'sp.education-primary-school:child',
+    defaultMessage: 'Barn',
   },
-  contactTypeGuardian: {
-    id: 'sp.education-primary-school:contact-type-guardian',
-    defaultMessage: 'Forráðamaður',
-  },
-  contactTypeEmergencyContact: {
-    id: 'sp.education-primary-school:contact-type-emergency-contact',
-    defaultMessage: 'Neyðartengiliður',
-  },
-  contactTypeRelative: {
-    id: 'sp.education-primary-school:contact-type-relative',
-    defaultMessage: 'Ættingi',
-  },
-  contactTypeSibling: {
-    id: 'sp.education-primary-school:contact-type-sibling',
-    defaultMessage: 'Systkini',
+  assessmentNoData: {
+    id: 'sp.education-primary-school:assessment-no-data',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })
 
@@ -160,7 +152,7 @@ export const uniMessages = defineMessages({
   graduationIntro: {
     id: 'sp.education-graduation:education-graduation-intro',
     defaultMessage:
-      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
+      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi',
     description: 'education graduation intro',
   },
   seeDetails: {
@@ -186,5 +178,16 @@ export const uniMessages = defineMessages({
   graduationFiles: {
     id: 'sp.education-graduation:graduation-files',
     defaultMessage: 'Brautskráningargögn',
+  },
+  microCredentialsIntro: {
+    id: 'sp.education-graduation:micro-credentials-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir örnám frá háskólanámi',
+    description: 'Micro-credentials list intro',
+  },
+  studyLevel: {
+    id: 'sp.education-graduation:study-level',
+    defaultMessage: 'Námsstig',
+    description:
+      'Level of study label (used instead of degree for micro-credentials)',
   },
 })

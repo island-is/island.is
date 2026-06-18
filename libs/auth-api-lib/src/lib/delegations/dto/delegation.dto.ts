@@ -87,6 +87,11 @@ export class DelegationDTO {
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
 
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  subjectId?: string | null
+
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]
 
@@ -111,6 +116,17 @@ export class PatchDelegationDTO {
   @IsOptional()
   @IsArray()
   deleteScopes?: string[]
+}
+
+export class DeleteDelegationScopesDTO {
+  @ApiProperty({
+    description:
+      'List of scope names to remove from a delegation. Used by the recipient of an incoming delegation to revoke their own scopes.',
+    type: [String],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  scopeNames!: string[]
 }
 
 export class CreateDelegationDTO {

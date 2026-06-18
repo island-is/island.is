@@ -31,7 +31,7 @@ interface OtherAssetsRepeaterProps {
 export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & OtherAssetsRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id } = field
+  const id = field.id as string
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.otherAssets
   const { formatMessage } = useLocale()
@@ -141,12 +141,14 @@ export const OtherAssetsRepeater: FC<
               )}
               {!field.initial && (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveOtherAsset.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               )}
             </Box>
             <GridRow>

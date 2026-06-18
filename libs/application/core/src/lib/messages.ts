@@ -72,7 +72,7 @@ export const coreMessages = defineMessages({
     description: 'Button label when application is approved',
   },
   cardButtonNotStarted: {
-    id: 'application:card.button.notStarted',
+    id: 'application.system:card.button.notStarted',
     defaultMessage: 'Hefja umsókn',
     description: 'Button label when application is not started',
   },
@@ -314,6 +314,17 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Afrita tengil',
     description: 'Copy link button title',
   },
+  paymentPendingInvoiceTitle: {
+    id: 'application.system:core.payment.pendingInvoiceTitle',
+    defaultMessage: 'Krafa stofnuð',
+    description: 'Title for payment pending invoice',
+  },
+  paymentPendingInvoiceDescription: {
+    id: 'application.system:core.payment.pendingInvoiceDescription#markdown',
+    defaultMessage:
+      '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan 48 klst (á virkum degi) mun umsóknin verða felld niður.',
+    description: 'Description for payment pending invoice',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
@@ -427,6 +438,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
   },
+  fileUploadRequired: {
+    id: 'application.system:core.error.file.uploadRequired',
+    defaultMessage: 'Vinsamlegast hladdu inn að minnsta kosti einni skrá.',
+    description:
+      'Shown when a required file upload field has no files attached',
+  },
   fileUploadMalware: {
     id: 'application.system:core.error.file.uploadMalware',
     defaultMessage: 'Eftirfarandi skrár hafa verið merktar sýktar: {files}',
@@ -515,6 +532,12 @@ export const coreErrorMessages = defineMessages({
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
   },
+  paymentSubmitFailedDescriptionMarkdown: {
+    id: 'application.system:core.payment.paymentSubmitFailedDescription#markdown',
+    defaultMessage:
+      '* **Greiðsla tókst** en ekki tókst að senda umsókn inn til afgreiðslu. \n\n* Þú getur reynt aftur að senda inn umsókn með smella á **Reyna aftur**. \n\n* Þú getur hætt við að senda umsóknina inn í bili og fengið endurgreitt með því að smella á **Hætta við greiðslu og vista umsókn**. Finna má vistaðar umsóknir á [Mínum síðum](https://island.is/minarsidur/umsoknir)',
+    description: 'Message indicating submission after payment failed',
+  },
   applicationSubmitFailed: {
     id: 'application.system:core.application.SubmitFailed',
     defaultMessage: 'Sending umsóknar mistókst',
@@ -527,7 +550,7 @@ export const coreErrorMessages = defineMessages({
   },
   paymentSubmitRefundExitButtonCaption: {
     id: 'application.system:core.payment.exitCaption',
-    defaultMessage: 'Hætta við greiðslu og fara aftur í umsókn',
+    defaultMessage: 'Hætta við greiðslu og vista umsókn',
     description: 'Caption for the refund payment and exit button',
   },
   paymentStatusError: {

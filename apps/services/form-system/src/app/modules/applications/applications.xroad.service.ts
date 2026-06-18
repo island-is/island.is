@@ -10,15 +10,11 @@ import { Application } from './models/application.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { ApplicationsService } from './applications.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
-import {
-  ApplicationXroadDto,
-  ApplicationXroadFieldDto,
-  ApplicationXroadValueDto,
-} from './models/dto/application.xroad.dto'
-import { ApplicationDto } from './models/dto/application.dto'
-import { FieldTypesEnum } from '@island.is/form-system/shared'
+import { ApplicationJsonDto } from './models/dto/application.json.dto'
 import { FileService } from '../file/file.service'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ApplicationEvent } from './models/applicationEvent.model'
+import { ApplicationEvents } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationsXRoadService {
@@ -26,6 +22,8 @@ export class ApplicationsXRoadService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
     private readonly applicationMapper: ApplicationMapper,
     private readonly applicationsService: ApplicationsService,
     private readonly fileService: FileService,
@@ -34,11 +32,17 @@ export class ApplicationsXRoadService {
   async getApplication(
     id: string,
     xRoadClient: string,
-  ): Promise<ApplicationXroadDto> {
+  ): Promise<ApplicationJsonDto> {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
       throw new NotFoundException(`Application with id ${id} not found`)
+    }
+
+    if (application.pruned) {
+      throw new NotFoundException(
+        `Application with id ${id} is pruned and cannot be accessed`,
+      )
     }
 
     const form = await this.applicationsService.getApplicationForm(
@@ -59,7 +63,7 @@ export class ApplicationsXRoadService {
         `X-Road client with member code ${memberCode} attempted to access application ${id} owned by ${formOwner}`,
       )
       throw new UnauthorizedException(
-        `You do not have access to this application.`,
+        `This application is owned by a different organization.`,
       )
     }
 
@@ -68,9 +72,28 @@ export class ApplicationsXRoadService {
       application,
     )
 
-    return this.applicationMapper.mapApplicationDtoToApplicationXroadDto(
-      applicationDto,
-    )
+    const applicationJsonDto =
+      this.applicationMapper.mapApplicationDtoToApplicationJsonDto(
+        applicationDto,
+      )
+
+    try {
+      await this.applicationEventModel.create({
+        applicationId: id,
+        eventType: ApplicationEvents.APPLICATION_FETCHED,
+        eventMessage: {
+          is: 'Umsókn sótt',
+          en: 'Application fetched',
+        },
+      } as ApplicationEvent)
+    } catch (err) {
+      this.logger.error(
+        `Failed to persist APPLICATION_FETCHED event for application ${id}`,
+        err,
+      )
+    }
+
+    return applicationJsonDto
   }
 
   async getFile(id: string, xRoadClient: string): Promise<FileResponseDto> {
@@ -103,7 +126,7 @@ export class ApplicationsXRoadService {
         `X-Road client with member code ${memberCode} attempted to access application ${applicationId} owned by ${formOwner}`,
       )
       throw new UnauthorizedException(
-        `You do not have access to this application.`,
+        `This application-file is owned by a different organization.`,
       )
     }
 

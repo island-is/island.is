@@ -9,6 +9,7 @@ import * as v4 from '../v4'
 import * as v5 from '../v5'
 import {
   CanApplyErrorCodeBTemporary,
+  CanApplyErrorCodeRenewal65,
   DriversLicense,
   QualitySignature,
   QualityPhotoAndSignature,
@@ -19,9 +20,9 @@ import {
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import {
-  PracticePermitDto,
-  DriverLicenseWithoutImagesDto,
-  ImagesFromThjodskraDto,
+  DtoV5PracticePermitDto,
+  DtoV5DriverLicenseWithoutImagesDto,
+  DtoImagesFromThjodskraDto,
 } from '../v5'
 
 @Injectable()
@@ -37,14 +38,15 @@ export class DrivingLicenseApi {
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
     nationalId: string
     token?: string
-    healthDecleration: v5.PostTemporaryLicenseWithHealthDeclaration
-  }): Promise<v5.NewTemporaryLicsenseDto> {
+    healthDecleration: v5.ModelsV5PostTemporaryLicenseWithHealthDeclaration
+  }): Promise<v5.DtoV5NewTemporaryLicsenseDto> {
     return this.v5.apiDrivinglicenseV5ApplicationsNewTemporarywithhealthdeclarationPost(
       {
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         jwttoken: input.token ?? '',
-        postTemporaryLicenseWithHealthDeclaration: input.healthDecleration,
+        modelsV5PostTemporaryLicenseWithHealthDeclaration:
+          input.healthDecleration,
       },
     )
   }
@@ -74,7 +76,7 @@ export class DrivingLicenseApi {
   public async getCurrentLicenseV5(input: {
     nationalId: string
     token?: string
-  }): Promise<v5.DriverLicenseDto | null> {
+  }): Promise<v5.DtoV5DriverLicenseDto | null> {
     const skirteini = await this.v5.getCurrentLicenseV5({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -277,7 +279,7 @@ export class DrivingLicenseApi {
   public async getDeprivation(input: {
     nationalId: string
     token?: string
-  }): Promise<v5.DeprivationDto> {
+  }): Promise<v5.DtoV5DeprivationDto> {
     return await this.v5.apiDrivinglicenseV5DeprivationGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -378,7 +380,7 @@ export class DrivingLicenseApi {
 
   public async getCanApplyForRenewal65(params: {
     token: string
-  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeRenewal65>> {
     const response = await this.v5.apiDrivinglicenseV5CanapplyforRenewal65Get({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -387,9 +389,7 @@ export class DrivingLicenseApi {
 
     return {
       result: !!response.result,
-      errorCode: response.errorCode
-        ? (response.errorCode as CanApplyErrorCodeBFull)
-        : undefined,
+      errorCode: response.errorCode ?? undefined,
     }
   }
 
@@ -417,7 +417,7 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5DrivingassessmentPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      postNewDrivingAssessment: {
+      modelsV5PostNewDrivingAssessment: {
         dateOfAssessment: params.dateOfAssessment,
         instructorSSN: params.nationalIdTeacher,
         ssn: params.nationalIdStudent,
@@ -435,13 +435,15 @@ export class DrivingLicenseApi {
     email: string
     phone: string
     auth: string
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }) {
     try {
       const response =
         await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost({
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-          postTemporaryLicense: {
+          modelsV5PostTemporaryLicense: {
             bringsHealthCertificate: params.willBringHealthCertificate,
             ssn: params.nationalIdApplicant,
             bringNewPhoto: params.willBringQualityPhoto,
@@ -450,6 +452,8 @@ export class DrivingLicenseApi {
             email: params.email,
             gsm: params.phone,
             authority: params.jurisdictionId,
+            photoBiometricsId: params.photoBiometricsId,
+            signatureBiometricsId: params.signatureBiometricsId,
           },
         })
       if (!response.result) {
@@ -490,7 +494,7 @@ export class DrivingLicenseApi {
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
-        postNewFinalLicense: {
+        modelsV5PostNewFinalLicense: {
           authorityNumber: params.jurisdictionId,
           needsToPresentHealthCertificate: params.willBringHealthCertificate
             ? 1
@@ -513,18 +517,60 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postApplyForRenewal65(params: {
+    token: string
+    districtId: number
+    phoneNumber: string
+    email: string
+    pickupPlasticAtDistrict?: boolean
+    sendPlasticToPerson?: boolean
+    contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
+  }): Promise<boolean> {
+    const response =
+      await this.applicationV5.apiApplicationsV5ApplyforRenewal65Post({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+        modelsV5PostRenewal65: {
+          districtId: params.districtId,
+          primaryPhoneNumber: params.phoneNumber,
+          email: params.email,
+          pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
+          sendPlasticToPerson: params.sendPlasticToPerson,
+          contentList: params.contentList,
+          photoBiometricsId: params.photoBiometricsId,
+          signatureBiometricsId: params.signatureBiometricsId,
+          renewalDate: new Date(),
+          userId: v5.DRIVING_LICENSE_API_USER_ID,
+        },
+      })
+
+    return response.result ?? false
+  }
+
+  // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
+  // Removed from upstream spec briefly mid-Phase-B; restored at our request
+  // with `deprecated: true`. Will be deleted along with this method once the
+  // redesign flag has been fully ON in prod long enough that no flag-OFF
+  // 65+ submissions reach this branch.
   async postRenewLicenseOver65(params: {
-    input: v5.PostRenewal65AndOver
-    auth: string
-  }) {
+    token: string
+    districtId: number
+    pickupPlasticAtDistrict?: boolean
+    sendPlasticToPerson?: boolean
+  }): Promise<v5.DtoV5Renewal65AndOver> {
     return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.auth,
-      postRenewal65AndOver: {
-        ...params.input,
-        renewalDate: new Date(),
+      jwttoken: params.token.replace('Bearer ', ''),
+      modelsV5PostRenewal65AndOver: {
         userId: v5.DRIVING_LICENSE_API_USER_ID,
+        districtId: params.districtId,
+        renewalDate: new Date(),
+        pickupPlasticAtDistrict: params.pickupPlasticAtDistrict,
+        sendPlasticToPerson: params.sendPlasticToPerson,
       },
     })
   }
@@ -536,16 +582,17 @@ export class DrivingLicenseApi {
     instructorSSN: string
     phoneNumber: string
     email: string
-    contentList?: v5.RLSApplicationContentModel[]
+    contentList?: v5.ContractsRLSApplicationSystemRLSApplicationContentModel[]
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
-    healthDeclarationModel?: v5.HealthDeclarationModel
+    sendPlasticToPerson?: boolean
+    healthDeclarationModel: v5.ModelsHealthDeclarationModel
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.token.replace('Bearer ', ''),
-      postApplicationForBEModel: {
+      modelsV5PostApplicationForBEModel: {
         districtId: params.jurisdictionId,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         instructorSSN: params.instructorSSN,
@@ -554,6 +601,7 @@ export class DrivingLicenseApi {
         contentList: params.contentList,
         photoBiometricsId: params.photoBiometricsId,
         signatureBiometricsId: params.signatureBiometricsId,
+        sendPlasticToPerson: params.sendPlasticToPerson,
         healthDeclarationModel: params.healthDeclarationModel,
       },
     })
@@ -564,12 +612,12 @@ export class DrivingLicenseApi {
   async postCanApplyForPracticePermit(params: {
     token: string
     studentSSN: string
-  }): Promise<PracticePermitDto> {
+  }): Promise<DtoV5PracticePermitDto> {
     return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.token.replace('Bearer ', ''),
-      postPracticePermit: {
+      modelsV5PostPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
@@ -580,12 +628,12 @@ export class DrivingLicenseApi {
   async postPracticePermitApplication(params: {
     token: string
     studentSSN: string
-  }): Promise<PracticePermitDto> {
+  }): Promise<DtoV5PracticePermitDto> {
     return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.token.replace('Bearer ', ''),
-      postPracticePermit: {
+      modelsV5PostPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
@@ -613,7 +661,7 @@ export class DrivingLicenseApi {
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: token.replace('Bearer ', ''),
-      postNewCollaborative: {
+      modelsV5PostNewCollaborative: {
         districtId,
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
@@ -688,7 +736,7 @@ export class DrivingLicenseApi {
         imageTypeId: res.imageTypeId ?? null,
         imageTypeName: res.imageTypeName ?? null,
         imageDate: res.imageDate ?? null,
-        pohto: res.pohto ?? null,
+        pohto: res.photo ?? null,
         signatureId: res.signatureId ?? null,
         signatureTypeId: res.signatureTypeId ?? null,
         signatureTypeName: res.signatureTypeName ?? null,
@@ -713,7 +761,7 @@ export class DrivingLicenseApi {
 
   async getAllPhotosFromThjodskra(params: {
     token: string
-  }): Promise<ImagesFromThjodskraDto> {
+  }): Promise<DtoImagesFromThjodskraDto> {
     const res =
       await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
         {
@@ -728,7 +776,7 @@ export class DrivingLicenseApi {
 
   async getAllDriverLicenses(
     token: string,
-  ): Promise<DriverLicenseWithoutImagesDto[]> {
+  ): Promise<DtoV5DriverLicenseWithoutImagesDto[]> {
     return await this.v5.apiDrivinglicenseV5AllGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,

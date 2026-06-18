@@ -189,28 +189,25 @@ export class PaymentApprovedCallbackInput {
   status!: CallbackStatusEnum
 }
 
-@InputType('PaymentApprovedFormSystemInput')
-export class PaymentApprovedInput {
-  @Field(() => String)
-  applicationId!: string
-
-  @Field(() => String)
-  id!: string
-
-  @Field(() => PaymentApprovedCallbackInput)
-  callback!: PaymentApprovedCallbackInput
-}
-
 @InputType('ChargeItemFormSystemInput')
 export class ChargeItemInput {
   @Field(() => String)
-  code!: string
+  performingOrgID!: string
+
+  @Field(() => String)
+  chargeType!: string
+
+  @Field(() => String)
+  chargeItemCode!: string
+
+  @Field(() => String)
+  chargeItemName!: string
+
+  @Field(() => Number)
+  priceAmount!: number
 
   @Field(() => Number, { nullable: true })
   quantity?: number
-
-  @Field(() => Number, { nullable: true })
-  amount?: number
 }
 
 @InputType('CreateFormSystemPaymentInput')

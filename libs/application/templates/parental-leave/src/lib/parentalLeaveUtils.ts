@@ -563,7 +563,7 @@ export const isEligibleForParentalLeave = (
 }
 
 export const getPeriodIndex = (field?: Field) => {
-  const id = field?.id
+  const id = field?.id as string
 
   if (!id) {
     return -1
@@ -618,7 +618,14 @@ export const getApplicationExternalData = (
     'person.data.fullname',
   ) ?? getValueViaPath(externalData, 'person.data.fullName', '')) as string
 
-  const navId = getValueViaPath(externalData, 'navId', '') as string
+  const navIdData = getValueViaPath(externalData, 'navId.data')
+  const rawNavId = getValueViaPath(externalData, 'navId', '')
+  const navId =
+    typeof navIdData === 'string'
+      ? navIdData
+      : typeof rawNavId === 'string'
+      ? rawNavId
+      : ''
 
   const dateOfBirth = getValueViaPath(externalData, 'dateOfBirth') as {
     data: { dateOfBirth: string }

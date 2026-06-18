@@ -17,11 +17,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases } from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -98,6 +99,8 @@ export class CivilClaimantController {
   async update(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: User,
     @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() updateCivilClaimantDto: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
@@ -105,9 +108,10 @@ export class CivilClaimantController {
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
     return this.civilClaimantService.update(
-      caseId,
+      theCase,
       civilClaimant,
       updateCivilClaimantDto,
+      user,
     )
   }
 

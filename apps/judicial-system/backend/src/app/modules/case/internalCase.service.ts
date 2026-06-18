@@ -24,10 +24,7 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import {
-  formatCaseType,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -37,6 +34,7 @@ import {
   completedIndictmentCaseStates,
   CourtSessionRulingType,
   courtSubtypes,
+  DateType,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadline,
@@ -44,7 +42,6 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
-  NotificationType,
   restrictionCases,
   ServiceRequirement,
   type User as TUser,
@@ -621,6 +618,11 @@ export class InternalCaseService {
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+        [
+          { model: IndictmentCount, as: 'indictmentCounts' },
+          'displayOrder',
+          'ASC',
+        ],
         [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
@@ -821,7 +823,7 @@ export class InternalCaseService {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            dateType: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            dateType: [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE],
             date: {
               [Op.gte]: startOfDay,
               [Op.lte]: endOfDay,
@@ -1180,19 +1182,20 @@ export class InternalCaseService {
 
   async deliverReceivedDateToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
       .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
-        theCase.appealCase?.appealCaseNumber,
-        theCase.appealCase?.appealReceivedByCourtDate,
+        appealCase.appealCaseNumber,
+        appealCase.appealReceivedByCourtDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with received date`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with received date`,
           { reason },
         )
 
@@ -1202,26 +1205,27 @@ export class InternalCaseService {
 
   async deliverAssignedRolesToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
       .updateAppealCaseWithAssignedRoles(
         user,
         theCase.id,
-        theCase.appealCase?.appealCaseNumber,
-        theCase.appealCase?.appealAssistant?.nationalId,
-        theCase.appealCase?.appealAssistant?.name,
-        theCase.appealCase?.appealJudge1?.nationalId,
-        theCase.appealCase?.appealJudge1?.name,
-        theCase.appealCase?.appealJudge2?.nationalId,
-        theCase.appealCase?.appealJudge2?.name,
-        theCase.appealCase?.appealJudge3?.nationalId,
-        theCase.appealCase?.appealJudge3?.name,
+        appealCase.appealCaseNumber,
+        appealCase.appealAssistant?.nationalId,
+        appealCase.appealAssistant?.name,
+        appealCase.appealJudge1?.nationalId,
+        appealCase.appealJudge1?.name,
+        appealCase.appealJudge2?.nationalId,
+        appealCase.appealJudge2?.name,
+        appealCase.appealJudge3?.nationalId,
+        appealCase.appealJudge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with assigned roles`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with assigned roles`,
           { reason },
         )
 
@@ -1231,32 +1235,22 @@ export class InternalCaseService {
 
   async deliverConclusionToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
-    // There is no timestamp for appeal ruling, so we use notifications to approximate the time.
-    // We know notifications occur in a decending order by time.
-    const appealCompletedNotifications = theCase.notifications?.filter(
-      (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
-    )
-    const appealRulingDate =
-      appealCompletedNotifications && appealCompletedNotifications.length > 0
-        ? appealCompletedNotifications[appealCompletedNotifications.length - 1]
-            .created
-        : undefined
-
     return this.courtService
       .updateAppealCaseWithConclusion(
         user,
         theCase.id,
-        theCase.appealCase?.appealCaseNumber,
-        Boolean(theCase.appealCase?.appealRulingModifiedHistory),
-        theCase.appealCase?.appealRulingDecision,
-        appealRulingDate,
+        appealCase.appealCaseNumber,
+        Boolean(appealCase.appealRulingModifiedHistory),
+        appealCase.appealRulingDecision,
+        appealCase.appealRulingDate,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with conclusion`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with conclusion`,
           { reason },
         )
 
@@ -1269,7 +1263,8 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const policeCaseId = await this.findOriginalAncestorId(theCase)
+    const policeCaseId =
+      await this.caseRepositoryService.findOriginalAncestorId(theCase)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1519,11 +1514,16 @@ export class InternalCaseService {
 
   async deliverAppealToPolice(
     theCase: Case,
+    appealCase: AppealCase,
     user: TUser,
   ): Promise<DeliverResponse> {
     const delivered = await Promise.all(
       theCase.caseFiles
-        ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
+        ?.filter(
+          (file) =>
+            file.rulingFileId === appealCase.rulingFileId &&
+            file.category === CaseFileCategory.APPEAL_RULING,
+        )
         .map(async (caseFile) => {
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
@@ -1542,7 +1542,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver appeal for case ${theCase.id} to police`,
+          `Failed to deliver appeal ruling for appeal case ${appealCase.id} of case ${theCase.id} to police`,
           { reason },
         )
 
@@ -1570,18 +1570,6 @@ export class InternalCaseService {
     }
 
     return originalAncestor
-  }
-
-  private async findOriginalAncestorId(theCase: Case): Promise<string> {
-    if (isIndictmentCase(theCase.type)) {
-      // indictment cases can be split
-      return theCase.splitCaseId ?? theCase.id
-    }
-
-    // request cases can be extended
-    const originalAncestor = await this.findOriginalAncestor(theCase)
-
-    return originalAncestor.id
   }
 
   // As this is only currently used by the digital mailbox API
@@ -1612,9 +1600,8 @@ export class InternalCaseService {
           CaseState.WAITING_FOR_CANCELLATION,
           ...completedIndictmentCaseStates,
         ],
-        // The national id could be without a hyphen or with a hyphen so we need to
-        // search for both
-        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
+        // nationalId comes from a raw @Param, so normalize it once here
+        '$defendants.national_id$': nationalId.replace(/-/g, ''),
       },
     })
   }
@@ -1633,6 +1620,7 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+              separate: true,
             },
             {
               model: Verdict,
@@ -1657,6 +1645,7 @@ export class InternalCaseService {
           as: 'eventLogs',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
@@ -1666,6 +1655,7 @@ export class InternalCaseService {
           as: 'courtSessions',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           attributes: ['ruling'],
           where: {
             ruling_type: CourtSessionRulingType.JUDGEMENT,
@@ -1685,9 +1675,9 @@ export class InternalCaseService {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
-        // This only selects defendants with the given national id, other defendants are not included
-        '$defendants.national_id$':
-          normalizeAndFormatNationalId(defendantNationalId),
+        // This only selects defendants with the given national id, other defendants are not included.
+        // defendantNationalId comes from a raw @Param, so normalize it once here.
+        '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
       },
     })
 
@@ -1758,6 +1748,7 @@ export class InternalCaseService {
           as: 'eventLogs',
           required: false,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
@@ -1765,8 +1756,9 @@ export class InternalCaseService {
         {
           model: Defendant,
           as: 'defendants',
-          required: false,
+          required: true,
           order: [['created', 'DESC']],
+          separate: true,
           where: {
             indictmentReviewDecision: null,
           },

@@ -1,5 +1,6 @@
-import { InputType, Field, Int } from '@nestjs/graphql'
+import { InputType, Field, Int, Float } from '@nestjs/graphql'
 import { ApplicationEventDtoInput } from './application.input'
+import { LanguageTypeInput } from './languageType.input'
 
 @InputType('FormSystemMonthInput')
 export class MonthInput {
@@ -18,14 +19,17 @@ export class ValueInput {
   @Field(() => String, { nullable: true })
   text?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   number?: number
 
   @Field(() => Date, { nullable: true })
   date?: Date | null
 
+  @Field(() => LanguageTypeInput, { nullable: true })
+  label?: LanguageTypeInput
+
   @Field(() => String, { nullable: true })
-  listValue?: string
+  value?: string
 
   @Field(() => String, { nullable: true })
   nationalId?: string

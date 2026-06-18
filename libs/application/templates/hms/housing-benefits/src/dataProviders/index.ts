@@ -1,0 +1,102 @@
+import {
+  DefaultEvents,
+  defineTemplateApi,
+  NationalRegistryV3UserApi,
+} from '@island.is/application/types'
+import { nationalIdPreface } from '../utils/assigneeUtils'
+import { TemplateApiActions } from '../utils/constants'
+
+export {
+  ChildrenCustodyInformationApiV3,
+  IdentityApi,
+} from '@island.is/application/types'
+
+export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
+  order: 1,
+})
+
+export const RentalAgreementsApi = defineTemplateApi({
+  action: 'getRentalAgreements',
+  order: 2,
+})
+
+export const DomicileResidentsByRentalContractsApi = defineTemplateApi({
+  action: 'getDomicileResidentsByRentalContracts',
+  order: 3,
+})
+
+export const HouseholdMembersApi = defineTemplateApi({
+  action: 'getHouseholdMembers',
+  order: 4,
+})
+
+export const PersonalTaxReturnApi = defineTemplateApi({
+  action: 'getPersonalTaxReturn',
+  order: 5,
+})
+
+// Assignee dataproviders with dynamic ids
+export const AssigneeNationalRegistryApi = defineTemplateApi({
+  action: 'assigneeNationalRegistry',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeNationalRegistry'),
+})
+
+export const AssigneeUserProfileApi = defineTemplateApi({
+  action: 'userProfile',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeUserProfile'),
+  namespace: 'UserProfile',
+})
+
+export const AssigneePersonalTaxReturnApi = defineTemplateApi({
+  action: 'getAssigneePersonalTaxReturn',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeTaxReturn'),
+})
+
+export const AssigneeChildrenCustodyInformationApiV3 = defineTemplateApi({
+  action: 'assigneeChildrenCustodyInformation',
+  externalDataId: (application, user) =>
+    nationalIdPreface(application, user, 'assigneeChildrenCustody'),
+})
+
+export const SubmitApplicationApi = defineTemplateApi({
+  action: TemplateApiActions.submitApplication,
+  externalDataId: 'submitApplication',
+  throwOnError: true,
+})
+
+export const NotifyAssigneesApi = defineTemplateApi({
+  action: TemplateApiActions.notifyAssignees,
+  externalDataId: 'notifyAssignees',
+  triggerEvent: DefaultEvents.SUBMIT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnAssigneeSubmitApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnAssigneeSubmit,
+  triggerEvent: DefaultEvents.SUBMIT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnAssigneeRejectApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnAssigneeReject,
+  triggerEvent: DefaultEvents.REJECT,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnExtraDataRequestedApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnExtraDataRequested,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnApprovedByInstitutionApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnApprovedByInstitution,
+  throwOnError: true,
+})
+
+export const NotifyApplicantOnRejectedByInstitutionApi = defineTemplateApi({
+  action: TemplateApiActions.notifyApplicantOnRejectedByInstitution,
+  throwOnError: true,
+})

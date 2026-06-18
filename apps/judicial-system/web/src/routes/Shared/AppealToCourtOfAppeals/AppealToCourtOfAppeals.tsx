@@ -9,8 +9,15 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
+  DEFENDER_INDICTMENT_CASE_ROUTE,
+  DEFENDER_REQUEST_CASE_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
+  PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -26,31 +33,33 @@ import {
   PageTitle,
   RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
+  RulingFileLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
+  TUploadFile,
+  useAppealCase,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getDefenceUserPartyIds } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  getDefenceUserPartyIds,
+  isMatchingAppealCaseFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 const AppealToCourtOfAppeals = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { id } = router.query
+  const rulingFileId = router.query.rulingFileId?.toString()
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
   const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    user,
     workingCase,
+    user,
   )
   const {
     uploadFiles,
@@ -64,11 +73,12 @@ const AppealToCourtOfAppeals = () => {
     workingCase.id,
     defendantId,
     civilClaimantId,
+    rulingFileId,
   )
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { createAppealCase, isCreatingAppealCase } = useAppealCase()
 
   const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
@@ -79,12 +89,14 @@ const AppealToCourtOfAppeals = () => {
   const previousUrl = `${
     isDefenceUser(user)
       ? isIndictmentCase(workingCase.type)
-        ? constants.DEFENDER_INDICTMENT_ROUTE
-        : constants.DEFENDER_ROUTE
+        ? DEFENDER_INDICTMENT_CASE_ROUTE
+        : DEFENDER_REQUEST_CASE_ROUTE
       : isIndictmentCase(workingCase.type)
-      ? constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-  }/${id}`
+      ? isCompletedCase(workingCase.state)
+        ? PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE
+        : PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
+      : SIGNED_VERDICT_OVERVIEW_ROUTE
+  }/${workingCase.id}`
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -96,20 +108,21 @@ const AppealToCourtOfAppeals = () => {
       return
     }
 
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      CaseTransition.APPEAL,
-    )
+    const appealCase = await createAppealCase(workingCase.id, rulingFileId)
 
-    if (caseTransitioned) {
+    refreshCase()
+
+    if (appealCase) {
       setVisibleModal('APPEAL_SENT')
     }
   }, [
     handleUpload,
-    transitionCase,
-    updateUploadFile,
     uploadFiles,
+    updateUploadFile,
+    createAppealCase,
     workingCase.id,
+    rulingFileId,
+    refreshCase,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {
@@ -121,14 +134,33 @@ const AppealToCourtOfAppeals = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: FileUploadStatus.done })
+    addUploadFiles(files, {
+      category,
+      status: FileUploadStatus.done,
+      defendantId,
+      civilClaimantId,
+      rulingFileId,
+    })
   }
+
+  const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    return isMatchingAppealCaseFile(
+      workingCase,
+      [category],
+      file,
+      user,
+      rulingFileId,
+    )
+  }
+  const appealBriefFiles = uploadFiles.filter((file) =>
+    filter(file, appealBriefType),
+  )
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <PageTitle previousUrl={previousUrl}>Kæra til Landsréttar</PageTitle>
+        <PageTitle>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
           <Text variant="h2" as="h2">
             {`Mál nr. ${workingCase.courtCaseNumber}`}
@@ -136,14 +168,16 @@ const AppealToCourtOfAppeals = () => {
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
           )}
+          <RulingFileLabel
+            caseFiles={workingCase.caseFiles}
+            rulingFileId={rulingFileId}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title="Kæra" required />
           <InputFileUpload
             name="appealBrief"
-            files={uploadFiles.filter(
-              (file) => file.category === appealBriefType,
-            )}
+            files={appealBriefFiles}
             accept={'application/pdf'}
             title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
@@ -174,8 +208,8 @@ const AppealToCourtOfAppeals = () => {
           </Text>
           <InputFileUpload
             name="appealCaseFiles"
-            files={uploadFiles.filter(
-              (file) => file.category === appealCaseFilesType,
+            files={uploadFiles.filter((file) =>
+              filter(file, appealCaseFilesType),
             )}
             accept={'application/pdf'}
             title={formatMessage(core.uploadBoxTitle)}
@@ -201,11 +235,8 @@ const AppealToCourtOfAppeals = () => {
           previousUrl={previousUrl}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda kæru'}
-          nextIsDisabled={
-            !uploadFiles.find((file) => file.category === appealBriefType) ||
-            isTransitioningCase
-          }
-          nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
+          nextIsDisabled={appealBriefFiles.length === 0 || isCreatingAppealCase}
+          nextIsLoading={!allFilesDoneOrError || isCreatingAppealCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />

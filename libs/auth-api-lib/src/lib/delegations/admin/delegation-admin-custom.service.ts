@@ -360,7 +360,7 @@ export class DelegationAdminCustomService {
         : this.rskCompanyInfoService
             .getCompany(delegation.fromNationalId)
             .then((company) => company?.name ?? ''),
-      this.namesService.getPersonName(delegation.toNationalId),
+      this.namesService.validateRecipientNotDeceased(delegation.toNationalId),
     ])
 
     const existingDelegation = await this.delegationModel.findOne({

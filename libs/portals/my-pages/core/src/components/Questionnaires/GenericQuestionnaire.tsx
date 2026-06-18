@@ -109,10 +109,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
     if (!questionnaire.sections?.length) return []
 
     return questionnaire.sections
-      .filter((section) => {
-        // First check if the section itself is visible based on its conditions
-        return isSectionVisible(section, answers)
-      })
+      .filter((section) => isSectionVisible(section, answers))
       .map((section) => {
         if (!section.questions?.length) return { ...section, questions: [] }
 
@@ -129,7 +126,6 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
             )
           }
 
-          // Questions without visibility conditions are visible by default
           return true
         })
 

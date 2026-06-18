@@ -258,6 +258,10 @@ export const m = defineMessages({
     defaultMessage:
       'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur síðar',
   },
+  deleteDelegationsFailed: {
+    id: 'sp.access-control-delegations:delete-delegations-failed',
+    defaultMessage: 'Ekki tókst að eyða eftirfarandi umboðum: {delegations}',
+  },
   dateError: {
     id: 'sp.access-control-delegations:date-error',
     defaultMessage: 'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
@@ -312,6 +316,14 @@ export const m = defineMessages({
   grantCreateError: {
     id: 'sp.access-control-delegations:grant-create-error',
     defaultMessage: 'Ekki tókst að búa til aðgang fyrir þennan notanda.',
+  },
+  grantDeceasedTitle: {
+    id: 'sp.access-control-delegations:grant-deceased-title',
+    defaultMessage: 'Ekki er hægt að stofna umboð',
+  },
+  grantDeceasedMessage: {
+    id: 'sp.access-control-delegations:grant-deceased-message',
+    defaultMessage: 'Ekki er hægt að veita umboð til látins einstaklings.',
   },
   grantRequiredSsn: {
     id: 'sp.access-control-delegations:grant-required-ssn',
@@ -431,9 +443,33 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:confirm-access-button-label',
     defaultMessage: 'Staðfesta skráningu umboðs',
   },
+  deleteWarningStepLabel: {
+    id: 'sp.access-control-delegations:delete-warning-step-label',
+    defaultMessage: 'Eyða umboði',
+  },
+  continueStepLabel: {
+    id: 'sp.access-control-delegations:continue-step-label',
+    defaultMessage: 'Halda áfram',
+  },
+  deleteWarningTitle: {
+    id: 'sp.access-control-delegations:title-delete-warning',
+    defaultMessage: 'Viltu eyða umboðinu?',
+  },
+  deleteWarningBody: {
+    id: 'sp.access-control-delegations:delete-warning-body',
+    defaultMessage: 'Ef öll réttindi eru fjarlægð verður umboðinu eytt.',
+  },
+  deleteWarningButton: {
+    id: 'sp.access-control-delegations:delete-warning-button',
+    defaultMessage: 'Eyða umboði',
+  },
   confirmAccessModalTitle: {
     id: 'sp.access-control-delegations:confirm-access-modal-title',
     defaultMessage: 'Staðfesta veitingu á nýju umboði',
+  },
+  confirmEditAccessModalTitle: {
+    id: 'sp.access-control-delegations:confirm-edit-access-modal-title',
+    defaultMessage: 'Staðfesta breytingar á umboði',
   },
   searchScopesPlaceholder: {
     id: 'sp.access-control-delegations:search-scopes-placeholder',
@@ -607,6 +643,10 @@ export const m = defineMessages({
   headerPermissionType: {
     id: 'sp.access-control-delegations:header-permission-type',
     defaultMessage: 'Tegund réttinda',
+  },
+  selectAll: {
+    id: 'sp.access-control-delegations:select-all',
+    defaultMessage: 'Velja allt',
   },
   noDelegationsFound: {
     id: 'sp.access-control-delegations:no-delegations-found',

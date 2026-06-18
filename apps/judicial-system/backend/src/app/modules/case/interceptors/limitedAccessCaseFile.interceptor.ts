@@ -7,9 +7,19 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { CaseFileCategory, User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isDefenceUser,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
-import { canLimitedAccessUserViewCaseFile } from '../../file'
+import {
+  canLimitedAccessUserViewCaseFile,
+  getDefenderVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
+} from '../../file'
+import { Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -21,15 +31,21 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
           ({
+            id,
             category,
             submittedBy,
             fileRepresentative,
             defendantId,
+            created,
+            civilClaimantId,
           }: {
+            id: string
             category: CaseFileCategory
             submittedBy: string
             fileRepresentative: string
             defendantId?: string
+            created?: Date
+            civilClaimantId?: string | null
           }) =>
             canLimitedAccessUserViewCaseFile({
               user,
@@ -41,12 +57,35 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               defendants: theCase.defendants,
               civilClaimants: theCase.civilClaimants,
               defendantId,
+              fileCreated: created,
+              civilClaimantId,
+              isRulingOrderInConfirmedCourtSession:
+                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
             }),
         )
+
+        let policeCaseNumbers = theCase.policeCaseNumbers
+
+        if (
+          isDefenceUser(user) &&
+          isIndictmentCase(theCase.type) &&
+          theCase.policeCaseNumbers &&
+          Defendant.isConfirmedDefenderOfDefendant(
+            user.nationalId,
+            theCase.defendants,
+          )
+        ) {
+          policeCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
+            user.nationalId,
+            theCase.defendants,
+            theCase.policeCaseNumbers,
+          )
+        }
 
         return {
           ...theCase,
           caseFiles,
+          policeCaseNumbers,
         }
       }),
     )

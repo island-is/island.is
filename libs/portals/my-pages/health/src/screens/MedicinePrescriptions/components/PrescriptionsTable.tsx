@@ -22,6 +22,20 @@ import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionMo
 
 const STRING_MAX_LENGTH = 22
 
+const renewalStatusMessageMap: Record<
+  HealthDirectoratePrescriptionRenewalStatus,
+  keyof typeof messages
+> = {
+  [HealthDirectoratePrescriptionRenewalStatus.Approved]:
+    'renewalStatusApproved',
+  [HealthDirectoratePrescriptionRenewalStatus.Rejected]:
+    'renewalStatusRejected',
+  [HealthDirectoratePrescriptionRenewalStatus.Dismissed]:
+    'renewalStatusDismissed',
+  [HealthDirectoratePrescriptionRenewalStatus.Unknown]: 'renewalStatusUnknown',
+  [HealthDirectoratePrescriptionRenewalStatus.Pending]: 'renewalInProgress',
+}
+
 interface Props {
   data?: HealthDirectoratePrescription[]
   loading?: boolean
@@ -118,7 +132,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
             return {
               id: item.id,
-              medicine: item?.name + ' ' + item?.strength,
+              medicine: [item?.name, item?.strength].filter(Boolean).join(' '),
               usedFor: item?.indication ?? '',
               process: item?.amountRemaining ?? '',
               validTo: isExpired ? (
@@ -132,19 +146,9 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
               lastNode: item?.renewalStatus
                 ? {
                     type: 'text' as const,
-                    label:
-                      item.renewalStatus ===
-                      HealthDirectoratePrescriptionRenewalStatus.Approved
-                        ? formatMessage(messages.renewalStatusApproved)
-                        : item.renewalStatus ===
-                          HealthDirectoratePrescriptionRenewalStatus.Rejected
-                        ? formatMessage(messages.renewalStatusRejected)
-                        : item.renewalStatus ===
-                          HealthDirectoratePrescriptionRenewalStatus.Dismissed
-                        ? formatMessage(messages.renewalStatusDismissed)
-                        : formatMessage(
-                            messages.medicineIsProcessedCertificate,
-                          ),
+                    label: formatMessage(
+                      messages[renewalStatusMessageMap[item.renewalStatus]],
+                    ),
                     text: item.renewResponseMessage ?? undefined,
                   }
                 : item?.isRenewable
@@ -196,10 +200,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                             href: item?.url ?? '',
                             type: 'link',
                           },
-                          {
-                            title: formatMessage(messages.medicineStrength),
-                            value: item?.strength ?? '',
-                          },
+                          ...(item?.strength
+                            ? [
+                                {
+                                  title: formatMessage(
+                                    messages.medicineStrength,
+                                  ),
+                                  value: item?.strength ?? '',
+                                },
+                              ]
+                            : []),
                           {
                             title: formatMessage(messages.usedFor),
                             value: item?.indication ?? '',

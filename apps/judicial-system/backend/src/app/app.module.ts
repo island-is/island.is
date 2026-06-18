@@ -39,6 +39,7 @@ import {
   InstitutionModule,
   lawyerRegistryConfig,
   LawyerRegistryModule,
+  MessageSuspensionModule,
   NotificationModule,
   notificationModuleConfig,
   PoliceModule,
@@ -78,6 +79,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     LawyerRegistryModule,
     StatisticsModule,
     RepositoryModule,
+    MessageSuspensionModule,
     MessageModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({

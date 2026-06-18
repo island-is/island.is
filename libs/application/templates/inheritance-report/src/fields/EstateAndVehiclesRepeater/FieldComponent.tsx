@@ -24,8 +24,13 @@ export const FieldComponent = ({
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
 
-  // For initial/prefilled rows, only the share field is editable
-  const readOnly = isInitial && field.id !== 'share'
+  // For initial/prefilled rows, only the share field is editable.
+  // Vehicles are an exception: the market value at date of death
+  // (propertyValuation) can be corrected even for prefilled rows.
+  const isEditablePrefilledField =
+    field.id === 'share' ||
+    (assetKey === 'vehicles' && field.id === 'propertyValuation')
+  const readOnly = isInitial && !isEditablePrefilledField
 
   const defaultProps = {
     ...field,

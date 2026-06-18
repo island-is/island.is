@@ -29,6 +29,9 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
   allowsWrite
   requiresConfirmation
 
+  # Third party delegation login
+  thirdPartyLoginUrl
+
   # Categories and Tags
   categoryIds
   tagIds
@@ -42,6 +45,7 @@ query AuthAdminScope($input: ScopeInput!) {
     modified
     environments {
       ...AuthAdminScopeEnvironmentFragment
+      userNationalIds
     }
     defaultEnvironment {
       environment

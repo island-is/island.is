@@ -97,6 +97,26 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
     | ((role: ApplicationRole, nationalId: string, isAdmin: boolean) => boolean)
 }
 
+export type ScheduledNotificationConfig =
+  | {
+      template: string
+      /**
+       * Schedules the notification relative to the time the state is entered.
+       * E.g. `delayInMs: 7 * 24 * 3600 * 1000` for 7 days later.
+       */
+      args?: Array<{ key: string; value: string }>
+      delayInMs: number | ((application: Application) => number)
+    }
+  | {
+      template: string
+      /**
+       * Schedules the notification at an exact point in time.
+       * E.g. `date: (app) => new Date(app.answers.flightDate)`
+       */
+      args?: Array<{ key: string; value: string }>
+      date: Date | ((application: Application) => Date)
+    }
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown,
@@ -104,14 +124,20 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
-    /** @deprecated use pendingAction field instead */
-    title?: StaticText
-    /** @deprecated use pendingAction field instead */
-    description?: StaticText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    title?: FormText
+    /**
+     * @deprecated use pendingAction field instead
+     * Static copy or a function of the application (same shape as FormText).
+     */
+    description?: FormText
     /**
      * Configures which messages should be displayed to the user when presenting the
      * application's history.
-     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * Each `HistoryEventMessage` object maps a state's `exitEvent` to its corresponding user-friendly log message.
      * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
      * or a single `HistoryEventMessage` object.
      */
@@ -145,11 +171,27 @@ export interface ApplicationStateMeta<
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
-  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
+  status:
+    | 'approved'
+    | 'rejected'
+    | 'draft'
+    | 'completed'
+    | 'inprogress'
+    | 'notstarted'
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>
   onDelete?: TemplateApi<R>[] | TemplateApi<R>
+  /**
+   * Optional configuration to schedule notifications when entering the state.
+   * Any unsent schedules for a state are automatically canceled when the state is left.
+   */
+  scheduledNotifications?:
+    | ScheduledNotificationConfig[]
+    | ScheduledNotificationConfig
+    | ((
+        application: Application,
+      ) => ScheduledNotificationConfig | ScheduledNotificationConfig[])
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

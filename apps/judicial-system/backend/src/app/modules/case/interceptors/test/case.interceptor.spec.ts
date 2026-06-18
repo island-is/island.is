@@ -6,10 +6,15 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { DefendantEventLog } from '../../../repository'
+import {
+  CaseRepositoryService,
+  Defendant,
+  DefendantEventLog,
+} from '../../../repository'
 import { CaseInterceptor, transformDefendants } from '../case.interceptor'
 
 const nationalId = '0101010101'
@@ -59,7 +64,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
   describe('when defendant has no dismissal or cancellation event', () => {
     it('is undefined', () => {
       const result = transformDefendants({
-        defendants: [makeDefendant(nationalId, [])] as any,
+        defendants: [makeDefendant(nationalId, [])] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toBeUndefined()
@@ -73,7 +78,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
           makeDefendant(nationalId, [
             makeEventLog(DefendantEventType.INDICTMENT_DISMISSED, dismissedAt),
           ]),
-        ] as any,
+        ] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toEqual({
@@ -90,7 +95,7 @@ describe('transformDefendants - indictmentCancelledOrDismissedState', () => {
           makeDefendant(nationalId, [
             makeEventLog(DefendantEventType.INDICTMENT_CANCELLED, cancelledAt),
           ]),
-        ] as any,
+        ] as unknown as Defendant[],
       })
 
       expect(result?.[0].indictmentCancelledOrDismissedState).toEqual({
@@ -115,8 +120,10 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
-    givenWhenThen = async (theCase): Promise<Then> => {
-      const interceptor = new CaseInterceptor()
+    givenWhenThen = async (): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
       const then = {} as Then
 
       await firstValueFrom(
@@ -276,6 +283,85 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
           (d) => d.defenderNationalId === nationalId,
         ),
       ).toBe(true)
+    })
+  })
+})
+
+describe('CaseInterceptor - reopenReason mapping', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  interface Then {
+    result: { reopenReason?: string }
+    error: Error
+  }
+
+  let givenWhenThen: () => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('when caseStrings contains a REOPEN_REASON entry', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = {
+        ...makeCase([]),
+        caseStrings: [
+          { stringType: StringType.REOPEN_REASON, value: 'the reopen reason' },
+        ],
+      }
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen()
+    })
+
+    it('includes the reopenReason in the response', () => {
+      expect(then.result.reopenReason).toBe('the reopen reason')
+    })
+  })
+
+  describe('when caseStrings is undefined', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.DISTRICT_COURT_JUDGE, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(makeCase([])))
+
+      then = await givenWhenThen()
+    })
+
+    it('returns undefined for reopenReason', () => {
+      expect(then.result.reopenReason).toBeUndefined()
     })
   })
 })
