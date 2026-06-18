@@ -1,4 +1,4 @@
-import React, { memo, type JSX } from 'react'
+import React, { type JSX,memo } from 'react'
 
 import { AlertMessage, Box, LinkV2 } from '@island.is/island-ui/core'
 
