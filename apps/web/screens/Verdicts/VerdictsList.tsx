@@ -1827,7 +1827,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     onFilterClear={resetQueryState}
                     usePopoverDiscloureButtonStyling
                   >
-                    <Box paddingY={3}>
+                    <Box paddingX={[3, 3, 0]} paddingY={3}>
                       <Filters
                         selectedCourtLevel={mapCourtsToTopLevelCourt(
                           selectedCourts,
