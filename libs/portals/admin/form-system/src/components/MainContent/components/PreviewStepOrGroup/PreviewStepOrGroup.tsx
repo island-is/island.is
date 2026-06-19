@@ -104,12 +104,9 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
             </Box>
           )}
           disclosure={
-            <Button
-              circle
-              icon="arrowBack"
-              variant="ghost"
-              aria-label="Sýna skref"
-            />
+            <Button variant="text" aria-label="Sýna skref">
+              Sjá skrefavísi
+            </Button>
           }
         >
           {({ closeModal }) => (
