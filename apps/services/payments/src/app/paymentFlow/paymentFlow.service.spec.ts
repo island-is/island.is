@@ -557,6 +557,25 @@ describe('PaymentFlowService', () => {
       ).resolves.toBeUndefined()
     })
 
+    it('does not throw when FJS deletion succeeds but the local update fails (refund already committed)', async () => {
+      const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+        ChargeFjsV2ClientService,
+      )
+      jest.spyOn(chargeFjsService, 'deleteCharge').mockResolvedValueOnce(
+        undefined as never,
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+      jest
+        .spyOn(fjsChargeModel, 'update')
+        .mockRejectedValueOnce(new Error('db blip'))
+
+      // Throwing here would roll the saga back and resurrect the PAID state — it must not throw,
+      // even with the default throwOnError=true.
+      await expect(
+        service.deleteFjsCharge(uuid()),
+      ).resolves.toBeUndefined()
+    })
+
     it('treats an "already cancelled" FJS error as success and syncs local state', async () => {
       const chargeFjsService = app.get<ChargeFjsV2ClientService>(
         ChargeFjsV2ClientService,

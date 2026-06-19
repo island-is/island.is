@@ -1050,9 +1050,26 @@ export class PaymentFlowService {
     { throwOnError = true }: { throwOnError?: boolean } = {},
   ): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
+
+    // Deleting/cancelling the FJS charge IS the refund — it returns the money to the payer. If this
+    // fails the money was NOT returned, so surface it (when throwOnError) to let the saga roll back.
     try {
       await this.requestFjsChargeDeletion(paymentFlowId)
+    } catch (error) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to delete FJS charge`,
+        { error: error.message, stack: error.stack },
+      )
+      if (throwOnError) {
+        throw error
+      }
+      return
+    }
 
+    // FJS confirmed the deletion — the refund is committed and irreversible from our side. A failure
+    // to mark the local row deleted must NOT throw: rethrowing here would roll the saga back and
+    // resurrect the PAID state even though the money was already returned. Log for reconciliation.
+    try {
       const [updatedCount] = await this.fjsChargeModel.update(
         { isDeleted: true },
         { where: { paymentFlowId, isDeleted: false } },
@@ -1064,13 +1081,9 @@ export class PaymentFlowService {
       }
     } catch (error) {
       this.logger.error(
-        `[${paymentFlowId}] Failed to fully process FJS charge deletion or update local records`,
+        `[${paymentFlowId}] FJS charge deleted but failed to mark local FjsCharge row as deleted — needs reconciliation`,
         { error: error.message, stack: error.stack },
       )
-      // Deleting/cancelling the FJS charge IS the refund — it returns the money to the payer.
-      if (throwOnError) {
-        throw error
-      }
     }
   }
 
