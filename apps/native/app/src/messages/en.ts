@@ -820,18 +820,11 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.detailTitle': 'Healthcare appointment',
-  'health.appointments.dateAndTime': 'Date and time',
-  'health.appointments.duration': 'Duration',
-  'health.appointments.location': 'Location',
   'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
-  'health.appointments.atTime': 'at {time}',
-  'health.appointments.timePrefix': 'at',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
-  'health.appointments.type': 'Type',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',
@@ -840,6 +833,7 @@ export const en: TranslatedMessages = {
   'health.appointments.notFoundMessage':
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
+  'health.appointments.moreInfo': 'More information',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

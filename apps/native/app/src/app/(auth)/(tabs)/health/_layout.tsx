@@ -40,11 +40,7 @@ export default function HealthLayout() {
       />
       <Stack.Screen
         name="appointments/[id]"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.appointments.detailTitle',
-          }),
-        }}
+        options={modalScreenOptions}
       />
       <Stack.Screen
         name="questionnaires/index"
