@@ -16,24 +16,18 @@ export const FinancialManagementAuthorityEmployeesClientConfig = defineConfig<
   schema,
   load: (env) => ({
     basePath: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      'ELFUR_BASE_PATH',
       'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
     ),
     authUrl: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_IDS_URL',
+      'ELFUR_BASE_IDS_URL',
       'https://identity-server.staging01.devland.is',
     ),
     clientId: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      'ELFUR_CLIENT_ID',
       '@fjs.is/stafraent-island-api-elfur',
     ),
-    clientSecret: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
-      '',
-    ),
-    executeAsUsername: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_EXECUTE_AS_USERNAME',
-      '',
-    ),
+    clientSecret: env.required('ELFUR_CLIENT_SECRET', ''),
+    executeAsUsername: env.required('ELFUR_EXECUTE_AS_USERNAME', ''),
   }),
 })
