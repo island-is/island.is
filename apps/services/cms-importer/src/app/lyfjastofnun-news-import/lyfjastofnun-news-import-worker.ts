@@ -8,7 +8,10 @@ export const lyfjastofnunNewsImportWorker = async () => {
   const slugArgIndex = process.argv.indexOf('--slug')
   const slug = slugArgIndex !== -1 ? process.argv[slugArgIndex + 1] : undefined
   try {
-    logger.info('Lyfjastofnun news import worker job initiating...', { publish, slug })
+    logger.info('Lyfjastofnun news import worker job initiating...', {
+      publish,
+      slug,
+    })
     const app = await NestFactory.createApplicationContext(
       LyfjastofnunNewsImportModule,
     )

@@ -40,9 +40,14 @@ export class CmsRepository {
     contentType: string,
     linkedEntryId: string,
   ): Promise<Array<Entry>> =>
-    this.fetchEntries({ content_type: contentType, links_to_entry: linkedEntryId })
+    this.fetchEntries({
+      content_type: contentType,
+      links_to_entry: linkedEntryId,
+    })
 
-  getGenericListItemEntries = async (genericListId: string): Promise<Entry[]> => {
+  getGenericListItemEntries = async (
+    genericListId: string,
+  ): Promise<Entry[]> => {
     const response = await this.managementClient.getEntries({
       content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
       select: 'fields,sys,metadata',
@@ -50,9 +55,12 @@ export class CmsRepository {
     })
 
     if (!response?.ok) {
-      logger.warn(`cms service failed to fetch items from ${genericListId} entries`, {
-        error: response.error,
-      })
+      logger.warn(
+        `cms service failed to fetch items from ${genericListId} entries`,
+        {
+          error: response.error,
+        },
+      )
       return []
     }
 
@@ -75,7 +83,9 @@ export class CmsRepository {
     tags: string[],
     publish = false,
   ): Promise<Asset | null> => {
-    const createResult = await this.managementClient.createAssetFromLocalFile(data)
+    const createResult = await this.managementClient.createAssetFromLocalFile(
+      data,
+    )
 
     if (!createResult.ok) {
       logger.warn('Failed to create local asset', { error: createResult.error })
@@ -85,7 +95,9 @@ export class CmsRepository {
     try {
       const asset = createResult.data
       asset.metadata = {
-        tags: tags.map((id) => ({ sys: { type: 'Link' as const, linkType: 'Tag' as const, id } })),
+        tags: tags.map((id) => ({
+          sys: { type: 'Link' as const, linkType: 'Tag' as const, id },
+        })),
       }
       const updated = await asset.update()
       const processed = await updated.processForAllLocales()
@@ -144,7 +156,10 @@ export class CmsRepository {
           }
           return true
         })
-        .map((entry) => () => this.createSingleEntry(cmsContentType, entry, publish)),
+        .map(
+          (entry) => () =>
+            this.createSingleEntry(cmsContentType, entry, publish),
+        ),
     )
   }
 
@@ -167,19 +182,22 @@ export class CmsRepository {
       entries
         .filter((e) => {
           if (!e?.inputFields) {
-            logger.warn('No input fields to update', { referenceId: e.referenceId })
+            logger.warn('No input fields to update', {
+              referenceId: e.referenceId,
+            })
             return false
           }
           return true
         })
-        .map((entry) => () =>
-          this.updateSingleEntry(
-            entry.cmsEntry,
-            cmsContentType.fields,
-            entry.inputFields,
-            entry.referenceId,
-            abortIfUnpublished,
-          ),
+        .map(
+          (entry) => () =>
+            this.updateSingleEntry(
+              entry.cmsEntry,
+              cmsContentType.fields,
+              entry.inputFields,
+              entry.referenceId,
+              abortIfUnpublished,
+            ),
         ),
     )
   }
@@ -245,7 +263,9 @@ export class CmsRepository {
     input: EntryCreationDto,
     publish = false,
   ): Promise<Entry | undefined> => {
-    logger.debug('creating single entry', { slug: input.fields?.['slug']?.[LOCALE] })
+    logger.debug('creating single entry', {
+      slug: input.fields?.['slug']?.[LOCALE],
+    })
 
     for (const key of Object.keys(input.fields)) {
       if (!this.fieldExists(contentType.fields, key)) {
@@ -256,7 +276,10 @@ export class CmsRepository {
 
     let result: ContentfulFetchResponse<Entry> | undefined
     try {
-      result = await this.managementClient.createEntry(contentType.sys.id, input)
+      result = await this.managementClient.createEntry(
+        contentType.sys.id,
+        input,
+      )
     } catch (e) {
       logger.warn('Entry creation failed', { error: e })
     }
@@ -307,7 +330,9 @@ export class CmsRepository {
             id: entry.sys.id,
             referenceId,
           })
-          return Promise.reject(`Invalid field in input fields: ${inputField.key}`)
+          return Promise.reject(
+            `Invalid field in input fields: ${inputField.key}`,
+          )
         }
 
         if (!entry.fields[inputField.key]?.[locale] && inputField.value) {
@@ -318,7 +343,9 @@ export class CmsRepository {
           })
           hasChanges = true
           entry.fields[inputField.key] = { [locale]: inputField.value }
-        } else if (entry.fields[inputField.key]?.[locale] !== inputField.value) {
+        } else if (
+          entry.fields[inputField.key]?.[locale] !== inputField.value
+        ) {
           hasChanges = true
           entry.fields[inputField.key][locale] = inputField.value
         }
@@ -326,7 +353,10 @@ export class CmsRepository {
     }
 
     if (!hasChanges) {
-      logger.info('Values unchanged, aborting update', { id: entry.sys.id, referenceId })
+      logger.info('Values unchanged, aborting update', {
+        id: entry.sys.id,
+        referenceId,
+      })
       return undefined
     }
 

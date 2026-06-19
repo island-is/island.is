@@ -48,7 +48,11 @@ const htmlToInlineNodes = (html: string): Array<Text | Inline> => {
 
   while ((match = linkPattern.exec(html)) !== null) {
     const before = stripHtml(html.slice(lastIndex, match.index))
-    const beforeWithSpace = before && /\s$/.test(html.slice(lastIndex, match.index).replace(/<[^>]+>/g, '')) ? before + ' ' : before
+    const beforeWithSpace =
+      before &&
+      /\s$/.test(html.slice(lastIndex, match.index).replace(/<[^>]+>/g, ''))
+        ? before + ' '
+        : before
     if (beforeWithSpace) nodes.push(makeTextNode(beforeWithSpace))
 
     const href = match[1]
@@ -60,7 +64,10 @@ const htmlToInlineNodes = (html: string): Array<Text | Inline> => {
 
   const afterHtml = html.slice(lastIndex)
   const after = stripHtml(afterHtml)
-  const afterNeedsSpace = after && /^\s/.test(afterHtml.replace(/<[^>]+>/g, '')) && !/^[.,;:!?)}\]'"]/.test(after)
+  const afterNeedsSpace =
+    after &&
+    /^\s/.test(afterHtml.replace(/<[^>]+>/g, '')) &&
+    !/^[.,;:!?)}\]'"]/.test(after)
   const afterWithSpace = afterNeedsSpace ? ' ' + after : after
   if (afterWithSpace) nodes.push(makeTextNode(afterWithSpace))
 
@@ -103,7 +110,12 @@ const makeTableNode = (inner: string): TopLevelBlock | null => {
         content: [makeBlockNode(BLOCKS.PARAGRAPH, cellMatch[2])],
       } as Block)
     }
-    if (cells.length > 0) rows.push({ nodeType: BLOCKS.TABLE_ROW, data: {}, content: cells } as Block)
+    if (cells.length > 0)
+      rows.push({
+        nodeType: BLOCKS.TABLE_ROW,
+        data: {},
+        content: cells,
+      } as Block)
   }
   if (rows.length === 0) return null
   return { nodeType: BLOCKS.TABLE, data: {}, content: rows } as TopLevelBlock
@@ -111,9 +123,28 @@ const makeTableNode = (inner: string): TopLevelBlock | null => {
 
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
-    'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'a', 'hr',
-    'div', 'strong', 'em', 'blockquote',
-    'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'ul',
+    'ol',
+    'li',
+    'a',
+    'hr',
+    'div',
+    'strong',
+    'em',
+    'blockquote',
+    'table',
+    'thead',
+    'tbody',
+    'tfoot',
+    'tr',
+    'th',
+    'td',
   ],
   allowedAttributes: {
     a: ['href'],
@@ -138,7 +169,8 @@ const transformSpecialDivs = (html: string): string =>
     .replace(
       /<div[^>]+class="[^"]*linklist[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
       (_, inner) => {
-        const linkPattern = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
+        const linkPattern =
+          /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
         let items = ''
         let linkMatch: RegExpExecArray | null
         while ((linkMatch = linkPattern.exec(inner)) !== null) {
@@ -170,7 +202,11 @@ export const htmlToRichTextDocument = (html: string): Document => {
     } else if (tag === 'p') {
       topLevel.push(makeBlockNode(BLOCKS.PARAGRAPH, inner))
     } else if (tag === 'blockquote') {
-      topLevel.push({ nodeType: BLOCKS.QUOTE, data: {}, content: [makeBlockNode(BLOCKS.PARAGRAPH, inner)] } as TopLevelBlock)
+      topLevel.push({
+        nodeType: BLOCKS.QUOTE,
+        data: {},
+        content: [makeBlockNode(BLOCKS.PARAGRAPH, inner)],
+      } as TopLevelBlock)
     } else if (tag === 'ul' || tag === 'ol') {
       const listType = tag === 'ul' ? BLOCKS.UL_LIST : BLOCKS.OL_LIST
       const itemPattern = /<li[^>]*>([\s\S]*?)<\/li>/gi

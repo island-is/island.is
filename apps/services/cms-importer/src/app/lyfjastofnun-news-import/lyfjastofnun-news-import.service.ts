@@ -29,7 +29,10 @@ export class LyfjastofnunNewsImportService {
     private readonly wordpressRepository: LyfjastofnunWordpressRepository,
   ) {}
 
-  async run({ publish = false, slug }: { publish?: boolean; slug?: string } = {}): Promise<void> {
+  async run({
+    publish = false,
+    slug,
+  }: { publish?: boolean; slug?: string } = {}): Promise<void> {
     logger.info('Lyfjastofnun news import starting...', { publish, slug })
 
     const existingSlugs = await this.getExistingSlugs()
@@ -38,7 +41,10 @@ export class LyfjastofnunNewsImportService {
     const posts = await this.wordpressRepository.getPosts()
     const filtered = slug ? posts.filter((p) => p.slug === slug) : posts
     const limited = filtered.slice(0, slug ? filtered.length : IMPORT_LIMIT)
-    logger.info('Processing posts', { total: posts.length, limit: IMPORT_LIMIT })
+    logger.info('Processing posts', {
+      total: posts.length,
+      limit: IMPORT_LIMIT,
+    })
 
     let skipped = 0
     const dtos: EntryCreationDto[] = []
@@ -47,7 +53,9 @@ export class LyfjastofnunNewsImportService {
       const slug = post.slug
 
       if (existingSlugs.has(slug)) {
-        logger.info('Skipping post, slug already exists in Contentful', { slug })
+        logger.info('Skipping post, slug already exists in Contentful', {
+          slug,
+        })
         skipped++
         continue
       }
@@ -65,18 +73,28 @@ export class LyfjastofnunNewsImportService {
         continue
       }
 
-      const summary = await this.wordpressRepository.scrapePostSummary(post.link)
+      const summary = await this.wordpressRepository.scrapePostSummary(
+        post.link,
+      )
       if (summary) logger.info('Scraped post summary', { slug })
 
       dtos.push(buildNewsEntry(post, assetId, summary))
     }
 
-    const results = await this.cmsRepository.createEntries(dtos, NEWS_CONTENT_TYPE, publish)
+    const results = await this.cmsRepository.createEntries(
+      dtos,
+      NEWS_CONTENT_TYPE,
+      publish,
+    )
     const created = results.filter((r) => r.status === 'success').length
     const failed = results.filter((r) => r.status === 'error').length
 
     if (failed > 0) logger.warn('Some entries failed to create', { failed })
-    logger.info('Lyfjastofnun news import finished', { created, skipped, failed })
+    logger.info('Lyfjastofnun news import finished', {
+      created,
+      skipped,
+      failed,
+    })
   }
 
   private async getExistingSlugs(): Promise<Set<string>> {
@@ -94,7 +112,10 @@ export class LyfjastofnunNewsImportService {
     return slugs
   }
 
-  private async uploadImage(post: WpPost, publish: boolean): Promise<string | null> {
+  private async uploadImage(
+    post: WpPost,
+    publish: boolean,
+  ): Promise<string | null> {
     const inlineUrl = extractFirstImageUrl(post.content?.rendered ?? '')
     if (inlineUrl) {
       return this.uploadRemoteImage(inlineUrl, post.slug, publish)
@@ -112,7 +133,10 @@ export class LyfjastofnunNewsImportService {
 
     const existing = await this.cmsRepository.findAssetByFileName(fileName)
     if (existing) {
-      logger.info('Inline image already exists in Contentful, reusing', { slug, assetId: existing.sys.id })
+      logger.info('Inline image already exists in Contentful, reusing', {
+        slug,
+        assetId: existing.sys.id,
+      })
       return existing.sys.id
     }
 
@@ -144,7 +168,10 @@ export class LyfjastofnunNewsImportService {
     return asset.sys.id
   }
 
-  private async uploadImageFromBank(slug: string, publish: boolean): Promise<string | null> {
+  private async uploadImageFromBank(
+    slug: string,
+    publish: boolean,
+  ): Promise<string | null> {
     const bankFile = this.pickRandomBankImage()
     if (!bankFile) {
       logger.warn('Image bank is empty', { slug })
@@ -156,7 +183,10 @@ export class LyfjastofnunNewsImportService {
 
     const existing = await this.cmsRepository.findAssetByFileName(fileName)
     if (existing) {
-      logger.info('Bank image already exists in Contentful, reusing', { slug, assetId: existing.sys.id })
+      logger.info('Bank image already exists in Contentful, reusing', {
+        slug,
+        assetId: existing.sys.id,
+      })
       return existing.sys.id
     }
 
@@ -185,16 +215,20 @@ export class LyfjastofnunNewsImportService {
       return null
     }
 
-    logger.info('Bank image uploaded', { slug, assetId: asset.sys.id, fileName })
+    logger.info('Bank image uploaded', {
+      slug,
+      assetId: asset.sys.id,
+      fileName,
+    })
     return asset.sys.id
   }
 
   private pickRandomBankImage(): { filePath: string; fileName: string } | null {
     if (!fs.existsSync(IMAGE_BANK_DIR)) return null
 
-    const files = fs.readdirSync(IMAGE_BANK_DIR).filter((f) =>
-      /\.(jpg|jpeg|png|gif|webp|jfif)$/i.test(f),
-    )
+    const files = fs
+      .readdirSync(IMAGE_BANK_DIR)
+      .filter((f) => /\.(jpg|jpeg|png|gif|webp|jfif)$/i.test(f))
     if (!files.length) return null
 
     const fileName = files[Math.floor(Math.random() * files.length)]

@@ -53,9 +53,15 @@ export class LyfjastofnunWordpressRepository {
       const response = await this.fetch(link)
       if (!response.ok) return null
       const html = await response.text()
-      const match = /<div[^>]+class="[^"]*article__summary[^"]*"[^>]*>([\s\S]*?)<\/div>/i.exec(html)
+      const match =
+        /<div[^>]+class="[^"]*article__summary[^"]*"[^>]*>([\s\S]*?)<\/div>/i.exec(
+          html,
+        )
       if (!match) return null
-      const text = match[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+      const text = match[1]
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
       return text || null
     } catch {
       return null

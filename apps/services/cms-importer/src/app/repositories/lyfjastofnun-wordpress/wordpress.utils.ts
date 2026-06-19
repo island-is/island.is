@@ -9,5 +9,7 @@ export const extractFirstImageUrl = (html: string): string | null => {
 export const extractIntro = (post: WpPost): string => {
   const fromExcerpt = stripHtml(post.excerpt?.rendered ?? '')
   if (fromExcerpt) return fromExcerpt
-  return stripHtml(post.content?.rendered ?? '').slice(0, 300).trimEnd()
+  return stripHtml(post.content?.rendered ?? '')
+    .slice(0, 300)
+    .trimEnd()
 }
