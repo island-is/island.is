@@ -179,6 +179,30 @@ export const FieldTypes: FieldType[] = [
     isCommon: true,
   },
   {
+    id: FieldTypesEnum.VEHICLE,
+    name: {
+      is: 'Ökutæki',
+      en: 'Vehicle',
+    },
+    description: {
+      is: 'Notandi velur ökutæki úr lista yfir ökutæki tengd kennitölu eða slær inn skráningarnúmer ökutækisins',
+      en: 'The user selects a vehicle from a list of vehicles related to their national Id or enters the registration number of the vehicle',
+    },
+    isCommon: false,
+  },
+  {
+    id: FieldTypesEnum.REAL_ESTATE,
+    name: {
+      is: 'Fasteignir',
+      en: 'Real estates',
+    },
+    description: {
+      is: 'Notandi velur fasteign úr lista yfir fasteignir tengdar kennitölu eða slær inn fasteignanúmer',
+      en: 'The user selects a real estate property from a list of properties related to their national Id or enters the property number',
+    },
+    isCommon: false,
+  },
+  {
     id: FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
     name: { is: 'Kennitala með heimilisfangi', en: 'National Id with address' },
     description: {
