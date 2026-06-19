@@ -113,21 +113,35 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewTeacher,
           width: 'half',
           condition: isApplicationForCondition(B_TEMP),
-          value: ({
-            externalData: {
-              drivingAssessment,
-              teachers: { data },
-            },
-            answers,
-          }) => {
+          value: ({ externalData, answers }) => {
             if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as TeacherV4[])?.find(
-                ({ nationalId }) =>
-                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
+              const selectedNationalId = getValueViaPath<string>(
+                answers,
+                'drivingInstructor',
               )
-              return teacher?.name ?? ''
+              const teachers =
+                getValueViaPath<TeacherV4[]>(
+                  externalData,
+                  'teachers.data',
+                  [],
+                ) ?? []
+              const teacher = teachers.find(
+                ({ nationalId }) => nationalId === selectedNationalId,
+              )
+              // Fall back to the kennitala if the chosen instructor isn't in
+              // the (snapshot) list — e.g. an instructor registered after this
+              // application was created, now selectable via the live dropdown.
+              return (
+                teacher?.name ??
+                (selectedNationalId ? formatNationalId(selectedNationalId) : '')
+              )
             }
-            return (drivingAssessment.data as StudentAssessment).teacherName
+            return (
+              getValueViaPath<StudentAssessment>(
+                externalData,
+                'drivingAssessment.data',
+              )?.teacherName ?? ''
+            )
           },
         }),
         // Health cert section — old "bring along" checkbox flow.
