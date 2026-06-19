@@ -2,7 +2,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { Employees } from '../models/employees.model'
-import { IcelandicGovernmentInstitutionsEmployeesInput } from '../dtos/getEmployees.input'
+import { EmployeesInput } from '../dtos/getEmployees.input'
 import { EmployeesService } from '../services/employees/employees.service'
 import { Inject } from '@nestjs/common'
 
@@ -20,8 +20,9 @@ export class EmployeesResolver {
   })
   @BypassAuth()
   async getEmployeeList(
-    @Args() input: IcelandicGovernmentInstitutionsEmployeesInput,
+    @Args('input', { type: () => EmployeesInput })
+    input: EmployeesInput,
   ): Promise<Employees | null> {
-    return this.employeeService.getEmployees(input.organizationId, input.locale)
+    return this.employeeService.getEmployees(input)
   }
 }

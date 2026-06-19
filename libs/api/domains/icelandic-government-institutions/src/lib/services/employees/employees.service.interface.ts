@@ -1,6 +1,6 @@
-import type { Locale } from '@island.is/shared/types'
 import { Employees } from '../../models/employees.model'
+import { EmployeesInput } from '@/lib/dtos/getEmployees.input'
 
 export interface IEmployeesService {
-  getEmployees(organizationId: string, locale: Locale): Promise<Employees>
+  getEmployees(input: EmployeesInput): Promise<Employees>
 }
