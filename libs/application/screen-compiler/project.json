@@ -3,7 +3,7 @@
   "name": "application-screen-compiler",
   "sourceRoot": "libs/application/screen-compiler/src",
   "projectType": "library",
-  "tags": ["scope:application-system", "lib:application-system", "type:util"],
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {

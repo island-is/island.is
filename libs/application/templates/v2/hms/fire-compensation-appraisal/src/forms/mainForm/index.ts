@@ -215,6 +215,7 @@ export const MainForm = new FormBuilder<typeof dataSchema>('MainForm', '', {
         { showWhen: showOtherProperty },
       )
     },
+    { condition: showOtherProperty },
   )
   // Changes / appraisal method
   .addSection('appraisalMethodSection', m.changesMessages.title, (section) => {
