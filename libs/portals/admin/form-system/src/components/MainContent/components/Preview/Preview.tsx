@@ -60,7 +60,9 @@ export const Preview = ({ data, screenOrSection }: Props) => {
       {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
       {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
       {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
-      {type === FieldTypesEnum.PROPERTY_NUMBER && <PropertyNumber item={data} />}
+      {type === FieldTypesEnum.PROPERTY_NUMBER && (
+        <PropertyNumber item={data} />
+      )}
       {type === FieldTypesEnum.PAYMENT_QUANTITY && (
         <PaymentQuantity item={data} />
       )}
