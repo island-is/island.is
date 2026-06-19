@@ -1294,4 +1294,29 @@ export const m = defineMessages({
     defaultMessage: 'Vantar gildi',
     description: 'Missing value',
   },
+  registrationNumber: {
+    id: 'form.system:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+    description: 'Registration number',
+  },
+  model: {
+    id: 'form.system:model',
+    defaultMessage: 'Tegund',
+    description: 'Model',
+  },
+  color: {
+    id: 'form.system:color',
+    defaultMessage: 'Litur',
+    description: 'Color',
+  },
+  vehicleNotFoundError: {
+    id: 'form.system:vehicle-not-found-error',
+    defaultMessage: 'Ekkert ökutæki fannst með þessu skráningarnúmeri',
+    description: 'No vehicle found with this registration number',
+  },
+  vehiclePlaceholder: {
+    id: 'form.system:vehicle-placeholder',
+    defaultMessage: 'Sláðu inn skráningarnúmer',
+    description: 'Enter registration number',
+  },
 })
