@@ -31,9 +31,10 @@ import { useHeaderInfo } from './HeaderInfoProvider'
 
 interface ApplicationsPageProps {
   slug: string
+  basePath?: string
 }
 
-export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
+export const ApplicationsPage = ({ slug, basePath = '/umsoknir' }: ApplicationsPageProps) => {
   const router = useRouter()
   const { formatMessage } = useLocale()
   const { clearInfo } = useHeaderInfo()
@@ -78,7 +79,7 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
     {
       onCompleted({ createApplication }) {
         if (slug) {
-          router.push(`/umsoknir/${slug}/${createApplication.id}`)
+          router.push(`${basePath}/${slug}/${createApplication.id}`)
         }
       },
     },
@@ -184,7 +185,7 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
                 applications={data.ApplicationSystemCard}
                 organizations={mappedOrganizations as Organization[]}
                 onClick={(applicationUrl) =>
-                  router.push(`/umsoknir/${applicationUrl}`)
+                  router.push(`${basePath}/${applicationUrl}`)
                 }
                 refetch={refetch}
               />

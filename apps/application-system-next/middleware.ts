@@ -22,6 +22,11 @@ const LEGACY_SPA_BASE = process.env.LEGACY_SPA_URL ?? 'http://localhost:4242'
 export const middleware = (request: NextRequest) => {
   const { pathname } = request.nextUrl
 
+  // Everything under /umsoknir/sdf is served by this app; no redirect needed.
+  if (pathname === '/umsoknir/sdf' || pathname.startsWith('/umsoknir/sdf/')) {
+    return NextResponse.next()
+  }
+
   const match = pathname.match(/^\/umsoknir\/([^/]+)/)
   if (!match) {
     return NextResponse.next()

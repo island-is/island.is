@@ -412,7 +412,18 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
-      await this.uploadApplicationFiles(application)
+      // Fire-and-forget: S3 downloads block the response on first call (cold-start
+      // latency), causing an ECONNRESET at the proxy layer. The application has
+      // already been recorded on HMS's side, and the inner HMS uploads are already
+      // fire-and-forget, so there is no reason to hold the response for the downloads.
+      this.uploadApplicationFiles(application).catch((e) => {
+        this.logger.error(
+          `Background file upload failed for application ${application.id}: ${
+            e instanceof Error ? e.message : String(e)
+          }`,
+          e,
+        )
+      })
 
       return res
     } catch (e) {
