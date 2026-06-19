@@ -11,10 +11,13 @@ interface QualityPhotoData {
   application: Application
 }
 
-const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
+// Called as a plain function (`Photo({...})`), so it needs an explicit return type: under
+// @types/react 19 an FC's call signature returns promise-inclusive `ReactNode`, which no
+// longer fits the `ReactNode` slot where `img` is rendered.
+const Photo = ({
   qualityPhoto,
   application,
-}: QualityPhotoData) => {
+}: QualityPhotoData): React.ReactElement | null => {
   const { formatMessage } = useLocale()
 
   if (!qualityPhoto) {
