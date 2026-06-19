@@ -122,6 +122,9 @@ export const MainContentColumn = () => {
         width="full"
         style={{
           minHeight: 'clamp(300px, 50vh, 500px)',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
         }}
       >
         <MainContent

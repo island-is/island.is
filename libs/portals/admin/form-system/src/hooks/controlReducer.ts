@@ -308,6 +308,10 @@ type InputSettingsActions =
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
+      type: 'SET_LIST_ITEMS'
+      payload: { listItems: FormSystemListItem[] }
+    }
+  | {
       type: 'SET_LIST_TYPE'
       payload: {
         listType: string
@@ -1483,6 +1487,25 @@ export const controlReducer = (
       const newField = {
         ...field,
         list: [...(field?.list ?? []), action.payload.newListItem],
+      }
+
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_LIST_ITEMS': {
+      const field = activeItem.data as FormSystemField
+      const newField = {
+        ...field,
+        list: action.payload.listItems,
       }
 
       return {

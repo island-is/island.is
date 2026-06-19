@@ -74,7 +74,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   }
 
   return (
-    <Box>
+    <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&
