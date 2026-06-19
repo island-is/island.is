@@ -14,6 +14,7 @@ export const completedForm = buildForm({
       accordion: false,
       bottomButtonLabel: am.bottomButtonLabel,
       bottomButtonMessage: am.bottomButtonMessage,
+      bottomButtonLink: '/minarsidur/framfaersla/atvinnuleysisbaetur/minstada',
     }),
   ],
 })

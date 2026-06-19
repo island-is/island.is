@@ -47,14 +47,29 @@ export const uploadDocuments = defineMessages({
   },
   commentLabel: {
     id: 'vmst.vsd.application:uploadDocuments.commentLabel',
-    defaultMessage: 'Athugasemd',
+    defaultMessage: 'Frekari skýringar',
     description: 'Label for comment input',
+  },
+  checkboxLabel: {
+    id: 'vmst.vsd.application:uploadDocuments.checkboxLabel',
+    defaultMessage: 'Ég hef ekki gögnin undir höndum eins og er',
+    description: 'Label for checkbox',
   },
   requestedAttachmentsDescription: {
     id: 'vmst.vsd.application:uploadDocuments.requestedAttachmentsDescription',
     defaultMessage:
       'Vinnumálastofnun óskar eftir að þú skilir inn eftirfarandi gögnum:',
     description: 'Requested attachments description heading',
+  },
+  submitNextButton: {
+    id: 'vmst.vsd.application:uploadDocuments.submitNextButton',
+    defaultMessage: 'Skila inn gögnum',
+    description: 'Submit application button',
+  },
+  uploadDocSaveButton: {
+    id: 'vmst.vsd.application:uploadDocuments.uploadDocSaveButton',
+    defaultMessage: 'Hlaða upp skjali',
+    description: 'Submit application button',
   },
 })
 

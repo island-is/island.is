@@ -9,6 +9,7 @@ export const dataSchema = z.object({
     .array(
       z.object({
         type: z.string().min(1),
+        checkbox: z.array(z.string().optional()).optional(),
         file: z
           .array(
             z.object({
@@ -16,17 +17,17 @@ export const dataSchema = z.object({
               name: z.string().min(1),
             }),
           )
-          .min(1),
+          .optional(),
         comment: z.string().nullish(),
       }),
     )
     .superRefine((docs, ctx) => {
-      if (docs.length < 1) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          params: errorMessages.documentsMinError,
-        })
-      }
+      // if (docs.length < 1) {
+      //   ctx.addIssue({
+      //     code: z.ZodIssueCode.custom,
+      //     params: errorMessages.documentsMinError,
+      //   })
+      // }
       if (docs.length > MAX_DOCUMENTS) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

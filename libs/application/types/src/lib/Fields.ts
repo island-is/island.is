@@ -245,6 +245,7 @@ export type RepeaterItem = {
   | {
       component: 'checkbox'
       large?: boolean
+      spacing?: 0 | 1 | 2
     }
   | {
       component: 'nationalIdWithName'
