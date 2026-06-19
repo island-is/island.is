@@ -1,7 +1,7 @@
-import { EmployeeDto } from '@island.is/clients/financial-management-authority'
+import { EmployeeBasicResponseDto } from '@island.is/clients/financial-management-authority-employees'
 import { Employee } from '../models/employee.model'
 
-export const mapEmployee = (employee: EmployeeDto): Employee | undefined => {
+export const mapEmployee = (employee: EmployeeBasicResponseDto): Employee | undefined => {
   if (!employee.employeeName) {
     return undefined
   }

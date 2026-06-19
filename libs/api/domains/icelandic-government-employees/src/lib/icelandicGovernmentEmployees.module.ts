@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
-import { FinancialManagementAuthorityClientModule } from '@island.is/clients/financial-management-authority'
+import { FinancialManagementAuthorityEmployeesClientModule } from '@island.is/clients/financial-management-authority-employees'
 import { IcelandicGovernmentEmployeesResolver } from './icelandicGovernmentEmployees.resolver'
 import { IcelandicGovernmentEmployeesService } from './icelandicGovernmentEmployees.service'
 
 @Module({
-  imports: [FinancialManagementAuthorityClientModule],
+  imports: [FinancialManagementAuthorityEmployeesClientModule],
   providers: [
     IcelandicGovernmentEmployeesResolver,
     IcelandicGovernmentEmployeesService,

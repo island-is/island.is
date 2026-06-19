@@ -1,0 +1,1073 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Elfur API - Organization",
+    "description": "<h2>Organization</h2><p>Status: Beta</p><p><strong>Sections:</strong> Core, Units, Employees</p><h3>Authentication</h3>\r\n<ul>\r\n  <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\r\n  <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_employee_read</code>, <code>@fjs.is/elfur_organization_read</code></li>\r\n  \r\n</ul>",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/organization": {
+      "get": {
+        "tags": ["Organization"],
+        "summary": "Get a list of organizations (stofnanir).",
+        "description": "Set `isSalaryPayer = true` (default) for salary-paying organizations, or `false` for projects.",
+        "parameters": [
+          {
+            "name": "validFrom",
+            "in": "query",
+            "description": "(Optional) Filter by date. The start date of the organization.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "validTo",
+            "in": "query",
+            "description": "(Optional) Filter by date. The end date of the organization.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "(Optional) Free-text filter applied across ministry/organization name, code, abbreviation and national identifier.",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "isSalaryPayer",
+            "in": "query",
+            "description": "If true, returns only salary-paying organizations (default). If false, returns projects/non-salary organizations.",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(Optional) Offset for pagination. Row where to start fetching from.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(Optional) Fetch size for pagination. Clamped to the range [1, 1000].",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Total-Count": {
+                "description": "Total number of rows matching the query, ignoring offset and fetch size.",
+                "schema": {
+                  "type": "integer",
+                  "example": 1234
+                }
+              },
+              "Row-Offset": {
+                "description": "Offset that was applied to this response (matches the rowOffset request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              },
+              "Fetch-Size": {
+                "description": "Fetch size that was applied to this response (matches the fetchSize request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 25
+                }
+              },
+              "Has-Next-Page": {
+                "description": "True when more rows exist past the end of the current page (rowOffset + items < Total-Count).",
+                "schema": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/organization/{fjarlagalidurConstant}": {
+      "get": {
+        "tags": ["Organization"],
+        "summary": "Get a single organization by its fjárlaganúmer.",
+        "parameters": [
+          {
+            "name": "fjarlagalidurConstant",
+            "in": "path",
+            "description": "The organization's fjárlaganúmer (matches `Organizations.organizationCode` in ELFUR_DATAMART).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isSalaryPayer",
+            "in": "query",
+            "description": "If true, returns the organization only if it is a salary payer (default). If false, returns it only if it is a project/non-salary organization.",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/organization/{fjarlagalidurConstant}/employees": {
+      "get": {
+        "tags": ["OrganizationEmployee"],
+        "summary": "Get employees for an organization, optionally filtered to a specific unit.",
+        "description": "\nOmit `organizationUnitNumber` (or set to 0) to get all employees in the organization.\r\n\nSet `activeOnly = true` to return only employees with AssignmentStatusGroup = 'ACTIVE_ASSIGN'.\r\n\nAuthorization is based on the `client_id` from the bearer token.",
+        "parameters": [
+          {
+            "name": "fjarlagalidurConstant",
+            "in": "path",
+            "description": "The organization's fjárlaganúmer (matches `OrganizationEmployees.parentOrganizationId` in ELFUR_DATAMART).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationUnitNumber",
+            "in": "query",
+            "description": "(Optional) Organization unit number (ie. deild). If used, only employees for the given OU will be returned. If not set or set to 0, all employees for that organization will be returned.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "description": "(Optional) If true, returns only active employees (AssignmentStatusGroup = 'ACTIVE_ASSIGN'). If false or not provided, returns all employees.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(Optional) Offset for pagination. Row where to start fetching from.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(Optional) Fetch size for pagination. Clamped to the range [1, 1000].",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Total-Count": {
+                "description": "Total number of rows matching the query, ignoring offset and fetch size.",
+                "schema": {
+                  "type": "integer",
+                  "example": 1234
+                }
+              },
+              "Row-Offset": {
+                "description": "Offset that was applied to this response (matches the rowOffset request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              },
+              "Fetch-Size": {
+                "description": "Fetch size that was applied to this response (matches the fetchSize request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 25
+                }
+              },
+              "Has-Next-Page": {
+                "description": "True when more rows exist past the end of the current page (rowOffset + items < Total-Count).",
+                "schema": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployeeBasicResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/organization/{fjarlagalidurConstant}/units": {
+      "get": {
+        "tags": ["OrganizationUnit"],
+        "summary": "Get organization units (deildir/stofnunareiningar) for a given organization.",
+        "parameters": [
+          {
+            "name": "fjarlagalidurConstant",
+            "in": "path",
+            "description": "The parent organization's fjárlaganúmer (matches `OrganizationUnits.orgUnitFjarlagalidurConstant` in ELFUR_DATAMART).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "validFrom",
+            "in": "query",
+            "description": "(Optional) Filter by date. The start date of the organization unit.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "validTo",
+            "in": "query",
+            "description": "(Optional) Filter by date. The end date of the organization unit.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(Optional) Offset for pagination. Row where to start fetching from.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(Optional) Fetch size for pagination. Clamped to the range [1, 1000].",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Total-Count": {
+                "description": "Total number of rows matching the query, ignoring offset and fetch size.",
+                "schema": {
+                  "type": "integer",
+                  "example": 1234
+                }
+              },
+              "Row-Offset": {
+                "description": "Offset that was applied to this response (matches the rowOffset request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              },
+              "Fetch-Size": {
+                "description": "Fetch size that was applied to this response (matches the fetchSize request parameter after clamping).",
+                "schema": {
+                  "type": "integer",
+                  "example": 25
+                }
+              },
+              "Has-Next-Page": {
+                "description": "True when more rows exist past the end of the current page (rowOffset + items < Total-Count).",
+                "schema": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationUnitDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/organization/units/{organizationUnitNumber}": {
+      "get": {
+        "tags": ["OrganizationUnit"],
+        "summary": "Get details for a single organization unit.",
+        "parameters": [
+          {
+            "name": "organizationUnitNumber",
+            "in": "path",
+            "description": "The organization unit id (fjárlaganúmer einingar/deildar) to fetch details about.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationUnitDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/organization/units/{organizationUnitNumber}/name": {
+      "get": {
+        "tags": ["OrganizationUnit"],
+        "summary": "Get the display name of an organization unit.",
+        "parameters": [
+          {
+            "name": "organizationUnitNumber",
+            "in": "path",
+            "description": "The organization unit id to fetch the name for.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EmployeeBasicResponseDto": {
+        "type": "object",
+        "properties": {
+          "nationalIdentifier": {
+            "type": "string",
+            "description": "Gets or sets the NationalIdentifier.",
+            "nullable": true,
+            "example": "string"
+          },
+          "employeeName": {
+            "type": "string",
+            "description": "Gets or sets the EmployeeName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Gets or sets the Email.",
+            "nullable": true,
+            "example": "string"
+          },
+          "workPhone": {
+            "type": "integer",
+            "description": "Gets or sets the WorkPhone.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "employeeNumber": {
+            "type": "string",
+            "description": "Gets or sets the EmployeeNumber.",
+            "nullable": true,
+            "example": "string"
+          },
+          "personID": {
+            "type": "number",
+            "description": "Gets or sets the PersonID.",
+            "format": "double"
+          },
+          "sex": {
+            "type": "string",
+            "description": "Gets or sets the Sex.",
+            "nullable": true,
+            "example": "string"
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Gets or sets the Nationality.",
+            "nullable": true,
+            "example": "string"
+          },
+          "assignmentID": {
+            "type": "number",
+            "description": "Gets or sets the AssignmentID.",
+            "format": "double"
+          },
+          "jobName": {
+            "type": "string",
+            "description": "Gets or sets the JobName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "jobLongName": {
+            "type": "string",
+            "description": "Gets or sets the JobLongName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "istarf4": {
+            "type": "string",
+            "description": "Gets or sets the Istarf4.",
+            "nullable": true,
+            "example": "string"
+          },
+          "istarf6": {
+            "type": "string",
+            "description": "Gets or sets the Istarf6.",
+            "nullable": true,
+            "example": "string"
+          },
+          "primaryFlag": {
+            "type": "string",
+            "description": "Gets or sets the PrimaryFlag.",
+            "nullable": true,
+            "example": "string"
+          },
+          "managerFlag": {
+            "type": "string",
+            "description": "Gets or sets the ManagerFlag.",
+            "nullable": true,
+            "example": "string"
+          },
+          "assignmentStatus": {
+            "type": "string",
+            "description": "Gets or sets the AssignmentStatus.",
+            "nullable": true,
+            "example": "string"
+          },
+          "assignmentStatusTypeId": {
+            "type": "number",
+            "description": "Gets or sets the AssignmentStatusTypeId.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "assignmentStatusGroup": {
+            "type": "string",
+            "description": "Gets or sets the AssignmentStatusGroup.",
+            "nullable": true,
+            "example": "string"
+          },
+          "assignmentPercent": {
+            "type": "integer",
+            "description": "Gets or sets the AssignmentPercent.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "assignmentStartDate": {
+            "type": "string",
+            "description": "Gets or sets the AssignmentStartDate.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "assignmentEndDate": {
+            "type": "string",
+            "description": "Gets or sets the AssignmentEndDate.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "organizationId": {
+            "type": "number",
+            "description": "Gets or sets the OrganizationId.",
+            "format": "double"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Gets or sets the OrganizationName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "locationCode": {
+            "type": "string",
+            "description": "Gets or sets the LocationCode.",
+            "nullable": true,
+            "example": "string"
+          },
+          "locationDescription": {
+            "type": "string",
+            "description": "Gets or sets the LocationDescription.",
+            "nullable": true,
+            "example": "string"
+          },
+          "locationAddress": {
+            "type": "string",
+            "description": "Gets or sets the LocationAddress.",
+            "nullable": true,
+            "example": "string"
+          },
+          "locationPostalCode": {
+            "type": "string",
+            "description": "Gets or sets the LocationPostalCode.",
+            "nullable": true,
+            "example": "string"
+          },
+          "parentOrganizationId": {
+            "type": "string",
+            "description": "Gets or sets the ParentOrganizationId.",
+            "nullable": true,
+            "example": "string"
+          },
+          "parentOrganizationName": {
+            "type": "string",
+            "description": "Gets or sets the ParentOrganizationName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "supervisorNationalIdentifier": {
+            "type": "string",
+            "description": "Gets or sets the SupervisorNationalIdentifier.",
+            "nullable": true,
+            "example": "string"
+          },
+          "supervisorPersonId": {
+            "type": "number",
+            "description": "Gets or sets the SupervisorPersonId.",
+            "format": "double",
+            "nullable": true,
+            "example": 0
+          },
+          "supervisorName": {
+            "type": "string",
+            "description": "Gets or sets the SupervisorName.",
+            "nullable": true,
+            "example": "string"
+          },
+          "supervisorEmail": {
+            "type": "string",
+            "description": "Gets or sets the SupervisorEmail.",
+            "nullable": true,
+            "example": "string"
+          },
+          "datamartLoadDatetime": {
+            "type": "string",
+            "description": "Gets or sets the timestamp this row was loaded into the datamart by the nightly SQL transfer pipeline.\r\nUse this to gauge data freshness; a value older than ~24 hours suggests the pipeline may have failed.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a basic response DTO for an employee."
+      },
+      "OrganizationDto": {
+        "type": "object",
+        "properties": {
+          "organizationCode": {
+            "type": "string",
+            "description": "Gets or sets the organization code (also known as fjárlaganúmer stofnunar).",
+            "nullable": true,
+            "example": "string"
+          },
+          "ministryCode": {
+            "type": "string",
+            "description": "Gets or sets the ministry code.",
+            "nullable": true,
+            "example": "string"
+          },
+          "ministryName": {
+            "type": "string",
+            "description": "Gets or sets the ministry name.",
+            "nullable": true,
+            "example": "string"
+          },
+          "ministryAbbreviation": {
+            "type": "string",
+            "description": "Gets or sets the ministry abbreviation.",
+            "nullable": true,
+            "example": "string"
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "Gets or sets the organization name.",
+            "nullable": true,
+            "example": "string"
+          },
+          "fjarlagalidurCode": {
+            "type": "string",
+            "description": "Gets or sets the fjarlagalidur code.",
+            "nullable": true,
+            "example": "string"
+          },
+          "nationalIdentifier": {
+            "type": "string",
+            "description": "Gets or sets the national identifier.",
+            "nullable": true,
+            "example": "string"
+          },
+          "organizationAbbreviation": {
+            "type": "string",
+            "description": "Gets or sets the organization abbreviation.",
+            "nullable": true,
+            "example": "string"
+          },
+          "orgAddress": {
+            "type": "string",
+            "description": "Gets or sets the organization address.",
+            "nullable": true,
+            "example": "string"
+          },
+          "township": {
+            "type": "string",
+            "description": "Gets or sets the township.",
+            "nullable": true,
+            "example": "string"
+          },
+          "orgStartDate": {
+            "type": "string",
+            "description": "Gets or sets the organization start date.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "orgEndDate": {
+            "type": "string",
+            "description": "Gets or sets the organization end date.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "orgCategory": {
+            "type": "string",
+            "description": "Gets or sets the organization category.",
+            "nullable": true,
+            "example": "string"
+          },
+          "isHrOrganization": {
+            "type": "boolean",
+            "description": "Gets or sets whether the organization is an HR organization (i.e. pays salaries)."
+          },
+          "countActiveAssignments": {
+            "type": "integer",
+            "description": "Gets or sets the count of active assignments.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "countActiveIndividuals": {
+            "type": "integer",
+            "description": "Gets or sets the count of active individuals.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "datamartLoadDatetime": {
+            "type": "string",
+            "description": "Gets or sets the timestamp this row was loaded into the datamart by the nightly SQL transfer pipeline.\r\nUse this to gauge data freshness; a value older than ~24 hours suggests the pipeline may have failed.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a data transfer object for an organization response.\r\nSourced from the ELFUR_DATAMART.HRData.Organizations table."
+      },
+      "OrganizationUnitDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "number",
+            "description": "Gets or sets the organization id (HR organization unit id).",
+            "format": "double"
+          },
+          "organizationUnitName": {
+            "type": "string",
+            "description": "Gets or sets the organization unit name.",
+            "nullable": true,
+            "example": "string"
+          },
+          "organizationUnitTypeID": {
+            "type": "string",
+            "description": "Gets or sets the organization unit type id.",
+            "nullable": true,
+            "example": "string"
+          },
+          "organizationUnitType": {
+            "type": "string",
+            "description": "Gets or sets the organization unit type.",
+            "nullable": true,
+            "example": "string"
+          },
+          "hrOrganizationName": {
+            "type": "string",
+            "description": "Gets or sets the HR organization name.",
+            "nullable": true,
+            "example": "string"
+          },
+          "orgUnitAbbreviation": {
+            "type": "string",
+            "description": "Gets or sets the organization unit abbreviation.",
+            "nullable": true,
+            "example": "string"
+          },
+          "orgUnitFjarlagalidurConstant": {
+            "type": "string",
+            "description": "Gets or sets the parent fjarlagalidur constant (corresponds to the parent organization code).",
+            "nullable": true,
+            "example": "string"
+          },
+          "costAllocation_Segment1": {
+            "type": "string",
+            "description": "Gets or sets the cost allocation segment 1.",
+            "nullable": true,
+            "example": "string"
+          },
+          "addressLine1": {
+            "type": "string",
+            "description": "Gets or sets address line 1.",
+            "nullable": true,
+            "example": "string"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Gets or sets the postal code.",
+            "nullable": true,
+            "example": "string"
+          },
+          "orgUnitDateFrom": {
+            "type": "string",
+            "description": "Gets or sets the organization unit start date.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "orgUnitDateTo": {
+            "type": "string",
+            "description": "Gets or sets the organization unit end date.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          },
+          "countActiveAssignments": {
+            "type": "integer",
+            "description": "Gets or sets the count of active assignments.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "countActiveIndividuals": {
+            "type": "integer",
+            "description": "Gets or sets the count of active individuals.",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "datamartLoadDatetime": {
+            "type": "string",
+            "description": "Gets or sets the timestamp this row was loaded into the datamart by the nightly SQL transfer pipeline.\r\nUse this to gauge data freshness; a value older than ~24 hours suggests the pipeline may have failed.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-06-19T10:29:24Z"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a data transfer object for an organization unit response.\r\nSourced from the ELFUR_DATAMART.HRData.OrganizationUnits table."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "example": 0
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true,
+            "example": "string"
+          }
+        },
+        "additionalProperties": {}
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter: Bearer {JWT token}.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Organization",
+      "description": "Organization controller, used to get information about an organization and lookup a group of organizations.\r\nOrganization is equivalent to Stofnun in Icelandic."
+    },
+    {
+      "name": "OrganizationEmployee",
+      "description": "Organization Employee controller, used to get information about employees in an organization or organization unit."
+    },
+    {
+      "name": "OrganizationUnit",
+      "description": "Organization unit controller, used to get information about an organization unit and lookup a group of organization units.\r\nOrganization unit is equivalent to Stofnunareining/Deild in Icelandic."
+    }
+  ]
+}

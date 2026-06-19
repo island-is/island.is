@@ -57,11 +57,11 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
-      "@island.is/api/domains/customs-general": [
-        "libs/api/domains/customs-general/src/index.ts"
-      ],
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
       ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
@@ -755,9 +755,6 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
-      "@island.is/clients/rsk/customs/general": [
-        "libs/clients/rsk/customs/general/src/index.ts"
-      ],
       "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
@@ -935,6 +932,9 @@
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
+      ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
@@ -1366,6 +1366,9 @@
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
+      ],
+      "@island.is/clients/financial-management-authority-employees": [
+        "libs/clients/financial-management-authority-employees/src/index.ts"
       ],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { FinancialManagementAuthorityClientEmployeesService } from '@island.is/clients/financial-management-authority'
+import { FinancialManagementAuthorityEmployeesClientService } from '@island.is/clients/financial-management-authority-employees'
 import { Locale } from '@island.is/shared/types'
 import { mapEmployee } from './mappers/employeeMapper'
 import { isDefined } from '@island.is/shared/utils'
@@ -11,7 +11,7 @@ const category = 'api-domains-icelandic-government-employees'
 @Injectable()
 export class IcelandicGovernmentEmployeesService {
   constructor(
-    private readonly employeesClient: FinancialManagementAuthorityClientEmployeesService,
+    private readonly employeesClient: FinancialManagementAuthorityEmployeesClientService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

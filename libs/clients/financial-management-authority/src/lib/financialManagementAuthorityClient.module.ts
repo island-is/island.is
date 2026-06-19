@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common'
-import { apiProviders } from './providers'
-import { VacancyApi } from '../../gen/fetch'
-import { FinancialManagementAuthorityClientEmployeesService as EmployeesService } from './services/employees.service'
+import { ApiConfig } from './apiConfig'
+import { ApiProvider } from './apiProvider'
 
 @Module({
-  providers: [...apiProviders, EmployeesService],
-  exports: [VacancyApi, EmployeesService],
+  providers: [ApiConfig, ApiProvider],
+  exports: [ApiProvider],
 })
 export class FinancialManagementAuthorityClientModule {}
