@@ -27,7 +27,10 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  concludedDecisions: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
+  concludedDecisions: {
+    defendantId: string
+    rulingDecision: CaseIndictmentRulingDecision
+  }[],
 ) => Promise<Then>
 
 describe('IndictmentCaseService - send indictment completed for some', () => {
@@ -53,7 +56,10 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
 
     givenWhenThen = async (
       theCase: Case,
-      concludedDecisions: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
+      concludedDecisions: {
+        defendantId: string
+        rulingDecision: CaseIndictmentRulingDecision
+      }[],
     ) => {
       const then = {} as Then
 
@@ -79,7 +85,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     prosecutor: { name: 'Ákærandi', email: 'prosecutor@omnitrix.is' },
   }
 
-  it('should notify only the concluded defendant\'s confirmed defender, civil claimant spokespersons and the prosecutor', async () => {
+  it("should notify only the concluded defendant's confirmed defender, civil claimant spokespersons and the prosecutor", async () => {
     const theCase = {
       ...baseCase,
       defendants: [
@@ -109,7 +115,10 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     const then = await givenWhenThen(theCase, [
-      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
+      {
+        defendantId: defendantAaId,
+        rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      },
     ])
 
     const defenderUrl = `${mockConfig.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}`
@@ -178,7 +187,10 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     await givenWhenThen(theCase, [
-      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.CANCELLATION },
+      {
+        defendantId: defendantAaId,
+        rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      },
     ])
 
     expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
@@ -206,8 +218,14 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     await givenWhenThen(theCase, [
-      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
-      { defendantId: defendantBbId, rulingDecision: CaseIndictmentRulingDecision.CANCELLATION },
+      {
+        defendantId: defendantAaId,
+        rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      },
+      {
+        defendantId: defendantBbId,
+        rulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      },
     ])
 
     // Round 1 (AA dismissed): AA defender + prosecutor
@@ -262,7 +280,10 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     await givenWhenThen(theCase, [
-      { defendantId: defendantBbId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
+      {
+        defendantId: defendantBbId,
+        rulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+      },
     ])
 
     // Only BB defender + prosecutor — AA must not be re-notified
