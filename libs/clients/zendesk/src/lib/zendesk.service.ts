@@ -68,7 +68,7 @@ export type CustomObjectJobItem = {
 type CustomObjectJobStatus = {
   id: string
   url?: string
-  status: 'queued' | 'working' | 'completed' | 'failed' | 'aborted'
+  status: string
   results?: Array<{
     id?: string
     external_id?: string
@@ -329,7 +329,7 @@ export class ZendeskService {
     let jobStatus: CustomObjectJobStatus
     try {
       const response = await axios.post(
-        `${this.api}/custom_objects/${objectKey}/records/jobs`,
+        `${this.api}/custom_objects/${objectKey}/jobs`,
         body,
         this.params,
       )
@@ -357,7 +357,7 @@ export class ZendeskService {
       try {
         const pollUrl =
           jobStatus.url ??
-          `${this.api}/custom_objects/${objectKey}/records/jobs/${jobStatus.id}`
+          `${this.api}/custom_objects/${objectKey}/jobs/${jobStatus.id}`
         const response = await axios.get(pollUrl, this.params)
         jobStatus = response.data.job_status ?? response.data
       } catch (e) {
@@ -375,10 +375,10 @@ export class ZendeskService {
     }
 
     if (jobStatus.results) {
-      const failed = jobStatus.results.filter((r) =>
-        r.status === 'failed' || Array.isArray(r.errors)
-          ? (r.errors as unknown[]).length > 0
-          : Boolean(r.errors),
+      const failed = jobStatus.results.filter(
+        (r) =>
+          r.status === 'failed' ||
+          (Array.isArray(r.errors) ? r.errors.length > 0 : Boolean(r.errors)),
       )
       if (failed.length > 0) {
         throw new Error(
