@@ -234,6 +234,10 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
       return
     }
 
+    if (!PROPERTY_NUMBER_REGEX.test(normalized)) {
+      return
+    }
+
     setSearchLoading(true)
 
     try {
