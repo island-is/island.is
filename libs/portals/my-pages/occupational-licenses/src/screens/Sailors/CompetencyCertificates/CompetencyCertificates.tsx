@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, FilterInput, Stack } from '@island.is/island-ui/core'
+import { Box, FilterInput, Stack, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -13,6 +13,7 @@ import {
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { Markdown } from '@island.is/shared/components'
 import { olMessage as om } from '../../../lib/messages'
 import { useShipRegistrySailorSchoolCertificatesQuery } from './CompetencyCertificates.generated'
 import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
@@ -76,7 +77,11 @@ const CompetencyCertificates = () => {
   return (
     <IntroWrapper
       title={m.sailorsSchoolCertificatesTitle}
-      intro={om.sailorSchoolCertificatesIntro}
+      introComponent={
+        <Text variant="default">
+          <Markdown>{formatMessage(om.sailorSchoolCertificatesIntro)}</Markdown>
+        </Text>
+      }
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),

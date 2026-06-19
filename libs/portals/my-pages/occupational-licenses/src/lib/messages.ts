@@ -171,9 +171,9 @@ export const olMessage = defineMessages({
 
   // Sailor screens
   sailorSchoolCertificatesIntro: {
-    id: 'sp.occupational-licenses:sailor-school-certificates-intro',
+    id: 'sp.occupational-licenses:sailor-school-certificates-intro#markdown',
     defaultMessage:
-      'Hér eru birtar upplýsingar um próf, námskeið og önnur hæfisskilyrði sem tengjast störfum sjómanns, gildistíma réttinda og mikilvæga fresti vegna endurnýjunar eða endurmenntunar.',
+      'Hér má sjá upplýsingar um próf, nám og námskeið sem þú hefur lokið, gilt sjómannalæknisvottorð og frest til lögskráningar þegar öryggisfræðslunámskeið eru útrunnin. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
   },
   sailorSchoolCertificatesEmpty: {
     id: 'sp.occupational-licenses:sailor-school-certificates-empty',
@@ -196,9 +196,9 @@ export const olMessage = defineMessages({
     defaultMessage: 'Útgáfudagsetning',
   },
   sailorRightCertificatesIntro: {
-    id: 'sp.occupational-licenses:sailor-right-certificates-intro',
+    id: 'sp.occupational-licenses:sailor-right-certificates-intro#markdown',
     defaultMessage:
-      'Hér eru birtar upplýsingar um atvinnuskírteini sjómanns og réttindaflokka sem þeim fylgja.',
+      'Hér er hægt að sjá atvinnuskírteini sem eru í gildi, þar á meðal skírteinistegund, réttindaflokk og gildislokadagsetningu. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
   },
   sailorRightCertificatesEmpty: {
     id: 'sp.occupational-licenses:sailor-right-certificates-empty',
@@ -221,13 +221,13 @@ export const olMessage = defineMessages({
     defaultMessage: 'Útgáfudagur',
   },
   sailorCrewRegistrationsIntro: {
-    id: 'sp.occupational-licenses:sailor-crew-registrations-intro',
+    id: 'sp.occupational-licenses:sailor-crew-registrations-intro#markdown',
     defaultMessage:
-      'Hér birtast upplýsingar um allar lögskráningar sjómanns á skipum, bæði núverandi og eldri. Lögskráning staðfestir ráðningu og stöðu um borð og er grundvöllur fyrir skráningu siglingartíma, réttinda og atvinnuskírteina.',
+      'Hér má sjá heildarlögskráningardaga, siglingatíma eftir stöðu og skipaflokkum, auk upplýsinga um gildar undanþágur og sjóferðabækur. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
   },
   sailorTabSeaService: {
     id: 'sp.occupational-licenses:sailor-tab-sea-service',
-    defaultMessage: 'Siglingartími',
+    defaultMessage: 'Siglingatími',
   },
   sailorTabExemptions: {
     id: 'sp.occupational-licenses:sailor-tab-exemptions',
@@ -365,10 +365,10 @@ export const olMessage = defineMessages({
   },
   sailorSeaServiceMinTonnage: {
     id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage',
-    defaultMessage: 'Yfir brúttotonn',
+    defaultMessage: 'Yfir brúttótonn',
   },
   sailorSeaServiceMinTonnagePlaceholder: {
     id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage-placeholder',
-    defaultMessage: 'Skráðu brúttotonn',
+    defaultMessage: 'Skráðu brúttótonn',
   },
 })

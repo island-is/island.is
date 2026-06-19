@@ -1,10 +1,11 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Tabs } from '@island.is/island-ui/core'
+import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import {
   IntroWrapper,
   m,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import { olMessage as om } from '../../../lib/messages'
 import { SeagoingTime } from './SeagoingTime/SeagoingTime'
 import { Exemptions } from './Exemptions/Exemptions'
@@ -17,7 +18,11 @@ const LegalRegistrations = () => {
   return (
     <IntroWrapper
       title={m.sailorsCrewRegistrationsTitle}
-      intro={om.sailorCrewRegistrationsIntro}
+      introComponent={
+        <Text variant="default">
+          <Markdown>{formatMessage(om.sailorCrewRegistrationsIntro)}</Markdown>
+        </Text>
+      }
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
         tooltip: formatMessage(m.sailorsTooltip),
