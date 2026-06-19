@@ -14,6 +14,7 @@ import {
 } from 'kennitala'
 import {
   formatBankInfo,
+  formatCurrency,
   formatPhoneNumberWithIcelandicCountryCode,
 } from '@island.is/application/ui-components'
 import * as m from '../lib/messages'
@@ -197,7 +198,9 @@ export const exemptionSectionOverviewAttachments = (
   const hasExemption =
     Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
 
-  if (!hasExemption || !exemptionReason) return []
+  if (!hasExemption || !exemptionReason || exemptionReason === 'housing') {
+    return []
+  }
 
   const files = getValueViaPath<Array<{ key: string; name: string }>>(
     answers,
@@ -448,89 +451,43 @@ export const incomeSectionOverviewItems = (
 
   const items: KeyValueItem[] = []
 
-  const contractorText = getValueViaPath<string>(
+  const contractorAmount = getValueViaPath<string>(
     answers,
     'incomeContractorDescription',
   )?.trim()
-  if (contractorText) {
+  if (contractorAmount) {
     items.push({
       width: 'full',
       keyText: m.draftMessages.incomeSection.contractorDescriptionTitle,
-      valueText: contractorText,
+      valueText: formatCurrency(contractorAmount),
     })
   }
 
-  const foreignText = getValueViaPath<string>(
+  const foreignAmount = getValueViaPath<string>(
     answers,
     'incomeForeignDescription',
   )?.trim()
-  if (foreignText) {
+  if (foreignAmount) {
     items.push({
       width: 'full',
       keyText: m.draftMessages.incomeSection.foreignDescriptionTitle,
-      valueText: foreignText,
+      valueText: formatCurrency(foreignAmount),
     })
   }
 
-  const otherText = getValueViaPath<string>(
+  const otherAmount = getValueViaPath<string>(
     answers,
     'incomeOtherDescription',
   )?.trim()
-  if (otherText) {
+  if (otherAmount) {
     items.push({
       width: 'full',
       keyText: m.draftMessages.incomeSection.otherDescriptionTitle,
-      valueText: otherText,
+      valueText: formatCurrency(otherAmount),
     })
   }
 
   return items
-}
-
-const appendIncomeFiles = (
-  answers: FormValue,
-  path: string,
-  label: string,
-  out: AttachmentItem[],
-) => {
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    path,
-  )
-  if (!Array.isArray(files)) return
-  files.forEach((file) => {
-    out.push({
-      width: 'full',
-      fileName: `${label}: ${file.name}`,
-      fileType: file.name?.split('.').pop(),
-    })
-  })
-}
-
-export const incomeSectionOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<AttachmentItem> => {
-  if (getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES) {
-    return []
-  }
-
-  const attachments: AttachmentItem[] = []
-  appendIncomeFiles(
-    answers,
-    'incomeContractorFiles',
-    'Verktakagreiðslur',
-    attachments,
-  )
-  appendIncomeFiles(
-    answers,
-    'incomeForeignFiles',
-    'Erlendar greiðslur',
-    attachments,
-  )
-  appendIncomeFiles(answers, 'incomeOtherFiles', 'Aðrar greiðslur', attachments)
-
-  return attachments
 }
 
 export const incomeNoTaxReturnOverviewItems = (
@@ -561,33 +518,18 @@ export const assetsDeclarationOverviewItems = (
   _userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
-  const hasAssets =
-    getValueViaPath<string>(answers, 'assetsDeclarationRadio') === YES
+  const description =
+    getValueViaPath<string>(answers, 'assetsDeclarationTextField')?.trim() ?? ''
 
-  const items: Array<KeyValueItem> = [
+  if (!description) return []
+
+  return [
     {
       width: 'full',
-      keyText: m.draftMessages.assetsDeclarationSection.radioTitle,
-      valueText: hasAssets
-        ? m.draftMessages.assetsDeclarationSection.optionYes
-        : m.draftMessages.assetsDeclarationSection.optionNo,
+      keyText: m.draftMessages.assetsDeclarationSection.textFieldDescription,
+      valueText: description,
     },
   ]
-
-  if (hasAssets) {
-    const description =
-      getValueViaPath<string>(answers, 'assetsDeclarationTextField')?.trim() ??
-      ''
-    if (description) {
-      items.push({
-        width: 'full',
-        keyText: m.draftMessages.assetsDeclarationSection.textFieldDescription,
-        valueText: description,
-      })
-    }
-  }
-
-  return items
 }
 
 export const paymentSectionOverviewItems = (
@@ -819,35 +761,21 @@ export const assigneeAssetDeclarationOverviewItems = (
   _locale?: Locale,
 ): Array<KeyValueItem> => {
   const prefix = userNationalId ? sanitizeKennitala(userNationalId) : ''
-  const hasAssets =
-    getValueViaPath<string>(answers, `${prefix}.assetDeclerationRadio`) === YES
+  const description =
+    getValueViaPath<string>(
+      answers,
+      `${prefix}.assetDeclerationTextField`,
+    )?.trim() ?? ''
 
-  const items: Array<KeyValueItem> = [
+  if (!description) return []
+
+  return [
     {
       width: 'full',
-      keyText: m.assigneeDraftOverview.ownsAssets,
-      valueText: hasAssets
-        ? m.assigneeDraftOverview.yes
-        : m.assigneeDraftOverview.no,
+      keyText: m.assigneeDraftOverview.assetDescription,
+      valueText: description,
     },
   ]
-
-  if (hasAssets) {
-    const description =
-      getValueViaPath<string>(
-        answers,
-        `${prefix}.assetDeclerationTextField`,
-      )?.trim() ?? ''
-    if (description) {
-      items.push({
-        width: 'full',
-        keyText: m.assigneeDraftOverview.assetDescription,
-        valueText: description,
-      })
-    }
-  }
-
-  return items
 }
 
 const assigneeAccessAgreementChildDisplayName = (

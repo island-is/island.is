@@ -18,7 +18,6 @@ import {
   applicantSubmitHouseholdMembersOverviewItems,
   applicantSubmitHouseholdMembersOverviewAttachments,
   incomeSectionOverviewItems,
-  incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
@@ -82,15 +81,11 @@ export const applicantOverviewSection = buildSection({
               return false
             }
             const emptyExternal = {} as ExternalData
-            const items = incomeSectionOverviewItems(answers, emptyExternal)
-            const attachments = incomeSectionOverviewAttachments(
-              answers,
-              emptyExternal,
+            return (
+              incomeSectionOverviewItems(answers, emptyExternal).length > 0
             )
-            return items.length > 0 || attachments.length > 0
           },
           items: incomeSectionOverviewItems,
-          attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'submitIncomeNoTaxReturnOverview',
