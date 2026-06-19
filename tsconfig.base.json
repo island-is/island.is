@@ -145,6 +145,9 @@
       "@island.is/api/domains/housing-benefits": [
         "libs/api/domains/housing-benefits/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-employees": [
+        "libs/api/domains/icelandic-government-employees/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
