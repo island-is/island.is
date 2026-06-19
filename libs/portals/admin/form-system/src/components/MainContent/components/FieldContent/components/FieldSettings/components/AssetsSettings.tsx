@@ -12,7 +12,7 @@ import { ControlContext } from '../../../../../../../context/ControlContext'
 import { AssetTypes } from '@island.is/form-system/enums'
 
 const assetTypeOptions = [
-  { label: 'Fasteign', value: AssetTypes.REAL_ESTATE },
+  // { label: 'Fasteign', value: AssetTypes.REAL_ESTATE },
   { label: 'Ökutæki', value: AssetTypes.VEHICLE },
   //   { label: 'Skip', value: AssetTypes.SHIP },
 ]
