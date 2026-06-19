@@ -580,7 +580,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendIndictmentCompletedForSomeNotifications(
     theCase: Case,
-    newDecisions?: CaseIndictmentRulingDecision[],
+    newDecisions?: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
   ): Promise<DeliverResponse> {
     const courtName = applyDativeCaseToCourtName(
       theCase.court?.name || 'héraðsdómi',
@@ -590,29 +590,34 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     // in by the caller so previously concluded defendants are not re-notified
     // on sequential partial completions. Fall back to deriving from case event
     // logs only for in-flight messages that predate this parameter.
-    const concludedDecisions = newDecisions
-      ? newDecisions.map(getHumanReadableCaseIndictmentRulingDecision)
-      : (theCase.defendants ?? [])
-          .map((defendant) => {
-            const eventLog = DefendantEventLog.getEventLogByEventType(
-              [
-                DefendantEventType.INDICTMENT_CANCELLED,
-                DefendantEventType.INDICTMENT_DISMISSED,
-              ],
-              defendant.eventLogs,
-            )
+    const concludedDecisions: {
+      defendantId: string
+      rulingDecision: CaseIndictmentRulingDecision
+    }[] = newDecisions
+      ? newDecisions
+      : (theCase.defendants ?? []).flatMap((defendant) => {
+          const eventLog = DefendantEventLog.getEventLogByEventType(
+            [
+              DefendantEventType.INDICTMENT_CANCELLED,
+              DefendantEventType.INDICTMENT_DISMISSED,
+            ],
+            defendant.eventLogs,
+          )
 
-            if (!eventLog) {
-              return undefined
-            }
+          if (!eventLog) {
+            return []
+          }
 
-            return getHumanReadableCaseIndictmentRulingDecision(
-              eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
-                ? CaseIndictmentRulingDecision.CANCELLATION
-                : CaseIndictmentRulingDecision.DISMISSAL,
-            )
-          })
-          .filter((decision) => decision !== undefined)
+          return [
+            {
+              defendantId: defendant.id,
+              rulingDecision:
+                eventLog.eventType === DefendantEventType.INDICTMENT_CANCELLED
+                  ? CaseIndictmentRulingDecision.CANCELLATION
+                  : CaseIndictmentRulingDecision.DISMISSAL,
+            },
+          ]
+        })
 
     if (concludedDecisions.length === 0) {
       return { delivered: true }
@@ -620,15 +625,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const subject = `Lyktir skráðar í máli ${theCase.courtCaseNumber}`
 
-    // DEFENDERS
-    const defenders = _uniqBy(
-      theCase.defendants?.filter(
-        ({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed,
-      ) ?? [],
-      (defendant) => defendant.defenderEmail,
-    )
-
-    // CIVIL CLAIMANT SPOKESPERSONS
+    // CIVIL CLAIMANT SPOKESPERSONS — notified for all decision rounds
     const spokespersons = _uniqBy(
       theCase.civilClaimants?.filter(
         ({ hasSpokesperson, isSpokespersonConfirmed }) =>
@@ -645,23 +642,33 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const prosecutorUrl = `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`
 
     const results = await Promise.all(
-      concludedDecisions.map(async (rulingDecision) => {
-        const baseBody = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${rulingDecision}`
+      concludedDecisions.map(async ({ defendantId, rulingDecision }) => {
+        const humanReadableDecision =
+          getHumanReadableCaseIndictmentRulingDecision(rulingDecision)
+        const baseBody = `Lyktir hafa verið skráðar á aðila í máli ${theCase.courtCaseNumber} hjá ${courtName}.<br>Niðurstaða: ${humanReadableDecision}`
+
+        // Only the specific concluded defendant's confirmed defender is notified
+        const defendant = (theCase.defendants ?? []).find(
+          (d) => d.id === defendantId,
+        )
+        const defender =
+          defendant?.isDefenderChoiceConfirmed &&
+          defendant.defenderName &&
+          defendant.defenderEmail
+            ? { name: defendant.defenderName, email: defendant.defenderEmail }
+            : undefined
 
         const promises: Promise<Recipient>[] = [
-          ...defenders
-            .filter(
-              ({ defenderName, defenderEmail }) =>
-                defenderName && defenderEmail,
-            )
-            .map(({ defenderName, defenderEmail }) =>
-              this.sendEmail({
-                subject,
-                html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
-                recipientName: defenderName,
-                recipientEmail: defenderEmail,
-              }),
-            ),
+          ...(defender
+            ? [
+                this.sendEmail({
+                  subject,
+                  html: `${baseBody}<br>Sjá nánar á <a href="${defenderUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+                  recipientName: defender.name,
+                  recipientEmail: defender.email,
+                }),
+              ]
+            : []),
           ...spokespersons
             .filter(
               ({ spokespersonName, spokespersonEmail }) =>
@@ -704,7 +711,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
     user?: UserDescriptor,
-    concludedDecisions?: CaseIndictmentRulingDecision[],
+    concludedDecisions?: {
+      defendantId: string
+      rulingDecision: CaseIndictmentRulingDecision
+    }[],
   ): Promise<DeliverResponse> {
     switch (notificationType) {
       case IndictmentCaseNotificationType.COURT_DATE:
@@ -733,7 +743,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     type: IndictmentCaseNotificationType,
     theCase: Case,
     user?: UserDescriptor,
-    concludedDecisions?: CaseIndictmentRulingDecision[],
+    concludedDecisions?: {
+      defendantId: string
+      rulingDecision: CaseIndictmentRulingDecision
+    }[],
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
     try {

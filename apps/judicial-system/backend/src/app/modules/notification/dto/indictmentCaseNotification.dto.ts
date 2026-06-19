@@ -1,9 +1,12 @@
+import { Type } from 'class-transformer'
 import {
   IsArray,
   IsEnum,
   IsNotEmpty,
   IsObject,
   IsOptional,
+  IsUUID,
+  ValidateNested,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -13,6 +16,16 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
 } from '@island.is/judicial-system/types'
+
+class ConcludedDecisionDto {
+  @IsUUID('4')
+  @IsNotEmpty()
+  readonly defendantId!: string
+
+  @IsEnum(CaseIndictmentRulingDecision)
+  @IsNotEmpty()
+  readonly rulingDecision!: CaseIndictmentRulingDecision
+}
 
 export class IndictmentCaseNotificationDto {
   @IsNotEmpty()
@@ -27,7 +40,8 @@ export class IndictmentCaseNotificationDto {
 
   @IsOptional()
   @IsArray()
-  @IsEnum(CaseIndictmentRulingDecision, { each: true })
-  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision, isArray: true })
-  readonly concludedDecisions?: CaseIndictmentRulingDecision[]
+  @ValidateNested({ each: true })
+  @Type(() => ConcludedDecisionDto)
+  @ApiPropertyOptional({ type: [ConcludedDecisionDto] })
+  readonly concludedDecisions?: ConcludedDecisionDto[]
 }

@@ -2054,7 +2054,7 @@ export class CaseService {
         body: {
           type: IndictmentCaseNotificationType.INDICTMENT_COMPLETED_FOR_SOME,
           concludedDecisions: defendantEventLogDecisions.map(
-            ({ rulingDecision }) => rulingDecision,
+            ({ defendantId, rulingDecision }) => ({ defendantId, rulingDecision }),
           ),
         },
       })

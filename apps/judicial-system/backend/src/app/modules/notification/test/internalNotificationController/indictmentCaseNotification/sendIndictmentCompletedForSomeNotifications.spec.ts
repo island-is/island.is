@@ -27,13 +27,15 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  concludedDecisions: CaseIndictmentRulingDecision[],
+  concludedDecisions: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
 ) => Promise<Then>
 
 describe('IndictmentCaseService - send indictment completed for some', () => {
   const caseId = uuid()
   const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = 'S-275/2026'
+  const defendantAaId = uuid()
+  const defendantBbId = uuid()
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -51,7 +53,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
 
     givenWhenThen = async (
       theCase: Case,
-      concludedDecisions: CaseIndictmentRulingDecision[],
+      concludedDecisions: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
     ) => {
       const then = {} as Then
 
@@ -77,17 +79,19 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     prosecutor: { name: 'Ákærandi', email: 'prosecutor@omnitrix.is' },
   }
 
-  it('should notify all confirmed defenders, civil claimant spokespersons and the prosecutor', async () => {
+  it('should notify only the concluded defendant\'s confirmed defender, civil claimant spokespersons and the prosecutor', async () => {
     const theCase = {
       ...baseCase,
       defendants: [
         {
+          id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
           eventLogs: [],
         },
         {
+          id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
           defenderEmail: 'bb@defender.is',
@@ -105,7 +109,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     const then = await givenWhenThen(theCase, [
-      CaseIndictmentRulingDecision.DISMISSAL,
+      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
     ])
 
     const defenderUrl = `${mockConfig.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}`
@@ -118,18 +122,12 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       `Niðurstaða: Frávísun<br>Sjá nánar á <a href="${prosecutorUrl}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
     )
 
+    // Only AA (the concluded defendant) gets the defender email
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         subject,
         html: defenderHtml,
         to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
-      }),
-    )
-    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject,
-        html: defenderHtml,
-        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
@@ -146,7 +144,13 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
         to: [{ name: 'Ákærandi', address: 'prosecutor@omnitrix.is' }],
       }),
     )
-    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
+    // BB is not the concluded defendant — must not be notified
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
+      }),
+    )
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
     expect(then.result).toEqual({ delivered: true })
   })
 
@@ -156,6 +160,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       prosecutor: undefined,
       defendants: [
         {
+          id: defendantAaId,
           isDefenderChoiceConfirmed: false,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
@@ -172,22 +177,26 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       ],
     } as Case
 
-    await givenWhenThen(theCase, [CaseIndictmentRulingDecision.CANCELLATION])
+    await givenWhenThen(theCase, [
+      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.CANCELLATION },
+    ])
 
     expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
   })
 
-  it('should send one notification per concluded defendant when decisions are mixed', async () => {
+  it('should send one notification round per concluded defendant with the correct decision', async () => {
     const theCase = {
       ...baseCase,
       defendants: [
         {
+          id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
           eventLogs: [],
         },
         {
+          id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
           defenderEmail: 'bb@defender.is',
@@ -197,20 +206,23 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
     } as Case
 
     await givenWhenThen(theCase, [
-      CaseIndictmentRulingDecision.DISMISSAL,
-      CaseIndictmentRulingDecision.CANCELLATION,
+      { defendantId: defendantAaId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
+      { defendantId: defendantBbId, rulingDecision: CaseIndictmentRulingDecision.CANCELLATION },
     ])
 
-    // 2 concluded defendants × 3 recipients (AA defender, BB defender, prosecutor)
-    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(6)
+    // Round 1 (AA dismissed): AA defender + prosecutor
+    // Round 2 (BB cancelled): BB defender + prosecutor
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(4)
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Frávísun'),
+        to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Niðurfelling máls'),
+        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
@@ -221,14 +233,14 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
   })
 
   it('should not re-notify for defendants concluded in a previous partial completion', async () => {
-    // Defendant AA was already concluded (CANCELLATION) in an earlier update and
-    // has an event log in the case. Defendant BB is newly concluded (DISMISSAL).
-    // The concludedDecisions argument carries only BB's new decision, so only one
-    // notification round should be sent — AA must not be re-notified.
+    // Defendant AA was already concluded (CANCELLATION) in an earlier update.
+    // Only BB is newly concluded (DISMISSAL). AA's defender must not receive
+    // another email.
     const theCase = {
       ...baseCase,
       defendants: [
         {
+          id: defendantAaId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi AA',
           defenderEmail: 'aa@defender.is',
@@ -240,6 +252,7 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
           ],
         },
         {
+          id: defendantBbId,
           isDefenderChoiceConfirmed: true,
           defenderName: 'Verjandi BB',
           defenderEmail: 'bb@defender.is',
@@ -248,18 +261,21 @@ describe('IndictmentCaseService - send indictment completed for some', () => {
       ],
     } as Case
 
-    await givenWhenThen(theCase, [CaseIndictmentRulingDecision.DISMISSAL])
+    await givenWhenThen(theCase, [
+      { defendantId: defendantBbId, rulingDecision: CaseIndictmentRulingDecision.DISMISSAL },
+    ])
 
-    // Only 1 decision (DISMISSAL for BB) × 3 recipients (AA defender, BB defender, prosecutor)
-    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
+    // Only BB defender + prosecutor — AA must not be re-notified
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         html: expect.stringContaining('Niðurstaða: Frávísun'),
+        to: [{ name: 'Verjandi BB', address: 'bb@defender.is' }],
       }),
     )
     expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        html: expect.stringContaining('Niðurstaða: Niðurfelling máls'),
+        to: [{ name: 'Verjandi AA', address: 'aa@defender.is' }],
       }),
     )
   })
