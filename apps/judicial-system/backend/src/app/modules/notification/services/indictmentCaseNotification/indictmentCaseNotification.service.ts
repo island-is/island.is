@@ -580,7 +580,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendIndictmentCompletedForSomeNotifications(
     theCase: Case,
-    newDecisions?: { defendantId: string; rulingDecision: CaseIndictmentRulingDecision }[],
+    newDecisions?: {
+      defendantId: string
+      rulingDecision: CaseIndictmentRulingDecision
+    }[],
   ): Promise<DeliverResponse> {
     const courtName = applyDativeCaseToCourtName(
       theCase.court?.name || 'héraðsdómi',
