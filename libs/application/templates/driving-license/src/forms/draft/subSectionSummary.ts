@@ -107,14 +107,17 @@ export const subSectionSummary = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
-          condition: isApplicationForCondition(B_TEMP),
+          condition: isApplicationForCondition([B_TEMP, BE]),
         }),
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          condition: isApplicationForCondition(B_TEMP),
+          condition: isApplicationForCondition([B_TEMP, BE]),
           value: ({ externalData, answers }) => {
-            if (answers.applicationFor === B_TEMP) {
+            if (
+              answers.applicationFor === B_TEMP ||
+              answers.applicationFor === BE
+            ) {
               const selectedNationalId = getValueViaPath<string>(
                 answers,
                 'drivingInstructor',
