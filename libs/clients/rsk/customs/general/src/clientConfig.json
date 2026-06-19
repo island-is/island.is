@@ -1,0 +1,2736 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Almennar �j�nustur"
+  },
+  "host": "apptorg.hysing.is",
+  "basePath": "/gateway/tollur-almennt/v1",
+  "schemes": ["https"],
+  "consumes": ["application/json", "application/x-www-form-urlencoded"],
+  "produces": ["application/json", "application/x-www-form-urlencoded"],
+  "paths": {
+    "/Tollgengi": {
+      "get": {
+        "description": "Skilar tollgengi � gildi �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur) ",
+        "operationId": "Tollgengi_GET_1",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tollgengi_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Abendi": {
+      "get": {
+        "description": "Skilar lista yfir �bendi � tollskr�rn�mer, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur) ",
+        "operationId": "Abendi_GET_2",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Abendi_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Bonn": {
+      "get": {
+        "description": "Skilar lista yfir tegundir banna, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Bonn_GET_3",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Bonn_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Gjold": {
+      "get": {
+        "description": "Skilar lista yfir tegundir gjalda, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Gjold_GET_4",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Gjold_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Leyfi": {
+      "get": {
+        "description": "Skilar lista yfir tegundir leyfa, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Leyfi_GET_5",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Leyfi_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Tollar": {
+      "get": {
+        "description": "Skilar lista yfir tegundir tolla, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Tollar_GET_6",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tollar_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Undanthagur": {
+      "get": {
+        "description": "Skilar lista yfir tegundir undan��ga, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Undanthagur_GET_7",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Undanthagur_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Urvinnslugjold": {
+      "get": {
+        "description": "Skilar lista yfir �rvinnslugj�ld tollskr�rn�mera, �t fr� vi�mi�unardagsetningu og tollskr�rn�merum fr�/til.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nTollskr�rn�mer: Engin auka t�kn. H�gt er a� setja inn hluta (byrjun) n�mera.",
+        "operationId": "Urvinnslugjold_GET_8",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "TollskrarnumerFra",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "TollskrarnumerTil",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "schema": {
+              "$ref": "#/definitions/Urvinnslugjold_GET_response"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Afhendingarskilmalar": {
+      "get": {
+        "description": "Skilar lista yfir tegundir afhendingarskilm�la, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Afhendingarskilmalar_GET_9",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Afhendingarskilmalar_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Flutningsmati": {
+      "get": {
+        "description": "Skilar lista yfir tegundir flutningsm�ta, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Flutningsmati_GET_10",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Flutningsmati_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Geymslustadur": {
+      "get": {
+        "description": "Skilar lista yfir geymslusta�i, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Geymslustadur_GET_11",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Geymslustadur_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Kostnadur": {
+      "get": {
+        "description": "Skilar lista yfir tegundir kostna�ar, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Kostnadur_GET_12",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Kostnadur_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Magntala": {
+      "get": {
+        "description": "Skilar lista yfir tegundir magnt�lu, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Magntala_GET_13",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Magntala_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Markadssvaedi": {
+      "get": {
+        "description": "Skilar lista yfir marka�ssv��i, �t fr� vi�mi�unardagsetningu.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\n",
+        "operationId": "Markadssvaedi_GET_14",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Markadssvaedi_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/TegundAfgreidslu": {
+      "get": {
+        "description": "Skilar lista yfir tegundir afgrei�slu, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "TegundAfgreidslu_GET_15",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TegundAfgreidslu_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/TegundVidskipta": {
+      "get": {
+        "description": "Skilar lista yfir tegundir vi�skipta, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "TegundVidskipta_GET_16",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TegundVidskipta_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/LandMynt": {
+      "get": {
+        "description": "Skilar lista yfir mynt og landak��a, �t fr� vi�mi�unardagsetningu.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)",
+        "operationId": "LandMynt_GET_17",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LandMynt_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Tollmedferd": {
+      "get": {
+        "description": "Skilar lista yfir tegundir tollme�fer�a, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Tollmedferd_GET_18",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Tollmedferd_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Umbudir": {
+      "get": {
+        "description": "Skilar lista yfir tegundir umb��a, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur) ",
+        "operationId": "Umbudir_GET_19",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Umbudir_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Uppruni": {
+      "get": {
+        "description": "Skilar lista yfir tegundir uppruna, �t fr� vi�mi�unardagsetningu.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)",
+        "operationId": "Uppruni_GET_20",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Uppruni_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Valykill": {
+      "get": {
+        "description": "Skilar lista yfir Va lykla, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Valykill_GET_21",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Valykill_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Vidbotarskjol": {
+      "get": {
+        "description": "Skilar lista yfir tegundir vi�b�tarskjala, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Vidbotarskjol_GET_22",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Vidbotarskjol_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Villur": {
+      "get": {
+        "description": "Skilar lista yfir tegundir villna, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "Villur_GET_23",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Villur_GET_response_1"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/TollskrarLyklar": {
+      "get": {
+        "description": "Skilar lista yfir geymslusta�i, �t fr� vi�mi�unardagsetningu og kerfi.\r\nDags sni�m�t: yyyy-MM-dd'T'HH:mm:ss'Z'  (d�mi 2020-01-01T13:00:00Z)\r\nKerfi: I (innflutningur), U (�tflutningur)",
+        "operationId": "TollskrarLyklar_GET_24",
+        "parameters": [
+          {
+            "name": "Dags",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Kerfi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TollskrarLyklar_GET_response"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/Akvordunarstadir": {
+      "get": {
+        "description": "",
+        "operationId": "Akvordunarstadir_GET_25",
+        "parameters": [
+          {
+            "name": "Landakodi",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Akvordunarstadir_GET_response"
+            }
+          },
+          "401": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "GeymslustadurResult_DT": {
+      "type": "object",
+      "required": [
+        "DagsFra",
+        "DagsTil",
+        "Kennitala",
+        "Kerfi",
+        "Kodi",
+        "Lysing",
+        "Nafn",
+        "Stadsetning"
+      ],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "Stadsetning": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kennitala": {
+          "type": "string"
+        },
+        "Nafn": {
+          "type": "string"
+        }
+      }
+    },
+    "TollmedferdResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollmedferdResult_DT"
+          }
+        }
+      }
+    },
+    "VidbotarskjolResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VidbotarskjolResult_DT"
+          }
+        }
+      }
+    },
+    "Alagsgrunnur": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "ValykillResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValykillResult_DT"
+          }
+        }
+      }
+    },
+    "AfhendingarskilmalarResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AfhendingarskilmResult_DT"
+          }
+        }
+      }
+    },
+    "Markadssvaedi_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MarkadssvaediResult_DT"
+          }
+        }
+      }
+    },
+    "TollarResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Kerfi", "Lysing", "Tollur"],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Tollur": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "Lond": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Lond_1"
+          }
+        }
+      }
+    },
+    "Lond_1": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Kerfi", "Kodi", "Tollur"],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Tollur": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kodi": {
+          "type": "string"
+        }
+      }
+    },
+    "ValykillResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValykillResult_DT"
+          }
+        }
+      }
+    },
+    "UndanthagurResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UndanthagurResult_DT"
+          }
+        }
+      }
+    },
+    "UppruniResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UppruniResult_DT"
+          }
+        }
+      }
+    },
+    "AbendiResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Kerfi", "Kodi", "Lysing"],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kodi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Lysing": {
+          "type": "string"
+        }
+      }
+    },
+    "UmbudirResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "LeyfiResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LeyfiResult_DT"
+          }
+        }
+      }
+    },
+    "MarkadssvaediResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MarkadssvaediResult_DT"
+          }
+        }
+      }
+    },
+    "BonnResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BonnResult_DT"
+          }
+        }
+      }
+    },
+    "Lond": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Kerfi", "Kodi", "Tollur"],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Tollur": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date"
+        },
+        "Kodi": {
+          "type": "string"
+        }
+      }
+    },
+    "Gjold_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GjoldResult_DT"
+          }
+        }
+      }
+    },
+    "LeyfiResult_DT": {
+      "type": "object",
+      "required": [
+        "DagsFra",
+        "DagsTil",
+        "Heiti",
+        "Kerfi",
+        "Kodi",
+        "LeyfiVeitir",
+        "Lysing"
+      ],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kodi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LeyfiVeitir": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        }
+      }
+    },
+    "LandMyntResult_DT": {
+      "type": "object",
+      "required": [
+        "LandDagsFra",
+        "LandDagsTil",
+        "LandHeiti",
+        "LandKodi",
+        "MyntDagsFra",
+        "MyntDagsTil",
+        "MyntHeiti",
+        "MyntKodi"
+      ],
+      "properties": {
+        "LandKodi": {
+          "type": "string"
+        },
+        "LandHeiti": {
+          "type": "string"
+        },
+        "LandDagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LandDagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MyntKodi": {
+          "type": "string"
+        },
+        "MyntHeiti": {
+          "type": "string"
+        },
+        "MyntDagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MyntDagsTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "TegundAfgreidsluResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TegundAfgreidsluResult_DT"
+          }
+        }
+      }
+    },
+    "Tollgengi_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Gengi_DT"
+          }
+        }
+      }
+    },
+    "BonnResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BonnResult_DT"
+          }
+        }
+      }
+    },
+    "Kostnadur_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KostnadurResult_DT"
+          }
+        }
+      }
+    },
+    "Tollmedferd_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollmedferdResult_DT"
+          }
+        }
+      }
+    },
+    "KostnadurResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KostnadurResult_DT"
+          }
+        }
+      }
+    },
+    "LandMyntResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LandMyntResult_DT"
+          }
+        }
+      }
+    },
+    "GjoldResult_DT": {
+      "type": "object",
+      "required": [
+        "DagsFra",
+        "DagsTil",
+        "Heiti",
+        "Kerfi",
+        "Kodi",
+        "Lysing",
+        "TaxtiProsenta",
+        "TaxtiUpphaed"
+      ],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kodi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "TaxtiProsenta": {
+          "type": "string"
+        },
+        "TaxtiUpphaed": {
+          "type": "string"
+        }
+      }
+    },
+    "KostnadurResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi", "Lysing"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "Urvinnslugjold_GET_response": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollskrarUrvinnslugjaldResult_DT"
+          }
+        }
+      }
+    },
+    "TollskrarLyklar_GET_response": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollskrarLyklarResult_DT"
+          }
+        }
+      }
+    },
+    "Geymslustadur_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GeymslustadurResult_DT"
+          }
+        }
+      }
+    },
+    "Magntala_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MagntalaResult_DT"
+          }
+        }
+      }
+    },
+    "Status_DT": {
+      "type": "object",
+      "required": ["code", "message", "type"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "exclusiveMinimum": false,
+          "exclusiveMaximum": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "MagntalaResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MagntalaResult_DT"
+          }
+        }
+      }
+    },
+    "AkvordunarstadurResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AkvordunarstadurResult_DT"
+          }
+        }
+      }
+    },
+    "MagntalaResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MagntalaResult_DT"
+          }
+        }
+      }
+    },
+    "UmbudirResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UmbudirResult_DT"
+          }
+        }
+      }
+    },
+    "VillurResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VillurResult_DT"
+          }
+        }
+      }
+    },
+    "TollarResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollarResult_DT"
+          }
+        }
+      }
+    },
+    "Flutningsmati_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlutningsmatiResult_DT"
+          }
+        }
+      }
+    },
+    "TegundVidskiptaResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NatureOfTransactionReportResult_DT"
+          }
+        }
+      }
+    },
+    "MarkadssvaediResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MarkadssvaediResult_DT"
+          }
+        }
+      }
+    },
+    "Uppruni_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UppruniResult_DT"
+          }
+        }
+      }
+    },
+    "GjoldResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GjoldResult_DT"
+          }
+        }
+      }
+    },
+    "FlutningsmatiResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "Tollar_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollarResult_DT"
+          }
+        }
+      }
+    },
+    "GeymslustadurResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "$ref": "#/definitions/GeymslustadurResult_DT"
+        }
+      }
+    },
+    "TollarResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollarResult_DT"
+          }
+        }
+      }
+    },
+    "NatureOfTransactionReportResult_DT": {
+      "type": "object",
+      "required": [
+        "Endurgjaldlaust",
+        "KerfiID",
+        "Loka",
+        "TegundVidskiptaSkyrslaID",
+        "TegundVidskiptaSkyrslaKodi",
+        "chDate",
+        "chUserID",
+        "dtFra",
+        "dtTil",
+        "tegundVidskiptaSkyrslaHeiti"
+      ],
+      "properties": {
+        "TegundVidskiptaSkyrslaID": {
+          "type": "string"
+        },
+        "TegundVidskiptaSkyrslaKodi": {
+          "type": "string"
+        },
+        "tegundVidskiptaSkyrslaHeiti": {
+          "type": "string"
+        },
+        "Endurgjaldlaust": {
+          "type": "string"
+        },
+        "dtFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dtTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "chUserID": {
+          "type": "string"
+        },
+        "chDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "KerfiID": {
+          "type": "string"
+        },
+        "Loka": {
+          "type": "string"
+        }
+      }
+    },
+    "VillurResult_DT": {
+      "type": "object",
+      "required": [
+        "Athugasemd",
+        "DagsFra",
+        "DagsTil",
+        "Heiti",
+        "Kerfi",
+        "Kodi",
+        "Reitur"
+      ],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Reitur": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        },
+        "Athugasemd": {
+          "type": "string"
+        }
+      }
+    },
+    "TollskrarUrvinnslugjaldResult_DT": {
+      "type": "object",
+      "required": [
+        "DagsFra",
+        "DagsTil",
+        "PLhlutfall",
+        "PPhlutfall",
+        "Tollskrarnumer"
+      ],
+      "properties": {
+        "Tollskrarnumer": {
+          "type": "string"
+        },
+        "PLhlutfall": {
+          "type": "string"
+        },
+        "PPhlutfall": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "UmbudirResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UmbudirResult_DT"
+          }
+        }
+      }
+    },
+    "VidbotarskjolResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VidbotarskjolResult_DT"
+          }
+        }
+      }
+    },
+    "TollmedferdResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "Bonn_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BonnResult_DT"
+          }
+        }
+      }
+    },
+    "TollskrarLyklarResult_DT": {
+      "type": "object",
+      "required": [
+        "Lysing",
+        "TimabilFra",
+        "TimabilTil",
+        "UrlAJsonSkra",
+        "UrlATextaSkra",
+        "Utgafa"
+      ],
+      "properties": {
+        "Utgafa": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "TimabilFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TimabilTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UrlAJsonSkra": {
+          "type": "string"
+        },
+        "UrlATextaSkra": {
+          "type": "string"
+        }
+      }
+    },
+    "TollskrarLyklarResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollskrarLyklarResult_DT"
+          }
+        }
+      }
+    },
+    "UndanthagurResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UndanthagurResult_DT"
+          }
+        }
+      }
+    },
+    "AbendiResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AbendiResult_DT"
+          }
+        }
+      }
+    },
+    "Akvordunarstadir_GET_response": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AkvordunarstadurResult_DT"
+          }
+        }
+      }
+    },
+    "LandMynt_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LandMyntResult_DT"
+          }
+        }
+      }
+    },
+    "AfhendingarskilmalarResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AfhendingarskilmResult_DT"
+          }
+        }
+      }
+    },
+    "Abendi_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AbendiResult_DT"
+          }
+        }
+      }
+    },
+    "Villur_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VillurResult_DT"
+          }
+        }
+      }
+    },
+    "BonnResult_DT": {
+      "type": "object",
+      "required": [
+        "Astaeda",
+        "DagsFra",
+        "DagsTil",
+        "Heiti",
+        "Kerfi",
+        "Kodi",
+        "UndanthVeitir"
+      ],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kodi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Astaeda": {
+          "type": "string"
+        },
+        "UndanthVeitir": {
+          "type": "string"
+        }
+      }
+    },
+    "TegundVidskiptaResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NatureOfTransactionReportResult_DT"
+          }
+        }
+      }
+    },
+    "Valykill_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValykillResult_DT"
+          }
+        }
+      }
+    },
+    "FlutningsmatiResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlutningsmatiResult_DT"
+          }
+        }
+      }
+    },
+    "Alagsgrunnur_1": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Umbudir_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UmbudirResult_DT"
+          }
+        }
+      }
+    },
+    "TegundAfgreidsluResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Kerfi", "Kodi", "StuttLysing"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "StuttLysing": {
+          "type": "string"
+        },
+        "Kerfi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ValykillResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi", "Verdlaust"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        },
+        "Verdlaust": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MagntalaResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "VillurResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VillurResult_DT"
+          }
+        }
+      }
+    },
+    "Afhendingarskilmalar_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AfhendingarskilmResult_DT"
+          }
+        }
+      }
+    },
+    "LandMyntResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LandMyntResult_DT"
+          }
+        }
+      }
+    },
+    "TegundAfgreidslu_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TegundAfgreidsluResult_DT"
+          }
+        }
+      }
+    },
+    "VidbotarskjolResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "TollmedferdResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollmedferdResult_DT"
+          }
+        }
+      }
+    },
+    "UrvinnslugjoldResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollskrarUrvinnslugjaldResult_DT"
+          }
+        }
+      }
+    },
+    "AkvordunarstadurResult_DT": {
+      "type": "object",
+      "required": ["Landakodi", "Stadur", "StadurHeiti"],
+      "properties": {
+        "Landakodi": {
+          "type": "string"
+        },
+        "Stadur": {
+          "type": "string"
+        },
+        "StadurHeiti": {
+          "type": "string"
+        }
+      }
+    },
+    "UrvinnslugjoldResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TollskrarUrvinnslugjaldResult_DT"
+          }
+        }
+      }
+    },
+    "AbendiResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AbendiResult_DT"
+          }
+        }
+      }
+    },
+    "Vidbotarskjol_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VidbotarskjolResult_DT"
+          }
+        }
+      }
+    },
+    "LeyfiResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LeyfiResult_DT"
+          }
+        }
+      }
+    },
+    "TollgengiResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Gengi_DT"
+          }
+        }
+      }
+    },
+    "UndanthagurResult_DT": {
+      "type": "object",
+      "required": [
+        "DagsFra",
+        "DagsTil",
+        "FyrirtaekiKennitala",
+        "Heiti",
+        "Kerfi",
+        "Kodi",
+        "LagaGrein",
+        "Lysing"
+      ],
+      "properties": {
+        "Kerfi": {
+          "type": "string"
+        },
+        "Kodi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "LagaGrein": {
+          "type": "string"
+        },
+        "FyrirtaekiKennitala": {
+          "type": "string"
+        }
+      }
+    },
+    "KostnadurResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KostnadurResult_DT"
+          }
+        }
+      }
+    },
+    "TegundAfgreidsluResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TegundAfgreidsluResult_DT"
+          }
+        }
+      }
+    },
+    "GeymslustadurResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GeymslustadurResult_DT"
+          }
+        }
+      }
+    },
+    "Undanthagur_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UndanthagurResult_DT"
+          }
+        }
+      }
+    },
+    "UppruniResponse_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UppruniResult_DT"
+          }
+        }
+      }
+    },
+    "FlutningsmatiResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FlutningsmatiResult_DT"
+          }
+        }
+      }
+    },
+    "AfhendingarskilmResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "GjoldResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GjoldResult_DT"
+          }
+        }
+      }
+    },
+    "TollgengiResponse": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Gengi_DT"
+          }
+        }
+      }
+    },
+    "Leyfi_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LeyfiResult_DT"
+          }
+        }
+      }
+    },
+    "UppruniResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Lysing"],
+      "properties": {
+        "Heiti": {
+          "type": "string"
+        },
+        "Lysing": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Gengi_DT": {
+      "type": "object",
+      "required": [
+        "BreyttDag",
+        "DagsFra",
+        "DagsTil",
+        "Gengi",
+        "GengistaflaId",
+        "Kerfi"
+      ],
+      "properties": {
+        "Kodi": {
+          "type": "string",
+          "description": "Descritpion = Format:2"
+        },
+        "Heiti": {
+          "type": "string",
+          "description": "Descritpion = Format:20"
+        },
+        "Gengi": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "GengistaflaId": {
+          "type": "string"
+        },
+        "BreyttDag": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "MarkadssvaediResult_DT": {
+      "type": "object",
+      "required": ["DagsFra", "DagsTil", "Heiti", "Kerfi", "Kodi"],
+      "properties": {
+        "Kodi": {
+          "type": "string"
+        },
+        "Heiti": {
+          "type": "string"
+        },
+        "DagsFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DagsTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Kerfi": {
+          "type": "string"
+        }
+      }
+    },
+    "TegundVidskipta_GET_response_1": {
+      "type": "object",
+      "required": ["Listi", "status"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/Status_DT"
+        },
+        "Listi": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NatureOfTransactionReportResult_DT"
+          }
+        }
+      }
+    }
+  }
+}

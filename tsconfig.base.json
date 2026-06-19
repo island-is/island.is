@@ -57,6 +57,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
+      ],
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
       ],
@@ -766,6 +769,9 @@
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
+      ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
