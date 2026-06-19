@@ -10,11 +10,10 @@ export class FinancialManagementAuthorityEmployeesClientService {
     organizationId: string,
     activeOnly = true,
   ): Promise<EmployeeBasicResponseDto[]> => {
-    const response =
-      await getV1OrganizationByFjarlagalidurConstantEmployees({
-        path: { fjarlagalidurConstant: organizationId },
-        query: { activeOnly },
-      })
+    const response = await getV1OrganizationByFjarlagalidurConstantEmployees({
+      path: { fjarlagalidurConstant: organizationId },
+      query: { activeOnly },
+    })
 
     return response.data ?? []
   }
