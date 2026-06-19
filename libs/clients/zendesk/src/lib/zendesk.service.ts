@@ -68,7 +68,7 @@ export type CustomObjectJobItem = {
 type CustomObjectJobStatus = {
   id: string
   url?: string
-  status: string
+  status: 'queued' | 'working' | 'completed' | 'failed' | 'aborted'
   results?: Array<{
     id?: string
     external_id?: string
