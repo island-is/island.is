@@ -1,4 +1,8 @@
-import { getSlugFromType, getValueViaPath, YES } from '@island.is/application/core'
+import {
+  getSlugFromType,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import {

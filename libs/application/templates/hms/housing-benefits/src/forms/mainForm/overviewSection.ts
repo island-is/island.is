@@ -102,9 +102,7 @@ export const overviewSection = buildSection({
               return false
             }
             const emptyExternal = {} as ExternalData
-            return (
-              incomeSectionOverviewItems(answers, emptyExternal).length > 0
-            )
+            return incomeSectionOverviewItems(answers, emptyExternal).length > 0
           },
           items: incomeSectionOverviewItems,
         }),

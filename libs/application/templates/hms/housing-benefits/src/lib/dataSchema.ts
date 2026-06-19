@@ -519,8 +519,7 @@ export const dataSchema = baseSchema
         code: z.ZodIssueCode.custom,
         path: ['assetsDeclarationTextField'],
         params:
-          m.draftMessages.assetsDeclarationSection
-            .validationTextFieldRequired,
+          m.draftMessages.assetsDeclarationSection.validationTextFieldRequired,
       })
     }
   })
@@ -544,8 +543,7 @@ export const dataSchema = baseSchema
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [key, 'assetDeclerationTextField'],
-          params:
-            m.assigneeDraft.validationAssetDeclerationTextFieldRequired,
+          params: m.assigneeDraft.validationAssetDeclerationTextFieldRequired,
         })
       }
     }
