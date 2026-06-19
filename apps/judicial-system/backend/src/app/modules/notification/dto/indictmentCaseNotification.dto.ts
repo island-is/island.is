@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 class ConcludedDecisionDto {
-  @IsUUID('4')
+  @IsUUID()
   @IsNotEmpty()
   readonly defendantId!: string
 
