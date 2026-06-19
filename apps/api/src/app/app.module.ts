@@ -48,6 +48,7 @@ import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { IcelandicGovernmentEmployeesModule } from '@island.is/api/domains/icelandic-government-employees'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { IcelandicMedicinesAgencyModule } from '@island.is/api/domains/icelandic-medicines-agency'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -360,6 +361,7 @@ const environment = getConfig
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
+    IcelandicGovernmentEmployeesModule,
     IcelandicGovernmentInstitutionVacanciesModule,
     FinancialManagementAuthorityEmployeesClientModule,
     IcelandicMedicinesAgencyModule,
