@@ -33,6 +33,7 @@ export const FieldSettingsFragment = gql`
     zendeskIsCustomField
     zendeskCustomFieldId
     applicantType
+    assetType
     hasDescription
     isPhoneRequired
     isEmailRequired

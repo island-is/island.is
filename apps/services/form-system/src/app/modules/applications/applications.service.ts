@@ -110,11 +110,6 @@ export class ApplicationsService {
 
     const nationalId = user.actor?.nationalId || user.nationalId
 
-    this.logger.info(
-      'Creating application for user with nationalId:',
-      nationalId,
-    )
-
     try {
       await this.sequelize.transaction(async (transaction) => {
         const newApplication: Application = await this.applicationModel.create(
@@ -204,14 +199,11 @@ export class ApplicationsService {
       })
     } catch (error) {
       this.logger.error('Error creating application', error)
+
       throw error
     }
 
-    this.logger.info('got this far with applicationId:', newApplicationId)
-
     const applicationDto = await this.getApplication(newApplicationId, '', null)
-
-    this.logger.info('getting applicationDto')
 
     return applicationDto
   }
@@ -1289,7 +1281,6 @@ export class ApplicationsService {
     const nationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
-    notificationDto.organizationNationalId = form.organizationNationalId
 
     if (!notificationDto.screenDto) {
       throw new BadRequestException(
