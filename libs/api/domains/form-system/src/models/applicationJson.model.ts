@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import GraphQLJSON from 'graphql-type-json'
 import { LanguageType } from './languageType.model'
 import { Value } from './value.model'
 
