@@ -18,8 +18,8 @@ import { AppealDecision } from '../models/appealDecision.model'
 
 // Identifies a party's decision row for a specific appealable ruling.
 // rulingFileId null targets the case-level ruling. defendantId is required
-// iff partyRole is DEFENDANT, civilClaimantId iff CIVIL_CLAIMANT - enforced
-// by a DB CHECK constraint.
+// iff partyRole is DEFENDANT and rulingFileId is not null,
+// civilClaimantId iff CIVIL_CLAIMANT - enforced by a DB CHECK constraint.
 export interface AppealDecisionPartyKey {
   caseId: string
   rulingFileId?: string | null
@@ -122,38 +122,37 @@ export class AppealDecisionRepositoryService {
         `Upserting appeal decision for ${party.partyRole} in case ${party.caseId}`,
       )
 
-      const where = {
-        caseId: party.caseId,
-        rulingFileId: party.rulingFileId ?? null,
-        partyRole: party.partyRole,
-        defendantId: party.defendantId ?? null,
-        civilClaimantId: party.civilClaimantId ?? null,
-      }
-
-      const existing = await this.appealDecisionModel.findOne({
-        where,
-        transaction: options.transaction,
-      })
-
-      if (existing) {
-        const result = await existing.update(data, {
+      // Atomic upsert against the
+      // (case_id, ruling_file_id, party_role, defendant_id, civil_claimant_id)
+      // NULLS NOT DISTINCT unique index. A separate findOne + create would race:
+      // two concurrent requests for the same party (e.g. a decision and its
+      // autofilled announcement firing together) could both miss the lookup and
+      // then collide on the unique constraint. decision and announcement are
+      // always set together, so this replaces the party's recorded position.
+      const [result] = await this.appealDecisionModel.upsert(
+        {
+          caseId: party.caseId,
+          rulingFileId: party.rulingFileId ?? null,
+          partyRole: party.partyRole,
+          defendantId: party.defendantId ?? null,
+          civilClaimantId: party.civilClaimantId ?? null,
+          decision: data.decision ?? null,
+          announcement: data.announcement ?? null,
+        },
+        {
+          conflictFields: [
+            'case_id',
+            'ruling_file_id',
+            'party_role',
+            'defendant_id',
+            'civil_claimant_id',
+          ],
           transaction: options.transaction,
-        })
-
-        this.logger.debug(
-          `Updated appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
-        )
-
-        return result
-      }
-
-      const result = await this.appealDecisionModel.create(
-        { ...where, ...data },
-        { transaction: options.transaction },
+        },
       )
 
       this.logger.debug(
-        `Created appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
+        `Upserted appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
       )
 
       return result
