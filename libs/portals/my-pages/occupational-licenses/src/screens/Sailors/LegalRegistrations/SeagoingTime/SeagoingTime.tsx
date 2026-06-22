@@ -31,7 +31,12 @@ import {
 import { useShipRegistrySailorSeagoingTimeLazyQuery } from './SeagoingTime.generated'
 import * as styles from './SeagoingTime.css'
 
-const PAGE_SIZE = 20
+const DEFAULT_PAGE_SIZE = 25
+
+const pageSizeOptions = [25, 50, 75, 100].map((n) => ({
+  label: String(n),
+  value: String(n),
+}))
 
 type SeaServiceState = {
   dateFrom?: Date
@@ -41,6 +46,7 @@ type SeaServiceState = {
   power?: string
   tonnage?: string
   page?: number
+  pageSize?: number
 }
 
 const defaultState: SeaServiceState = {}
@@ -59,7 +65,7 @@ export const SeagoingTime = () => {
 
   const buildInput = (s: SeaServiceState) => ({
     pageNumber: s.page ?? 1,
-    pageSize: PAGE_SIZE,
+    pageSize: s.pageSize ?? DEFAULT_PAGE_SIZE,
     dateFrom: s.dateFrom?.toISOString(),
     dateTo: s.dateTo?.toISOString(),
     rankId: s.rankId ? Number(s.rankId) : undefined,
@@ -84,7 +90,9 @@ export const SeagoingTime = () => {
   const seagoingTime = data?.shipRegistrySailor?.seagoingTime
   const entries = seagoingTime?.data ?? []
   const totalCount = seagoingTime?.totalCount ?? 0
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
+  const totalPages = Math.ceil(
+    totalCount / (state.pageSize ?? DEFAULT_PAGE_SIZE),
+  )
 
   const rankOptions = useMemo(() => {
     const all = {
@@ -309,21 +317,43 @@ export const SeagoingTime = () => {
           />
         </GridColumn>
       </GridRow>
-      <Box className={styles.searchButton}>
-        <Button
-          fluid
-          onClick={() => {
-            patchState({ page: 1 })
-            execute({
-              variables: {
-                input: buildInput({ ...state, page: 1 }),
-                locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
-              },
-            })
-          }}
-        >
-          {formatMessage(om.sailorSeaServiceSearchButton)}
-        </Button>
+      <Box display="flex" justifyContent="spaceBetween" alignItems="flexEnd">
+        <Box className={styles.searchButton}>
+          <Button
+            fluid
+            onClick={() => {
+              patchState({ page: 1 })
+              execute({
+                variables: {
+                  input: buildInput({ ...state, page: 1 }),
+                  locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+                },
+              })
+            }}
+          >
+            {formatMessage(om.sailorSeaServiceSearchButton)}
+          </Button>
+        </Box>
+        {totalPages > 1 && (
+          <Box className={styles.pageSizeSelect}>
+            <Select
+            label={formatMessage(om.sailorSeaServicePageSize)}
+            name="seaServicePageSize"
+            size="sm"
+            backgroundColor="blue"
+            options={pageSizeOptions}
+            value={pageSizeOptions.find(
+              (o) => o.value === String(state.pageSize ?? DEFAULT_PAGE_SIZE),
+            )}
+            onChange={(opt) =>
+              patchState({
+                pageSize: Number(opt?.value ?? DEFAULT_PAGE_SIZE),
+                page: 1,
+              })
+            }
+          />
+          </Box>
+        )}
       </Box>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}

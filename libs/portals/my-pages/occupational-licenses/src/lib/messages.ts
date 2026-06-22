@@ -371,4 +371,8 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-sea-service-min-tonnage-placeholder',
     defaultMessage: 'Skráðu brúttótonn',
   },
+  sailorSeaServicePageSize: {
+    id: 'sp.occupational-licenses:sailor-sea-service-page-size',
+    defaultMessage: 'Fjöldi á síðu',
+  },
 })

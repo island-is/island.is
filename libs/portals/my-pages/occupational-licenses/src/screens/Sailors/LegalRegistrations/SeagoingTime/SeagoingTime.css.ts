@@ -5,6 +5,10 @@ export const searchButton = style({
   width: 'fit-content',
 })
 
+export const pageSizeSelect = style({
+  minWidth: '160px',
+})
+
 export const datePicker = style({})
 
 globalStyle(`${datePicker} > div > div`, {
