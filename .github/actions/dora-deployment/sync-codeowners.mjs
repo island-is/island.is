@@ -125,7 +125,10 @@ export function buildServiceDefinition(serviceName, teams) {
 /**
  * Upsert a service definition to Datadog.
  */
-export async function upsertServiceDefinition(definition, { apiKey, appKey, site }) {
+export async function upsertServiceDefinition(
+  definition,
+  { apiKey, appKey, site },
+) {
   const url = `https://api.${site}/api/v2/services/definitions`
   const res = await fetch(url, {
     method: 'POST',
@@ -169,7 +172,9 @@ if (isMain) {
   const rules = parseCodeownersRules(codeownersContent)
   const apps = discoverDeployableApps(REPO_ROOT)
 
-  console.log(`Found ${apps.length} deployable app(s), ${rules.length} CODEOWNERS rule(s)`)
+  console.log(
+    `Found ${apps.length} deployable app(s), ${rules.length} CODEOWNERS rule(s)`,
+  )
 
   let success = 0
   let failed = 0

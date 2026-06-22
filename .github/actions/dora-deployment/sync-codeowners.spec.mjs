@@ -99,10 +99,9 @@ describe('sync-codeowners', () => {
 
     it('last match wins', () => {
       const overrideRules = parseCodeownersRules(
-        [
-          '/apps/web/  @island-is/juni',
-          '/apps/web/  @island-is/stefna',
-        ].join('\n'),
+        ['/apps/web/  @island-is/juni', '/apps/web/  @island-is/stefna'].join(
+          '\n',
+        ),
       )
       expect(resolveOwner('apps/web', overrideRules)).toEqual(['stefna'])
     })
