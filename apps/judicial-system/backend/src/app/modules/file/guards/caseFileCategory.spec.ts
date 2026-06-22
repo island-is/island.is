@@ -341,6 +341,26 @@ describe('getDefenceUserVisiblePoliceCaseNumbers', () => {
 
     expect(result.sort()).toEqual(['007-2026-1', '007-2026-2', '007-2026-3'].sort())
   })
+
+  it('should apply defender visibility rules when user is neither defender nor spokesperson', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2', '007-2026-3']
+    const defendants = [
+      makeDefendant({
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+        policeCaseNumbers: ['007-2026-1', '007-2026-2'],
+      }),
+    ]
+
+    const result = getDefenceUserVisiblePoliceCaseNumbers(
+      '1234567890',
+      defendants,
+      [],
+      allNumbers,
+    )
+
+    expect(result).toEqual(['007-2026-3'])
+  })
 })
 
 describe('getConfirmedDefendantsForDefender', () => {
