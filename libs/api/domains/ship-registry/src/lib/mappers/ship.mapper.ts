@@ -13,8 +13,6 @@ import { UserShip } from '../models/userShip.model'
 import { ShipRegistryCertificateStatus } from '../models/enums'
 import { ShipRegistryLocalizedValue } from '../models/localizedValue.model'
 
-// --- Helpers ---
-
 const mapCertificateStatus = (
   raw: ShipCertificateIssueStatus | undefined,
 ): ShipRegistryCertificateStatus => {
@@ -43,8 +41,6 @@ const toLocalizedValue = (
     unit: 'unit' in dto ? dto.unit ?? undefined : undefined,
   }
 }
-
-// --- Mappers ---
 
 export const mapToUserShipCollection = (
   ships: ShipBaseInfoDto[],

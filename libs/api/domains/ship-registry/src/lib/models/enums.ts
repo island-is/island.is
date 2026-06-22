@@ -13,9 +13,9 @@ registerEnumType(ShipRegistryCertificateStatus, {
 })
 
 export enum ShipRegistrySailorCertificateStatus {
-  Valid = 'Valid',
-  Invalid = 'Invalid',
-  Unknown = 'Unknown',
+  Valid = 'valid',
+  Invalid = 'invalid',
+  Unknown = 'unknown',
 }
 
 registerEnumType(ShipRegistrySailorCertificateStatus, {
@@ -23,15 +23,15 @@ registerEnumType(ShipRegistrySailorCertificateStatus, {
 })
 
 export enum ShipRegistrySailorCrewRegistrationField {
-  SHIP_NAME = 'SHIP_NAME',
-  LENGTH = 'LENGTH',
-  GROSS_TONNAGE = 'GROSS_TONNAGE',
-  MAIN_ENGINE = 'MAIN_ENGINE',
-  SHIP_REGISTRATION_NUMBER = 'SHIP_REGISTRATION_NUMBER',
-  RANK = 'RANK',
-  START_DATE = 'START_DATE',
-  END_DATE = 'END_DATE',
-  NUMBER_OF_DAYS = 'NUMBER_OF_DAYS',
+  SHIP_NAME = 'shipName',
+  LENGTH = 'length',
+  GROSS_TONNAGE = 'grossTonnage',
+  MAIN_ENGINE = 'mainEngine',
+  SHIP_REGISTRATION_NUMBER = 'shipRegistrationNumber',
+  RANK = 'rank',
+  START_DATE = 'startDate',
+  END_DATE = 'endDate',
+  NUMBER_OF_DAYS = 'numberOfDays',
 }
 
 registerEnumType(ShipRegistrySailorCrewRegistrationField, {

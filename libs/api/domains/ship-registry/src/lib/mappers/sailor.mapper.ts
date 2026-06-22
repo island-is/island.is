@@ -22,8 +22,6 @@ import {
   ShipRegistrySailorCrewRegistrationField,
 } from '../models/enums'
 
-// --- Helpers ---
-
 const mapSailorCertificateStatus = (
   raw: string | undefined,
 ): ShipRegistrySailorCertificateStatus => {
@@ -39,10 +37,15 @@ const mapSailorCertificateStatus = (
 
 const mapCrewRegistration = (
   entry: CrewRegistrationDto,
-  index: number,
   locale: LocaleEnum,
 ): ShipRegistrySailorCrewRegistration => ({
-  id: `${entry.shipRegistrationNumber ?? index}-${index}-${locale}`,
+  id: [
+    entry.shipRegistrationNumber,
+    entry.startDate?.toISOString() ?? '',
+    entry.endDate?.toISOString() ?? '',
+    entry.rank ?? '',
+    locale,
+  ].join('-'),
   shipName: entry.shipName,
   shipRegistrationNumber: entry.shipRegistrationNumber,
   rank: locale === LocaleEnum.En ? entry.rankEn ?? entry.rank : entry.rank,
@@ -57,7 +60,8 @@ const mapCrewRegistration = (
 const pickLabel = (
   dto: { is: string; en: string } | undefined,
   locale: LocaleEnum,
-): string => (locale === LocaleEnum.En ? dto?.en ?? '' : dto?.is ?? '')
+): string =>
+  locale === LocaleEnum.En ? dto?.en ?? dto?.is ?? '' : dto?.is ?? dto?.en ?? ''
 
 const mapCrewRegistrationLabels = (
   labels: CrewRegistrationLabelsDto,
@@ -102,8 +106,6 @@ const mapCrewRegistrationLabels = (
   },
 ]
 
-// --- Mappers ---
-
 export const mapToSailorSchoolCertificates = (
   entries: SailorSchoolCertificateDto[],
   locale: LocaleEnum,
@@ -137,18 +139,20 @@ export const mapToSailorRegistrationExemptions = (
   entries: SailorRegistrationExemptionDto[],
   locale: LocaleEnum,
 ): ShipRegistrySailorRegistrationExemption[] =>
-  entries.map((exemption) => ({
+  entries.map(({ shipRegistrationNo, exemptionLowerStatus, ...exemption }) => ({
     ...exemption,
     id: `${exemption.id}-${locale}`,
+    shipRegistrationNumber: shipRegistrationNo,
+    exemptionLowerCertificateStatus: exemptionLowerStatus,
   }))
 
 export const mapToSailorSeagoingTime = (
   response: SeagoingTimeResponseDto,
   locale: LocaleEnum,
 ): ShipRegistrySailorSeagoingTimeCollection => ({
-  data: response.entries.map((entry, index) =>
-    mapCrewRegistration(entry, index, locale),
-  ),
+  data: response.entries
+    .filter((entry) => entry.shipRegistrationNumber != null)
+    .map((entry) => mapCrewRegistration(entry, locale)),
   totalCount: response.totalCount,
   pageInfo: { hasNextPage: response.hasNextPage },
   totalCrewRegistrationDayCount: response.totalCrewRegistrationDayCount,

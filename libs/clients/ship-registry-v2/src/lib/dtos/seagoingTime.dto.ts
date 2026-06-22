@@ -86,7 +86,7 @@ export const mapCrewRegistration = (
     ? parseDate(entry.startDate) ?? undefined
     : undefined,
   endDate: entry.endDate ? parseDate(entry.endDate) ?? undefined : undefined,
-  numberOfDays: Number(entry.numberOfDays),
+  numberOfDays: Number(entry.numberOfDays ?? 0),
   length: entry.length
     ? { value: entry.length.value, unit: entry.length.unit ?? undefined }
     : undefined,

@@ -18,12 +18,11 @@ import { olMessage as om } from '../../../lib/messages'
 import { useShipRegistrySailorSchoolCertificatesQuery } from './CompetencyCertificates.generated'
 import { ShipRegistrySailorSchoolCertificate } from '@island.is/api/schema'
 
-//TODO: add file export
 const columnHelper = createColumnHelper<ShipRegistrySailorSchoolCertificate>()
 
 const CompetencyCertificates = () => {
   useNamespaces('sp.occupational-licenses')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { data, loading, error } =
     useShipRegistrySailorSchoolCertificatesQuery()
@@ -53,8 +52,7 @@ const CompetencyCertificates = () => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<ShipRegistrySailorSchoolCertificate>) => (
@@ -121,3 +119,4 @@ const CompetencyCertificates = () => {
 }
 
 export default CompetencyCertificates
+

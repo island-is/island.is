@@ -17,6 +17,7 @@ import { ShipRegistrySailorSeagoingTimeCollection } from '../models/sailorSeagoi
 import { ShipRegistryRank } from '../models/rank.model'
 import { LocaleEnum } from '@island.is/nest/graphql'
 import type { SeagoingTimeInput } from '../dto/seagoingTime.input'
+import type { SeagoingTimeFilterDto } from '@island.is/clients/ship-registry-v2'
 
 @Injectable()
 export class SailorsService {
@@ -67,9 +68,19 @@ export class SailorsService {
     locale: LocaleEnum,
     input: SeagoingTimeInput,
   ): Promise<ShipRegistrySailorSeagoingTimeCollection | null> {
+    const filter: SeagoingTimeFilterDto = {
+      dateFrom: input.dateFrom?.toISOString(),
+      dateTo: input.dateTo?.toISOString(),
+      rankId: input.rankId,
+      fromOrEqLength: input.minimumLength,
+      fromOrEqMainEnginePower: input.minimumEnginePower,
+      fromOrEqBruttoWeight: input.minimumGrossTonnage,
+      pageNumber: input.pageNumber,
+      pageSize: input.pageSize,
+    }
     const response = await this.shipRegistryClientV2Service.getSailorSeaService(
       user,
-      input,
+      filter,
     )
     return response ? mapToSailorSeagoingTime(response, locale) : null
   }

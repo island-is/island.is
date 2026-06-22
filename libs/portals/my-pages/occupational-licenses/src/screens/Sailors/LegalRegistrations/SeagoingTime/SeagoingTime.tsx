@@ -69,11 +69,11 @@ export const SeagoingTime = () => {
     dateFrom: s.dateFrom?.toISOString(),
     dateTo: s.dateTo?.toISOString(),
     rankId: s.rankId ? Number(s.rankId) : undefined,
-    fromOrEqLength:
+    minimumLength:
       s.length && !isNaN(Number(s.length)) ? Number(s.length) : undefined,
-    fromOrEqMainEnginePower:
+    minimumEnginePower:
       s.power && !isNaN(Number(s.power)) ? Number(s.power) : undefined,
-    fromOrEqBruttoWeight:
+    minimumGrossTonnage:
       s.tonnage && !isNaN(Number(s.tonnage)) ? Number(s.tonnage) : undefined,
   })
 
@@ -238,34 +238,30 @@ export const SeagoingTime = () => {
         </Box>
       )}
       {/* Filters */}
-      <GridRow>
-        <GridColumn span={['12/12', '4/12']}>
-          <Box className={styles.datePicker}>
-            <DatePicker
-              label={formatMessage(om.sailorSeaServiceDateFrom)}
-              placeholderText=""
-              locale="is"
-              size="sm"
-              backgroundColor="blue"
-              selected={state.dateFrom}
-              handleChange={(d) => patchState({ dateFrom: d })}
-            />
-          </Box>
+      <GridRow rowGap={[2, 2, 2, 2, 3]}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <DatePicker
+            label={formatMessage(om.sailorSeaServiceDateFrom)}
+            placeholderText=""
+            locale="is"
+            size="sm"
+            backgroundColor="blue"
+            selected={state.dateFrom}
+            handleChange={(d) => patchState({ dateFrom: d })}
+          />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
-          <Box className={styles.datePicker}>
-            <DatePicker
-              label={formatMessage(om.sailorSeaServiceDateTo)}
-              placeholderText=""
-              locale="is"
-              size="sm"
-              backgroundColor="blue"
-              selected={state.dateTo}
-              handleChange={(d) => patchState({ dateTo: d })}
-            />
-          </Box>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
+          <DatePicker
+            label={formatMessage(om.sailorSeaServiceDateTo)}
+            placeholderText=""
+            locale="is"
+            size="sm"
+            backgroundColor="blue"
+            selected={state.dateTo}
+            handleChange={(d) => patchState({ dateTo: d })}
+          />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <Select
             label={formatMessage(om.sailorSeaServiceRank)}
             name="seaServiceRank"
@@ -276,9 +272,7 @@ export const SeagoingTime = () => {
             backgroundColor="blue"
           />
         </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <Input
             label={formatMessage(om.sailorSeaServiceMinLength)}
             placeholder={formatMessage(om.sailorSeaServiceMinLengthPlaceholder)}
@@ -290,7 +284,7 @@ export const SeagoingTime = () => {
             onChange={(e) => patchState({ length: e.target.value })}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <Input
             label={formatMessage(om.sailorSeaServiceMinPower)}
             placeholder={formatMessage(om.sailorSeaServiceMinPowerPlaceholder)}
@@ -302,7 +296,7 @@ export const SeagoingTime = () => {
             onChange={(e) => patchState({ power: e.target.value })}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '4/12']}>
+        <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <Input
             label={formatMessage(om.sailorSeaServiceMinTonnage)}
             placeholder={formatMessage(
@@ -334,26 +328,29 @@ export const SeagoingTime = () => {
             {formatMessage(om.sailorSeaServiceSearchButton)}
           </Button>
         </Box>
-        {totalPages > 1 && (
-          <Box className={styles.pageSizeSelect}>
-            <Select
-              label={formatMessage(om.sailorSeaServicePageSize)}
-              name="seaServicePageSize"
-              size="sm"
-              backgroundColor="blue"
-              options={pageSizeOptions}
-              value={pageSizeOptions.find(
-                (o) => o.value === String(state.pageSize ?? DEFAULT_PAGE_SIZE),
-              )}
-              onChange={(opt) =>
-                patchState({
-                  pageSize: Number(opt?.value ?? DEFAULT_PAGE_SIZE),
-                  page: 1,
-                })
-              }
-            />
-          </Box>
-        )}
+        <Box className={styles.pageSizeSelect}>
+          <Select
+            label={formatMessage(om.sailorSeaServicePageSize)}
+            name="seaServicePageSize"
+            size="sm"
+            backgroundColor="blue"
+            options={pageSizeOptions}
+            value={pageSizeOptions.find(
+              (o) => o.value === String(state.pageSize ?? DEFAULT_PAGE_SIZE),
+            )}
+            onChange={(opt) => {
+              const newPageSize = Number(opt?.value ?? DEFAULT_PAGE_SIZE)
+              const newState = { ...state, pageSize: newPageSize, page: 1 }
+              patchState({ pageSize: newPageSize, page: 1 })
+              execute({
+                variables: {
+                  input: buildInput(newState),
+                  locale: locale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+                },
+              })
+            }}
+          />
+        </Box>
       </Box>
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}

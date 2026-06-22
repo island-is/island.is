@@ -1,28 +1,50 @@
-import { Field, Float, InputType, Int } from '@nestjs/graphql'
+import { Field, Float, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
+import { IsDate, IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator'
 
 @InputType('ShipRegistrySeagoingTimeInput')
 export class SeagoingTimeInput {
-  @Field({ nullable: true })
-  dateFrom?: string
+  @IsOptional()
+  @IsDate()
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateFrom?: Date
 
-  @Field({ nullable: true })
-  dateTo?: string
+  @IsOptional()
+  @IsDate()
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  dateTo?: Date
 
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   @Field(() => Int, { nullable: true })
   rankId?: number
 
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   @Field(() => Float, { nullable: true })
-  fromOrEqLength?: number
+  minimumLength?: number
 
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   @Field(() => Float, { nullable: true })
-  fromOrEqMainEnginePower?: number
+  minimumEnginePower?: number
 
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   @Field(() => Float, { nullable: true })
-  fromOrEqBruttoWeight?: number
+  minimumGrossTonnage?: number
 
+  @IsInt()
+  @Min(1)
   @Field(() => Int)
   pageNumber!: number
 
+  @IsInt()
+  @Min(1)
+  @Max(100)
   @Field(() => Int)
   pageSize!: number
 }

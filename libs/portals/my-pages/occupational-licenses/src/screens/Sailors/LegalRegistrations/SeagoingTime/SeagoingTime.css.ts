@@ -1,4 +1,4 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 
 export const searchButton = style({
   minWidth: '162px',
@@ -7,10 +7,4 @@ export const searchButton = style({
 
 export const pageSizeSelect = style({
   minWidth: '160px',
-})
-
-export const datePicker = style({})
-
-globalStyle(`${datePicker} > div > div`, {
-  minWidth: 'unset',
 })

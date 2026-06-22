@@ -17,7 +17,7 @@ import { useShipRegistrySailorSeaServiceBooksQuery } from './SeaServiceBooks.gen
 const columnHelper = createColumnHelper<ShipRegistrySailorMaritimeBook>()
 
 export const SeaServiceBooks = () => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
 
   const { data, loading, error } = useShipRegistrySailorSeaServiceBooksQuery()
@@ -52,8 +52,7 @@ export const SeaServiceBooks = () => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   return (

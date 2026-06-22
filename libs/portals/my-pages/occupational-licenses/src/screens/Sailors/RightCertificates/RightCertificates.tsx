@@ -20,11 +20,9 @@ import { ShipRegistrySailorRightCertificate } from '@island.is/api/schema'
 
 const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
 
-//TODO: add file export
-
 const RightCertificates = () => {
   useNamespaces('sp.occupational-licenses')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { data, loading, error } = useShipRegistrySailorRightCertificatesQuery()
   const rightCertificates =
@@ -63,8 +61,7 @@ const RightCertificates = () => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<ShipRegistrySailorRightCertificate>) => (
@@ -131,3 +128,4 @@ const RightCertificates = () => {
 }
 
 export default RightCertificates
+

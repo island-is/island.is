@@ -6,7 +6,7 @@ export class ShipRegistrySailorRegistrationExemption {
   id!: string
 
   @Field({ nullable: true })
-  shipRegistrationNo?: string
+  shipRegistrationNumber?: string
 
   @Field()
   shipName!: string
@@ -16,15 +16,17 @@ export class ShipRegistrySailorRegistrationExemption {
 
   @Field({
     nullable: true,
-    description: 'TODO: clarify meaning with domain expert',
+    description:
+      'Whether the dispensation position was publicly advertised before the exemption was granted.',
   })
   advertised?: string
 
   @Field({
     nullable: true,
-    description: 'TODO: clarify meaning with domain expert',
+    description:
+      'Indicates whether the dispensation requires the holder to hold a certificate for the capacity immediately below the dispensed role, as required by the Icelandic Transport Authority.',
   })
-  exemptionLowerStatus?: string
+  exemptionLowerCertificateStatus?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   dateFrom?: Date

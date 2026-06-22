@@ -20,7 +20,7 @@ const columnHelper =
   createColumnHelper<ShipRegistrySailorRegistrationExemption>()
 
 export const Exemptions = () => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
 
   const { data, loading, error } =
@@ -64,8 +64,7 @@ export const Exemptions = () => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpanded = (
@@ -75,7 +74,7 @@ export const Exemptions = () => {
       data={[
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandShipNo),
-          value: row.original.shipRegistrationNo ?? '-',
+          value: row.original.shipRegistrationNumber ?? '-',
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandAdvertised),
@@ -83,7 +82,7 @@ export const Exemptions = () => {
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandLowerRank),
-          value: row.original.exemptionLowerStatus ?? '-',
+          value: row.original.exemptionLowerCertificateStatus ?? '-',
         },
         {
           title: formatMessage(om.sailorCrewRegistrationsExpandDays),

@@ -22,7 +22,7 @@ export class ShipRegistryResolver {
     return this.service.findShipByNameOrNumber(input)
   }
 
-  @Query(() => [ShipRegistryRank], { name: 'shipRegistryRanks' })
+  @Query(() => [ShipRegistryRank], { name: 'shipRegistryRanks', nullable: true })
   @BypassAuth()
   async getRanks(
     @Args('locale', {

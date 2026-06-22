@@ -4,7 +4,7 @@ import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mappers'
 import { UserShip } from '../models/userShip.model'
-import { LocaleEnum } from '@island.is/nest/graphql'
+import { UserShipInput } from '../dto/userShip.input'
 
 @Injectable()
 export class UserShipsService {
@@ -27,18 +27,17 @@ export class UserShipsService {
 
   async getUserShip(
     user: User,
-    registrationNumber: string,
-    locale?: LocaleEnum,
+    input: UserShipInput,
   ): Promise<UserShip | null> {
     const ship = await this.shipRegistryClientV2Service.getShipDetails(
       user,
-      registrationNumber,
+      input.registrationNumber,
     )
 
     if (!ship) {
       return null
     }
 
-    return mapToUserShipFromDetails(ship, locale) ?? null
+    return mapToUserShipFromDetails(ship, input.locale) ?? null
   }
 }

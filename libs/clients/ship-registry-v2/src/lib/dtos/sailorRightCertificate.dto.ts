@@ -15,7 +15,7 @@ export interface SailorRightCertificateDto {
 export const mapRightCertificate = (
   dto: RightCertificateIslandisDto,
 ): SailorRightCertificateDto | undefined => {
-  if (!dto.certificateSerialNo) return undefined
+  if (dto.certificateSerialNo == null) return undefined
   const serialNo = String(dto.certificateSerialNo)
 
   const validToDate = dto.expirationDate

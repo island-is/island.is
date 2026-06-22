@@ -5,13 +5,13 @@ export type {
   SailorCertificateStatus,
   ShipCertificateIssueStatus,
 } from './lib/types'
-export type { SailorCertificatesDto } from './lib/dtos/sailor.dto'
 export type { SailorSchoolCertificateDto } from './lib/dtos/sailorSchoolCertificate.dto'
 export type { SailorRightCertificateDto } from './lib/dtos/sailorRightCertificate.dto'
 export type { SailorMaritimeBookDto } from './lib/dtos/sailorMaritimeBook.dto'
 export type { SailorRegistrationExemptionDto } from './lib/dtos/sailorRegistrationExemption.dto'
 export type {
   CrewRegistrationDto,
+  CrewRegistrationValueUnitDto,
   SeagoingTimeFilterDto,
   CrewRegistrationLabelsDto,
   CrewRegistrationLabelTranslationDto,

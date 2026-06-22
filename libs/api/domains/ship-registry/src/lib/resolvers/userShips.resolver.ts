@@ -46,10 +46,6 @@ export class UserShipsResolver {
     @Args('input') input: UserShipInput,
     @CurrentUser() user: User,
   ): Promise<UserShip | null> {
-    return this.userShipsService.getUserShip(
-      user,
-      input.registrationNumber,
-      input.locale,
-    )
+    return this.userShipsService.getUserShip(user, input)
   }
 }

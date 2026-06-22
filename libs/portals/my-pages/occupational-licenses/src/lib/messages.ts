@@ -173,7 +173,7 @@ export const olMessage = defineMessages({
   sailorSchoolCertificatesIntro: {
     id: 'sp.occupational-licenses:sailor-school-certificates-intro#markdown',
     defaultMessage:
-      'Hér má sjá upplýsingar um próf, nám og námskeið sem þú hefur lokið, gilt sjómannalæknisvottorð og frest til lögskráningar þegar öryggisfræðslunámskeið eru útrunnin. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
+      'Hér má sjá upplýsingar um próf, nám og námskeið sem þú hefur lokið, gilt sjómannalæknisvottorð og frest til lögskráningar þegar öryggisfræðslunámskeið eru útrunnin. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
   },
   sailorSchoolCertificatesEmpty: {
     id: 'sp.occupational-licenses:sailor-school-certificates-empty',
@@ -198,7 +198,7 @@ export const olMessage = defineMessages({
   sailorRightCertificatesIntro: {
     id: 'sp.occupational-licenses:sailor-right-certificates-intro#markdown',
     defaultMessage:
-      'Hér er hægt að sjá atvinnuskírteini sem eru í gildi, þar á meðal skírteinistegund, réttindaflokk og gildislokadagsetningu. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
+      'Hér er hægt að sjá atvinnuskírteini sem eru í gildi, þar á meðal skírteinistegund, réttindaflokk og gildislokadagsetningu. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
   },
   sailorRightCertificatesEmpty: {
     id: 'sp.occupational-licenses:sailor-right-certificates-empty',
@@ -223,7 +223,7 @@ export const olMessage = defineMessages({
   sailorCrewRegistrationsIntro: {
     id: 'sp.occupational-licenses:sailor-crew-registrations-intro#markdown',
     defaultMessage:
-      'Hér má sjá heildarlögskráningardaga, siglingatíma eftir stöðu og skipaflokkum, auk upplýsinga um gildar undanþágur og sjóferðabækur. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [www.sigling@samgongustofa.is](mailto:www.sigling@samgongustofa.is)',
+      'Hér má sjá heildarlögskráningardaga, siglingatíma eftir stöðu og skipaflokkum, auk upplýsinga um gildar undanþágur og sjóferðabækur. Ef upplýsingar eru rangar eða vantar skaltu senda erindi og viðeigandi gögn á [sigling@samgongustofa.is](mailto:sigling@samgongustofa.is)',
   },
   sailorTabSeaService: {
     id: 'sp.occupational-licenses:sailor-tab-sea-service',
