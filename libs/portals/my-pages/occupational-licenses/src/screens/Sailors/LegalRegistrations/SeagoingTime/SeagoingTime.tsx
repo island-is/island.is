@@ -337,21 +337,21 @@ export const SeagoingTime = () => {
         {totalPages > 1 && (
           <Box className={styles.pageSizeSelect}>
             <Select
-            label={formatMessage(om.sailorSeaServicePageSize)}
-            name="seaServicePageSize"
-            size="sm"
-            backgroundColor="blue"
-            options={pageSizeOptions}
-            value={pageSizeOptions.find(
-              (o) => o.value === String(state.pageSize ?? DEFAULT_PAGE_SIZE),
-            )}
-            onChange={(opt) =>
-              patchState({
-                pageSize: Number(opt?.value ?? DEFAULT_PAGE_SIZE),
-                page: 1,
-              })
-            }
-          />
+              label={formatMessage(om.sailorSeaServicePageSize)}
+              name="seaServicePageSize"
+              size="sm"
+              backgroundColor="blue"
+              options={pageSizeOptions}
+              value={pageSizeOptions.find(
+                (o) => o.value === String(state.pageSize ?? DEFAULT_PAGE_SIZE),
+              )}
+              onChange={(opt) =>
+                patchState({
+                  pageSize: Number(opt?.value ?? DEFAULT_PAGE_SIZE),
+                  page: 1,
+                })
+              }
+            />
           </Box>
         )}
       </Box>
