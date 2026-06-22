@@ -13,6 +13,7 @@ import {
 import { applyUpdateToCase } from '../../formHelper'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
+import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
 import { useExtendCaseMutation } from './extendCase.generated'
 import {
   LimitedAccessTransitionCaseMutation,
@@ -76,6 +77,11 @@ const useCase = () => {
 
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useExtendCaseMutation()
+
+  const [
+    duplicateIndictmentCaseMutation,
+    { loading: isDuplicatingIndictmentCase },
+  ] = useDuplicateIndictmentCaseMutation()
 
   const [
     splitDefendantFromCaseMutation,
@@ -320,6 +326,21 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
+  const duplicateIndictmentCase = useMemo(
+    () => async (id: string) => {
+      try {
+        const { data } = await duplicateIndictmentCaseMutation({
+          variables: { input: { id } },
+        })
+
+        return data?.duplicateIndictmentCase
+      } catch (error) {
+        toast.error('Ekki tókst að afrita mál í drög')
+      }
+    },
+    [duplicateIndictmentCaseMutation],
+  )
+
   const splitDefendantFromCase = useMemo(
     () => async (caseId: string, defendantId: string) => {
       try {
@@ -390,6 +411,8 @@ const useCase = () => {
     sendAppealNotificationError,
     extendCase,
     isExtendingCase,
+    duplicateIndictmentCase,
+    isDuplicatingIndictmentCase,
     splitDefendantFromCase,
     isSplittingDefendantFromCase,
     setAndSendCaseToServer,
