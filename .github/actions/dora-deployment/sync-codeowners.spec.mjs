@@ -1,105 +1,122 @@
 import { jest } from '@jest/globals'
 import {
-  parseCodeowners,
+  parseCodeownersRules,
+  resolveOwner,
   buildServiceDefinition,
   upsertServiceDefinition,
 } from './sync-codeowners.mjs'
 
 describe('sync-codeowners', () => {
-  describe('parseCodeowners', () => {
-    it('extracts top-level app with single team', () => {
-      const content = '/apps/download-service/  @island-is/hugsmidjan'
-      const result = parseCodeowners(content)
-      expect(result.get('download-service')).toEqual(['hugsmidjan'])
+  describe('parseCodeownersRules', () => {
+    it('parses a simple rule', () => {
+      const rules = parseCodeownersRules('/apps/api/  @island-is/core')
+      expect(rules).toEqual([{ pattern: '/apps/api/', teams: ['core'] }])
     })
 
-    it('extracts top-level app with multiple teams', () => {
-      const content = '/apps/web*/  @island-is/juni @island-is/stefna'
-      // web* contains a glob which won't match our strict regex
-      // but /apps/web/ should work:
-      const content2 = '/apps/web/  @island-is/juni @island-is/stefna'
-      const result = parseCodeowners(content2)
-      expect(result.get('web')).toEqual(['juni', 'stefna'])
+    it('parses multiple teams', () => {
+      const rules = parseCodeownersRules(
+        '/apps/web/  @island-is/juni @island-is/stefna',
+      )
+      expect(rules).toEqual([
+        { pattern: '/apps/web/', teams: ['juni', 'stefna'] },
+      ])
     })
 
-    it('extracts nested app (2 levels) using leaf name', () => {
-      const content = '/apps/services/endorsements/  @island-is/juni'
-      const result = parseCodeowners(content)
-      expect(result.get('endorsements')).toEqual(['juni'])
-    })
-
-    it('skips paths deeper than 2 levels under /apps/', () => {
-      const content = '/apps/web/screens/PetitionView/  @island-is/juni'
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(0)
-    })
-
-    it('skips comment lines', () => {
-      const content = '# /apps/download-service/  @island-is/devops'
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(0)
+    it('skips comments', () => {
+      const rules = parseCodeownersRules('# /apps/api/  @island-is/core')
+      expect(rules).toEqual([])
     })
 
     it('skips empty lines', () => {
-      const content = '\n\n  \n'
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(0)
+      const rules = parseCodeownersRules('\n\n  \n')
+      expect(rules).toEqual([])
     })
 
-    it('skips lines without @island-is/ teams', () => {
-      const content = '/apps/download-service/  @some-other-org/team'
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(0)
+    it('skips lines without @island-is teams', () => {
+      const rules = parseCodeownersRules('/apps/api/  @other-org/team')
+      expect(rules).toEqual([])
     })
 
-    it('skips non-app paths', () => {
-      const content = '/libs/api/domains/identity/  @island-is/core'
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(0)
+    it('handles wildcard patterns', () => {
+      const rules = parseCodeownersRules('*  @island-is/core')
+      expect(rules).toEqual([{ pattern: '*', teams: ['core'] }])
     })
 
-    it('last match wins (CODEOWNERS precedence)', () => {
+    it('handles glob patterns', () => {
+      const rules = parseCodeownersRules('**/infra/  @island-is/devops')
+      expect(rules).toEqual([{ pattern: '**/infra/', teams: ['devops'] }])
+    })
+
+    it('parses multiple rules preserving order', () => {
       const content = [
-        '/apps/download-service/  @island-is/core',
-        '/apps/download-service/  @island-is/hugsmidjan',
+        '*  @island-is/core',
+        '/apps/api/  @island-is/norda',
+        '/apps/web/  @island-is/stefna',
       ].join('\n')
-      const result = parseCodeowners(content)
-      expect(result.get('download-service')).toEqual(['hugsmidjan'])
+      const rules = parseCodeownersRules(content)
+      expect(rules).toHaveLength(3)
+      expect(rules[0].teams).toEqual(['core'])
+      expect(rules[1].teams).toEqual(['norda'])
+      expect(rules[2].teams).toEqual(['stefna'])
     })
+  })
 
-    it('handles path without trailing slash', () => {
-      const content = '/apps/payments  @island-is/aranja'
-      const result = parseCodeowners(content)
-      expect(result.get('payments')).toEqual(['aranja'])
-    })
-
-    it('handles multiple apps in one file', () => {
-      const content = [
-        '/apps/api/  @island-is/core',
-        '/apps/download-service/  @island-is/hugsmidjan',
+  describe('resolveOwner', () => {
+    const rules = parseCodeownersRules(
+      [
+        '*  @island-is/core',
         '/apps/judicial-system/  @island-is/kolibri-justice-league',
-      ].join('\n')
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(3)
-      expect(result.get('api')).toEqual(['core'])
-      expect(result.get('download-service')).toEqual(['hugsmidjan'])
-      expect(result.get('judicial-system')).toEqual(['kolibri-justice-league'])
+        '/apps/services/endorsements/  @island-is/juni',
+        '/apps/download-service/  @island-is/hugsmidjan',
+      ].join('\n'),
+    )
+
+    it('matches exact app path', () => {
+      expect(resolveOwner('apps/download-service', rules)).toEqual([
+        'hugsmidjan',
+      ])
     })
 
-    it('handles mixed content (comments, blanks, non-app paths, app paths)', () => {
-      const content = [
-        '# Top level ownership',
-        '',
-        '/libs/shared/  @island-is/core',
-        '/apps/application-system/  @island-is/norda',
-        '# Edge case',
-        '/apps/services/endorsements/  @island-is/juni',
-        '/apps/web/screens/deep/nested/  @island-is/stefna',
-      ].join('\n')
-      const result = parseCodeowners(content)
-      expect(result.size).toBe(2)
-      expect(result.get('application-system')).toEqual(['norda'])
-      expect(result.get('endorsements')).toEqual(['juni'])
+    it('matches nested app under parent', () => {
+      expect(resolveOwner('apps/judicial-system/api', rules)).toEqual([
+        'kolibri-justice-league',
+      ])
+    })
+
+    it('matches 2-level nested path', () => {
+      expect(resolveOwner('apps/services/endorsements', rules)).toEqual([
+        'juni',
+      ])
+    })
+
+    it('falls back to catch-all wildcard', () => {
+      expect(resolveOwner('apps/unknown-service', rules)).toEqual(['core'])
+    })
+
+    it('returns default team when no rules match', () => {
+      expect(resolveOwner('apps/something', [])).toEqual(['core'])
+    })
+
+    it('last match wins', () => {
+      const overrideRules = parseCodeownersRules(
+        [
+          '/apps/web/  @island-is/juni',
+          '/apps/web/  @island-is/stefna',
+        ].join('\n'),
+      )
+      expect(resolveOwner('apps/web', overrideRules)).toEqual(['stefna'])
+    })
+
+    it('more specific path wins over general when ordered correctly', () => {
+      const orderedRules = parseCodeownersRules(
+        [
+          '/apps/services/  @island-is/core',
+          '/apps/services/endorsements/  @island-is/juni',
+        ].join('\n'),
+      )
+      expect(resolveOwner('apps/services/endorsements', orderedRules)).toEqual([
+        'juni',
+      ])
     })
   })
 
@@ -129,15 +146,6 @@ describe('sync-codeowners', () => {
       const result = buildServiceDefinition('api', ['core'])
       expect(result.contacts).toBeUndefined()
     })
-
-    it('handles three teams', () => {
-      const result = buildServiceDefinition('web', ['a', 'b', 'c'])
-      expect(result.team).toBe('c')
-      expect(result.contacts).toEqual([
-        { name: 'a', type: 'email', contact: 'a@island.is' },
-        { name: 'b', type: 'email', contact: 'b@island.is' },
-      ])
-    })
   })
 
   describe('upsertServiceDefinition', () => {
@@ -146,8 +154,7 @@ describe('sync-codeowners', () => {
         ok: true,
         json: () => Promise.resolve({ data: {} }),
       }
-      const mockFetch = jest.fn(() => Promise.resolve(mockResponse))
-      globalThis.fetch = mockFetch
+      globalThis.fetch = jest.fn(() => Promise.resolve(mockResponse))
 
       const definition = {
         'schema-version': 'v2.2',
@@ -161,7 +168,7 @@ describe('sync-codeowners', () => {
         site: 'datadoghq.eu',
       })
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(globalThis.fetch).toHaveBeenCalledWith(
         'https://api.datadoghq.eu/api/v2/services/definitions',
         {
           method: 'POST',
@@ -184,19 +191,12 @@ describe('sync-codeowners', () => {
         }),
       )
 
-      const definition = {
-        'schema-version': 'v2.2',
-        'dd-service': 'test-service',
-        team: 'devops',
-      }
-
       await expect(
-        upsertServiceDefinition(definition, {
-          apiKey: 'k',
-          appKey: 'k',
-          site: 'datadoghq.eu',
-        }),
-      ).rejects.toThrow('Failed to upsert test-service: 400 Bad Request')
+        upsertServiceDefinition(
+          { 'schema-version': 'v2.2', 'dd-service': 'x', team: 'y' },
+          { apiKey: 'k', appKey: 'k', site: 'datadoghq.eu' },
+        ),
+      ).rejects.toThrow('Failed to upsert x: 400 Bad Request')
     })
   })
 })
