@@ -26,39 +26,68 @@ const SelectCourtOfficials = () => {
   } = useUsers(workingCase.court?.id)
 
   const setJudge = async (judgeId?: string) => {
-    if (workingCase) {
-      if (!judgeId) {
-        return
-      }
-      const updatedCase = await updateCase(workingCase.id, {
-        judgeId,
-      })
+    if (!judgeId) {
+      return
+    }
 
-      if (!updatedCase) {
-        return
-      }
+    const previousJudge = workingCase.judge
+    const selectedJudge = judges?.find((judge) => judge.value === judgeId)?.user
 
+    // Optimistic update so the dropdown reflects the choice immediately
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      judge: selectedJudge,
+    }))
+
+    const updatedCase = await updateCase(workingCase.id, {
+      judgeId,
+    })
+
+    if (!updatedCase) {
+      // Revert on error (a toast is already shown inside updateCase)
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        judge: updatedCase?.judge,
+        judge: previousJudge,
       }))
+      return
     }
+
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      judge: updatedCase?.judge,
+    }))
   }
 
   const setRegistrar = async (registrarId?: string) => {
-    if (workingCase) {
-      const updatedCase = await updateCase(workingCase.id, {
-        registrarId: registrarId ?? null,
-      })
-      if (!updatedCase) {
-        return
-      }
+    const previousRegistrar = workingCase.registrar
+    const selectedRegistrar = registrars?.find(
+      (registrar) => registrar.value === registrarId,
+    )?.user
 
+    // Optimistic update so the dropdown reflects the choice immediately
+    // (registrarId may be undefined when cleared)
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      registrar: selectedRegistrar,
+    }))
+
+    const updatedCase = await updateCase(workingCase.id, {
+      registrarId: registrarId ?? null,
+    })
+
+    if (!updatedCase) {
+      // Revert on error (a toast is already shown inside updateCase)
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
-        registrar: updatedCase?.registrar,
+        registrar: previousRegistrar,
       }))
+      return
     }
+
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      registrar: updatedCase?.registrar,
+    }))
   }
 
   const { formatMessage } = useIntl()
