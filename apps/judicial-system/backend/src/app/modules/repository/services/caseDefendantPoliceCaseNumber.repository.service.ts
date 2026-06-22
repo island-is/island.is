@@ -110,6 +110,27 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
       .filter((n, i) => i === 0 || n !== unassigned[i - 1])
   }
 
+  /**
+   * Returns the defendant-assigned (case_id, defendant_id, police_case_number)
+   * links for a case, used when duplicating a case so the same per-defendant
+   * police case number assignments can be recreated against the new defendants.
+   */
+  async findAssignedLinksByCaseId(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<{ defendantId: string; policeCaseNumber: string }[]> {
+    const rows = await this.model.findAll({
+      where: { caseId, defendantId: { [Op.not]: null } },
+      attributes: ['defendantId', 'policeCaseNumber'],
+      transaction: options?.transaction,
+    })
+
+    return rows.map((row) => ({
+      defendantId: row.defendantId as string,
+      policeCaseNumber: row.policeCaseNumber,
+    }))
+  }
+
   async findDistinctPoliceCaseNumbersByCaseIds(
     caseIds: string[],
     options?: { transaction?: Transaction },

@@ -207,6 +207,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+  // Housing Benefits
+  isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }

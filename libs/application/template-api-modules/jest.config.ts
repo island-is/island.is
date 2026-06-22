@@ -14,4 +14,5 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/application/template-api-modules',
   displayName: 'application-template-api-modules',
+  maxWorkers: 3,
 }
