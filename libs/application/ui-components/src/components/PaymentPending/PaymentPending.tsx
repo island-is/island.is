@@ -1,10 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react'
-import {
-  coreErrorMessages,
-  coreMessages,
-  getErrorReasonIfPresent,
-  isProviderErrorReason,
-} from '@island.is/application/core'
+import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
@@ -21,9 +16,12 @@ import {
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
-import { findProblemInApolloError } from '@island.is/shared/problem'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
-import { getRedirectStatus, isComingFromRedirect } from './util'
+import {
+  getRedirectStatus,
+  isComingFromRedirect,
+  getSubmitErrorReasonToToast,
+} from './util'
 import { useSearchParams } from 'react-router-dom'
 import cn from 'classnames'
 
@@ -33,11 +31,14 @@ export interface PaymentPendingProps {
   application: Application
   targetEvent: DefaultEvents
   refetch: FieldBaseProps['refetch']
+  // Opt-in (default off): surface a failed submit's structured errorReason as a
+  // toast. Threaded from buildPaymentState({ showSubmitErrorReason }).
+  showSubmitErrorReason?: boolean
 }
 
 export const PaymentPending: FC<
   React.PropsWithChildren<PaymentPendingProps>
-> = ({ application, refetch, targetEvent }) => {
+> = ({ application, refetch, targetEvent, showSubmitErrorReason }) => {
   const msg = useMsg(application)
   const { formatMessage } = useLocale()
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
@@ -100,26 +101,26 @@ export const PaymentPending: FC<
     setSearchParams,
   ])
 
-  // A post-payment submission failure keeps the generic error screen below, but
-  // when the TemplateApiError carries a specific, user-facing reason (a
-  // structured provider errorReason) surface it as a toast so the applicant
-  // knows *why* the submission failed. Only toast for a real provider error
-  // reason — never an extra generic toast on top of the already-generic screen.
+  // A post-payment submission failure keeps the generic error screen below. When
+  // the consumer opts in (showSubmitErrorReason) and the TemplateApiError carries
+  // a specific, user-facing reason, also surface that reason as a toast so the
+  // applicant knows *why* the submission failed. Default off, so it never adds an
+  // extra toast for templates that haven't opted in.
   useEffect(() => {
-    if (!submitError || toastedSubmitError.current === submitError) {
+    if (toastedSubmitError.current === submitError) {
       return
     }
-    const problem = findProblemInApolloError(submitError)
-    if (
-      problem &&
-      'errorReason' in problem &&
-      isProviderErrorReason(problem.errorReason)
-    ) {
-      const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
-      toast.error(`${formatMessage(title)}: ${formatMessage(summary)}`)
+    const reason = getSubmitErrorReasonToToast(
+      submitError,
+      showSubmitErrorReason ?? false,
+    )
+    if (reason) {
+      toast.error(
+        `${formatMessage(reason.title)}: ${formatMessage(reason.summary)}`,
+      )
       toastedSubmitError.current = submitError
     }
-  }, [submitError, formatMessage])
+  }, [submitError, formatMessage, showSubmitErrorReason])
 
   if (pollingError) {
     return <Text>{msg(coreErrorMessages.paymentStatusError)}</Text>
