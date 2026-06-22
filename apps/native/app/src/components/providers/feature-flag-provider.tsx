@@ -52,9 +52,7 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
     skip: !isAuthenticated,
     variables: { attributes: clientAttributes },
   })
-  const flagsFromQuery = isAuthenticated
-    ? data?.featureFlags?.flags
-    : undefined
+  const flagsFromQuery = isAuthenticated ? data?.featureFlags?.flags : undefined
   const flags = flagsFromQuery ?? EMPTY_FLAGS
 
   // Also triggers on token refresh (~5min), which is acceptable.
