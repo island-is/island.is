@@ -38,11 +38,9 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
-  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
@@ -164,8 +162,6 @@ const CourtSessionLabel = forwardRef(
 const CourtSessionAccordionItem: FC<Props> = (props) => {
   const { index, courtSession, isExpanded, onToggle } = props
   const ref = useRef<HTMLDivElement>(null)
-  const { features } = useContext(FeatureContext)
-  const useTinyMCE = features.includes(Feature.TINY_MCE)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -1442,71 +1438,37 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
               )}
               <Box>
                 <SectionHeading title="Bókanir" />
-                {useTinyMCE ? (
-                  <TinyMCE
-                    data-testid="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    defaultValue={courtSession.entries || ''}
-                    onChange={(html) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, { entries: html })
-                    }}
-                    onBlur={(html) => {
-                      // Decode entities (e.g. &nbsp;) and strip tags so an
-                      // otherwise-empty paragraph doesn't pass the required check.
-                      const decodedText =
-                        new DOMParser()
-                          .parseFromString(html, 'text/html')
-                          .body.textContent?.trim() ?? ''
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        decodedText,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: html },
-                        { persist: true },
-                      )
-                    }}
-                    errorMessage={entriesErrorMessage || undefined}
-                    disabled={courtSession.isConfirmed || false}
-                    required
-                  />
-                ) : (
-                  <Input
-                    data-testid="entries"
-                    name="entries"
-                    label="Afstaða ákærða, málflutningur og aðrar bókanir"
-                    value={courtSession.entries || ''}
-                    placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
-                    onChange={(event) => {
-                      setEntriesErrorMessage('')
-                      patchSession(courtSession.id, {
-                        entries: event.target.value,
-                      })
-                    }}
-                    onBlur={(event) => {
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        event.target.value,
-                        setEntriesErrorMessage,
-                      )
-                      patchSession(
-                        courtSession.id,
-                        { entries: event.target.value },
-                        { persist: true },
-                      )
-                    }}
-                    hasError={entriesErrorMessage !== ''}
-                    errorMessage={entriesErrorMessage}
-                    rows={15}
-                    disabled={courtSession.isConfirmed || false}
-                    textarea
-                    required
-                  />
-                )}
+                <TinyMCE
+                  data-testid="entries"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  defaultValue={courtSession.entries || ''}
+                  onChange={(html) => {
+                    setEntriesErrorMessage('')
+                    patchSession(courtSession.id, { entries: html })
+                  }}
+                  onBlur={(html) => {
+                    // Decode entities (e.g. &nbsp;) and strip tags so an
+                    // otherwise-empty paragraph doesn't pass the required check.
+                    const decodedText =
+                      new DOMParser()
+                        .parseFromString(html, 'text/html')
+                        .body.textContent?.trim() ?? ''
+                    validateAndSetErrorMessage(
+                      ['empty'],
+                      decodedText,
+                      setEntriesErrorMessage,
+                    )
+                    patchSession(
+                      courtSession.id,
+                      { entries: html },
+                      { persist: true },
+                    )
+                  }}
+                  errorMessage={entriesErrorMessage || undefined}
+                  disabled={courtSession.isConfirmed || false}
+                  required
+                />
               </Box>
               <Box>
                 <SectionHeading
