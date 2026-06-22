@@ -1,5 +1,10 @@
 import React, { FC, useEffect, useRef } from 'react'
-import { coreErrorMessages, coreMessages } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  coreMessages,
+  getErrorReasonIfPresent,
+  isProviderErrorReason,
+} from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
@@ -12,8 +17,11 @@ import {
   getTextStyles,
   LoadingDots,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
+import { useLocale } from '@island.is/localization'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
@@ -31,9 +39,13 @@ export const PaymentPending: FC<
   React.PropsWithChildren<PaymentPendingProps>
 > = ({ application, refetch, targetEvent }) => {
   const msg = useMsg(application)
+  const { formatMessage } = useLocale()
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
+  // Only toast once per distinct submit error (the component can re-render with
+  // the same Apollo error).
+  const toastedSubmitError = useRef<unknown>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const isInvoice = getRedirectStatus() === 'invoice'
 
@@ -87,6 +99,27 @@ export const PaymentPending: FC<
     shouldRedirect,
     setSearchParams,
   ])
+
+  // A post-payment submission failure keeps the generic error screen below, but
+  // when the TemplateApiError carries a specific reason (e.g. an RLS denial code
+  // resolved to human-readable text) surface that reason as a toast so the user
+  // knows *why* it failed. Only toast for a real provider error reason — never
+  // an extra generic toast on top of the already-generic screen.
+  useEffect(() => {
+    if (!submitError || toastedSubmitError.current === submitError) {
+      return
+    }
+    const problem = findProblemInApolloError(submitError)
+    if (
+      problem &&
+      'errorReason' in problem &&
+      isProviderErrorReason(problem.errorReason)
+    ) {
+      const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+      toast.error(`${formatMessage(title)}: ${formatMessage(summary)}`)
+      toastedSubmitError.current = submitError
+    }
+  }, [submitError, formatMessage])
 
   if (pollingError) {
     return <Text>{msg(coreErrorMessages.paymentStatusError)}</Text>
