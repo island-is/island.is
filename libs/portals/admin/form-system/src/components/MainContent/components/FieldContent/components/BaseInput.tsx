@@ -40,6 +40,19 @@ export const BaseInput = () => {
     (s) => s && s.id === currentItem.screenId,
   )
 
+  const hasAssetLookupPermission = fieldTypes?.some(
+    (fieldType) =>
+      fieldType?.id === FieldTypesEnum.REAL_ESTATE ||
+      fieldType?.id === FieldTypesEnum.VEHICLE,
+  )
+
+  const excludedFieldTypes = [
+    FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    FieldTypesEnum.VEHICLE,
+    FieldTypesEnum.REAL_ESTATE,
+    ...(!hasAssetLookupPermission ? [FieldTypesEnum.ASSETS] : []),
+  ]
+
   const selectList =
     fieldTypes
       ?.filter((fieldType): fieldType is NonNullable<typeof fieldType> =>
@@ -54,6 +67,7 @@ export const BaseInput = () => {
           fieldType.id !== FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS &&
           fieldType.id !== FieldTypesEnum.PAYMENT,
       )
+      .filter((fieldType) => !excludedFieldTypes.includes(fieldType.id))
       .map((fieldType) => ({
         value: fieldType.id ?? '',
         label: fieldType.name?.is ?? fieldType.id ?? '',

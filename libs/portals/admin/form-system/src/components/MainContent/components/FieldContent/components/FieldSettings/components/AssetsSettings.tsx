@@ -9,23 +9,35 @@ import {
 import { useContext } from 'react'
 
 import { ControlContext } from '../../../../../../../context/ControlContext'
-import { AssetTypes } from '@island.is/form-system/enums'
+import { AssetTypes, FieldTypesEnum } from '@island.is/form-system/enums'
 
 const assetTypeOptions = [
-  // { label: 'Fasteign', value: AssetTypes.REAL_ESTATE },
-  { label: 'Ökutæki', value: AssetTypes.VEHICLE },
+  {
+    label: 'Fasteign',
+    value: AssetTypes.REAL_ESTATE,
+    fieldType: FieldTypesEnum.REAL_ESTATE,
+  },
+  {
+    label: 'Ökutæki',
+    value: AssetTypes.VEHICLE,
+    fieldType: FieldTypesEnum.VEHICLE,
+  },
   //   { label: 'Skip', value: AssetTypes.SHIP },
 ]
 
 export const AssetsSettings = () => {
-  const { control, controlDispatch, updateActiveItem } =
+  const { control, controlDispatch, updateActiveItem, fieldTypes } =
     useContext(ControlContext)
   const { isReadOnly, activeItem } = control
   const currentItem = activeItem.data as FormSystemField
   const isDropdown = currentItem.fieldSettings?.isDropdown ?? false
 
+  const visibleAssetTypeOptions = assetTypeOptions.filter((option) =>
+    fieldTypes?.some((fieldType) => fieldType?.id === option.fieldType),
+  )
+
   const selected =
-    assetTypeOptions.find(
+    visibleAssetTypeOptions.find(
       (option) => option.value === currentItem.fieldSettings?.assetType,
     ) ?? null
 
@@ -53,7 +65,7 @@ export const AssetsSettings = () => {
           label="Tegund eignar"
           placeholder="Veldu tegund eignar"
           backgroundColor="blue"
-          options={assetTypeOptions}
+          options={visibleAssetTypeOptions}
           value={selected}
           isDisabled={control.isReadOnly}
           onChange={(option) => {
