@@ -54,10 +54,10 @@ const ConnectedTeamList = ({ slice }: Props) => {
   const { data, error } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
     variables: {
       input: {
-          locale: activeLocale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
-          organizationId,
-          activeOnly: true,
-        },
+        locale: activeLocale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+        organizationId,
+        activeOnly: true,
+      },
     },
     onError(error) {
       console.error('Error fetching team members:', error)
