@@ -374,9 +374,9 @@ export class DrivingLicenseService {
   /**
    * Resolve RLS's own human-readable descriptions (both languages) for an error
    * code, from the cached error-code catalogue. Returns null for an unknown
-   * code. The caller attaches both and the frontend picks by locale. Reusable
-   * by any scope:api consumer; submission / practice-permit (other scopes)
-   * should call the client wrapper directly.
+   * code. The caller attaches both and the frontend picks by locale. Best-effort
+   * — never throws. Used by the eligibility resolver here and by the submission
+   * template-api-module, which injects this service.
    */
   async describeErrorCode(
     code: string,
