@@ -35,13 +35,10 @@ export interface FeatureFlagClient {
     key: string,
     defaultValue: boolean | string | number,
   ): Promise<boolean | string | number>
-  dispose(): void
 }
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: (_, defaultValue) => Promise.resolve(defaultValue),
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  dispose() {},
 })
 
 export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
@@ -84,7 +81,6 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
       ) => {
         return flags[key] ?? defaultValue
       },
-      dispose: () => {},
     }),
     [flags],
   )
