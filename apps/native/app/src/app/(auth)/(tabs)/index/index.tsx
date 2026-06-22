@@ -65,8 +65,9 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '@/stores/preferences-store'
-import { needsToUpdateAppVersion } from '@/utils/minimum-app-version'
 import { testIDs } from '@/utils/test-ids'
+import * as Application from 'expo-application'
+import compareVersions from 'compare-versions'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
 import { StackScreen } from '../../../../components/stack-screen'
@@ -108,6 +109,10 @@ export default function HomeScreen() {
     'isPostholfWidgetDisabled',
     false,
     null,
+  )
+  const minimumVersionSupported = useFeatureFlag(
+    'minimumSupportedAppVersion',
+    '1.0.0',
   )
 
   const [refetching, setRefetching] = useState(false)
@@ -289,23 +294,21 @@ export default function HomeScreen() {
   )
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
-  const isAppUpdateRequired = useCallback(async () => {
-    const needsUpdate = await needsToUpdateAppVersion()
-    if (needsUpdate) {
+  useEffect(() => {
+    syncToken()
+    checkUnseen()
+  }, [])
+
+  // Check if the app version is below the minimum supported version and navigate to the update screen if so
+  useEffect(() => {
+    const currentVersion = Application.nativeApplicationVersion ?? ''
+    if (compareVersions.compare(minimumVersionSupported, currentVersion, '>')) {
       router.navigate({
         pathname: '/update-app',
         params: { closable: String(false) },
       })
     }
-  }, [])
-
-  useEffect(() => {
-    // Sync push tokens and unseen notifications
-    syncToken()
-    checkUnseen()
-    // Check if upgrade wall should be shown
-    isAppUpdateRequired()
-  }, [])
+  }, [minimumVersionSupported])
 
   useEffect(() => {
     if (!userProfileLocale) {
