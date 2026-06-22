@@ -25,7 +25,8 @@ export const bankTransfer = defineMessages({
   accountNumberPlaceholder: {
     id: 'payments:bankTransfer.accountNumberPlaceholder',
     defaultMessage: '0000-00-000000',
-    description: 'Placeholder for the bank account number input (XXXX-XX-XXXXXX)',
+    description:
+      'Placeholder for the bank account number input (XXXX-XX-XXXXXX)',
   },
   accountNumberRequired: {
     id: 'payments:bankTransfer.accountNumberRequired',
@@ -121,13 +122,13 @@ export const bankTransferError = defineMessages({
   },
   rejectedTitle: {
     id: 'payments:bankTransferError.rejectedTitle',
-    defaultMessage: 'Millifærslunni hafnað',
+    defaultMessage: 'Millifærslu hafnað',
     description:
       'Header on the standard error view for a bank-transfer rejected by the bank (REJECTED status)',
   },
   cancelled: {
     id: 'payments:bankTransferError.cancelled',
-    defaultMessage: 'Millifærslan var afturkölluð',
+    defaultMessage: 'Hætt var við millifærslu',
     description: 'Error shown when the bank-transfer attempt was cancelled',
   },
   cancelledTitle: {
