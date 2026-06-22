@@ -247,3 +247,32 @@ query getAppointments(
     }
   }
 }
+
+query getAppointmentDetail($id: String!) {
+  healthDirectorateAppointment(id: $id) {
+    id
+    title
+    instruction
+    date
+    duration
+    practitioners
+    location {
+      name
+      organization
+      directions
+      address
+      city
+      postalCode
+      country
+      latitude
+      longitude
+      link
+      phoneNumber
+      openingHoursText
+      locationLinks {
+        type
+        url
+      }
+    }
+  }
+}

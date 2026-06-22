@@ -820,11 +820,15 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
+  'health.appointments.locationInstructions': 'More about location',
+  'health.appointments.seeMore': 'See more',
+  'health.appointments.openingHours': 'Opening hours',
+  'health.appointments.phoneNumber': 'Phone number',
+  'health.appointments.organization': 'Organization',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',

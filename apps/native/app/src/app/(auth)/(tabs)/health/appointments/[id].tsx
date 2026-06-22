@@ -9,13 +9,13 @@ import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '@/assets/icons/calendar.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLink from '@/assets/icons/external-link.png'
+import infoIcon from '@/assets/icons/info-bubble-outline.png'
 import locationIcon from '@/assets/icons/location.png'
 import hourglassIcon from '@/assets/icons/hourglass.png'
-import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
-  useGetAppointmentsQuery,
+  useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
 import { Icon, Input, InputRow, Problem, Typography } from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
@@ -33,22 +33,27 @@ const IconList = styled.View`
 const IconRow = styled.View`
   flex-direction: row;
   align-items: center;
-  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  column-gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const MapLink = styled.TouchableOpacity`
+  flex-direction: row;
+  align-self: flex-start;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-left: ${({ theme }) => 16 + theme.spacing[1]}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.color.blue400};
+`
+
+const LocationItem = styled.View`
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const EyebrowContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-`
-
-const ExternalLinkContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.smallGutter}px;
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
-  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const ProblemContainer = styled.View`
@@ -71,40 +76,30 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error, networkStatus } = useGetAppointmentsQuery({
-    variables: {
-      from: undefined,
-      status: BaseAppointmentStatuses,
-    },
-    skip: !!appointmentFromCache?.data,
+  const { data, loading, error, networkStatus } = useGetAppointmentDetailQuery({
+    variables: { id: appointmentId ?? '' },
+    skip: !appointmentId,
   })
 
   const appointment =
-    appointmentFromCache?.data ??
-    data?.healthDirectorateAppointments.data?.find(
-      (apt) => apt.id === appointmentId,
-    )
+    data?.healthDirectorateAppointment ?? appointmentFromCache?.data
 
-  const formatAddress = () => {
-    if (!appointment?.location) return '-'
-    const parts = [
-      appointment.location.address,
-      [appointment.location.postalCode, appointment.location.city]
-        .filter(Boolean)
-        .join(' '),
-    ]
-      .filter(Boolean)
-      .join(', ')
-    return parts || '-'
-  }
+  const { latitude, longitude } = appointment?.location ?? {}
+  const mapsLink =
+    latitude != null && longitude != null
+      ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+      : null
 
   const handleOpenMap = useCallback(() => {
-    if (appointment?.location?.address) {
-      const address = encodeURIComponent(appointment.location.address)
-      const url = `https://www.google.com/maps/search/?api=1&query=${address}`
-      Linking.openURL(url)
+    if (mapsLink) {
+      Linking.openURL(mapsLink)
     }
-  }, [appointment])
+  }, [mapsLink])
+
+  const locationLinks = appointment?.location?.locationLinks
+  const locationLink =
+    locationLinks?.find((l) => l.type === 'WEBSITE')?.url ??
+    locationLinks?.[0]?.url
 
   const {
     weekday,
@@ -116,7 +111,9 @@ export default function AppointmentDetailScreen() {
     !!appointment &&
     ((appointment.practitioners?.length ?? 0) > 0 ||
       !!appointment.instruction ||
-      !!appointment.location?.address)
+      !!appointment.location?.openingHoursText ||
+      !!appointment.location?.phoneNumber ||
+      !!appointment.location?.organization)
 
   return (
     <View style={{ flex: 1 }}>
@@ -125,7 +122,11 @@ export default function AppointmentDetailScreen() {
         networkStatus={networkStatus}
         options={{ title: '' }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 64 }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         {error && (
           <ProblemContainer>
             <Problem
@@ -203,17 +204,83 @@ export default function AppointmentDetailScreen() {
                 )}
 
                 {appointment.location?.name && (
-                  <IconRow>
-                    <Icon
-                      source={locationIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor="blue400"
-                    />
-                    <Typography variant="body">
-                      {appointment.location.name}
-                    </Typography>
-                  </IconRow>
+                  <LocationItem>
+                    <IconRow style={{ alignItems: 'flex-start' }}>
+                      <Icon
+                        source={locationIcon as ImageSourcePropType}
+                        width={16}
+                        height={16}
+                        tintColor="blue400"
+                        style={{ marginTop: 4 }}
+                      />
+                      <View style={{ flex: 1 }}>
+                        <Typography variant="body">
+                          {[
+                            appointment.location.name,
+                            appointment.location.address,
+                            [
+                              appointment.location.postalCode,
+                              appointment.location.city,
+                            ]
+                              .filter(Boolean)
+                              .join(' '),
+                          ]
+                            .filter(Boolean)
+                            .join(', ')}
+                        </Typography>
+                      </View>
+                    </IconRow>
+                    {mapsLink && (
+                      <MapLink onPress={handleOpenMap}>
+                        <Typography
+                          variant="eyebrow"
+                          color={theme.color.blue400}
+                        >
+                          {intl.formatMessage({
+                            id: 'health.appointments.openMap',
+                          })}
+                        </Typography>
+                        <Icon
+                          source={externalLink as ImageSourcePropType}
+                          width={16}
+                          height={16}
+                        />
+                      </MapLink>
+                    )}
+                  </LocationItem>
+                )}
+
+                {locationLink && (
+                  <LocationItem>
+                    <IconRow>
+                      <Icon
+                        source={infoIcon as ImageSourcePropType}
+                        width={16}
+                        height={16}
+                        tintColor="blue400"
+                      />
+                      <Typography variant="body">
+                        {intl.formatMessage({
+                          id: 'health.appointments.locationInstructions',
+                        })}
+                      </Typography>
+                    </IconRow>
+                    <MapLink onPress={() => Linking.openURL(locationLink)}>
+                      <Typography
+                        variant="eyebrow"
+                        color={theme.color.blue400}
+                      >
+                        {intl.formatMessage({
+                          id: 'health.appointments.seeMore',
+                        })}
+                      </Typography>
+                      <Icon
+                        source={externalLink as ImageSourcePropType}
+                        width={16}
+                        height={16}
+                      />
+                    </MapLink>
+                  </LocationItem>
                 )}
               </IconList>
             </Header>
@@ -250,28 +317,35 @@ export default function AppointmentDetailScreen() {
               </InputRow>
             )}
 
-            {appointment.location?.address && (
+            {appointment.location?.openingHoursText && (
               <InputRow>
                 <Input
-                  style={{ alignItems: 'center' }}
                   label={intl.formatMessage({
-                    id: 'health.appointments.address',
+                    id: 'health.appointments.openingHours',
                   })}
-                  value={formatAddress()}
-                  rightElement={
-                    <ExternalLinkContainer onPress={handleOpenMap}>
-                      <Typography variant="eyebrow" color={theme.color.blue400}>
-                        {intl.formatMessage({
-                          id: 'health.appointments.openMap',
-                        })}
-                      </Typography>
-                      <Icon
-                        source={externalLink as ImageSourcePropType}
-                        width={24}
-                        height={24}
-                      />
-                    </ExternalLinkContainer>
-                  }
+                  value={appointment.location.openingHoursText}
+                />
+              </InputRow>
+            )}
+
+            {appointment.location?.phoneNumber && (
+              <InputRow>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.appointments.phoneNumber',
+                  })}
+                  value={appointment.location.phoneNumber}
+                />
+              </InputRow>
+            )}
+
+            {appointment.location?.organization && (
+              <InputRow>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.appointments.organization',
+                  })}
+                  value={appointment.location.organization}
                 />
               </InputRow>
             )}

@@ -818,11 +818,15 @@ export const is = {
   'health.appointments.title': 'Tímabókanir',
   'health.appointments.description':
     'Hér getur þú séð tímabókanir þínar í heilbrigðiskerfinu.',
-  'health.appointments.address': 'Heimilisfang',
   'health.appointments.practitioners': 'Tími hjá: {practitioner}',
   'health.appointments.appointmentWith': 'Tími hjá',
   'health.appointments.instructions': 'Leiðbeiningar',
-  'health.appointments.openMap': 'Sjá á korti',
+  'health.appointments.openMap': 'Opna kort',
+  'health.appointments.locationInstructions': 'Nánar um staðsetningu',
+  'health.appointments.seeMore': 'Sjá nánar',
+  'health.appointments.openingHours': 'Opnunartímar',
+  'health.appointments.phoneNumber': 'Símanúmer',
+  'health.appointments.organization': 'Stofnun',
   'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
   'health.appointments.noAppointmentsText':
     'Þú ert ekki með neinar komandi tímabókanir.',
