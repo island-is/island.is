@@ -14,6 +14,7 @@ import {
 import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
 import { paginate } from '@island.is/nest/pagination'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   FjsErrorCode,
   InvoiceErrorCode,
@@ -104,6 +105,7 @@ export class PaymentFlowService {
     >,
     @Inject(JwksConfig.KEY)
     private readonly jwksConfig: ConfigType<typeof JwksConfig>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createPaymentUrl(
@@ -120,13 +122,23 @@ export class PaymentFlowService {
 
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
-      // Bank transfer is offered to individuals only — i.e. real persons.
-      // Companies and temporary kennitalas are excluded.
-      const availableMethods =
-        paymentMethods.includes(PaymentMethod.BANK_TRANSFER) &&
-        !isPerson(paymentInfo.payerNationalId)
-          ? paymentMethods.filter((m) => m !== PaymentMethod.BANK_TRANSFER)
-          : paymentMethods
+      // Bank transfer is gated behind the global feature flag and offered to
+      // individuals only — i.e. real persons. Companies and temporary kennitalas
+      // are excluded. The flag is the offer kill-switch: off → never listed, so
+      // the FE selector never shows a method whose endpoints the flag also guards.
+      let availableMethods = paymentMethods
+      if (paymentMethods.includes(PaymentMethod.BANK_TRANSFER)) {
+        const isBankTransferEnabled = await this.featureFlagService.getValue(
+          Features.isIslandisBankTransferPaymentEnabled,
+          false,
+        )
+
+        if (!isBankTransferEnabled || !isPerson(paymentInfo.payerNationalId)) {
+          availableMethods = paymentMethods.filter(
+            (m) => m !== PaymentMethod.BANK_TRANSFER,
+          )
+        }
+      }
 
       if (availableMethods.length === 0) {
         throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)

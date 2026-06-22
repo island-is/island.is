@@ -279,12 +279,19 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 
 ## Feature flags & access
 
-| Flag                                          | Scope                | Effect                                                                                                                                             |
-| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isIslandisBankTransferPaymentEnabled`        | Global               | Guards the REST controller and the GraphQL mutations (`FeatureFlagGuard`). Off → the endpoints are unavailable.                                    |
-| `isIslandisBankTransferPaymentAllowedForUser` | Per-user (ConfigCat) | Evaluated in the FE `getServerSideProps`. When true, `bank_transfer` is appended to the flow's available payment methods so the selector shows it. |
+| Flag                                          | Scope                |
+| --------------------------------------------- | -------------------- |
+| `isIslandisBankTransferPaymentEnabled`        | Global               |
+| `isIslandisBankTransferPaymentAllowedForUser` | Per-user (ConfigCat) |
 
 Both are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
+
+- **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
+  1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
+  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the individuals-only `isPerson` check.
+- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints.
+
+> The GraphQL mutations (`paymentsCreateBankTransfer` / `…Verify…` / `…Cancel…`) are not guarded by these flags directly — the whole payments resolver sits behind `isIslandisPaymentEnabled`. The bank-transfer global flag bites one layer down, on the `services-payments` REST controller the resolver proxies to.
 
 ## Configuration
 
@@ -294,7 +301,7 @@ Env vars (values from [`infra/payments.ts`](../../../infra/payments.ts), schemas
 
 | Env var                     | Default / per-env                                                         | Description                                                           |
 | --------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Its presence also gates readiness (`isConfigured`). |
+| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Read by the Blikk client.                           |
 | `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                    |
 | `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row.    |
 | `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.             |

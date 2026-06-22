@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
@@ -21,6 +22,7 @@ type TestPartial = any
 describe('PaymentFlowService', () => {
   let app: TestApp
   let service: PaymentFlowService
+  let featureFlagService: FeatureFlagService
 
   beforeAll(async () => {
     app = await setupTestApp()
@@ -34,6 +36,14 @@ describe('PaymentFlowService', () => {
     jest
       .spyOn(chargeFjsService, 'validateCharge')
       .mockReturnValue(Promise.resolve(true))
+
+    // Bank transfer availability is gated behind the global feature flag; default
+    // it on so the individuals-only tests exercise the kennitala gate. The
+    // flag-off case is asserted explicitly below.
+    featureFlagService = app.get<FeatureFlagService>(FeatureFlagService)
+    jest
+      .spyOn(featureFlagService, 'getValue')
+      .mockResolvedValue(true as never)
   })
 
   afterAll(() => {
@@ -132,6 +142,16 @@ describe('PaymentFlowService', () => {
 
     it('should not offer bank transfer to a temporary kennitala payer', async () => {
       const methods = await createFlowAndReadMethods('8123456789') // temporary kennitala (starts with 8)
+
+      expect(methods).toEqual([PaymentMethod.CARD])
+    })
+
+    it('should not offer bank transfer to an individual when the feature flag is off', async () => {
+      jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockResolvedValueOnce(false as never)
+
+      const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala
 
       expect(methods).toEqual([PaymentMethod.CARD])
     })
