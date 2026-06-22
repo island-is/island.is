@@ -32,11 +32,21 @@ query getAttachmentTypes {
 
 query getApplicantAttachments {
   vmstApplicantAttachments {
-    id
-    typeId
-    name
-    contentType
-    created
-    downloadServiceUrl
+    userSubmitted {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
+    letters {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
   }
 }

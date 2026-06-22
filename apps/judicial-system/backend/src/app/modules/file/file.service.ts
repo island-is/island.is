@@ -33,6 +33,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
@@ -40,6 +41,7 @@ import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { PoliceDocumentType } from '../police'
 import {
+  AppealCase,
   Case,
   CaseFile,
   CourtDocumentRepositoryService,
@@ -420,12 +422,25 @@ export class FileService {
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(file.category)
     ) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
-        user,
-        caseId: theCase.id,
-        elementId: file.id,
-      })
+      const appealCase = file.rulingFileId
+        ? theCase.rulingOrderAppealCases?.find(
+            (a) => a.rulingFileId === file.rulingFileId,
+          )
+        : theCase.appealCase
+
+      if (appealCase) {
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [appealCase.id, file.id],
+        })
+      } else {
+        // This should never happen, but log an error just in case
+        this.logger.error(
+          `Could not find appeal case for appeal case file ${file.id} of case ${theCase.id}`,
+        )
+      }
     }
 
     if (
@@ -671,6 +686,32 @@ export class FileService {
     return updatedCaseFiles[0]
   }
 
+  async confirmRulingOrder(
+    theCase: Case,
+    caseFile: CaseFile,
+    transaction?: Transaction,
+  ): Promise<CaseFile> {
+    if (caseFile.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      throw new BadRequestException(
+        'Only ruling orders uploaded during the course of a case can be confirmed',
+      )
+    }
+
+    if (caseFile.submissionDate) {
+      throw new BadRequestException('The ruling order is already confirmed')
+    }
+
+    // Setting the submission date marks the ruling order as confirmed by the
+    // registered judge. The RVG confirmation stamp is added lazily on download
+    // based on this date (see confirmIndictmentCaseFile).
+    return this.updateCaseFile(
+      theCase.id,
+      caseFile.id,
+      { submissionDate: nowFactory().toISOString() },
+      transaction,
+    )
+  }
+
   async updateFiles(
     caseId: string,
     caseFileUpdates: UpdateFileDto[],
@@ -702,6 +743,7 @@ export class FileService {
 
   async deliverCaseFileToCourtOfAppeals(
     theCase: Case,
+    appealCase: AppealCase,
     file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
@@ -719,7 +761,7 @@ export class FileService {
         user,
         theCase.id,
         file.id,
-        theCase.appealCase?.appealCaseNumber,
+        appealCase.appealCaseNumber,
         file.category,
         file.name,
         url,
@@ -728,7 +770,7 @@ export class FileService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update appeal case ${theCase.id} with file`,
+          `Failed to update appeal case ${appealCase.id} of case ${theCase.id} with file ${file.id}`,
           { reason },
         )
 

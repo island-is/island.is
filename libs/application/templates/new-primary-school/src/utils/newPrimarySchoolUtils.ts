@@ -94,11 +94,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const [languageEnvironmentId, languageEnvironment] =
     languageEnvironmentIdAndKey?.split('::') ?? []
 
-  const selectedLanguages =
-    getValueViaPath<Array<{ code: string }>>(
+  type SelectedLanguage = { code: string }
+  const selectedLanguages: SelectedLanguage[] = (
+    getValueViaPath<Array<{ code?: string }>>(
       answers,
       'languages.selectedLanguages',
     ) ?? []
+  ).filter(
+    (lang): lang is SelectedLanguage =>
+      typeof lang.code === 'string' && lang.code.length > 0,
+  )
 
   const signLanguage = getValueViaPath<YesOrNo>(
     answers,

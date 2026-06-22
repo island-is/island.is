@@ -240,7 +240,13 @@ const SearchModal: FC<Props> = ({ onClose }) => {
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+        <Box
+          marginBottom={3}
+          columnGap={1}
+          rowGap={1}
+          display="flex"
+          flexWrap="wrap"
+        >
           <Tag outlined disabled>
             Málsnúmer
           </Tag>

@@ -81,7 +81,7 @@ const AppealFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { sendNotification } = useCase()
+  const { sendAppealNotification } = useCase()
 
   const appealCaseFilesType = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE
@@ -109,10 +109,13 @@ const AppealFiles = () => {
       return
     }
 
-    sendNotification(
-      workingCase.id,
-      TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
-    )
+    if (targetAppealCase) {
+      await sendAppealNotification(
+        workingCase.id,
+        TrackedNotificationType.APPEAL_CASE_FILES_UPDATED,
+        targetAppealCase.id,
+      )
+    }
 
     refreshCase()
 
@@ -121,9 +124,10 @@ const AppealFiles = () => {
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    sendNotification,
-    workingCase.id,
+    targetAppealCase,
     refreshCase,
+    sendAppealNotification,
+    workingCase.id,
   ])
 
   const handleRemoveFile = (file: UploadFile) => {

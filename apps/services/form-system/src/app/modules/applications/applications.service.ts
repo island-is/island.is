@@ -52,10 +52,6 @@ import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
 import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import {
-  ApplicationJsonFieldDto,
-  ApplicationJsonValueDto,
-} from './models/dto/application.json.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import { NotificationDto } from './models/dto/notification.dto'
 import { NotificationResponseDto } from './models/dto/notification.response.dto'
@@ -113,11 +109,6 @@ export class ApplicationsService {
     const isTest = form.status !== FormStatus.PUBLISHED
 
     const nationalId = user.actor?.nationalId || user.nationalId
-
-    this.logger.info(
-      'Creating application for user with nationalId:',
-      nationalId,
-    )
 
     try {
       await this.sequelize.transaction(async (transaction) => {
@@ -208,14 +199,11 @@ export class ApplicationsService {
       })
     } catch (error) {
       this.logger.error('Error creating application', error)
+
       throw error
     }
 
-    this.logger.info('got this far with applicationId:', newApplicationId)
-
     const applicationDto = await this.getApplication(newApplicationId, '', null)
-
-    this.logger.info('getting applicationDto')
 
     return applicationDto
   }
@@ -1306,9 +1294,10 @@ export class ApplicationsService {
       notificationDto.command !== NotificationCommands.SUBMIT &&
       notificationDto.screenDto
     ) {
-      notificationDto.fields = this.mapScreenToNotificationFields(
-        notificationDto.screenDto,
-      )
+      notificationDto.fields =
+        this.applicationMapper.mapScreenToApplicationJsonFields(
+          notificationDto.screenDto,
+        )
       notificationDto.screenDto = undefined
     }
 
@@ -1359,24 +1348,6 @@ export class ApplicationsService {
         en: 'Please try again later or send an email to island@island.is',
       },
     }
-  }
-
-  private mapScreenToNotificationFields(
-    screen: ScreenDto,
-  ): ApplicationJsonFieldDto[] {
-    return (screen.fields ?? []).map((field) => {
-      const xroadField = new ApplicationJsonFieldDto()
-      xroadField.identifier = field.identifier
-      xroadField.screenIdentifier = screen.identifier
-      xroadField.fieldType = field.fieldType
-      xroadField.values = (field.values ?? []).map((value) => {
-        const xroadValue = new ApplicationJsonValueDto()
-        xroadValue.order = value.order
-        xroadValue.json = (value.json ?? {}) as Record<string, unknown>
-        return xroadValue
-      })
-      return xroadField
-    })
   }
 
   private async getOrganizationZendeskInfo(
@@ -1740,7 +1711,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified >= :startDate AND a.modified <= :endDate
+    WHERE a.created >= :startDate AND a.created <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;

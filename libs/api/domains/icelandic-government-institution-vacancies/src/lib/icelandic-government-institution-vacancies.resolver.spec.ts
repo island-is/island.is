@@ -200,4 +200,54 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
     })
     expect(mockXRoadApi.vacanciesVacancyIdGet).not.toHaveBeenCalled()
   })
+
+  it('forces the new list API via override even when the feature flag is disabled', async () => {
+    featureFlagClient.getValue.mockResolvedValue(false)
+
+    await request(app.getHttpServer()).get('/graphql').query({
+      query:
+        '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true }) { vacancies { id } } }',
+    })
+
+    expect(mockElfurApi.v1VacancyGetVacancyListGet).toHaveBeenCalledTimes(1)
+    expect(mockXRoadApi.vacanciesGet).not.toHaveBeenCalled()
+  })
+
+  it('forces the xroad list API via override even when the feature flag is enabled', async () => {
+    featureFlagClient.getValue.mockResolvedValue(true)
+
+    await request(app.getHttpServer()).get('/graphql').query({
+      query:
+        '{ icelandicGovernmentInstitutionVacancies(input: { useOldApiOverride: true }) { vacancies { id } } }',
+    })
+
+    expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
+    expect(mockElfurApi.v1VacancyGetVacancyListGet).not.toHaveBeenCalled()
+  })
+
+  it('lets the old API override win when both overrides are set', async () => {
+    featureFlagClient.getValue.mockResolvedValue(true)
+
+    await request(app.getHttpServer()).get('/graphql').query({
+      query:
+        '{ icelandicGovernmentInstitutionVacancies(input: { useNewApiOverride: true, useOldApiOverride: true }) { vacancies { id } } }',
+    })
+
+    expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
+    expect(mockElfurApi.v1VacancyGetVacancyListGet).not.toHaveBeenCalled()
+  })
+
+  it('forces the xroad detail API via override even when the feature flag is enabled', async () => {
+    featureFlagClient.getValue.mockResolvedValue(true)
+
+    await request(app.getHttpServer()).get('/graphql').query({
+      query:
+        '{ icelandicGovernmentInstitutionVacancyById(input: { id: "123", useOldApiOverride: true }) { vacancy { id } } }',
+    })
+
+    expect(mockXRoadApi.vacanciesVacancyIdGet).toHaveBeenCalledWith(
+      expect.objectContaining({ vacancyId: 123 }),
+    )
+    expect(mockElfurApi.v1VacancyGetVacancyGet).not.toHaveBeenCalled()
+  })
 })

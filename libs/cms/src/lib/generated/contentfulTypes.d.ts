@@ -1477,7 +1477,7 @@ export interface IFeaturedArticlesFields {
   image?: Asset | undefined
 
   /** Articles */
-  articles?: IArticle[] | undefined
+  articles?: (IArticle | IManual)[] | undefined
 
   /** Link */
   link?: ILink | undefined
@@ -4688,6 +4688,7 @@ export interface ISliceConnectedComponentFields {
     | 'KVTH/Rulings'
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
+    | 'ECOI/Calculator'
     | undefined
 
   /** Localized JSON */
@@ -4998,6 +4999,12 @@ export interface ISubArticleFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Content Last Reviewed */
+  contentLastReviewed?: string | undefined
+
+  /** Show date of the most recent review */
+  showDateOfTheMostRecentReview?: boolean | undefined
 
   /** Stepper */
   stepper?: IStepper | undefined
