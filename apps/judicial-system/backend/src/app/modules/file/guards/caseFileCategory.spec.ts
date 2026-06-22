@@ -339,7 +339,9 @@ describe('getDefenceUserVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-2', '007-2026-3'].sort())
+    expect(result.sort()).toEqual(
+      ['007-2026-1', '007-2026-2', '007-2026-3'].sort(),
+    )
   })
 })
 
