@@ -52,7 +52,10 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
     skip: !isAuthenticated,
     variables: { attributes: clientAttributes },
   })
-  const flags = data?.featureFlags?.flags ?? EMPTY_FLAGS
+  const flagsFromQuery = isAuthenticated
+    ? data?.featureFlags?.flags
+    : undefined
+  const flags = flagsFromQuery ?? EMPTY_FLAGS
 
   // Also triggers on token refresh (~5min), which is acceptable.
   const prevAuthRef = useRef(authorizeResult)
@@ -68,10 +71,10 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   }, [authorizeResult, refetch])
 
   useEffect(() => {
-    if (data?.featureFlags?.flags) {
-      setFeatureFlagCache(flags)
+    if (flagsFromQuery) {
+      setFeatureFlagCache(flagsFromQuery)
     }
-  }, [data, flags])
+  }, [flagsFromQuery])
 
   const context = useMemo<FeatureFlagClient>(
     () => ({
