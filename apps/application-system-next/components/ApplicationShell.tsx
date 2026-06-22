@@ -48,12 +48,22 @@ export const ApplicationShell = ({
 
   const { setInfo } = useHeaderInfo()
 
+  React.useEffect(() => {
+    const titleParts = [
+      `${screen.header.applicationName ?? screen.header.title} | Ísland.is`,
+    ]
+    if (screen.header.applicationName && screen.header.title) {
+      titleParts.unshift(screen.header.title)
+    }
+    document.title = titleParts.join(' - ')
+  }, [screen.header.title, screen.header.applicationName])
+
   // Logos travel as a serializable export name (e.g. "HmsLogo"); resolve it back
   // to the SVG component from the institution-logos barrel, guarding unknown keys.
   const logoKey = screen.header.logo
   const FormLogo =
     logoKey && logoKey in institutionLogos
-      ? (institutionLogos as Record<string, React.ComponentType>)[logoKey]
+      ? (institutionLogos as unknown as Record<string, React.ComponentType>)[logoKey]
       : undefined
 
   const displayValues = useDisplayRecompute(

@@ -14,7 +14,7 @@ const readFireCompensationInfo = z.array(z.literal(YES)).length(1)
 const applicantSchema = z.object({
   address: z.string().refine((v) => !!v),
   city: z.string().optional(),
-  email: z.string().refine((v) => !!v),
+  email: z.string().email(),
   name: z.string().refine((v) => !!v),
   nationalId: z.string().refine((v) => !!v),
   phoneNumber: z.string().refine((v) => !!v),

@@ -9,6 +9,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationService } from '@island.is/application/api/core'
 import {
   ApplicationTemplateHelper,
+  coreErrorMessages,
   getFormExpressionDependencies,
   getValueViaPath,
   resolveFormItemId,
@@ -24,6 +25,7 @@ import {
   FormItemTypes,
   FormValue,
   RoleInState,
+  StaticText,
   TemplateApi,
 } from '@island.is/application/types'
 import {
@@ -46,6 +48,7 @@ import { getApplicationNameTranslationString } from '../application/utils/applic
 import { isNewActor } from '../application/utils/delegationUtils'
 import { I18nResolverService, FormTextResolver } from './i18n-resolver.service'
 import { mapScreenToComponents } from './screen-mapper'
+import set from 'lodash/set'
 import { applyResolvedFieldDefaults } from './field-default-persistence'
 import { applyFlatAnswers } from './apply-flat-answers'
 import { stripEmptyFormValue } from './strip-empty-answers'
@@ -58,10 +61,8 @@ import {
   ValidateResponseDto,
 } from './dto/screen.dto'
 import { SdfActionType } from './dto/action.dto'
+import { type ZodIssue, ZodIssueCode } from 'zod'
 
-// vanilla-extract's `style()` needs a build-tool "file scope" that doesn't exist
-// on the server. Set a no-op scope so importing form templates doesn't throw; the
-// generated class names are discarded since we only need the form AST.
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { setFileScope } = require('@vanilla-extract/css/fileScope')
@@ -123,10 +124,6 @@ export class SdfScreenService {
     private readonly applicationActionService: ApplicationActionService,
   ) {}
 
-  /**
-   * Same access rules as GET /applications/:id — applicant, assignee, actor edge
-   * cases, and template role fallback (see ApplicationAccessService).
-   */
   private async requireApplicationForUser(
     applicationId: string,
     user: User,
@@ -332,9 +329,6 @@ export class SdfScreenService {
     pageIndexOverride: number | undefined,
     ephemeral: boolean,
   ): Promise<number> {
-    // Priority: explicit override > persisted DB value > answer-based inference.
-    // Ephemeral (REFETCH) renders keep the persisted index so the client never
-    // advances ahead of what NEXT_PAGE committed.
     if (pageIndexOverride !== undefined && pageIndexOverride >= 0) {
       const resolvedIndex = moveToScreen(screens, pageIndexOverride, true)
       if (!ephemeral && application.pageIndex !== pageIndexOverride) {
@@ -349,9 +343,6 @@ export class SdfScreenService {
     const persistedPageIndex = application.pageIndex ?? 0
     const hasAnswers = Object.keys(application.answers ?? {}).length > 0
     if (!ephemeral && persistedPageIndex === 0 && hasAnswers) {
-      // Migration fallback for existing apps with no persisted page index:
-      // infer from answers and persist once. Skipped for ephemeral renders,
-      // which can't persist and would desync the cursor from the client.
       const resolvedIndex = findCurrentScreen(screens, filteredAnswers)
       await this.applicationService.update(applicationId, {
         pageIndex: resolvedIndex,
@@ -408,8 +399,6 @@ export class SdfScreenService {
       ? resolver.resolve(screen.description)
       : undefined
 
-    // Name comes from the template, not `form.title`: NOT_STARTED forms have an
-    // empty title which would leave the header name blank.
     const applicationName = getApplicationNameTranslationString(
       context.template,
       context.application as Application,
@@ -424,8 +413,6 @@ export class SdfScreenService {
       description,
       applicationName,
       institutionName,
-      // Logos are non-serializable React components; send the export name for the
-      // client to resolve from @island.is/application/assets/institution-logos.
       logo: context.form.logo?.name,
     }
   }
@@ -442,9 +429,6 @@ export class SdfScreenService {
     const storedAnswers = application.answers ?? {}
 
     for (const fieldId of pageFieldIds) {
-      // Answers are stored nested (e.g. `applicant.phoneNumber`); read by path and
-      // return under the flat field id the client keys on. Fall back to a literal
-      // flat key for older applications written before nested normalization.
       const value =
         getValueViaPath(storedAnswers, fieldId) ??
         (fieldId in storedAnswers ? storedAnswers[fieldId] : undefined)
@@ -483,11 +467,6 @@ export class SdfScreenService {
     return Array.from(ids)
   }
 
-  /**
-   * Recomputes the current screen against an in-memory answer snapshot without
-   * persisting anything. Template APIs run through the ephemeral action path,
-   * mutating only the in-memory application used to render the response.
-   */
   async handleRefetch(
     applicationId: string,
     answers: Record<string, unknown> | undefined,
@@ -604,6 +583,15 @@ export class SdfScreenService {
     const errors: ValidationErrorDto[] = []
     const mergedAnswers = applyFlatAnswers(application.answers, answers)
 
+    const helper = new ApplicationTemplateHelper(
+      application as Application,
+      template,
+    )
+    const formatResolver = await this.i18nResolverService.createResolver(
+      application as Application,
+      locale,
+    )
+
     if (template.dataSchema && fieldIds.length > 0) {
       try {
         const result = template.dataSchema.safeParse(mergedAnswers)
@@ -613,7 +601,7 @@ export class SdfScreenService {
             if (fieldIds.includes(path)) {
               errors.push({
                 componentId: path,
-                message: issue.message,
+                message: this.resolveZodIssueMessage(issue, formatResolver),
               })
             }
           }
@@ -622,15 +610,6 @@ export class SdfScreenService {
         this.logger.error('Validation error', e)
       }
     }
-
-    const helper = new ApplicationTemplateHelper(
-      application as Application,
-      template,
-    )
-    const formatResolver = await this.i18nResolverService.createResolver(
-      application as Application,
-      locale,
-    )
 
     if (fieldIds.length > 0) {
       const validatorErrors = await helper.applyAnswerValidators(
@@ -665,12 +644,6 @@ export class SdfScreenService {
     }
   }
 
-  /**
-   * For every `FieldTypes.DISPLAY` field on the page, runs its `value(answers,
-   * externalData)` closure against the merged answers and resolves the result.
-   * Side-effect free; per-field failures are swallowed so one broken display
-   * field can't fail the whole VALIDATE action.
-   */
   private async computeDisplayValues(
     application: ApplicationWithAttachments,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
@@ -774,8 +747,6 @@ export class SdfScreenService {
       }
     }
 
-    // Expand the flat dotted-key payload into the nested shape the schema expects
-    // and deep-merge onto the persisted tree. See `applyFlatAnswers`.
     const mergedAnswers = applyFlatAnswers(application.answers, answers)
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
@@ -788,9 +759,6 @@ export class SdfScreenService {
       user,
     )
 
-    // Seed resolved field defaults for the page being left (legacy committed each
-    // field's `defaultValue` on submit). Runs before validation and page-advance
-    // so both see the values; mutates `mergedAnswers` in place.
     applyResolvedFieldDefaults(
       currentScreen,
       mergedAnswers,
@@ -798,9 +766,10 @@ export class SdfScreenService {
       locale,
     )
 
-    // Validate the page being left before any side effects. EDP screens validate
-    // the provider node's own id (e.g. `approveExternalData`), so an unchecked
-    // approval can't advance.
+    for (const [key, value] of Object.entries(answers)) {
+      set(mergedAnswers as Record<string, unknown>, key, value)
+    }
+
     const validationErrors = await this.validateScreenAnswers(
       currentScreen,
       template,
@@ -810,10 +779,6 @@ export class SdfScreenService {
       locale,
     )
     if (validationErrors.length > 0) {
-      // Re-render against the just-submitted answers (not the persisted ones) so
-      // in-progress input is preserved behind the error. Rebuilding from the
-      // persisted application would drop unpersisted answers and collapse
-      // dependent options and computed display values.
       const workingApplication = {
         ...toApplicationSnapshot(application),
         answers: mergedAnswers,
@@ -829,9 +794,6 @@ export class SdfScreenService {
       return screen
     }
 
-    // Record the acting delegate on the application when answers are persisted,
-    // matching the legacy `PUT /applications/:id` update path. See
-    // ApplicationController.update.
     const applicantActors: string[] =
       isNewActor(application, user) && !!user.actor?.nationalId
         ? [...application.applicantActors, user.actor.nationalId]
@@ -890,9 +852,6 @@ export class SdfScreenService {
         user,
       )
       await this.applicationService.update(applicationId, {
-        // Strip empty strings on write to match legacy, which never persisted an
-        // untouched optional field. Only the write is normalized; validation above
-        // ran on the unstripped merge.
         answers: stripEmptyFormValue(mergedAnswers),
         applicantActors,
         pageIndex: newPageIndex,
@@ -910,8 +869,6 @@ export class SdfScreenService {
       user,
     )
     await this.applicationService.update(applicationId, {
-      // Strip empty strings on write to match legacy; validation above ran on the
-      // unstripped merge. See the EDP branch above.
       answers: stripEmptyFormValue(mergedAnswers),
       applicantActors,
       pageIndex: newPageIndex,
@@ -969,10 +926,6 @@ export class SdfScreenService {
     return screens[resolvedIndex]
   }
 
-  // Index of the next *navigable* screen after `currentPageIndex`, computed
-  // against the just-submitted answers (which can flip page visibility). The
-  // persisted cursor must land on a navigable screen, otherwise it desyncs from
-  // the client's echoed `lastKnownPageIndex` and breaks the idempotency check.
   private async resolveAdvancedPageIndex(
     application: ApplicationWithAttachments,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
@@ -1008,19 +961,18 @@ export class SdfScreenService {
     )
 
     const currentPageIndex: number = (application as any).pageIndex ?? 0
-    const newPageIndex = Math.max(0, currentPageIndex - 1)
 
-    if (newPageIndex !== currentPageIndex) {
-      await this.applicationService.update(applicationId, {
-        pageIndex: newPageIndex,
-      })
-    }
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const screens = await this.buildScreens(application, template, locale, user)
 
-    return this.getScreen(applicationId, undefined, locale, user)
+    const newPageIndex =
+      screens && currentPageIndex > 0
+        ? moveToScreen(screens, currentPageIndex - 1, false)
+        : 0
+
+    return this.getScreen(applicationId, newPageIndex, locale, user)
   }
 
-  // Jump directly to a page by id (overview "Breyta"/edit button), landing on the
-  // nearest navigable screen and persisting the cursor like NEXT_PAGE/PREV_PAGE.
   async goToPage(
     applicationId: string,
     targetPageId: string,
@@ -1054,14 +1006,6 @@ export class SdfScreenService {
     return this.getScreen(applicationId, undefined, locale, user)
   }
 
-  /**
-   * Validates a screen's answers against the template `dataSchema` and answer
-   * validators, scoped to that screen's fields.
-   *
-   * EXTERNAL_DATA_PROVIDER screens carry their required answer (e.g.
-   * `approveExternalData`) on the node's own `id` rather than in `children`, so
-   * we validate the node id directly to block an unchecked approval.
-   */
   private async validateScreenAnswers(
     currentScreen: FormScreen | undefined,
     template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
@@ -1085,22 +1029,6 @@ export class SdfScreenService {
 
     if (fieldIds.length === 0) return errors
 
-    if (template.dataSchema) {
-      try {
-        const result = template.dataSchema.safeParse(mergedAnswers)
-        if (!result.success) {
-          for (const issue of result.error.issues) {
-            const path = issue.path.join('.')
-            if (fieldIds.includes(path)) {
-              errors.push({ componentId: path, message: issue.message })
-            }
-          }
-        }
-      } catch (e) {
-        this.logger.error('Zod validation error during screen validation', e)
-      }
-    }
-
     const helper = new ApplicationTemplateHelper(
       application as Application,
       template,
@@ -1109,6 +1037,26 @@ export class SdfScreenService {
       application as Application,
       locale,
     )
+
+    if (template.dataSchema) {
+      try {
+        const result = template.dataSchema.safeParse(mergedAnswers)
+        if (!result.success) {
+          for (const issue of result.error.issues) {
+            const path = issue.path.join('.')
+            if (fieldIds.includes(path)) {
+              errors.push({
+                componentId: path,
+                message: this.resolveZodIssueMessage(issue, formatResolver),
+              })
+            }
+          }
+        }
+      } catch (e) {
+        this.logger.error('Zod validation error during screen validation', e)
+      }
+    }
+
     const validatorErrors = await helper.applyAnswerValidators(
       applyFlatAnswers({}, newAnswers),
       (descriptor, values) => formatResolver.resolve(descriptor as any),
@@ -1143,9 +1091,6 @@ export class SdfScreenService {
       throw new ForbiddenException('Access denied')
     }
 
-    // Validate the originating screen before transitioning, so e.g. an unchecked
-    // prerequisites approval can't trigger `changeState`. Non-input screens (e.g.
-    // the overview) have no schema-backed field ids, so this is a no-op for them.
     const currentPageIndex: number =
       (application as ApplicationWithPageIndex).pageIndex ?? 0
     const submitMergedAnswers = applyFlatAnswers(application.answers, answers)
@@ -1183,16 +1128,11 @@ export class SdfScreenService {
     if (answers && Object.keys(answers).length > 0) {
       const mergedAnswers = applyFlatAnswers(application.answers, answers)
       await this.applicationService.update(applicationId, {
-        // Strip empty strings on write to match legacy; see persistAnswersAndAdvance.
         answers: stripEmptyFormValue(mergedAnswers),
       })
       application = await this.requireApplicationForUser(applicationId, user)
     }
 
-    // `requireApplicationForUser` returns a Sequelize model whose attributes live
-    // behind prototype getters. `changeState` spreads the application, which drops
-    // those getters (leaving `typeId` undefined and crashing `CreateChargeApi`).
-    // Pass a plain snapshot so the spread preserves every field.
     const applicationSnapshot = toApplicationSnapshot(
       application,
     ) as ApplicationWithAttachments
@@ -1224,8 +1164,6 @@ export class SdfScreenService {
     )
 
     if (result.hasError) {
-      // A failed `onEntry` action (e.g. `CreateChargeApi`) aborts the transition.
-      // Log the full reason server-side and propagate it to the client.
       const reason =
         typeof result.error === 'string'
           ? result.error
@@ -1344,6 +1282,29 @@ export class SdfScreenService {
       components,
       errors: [],
     }
+  }
+
+  private resolveZodIssueMessage(
+    issue: ZodIssue,
+    resolver: FormTextResolver,
+  ): string {
+    const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/
+    const isDefaultZodMessage = issue.message === 'Invalid input'
+    let message = resolver.resolve(coreErrorMessages.defaultError)
+
+    if (issue.code === ZodIssueCode.custom) {
+      const params = (issue as { params?: unknown }).params as
+        | Record<string, unknown>
+        | undefined
+      const paramId = params?.id
+      if (typeof paramId === 'string' && namespaceRegex.test(paramId)) {
+        message = resolver.resolve(params as StaticText)
+      } else if (!isDefaultZodMessage) {
+        message = issue.message
+      }
+    }
+
+    return message
   }
 
   private logTiming(label: string, startTime: number) {
