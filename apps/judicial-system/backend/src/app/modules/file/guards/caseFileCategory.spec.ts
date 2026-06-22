@@ -72,7 +72,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return all police case numbers when defendants array is empty', () => {
@@ -84,7 +84,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return all police case numbers when defendants is undefined', () => {
@@ -96,7 +96,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return only own defendant police case numbers plus unassigned', () => {
@@ -120,7 +120,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-3'].sort())
+    expect(result).toEqual(['007-2026-1', '007-2026-3'])
   })
 
   it('should return union when defender represents multiple defendants', () => {
@@ -149,7 +149,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-2'].sort())
+    expect(result).toEqual(['007-2026-1', '007-2026-2'])
   })
 
   it('should return only unassigned when defender is not found in defendants', () => {
@@ -168,7 +168,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-3'].sort())
+    expect(result).toEqual(['007-2026-3'])
   })
 
   it('should treat unconfirmed defender choice as not being a defender', () => {
@@ -241,7 +241,7 @@ describe('getSpokespersonVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return only civil claimant police case numbers plus unassigned', () => {
@@ -267,7 +267,7 @@ describe('getSpokespersonVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-3'].sort())
+    expect(result).toEqual(['007-2026-1', '007-2026-3'])
   })
 
   it('should return empty array when user is not a confirmed spokesperson', () => {
@@ -339,9 +339,7 @@ describe('getDefenceUserVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(
-      ['007-2026-1', '007-2026-2', '007-2026-3'].sort(),
-    )
+    expect(result).toEqual(['007-2026-1', '007-2026-2', '007-2026-3'])
   })
 
   it('should apply defender visibility rules when user is neither defender nor spokesperson', () => {

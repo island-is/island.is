@@ -393,9 +393,10 @@ describe('LimitedAccessCaseFileInterceptor', () => {
 
         it('should only include spokesperson-visible police case numbers', () => {
           const result = then.result as { policeCaseNumbers: string[] }
-          expect(result.policeCaseNumbers.sort()).toEqual(
-            ['007-2026-1', '007-2026-3'].sort(),
-          )
+          expect(result.policeCaseNumbers).toEqual([
+            '007-2026-1',
+            '007-2026-3',
+          ])
         })
       })
     })
