@@ -34,7 +34,10 @@ interface ApplicationsPageProps {
   basePath?: string
 }
 
-export const ApplicationsPage = ({ slug, basePath = '/umsoknir' }: ApplicationsPageProps) => {
+export const ApplicationsPage = ({
+  slug,
+  basePath = '/umsoknir',
+}: ApplicationsPageProps) => {
   const router = useRouter()
   const { formatMessage } = useLocale()
   const { clearInfo } = useHeaderInfo()

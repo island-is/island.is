@@ -63,7 +63,9 @@ export const ApplicationShell = ({
   const logoKey = screen.header.logo
   const FormLogo =
     logoKey && logoKey in institutionLogos
-      ? (institutionLogos as unknown as Record<string, React.ComponentType>)[logoKey]
+      ? (institutionLogos as unknown as Record<string, React.ComponentType>)[
+          logoKey
+        ]
       : undefined
 
   const displayValues = useDisplayRecompute(
