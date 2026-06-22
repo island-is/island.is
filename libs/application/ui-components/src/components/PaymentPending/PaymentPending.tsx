@@ -101,10 +101,10 @@ export const PaymentPending: FC<
   ])
 
   // A post-payment submission failure keeps the generic error screen below, but
-  // when the TemplateApiError carries a specific reason (e.g. an RLS denial code
-  // resolved to human-readable text) surface that reason as a toast so the user
-  // knows *why* it failed. Only toast for a real provider error reason — never
-  // an extra generic toast on top of the already-generic screen.
+  // when the TemplateApiError carries a specific, user-facing reason (a
+  // structured provider errorReason) surface it as a toast so the applicant
+  // knows *why* the submission failed. Only toast for a real provider error
+  // reason — never an extra generic toast on top of the already-generic screen.
   useEffect(() => {
     if (!submitError || toastedSubmitError.current === submitError) {
       return
