@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, type JSX } from 'react'
 import ClientDTO from '../../../entities/dtos/client-dto'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'

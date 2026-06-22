@@ -43,7 +43,7 @@ function BottomTabsIndicatorInner({ index, total }: BottomTabsIndicatorProps) {
   const h = (1.0 - p) / 2
   const av = useRef(new Animated.Value(index)).current
   const tabWidth = width / total
-  const anim = useRef<Animated.CompositeAnimation>()
+  const anim = useRef<Animated.CompositeAnimation>(undefined)
 
   useEffect(() => {
     if (anim.current) {

@@ -121,8 +121,10 @@ export const GalleryModal: FC<Props> = ({
           alignItems="center"
         >
           <Box className={styles.imageWrap}>
+            {/* React 19 types ReactElement.props as `unknown`, so cloneElement rejects
+                the extra `active` prop; widen the element to keep it compiling. */}
             {childArray.map((item, i) =>
-              cloneElement(item as React.ReactElement, {
+              cloneElement(item as React.ReactElement<any>, {
                 active: i === activeItem,
               }),
             )}

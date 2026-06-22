@@ -21,6 +21,24 @@ const nextConfig = {
     if (!dev && isServer) {
       config.devtool = 'source-map'
     }
+    // @nx/next 22 dropped its built-in SVGR handling. Restore it explicitly so
+    // the named-export style `import { ReactComponent as X } from './x.svg'`
+    // (used in components/Layout) keeps resolving to a React component.
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: require.resolve('@svgr/webpack'),
+          options: {
+            svgo: false,
+            titleProp: true,
+            ref: true,
+            exportType: 'named',
+            namedExport: 'ReactComponent',
+          },
+        },
+      ],
+    })
     return config
   },
   serverRuntimeConfig: {
