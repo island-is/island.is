@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
@@ -8,8 +9,11 @@ import { GET_CUSTOMS_GENERAL_PROHIBITIONS } from '@island.is/web/screens/queries
 import { formatDate } from '@island.is/web/utils/formatDate'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
 import * as styles from './CustomsGeneralProhibitions.css'
+
+const QUERY_PARAM = 'bonnKodi'
 
 interface ProhibitionItem {
   code: string
@@ -18,17 +22,6 @@ interface ProhibitionItem {
   exemptionProvider: string
   validFrom: string
   validTo: string
-}
-
-const formatValidityDate = (
-  iso: string,
-  indefinite: string,
-  locale: string,
-): string => {
-  if (!iso) return indefinite
-  const d = new Date(iso)
-  if (isNaN(d.getTime()) || d.getFullYear() >= 2200) return indefinite
-  return formatDate(d, locale as 'is' | 'en', 'dd.MM.yyyy') ?? indefinite
 }
 
 const LABEL_WIDTH = 220
@@ -85,7 +78,9 @@ const ProhibitionDetailView = ({ item, date, onBack }: DetailViewProps) => {
           paddingBottom={2}
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
-            <Text fontWeight="semiBold">{formatMessage(m.exemptionColumnKey)}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.exemptionColumnKey)}
+            </Text>
           </Box>
           <Text>{item.code}</Text>
         </Box>
@@ -94,7 +89,7 @@ const ProhibitionDetailView = ({ item, date, onBack }: DetailViewProps) => {
           <Box display="flex" flexDirection="row" alignItems="flexStart">
             <Box style={{ minWidth: LABEL_WIDTH }}>
               <Text fontWeight="semiBold">
-                {formatMessage(m.prohibitionValidityPeriod)}
+                {formatMessage(m.exemptionDetailValidityPeriod)}
               </Text>
             </Box>
             <Text>
@@ -129,8 +124,10 @@ const ProhibitionDetailView = ({ item, date, onBack }: DetailViewProps) => {
 
 const CustomsGeneralProhibitions = () => {
   const { formatMessage } = useIntl()
+  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [selectedItem, setSelectedItem] = useState<ProhibitionItem | null>(null)
+
+  const selectedCode = router.query[QUERY_PARAM] as string | undefined
 
   const columns = [
     {
@@ -140,7 +137,10 @@ const CustomsGeneralProhibitions = () => {
         <span className={styles.link}>{String(value ?? '')}</span>
       ),
     },
-    { key: 'name' as const, label: formatMessage(m.exemptionColumnDescription) },
+    {
+      key: 'name' as const,
+      label: formatMessage(m.exemptionColumnDescription),
+    },
   ]
 
   const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_PROHIBITIONS, {
@@ -158,12 +158,28 @@ const CustomsGeneralProhibitions = () => {
     }),
   )
 
+  const selectedItem = selectedCode
+    ? items.find((item) => item.code === selectedCode) ?? null
+    : null
+
+  const handleRowClick = (row: ProhibitionItem) => {
+    router.push(
+      { query: { ...router.query, [QUERY_PARAM]: row.code } },
+      undefined,
+      { shallow: true },
+    )
+  }
+
+  const handleBack = () => {
+    router.back()
+  }
+
   if (selectedItem) {
     return (
       <ProhibitionDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={() => setSelectedItem(null)}
+        onBack={handleBack}
       />
     )
   }
@@ -178,7 +194,7 @@ const CustomsGeneralProhibitions = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      onRowClick={(row) => setSelectedItem(row as ProhibitionItem)}
+      onRowClick={(row) => handleRowClick(row as ProhibitionItem)}
     />
   )
 }
