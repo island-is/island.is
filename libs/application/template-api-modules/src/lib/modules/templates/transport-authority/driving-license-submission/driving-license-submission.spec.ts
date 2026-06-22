@@ -871,7 +871,7 @@ describe('DrivingLicenseSubmissionService', () => {
       )
     })
 
-    it('falls back to the raw title/detail behaviour when the code is not in the table', async () => {
+    it('uses the generic title (never the raw code) when the code is not in the table', async () => {
       newDrivingLicense.mockRejectedValue(
         makeFetchError({ title: 'SOME_UNMAPPED_CODE', detail: 'raw detail' }),
       )
@@ -879,14 +879,16 @@ describe('DrivingLicenseSubmissionService', () => {
 
       const thrown = await submitAndCatch('is')
 
+      // The raw RLS code must never reach the UI — generic title, detail as body.
       expect(reasonOf(thrown)).toMatchObject({
-        title: 'SOME_UNMAPPED_CODE',
+        title: coreErrorMessages.failedDataProviderSubmit,
         summary: 'raw detail',
       })
+      expect(reasonOf(thrown).title).not.toBe('SOME_UNMAPPED_CODE')
       expect(thrown.problem.status).toBe(400)
     })
 
-    it('falls back (best-effort) when the codetable lookup itself throws', async () => {
+    it('falls back to the generic title (best-effort) when the codetable lookup itself throws', async () => {
       newDrivingLicense.mockRejectedValue(
         makeFetchError({ title: 'HAS_POINTS', detail: 'raw detail' }),
       )
@@ -895,9 +897,10 @@ describe('DrivingLicenseSubmissionService', () => {
       const thrown = await submitAndCatch('is')
 
       expect(reasonOf(thrown)).toMatchObject({
-        title: 'HAS_POINTS',
+        title: coreErrorMessages.failedDataProviderSubmit,
         summary: 'raw detail',
       })
+      expect(reasonOf(thrown).title).not.toBe('HAS_POINTS')
     })
 
     it('does not look up a description when the error carries no code', async () => {

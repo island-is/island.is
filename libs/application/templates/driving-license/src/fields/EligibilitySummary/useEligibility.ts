@@ -28,7 +28,6 @@ const QUERY = gql`
         key
         requirementMet
         daysOfResidency
-        errorCode
         messageIs
         messageEn
       }

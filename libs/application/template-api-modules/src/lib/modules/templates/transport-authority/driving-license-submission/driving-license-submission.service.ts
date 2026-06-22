@@ -212,9 +212,13 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
     }
 
+    // `problem.title` is RLS's raw error *code* (not human text), so it must
+    // never become the user-facing title — always fall back to the generic
+    // message. (An unresolved code with a non-empty `summary` would otherwise
+    // leak the raw code into the opt-in submit-error toast.)
     return new TemplateApiError(
       {
-        title: err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
+        title: coreErrorMessages.failedDataProviderSubmit,
         summary: err.problem?.detail || '',
       },
       err.status || 400,
