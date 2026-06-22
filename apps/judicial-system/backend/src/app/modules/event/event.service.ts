@@ -160,7 +160,7 @@ export class EventService {
               formatDate(
                 DateLog.courtDate(theCase.dateLogs)?.date ??
                   DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                'Pp',
+                'dd.MM.y HH:mm',
               ) ?? 'er ekki skráð'
             }`
           : ''
@@ -390,7 +390,7 @@ export class EventService {
         extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??
             DateLog.arraignmentDate(theCase.dateLogs)?.date,
-          'Pp',
+          'dd.MM.y HH:mm',
         )}`
         break
       default:
