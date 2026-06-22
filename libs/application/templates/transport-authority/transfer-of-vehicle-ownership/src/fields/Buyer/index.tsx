@@ -54,7 +54,12 @@ export const Buyer: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
 
   return (
     <Box>
-      <BuyerItem id={id} buyer={buyer} setBuyer={setBuyer} {...props} />
+      <BuyerItem
+        id={id as string}
+        buyer={buyer}
+        setBuyer={setBuyer}
+        {...props}
+      />
     </Box>
   )
 }

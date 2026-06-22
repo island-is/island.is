@@ -329,7 +329,7 @@ export class ZendeskService {
     let jobStatus: CustomObjectJobStatus
     try {
       const response = await axios.post(
-        `${this.api}/custom_objects/${objectKey}/records/jobs`,
+        `${this.api}/custom_objects/${objectKey}/jobs`,
         body,
         this.params,
       )
@@ -357,7 +357,7 @@ export class ZendeskService {
       try {
         const pollUrl =
           jobStatus.url ??
-          `${this.api}/custom_objects/${objectKey}/records/jobs/${jobStatus.id}`
+          `${this.api}/custom_objects/${objectKey}/jobs/${jobStatus.id}`
         const response = await axios.get(pollUrl, this.params)
         jobStatus = response.data.job_status ?? response.data
       } catch (e) {
