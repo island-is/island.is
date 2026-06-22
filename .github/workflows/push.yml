@@ -609,28 +609,6 @@ jobs:
         if: '!needs.pre-checks.outputs.PRE_CHECK'
         run: echo "Build was skipped"
 
-  dora-deployment-test:
-    runs-on: arc-shared
-    if: ${{ needs.prepare.outputs.IMAGES && needs.docker-build.result == 'success' }}
-    needs:
-      - prepare
-      - docker-build
-    steps:
-      - uses: actions/checkout@v4
-      - name: Record deploy start
-        id: dora-start
-        uses: ./.github/actions/dora-deployment
-        with:
-          mode: start
-      - name: Send DORA deployment events
-        uses: ./.github/actions/dora-deployment
-        with:
-          mode: finish
-          dd-api-key: ${{ secrets.DD_API_KEY }}
-          environment: dev
-          services: ${{ needs.prepare.outputs.IMAGES }}
-          started-at: ${{ steps.dora-start.outputs.started-at }}
-
   failure-notification:
     runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'

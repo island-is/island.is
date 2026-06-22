@@ -1,4 +1,3 @@
-// DORA metrics test - remove after validation
 import { bootstrap } from '@island.is/infra-nest-server'
 
 import { AppModule } from './app/app.module'
