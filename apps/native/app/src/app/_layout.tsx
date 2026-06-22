@@ -186,8 +186,8 @@ function RootLayoutNav({
   return (
     <LocaleProvider>
       <AppThemeProvider>
-        <FeatureFlagProvider>
-          <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={apolloClient}>
+          <FeatureFlagProvider>
             <OfflineProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -198,8 +198,8 @@ function RootLayoutNav({
               </Stack>
               <PromptModal />
             </OfflineProvider>
-          </ApolloProvider>
-        </FeatureFlagProvider>
+          </FeatureFlagProvider>
+        </ApolloProvider>
       </AppThemeProvider>
     </LocaleProvider>
   )
