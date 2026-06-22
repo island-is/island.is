@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
+import { formatText, resolveFieldId } from '@island.is/application/core'
 import {
   Application,
+  Field,
   FormValue,
   FieldTypes,
   RecordObject,
@@ -11,6 +12,7 @@ import {
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -31,6 +33,7 @@ const FormMultiField: FC<
     setBeforeSubmitCallback?: SetBeforeSubmitCallback
     setFieldLoadingState?: SetFieldLoadingState
     setSubmitButtonDisabled?: SetSubmitButtonDisabled
+    user?: BffUser
   }>
 > = ({
   application,
@@ -42,8 +45,12 @@ const FormMultiField: FC<
   setBeforeSubmitCallback,
   setFieldLoadingState,
   setSubmitButtonDisabled,
+  user,
 }) => {
-  const { description, children, space = 0 } = multiField
+  const { description, children, space = 0, id: multiFieldId } = multiField
+  const resolvedId = multiFieldId
+    ? resolveFieldId({ id: multiFieldId }, application, user)
+    : undefined
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -76,7 +83,7 @@ const FormMultiField: FC<
         with having the controls nested in the section so I am just interleaving the elements with section "separators" but would be great
         if someone could jump in and fix this.
       */}
-      <Box component="section" width="full" aria-labelledby={multiField.id} />
+      <Box component="section" width="full" aria-labelledby={resolvedId} />
       {children.map((field, index) => {
         const isHalfColumn =
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
@@ -92,9 +99,11 @@ const FormMultiField: FC<
           return null
         }
 
+        const columnKey = resolveFieldId(field as Field, application, user)
+
         return (
           <GridColumn
-            key={field.id || index}
+            key={columnKey || index}
             span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', '1/1', span]}
             paddingBottom={paddingBottom}
           >
@@ -103,7 +112,7 @@ const FormMultiField: FC<
                 application={application}
                 showFieldName
                 field={field as FieldDef}
-                key={field.id}
+                key={columnKey}
                 errors={errors}
                 goToScreen={goToScreen}
                 refetch={refetch}
@@ -111,6 +120,7 @@ const FormMultiField: FC<
                 setFieldLoadingState={setFieldLoadingState}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
                 answerQuestions={answerQuestions}
+                user={user}
               />
             </Box>
           </GridColumn>

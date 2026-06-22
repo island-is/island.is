@@ -14,11 +14,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   addMessagesToQueue,
+  type Message,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
+  IndictmentCaseNotificationType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -45,13 +47,29 @@ export class CourtSessionService {
 
   private addMessagesForConfirmedCourtRecordToQueue(
     caseId: string,
+    courtSession: CourtSession,
     user: TUser,
   ): void {
-    addMessagesToQueue({
-      type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
-      user,
-      caseId,
-    })
+    const messages: Message[] = [
+      {
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+        user,
+        caseId,
+      },
+    ]
+
+    // When a ruling order uploaded during the course of a case is pronounced
+    // in a confirmed court session, the parties are notified about the ruling.
+    if (courtSession.rulingType === CourtSessionRulingType.ORDER) {
+      messages.push({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        user,
+        caseId,
+        body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
+      })
+    }
+
+    addMessagesToQueue(...messages)
   }
 
   create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
@@ -153,7 +171,11 @@ export class CourtSessionService {
     )
 
     if (!existingCourtSession.isConfirmed && updatedCourtSession.isConfirmed) {
-      this.addMessagesForConfirmedCourtRecordToQueue(theCase.id, user)
+      this.addMessagesForConfirmedCourtRecordToQueue(
+        theCase.id,
+        updatedCourtSession,
+        user,
+      )
     }
 
     return updatedCourtSession

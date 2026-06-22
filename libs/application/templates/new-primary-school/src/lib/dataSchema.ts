@@ -193,7 +193,7 @@ export const dataSchema = z.object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
       selectedLanguages: z
-        .array(z.object({ code: z.string().optional().nullable() }))
+        .array(z.object({ code: z.string().nullish() }))
         .optional(),
       preferredLanguage: z.string().optional().nullable(),
     })

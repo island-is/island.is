@@ -17,7 +17,7 @@ export const dataSchema = z.object({
             }),
           )
           .min(1),
-        comment: z.string().min(1),
+        comment: z.string().nullish(),
       }),
     )
     .superRefine((docs, ctx) => {

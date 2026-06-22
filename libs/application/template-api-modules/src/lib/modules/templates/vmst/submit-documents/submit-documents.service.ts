@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService, sharedModuleConfig } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,18 +9,18 @@ import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FetchError } from '@island.is/clients/middlewares'
 import { S3Service } from '@island.is/nest/aws'
-import { ConfigType } from '@nestjs/config'
 import { errorMessages } from '@island.is/application/templates/vmst/submit-documents'
 
 interface DocumentEntry {
   type: string
   file: Array<{ key: string; name: string }>
-  comment: string
+  comment?: string
 }
 
 interface CreatedAttachment {
   attachmentId: string
   attachmentTypeId: string
+  description: string | null
 }
 
 const getMimeType = (fileName: string): string | undefined => {
@@ -54,14 +52,22 @@ const getMimeType = (fileName: string): string | undefined => {
 export class SubmitDocumentsService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
     private readonly s3Service: S3Service,
-    @Inject(sharedModuleConfig.KEY)
-    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.VMST_SUBMIT_DOCUMENTS)
+  }
+
+  async getRequestedAttachments({ auth }: TemplateApiModuleActionProps) {
+    try {
+      const { applicantId } =
+        await this.vmstUnemploymentClientService.resolveApplicant(auth)
+      return await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
+        applicantId,
+      )
+    } catch {
+      return [] // Better to return nothing than fail prereq as this is not vital.
+    }
   }
 
   async checkEligibility({
@@ -148,7 +154,8 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     }
 
     return response.attachmentTypes?.filter(
-      (type) => type.visibleInApplicationDataRequest === true,
+      (type) =>
+        type.visibleInCreateAttachment === true && type.visible === true,
     )
   }
 
@@ -175,6 +182,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       document.file.map((file) => ({
         file,
         attachmentTypeId: document.type,
+        description: document.comment ?? null,
       })),
     )
 
@@ -219,7 +227,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
 
     // Phase 2: Create attachments in parallel in Galdur
     const results = await Promise.allSettled(
-      fileEntries.map(async ({ attachmentTypeId }, i) => {
+      fileEntries.map(async ({ attachmentTypeId, description }, i) => {
         const { content, fileName } = fileContents[i]
         const mimeType = getMimeType(fileName)
 
@@ -247,6 +255,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
           attachmentId: response.attachment.id,
           attachmentTypeId,
           fileName,
+          description,
         }
       }),
     )
@@ -305,6 +314,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
             galdurExternalDomainRequestsApplicantSubmitAttachmentRequestRequest:
               createdAttachments.map((a) => ({
                 attachmentId: a.attachmentId,
+                description: a.description,
               })),
           },
         )

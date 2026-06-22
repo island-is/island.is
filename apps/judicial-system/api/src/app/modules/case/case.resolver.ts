@@ -20,6 +20,7 @@ import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
 import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
+import { SendAppealNotificationInput } from './dto/sendAppealNotification.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
 import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
@@ -247,6 +248,30 @@ export class CaseResolver {
       user.id,
       AuditedAction.SEND_NOTIFICATION,
       backendService.sendNotification(caseId, sendNotification),
+      caseId,
+    )
+  }
+
+  @Mutation(() => SendNotificationResponse, { nullable: true })
+  sendAppealNotification(
+    @Args('input', { type: () => SendAppealNotificationInput })
+    input: SendAppealNotificationInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SendNotificationResponse> {
+    const { caseId, appealCaseId, ...sendAppealNotification } = input
+
+    this.logger.debug(`Sending appeal notification for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_NOTIFICATION,
+      backendService.sendAppealNotification(
+        caseId,
+        appealCaseId,
+        sendAppealNotification,
+      ),
       caseId,
     )
   }

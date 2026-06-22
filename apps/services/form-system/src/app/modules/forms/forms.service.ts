@@ -1206,13 +1206,16 @@ export class FormsService {
         (screen.fields ?? []).map((field) => ({
           field,
           screenIdentifier: screen.identifier,
+          screenTitle: screen.name,
         })),
       )
       .filter(({ field }) => field.fieldType !== FieldTypesEnum.MESSAGE)
-      .map(({ field, screenIdentifier }) => {
+      .map(({ field, screenIdentifier, screenTitle }) => {
         const jsonField = new ApplicationJsonFieldDto()
         jsonField.identifier = field.identifier
         jsonField.screenIdentifier = screenIdentifier
+        jsonField.screenTitle = screenTitle
+        jsonField.fieldTitle = field.name
         jsonField.fieldType = field.fieldType
 
         const settings = new ApplicationJsonFieldSettingsDto()
@@ -1242,6 +1245,7 @@ export class FormsService {
 
     const jsonSample = new ApplicationJsonDto()
     jsonSample.id = uuidV4()
+    jsonSample.organizationNationalId = form.organizationNationalId ?? ''
     jsonSample.slug = form.slug ?? ''
     jsonSample.isTest = true
     jsonSample.status = 'COMPLETED'
@@ -1287,7 +1291,10 @@ export class FormsService {
     if ('bankAccount' in v) v.bankAccount = '0000-00-000000'
 
     if ('time' in v) v.time = '12:34'
-    if ('s3Key' in v) v.s3Key = ['uploads/example.pdf']
+    if ('s3Key' in v)
+      v.s3Key = [
+        'fd1db740-910d-40cd-aa25-d2fb0161261c/d36f7461-3ac5-4702-b292-b638fed83038_nafn-a-skra.pdf',
+      ]
 
     if ('paymentCode' in v) v.paymentCode = 'PAYMENT-CODE-123'
     if ('applicantType' in v) v.applicantType = 'INDIVIDUAL'

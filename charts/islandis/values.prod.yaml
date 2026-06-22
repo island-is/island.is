@@ -50,15 +50,6 @@ air-discount-scheme-api:
             - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.island.is'
-          paths:
-            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -148,16 +139,6 @@ air-discount-scheme-backend:
             - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.island.is'
-          paths:
-            - '/api/swagger'
-            - '/api/public'
   initContainer:
     containers:
       - args:
@@ -263,18 +244,6 @@ air-discount-scheme-web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'loftbru.island.is'
-          paths:
-            - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -352,11 +321,11 @@ api:
     MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
@@ -525,18 +494,6 @@ api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/api'
-        - host: 'www.island.is'
-          paths:
-            - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -647,6 +604,10 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+    SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY'
+    SKATTUR_TOLLUR_ALMENNT_BASE_URL: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL'
+    SKATTUR_TOLLUR_ALMENNT_PASSWORD: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD'
+    SKATTUR_TOLLUR_ALMENNT_USERNAME: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
@@ -731,11 +692,11 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island.is'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
@@ -866,22 +827,6 @@ application-system-api:
             - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'application-payment-callback-xrd.internal.island.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
-        - host: 'application-callback-xrd.internal.island.is'
-          paths:
-            - '/application-payment'
-            - '/applications'
   initContainer:
     containers:
       - args:
@@ -1009,11 +954,11 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
@@ -1147,20 +1092,6 @@ application-system-form:
             - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/umsoknir'
-        - host: 'www.island.is'
-          paths:
-            - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1524,20 +1455,6 @@ consultation-portal:
             - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/samradsgatt'
-        - host: 'www.island.is'
-          paths:
-            - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1610,15 +1527,6 @@ contentful-apps:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'contentful-apps.island.is'
-          paths:
-            - '/'
   namespace: 'contentful-apps'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1686,15 +1594,6 @@ contentful-entry-tagger-service:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'contentful-entry-tagger-service.island.is'
-          paths:
-            - '/'
   namespace: 'contentful-entry-tagger'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1748,6 +1647,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCES_V3_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
@@ -1801,15 +1701,6 @@ download-service:
             - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'api.island.is'
-          paths:
-            - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -1875,11 +1766,11 @@ endorsement-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -2011,20 +1902,6 @@ form-system-web:
             - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/form'
-        - host: 'www.island.is'
-          paths:
-            - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2203,15 +2080,6 @@ island-ui-storybook:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'ui.devland.is'
-          paths:
-            - '/'
   namespace: 'storybook'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2288,15 +2156,6 @@ license-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'license-api-xrd.internal.island.is'
-          paths:
-            - '/'
   namespace: 'license-api'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2426,20 +2285,6 @@ payments:
             - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/greida'
-        - host: 'www.island.is'
-          paths:
-            - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2515,20 +2360,6 @@ portals-admin:
             - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/stjornbord'
-        - host: 'www.island.is'
-          paths:
-            - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2570,11 +2401,11 @@ regulations-admin-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -2617,15 +2448,6 @@ regulations-admin-backend:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'regulations-admin-backend-xrd.internal.island.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -2733,15 +2555,6 @@ search-indexer-service:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'search-indexer-service.island.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -2877,20 +2690,6 @@ service-portal:
             - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/minarsidur'
-        - host: 'www.island.is'
-          paths:
-            - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -2934,11 +2733,11 @@ service-portal-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2985,15 +2784,6 @@ service-portal-api:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'service-portal-api.internal.island.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -3114,20 +2904,6 @@ services-bff-portals-admin:
             - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/stjornbord/bff'
-        - host: 'www.island.is'
-          paths:
-            - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3215,20 +2991,6 @@ services-bff-portals-my-pages:
             - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/bff'
-        - host: 'www.island.is'
-          paths:
-            - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3360,11 +3122,11 @@ services-form-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
@@ -3419,15 +3181,6 @@ services-form-system-api:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-form-system-api.internal.island.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -3620,15 +3373,6 @@ services-payment-flow-update-handler:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payment-flow-update-handler.internal.island.is'
-          paths:
-            - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -3728,25 +3472,6 @@ services-payments:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments.internal.island.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-payments-xrd.internal.island.is'
-          paths:
-            - '/'
   initContainer:
     containers:
       - args:
@@ -3961,15 +3686,6 @@ services-sessions:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'sessions-api.internal.island.is'
-          paths:
-            - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4226,15 +3942,6 @@ services-university-gateway:
             - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'services-university-gateway.internal.island.is'
-          paths:
-            - '/api'
   initContainer:
     containers:
       - args:
@@ -4431,20 +4138,6 @@ skilavottord-web:
             - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/app/skilavottord/'
-        - host: 'www.island.is'
-          paths:
-            - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4523,18 +4216,6 @@ skilavottord-ws:
             - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/app/skilavottord/api/graphql'
-        - host: 'www.island.is'
-          paths:
-            - '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -4622,11 +4303,11 @@ user-notification:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
     PUSH_QUEUE_NAME: 'user-notification-push'
@@ -4689,25 +4370,6 @@ user-notification:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    internal-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification.internal.island.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'user-notification-xrd.internal.island.is'
-          paths:
-            - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -4773,11 +4435,11 @@ user-notification-birthday-worker:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
     PUSH_QUEUE_NAME: 'user-notification-push'
@@ -4983,11 +4645,11 @@ user-notification-worker:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
-    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
-    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraid.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '636b16a3-7f61-4eca-84cb-71e2ad106adb'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
-    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraid.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
     PUSH_QUEUE_NAME: 'user-notification-push'
@@ -5147,20 +4809,6 @@ web:
             - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/'
-        - host: 'www.island.is'
-          paths:
-            - '/'
   namespace: 'islandis'
   podDisruptionBudget:
     minAvailable: '50%'

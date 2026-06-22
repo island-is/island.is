@@ -1,5 +1,6 @@
 import { Passkey } from 'react-native-passkey'
 import {
+  authStore,
   clearLockScreenSuppression,
   suppressLockScreen,
 } from '@/stores/auth-store'
@@ -11,9 +12,18 @@ import {
   addPasskeyAsLoginHint,
   doesUrlSupportPasskey,
 } from '../lib/passkeys/helpers'
+import { AppState } from 'react-native'
 import * as WebBrowser from 'expo-web-browser'
 
 export const openAndSuppressBrowser = async (url: string) => {
+  // Capture the first background timestamp during the session so the grace
+  // check measures time-spent-backgrounded, not total session duration.
+  let backgroundedAt: number | null = null
+  const sub = AppState.addEventListener('change', (state) => {
+    if (state === 'background' && backgroundedAt === null) {
+      backgroundedAt = Date.now()
+    }
+  })
   suppressLockScreen()
   try {
     await WebBrowser.dismissBrowser()?.catch((e) => void 0)
@@ -23,7 +33,21 @@ export const openAndSuppressBrowser = async (url: string) => {
   } catch (error) {
     console.error('Error opening browser:', error)
   } finally {
+    sub.remove()
     clearLockScreenSuppression()
+    // iOS' SFSafariViewController doesn't toggle host AppState on close, so
+    // the AuthLayout listener won't fire — push the lock ourselves.
+    if (backgroundedAt !== null) {
+      authStore.setState({
+        lockScreenActivatedAt: backgroundedAt,
+        biometricAutoPromptedForCurrentLock: false,
+      })
+      const state = authStore.getState()
+      if (!state.lockScreenComponentId && !state.lockScreenPushPending) {
+        authStore.setState({ lockScreenPushPending: true })
+        router.push('/app-lock')
+      }
+    }
   }
 }
 

@@ -10,7 +10,11 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant, DefendantEventLog } from '../../../repository'
+import {
+  CaseRepositoryService,
+  Defendant,
+  DefendantEventLog,
+} from '../../../repository'
 import { CaseInterceptor, transformDefendants } from '../case.interceptor'
 
 const nationalId = '0101010101'
@@ -117,7 +121,9 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
 
   beforeEach(() => {
     givenWhenThen = async (): Promise<Then> => {
-      const interceptor = new CaseInterceptor()
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
       const then = {} as Then
 
       await firstValueFrom(
@@ -294,7 +300,9 @@ describe('CaseInterceptor - reopenReason mapping', () => {
 
   beforeEach(() => {
     givenWhenThen = async (): Promise<Then> => {
-      const interceptor = new CaseInterceptor()
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
       const then = {} as Then
 
       await firstValueFrom(
