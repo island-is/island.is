@@ -15,7 +15,7 @@ export const prosecutorNotificationRule: RolesRule = {
     RequestCaseNotificationType.READY_FOR_COURT,
     RequestCaseNotificationType.CASE_FILES_UPDATED,
   ],
-} as RolesRule
+}
 
 // Allows defenders to send notifications
 export const defenderNotificationRule: RolesRule = {
@@ -23,7 +23,7 @@ export const defenderNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [RequestCaseNotificationType.CASE_FILES_UPDATED],
-} as RolesRule
+}
 
 // Allows prosecutors to send appeal case notifications
 export const prosecutorAppealNotificationRule: RolesRule = {
@@ -31,7 +31,7 @@ export const prosecutorAppealNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED],
-} as RolesRule
+}
 
 // Allows defenders to send appeal case notifications
 export const defenderAppealNotificationRule: RolesRule = {
@@ -39,7 +39,7 @@ export const defenderAppealNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED],
-} as RolesRule
+}
 
 // Allows district court judges to send notifications
 export const districtCourtJudgeNotificationRule: RolesRule = {
