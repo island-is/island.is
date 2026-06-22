@@ -64,6 +64,7 @@ import {
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
@@ -76,7 +77,6 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { FileService, PoliceDigitalCaseFileService } from '../file'
-import { sortCaseFilesByOrder } from '../file/utils/sortCaseFiles'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
@@ -815,7 +815,7 @@ export class CaseService {
       },
     )
 
-    const sortedCaseFiles = sortCaseFilesByOrder(theCase.caseFiles ?? [])
+    const sortedCaseFiles = sortCaseFiles(theCase.caseFiles ?? [])
 
     for (const caseFile of sortedCaseFiles) {
       if (

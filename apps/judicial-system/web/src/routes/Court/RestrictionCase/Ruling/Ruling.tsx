@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -39,7 +40,6 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { getConclusionAutofill } from './Ruling.logic'

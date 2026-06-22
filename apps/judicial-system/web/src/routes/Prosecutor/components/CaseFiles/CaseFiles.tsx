@@ -319,7 +319,7 @@ export const CaseFiles = () => {
           <section>
             <SectionHeading
               title={formatMessage(strings.filesHeading)}
-              description={formatMessage(strings.filesDescriptionWithCourtRule)}
+              description="Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti."
             />
             <ReorderableFileUpload
               files={uploadFiles.filter((file) => !file.category)}

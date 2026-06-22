@@ -18,9 +18,9 @@ import {
 
 import { Box, Button, FileUploadStatus, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 
 import { TUploadFile } from '../../utils/hooks'
-import { sortCaseFiles } from '../../utils/sortCaseFiles'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import * as styles from './ReorderableFileUpload.css'
 
@@ -213,11 +213,7 @@ const ReorderableFileUpload: FC<ReorderableFileUploadProps> = (props) => {
     await onReorder(updates)
   }
 
-  const handleRename = async (
-    fileId: string,
-    newName: string,
-    _displayDate: string,
-  ) => {
+  const handleRename = async (fileId: string, newName: string) => {
     await onRename(fileId, newName)
   }
 

@@ -79,6 +79,9 @@ export {
   PoliceFileTypeCode,
 } from './lib/file'
 
+export { sortCaseFiles } from './lib/sortCaseFiles'
+export type { CaseFileOrderFields } from './lib/sortCaseFiles'
+
 export {
   UserRole,
   DefenderSubRole,

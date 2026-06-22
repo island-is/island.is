@@ -1,10 +1,10 @@
 export type CaseFileOrderFields = {
   orderWithinChapter?: number | null
-  created?: string | null
+  created?: Date | string | null
 }
 
 /**
- * Sort uncategorized case files for display.
+ * Sort uncategorized case files for display and court delivery.
  * - Legacy cases (no file has orderWithinChapter): preserve input order unchanged.
  * - Ordered cases: sort by orderWithinChapter; nulls last, then created ASC.
  */

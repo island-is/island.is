@@ -15,6 +15,7 @@ import {
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -53,7 +54,6 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 

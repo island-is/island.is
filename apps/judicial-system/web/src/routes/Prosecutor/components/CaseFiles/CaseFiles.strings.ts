@@ -37,13 +37,6 @@ export const caseFiles = defineMessages({
     description:
       'Notaður sem skýring fyrir "rannsóknargögn" hlutann á síðunni Rannsóknargögn',
   },
-  filesDescriptionWithCourtRule: {
-    id: 'judicial.system.core:case_files.files_description_with_court_rule',
-    defaultMessage:
-      'Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti.',
-    description:
-      'Notaður sem skýring fyrir "rannsóknargögn" hlutann á síðunni Rannsóknargögn, með reglum dómstólasýslunnar',
-  },
   filesLabel: {
     id: 'judicial.system.core:case_files.files_label',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',

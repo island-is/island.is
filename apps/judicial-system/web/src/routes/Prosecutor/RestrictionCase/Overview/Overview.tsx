@@ -15,6 +15,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -57,7 +58,6 @@ import {
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { sortCaseFiles } from '@island.is/judicial-system-web/src/utils/sortCaseFiles'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
