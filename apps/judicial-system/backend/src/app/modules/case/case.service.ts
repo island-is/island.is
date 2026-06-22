@@ -1859,6 +1859,7 @@ export class CaseService {
               isSentToPrisonAdmin: false,
               indictmentReviewDecision: null,
               publicProsecutorIsRegisteredInPoliceSystem: null,
+              isDrivingLicenseSuspended: null,
             },
             transaction,
           ),
