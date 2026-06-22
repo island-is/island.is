@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-firearm-license',
   preset: './jest.preset.js',
   rootDir: '../../..',

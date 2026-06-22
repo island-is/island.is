@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'services-auth-personal-representative-public',
   preset: './jest.preset.js',
   rootDir: '../../../..',

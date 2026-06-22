@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-hms-loans',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

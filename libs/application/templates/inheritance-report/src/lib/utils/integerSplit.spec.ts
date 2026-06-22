@@ -79,15 +79,15 @@ describe('integerPercentageSplit', () => {
   it('should throw an error when percentages do not add up to 100', () => {
     expect(() => {
       integerPercentageSplit(0, [1, 2, 3])
-    }).toThrowError('Percentages must add up to 100 exactly')
+    }).toThrow('Percentages must add up to 100 exactly')
 
     expect(() => {
       integerPercentageSplit(0, [99, 999, 9999])
-    }).toThrowError('Percentages must add up to 100 exactly')
+    }).toThrow('Percentages must add up to 100 exactly')
 
     expect(() => {
       integerPercentageSplit(0, [33.333, 33.333, 33.333])
-    }).toThrowError('Percentages must add up to 100 exactly')
+    }).toThrow('Percentages must add up to 100 exactly')
 
     // Should be tolerant for 100-d ~= 100 when d is tiny (see tolerance value in function)
     // Usually errors are around 1e-14 in size but we may as well select ~1.0e-10 for some leeway
@@ -103,14 +103,14 @@ describe('integerPercentageSplit', () => {
   it('should throw an error when some percentage is negative', () => {
     expect(() => {
       integerPercentageSplit(0, [100, -10, 10])
-    }).toThrowError('A percentage may not be negative')
+    }).toThrow('A percentage may not be negative')
 
     expect(() => {
       integerPercentageSplit(
         0,
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -5],
       )
-    }).toThrowError('A percentage may not be negative')
+    }).toThrow('A percentage may not be negative')
   })
 })
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'car-recycling',
   preset: '../../../../jest.preset.js',
   transform: {
