@@ -302,11 +302,17 @@ export default function HomeScreen() {
   // Check if the app version is below the minimum supported version and navigate to the update screen if so
   useEffect(() => {
     const currentVersion = Application.nativeApplicationVersion ?? ''
-    if (compareVersions.compare(minimumVersionSupported, currentVersion, '>')) {
-      router.navigate({
-        pathname: '/update-app',
-        params: { closable: String(false) },
-      })
+    try {
+      if (
+        compareVersions.compare(minimumVersionSupported, currentVersion, '>')
+      ) {
+        router.navigate({
+          pathname: '/update-app',
+          params: { closable: String(false) },
+        })
+      }
+    } catch {
+      // Malformed version string from the feature flag — skip the gate.
     }
   }, [minimumVersionSupported])
 
