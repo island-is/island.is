@@ -401,6 +401,95 @@ export const getDefenderVisiblePoliceCaseNumbers = (
   )
 }
 
+export const getSpokespersonVisiblePoliceCaseNumbers = (
+  userNationalId: string,
+  civilClaimants: CivilClaimant[] | undefined,
+  defendants: Defendant[] | undefined,
+  allPoliceCaseNumbers: string[],
+): string[] => {
+  const myClaimants = (civilClaimants ?? []).filter(
+    (civilClaimant) =>
+      civilClaimant.hasSpokesperson &&
+      civilClaimant.isSpokespersonConfirmed &&
+      civilClaimant.caseFilesSharedWithSpokesperson &&
+      civilClaimant.spokespersonNationalId === userNationalId,
+  )
+
+  if (myClaimants.length === 0) {
+    return []
+  }
+
+  if (myClaimants.some((civilClaimant) => !civilClaimant.policeCaseNumbers?.length)) {
+    return allPoliceCaseNumbers
+  }
+
+  const assignedToMe = new Set(
+    myClaimants.flatMap((civilClaimant) => civilClaimant.policeCaseNumbers ?? []),
+  )
+
+  const allAssignedToDefendants = new Set(
+    (defendants ?? []).flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+  )
+
+  if (allAssignedToDefendants.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) ||
+      !allAssignedToDefendants.has(policeCaseNumber),
+  )
+}
+
+export const getDefenceUserVisiblePoliceCaseNumbers = (
+  userNationalId: string,
+  defendants: Defendant[] | undefined,
+  civilClaimants: CivilClaimant[] | undefined,
+  allPoliceCaseNumbers: string[],
+): string[] => {
+  const isDefender = Defendant.isConfirmedDefenderOfDefendant(
+    userNationalId,
+    defendants,
+  )
+  const isSpokesperson =
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      userNationalId,
+      civilClaimants,
+    )
+
+  if (!isDefender && !isSpokesperson) {
+    return allPoliceCaseNumbers
+  }
+
+  const visibleNumbers = new Set<string>()
+
+  if (isDefender) {
+    for (const policeCaseNumber of getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  if (isSpokesperson) {
+    for (const policeCaseNumber of getSpokespersonVisiblePoliceCaseNumbers(
+      userNationalId,
+      civilClaimants,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  return allPoliceCaseNumbers.filter((policeCaseNumber) =>
+    visibleNumbers.has(policeCaseNumber),
+  )
+}
+
 export const getConfirmedDefendantsForDefender = (
   userNationalId: string,
   defendants?: Defendant[],
