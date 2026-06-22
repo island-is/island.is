@@ -75,7 +75,9 @@ export class DrivingLicenseApi {
   }
 
   // Static, shared reference data (no jwttoken / national ID), so the full
-  // catalogue is memoised once per instance. Failures are not cached.
+  // catalogue is memoised once per instance. Empty and failed responses are not
+  // cached, so a transient blip retries on the next call rather than disabling
+  // descriptions on this pod until restart.
   private errorCodeDescriptionsCache?: Promise<v5.DtoErrorCodeDescriptionDto[]>
 
   public async getErrorCodeDescriptions(): Promise<
@@ -87,8 +89,16 @@ export class DrivingLicenseApi {
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
-        // Guard a null body, mirroring getRemarksCodeTable above.
-        .then((codeTable) => codeTable ?? [])
+        .then((codeTable) => {
+          // A null/empty body (mirrors the guard in getRemarksCodeTable) is
+          // almost certainly a transient blip rather than RLS having zero
+          // codes, so don't memoise it — clear the cache and retry next call.
+          if (!codeTable || codeTable.length === 0) {
+            this.errorCodeDescriptionsCache = undefined
+            return []
+          }
+          return codeTable
+        })
         .catch((e) => {
           this.errorCodeDescriptionsCache = undefined
           throw e

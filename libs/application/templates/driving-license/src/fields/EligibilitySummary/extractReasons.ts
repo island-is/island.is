@@ -1,7 +1,7 @@
 import { MessageDescriptor } from 'react-intl'
 import { requirementsMessages } from '../../lib/messages'
 import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
-import { ReviewSectionState, Step } from './ReviewSection'
+import { ReviewSectionState, Step } from './ReviewSection/types'
 
 export const extractReasons = (
   eligibility: ApplicationEligibility,
@@ -44,9 +44,8 @@ const getDeniedByServiceMessageDescription = (
 }
 
 // The returned description is rendered by ReviewSection. For uncurated RLS
-// codes it is an already-translated string (currently Icelandic-only — see the
-// eligibility resolver) rather than a MessageDescriptor; proper en/is handling
-// for those strings is still a TODO.
+// codes it is an already-translated string (extractReasons has already picked
+// the current locale's text) rather than a MessageDescriptor.
 const requirementKeyToStep = (
   key: RequirementKey,
   requirementMet: boolean,

@@ -278,7 +278,7 @@ export class DrivingLicenseService {
     const canApply = await this.canApplyFor(type, token)
 
     // For an unmet can-apply denial, resolve RLS's own description for the raw
-    // error code (Icelandic for now) so the UI can surface it instead of the
+    // error code (both languages) so the UI can surface it instead of the
     // generic fallback for codes we don't curate ourselves.
     //
     // Limited to B-full / B-temp for now: their can-apply error codes are
