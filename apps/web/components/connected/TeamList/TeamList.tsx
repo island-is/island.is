@@ -5,6 +5,7 @@ import { isDefined } from '@island.is/shared/utils'
 import {
   ConnectedComponent,
   IcelandicGovernmentEmployee,
+  LocaleEnum,
   Query,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -52,7 +53,11 @@ const ConnectedTeamList = ({ slice }: Props) => {
 
   const { data, error } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
     variables: {
-      input: { locale: activeLocale, organizationId, activeOnly: true },
+      input: {
+          locale: activeLocale === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+          organizationId,
+          activeOnly: true,
+        },
     },
     onError(error) {
       console.error('Error fetching team members:', error)
