@@ -29,8 +29,7 @@ describe('sync-codeowners', () => {
     })
 
     it('skips paths deeper than 2 levels under /apps/', () => {
-      const content =
-        '/apps/web/screens/PetitionView/  @island-is/juni'
+      const content = '/apps/web/screens/PetitionView/  @island-is/juni'
       const result = parseCodeowners(content)
       expect(result.size).toBe(0)
     })
@@ -143,7 +142,10 @@ describe('sync-codeowners', () => {
 
   describe('upsertServiceDefinition', () => {
     it('calls Datadog API with correct URL and headers', async () => {
-      const mockResponse = { ok: true, json: () => Promise.resolve({ data: {} }) }
+      const mockResponse = {
+        ok: true,
+        json: () => Promise.resolve({ data: {} }),
+      }
       const mockFetch = jest.fn(() => Promise.resolve(mockResponse))
       globalThis.fetch = mockFetch
 

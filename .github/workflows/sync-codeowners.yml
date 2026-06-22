@@ -5,7 +5,11 @@ on:
     branches: [main]
     paths: ['.github/CODEOWNERS']
   pull_request:
-    paths: ['.github/CODEOWNERS', '.github/actions/dora-deployment/sync-codeowners.mjs']
+    paths:
+      [
+        '.github/CODEOWNERS',
+        '.github/actions/dora-deployment/sync-codeowners.mjs',
+      ]
   workflow_dispatch: {}
 
 jobs:

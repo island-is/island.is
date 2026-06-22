@@ -67,7 +67,10 @@ export function buildServiceDefinition(serviceName, teams) {
 /**
  * Upsert a service definition to Datadog.
  */
-export async function upsertServiceDefinition(definition, { apiKey, appKey, site }) {
+export async function upsertServiceDefinition(
+  definition,
+  { apiKey, appKey, site },
+) {
   const url = `https://api.${site}/api/v2/services/definitions`
   const res = await fetch(url, {
     method: 'POST',
