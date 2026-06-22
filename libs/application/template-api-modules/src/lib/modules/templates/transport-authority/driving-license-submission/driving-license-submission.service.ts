@@ -189,8 +189,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         // Icelandic (mirrors the eligibility screen).
         const localized = locale === 'en' ? described?.en : described?.is
         if (localized) {
+          // Generic header + the RLS text as the body. Both fields must be
+          // non-empty: the payment screen's getErrorReasonIfPresent only treats
+          // a reason as a real provider error (and renders our text) when title
+          // AND summary are set — and RLS often sends a code with no
+          // `problem.detail`, so the text must go in `summary`, not `title`.
           return new TemplateApiError(
-            { title: localized, summary: err.problem?.detail || '' },
+            {
+              title: coreErrorMessages.failedDataProviderSubmit,
+              summary: localized,
+            },
             err.status || 400,
           )
         }

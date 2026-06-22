@@ -19,6 +19,13 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
 import { ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
+import {
+  coreErrorMessages,
+  getErrorReasonIfPresent,
+} from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
+import type { ProviderErrorReason } from '@island.is/shared/problem'
+import type { Locale } from '@island.is/shared/types'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService
@@ -808,34 +815,27 @@ describe('DrivingLicenseSubmissionService', () => {
       service = module.get(DrivingLicenseSubmissionService)
     })
 
-    it('surfaces the Icelandic RLS description when the code is in the table (is locale)', async () => {
-      newDrivingLicense.mockRejectedValue(
-        makeFetchError({ title: 'HAS_POINTS', detail: 'raw detail' }),
-      )
-      describeErrorCode.mockResolvedValue({
-        is: 'Einstaklingur hefur punkta á skírteini',
-        en: 'Person has points on their license',
-      })
+    const reasonOf = (thrown: TemplateApiError) =>
+      (thrown.problem as unknown as { errorReason: ProviderErrorReason })
+        .errorReason
 
-      await expect(
-        service.submitApplication({
+    // Capture the rejected TemplateApiError so we can run its reason through the
+    // same helper the payment screen uses to decide what to render.
+    const submitAndCatch = (locale: Locale): Promise<TemplateApiError> =>
+      service
+        .submitApplication({
           application: buildApplication(),
           auth: createCurrentUser(),
-          currentUserLocale: 'is',
-        }),
-      ).rejects.toMatchObject({
-        problem: {
-          errorReason: {
-            title: 'Einstaklingur hefur punkta á skírteini',
-            summary: 'raw detail',
-          },
-          status: 400,
-        },
-      })
-      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
-    })
+          currentUserLocale: locale,
+        })
+        .then(
+          () =>
+            Promise.reject(new Error('expected submitApplication to reject')),
+          (e: TemplateApiError) => e,
+        )
 
-    it('surfaces the English RLS description for an en user', async () => {
+    it('renders the Icelandic RLS description on the payment screen, even with no problem.detail', async () => {
+      // No `detail` is exactly the shape that used to be dropped to generic copy.
       newDrivingLicense.mockRejectedValue(
         makeFetchError({ title: 'HAS_POINTS' }),
       )
@@ -844,37 +844,46 @@ describe('DrivingLicenseSubmissionService', () => {
         en: 'Person has points on their license',
       })
 
-      await expect(
-        service.submitApplication({
-          application: buildApplication(),
-          auth: createCurrentUser(),
-          currentUserLocale: 'en',
-        }),
-      ).rejects.toMatchObject({
-        problem: {
-          errorReason: { title: 'Person has points on their license' },
-        },
-      })
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
+      // getErrorReasonIfPresent keeps a reason only when title AND summary are
+      // non-empty; our text rides in `summary`, so the screen shows it instead
+      // of the generic fallback.
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Einstaklingur hefur punkta á skírteini',
+      )
     })
 
-    it('falls back to the raw title/detail when the code is not in the table', async () => {
+    it('renders the English RLS description for an en user', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS' }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      const thrown = await submitAndCatch('en')
+
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Person has points on their license',
+      )
+    })
+
+    it('falls back to the raw title/detail behaviour when the code is not in the table', async () => {
       newDrivingLicense.mockRejectedValue(
         makeFetchError({ title: 'SOME_UNMAPPED_CODE', detail: 'raw detail' }),
       )
       describeErrorCode.mockResolvedValue(null)
 
-      await expect(
-        service.submitApplication({
-          application: buildApplication(),
-          auth: createCurrentUser(),
-          currentUserLocale: 'is',
-        }),
-      ).rejects.toMatchObject({
-        problem: {
-          errorReason: { title: 'SOME_UNMAPPED_CODE', summary: 'raw detail' },
-          status: 400,
-        },
+      const thrown = await submitAndCatch('is')
+
+      expect(reasonOf(thrown)).toMatchObject({
+        title: 'SOME_UNMAPPED_CODE',
+        summary: 'raw detail',
       })
+      expect(thrown.problem.status).toBe(400)
     })
 
     it('falls back (best-effort) when the codetable lookup itself throws', async () => {
@@ -883,17 +892,26 @@ describe('DrivingLicenseSubmissionService', () => {
       )
       describeErrorCode.mockRejectedValue(new Error('codetable down'))
 
-      await expect(
-        service.submitApplication({
-          application: buildApplication(),
-          auth: createCurrentUser(),
-          currentUserLocale: 'is',
-        }),
-      ).rejects.toMatchObject({
-        problem: {
-          errorReason: { title: 'HAS_POINTS', summary: 'raw detail' },
-          status: 400,
-        },
+      const thrown = await submitAndCatch('is')
+
+      expect(reasonOf(thrown)).toMatchObject({
+        title: 'HAS_POINTS',
+        summary: 'raw detail',
+      })
+    })
+
+    it('does not look up a description when the error carries no code', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ detail: 'raw detail' }),
+      )
+
+      const thrown = await submitAndCatch('is')
+
+      expect(describeErrorCode).not.toHaveBeenCalled()
+      // No code → generic title with the raw detail as summary (unchanged).
+      expect(reasonOf(thrown)).toMatchObject({
+        title: coreErrorMessages.failedDataProviderSubmit,
+        summary: 'raw detail',
       })
     })
   })
