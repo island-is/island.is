@@ -10,5 +10,9 @@ export function getFeatureFlagValue<T extends boolean | string | number>(
   key: string,
   defaultValue: T,
 ): T {
-  return (flagCache[key] as T) ?? defaultValue
+  const cached = flagCache[key]
+  if (typeof cached === typeof defaultValue) {
+    return cached as T
+  }
+  return defaultValue
 }
