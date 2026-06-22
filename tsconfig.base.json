@@ -5,9 +5,6 @@
       "@/*": [
         "${configDir}/src/*"
       ],
-      "@island.is/air-discount-scheme-web/*": [
-        "apps/air-discount-scheme/web/*"
-      ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
       ],
@@ -58,6 +55,9 @@
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
       ],
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
@@ -464,9 +464,6 @@
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
-      "@island.is/application/templates/grindavik-housing-buyout": [
-        "libs/application/templates/grindavik-housing-buyout/src/index.ts"
-      ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
@@ -478,6 +475,9 @@
       ],
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/housing-benefits": [
+        "libs/application/templates/hms/housing-benefits/src/index.ts"
       ],
       "@island.is/application/templates/hms/registration-of-new-property-numbers": [
         "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
@@ -754,6 +754,9 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
+      ],
       "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
@@ -799,18 +802,10 @@
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],
-      "@island.is/clients/farmers": [
-        "libs/clients/farmers/src/index.ts"
-      ],
-      "@island.is/clients/finance": [
-        "libs/clients/finance/src/index.ts"
-      ],
-      "@island.is/clients/finance-v2": [
-        "libs/clients/finance-v2/src/index.ts"
-      ],
-      "@island.is/clients/finance-v3": [
-        "libs/clients/finance-v3/src/index.ts"
-      ],
+      "@island.is/clients/farmers": ["libs/clients/farmers/src/index.ts"],
+      "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "@island.is/clients/financial-management-authority": [
         "libs/clients/financial-management-authority/src/index.ts"
       ],
@@ -882,15 +877,9 @@
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
-      "@island.is/clients/mms": [
-        "libs/clients/mms/general/src/index.ts"
-      ],
-      "@island.is/clients/mms/frigg": [
-        "libs/clients/mms/frigg/src/index.ts"
-      ],
-      "@island.is/clients/mms/grade": [
-        "libs/clients/mms/grade/src/index.ts"
-      ],
+      "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
+      "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
+      "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/mms/primary-school": [
         "libs/clients/mms/primary-school/src/index.ts"
       ],
@@ -1377,9 +1366,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "my-pages": [
-        "libs/api/domains/my-pages/src/index.ts"
-      ]
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
   }

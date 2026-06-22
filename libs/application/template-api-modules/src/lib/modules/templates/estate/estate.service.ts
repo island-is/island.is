@@ -15,6 +15,10 @@ import { infer as zinfer } from 'zod'
 import {
   estateSchema,
   nationalIdsMatch,
+  // estate's checkbox/schema write its local YES ('Yes'); the opt-in guard
+  // below must compare against that value, not core YES ('yes'), otherwise
+  // the copy-email path never fires.
+  YES,
 } from '@island.is/application/templates/estate'
 import {
   estateTransformer,
@@ -26,11 +30,7 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationAttachments,
   AttachmentPaths,
@@ -424,6 +424,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
+    if (
+      answers.selectedEstate === EstateTypes.officialDivision ||
+      answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ) {
+      this.logger.info(
+        '[estate]: Skipping getSignatories API for estate type without signatories',
+        { selectedEstate: answers.selectedEstate },
+      )
+      return {
+        success: true,
+        signatories: [],
+      }
+    }
 
     const syslumennData = application.externalData?.syslumennOnEntry?.data as
       | { estates: Array<EstateInfo> }
@@ -472,8 +485,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const estateTypeMap: Record<string, SignatoryEstateTypes> = {
       [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
       [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
-      [EstateTypes.officialDivision]: SignatoryEstateTypes.OpinberSkipti,
-      [EstateTypes.estateWithoutAssets]: SignatoryEstateTypes.Eignaleysi,
     }
 
     const estateType = estateTypeMap[selectedEstate]

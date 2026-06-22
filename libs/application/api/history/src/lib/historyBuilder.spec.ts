@@ -128,7 +128,6 @@ describe('HistoryBuilder', () => {
     expect(result[0].date).toEqual(exitTimestamp)
     expect(formatMessage).toHaveBeenCalledWith(
       coreHistoryMessages.paymentStarted,
-      undefined,
     )
     expect(result[0].subLog).toBeUndefined()
   })
@@ -170,7 +169,6 @@ describe('HistoryBuilder', () => {
 
     expect(formatMessage).toHaveBeenCalledWith(
       coreHistoryMessages.applicationApprovedBy,
-      undefined,
     )
   })
 

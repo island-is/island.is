@@ -9,6 +9,8 @@ import {
 import {
   AlertMessageField,
   Application,
+  SetFieldLoadingState,
+  SetSubmitButtonDisabled,
   AsyncSelectField,
   DescriptionField,
   FieldComponents,
@@ -52,6 +54,8 @@ interface ItemFieldProps {
   dataId: string
   activeIndex: number
   values: Array<Record<string, string>>
+  setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }
 
 const componentMapper = {
@@ -72,6 +76,8 @@ export const Item = ({
   dataId,
   activeIndex,
   values,
+  setFieldLoadingState,
+  setSubmitButtonDisabled,
 }: ItemFieldProps) => {
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
@@ -531,6 +537,8 @@ export const Item = ({
             ...fileUploadProps,
           }}
           showFieldName={true}
+          setFieldLoadingState={setFieldLoadingState}
+          setSubmitButtonDisabled={setSubmitButtonDisabled}
         />
       )}
       {!(component === 'selectAsync' && selectAsyncProps) &&

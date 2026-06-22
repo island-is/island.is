@@ -46,7 +46,7 @@ const SelectSchool: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </GridColumn>
         <GridColumn span={'12/12'}>
           <RadioController
-            id={id}
+            id={id as string}
             split="1/3"
             smallScreenSplit="1/1"
             largeButtons={true}
@@ -54,7 +54,7 @@ const SelectSchool: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             options={options}
             error={error}
             backgroundColor="white"
-            onSelect={(value) => setValue(id, value)}
+            onSelect={(value) => setValue(id as string, value)}
           />
         </GridColumn>
       </GridRow>

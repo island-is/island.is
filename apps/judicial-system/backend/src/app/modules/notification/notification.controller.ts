@@ -19,20 +19,24 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
+import { AppealCaseExistsGuard, CurrentAppealCase } from '../appeal-case'
 import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { Case } from '../repository'
+import { AppealCase, Case } from '../repository'
+import { AppealNotificationDto } from './dto/appealNotification.dto'
 import { NotificationDto } from './dto/notification.dto'
 import {
+  defenderAppealNotificationRule,
   defenderNotificationRule,
   districtCourtAssistantNotificationRule,
   districtCourtJudgeNotificationRule,
   districtCourtRegistrarNotificationRule,
+  prosecutorAppealNotificationRule,
   prosecutorNotificationRule,
 } from './guards/rolesRules'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './services/notification.service'
 
-@Controller('api/case/:caseId/notification')
+@Controller('api/case/:caseId')
 @ApiTags('notifications')
 @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
 export class NotificationController {
@@ -49,7 +53,7 @@ export class NotificationController {
     districtCourtAssistantNotificationRule,
     defenderNotificationRule,
   )
-  @Post()
+  @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
     description: 'Adds a new notification for an existing case to queue',
@@ -69,6 +73,32 @@ export class NotificationController {
       notificationDto.eventOnly,
       theCase,
       user,
+    )
+  }
+
+  @UseGuards(CaseWriteGuard, AppealCaseExistsGuard)
+  @RolesRules(prosecutorAppealNotificationRule, defenderAppealNotificationRule)
+  @Post('appeal/:appealCaseId/notification')
+  @ApiCreatedResponse({
+    type: SendNotificationResponse,
+    description: 'Adds a new appeal case notification to queue',
+  })
+  sendAppealNotification(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealCase() appealCase: AppealCase,
+    @Body() appealNotificationDto: AppealNotificationDto,
+  ): Promise<SendNotificationResponse> {
+    this.logger.debug(
+      `Adding ${appealNotificationDto.type} appeal notification for appeal case ${appealCase.id} of case ${caseId} to queue`,
+    )
+
+    return this.notificationService.addMessagesForAppealNotificationToQueue(
+      appealNotificationDto.type,
+      theCase,
+      user,
+      appealCase.id,
     )
   }
 }

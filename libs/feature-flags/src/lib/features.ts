@@ -16,7 +16,6 @@ export enum Features {
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
-  grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   officialJournalOfIcelandRegulations = 'isOjoiRegulationApplicationPathEnabled',
   legalGazette = 'isLegalGazetteEnabled',
@@ -205,6 +204,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+  // Housing Benefits
+  isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }

@@ -42,7 +42,7 @@ export const MainContent = () => {
   const { formatMessage } = useIntl()
 
   const showIdentifier =
-    form.useValidate && (activeItem.data as FormSystemScreen)?.shouldValidate
+    form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
 
   const activeScreen =
     activeItem.type === 'Screen'
@@ -66,7 +66,7 @@ export const MainContent = () => {
     (activeScreen?.isMulti ?? false) && screenHasMultisetFields
 
   return (
-    <Box>
+    <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&

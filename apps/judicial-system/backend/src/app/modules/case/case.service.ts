@@ -481,12 +481,20 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-        user,
-        caseId: theCase.id,
-        elementId: defendant.id,
-      })
+      addMessagesToQueue(
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId: theCase.id,
+          elementId: defendant.id,
+        },
+      )
     }
   }
 
@@ -2372,6 +2380,18 @@ export class CaseService {
     }
 
     return extendedCase
+  }
+
+  async duplicateIndictmentCase(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
+    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
+      transaction,
+      prosecutorId: user.id,
+      prosecutorsOfficeId: user.institution?.id,
+    })
   }
 
   async splitDefendantFromCase(

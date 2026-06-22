@@ -4,7 +4,6 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   AppealCaseNotificationType,
-  RequestCaseNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -14,7 +13,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -33,6 +32,7 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const appealCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -48,45 +48,49 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
     givenWhenThen = async (userIds?: string[]) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealReceivedByCourtDate: receivedDate,
+        appealAssistant: {
+          name: assistant.name,
+          email: assistant.email,
+          id: assistant.id,
+          role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+        },
+        appealAssistantId: assistant.id,
+        appealJudge1: {
+          name: judge1.name,
+          email: judge1.email,
+          id: judge1.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+        appealJudge1Id: judge1.id,
+        appealJudge2: {
+          name: judge2.name,
+          email: judge2.email,
+          id: judge2.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+        appealJudge3: {
+          name: judge3.name,
+          email: judge3.email,
+          id: judge3.id,
+          role: UserRole.COURT_OF_APPEALS_JUDGE,
+        },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
-            appealCase: {
-              appealCaseNumber,
-              appealReceivedByCourtDate: receivedDate,
-              appealAssistant: {
-                name: assistant.name,
-                email: assistant.email,
-                id: assistant.id,
-                role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-              },
-              appealAssistantId: assistant.id,
-              appealJudge1: {
-                name: judge1.name,
-                email: judge1.email,
-                id: judge1.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-              appealJudge1Id: judge1.id,
-              appealJudge2: {
-                name: judge2.name,
-                email: judge2.email,
-                id: judge2.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-              appealJudge3: {
-                name: judge3.name,
-                email: judge3.email,
-                id: judge3.id,
-                role: UserRole.COURT_OF_APPEALS_JUDGE,
-              },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
-            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED as unknown as RequestCaseNotificationType,
+            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
             userIds,
           },
         )
