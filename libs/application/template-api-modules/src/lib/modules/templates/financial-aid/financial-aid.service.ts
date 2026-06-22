@@ -176,67 +176,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     }),
   }
 
-  private fakeApplicationResponse: ApplicationModel = {
-    id: '12345678-1234-1234-1234-123456789012',
-    created: new Date('2026-02-20T10:00:00Z'),
-    modified: new Date('2026-02-20T10:00:00Z'),
-    appliedDate: new Date('2026-02-20T10:00:00Z'),
-    nationalId: '0101302989', // Example national id
-    name: 'Gervimaður Færeyjar',
-    phoneNumber: '5555555',
-    email: 'gervimadur@island.is',
-    homeCircumstances: ApplicationModelHomeCircumstancesEnum.OwnPlace,
-    homeCircumstancesCustom: '',
-    employment: ApplicationModelEmploymentEnum.Working,
-    employmentCustom: '',
-    student: false,
-    studentCustom: '',
-    usePersonalTaxCredit: true,
-    hasIncome: false,
-    bankNumber: '0000',
-    ledger: '00',
-    accountNumber: '000000',
-    interview: false,
-    formComment: 'No comments on form',
-    childrenComment: '',
-    spouseFormComment: '',
-    state: ApplicationModelStateEnum.New,
-    files: [],
-    rejection: '',
-    staffId: 'staff-123',
-    staff: {
-      id: 'staff-123',
-      name: 'Starfsmaður',
-      nationalId: '0101302989',
-      municipalityIds: ['0000'],
-      roles: ['SuperAdmin'],
-      active: true,
-      usePseudoName: false,
-      phoneNumber: '5555555',
-      created: new Date('2026-02-20T10:00:00Z'),
-      modified: new Date('2026-02-20T10:00:00Z'),
-      nickname: 'Staffy',
-      email: 'staff@island.is',
-    },
-    familyStatus: ApplicationModelFamilyStatusEnum.Cohabitation,
-    spouseName: 'Gervikona',
-    spouseNationalId: '0101302989',
-    spousePhoneNumber: '',
-    spouseEmail: '',
-    applicationEvents: [],
-    children: [],
-    amount: null,
-    city: 'Reykjavík',
-    streetName: 'Laugavegur 1',
-    postalCode: '101',
-    municipalityCode: '0000',
-    directTaxPayments: [],
-    applicationSystemId: 'sys-id-1234',
-    hasFetchedDirectTaxPayment: true,
-    spouseHasFetchedDirectTaxPayment: false,
-    navSuccess: true,
-  }
-
   async createApplication({
     application,
     auth,
@@ -529,26 +468,6 @@ export class FinancialAidService extends BaseTemplateApiService {
         })
     } else {
       return await this.applicationApiWithAuth(auth)
-        .withPreMiddleware(async (context) => {
-          return {
-            ...context,
-            url: 'https://app-veita-api-test.azurewebsites.net/applications',
-
-            init: {
-              ...context.init,
-              headers: {
-                ...context.init.headers,
-                'X-Tenant-Identifier': 'reykjavik',
-              },
-            },
-          }
-        })
-        .withPostMiddleware(async () => {
-          return new Response(JSON.stringify(this.fakeApplicationResponse), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        })
         .applicationControllerCreate({
           createApplicationDto: newApplication as any,
         })
@@ -585,41 +504,19 @@ export class FinancialAidService extends BaseTemplateApiService {
     auth,
     application,
   }: Props): Promise<MunicipalityModel | null> {
-    console.log('--------------------------------')
-    console.log('municipality')
-    console.log('--------------------------------')
     const municipalityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
-
-    console.log('--------------------------------')
-    console.log('municipalityCode', municipalityCode)
-    console.log('--------------------------------')
 
     if (municipalityCode == null) {
       return null
     }
     if (this.municipalityCodeCheck(municipalityCode)) {
-      console.log('--------------------------------')
-      console.log('municipalityCodeCheck true')
-      console.log('--------------------------------')
       return this.MOCK_RVK_MUNICIPALITY
     }
 
-    try {
-      const res = await this.municipalityApiWithAuth(auth)
-        .municipalityControllerGetById({ id: municipalityCode })
-        .catch(this.handle404)
-      console.log('--------------------------------')
-      console.log('municipality res', JSON.stringify(res, null, 2))
-      console.log('--------------------------------')
-      return res
-    } catch (error) {
-      console.log('--------------------------------')
-      console.log('municipality error', JSON.stringify(error, null, 2))
-      console.log('falling back to rvk municipality')
-      console.log('--------------------------------')
-      return this.MOCK_RVK_MUNICIPALITY
-    }
+    return await this.municipalityApiWithAuth(auth)
+      .municipalityControllerGetById({ id: municipalityCode })
+      .catch(this.handle404)
   }
 
   async taxData({ auth, application }: Props): Promise<TaxData> {
