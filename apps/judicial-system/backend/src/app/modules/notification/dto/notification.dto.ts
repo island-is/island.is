@@ -10,7 +10,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseNotificationType,
-  IndictmentCaseNotificationType,
   RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -20,7 +19,6 @@ export enum UserInitiatedNotificationType {
   COURT_DATE = RequestCaseNotificationType.COURT_DATE,
   HEADS_UP = RequestCaseNotificationType.HEADS_UP,
   READY_FOR_COURT = RequestCaseNotificationType.READY_FOR_COURT,
-  RULING_ORDER_ADDED = IndictmentCaseNotificationType.RULING_ORDER_ADDED,
 }
 
 export class NotificationDto {

@@ -51,6 +51,7 @@ import {
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { CaseFileTable } from '../Table'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
+import RulingOrderConfirmation from './RulingOrderConfirmation'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -677,20 +678,21 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
-                {showRulingOrderAppealMenu ? (
-                  filteredFiles.rulingOrders.map((file) => (
-                    <RulingOrderFileRow
-                      key={file.id}
-                      file={file}
-                      onOpenFile={onOpen}
-                    />
-                  ))
-                ) : (
-                  <RenderFiles
-                    caseFiles={filteredFiles.rulingOrders}
-                    onOpenFile={onOpen}
-                  />
-                )}
+                {showRulingOrderAppealMenu
+                  ? filteredFiles.rulingOrders.map((file) => (
+                      <RulingOrderFileRow
+                        key={file.id}
+                        file={file}
+                        onOpenFile={onOpen}
+                      />
+                    ))
+                  : filteredFiles.rulingOrders.map((file) => (
+                      <RulingOrderConfirmation
+                        key={file.id}
+                        file={file}
+                        onOpenFile={onOpen}
+                      />
+                    ))}
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (

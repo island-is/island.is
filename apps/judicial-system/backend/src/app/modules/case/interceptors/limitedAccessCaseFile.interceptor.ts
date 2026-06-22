@@ -17,6 +17,7 @@ import {
 import {
   canLimitedAccessUserViewCaseFile,
   getDefenderVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../../file'
 import { Defendant } from '../../repository'
 
@@ -30,6 +31,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
           ({
+            id,
             category,
             submittedBy,
             fileRepresentative,
@@ -37,6 +39,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             created,
             civilClaimantId,
           }: {
+            id: string
             category: CaseFileCategory
             submittedBy: string
             fileRepresentative: string
@@ -56,6 +59,8 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               defendantId,
               fileCreated: created,
               civilClaimantId,
+              isRulingOrderInConfirmedCourtSession:
+                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
             }),
         )
 

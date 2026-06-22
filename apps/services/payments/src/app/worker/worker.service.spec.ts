@@ -35,6 +35,7 @@ const createMockFlow = (
   charges: [],
   cardPaymentDetails: [
     {
+      id: 'card-details-correlation-id',
       authorizationCode: 'auth',
       cardScheme: 'Visa',
       maskedCardNumber: '****',
@@ -125,6 +126,12 @@ describe('WorkerService', () => {
       await service.run()
 
       expect(paymentFlowService.createFjsCharge).toHaveBeenCalledTimes(1)
+      // The card FJS charge carries the per-attempt correlationId (= cardPaymentDetails.id).
+      const [, cardChargePayload] =
+        paymentFlowService.createFjsCharge.mock.calls[0]
+      expect(cardChargePayload.payInfo?.correlationId).toBe(
+        'card-details-correlation-id',
+      )
       expect(paymentWorkerEventModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
           paymentFlowId: 'flow-success',

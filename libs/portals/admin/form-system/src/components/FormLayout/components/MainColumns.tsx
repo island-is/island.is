@@ -89,7 +89,11 @@ export const MainContentColumn = () => {
   }
 
   return (
-    <Box className={cn(styles.mainColumn)} padding={2}>
+    <Box
+      className={cn(styles.mainColumn)}
+      padding={2}
+      style={{ display: 'flex', flexDirection: 'column' }}
+    >
       {!isReadOnly &&
       !inSettings &&
       !staticSection &&
@@ -120,6 +124,9 @@ export const MainContentColumn = () => {
         width="full"
         style={{
           minHeight: 'clamp(300px, 50vh, 500px)',
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
         }}
       >
         <MainContent />
