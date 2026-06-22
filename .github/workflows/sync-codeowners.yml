@@ -1,0 +1,23 @@
+name: Sync CODEOWNERS to Datadog Service Catalog
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/CODEOWNERS']
+  pull_request:
+    paths: ['.github/CODEOWNERS', '.github/actions/dora-deployment/sync-codeowners.mjs']
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: arc-shared
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync service ownership to Datadog
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_APP_KEY: ${{ secrets.DD_APP_KEY_DORA }}
+          DD_SITE: datadoghq.eu
+          CODEOWNERS_PATH: .github/CODEOWNERS
+          DRY_RUN: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+        run: node .github/actions/dora-deployment/sync-codeowners.mjs
