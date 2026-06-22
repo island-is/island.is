@@ -30,6 +30,7 @@ export const tableRowContainer = style({
 
 export const th = style({
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  whiteSpace: 'nowrap',
 })
 
 export const smallContainer = style({

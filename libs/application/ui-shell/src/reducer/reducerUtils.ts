@@ -5,9 +5,11 @@ import {
   getSubSectionsInSection,
   getValueViaPath,
   isValidScreen,
+  resolveFieldId,
   shouldShowFormItem,
 } from '@island.is/application/core'
 import {
+  Application,
   ExternalData,
   ExternalDataProvider,
   Field,
@@ -60,18 +62,23 @@ export const screenRequiresAnswer = (screen: FormScreen) => {
 
 export const screenHasBeenAnswered = (
   screen: FormScreen,
-  answers: FormValue,
+  application: Application,
   checkIfPartlyAnswered = false,
+  user?: BffUser | null,
 ) => {
   if (!screenRequiresAnswer(screen)) {
     return true
   }
 
-  if (!screen.id) {
+  const resolvedId = screen.id
+    ? resolveFieldId({ id: screen.id }, application, user ?? undefined)
+    : undefined
+
+  if (!resolvedId) {
     return false
   }
 
-  const answer = getValueViaPath(answers, screen.id)
+  const answer = getValueViaPath(application.answers, resolvedId ?? '')
   const answerHasValue = !answerIsMissing(answer)
 
   if (screen.type === FormItemTypes.REPEATER) {
@@ -85,7 +92,12 @@ export const screenHasBeenAnswered = (
 
     for (const subScreen of screen.children) {
       const requiresAnswer = screenRequiresAnswer(subScreen)
-      const hasBeenAnswered = screenHasBeenAnswered(subScreen, answers)
+      const hasBeenAnswered = screenHasBeenAnswered(
+        subScreen,
+        application,
+        false,
+        user,
+      )
 
       if (requiresAnswer) {
         numberOfRequiredAnswers += 1
@@ -108,7 +120,7 @@ export const screenHasBeenAnswered = (
     screen.childInputIds.length > 0
   ) {
     const hasAnyMissingAnswer = screen.childInputIds.some((childInputId) => {
-      const childAnswer = getValueViaPath(answers, childInputId)
+      const childAnswer = getValueViaPath(application.answers, childInputId)
       const missingChildAnswer = answerIsMissing(childAnswer)
 
       return missingChildAnswer
@@ -122,7 +134,8 @@ export const screenHasBeenAnswered = (
 
 export const findCurrentScreen = (
   screens: FormScreen[],
-  answers: FormValue,
+  application: Application,
+  user?: BffUser | null,
 ): number => {
   let lastAnswerIndex = -1
   let index = 0
@@ -136,8 +149,18 @@ export const findCurrentScreen = (
     }
 
     // If we reach here we know that this screen requires an answer
-    const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
-    const hasBeenPartlyAnswered = screenHasBeenAnswered(screen, answers, true)
+    const hasBeenAnswered = screenHasBeenAnswered(
+      screen,
+      application,
+      false,
+      user,
+    )
+    const hasBeenPartlyAnswered = screenHasBeenAnswered(
+      screen,
+      application,
+      true,
+      user,
+    )
 
     if (hasBeenAnswered) {
       lastAnswerIndex = index

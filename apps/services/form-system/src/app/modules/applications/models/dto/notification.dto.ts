@@ -26,9 +26,8 @@ export class NotificationDto {
   @IsString()
   @Type(() => String)
   @Expose()
-  @ApiPropertyOptional()
-  @IsOptional()
-  organizationNationalId?: string
+  @ApiProperty()
+  organizationNationalId!: string
 
   @Type(() => String)
   @IsString()

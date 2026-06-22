@@ -20,7 +20,12 @@ export const uploadDocumentsSection = buildSection({
       title: udm.title,
       children: [
         buildDescriptionField({
-          id: 'uploadDocument.descriptionField',
+          id: 'uploadDocuments.descriptionFieldTwo',
+          description: udm.multiFieldDescription,
+          marginBottom: 1,
+        }),
+        buildDescriptionField({
+          id: 'uploadDocument.textField',
           condition: (_, externalData) => {
             const requestedAttachments =
               getValueViaPath<{ attachmentTypeId?: string }[]>(
@@ -61,10 +66,6 @@ export const uploadDocumentsSection = buildSection({
 
             return `${heading}\n\n${bulletList}`
           },
-        }),
-        buildDescriptionField({
-          id: 'uploadDocuments.descriptionFieldTwo',
-          description: udm.multiFieldDescription,
         }),
         buildTableRepeaterField({
           id: 'documents',

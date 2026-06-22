@@ -42,6 +42,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -996,6 +997,50 @@ export class CaseController {
     this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    CaseCompletedGuard,
+  )
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/duplicate')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new draft indictment case based on a revoked indictment case',
+  })
+  async duplicate(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(`Duplicating indictment case ${caseId} into a new draft`)
+
+    // Only indictments that were revoked after being sent to court can be
+    // duplicated into a new draft case
+    if (
+      theCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.WITHDRAWAL &&
+      theCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.CANCELLATION
+    ) {
+      throw new ForbiddenException(
+        `Cannot duplicate indictment case ${caseId} - it has not been revoked`,
+      )
+    }
+
+    const duplicatedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+    )
+
+    this.eventService.postEvent('DUPLICATE', duplicatedCase)
+
+    return duplicatedCase
   }
 
   @UseGuards(
