@@ -23,5 +23,5 @@ jobs:
           DD_APP_KEY: ${{ secrets.DD_APP_KEY_DORA }}
           DD_SITE: datadoghq.eu
           CODEOWNERS_PATH: .github/CODEOWNERS
-          DRY_RUN: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          DRY_RUN: 'false'
         run: node .github/actions/dora-deployment/sync-codeowners.mjs
