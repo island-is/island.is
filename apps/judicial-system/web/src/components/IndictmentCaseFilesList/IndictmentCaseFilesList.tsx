@@ -173,7 +173,11 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
   )
 
   if (!isDefender && !isSpokesperson) {
-    return allPoliceCaseNumbers
+    return getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )
   }
 
   const visibleNumbers = new Set<string>()
