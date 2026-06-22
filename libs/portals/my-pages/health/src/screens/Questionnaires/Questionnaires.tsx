@@ -53,6 +53,7 @@ const Questionnaires: FC = () => {
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
+  const [inputValue, setInputValue] = useState('')
   const [filteredData, setFilteredData] = useState<
     QuestionnairesBaseItem[] | null
   >(null)
@@ -99,6 +100,7 @@ const Questionnaires: FC = () => {
   )
 
   const handleSearchChange = (value: string) => {
+    setInputValue(value)
     debouncedSetSearchQuery(value)
   }
 
@@ -198,6 +200,7 @@ const Questionnaires: FC = () => {
           labelOpen={formatMessage(m.openFilter)}
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
+            setInputValue('')
             setFilterValues(defaultFilterValues)
           }}
           filterInput={
@@ -206,6 +209,7 @@ const Questionnaires: FC = () => {
               name="rafraen-skjol-input"
               size="xs"
               label={formatMessage(m.searchLabel)}
+              value={inputValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               backgroundColor="blue"
               icon={{ name: 'search' }}
