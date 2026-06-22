@@ -107,23 +107,6 @@ export class DrivingLicenseApi {
     return this.errorCodeDescriptionsCache
   }
 
-  public async getErrorCodeDescription(
-    code: string,
-  ): Promise<v5.DtoErrorCodeDescriptionDto | null> {
-    try {
-      return await this.v5CodeTable.apiCodetablesErrorCodesCodeGet({
-        code,
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      })
-    } catch (e) {
-      if ((e as { status: number })?.status === 404) {
-        return null
-      }
-      throw e
-    }
-  }
-
   public async getCurrentLicenseV5(input: {
     nationalId: string
     token?: string
