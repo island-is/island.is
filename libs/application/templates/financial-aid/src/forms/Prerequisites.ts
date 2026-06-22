@@ -33,6 +33,7 @@ export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
   logo: (application: Application) => {
     const logo = createElement(Logo, { application })
     return () => logo
@@ -117,11 +118,6 @@ export const Prerequisites: Form = buildForm({
               ],
             }),
           ],
-        }),
-        // This is here to be able to show submit button on former screen :( :( :(
-        buildMultiField({
-          id: '',
-          children: [],
         }),
       ],
     }),

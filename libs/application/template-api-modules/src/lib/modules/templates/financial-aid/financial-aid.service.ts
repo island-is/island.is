@@ -77,6 +77,16 @@ export class FinancialAidService extends BaseTemplateApiService {
   async childrenCustodyInformation() {
     return [] // no children
   }
+
+  municipalityCodeCheck(municipalityCode: string | null | undefined) {
+    if (
+      municipalityCode &&
+      (municipalityCode === '0000' || municipalityCode === '1400')
+    ) {
+      return true
+    }
+    return false
+  }
   // End of mock data providers for testing
 
   private applicationApiWithAuth(auth: Auth) {
@@ -351,7 +361,7 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     let files: ApplicationAnswerFile[] = []
 
-    if (municipalityCode === '0000') {
+    if (this.municipalityCodeCheck(municipalityCode)) {
       console.log('--------------------------------')
       console.log('formatFilesRvk municipalityCode', municipalityCode)
       console.log('--------------------------------')
@@ -443,7 +453,7 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     console.log('newApplication', JSON.stringify(newApplication, null, 2))
 
-    if (municipalityCode === '0000') {
+    if (this.municipalityCodeCheck(municipalityCode)) {
       console.log('--------------------------------')
       console.log('createApplication municipalityCode', municipalityCode)
       console.log('--------------------------------')
@@ -575,19 +585,41 @@ export class FinancialAidService extends BaseTemplateApiService {
     auth,
     application,
   }: Props): Promise<MunicipalityModel | null> {
+    console.log('--------------------------------')
+    console.log('municipality')
+    console.log('--------------------------------')
     const municipalityCode =
       application.externalData.nationalRegistry.data.address?.municipalityCode
+
+    console.log('--------------------------------')
+    console.log('municipalityCode', municipalityCode)
+    console.log('--------------------------------')
 
     if (municipalityCode == null) {
       return null
     }
-    if (municipalityCode === '0000') {
+    if (this.municipalityCodeCheck(municipalityCode)) {
+      console.log('--------------------------------')
+      console.log('municipalityCodeCheck true')
+      console.log('--------------------------------')
       return this.MOCK_RVK_MUNICIPALITY
     }
 
-    return await this.municipalityApiWithAuth(auth)
-      .municipalityControllerGetById({ id: municipalityCode })
-      .catch(this.handle404)
+    try {
+      const res = await this.municipalityApiWithAuth(auth)
+        .municipalityControllerGetById({ id: municipalityCode })
+        .catch(this.handle404)
+      console.log('--------------------------------')
+      console.log('municipality res', JSON.stringify(res, null, 2))
+      console.log('--------------------------------')
+      return res
+    } catch (error) {
+      console.log('--------------------------------')
+      console.log('municipality error', JSON.stringify(error, null, 2))
+      console.log('falling back to rvk municipality')
+      console.log('--------------------------------')
+      return this.MOCK_RVK_MUNICIPALITY
+    }
   }
 
   async taxData({ auth, application }: Props): Promise<TaxData> {

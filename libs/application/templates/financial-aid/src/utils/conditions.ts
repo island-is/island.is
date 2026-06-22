@@ -49,7 +49,7 @@ export const isRVKresident = (
     externalData,
     'nationalRegistry.data.address.municipalityCode',
   )
-  return municipalityCode === '0000'
+  return municipalityCode === '0000' || municipalityCode === '1400'
 }
 
 export const taxSuccess = (_answers: FormValue, externalData: ExternalData) =>
