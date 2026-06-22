@@ -419,16 +419,24 @@ export const getSpokespersonVisiblePoliceCaseNumbers = (
     return []
   }
 
-  if (myClaimants.some((civilClaimant) => !civilClaimant.policeCaseNumbers?.length)) {
+  if (
+    myClaimants.some(
+      (civilClaimant) => !civilClaimant.policeCaseNumbers?.length,
+    )
+  ) {
     return allPoliceCaseNumbers
   }
 
   const assignedToMe = new Set(
-    myClaimants.flatMap((civilClaimant) => civilClaimant.policeCaseNumbers ?? []),
+    myClaimants.flatMap(
+      (civilClaimant) => civilClaimant.policeCaseNumbers ?? [],
+    ),
   )
 
   const allAssignedToDefendants = new Set(
-    (defendants ?? []).flatMap((defendant) => defendant.policeCaseNumbers ?? []),
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
   )
 
   if (allAssignedToDefendants.size === 0) {

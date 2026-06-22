@@ -6,7 +6,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CourtSession, CivilClaimant, Defendant } from '../../repository'
+import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
   getConfirmedDefendantsForDefender,
@@ -339,7 +339,9 @@ describe('getDefenceUserVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-2', '007-2026-3'].sort())
+    expect(result.sort()).toEqual(
+      ['007-2026-1', '007-2026-2', '007-2026-3'].sort(),
+    )
   })
 
   it('should apply defender visibility rules when user is neither defender nor spokesperson', () => {

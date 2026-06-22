@@ -119,7 +119,11 @@ const getSpokespersonVisiblePoliceCaseNumbers = (
     return []
   }
 
-  if (myClaimants.some((civilClaimant) => !civilClaimant.policeCaseNumbers?.length)) {
+  if (
+    myClaimants.some(
+      (civilClaimant) => !civilClaimant.policeCaseNumbers?.length,
+    )
+  ) {
     return allPoliceCaseNumbers
   }
 
