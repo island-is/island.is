@@ -85,7 +85,9 @@ const ProhibitionDetailView = ({ item, date, onBack }: DetailViewProps) => {
           paddingBottom={2}
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
-            <Text fontWeight="semiBold">{formatMessage(m.exemptionColumnKey)}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.exemptionColumnKey)}
+            </Text>
           </Box>
           <Text>{item.code}</Text>
         </Box>
@@ -140,7 +142,10 @@ const CustomsGeneralProhibitions = () => {
         <span className={styles.link}>{String(value ?? '')}</span>
       ),
     },
-    { key: 'name' as const, label: formatMessage(m.exemptionColumnDescription) },
+    {
+      key: 'name' as const,
+      label: formatMessage(m.exemptionColumnDescription),
+    },
   ]
 
   const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_PROHIBITIONS, {
