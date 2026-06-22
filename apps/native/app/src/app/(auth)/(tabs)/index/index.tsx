@@ -67,7 +67,7 @@ import {
 } from '@/stores/preferences-store'
 import { testIDs } from '@/utils/test-ids'
 import * as Application from 'expo-application'
-import compareVersions from 'compare-versions'
+import { compare, validate } from 'compare-versions'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
 import { StackScreen } from '../../../../components/stack-screen'
@@ -301,18 +301,17 @@ export default function HomeScreen() {
 
   // Check if the app version is below the minimum supported version and navigate to the update screen if so
   useEffect(() => {
-    const currentVersion = Application.nativeApplicationVersion ?? ''
-    try {
-      if (
-        compareVersions.compare(minimumVersionSupported, currentVersion, '>')
-      ) {
-        router.navigate({
-          pathname: '/update-app',
-          params: { closable: String(false) },
-        })
-      }
-    } catch {
-      // Malformed version string from the feature flag — skip the gate.
+    const currentVersion = Application.nativeApplicationVersion
+    if (
+      currentVersion &&
+      validate(minimumVersionSupported) &&
+      validate(currentVersion) &&
+      compare(minimumVersionSupported, currentVersion, '>')
+    ) {
+      router.navigate({
+        pathname: '/update-app',
+        params: { closable: String(false) },
+      })
     }
   }, [minimumVersionSupported])
 
