@@ -2102,6 +2102,22 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  driversPoints: {
+    id: 'service.portal:drivers-points',
+    defaultMessage: 'Punktastaða',
+  },
+  driversPointsIntro: {
+    id: 'service.portal:drivers-points-intro',
+    defaultMessage: 'Punktastaða ökumanns hjá lögreglu',
+  },
+  driversDeprivations: {
+    id: 'service.portal:drivers-deprivations',
+    defaultMessage: 'Svipting',
+  },
+  driversDeprivationsIntro: {
+    id: 'service.portal:drivers-deprivations-intro',
+    defaultMessage: 'Upplýsingar um sviptingu ökuréttinda',
+  },
   case: {
     id: 'service.portal:case',
     defaultMessage: 'Dómur',

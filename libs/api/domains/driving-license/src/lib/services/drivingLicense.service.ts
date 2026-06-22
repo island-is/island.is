@@ -16,7 +16,7 @@ import {
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
   NewRenewal65DrivingLicenseInput,
-} from './drivingLicense.type'
+} from '../drivingLicense.type'
 import {
   Disqualification,
   DriversLicense,
@@ -29,9 +29,9 @@ import {
 import {
   BLACKLISTED_JURISDICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
-} from './util/constants'
-import sortTeachers from './util/sortTeachers'
-import { StudentAssessment } from '..'
+} from '../util/constants'
+import sortTeachers from '../util/sortTeachers'
+import { StudentAssessment } from '../models'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -40,10 +40,10 @@ import {
   hasLocalResidence,
   hasResidenceHistory,
   mapResidence,
-} from './util/hasResidenceHistory'
+} from '../util/hasResidenceHistory'
 import { info } from 'kennitala'
 import { computeCountryResidence } from '@island.is/residence-history'
-import { Jurisdiction } from './graphql/models'
+import { Jurisdiction } from '../models'
 import addMonths from 'date-fns/addMonths'
 
 const LOGTAG = '[api-domains-driving-license]'
@@ -657,14 +657,12 @@ export class DrivingLicenseService {
       return null
     }
 
-    let teacherName: string | null
+    let teacherName: string | undefined
     if (assessment.nationalIdTeacher) {
       const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
-      teacherName = teacherLicense?.name || null
-    } else {
-      teacherName = null
+      teacherName = teacherLicense?.name ?? undefined
     }
 
     return {
