@@ -914,5 +914,42 @@ describe('DrivingLicenseSubmissionService', () => {
         summary: 'raw detail',
       })
     })
+
+    it('simulates a submission failure from fakeData.submitErrorCode without calling RLS', async () => {
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      const application = createApplication({
+        answers: {
+          email: 'mock@email.com',
+          phone: '9999999',
+          fakeData: { useFakeData: 'yes', submitErrorCode: 'HAS_POINTS' },
+        },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const thrown = await service
+        .submitApplication({
+          application,
+          auth: createCurrentUser(),
+          currentUserLocale: 'is',
+        })
+        .then(
+          () =>
+            Promise.reject(new Error('expected submitApplication to reject')),
+          (e: TemplateApiError) => e,
+        )
+
+      // The fake path short-circuits before any real RLS create call...
+      expect(newDrivingLicense).not.toHaveBeenCalled()
+      // ...but still resolves + renders the chosen code's message.
+      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
+      expect(getErrorReasonIfPresent(reasonOf(thrown)).summary).toBe(
+        'Einstaklingur hefur punkta á skírteini',
+      )
+    })
   })
 })

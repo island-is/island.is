@@ -241,6 +241,24 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'fakeData.submitToRLS',
     )
     if (useFakeData === YES && fakeDataSubmitToRLS !== YES) {
+      // Dev-only: simulate a failed RLS submission with a chosen error code so
+      // the payment-step error UI can be exercised end-to-end without calling
+      // RLS. The thrown shape matches a real RLS FetchError, so it flows through
+      // the same `submitApplication` catch → `toSubmissionError` path (and the
+      // code is still resolved against the real error-code table).
+      const fakeSubmitErrorCode = getValueViaPath<string>(
+        answers,
+        'fakeData.submitErrorCode',
+      )
+      if (fakeSubmitErrorCode) {
+        const fakeError = new Error(
+          'Simulated RLS submission failure',
+        ) as Error & { problem?: { title: string }; status?: number }
+        fakeError.name = 'FetchError'
+        fakeError.problem = { title: fakeSubmitErrorCode }
+        fakeError.status = 400
+        throw fakeError
+      }
       return {
         success: true,
         errorMessage: null,
