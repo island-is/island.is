@@ -7,6 +7,7 @@ import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
 import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
 import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
+import { CustomsGeneralProhibition } from './models/customsGeneralProhibition.model'
 
 @Injectable()
 export class CustomsGeneralService {
@@ -48,7 +49,7 @@ export class CustomsGeneralService {
   async getProhibitions(
     date: string,
     system: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralProhibition[]> {
     const result = await this.customsGeneralClientService.getBonn({
       Dags: date,
       Kerfi: system,
@@ -57,6 +58,10 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
+      description: item.Astaeda,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
+      exemptionProvider: item.UndanthVeitir,
     }))
   }
 

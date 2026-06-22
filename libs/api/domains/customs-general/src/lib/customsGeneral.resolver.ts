@@ -11,6 +11,7 @@ import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
 import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
 import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
+import { CustomsGeneralProhibition } from './models/customsGeneralProhibition.model'
 
 @Resolver()
 export class CustomsGeneralResolver {
@@ -30,10 +31,10 @@ export class CustomsGeneralResolver {
     return this.customsGeneralService.getAdvisories(input.date, input.system)
   }
 
-  @Query(() => [CustomsGeneralEntry])
+  @Query(() => [CustomsGeneralProhibition])
   async customsGeneralProhibitions(
     @Args('input') input: CustomsGeneralInput,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralProhibition[]> {
     return this.customsGeneralService.getProhibitions(input.date, input.system)
   }
 

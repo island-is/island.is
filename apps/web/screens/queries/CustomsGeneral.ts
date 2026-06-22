@@ -16,6 +16,9 @@ export const GET_CUSTOMS_GENERAL_PROHIBITIONS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      exemptionProvider
     }
   }
 `

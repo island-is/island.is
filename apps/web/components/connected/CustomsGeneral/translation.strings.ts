@@ -169,6 +169,28 @@ export const m = defineMessages({
     description: 'Exemptions detail view: back to list button label',
   },
 
+  // Prohibitions specific
+  prohibitionBackToList: {
+    id: 'web.customsGeneral:bonnBackToList',
+    defaultMessage: 'Sjá lista yfir bönn',
+    description: 'Prohibitions detail view: back to list button label',
+  },
+  prohibitionValidityPeriod: {
+    id: 'web.customsGeneral:bonnGildistimi',
+    defaultMessage: 'Gildistími',
+    description: 'Prohibitions detail view label: validity period',
+  },
+  prohibitionExemptionProvider: {
+    id: 'web.customsGeneral:bonnUnanthaga',
+    defaultMessage: 'Undanþága',
+    description: 'Prohibitions detail view section: exemption provider',
+  },
+  prohibitionReason: {
+    id: 'web.customsGeneral:bonnAstaeda',
+    defaultMessage: 'Ástæða',
+    description: 'Prohibitions detail view section: reason/description',
+  },
+
   // AssessmentLocations columns
   assessmentLocationLocation: {
     id: 'web.customsGeneral:akvordunarstadirLocation',

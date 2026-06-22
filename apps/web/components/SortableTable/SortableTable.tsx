@@ -85,6 +85,18 @@ export const SortableTable = <T extends Record<string, any>>({
           <tr
             key={i}
             onClick={onRowClick ? () => onRowClick(item) : undefined}
+            onKeyDown={
+              onRowClick
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onRowClick(item)
+                    }
+                  }
+                : undefined
+            }
+            tabIndex={onRowClick ? 0 : undefined}
+            role={onRowClick ? 'button' : undefined}
             style={onRowClick ? { cursor: 'pointer' } : undefined}
           >
             {columns.map(({ key, render }) => (
