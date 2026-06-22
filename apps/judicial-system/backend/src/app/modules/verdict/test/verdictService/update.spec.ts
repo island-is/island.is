@@ -11,6 +11,7 @@ import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
+import { VerdictService } from '../../verdict.service'
 
 interface Then {
   result: Verdict
@@ -32,9 +33,7 @@ describe('VerdictService - update', () => {
   let mockVerdictRepositoryService: VerdictRepositoryService
   let transaction: Transaction
   let mockAddMessagesToQueue: jest.Mock
-  let verdictService: Awaited<
-    ReturnType<typeof createTestingVerdictModule>
-  >['verdictService']
+  let verdictService: VerdictService
 
   let givenWhenThen: GivenWhenThen
 
