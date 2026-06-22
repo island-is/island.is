@@ -6,7 +6,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CourtSession, CivilClaimant, Defendant } from '../../repository'
+import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
   getConfirmedDefendantsForDefender,
