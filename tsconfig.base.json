@@ -2,14 +2,8 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-<<<<<<< HEAD
       "@/*": [
         "${configDir}/src/*"
-=======
-      "@/*": ["${configDir}/src/*"],
-      "@island.is/air-discount-scheme-web/*": [
-        "apps/air-discount-scheme/web/*"
->>>>>>> main
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
