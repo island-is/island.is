@@ -76,7 +76,7 @@ function pathMatches(filePath, pattern) {
  */
 export function discoverDeployableApps(repoRoot) {
   const output = execSync(
-    'find apps -name "project.json" -maxdepth 3 | xargs grep -l "docker-"',
+    'find apps -name "project.json" -maxdepth 4 | xargs grep -l "docker-"',
     { cwd: repoRoot, encoding: 'utf-8' },
   )
 
