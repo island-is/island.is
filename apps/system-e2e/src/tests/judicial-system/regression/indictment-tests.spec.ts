@@ -245,12 +245,11 @@ test.describe.serial('Indictment tests', () => {
       page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
     ])
-    await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
-    // await page
-    //   .getByTestId('entries')
-    //   .frameLocator('iframe')
-    //   .locator('body')
-    //   .fill('Afstaða, málflutningur, og bókun')
+    await page
+      .getByTestId('entries')
+      .frameLocator('iframe')
+      .locator('body')
+      .fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
     await page.getByTestId('ruling').fill('Dómsorð')
