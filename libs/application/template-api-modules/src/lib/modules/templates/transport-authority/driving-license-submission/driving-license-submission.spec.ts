@@ -736,4 +736,165 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(input.sendPlasticToPerson).toBe(false)
     })
   })
+
+  describe('submitApplication — RLS error-code messages', () => {
+    let service: DrivingLicenseSubmissionService
+    let newDrivingLicense: jest.Mock
+    let describeErrorCode: jest.Mock
+
+    // A FetchError as the submission catch recognises it: name === 'FetchError'
+    // with RLS's `problem` (code in `title`) and an http `status`.
+    const makeFetchError = (
+      problem: { title?: string; detail?: string },
+      status = 400,
+    ) => {
+      const err = new Error('rls submission failed') as Error & {
+        problem?: unknown
+        status?: number
+      }
+      err.name = 'FetchError'
+      err.problem = problem
+      err.status = status
+      return err
+    }
+
+    // No applicationFor → defaults to B-full → newDrivingLicense is the create call.
+    const buildApplication = () =>
+      createApplication({
+        answers: { email: 'mock@email.com', phone: '9999999' },
+        typeId: ApplicationTypes.DRIVING_LICENSE,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+    beforeEach(async () => {
+      newDrivingLicense = jest.fn()
+      describeErrorCode = jest.fn()
+
+      const module = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true, load: [emailModuleConfig] }),
+        ],
+        providers: [
+          DrivingLicenseSubmissionService,
+          EmailService,
+          AdapterService,
+          {
+            provide: DrivingLicenseService,
+            useValue: { newDrivingLicense, describeErrorCode },
+          },
+          { provide: LOGGER_PROVIDER, useValue: logger },
+          {
+            provide: ConfigService,
+            useClass: jest.fn(() => ({ get: () => 'http://localhost' })),
+          },
+          {
+            provide: AttachmentS3Service,
+            useValue: { getFiles: jest.fn(async () => []) },
+          },
+          {
+            provide: SharedTemplateApiService,
+            useClass: jest.fn(() => ({
+              async getPaymentStatus() {
+                return { fulfilled: true }
+              },
+              async sendEmail() {
+                return 'messageId'
+              },
+            })),
+          },
+        ],
+      }).compile()
+
+      service = module.get(DrivingLicenseSubmissionService)
+    })
+
+    it('surfaces the Icelandic RLS description when the code is in the table (is locale)', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS', detail: 'raw detail' }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      await expect(
+        service.submitApplication({
+          application: buildApplication(),
+          auth: createCurrentUser(),
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            title: 'Einstaklingur hefur punkta á skírteini',
+            summary: 'raw detail',
+          },
+          status: 400,
+        },
+      })
+      expect(describeErrorCode).toHaveBeenCalledWith('HAS_POINTS')
+    })
+
+    it('surfaces the English RLS description for an en user', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS' }),
+      )
+      describeErrorCode.mockResolvedValue({
+        is: 'Einstaklingur hefur punkta á skírteini',
+        en: 'Person has points on their license',
+      })
+
+      await expect(
+        service.submitApplication({
+          application: buildApplication(),
+          auth: createCurrentUser(),
+          currentUserLocale: 'en',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: { title: 'Person has points on their license' },
+        },
+      })
+    })
+
+    it('falls back to the raw title/detail when the code is not in the table', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'SOME_UNMAPPED_CODE', detail: 'raw detail' }),
+      )
+      describeErrorCode.mockResolvedValue(null)
+
+      await expect(
+        service.submitApplication({
+          application: buildApplication(),
+          auth: createCurrentUser(),
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: { title: 'SOME_UNMAPPED_CODE', summary: 'raw detail' },
+          status: 400,
+        },
+      })
+    })
+
+    it('falls back (best-effort) when the codetable lookup itself throws', async () => {
+      newDrivingLicense.mockRejectedValue(
+        makeFetchError({ title: 'HAS_POINTS', detail: 'raw detail' }),
+      )
+      describeErrorCode.mockRejectedValue(new Error('codetable down'))
+
+      await expect(
+        service.submitApplication({
+          application: buildApplication(),
+          auth: createCurrentUser(),
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: { title: 'HAS_POINTS', summary: 'raw detail' },
+          status: 400,
+        },
+      })
+    })
+  })
 })
