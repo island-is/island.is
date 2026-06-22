@@ -419,7 +419,7 @@ describe('DrivingLicenseService', () => {
       expect(canApply?.messageEn).toBe('Person has no signature on file')
     })
 
-    it('does not attach RLS text for renewal-65 (unbounded codes); errorCode only', async () => {
+    it('attaches RLS text for renewal-65 too (no license-type gate)', async () => {
       jest
         .spyOn(drivingLicenseApi, 'getCanApplyForRenewal65')
         .mockResolvedValue({ result: false, errorCode: 'HAS_POINTS' })
@@ -435,9 +435,8 @@ describe('DrivingLicenseService', () => {
       const canApply = response.requirements.find(
         (r) => r.errorCode === 'HAS_POINTS',
       )
-      expect(canApply).toBeDefined()
-      expect(canApply?.messageIs).toBeUndefined()
-      expect(canApply?.messageEn).toBeUndefined()
+      expect(canApply?.messageIs).toBe('Þú ert með punkta á ökuskírteini')
+      expect(canApply?.messageEn).toBe('You have points on your license')
     })
   })
 

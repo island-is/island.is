@@ -279,17 +279,13 @@ export class DrivingLicenseService {
 
     // For an unmet can-apply denial, resolve RLS's own description for the raw
     // error code (both languages) so the UI can surface it instead of the
-    // generic fallback for codes we don't curate ourselves.
-    //
-    // Limited to B-full / B-temp for now: their can-apply error codes are
-    // modelled as closed unions of confirmed eligibility reasons. Renewal-65
-    // (and BE) codes are modelled as open strings, so we don't surface their
-    // RLS text until RLS flags which codes are applicant-facing. errorCode is
-    // still attached for every denial (telemetry); only the messages are gated.
-    // Both languages are attached; the frontend renders the one for its locale.
-    const rlsFallbackEnabledForType = type === 'B-full' || type === 'B-temp'
+    // generic fallback for codes we don't curate ourselves. Applies to all
+    // license types: it's best-effort fallback only — curated frontend copy
+    // still wins where it exists, and an unknown/unmatched code still falls back
+    // to the generic message. Both languages are attached; the frontend renders
+    // the one matching its locale.
     const canApplyMessages =
-      rlsFallbackEnabledForType && !canApply.result && canApply.errorCode
+      !canApply.result && canApply.errorCode
         ? await this.describeErrorCode(canApply.errorCode)
         : null
 
