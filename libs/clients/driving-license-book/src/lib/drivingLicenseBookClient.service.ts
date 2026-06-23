@@ -1,6 +1,6 @@
 import {
-  BookOverview,
   Configuration,
+  DigitalBook,
   DrivingLicenseBookApi,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -25,6 +25,7 @@ import {
   DrivingLicenseBookStudentOverview,
   DrivingLicenseBookStudentsInput,
   LICENSE_CATEGORY_B,
+  LICENSE_CATEGORY_BE,
   Organization,
   PracticalDrivingLesson,
   PracticalDrivingLessonsInput,
@@ -45,6 +46,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
 const LOGTAG = '[driving-license-book-client]'
+
+// License categories that can have an active ökunám book in the
+// change-instructor flow. A student may hold several at once (e.g. B and BE),
+// so we look up the active book per category instead of guessing from the
+// student overview. Extend this list as more categories start issuing digital
+// books (e.g. advanced rights).
+const UPDATE_INSTRUCTOR_LICENSE_CATEGORIES = [
+  LICENSE_CATEGORY_B,
+  LICENSE_CATEGORY_BE,
+]
 
 @Injectable()
 export class DrivingLicenseBookClientApiFactory {
@@ -343,21 +354,6 @@ export class DrivingLicenseBookClientApiFactory {
     )
   }
 
-  private async getActiveBookId(nationalId: string): Promise<string | null> {
-    const api = await this.create()
-    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({
-      ssn: nationalId,
-      licenseCategory: LICENSE_CATEGORY_B,
-    })
-    return data?.bookId || null
-  }
-
-  private async hasPracticeDriving(id: string): Promise<boolean> {
-    const api = await this.create()
-    const { data } = await api.apiStudentGetLicenseBookIdGet({ id })
-    return data?.practiceDriving || false
-  }
-
   async allowPracticeDriving({
     teacherNationalId,
     studentNationalId,
@@ -376,27 +372,68 @@ export class DrivingLicenseBookClientApiFactory {
     }
   }
 
-  async getActiveStudentBook(user: User): Promise<BookOverview | undefined> {
-    const api = await this.create()
-
-    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
-      ssn: user.nationalId,
-      showInactiveBooks: false,
-    })
-
-    const activeBook = data?.books
-      ?.filter((item) => item.status !== 9)
-      ?.reduce(
-        (a, b) =>
-          new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-        {},
+  private async getActiveLicenseBookByCategory(
+    api: DrivingLicenseBookApi,
+    nationalId: string,
+    licenseCategory: string,
+  ): Promise<DigitalBook | undefined> {
+    try {
+      const { data } =
+        await api.apiStudentGetStudentActiveLicenseBookBySsnSsnGet({
+          ssn: nationalId,
+          licenseCategory,
+        })
+      // Only treat it as an active book if it actually carries an id.
+      return data?.id ? data : undefined
+    } catch (e) {
+      // No active book for this category (e.g. the student isn't taking it).
+      // Not an error for the overall flow – other categories may still match.
+      this.logger.debug(
+        `${LOGTAG} No active ${licenseCategory} book for student`,
       )
+      return undefined
+    }
+  }
 
-    if (!activeBook?.id || !activeBook?.createdOn) {
+  private async fetchActiveStudentBooks(
+    api: DrivingLicenseBookApi,
+    nationalId: string,
+  ): Promise<DigitalBook[]> {
+    const books = await Promise.all(
+      UPDATE_INSTRUCTOR_LICENSE_CATEGORIES.map((licenseCategory) =>
+        this.getActiveLicenseBookByCategory(api, nationalId, licenseCategory),
+      ),
+    )
+
+    // Drop empty categories and de-duplicate in case the backend returns the
+    // same book for more than one category.
+    const seen = new Set<string>()
+    return books.filter((book): book is DigitalBook => {
+      if (!book?.id || seen.has(book.id)) {
+        return false
+      }
+      seen.add(book.id)
+      return true
+    })
+  }
+
+  async getActiveStudentBook(user: User): Promise<DigitalBook | undefined> {
+    const api = await this.create()
+    const activeBooks = await this.fetchActiveStudentBooks(api, user.nationalId)
+
+    if (activeBooks.length === 0) {
       return undefined
     }
 
-    return activeBook
+    // When several categories are active, surface the most recently created
+    // book (the instructor is shared across them in practice).
+    return activeBooks.reduce(
+      (mostRecent, book) =>
+        new Date(book.createdOn ?? '') > new Date(mostRecent.createdOn ?? '')
+          ? book
+          : mostRecent,
+      activeBooks[0],
+    )
   }
 
   async updateActiveStudentBookInstructor(
@@ -405,37 +442,38 @@ export class DrivingLicenseBookClientApiFactory {
   ): Promise<{ success: boolean }> {
     const api = await this.create()
 
-    const activeBook = await this.getActiveStudentBook(user)
-    if (!activeBook) {
+    const activeBooks = await this.fetchActiveStudentBooks(api, user.nationalId)
+    if (activeBooks.length === 0) {
       throw new NotFoundException(
         `Active book for national id ${user.nationalId} not found`,
       )
     }
 
-    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
-      ssn: user.nationalId,
-      showInactiveBooks: false,
-    })
-
-    const hasPracticeDriving = await this.hasPracticeDriving(
-      activeBook.id || '',
-    )
-
     try {
-      await api.apiStudentUpdateLicenseBookIdPut({
-        id: activeBook.id || '',
-        digitalBookUpdateRequestBody: {
-          createdOn: activeBook.createdOn || '',
-          teacherSsn: newTeacherSsn,
-          schoolSsn: activeBook.schoolSsn,
-          studentEmail: data?.email,
-          studentPrimaryPhoneNumber: data?.primaryPhoneNumber,
-          studentSecondaryPhoneNumber: data?.secondaryPhoneNumber,
-          practiceDriving: hasPracticeDriving,
-        },
-      })
+      // A student can be taking several categories (e.g. B and BE) at once –
+      // update the instructor on every active book.
+      await Promise.all(
+        activeBooks.map((book) =>
+          api.apiStudentUpdateLicenseBookIdPut({
+            id: book.id ?? '',
+            digitalBookUpdateRequestBody: {
+              createdOn: book.createdOn ?? '',
+              teacherSsn: newTeacherSsn,
+              schoolSsn: book.schoolSsn,
+              studentEmail: book.studentEmail,
+              studentPrimaryPhoneNumber: book.studentPrimaryPhoneNumber,
+              studentSecondaryPhoneNumber: book.studentSecondaryPhoneNumber,
+              practiceDriving: book.practiceDriving,
+            },
+          }),
+        ),
+      )
       return { success: true }
     } catch (e) {
+      this.logger.error(
+        `${LOGTAG} Error updating driving license book instructor`,
+        e,
+      )
       return { success: false }
     }
   }

@@ -60,6 +60,15 @@ describe('DrivingLicenseBookClientApiFactory', () => {
     })
   })
 
+  describe('getActiveStudentBook', () => {
+    it('should return the active book with the current instructor', async () => {
+      const response = await service.getActiveStudentBook(MOCK_USER)
+
+      expect(response?.id).toBeTruthy()
+      expect(response?.teacherSsn).toBe(MOCK_NATIONAL_ID_TEACHER_OLD)
+    })
+  })
+
   describe('updateActiveStudentBookInstructor', () => {
     it('student should be able to update the instructor with a valid instructor national id', async () => {
       const response = await service.updateActiveStudentBookInstructor(

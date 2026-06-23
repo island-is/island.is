@@ -70,6 +70,37 @@ export const requestHandlers = [
     },
   ),
   rest.get(
+    url(
+      `r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/GetStudentActiveLicenseBookBySsn/:ssn`,
+    ),
+    (req, res, ctx) => {
+      const isFound = req.params.ssn === MOCK_NATIONAL_ID_STUDENT
+      const licenseCategory = req.url.searchParams.get('licenseCategory')
+
+      // The mock student only has an active B book (no active BE book).
+      if (!isFound || licenseCategory !== 'B') {
+        return res(ctx.status(200), ctx.json({ data: null }))
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json({
+          data: {
+            id: MOCK_LICENSE_BOOK_ID,
+            licenseCategory: 'B',
+            createdOn: new Date(),
+            schoolSsn: MOCK_NATIONAL_ID_SCHOOL,
+            teacherSsn: MOCK_NATIONAL_ID_TEACHER_OLD,
+            studentEmail: null,
+            studentPrimaryPhoneNumber: null,
+            studentSecondaryPhoneNumber: null,
+            practiceDriving: true,
+          },
+        }),
+      )
+    },
+  ),
+  rest.get(
     url(`r1/${XROAD_DRIVING_LICENSE_BOOK_PATH}/api/Student/GetLicenseBook/:id`),
     (req, res, ctx) => {
       const isFound = req.params.id === MOCK_LICENSE_BOOK_ID
