@@ -8,6 +8,7 @@ import { StackScreen } from '@/components/stack-screen'
 
 import { LoadingIcon } from '@/components/nav-loading-spinner/loading-icon'
 import { Pressable } from '@/components/pressable/pressable'
+import { toast, ToastHost } from '@/components/toast'
 import {
   GetDocumentDocument,
   useDocumentReplyMutation,
@@ -97,6 +98,15 @@ export default function DocumentReplyScreen() {
         if (data.documentsV2Reply?.id) {
           setMessage('')
           router.back()
+        } else {
+          toast.error(
+            intl.formatMessage({ id: 'documentReply.sendMessageError' }),
+            {
+              message: intl.formatMessage({
+                id: 'documentReply.pleaseTryAgain',
+              }),
+            },
+          )
         }
       },
     })
@@ -141,6 +151,7 @@ export default function DocumentReplyScreen() {
         }}
       />
       <Host>
+        <ToastHost />
         {loading ? (
           <LoadingIcon />
         ) : error ? (
