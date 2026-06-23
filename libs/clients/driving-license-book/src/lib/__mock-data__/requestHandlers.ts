@@ -22,7 +22,7 @@ export const MOCK_USER = {
   userAgent: '',
 } as User
 
-const url = (path: string) => {
+export const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
 }
 

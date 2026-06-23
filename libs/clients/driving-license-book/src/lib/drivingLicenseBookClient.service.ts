@@ -3,7 +3,7 @@ import {
   DigitalBook,
   DrivingLicenseBookApi,
 } from '../../gen/fetch'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, FetchError } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { DrivingLicenseBookClientConfig } from './drivingLicenseBookClient.config'
@@ -56,6 +56,14 @@ const UPDATE_INSTRUCTOR_LICENSE_CATEGORIES = [
   LICENSE_CATEGORY_B,
   LICENSE_CATEGORY_BE,
 ]
+
+// An active book we can actually act on: it must have an id (to address the
+// update) and a createdOn (the update endpoint requires a non-empty yyyy-MM-dd).
+type ActiveLicenseBook = DigitalBook & { id: string; createdOn: string }
+
+const isActiveLicenseBook = (
+  book: DigitalBook | undefined,
+): book is ActiveLicenseBook => !!book?.id && !!book?.createdOn
 
 @Injectable()
 export class DrivingLicenseBookClientApiFactory {
@@ -383,33 +391,37 @@ export class DrivingLicenseBookClientApiFactory {
           ssn: nationalId,
           licenseCategory,
         })
-      // Only treat it as an active book if it actually carries an id.
-      return data?.id ? data : undefined
-    } catch (e) {
-      // No active book for this category (e.g. the student isn't taking it).
-      // Not an error for the overall flow – other categories may still match.
-      this.logger.debug(
-        `${LOGTAG} No active ${licenseCategory} book for student`,
-      )
-      return undefined
+      return data ?? undefined
+    } catch (error) {
+      // Only swallow the "no active book for this category" case – a student
+      // may legitimately have a book in one category but not another. Any other
+      // failure (401/403/5xx/timeout) must propagate, otherwise we could update
+      // some of a student's books, miss others, and still report success.
+      if (error instanceof FetchError && error.status === 404) {
+        this.logger.debug(
+          `${LOGTAG} No active ${licenseCategory} book for student`,
+        )
+        return undefined
+      }
+      throw error
     }
   }
 
   private async fetchActiveStudentBooks(
     api: DrivingLicenseBookApi,
     nationalId: string,
-  ): Promise<DigitalBook[]> {
+  ): Promise<ActiveLicenseBook[]> {
     const books = await Promise.all(
       UPDATE_INSTRUCTOR_LICENSE_CATEGORIES.map((licenseCategory) =>
         this.getActiveLicenseBookByCategory(api, nationalId, licenseCategory),
       ),
     )
 
-    // Drop empty categories and de-duplicate in case the backend returns the
-    // same book for more than one category.
+    // Keep only usable books (id + createdOn) and de-duplicate in case the
+    // backend returns the same book for more than one category.
     const seen = new Set<string>()
-    return books.filter((book): book is DigitalBook => {
-      if (!book?.id || seen.has(book.id)) {
+    return books.filter(isActiveLicenseBook).filter((book) => {
+      if (seen.has(book.id)) {
         return false
       }
       seen.add(book.id)
@@ -429,7 +441,7 @@ export class DrivingLicenseBookClientApiFactory {
     // book (the instructor is shared across them in practice).
     return activeBooks.reduce(
       (mostRecent, book) =>
-        new Date(book.createdOn ?? '') > new Date(mostRecent.createdOn ?? '')
+        new Date(book.createdOn) > new Date(mostRecent.createdOn)
           ? book
           : mostRecent,
       activeBooks[0],
@@ -455,9 +467,9 @@ export class DrivingLicenseBookClientApiFactory {
       await Promise.all(
         activeBooks.map((book) =>
           api.apiStudentUpdateLicenseBookIdPut({
-            id: book.id ?? '',
+            id: book.id,
             digitalBookUpdateRequestBody: {
-              createdOn: book.createdOn ?? '',
+              createdOn: book.createdOn,
               teacherSsn: newTeacherSsn,
               schoolSsn: book.schoolSsn,
               studentEmail: book.studentEmail,
