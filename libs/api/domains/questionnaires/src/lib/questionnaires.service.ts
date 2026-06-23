@@ -495,7 +495,7 @@ export class QuestionnairesService {
       }
       return []
     } else {
-      this.logger.error('Unhandled reply type', { reply })
+      this.logger.warn('Unhandled reply type')
       return []
     }
   }
