@@ -3,13 +3,13 @@ import { defineMessages } from 'react-intl'
 export const bankTransfer = defineMessages({
   paymentMethodTitle: {
     id: 'payments:bankTransfer.title',
-    defaultMessage: 'Tafarlaus millifærsla',
+    defaultMessage: 'Millifærsla',
     description: 'Title for bank transfer payment method',
   },
   disclaimer: {
     id: 'payments:bankTransfer.disclaimer',
     defaultMessage:
-      'Borgaðu á öruggan og einfaldan hátt með tafarlausri millifærslu beint úr bankaappinu þínu',
+      'Borgaðu á öruggan og einfaldan hátt beint úr bankaappinu þínu',
     description: 'Disclaimer banner shown on the bank-transfer payment view',
   },
   confirm: {
