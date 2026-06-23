@@ -829,6 +829,10 @@ export const en: TranslatedMessages = {
   'health.appointments.openingHours': 'Opening hours',
   'health.appointments.phoneNumber': 'Phone number',
   'health.appointments.organization': 'Organization',
+  'health.appointments.videoCall': 'Video call',
+  'health.appointments.videoCallInfo':
+    'A link to the video call will be sent to you before the appointment.',
+  'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',

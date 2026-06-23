@@ -529,6 +529,7 @@ export default function HealthOverviewScreen() {
                       practitioners={appointment.practitioners}
                       date={appointment.date ?? ''}
                       location={appointment.location?.name ?? ''}
+                      modality={appointment.modality}
                       onPress={handleAppointmentPress}
                     />
                   ))}

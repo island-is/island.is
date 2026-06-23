@@ -827,6 +827,10 @@ export const is = {
   'health.appointments.openingHours': 'Opnunartímar',
   'health.appointments.phoneNumber': 'Símanúmer',
   'health.appointments.organization': 'Stofnun',
+  'health.appointments.videoCall': 'Myndsímtal',
+  'health.appointments.videoCallInfo':
+    'Tengill á myndsímtalið verður sendur til þín fyrir tímann.',
+  'health.appointments.startVideoCall': 'Hefja myndsímtal',
   'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
   'health.appointments.noAppointmentsText':
     'Þú ert ekki með neinar komandi tímabókanir.',

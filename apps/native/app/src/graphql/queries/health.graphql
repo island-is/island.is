@@ -255,7 +255,12 @@ query getAppointmentDetail($id: String!) {
     instruction
     date
     duration
+    modality
     practitioners
+    links {
+      type
+      url
+    }
     location {
       name
       organization

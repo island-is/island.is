@@ -46,7 +46,7 @@ export default function AppointmentsScreen() {
   })
 
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -140,6 +140,7 @@ export default function AppointmentsScreen() {
                     practitioners={appointment.practitioners}
                     date={appointment.date ?? ''}
                     location={appointment.location?.name ?? ''}
+                    modality={appointment.modality}
                     onPress={handleAppointmentPress}
                   />
                 ))}

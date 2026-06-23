@@ -1,6 +1,12 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ImageSourcePropType, Linking, ScrollView, View } from 'react-native'
+import {
+  ImageSourcePropType,
+  Linking,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
@@ -12,12 +18,23 @@ import externalLink from '@/assets/icons/external-link.png'
 import infoIcon from '@/assets/icons/info-bubble-outline.png'
 import locationIcon from '@/assets/icons/location.png'
 import hourglassIcon from '@/assets/icons/hourglass.png'
+import videoCameraIcon from '@/assets/icons/video-camera.png'
 import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
+  HealthDirectorateAppointmentLinkType,
+  HealthDirectorateAppointmentModality,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
-import { Icon, Input, InputRow, Problem, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  Icon,
+  Input,
+  InputRow,
+  Problem,
+  Typography,
+} from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const Header = styled.View`
@@ -60,6 +77,12 @@ const ProblemContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
+const StickyFooter = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  background-color: ${({ theme }) => theme.color.white};
+`
+
 export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
@@ -100,6 +123,59 @@ export default function AppointmentDetailScreen() {
   const locationLink =
     locationLinks?.find((l) => l.type === 'WEBSITE')?.url ??
     locationLinks?.[0]?.url
+
+  const isVideo =
+    appointment?.modality === HealthDirectorateAppointmentModality.Video
+
+  const videoCallLink = appointment?.links?.find(
+    (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
+  )?.url
+
+  const [isVideoCallActive, setIsVideoCallActive] = useState(false)
+
+  useEffect(() => {
+    if (!appointment?.date) {
+      setIsVideoCallActive(false)
+      return
+    }
+    const appointmentMs = new Date(appointment.date).getTime()
+    const activateAtMs = appointmentMs - 5 * 60 * 1000
+    const deactivateAtMs = appointmentMs + 2 * 60 * 60 * 1000
+    const now = Date.now()
+
+    if (now >= deactivateAtMs) {
+      setIsVideoCallActive(false)
+      return
+    }
+
+    if (now >= activateAtMs) {
+      setIsVideoCallActive(true)
+      const deactivateTimeout = setTimeout(
+        () => setIsVideoCallActive(false),
+        deactivateAtMs - now,
+      )
+      return () => clearTimeout(deactivateTimeout)
+    }
+
+    setIsVideoCallActive(false)
+    const activateTimeout = setTimeout(() => {
+      setIsVideoCallActive(true)
+    }, activateAtMs - now)
+    const deactivateTimeout = setTimeout(
+      () => setIsVideoCallActive(false),
+      deactivateAtMs - now,
+    )
+    return () => {
+      clearTimeout(activateTimeout)
+      clearTimeout(deactivateTimeout)
+    }
+  }, [appointment?.date])
+
+  const handleStartVideoCall = useCallback(() => {
+    if (videoCallLink) {
+      Linking.openURL(videoCallLink)
+    }
+  }, [videoCallLink])
 
   const {
     weekday,
@@ -203,7 +279,23 @@ export default function AppointmentDetailScreen() {
                   </IconRow>
                 )}
 
-                {appointment.location?.name && (
+                {isVideo && (
+                  <IconRow>
+                    <Icon
+                      source={videoCameraIcon as ImageSourcePropType}
+                      width={16}
+                      height={16}
+                      tintColor="blue400"
+                    />
+                    <Typography variant="body">
+                      {intl.formatMessage({
+                        id: 'health.appointments.videoCall',
+                      })}
+                    </Typography>
+                  </IconRow>
+                )}
+
+                {!isVideo && appointment.location?.name && (
                   <LocationItem>
                     <IconRow style={{ alignItems: 'flex-start' }}>
                       <Icon
@@ -250,7 +342,7 @@ export default function AppointmentDetailScreen() {
                   </LocationItem>
                 )}
 
-                {locationLink && (
+                {!isVideo && locationLink && (
                   <LocationItem>
                     <IconRow>
                       <Icon
@@ -352,6 +444,29 @@ export default function AppointmentDetailScreen() {
           </>
         )}
       </ScrollView>
+
+      {isVideo && (
+        <StickyFooter>
+          <Alert
+            type="info"
+            hasBorder
+            message={intl.formatMessage({
+              id: 'health.appointments.videoCallInfo',
+            })}
+          />
+          {videoCallLink && (
+            <Button
+              title={intl.formatMessage({
+                id: 'health.appointments.startVideoCall',
+              })}
+              disabled={!isVideoCallActive}
+              onPress={handleStartVideoCall}
+              style={{ width: '100%', marginTop: theme.spacing[2] }}
+            />
+          )}
+          <SafeAreaView />
+        </StickyFooter>
+      )}
     </View>
   )
 }
