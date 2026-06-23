@@ -119,7 +119,7 @@ export default function AppointmentDetailScreen() {
   const isVideo =
     appointment?.modality === HealthDirectorateAppointmentModality.Video
 
-  const videoCallLink = appointment?.links?.find(
+  const videoCallLink = data?.healthDirectorateAppointment?.links?.find(
     (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
   )?.url
 
@@ -153,6 +153,15 @@ export default function AppointmentDetailScreen() {
     }
 
     setVideoCallPhase('before')
+
+    // setTimeout in JS overflows past ~24.8 days (2^31 - 1 ms) and fires
+    // immediately. For appointments further out, skip scheduling — the user
+    // will revisit closer to the date and the next mount will set it up.
+    const MAX_TIMEOUT_MS = 2 ** 31 - 1
+    if (activateAtMs - now > MAX_TIMEOUT_MS) {
+      return
+    }
+
     const activateTimeout = setTimeout(() => {
       setVideoCallPhase('active')
     }, activateAtMs - now)
