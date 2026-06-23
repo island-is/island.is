@@ -108,18 +108,24 @@ export class LyfjastofnunHealthProvidersClientService {
   public getPharmacies = async (): Promise<Pharmacy[]> => {
     const { data, error } = await getApiV1EftirlitLyfjabudir()
     if (error) throw error
-    return (data ?? []).map(mapPharmacy).filter((p): p is Pharmacy => p !== undefined)
+    return (data ?? [])
+      .map(mapPharmacy)
+      .filter((p): p is Pharmacy => p !== undefined)
   }
 
   public getMedicalClinics = async (): Promise<MedicalClinic[]> => {
     const { data, error } = await getApiV1EftirlitLaeknastodvar()
     if (error) throw error
-    return (data ?? []).map(mapMedicalClinic).filter((c): c is MedicalClinic => c !== undefined)
+    return (data ?? [])
+      .map(mapMedicalClinic)
+      .filter((c): c is MedicalClinic => c !== undefined)
   }
 
   public getWholesalers = async (): Promise<Wholesaler[]> => {
     const { data, error } = await getApiV1EftirlitLyfjaheildsolur()
     if (error) throw error
-    return (data ?? []).map(mapWholesaler).filter((w): w is Wholesaler => w !== undefined)
+    return (data ?? [])
+      .map(mapWholesaler)
+      .filter((w): w is Wholesaler => w !== undefined)
   }
 }

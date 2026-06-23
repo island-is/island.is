@@ -47,8 +47,10 @@ const REGION_LABEL_MAP: Record<
     pharmacyStrings.regionSouth,
   [IcelandicMedicinesAgencyPharmacyRegion.VesturlandOgVestfirdir]:
     pharmacyStrings.regionWest,
-  [IcelandicMedicinesAgencyPharmacyRegion.Nordurland]: pharmacyStrings.regionNorth,
-  [IcelandicMedicinesAgencyPharmacyRegion.Austurland]: pharmacyStrings.regionEast,
+  [IcelandicMedicinesAgencyPharmacyRegion.Nordurland]:
+    pharmacyStrings.regionNorth,
+  [IcelandicMedicinesAgencyPharmacyRegion.Austurland]:
+    pharmacyStrings.regionEast,
 }
 
 const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
@@ -146,10 +148,10 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
 
   const items: Item[] =
     datasource === 'pharmacies'
-      ? (pharmacyData?.icelandicMedicinesAgencyPharmacies?.data ?? [])
+      ? pharmacyData?.icelandicMedicinesAgencyPharmacies?.data ?? []
       : datasource === 'medicalClinics'
-      ? (clinicData?.icelandicMedicinesAgencyMedicalClinics?.data ?? [])
-      : (wholesalerData?.icelandicMedicinesAgencyWholesalers?.data ?? [])
+      ? clinicData?.icelandicMedicinesAgencyMedicalClinics?.data ?? []
+      : wholesalerData?.icelandicMedicinesAgencyWholesalers?.data ?? []
 
   const hasRegion = datasource !== 'wholesalers'
   const uniqueRegions = hasRegion
@@ -306,13 +308,9 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
                           {item.operator.address && (
                             <Text>{item.operator.address}</Text>
                           )}
-                          {(item.operator.postalCode ||
-                            item.operator.city) && (
+                          {(item.operator.postalCode || item.operator.city) && (
                             <Text>
-                              {[
-                                item.operator.postalCode,
-                                item.operator.city,
-                              ]
+                              {[item.operator.postalCode, item.operator.city]
                                 .filter(Boolean)
                                 .join(' ')}
                             </Text>
@@ -332,9 +330,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
                           {item.branches.map((branch, i) => (
                             <Box key={i}>
                               <Text variant="eyebrow">{branch.name}</Text>
-                              {branch.address && (
-                                <Text>{branch.address}</Text>
-                              )}
+                              {branch.address && <Text>{branch.address}</Text>}
                               {(branch.postalCode || branch.city) && (
                                 <Text>
                                   {[branch.postalCode, branch.city]

@@ -14,7 +14,8 @@ export class IcelandicMedicinesAgencyService {
   ) {}
 
   async getPharmacies(): Promise<IcelandicMedicinesAgencyPharmaciesCollection> {
-    const data = await this.lyfjastofnunHealthProvidersClientService.getPharmacies()
+    const data =
+      await this.lyfjastofnunHealthProvidersClientService.getPharmacies()
     const pharmacies = data
       .map(mapToPharmacy)
       .sort((a, b) => a.name.localeCompare(b.name))

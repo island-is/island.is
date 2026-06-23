@@ -14,6 +14,7 @@ export const m = defineMessages({
   noResults: {
     id: 'web.lyfjastofnunMedicalClinics:noResults',
     defaultMessage: 'Engar niðurstöður fundust',
-    description: 'Message shown when no medical clinics match the current filters',
+    description:
+      'Message shown when no medical clinics match the current filters',
   },
 })
