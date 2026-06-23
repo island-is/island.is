@@ -84,7 +84,11 @@ export const SortableTable = <T extends Record<string, any>>({
         {sorted.map((item, i) => (
           <tr
             key={i}
-            style={onRowClick ? { position: 'relative', cursor: 'pointer' } : undefined}
+            style={
+              onRowClick
+                ? { position: 'relative', cursor: 'pointer' }
+                : undefined
+            }
           >
             {columns.map(({ key, render }, colIdx) => (
               <T.Data key={String(key)}>

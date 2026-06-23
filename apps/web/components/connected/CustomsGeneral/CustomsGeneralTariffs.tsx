@@ -111,7 +111,9 @@ const CustomsGeneralTariffs = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedItem, setSelectedItem] = useState<TariffItem | null>(null)
-  const handleBack = useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
+  const handleBack = useDetailViewBack(!!selectedItem, () =>
+    setSelectedItem(null),
+  )
 
   const columns = [
     {

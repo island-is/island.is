@@ -151,7 +151,9 @@ const CustomsGeneralCharges = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedItem, setSelectedItem] = useState<ChargeItem | null>(null)
-  const handleBack = useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
+  const handleBack = useDetailViewBack(!!selectedItem, () =>
+    setSelectedItem(null),
+  )
 
   const columns = [
     {
