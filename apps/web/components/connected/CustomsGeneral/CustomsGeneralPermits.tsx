@@ -139,7 +139,10 @@ const CustomsGeneralPermits = () => {
         <span className={styles.link}>{String(value ?? '')}</span>
       ),
     },
-    { key: 'name' as const, label: formatMessage(m.exemptionColumnDescription) },
+    {
+      key: 'name' as const,
+      label: formatMessage(m.exemptionColumnDescription),
+    },
   ]
 
   const { data, loading, error } = useQuery(GET_CUSTOMS_GENERAL_PERMITS, {

@@ -76,9 +76,7 @@ const TariffDetailView = ({ item, date, onBack }: DetailViewProps) => {
           paddingBottom={2}
         >
           <Box style={{ minWidth: LABEL_WIDTH }}>
-            <Text fontWeight="semiBold">
-              {formatMessage(m.tariffName)}
-            </Text>
+            <Text fontWeight="semiBold">{formatMessage(m.tariffName)}</Text>
           </Box>
           <Text>{item.name}</Text>
         </Box>
