@@ -11,10 +11,10 @@ export default defineConfig({
     filters: {
       operations: {
         include: [
-        'GET /api/v1/Eftirlit/lyfjabudir',
-        'GET /api/v1/Eftirlit/laeknastodvar',
-        'GET /api/v1/Eftirlit/lyfjaheildsolur',
-      ],
+          'GET /api/v1/Eftirlit/lyfjabudir',
+          'GET /api/v1/Eftirlit/laeknastodvar',
+          'GET /api/v1/Eftirlit/lyfjaheildsolur',
+        ],
       },
     },
   },
