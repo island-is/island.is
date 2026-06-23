@@ -20,6 +20,7 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   BlueBox,
   ChangeProsecutorModal,
   FormContentContainer,
@@ -229,6 +230,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           <Box component="section">
             <InfoCardActiveIndictment
               displayVerdictViewDate
