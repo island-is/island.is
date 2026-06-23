@@ -23,6 +23,8 @@ export const dataSchema = z.object({
           comment: z.string().nullish(),
         })
         .superRefine((doc, ctx) => {
+          const hasComment =
+            typeof doc.comment === 'string' && doc.comment.trim().length > 0
           if (
             !doc.checkbox?.includes(YES) &&
             (!doc.file || doc.file.length < 1)
@@ -35,7 +37,7 @@ export const dataSchema = z.object({
               },
             })
           }
-          if (doc.checkbox?.includes(YES) && !doc.comment) {
+          if (doc.checkbox?.includes(YES) && !hasComment) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               path: ['comment'],
