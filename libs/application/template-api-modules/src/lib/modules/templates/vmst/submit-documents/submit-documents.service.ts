@@ -45,7 +45,7 @@ const getMimeType = (fileName: string): string | undefined => {
     case 'rtf':
       return 'application/rtf'
     default:
-      return 'application/pdf'
+      return undefined
   }
 }
 
@@ -67,6 +67,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
         await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
           applicantId,
         )
+      // We filter out those that have attachmentId because they have already been handed in but not approved by VMTS
       return response.filter((i) => !i.attachmentId)
     } catch {
       return [] // Better to return nothing than fail prereq as this is not vital.
