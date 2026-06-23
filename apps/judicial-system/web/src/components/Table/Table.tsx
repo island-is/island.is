@@ -319,12 +319,16 @@ const Table: FC<TableProps> = (props) => {
                 aria-disabled={isRowDisabled}
                 className={styles.tableRowContainer}
                 onClick={() => {
-                  handleCaseClick(row)
+                  if (!isRowDisabled) {
+                    handleCaseClick(row)
+                  }
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault()
-                    handleCaseClick(row)
+                    if (!isRowDisabled) {
+                      handleCaseClick(row)
+                    }
                   }
                 }}
                 data-testid="tableRow"

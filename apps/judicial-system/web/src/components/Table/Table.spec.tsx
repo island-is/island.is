@@ -32,12 +32,33 @@ jest.mock('next/router', () => ({
   },
 }))
 
+// Lets a test force every row into the disabled state via `useCase`.
+// Only `Table` consumes `useCase` in this render tree, so a minimal stub that
+// delegates to the real hook is enough.
+let mockIsTransitioningCase = false
+
+jest.mock('../../utils/hooks/useCase', () => {
+  const actual = jest.requireActual('../../utils/hooks/useCase')
+  return {
+    ...actual,
+    __esModule: true,
+    default: () => ({
+      ...actual.default(),
+      isTransitioningCase: mockIsTransitioningCase,
+    }),
+  }
+})
+
 describe('Table', () => {
   let user: UserEvent
 
   beforeEach(() => {
     user = userEvent.setup()
     window.localStorage.clear()
+  })
+
+  afterEach(() => {
+    mockIsTransitioningCase = false
   })
 
   const clickButtonByTestId = async (testId: string) => {
@@ -387,5 +408,39 @@ describe('Table', () => {
 
     await user.keyboard(' ')
     expect(onClick).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not activate a disabled row', async () => {
+    // A transitioning case disables every row.
+    mockIsTransitioningCase = true
+
+    const onClick = jest.fn(() => true)
+    const thead = [{ title: 'Title' }]
+    const data: CaseListEntry[] = [
+      { id: faker.datatype.uuid(), courtCaseNumber: 'R-123/2021' },
+    ]
+    const columns = [
+      { cell: (row: CaseListEntry) => <p>{row.courtCaseNumber}</p> },
+    ]
+
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <Table
+            thead={thead}
+            data={data}
+            columns={columns}
+            onClick={onClick}
+          />
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    const row = screen.getByRole('button', { name: 'Opna mál R-123/2021' })
+    expect(row).toHaveAttribute('aria-disabled', 'true')
+    expect(row).toHaveAttribute('tabindex', '-1')
+
+    await user.click(row)
+    expect(onClick).not.toHaveBeenCalled()
   })
 })
