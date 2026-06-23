@@ -507,7 +507,7 @@ export default function HealthOverviewScreen() {
                 ))}
               </AppointmentsSkeletonGroup>
             )}
-            {appointmentsRes.error && !appointmentsRes.data && (
+            {appointmentsRes.error && appointments.length === 0 && (
               <AppointmentsContainer>
                 <Problem
                   type="error"
@@ -530,7 +530,6 @@ export default function HealthOverviewScreen() {
               )}
             {hasBeenFocused &&
               !appointmentsRes.loading &&
-              !appointmentsRes.error &&
               appointments.length > 0 && (
                 <AppointmentsContainer>
                   {appointments.slice(0, 2).map((appointment) => (
