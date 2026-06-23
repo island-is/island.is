@@ -112,6 +112,17 @@ export const m = {
       defaultMessage: 'Sláðu inn orð, málsnúmer, málsaðila',
       description: 'Placeholder fyrir leitarbox',
     },
+    searchInputTooltip: {
+      id: 'web.verdicts:listPage.searchInputTooltip',
+      defaultMessage:
+        'Ef leitað er eftir hluta úr orði þarf að nota * á eftir orðhluta.',
+      description: 'Skýringartexti í upplýsingabólu fyrir aðalleitarbox',
+    },
+    searchInputLabel: {
+      id: 'web.verdicts:listPage.searchInputLabel',
+      defaultMessage: 'Aðalleit',
+      description: 'Label fyrir leitarbox',
+    },
     presentings: {
       id: 'web.verdicts:listPage.presentings',
       defaultMessage: 'Reifun',

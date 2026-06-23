@@ -7,11 +7,12 @@ import {
   Application,
 } from '@island.is/application/types'
 import { m } from '../messages'
-import { ConditionFn, DrivingLicense } from '../types'
+import { ConditionFn, DrivingLicense, Remark } from '../types'
 import {
   B_FULL,
   B_TEMP,
   CHARGE_ITEM_CODES,
+  codesRequiringHealthCertificate,
   DELIVERY_FEE,
   DrivingLicenseApplicationFor,
   Pickup,
@@ -79,14 +80,33 @@ export const hasCompletedPrerequisitesStep =
     return requirementsMet === value
   }
 
-export const hasHealthRemarks = (externalData: ExternalData) => {
-  return (
-    (
-      getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
-        ?.remarks || []
-    ).length > 0
+// Returns only the remarks whose code is on the BE health-certificate
+// allowlist (vision / hearing / prosthesis). Used both to decide whether the
+// `HealthRemarks` alert renders and to filter what is shown inside it, so
+// administrative remarks (e.g. `71` samrit) never appear in a "health"
+// warning.
+export const getHealthCertificateRemarks = (
+  remarks: Remark[] | undefined,
+): Remark[] =>
+  (remarks ?? []).filter((r) =>
+    codesRequiringHealthCertificate.includes(r.code),
   )
-}
+
+export const hasHealthRemarks = (externalData: ExternalData) =>
+  getHealthCertificateRemarks(
+    getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
+      ?.remarks,
+  ).length > 0
+
+// RLS exposes the photo binary (`pohto`) inconsistently — some legacy records
+// return metadata + signature but a null photo blob. Submission resolves the
+// photo by reference (imageId), so binary presence is irrelevant for whether
+// a usable quality photo exists. Gate on the record, not the blob.
+export const hasUsableRlsQualityPhoto = (externalData: ExternalData): boolean =>
+  getValueViaPath<{ imageId?: number | null }>(
+    externalData,
+    'qualityPhotoAndSignature.data',
+  )?.imageId != null
 
 export const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<

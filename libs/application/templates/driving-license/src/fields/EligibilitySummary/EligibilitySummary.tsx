@@ -1,6 +1,8 @@
 import React, { FC, useEffect } from 'react'
 import type { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
 import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
 import { extractReasons } from './extractReasons'
@@ -9,9 +11,26 @@ import { useEligibility } from './useEligibility'
 export const EligibilitySummary: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
-  const { eligibility, loading, error } = useEligibility(application)
+  const { setValue, watch } = useFormContext()
+  const { lang } = useLocale()
 
-  const { setValue } = useFormContext()
+  // The redesign flags are written by hidden inputs on this same screen
+  // (sectionRequirements.ts), so `application.answers` is still stale on
+  // first render. Read live form state first, fall back to answers for
+  // returning visits after the value has been persisted.
+  const is65RenewalRedesignEnabled =
+    watch('is65RenewalRedesignEnabled') === true ||
+    getValueViaPath(application.answers, 'is65RenewalRedesignEnabled') === true
+
+  const isBTempRedesignEnabled =
+    watch('isBTempRedesignEnabled') === true ||
+    getValueViaPath(application.answers, 'isBTempRedesignEnabled') === true
+
+  const { eligibility, loading, error } = useEligibility(
+    application,
+    is65RenewalRedesignEnabled,
+    isBTempRedesignEnabled,
+  )
 
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)
@@ -25,7 +44,7 @@ export const EligibilitySummary: FC<
     return <Text>Villa kom upp við að sækja upplýsingar</Text>
   }
 
-  const requirements = extractReasons(eligibility)
+  const requirements = extractReasons(eligibility, lang)
 
   return (
     <Box marginBottom={10}>

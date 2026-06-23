@@ -336,7 +336,7 @@ export class QuestionnairesService {
                             ? formatMessage(m.yes)
                             : formatMessage(m.no),
                         ]
-                      } else {
+                      } else if (reply.answer != null) {
                         // StringReplyDto, NumberReplyDto, DateReplyDto
                         values = [String(reply.answer)]
                       }
@@ -350,8 +350,7 @@ export class QuestionnairesService {
                   }
                 }) ?? [],
             )
-            .filter((answer) => answer != null && answer.values.length > 0) ??
-          [],
+            .filter((answer) => answer != null) ?? [],
       }
 
       return {

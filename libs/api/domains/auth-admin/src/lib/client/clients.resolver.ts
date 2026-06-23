@@ -26,6 +26,8 @@ import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { RotateSecretInput } from './dto/rotate-secret.input'
 import { ClientSecret } from './models/client-secret.model'
 import { DeleteClientInput } from './dto/delete-client.input'
+import { RestoreClientInput } from './dto/restore-client.input'
+import { PatchClientResponse } from './models/patch-client-response.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -75,13 +77,13 @@ export class ClientsResolver {
     return this.clientsService.publishClient(user, input)
   }
 
-  @Mutation(() => [ClientEnvironment], {
+  @Mutation(() => PatchClientResponse, {
     name: 'patchAuthAdminClient',
   })
   patchClient(
     @CurrentUser() user: User,
     @Args('input', { type: () => PatchClientInput }) input: PatchClientInput,
-  ) {
+  ): Promise<PatchClientResponse> {
     return this.clientsService.patchClient(user, input)
   }
 
@@ -99,6 +101,15 @@ export class ClientsResolver {
     @Args('input', { type: () => DeleteClientInput }) input: DeleteClientInput,
   ): Promise<boolean> {
     return this.clientsService.deleteClient(user, input)
+  }
+
+  @Mutation(() => Boolean, { name: 'restoreAuthAdminClient' })
+  restoreClient(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RestoreClientInput })
+    input: RestoreClientInput,
+  ): Promise<boolean> {
+    return this.clientsService.restoreClient(user, input)
   }
 
   @Mutation(() => Boolean, { name: 'revokeAuthAdminClientSecrets' })

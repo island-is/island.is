@@ -1,3 +1,15 @@
+import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
+import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
+import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
+import { SubmitDocumentsService } from './vmst/submit-documents/submit-documents.service'
+import { ConfirmTravelModule } from './vmst/confirm-travel/confirm-travel.module'
+import { ConfirmTravelService } from './vmst/confirm-travel/confirm-travel.service'
+import { ConfirmJobSearchModule } from './vmst/confirm-job-search/confirm-job-search.module'
+import { ConfirmJobSearchService } from './vmst/confirm-job-search/confirm-job-search.service'
+import { EditUnemploymentInformationModule } from './vmst/edit-unemployment-information/edit-unemployment-information.module'
+import { EditUnemploymentInformationService } from './vmst/edit-unemployment-information/edit-unemployment-information.service'
+import { DeRegisterUnemploymentBenefitsModule } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.module'
+import { DeRegisterUnemploymentBenefitsService } from './vmst/de-register-unemployment-benefits/de-register-unemployment-benefits.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -144,8 +156,6 @@ import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/dereg
 import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
 import { RegisterNewMachineTemplateModule } from './aosh/register-new-machine/register-new-machine.module'
 import { RegisterNewMachineTemplateService } from './aosh/register-new-machine/register-new-machine.service'
-import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
-import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
 import { StreetRegistrationTemplateModule } from './aosh/street-registration/street-registration.module'
 import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
@@ -244,7 +254,6 @@ export const modules = [
   UniversityModule,
   DeregisterMachineTemplateModule,
   RegisterNewMachineTemplateModule,
-  GrindavikHousingBuyoutModule,
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
@@ -276,6 +285,12 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
+  HousingBenefitsModule,
+  ConfirmJobSearchModule,
+  EditUnemploymentInformationModule,
+  DeRegisterUnemploymentBenefitsModule,
+  SubmitDocumentsModule,
+  ConfirmTravelModule,
 ]
 
 export const services = [
@@ -340,7 +355,6 @@ export const services = [
   UniversityService,
   DeregisterMachineTemplateService,
   RegisterNewMachineTemplateService,
-  GrindavikHousingBuyoutService,
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
@@ -370,4 +384,10 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
+  HousingBenefitsService,
+  ConfirmJobSearchService,
+  EditUnemploymentInformationService,
+  DeRegisterUnemploymentBenefitsService,
+  SubmitDocumentsService,
+  ConfirmTravelService,
 ]

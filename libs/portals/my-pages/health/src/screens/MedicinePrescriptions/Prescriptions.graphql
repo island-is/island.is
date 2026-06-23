@@ -48,6 +48,14 @@ query getPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
   }
 }
 
+query getPrescriptionRenewalTargets($prescriptionId: String!) {
+  healthDirectoratePrescriptionRenewalTargets(prescriptionId: $prescriptionId) {
+    groupId
+    nodeId
+    name
+  }
+}
+
 mutation postPrescriptionRenewal($input: HealthDirectorateRenewalInput!) {
   healthDirectoratePrescriptionRenewal(input: $input) {
     prescriptions {

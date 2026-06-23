@@ -29,7 +29,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '3'
   MAX_JOBS: '2'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   AWS_REGION: eu-west-1
@@ -58,7 +58,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -208,7 +208,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -236,7 +236,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -257,6 +257,13 @@ jobs:
       - name: checkout
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         uses: actions/checkout@v4
+
+      - name: Record deploy start time
+        id: dora-start
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        uses: ./.github/actions/dora-deployment
+        with:
+          mode: start
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -288,6 +295,15 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+
+      - name: Send DORA deployment events
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
+        uses: ./.github/actions/dora-deployment
+        with:
+          mode: finish
+          dd-api-key: ${{ secrets.DD_API_KEY }}
+          environment: ${{ contains(github.event.merge_group.base_ref || github.ref_name, 'release/') && 'prod' || 'dev' }}
+          started-at: ${{ steps.dora-start.outputs.started-at }}
       - name: Update judicial system
         id: judicial-system
         if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}
@@ -319,7 +335,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: [self-hosted, ec2-runners, shared-v2]
+    runs-on: arc-shared
     env:
       CHECK: 'false'
     steps:

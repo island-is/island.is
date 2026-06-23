@@ -2,11 +2,12 @@ import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
+import { SmsService } from '@island.is/nova-sms'
 
 import {
-  CaseAppealRulingDecision,
+  AppealCaseNotificationType,
+  AppealCaseRulingDecision,
   CaseDecision,
-  CaseNotificationType,
   CaseState,
   CaseType,
   User,
@@ -17,7 +18,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -28,7 +29,8 @@ interface Then {
 
 type GivenWhenThen = (
   defenderNationalId?: string,
-  appealRulingDecision?: CaseAppealRulingDecision,
+  appealRulingDecision?: AppealCaseRulingDecision,
+  appealRulingModifiedHistory?: string,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
@@ -40,38 +42,58 @@ describe('InternalNotificationController - Send appeal completed notifications',
   ])
   const userId = uuid()
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const courtId = uuid()
 
   let mockEmailService: EmailService
+  let mockSmsService: SmsService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppeals.email}"}`
 
-    const { emailService, notificationConfig, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      smsService,
+      notificationConfig,
+      internalNotificationController,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
+    mockSmsService = smsService
     mockConfig = notificationConfig
 
     givenWhenThen = async (
       defenderNationalId?: string,
-      appealRulingDecision?: CaseAppealRulingDecision,
+      appealRulingDecision?: AppealCaseRulingDecision,
+      appealRulingModifiedHistory?: string,
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealCaseNumber,
+        appealRulingDecision:
+          appealRulingDecision ?? AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory,
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             type: CaseType.CUSTODY,
             state: CaseState.ACCEPTED,
             decision: CaseDecision.ACCEPTING,
-            prosecutor: { name: prosecutor.name, email: prosecutor.email },
+            prosecutor: {
+              name: prosecutor.name,
+              email: prosecutor.email,
+              mobileNumber: prosecutor.mobile,
+            },
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
@@ -79,15 +101,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderEmail: defender.email,
             courtCaseNumber,
             courtId: courtId,
-            appealCase: {
-              appealCaseNumber,
-              appealRulingDecision:
-                appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user: { id: userId } as User,
-            type: CaseNotificationType.APPEAL_COMPLETED,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -149,6 +168,50 @@ describe('InternalNotificationController - Send appeal completed notifications',
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+      expect(mockSmsService.sendSms).toHaveBeenCalledWith(
+        [prosecutor.mobile],
+        `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Sjá nánar á rettarvorslugatt.island.is`,
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent with repealed ruling', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(uuid(), AppealCaseRulingDecision.REPEAL)
+    })
+
+    it('should send sms with repealed ruling decision', () => {
+      expect(mockSmsService.sendSms).toHaveBeenCalledWith(
+        [prosecutor.mobile],
+        `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Fellt úr gildi. Sjá nánar á rettarvorslugatt.island.is`,
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent for corrected ruling', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        uuid(),
+        AppealCaseRulingDecision.CHANGED,
+        'Leiðrétting á úrskurði',
+      )
+    })
+
+    it('should send resent email but not sms to prosecutor', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          subject: `Leiðréttur úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur leiðrétt úrskurð í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockSmsService.sendSms).not.toHaveBeenCalled()
       expect(then.result).toEqual({ delivered: true })
     })
   })
@@ -176,7 +239,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen('', CaseAppealRulingDecision.DISCONTINUED)
+      then = await givenWhenThen('', AppealCaseRulingDecision.DISCONTINUED)
     })
 
     it('should send notification about discontinuance', () => {
@@ -194,6 +257,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
           html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður.`,
         }),
       )
+      expect(mockSmsService.sendSms).not.toHaveBeenCalled()
       expect(then.result).toEqual({ delivered: true })
     })
   })

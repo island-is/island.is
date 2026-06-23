@@ -8,6 +8,7 @@ import {
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
+  valueToNumber,
 } from './utils'
 
 const asset = z
@@ -25,6 +26,54 @@ const asset = z
     },
     {
       path: ['marketValue'],
+    },
+  )
+  .refine(
+    ({ enabled, assetNumber }) => {
+      return enabled ? isValidString(assetNumber) : true
+    },
+    {
+      path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share >= 0.01 && share <= 100 : true
+    },
+    {
+      path: ['share'],
+    },
+  )
+  .refine(
+    ({ enabled, description }) => {
+      return enabled ? isValidString(description) : true
+    },
+    {
+      path: ['description'],
+    },
+  )
+  .array()
+  .optional()
+
+// Same shape as `asset`, but marketValue must be greater than 0 so vehicles
+// cannot be submitted at 0 kr. Heirs that genuinely should not count a vehicle
+// can disable the row ("Afvirkja"), which skips validation.
+const vehicleAsset = z
+  .object({
+    assetNumber: z.string(),
+    description: z.string(),
+    marketValue: z.string(),
+    initial: z.boolean(),
+    enabled: z.boolean(),
+    share: z.number(),
+  })
+  .refine(
+    ({ enabled, marketValue }) => {
+      return enabled ? valueToNumber(marketValue) > 0 : true
+    },
+    {
+      path: ['marketValue'],
+      params: m.errorMarketValue,
     },
   )
   .refine(
@@ -227,7 +276,7 @@ export const estateSchema = z.object({
       .optional(),
     assets: asset,
     flyers: asset,
-    vehicles: asset,
+    vehicles: vehicleAsset,
     ships: asset,
     guns: asset,
     bankAccounts: z
@@ -756,4 +805,7 @@ export const estateSchema = z.object({
   confirmAction: z.array(z.enum([YES])).length(1),
   confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
+  // Optional: applicant chooses to email a copy of the application to the
+  // parties (málsaðilar). Only offered for the payment-bearing estate types.
+  sendCopyToParties: z.array(z.enum([YES])).optional(),
 })

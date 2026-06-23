@@ -10,7 +10,10 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE,
+  DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   formatDate,
   getHumanReadableCaseIndictmentRulingDecision,
@@ -119,7 +122,9 @@ const Summary: FC = () => {
       return
     }
 
-    router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+    router.push(
+      `${DISTRICT_COURT_INDICTMENT_CASE_COMPLETED_ROUTE}/${workingCase.id}`,
+    )
   }
 
   const handleModalPrimaryButtonClick = async () => {
@@ -295,7 +300,7 @@ const Summary: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
           onNextButtonClick={handleNextButtonClick}

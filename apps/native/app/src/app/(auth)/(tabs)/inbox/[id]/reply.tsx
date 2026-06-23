@@ -1,14 +1,16 @@
+import { router, useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, TextInput } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { Keyboard, KeyboardAvoidingView, ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
 
 import { LoadingIcon } from '@/components/nav-loading-spinner/loading-icon'
 import { Pressable } from '@/components/pressable/pressable'
+import { toast, ToastHost } from '@/components/toast'
 import {
+  GetDocumentDocument,
   useDocumentReplyMutation,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
@@ -17,17 +19,12 @@ import {
   Button,
   Container,
   Icon,
-  NavigationBarSheet,
   Problem,
   Spacing,
   TextField,
   Typography,
 } from '@/ui'
 import { isAndroid } from '@/utils/devices'
-
-const Wrapper = styled.View`
-  flex: 1;
-`
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -96,10 +93,20 @@ export default function DocumentReplyScreen() {
 
   const [sendMessage, { loading: sendMessageLoading }] =
     useDocumentReplyMutation({
+      refetchQueries: [GetDocumentDocument],
       onCompleted: (data) => {
         if (data.documentsV2Reply?.id) {
           setMessage('')
           router.back()
+        } else {
+          toast.error(
+            intl.formatMessage({ id: 'documentReply.sendMessageError' }),
+            {
+              message: intl.formatMessage({
+                id: 'documentReply.pleaseTryAgain',
+              }),
+            },
+          )
         }
       },
     })
@@ -144,6 +151,7 @@ export default function DocumentReplyScreen() {
         }}
       />
       <Host>
+        <ToastHost />
         {loading ? (
           <LoadingIcon />
         ) : error ? (
@@ -153,7 +161,7 @@ export default function DocumentReplyScreen() {
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
           >
-            <Wrapper>
+            <KeyboardAvoidingView behavior="padding">
               <Row>
                 <Typography
                   variant="body3"
@@ -209,9 +217,11 @@ export default function DocumentReplyScreen() {
                   })}
                   autoFocus
                   multiline
+                  numberOfLines={3}
+                  inputStyle={{ minHeight: 60 }}
                 />
               </Row>
-            </Wrapper>
+            </KeyboardAvoidingView>
             <Footer>
               <Button
                 title={intl.formatMessage({ id: 'documentReply.sendMessage' })}

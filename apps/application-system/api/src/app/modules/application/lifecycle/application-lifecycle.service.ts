@@ -13,6 +13,7 @@ import {
   ApplicationWithAttachments,
   PruningApplication,
   RecordObject,
+  ApplicationStatus,
 } from '@island.is/application/types'
 import {
   getAdminDataForPruning,
@@ -20,6 +21,8 @@ import {
 } from './application-lifecycle.utils'
 import { HistoryService } from '@island.is/application/api/history'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import addMonths from 'date-fns/addMonths'
+import { createDailyCompletionNotifications } from '@island.is/application/api/payment'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -54,6 +57,8 @@ export class ApplicationLifeCycleService {
     // Pruning
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
+    await this.filterInvoicesFromPruning()
+    await this.fetchAndSendCurrentScheduledNotifications()
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
     await this.pruneApplicationData()
@@ -96,6 +101,195 @@ export class ApplicationLifeCycleService {
       if (notifications && notifications.length > 0) {
         this.pruneNotifications.set(application.id, notifications)
       }
+    }
+  }
+
+  private async filterInvoicesFromPruning() {
+    const incompleteWithPayment: ApplicationPruning[] = []
+    const incompleteWithInvoicePayments: ApplicationPruning[] = []
+    const output: ApplicationPruning[] = []
+
+    // Filter out applications that are not completed and have a successful payment creation
+    for (const application of this.processingApplications) {
+      if (
+        application.application.status !== ApplicationStatus.COMPLETED &&
+        application.application.externalData?.createCharge?.status === 'success'
+      ) {
+        incompleteWithPayment.push(application)
+      } else {
+        output.push(application)
+      }
+    }
+
+    if (incompleteWithPayment.length === 0) {
+      this.logger.info(
+        'No incomplete applications with payment to be extended.',
+      )
+      return
+    }
+
+    const inCompleteApplicationIds = incompleteWithPayment.map(
+      (application) => application.application.id,
+    )
+
+    // Fetch ids of applications that have invoice payments
+    const invoicePaymentApplicationIds =
+      await this.applicationChargeService.getInvoicePaymentApplicationIds(
+        inCompleteApplicationIds,
+      )
+
+    for (const application of incompleteWithPayment) {
+      if (invoicePaymentApplicationIds.has(application.application.id)) {
+        // Add the applications that have invoice payments to the incompleteWithInvoicePayments array
+        incompleteWithInvoicePayments.push(application)
+      } else {
+        // Add the applications that don't have invoice payments to the output array
+        output.push(application)
+      }
+    }
+
+    this.logger.info(
+      `Found ${incompleteWithInvoicePayments.length} applications with invoice payments to be extended.`,
+    )
+    this.processingApplications = output // Assign the filtered array to the processing applications array
+
+    for (const prunable of incompleteWithInvoicePayments) {
+      try {
+        const applicationLink =
+          await this.applicationChargeService.getApplicationLink(
+            prunable.application,
+          )
+        const oneMonthFromNow = addMonths(new Date(), 1)
+        const notifications = createDailyCompletionNotifications(
+          applicationLink,
+          new Date(),
+          oneMonthFromNow,
+        )
+        await this.applicationService.cancelScheduledNotifications(
+          prunable.application.id, // cancel any existing notifications
+        )
+        await this.applicationService.createScheduledNotifications(
+          prunable.application.id,
+          prunable.application.state,
+          notifications,
+        )
+        await this.applicationService.update(prunable.application.id, {
+          pruneAt: oneMonthFromNow,
+        })
+      } catch (error) {
+        this.logger.error(
+          `Failed to extend invoice application ${prunable.application.id}`,
+          error,
+        )
+      }
+    }
+  }
+
+  private async fetchAndSendCurrentScheduledNotifications() {
+    const scheduledNotifications =
+      await this.applicationService.findCurrentScheduledNotifications()
+
+    this.logger.info(
+      `Found ${scheduledNotifications.length} scheduled notifications to be processed.`,
+    )
+    const notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[] = []
+    const failedIds: string[] = []
+    for (const notification of scheduledNotifications) {
+      try {
+        // Fetch the application to get the applicant details
+        const application = await this.applicationService.findOneById(
+          notification.application_id,
+        )
+        if (!application) {
+          continue // Or handle missing application
+        }
+        // Handle applicant actors (delegations) vs normal applicant
+        if (
+          application.applicantActors &&
+          application.applicantActors.length > 0
+        ) {
+          application.applicantActors.forEach((actor) => {
+            notificationsToSend.push({
+              notificationId: notification.id,
+              applicationId: application.id,
+              dto: {
+                recipient: actor,
+                onBehalfOf: { nationalId: application.applicant },
+                templateId: notification.template,
+                args: notification.args || [],
+              },
+            })
+          })
+        } else {
+          notificationsToSend.push({
+            notificationId: notification.id,
+            applicationId: application.id,
+            dto: {
+              recipient: application.applicant,
+              templateId: notification.template,
+              args: notification.args || [],
+            },
+          })
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to prepare scheduled notification ${notification.id}`,
+          error,
+        )
+        failedIds.push(notification.id)
+      } finally {
+        if (failedIds.length > 0) {
+          await this.applicationService.markScheduledNotificationsFailed(
+            failedIds,
+          )
+        }
+      }
+    }
+    // Pass them off to be sent
+    await this.sendScheduledNotifications(notificationsToSend)
+  }
+
+  private async sendScheduledNotifications(
+    notificationsToSend: {
+      notificationId: string
+      applicationId: string
+      dto: CreateHnippNotificationDto
+    }[],
+  ) {
+    const sentIds: string[] = []
+    const failedIds: string[] = []
+    for (const notification of notificationsToSend) {
+      try {
+        await this.notificationApi.notificationsControllerCreateHnippNotification(
+          {
+            createHnippNotificationDto: notification.dto,
+          },
+        )
+        sentIds.push(notification.notificationId) // add successfully sent notifications to the list fo marking as sent
+      } catch (error) {
+        this.logger.error(
+          `Failed to send scheduled notification ${notification.notificationId} for application ${notification.applicationId}`,
+          error,
+        )
+        failedIds.push(notification.notificationId) // add failed notifications to the list to be marked as failed
+      }
+    }
+
+    this.logger.info(
+      `Marking ${sentIds.length} scheduled notifications as sent.`,
+    )
+
+    await this.applicationService.markScheduledNotificationsSent(sentIds)
+    if (failedIds.length > 0) {
+      const sentSet = new Set(sentIds)
+      const failedIdsToMark = failedIds.filter((id) => !sentSet.has(id)) // filter out notifications that only partially failed
+      await this.applicationService.markScheduledNotificationsFailed(
+        failedIdsToMark,
+      )
     }
   }
 
@@ -159,6 +353,9 @@ export class ApplicationLifeCycleService {
 
         let postPruneAt
         if (prune.pruned) {
+          await this.applicationService.cancelScheduledNotifications(
+            prune.application.id,
+          )
           postPruneAt = addMilliseconds(
             new Date(),
             template?.adminDataConfig?.postPruneDelayOverride ??
@@ -237,16 +434,7 @@ export class ApplicationLifeCycleService {
                   nationalId: application.applicant,
                 },
                 templateId: pruneMessage.notificationTemplateId,
-                args: [
-                  {
-                    key: 'externalBody',
-                    value: pruneMessage.externalBody || '',
-                  },
-                  {
-                    key: 'internalBody',
-                    value: pruneMessage.internalBody || '',
-                  },
-                ],
+                args: pruneMessage.args ?? [],
               }
               notificationArray.push(notification)
             })
@@ -254,16 +442,7 @@ export class ApplicationLifeCycleService {
             const notification = {
               recipient: application.applicant,
               templateId: pruneMessage.notificationTemplateId,
-              args: [
-                {
-                  key: 'externalBody',
-                  value: pruneMessage.externalBody || '',
-                },
-                {
-                  key: 'internalBody',
-                  value: pruneMessage.internalBody || '',
-                },
-              ],
+              args: pruneMessage.args ?? [],
             }
             notificationArray.push(notification)
           }

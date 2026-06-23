@@ -31,6 +31,7 @@ import { MedicinePrescriptionDocumentsInput } from '.././models/prescriptionDocu
 import { PrescriptionDocuments } from '.././models/prescriptionDocuments.model'
 import { Prescriptions } from '.././models/prescriptions.model'
 import { HealthDirectorateRenewalInput } from '.././models/renewal.input'
+import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -65,6 +66,21 @@ export class MedicineResolver {
     @CurrentUser() user: User,
   ): Promise<PrescriptionDocuments | null> {
     return this.api.getPrescriptionDocuments(user, input)
+  }
+
+  /* Prescription Renewal Targets */
+  @Query(() => [PrescriptionRenewalTarget], {
+    nullable: true,
+    name: 'healthDirectoratePrescriptionRenewalTargets',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getPrescriptionRenewalTargets(
+    @Args('prescriptionId', { type: () => String }) prescriptionId: string,
+    @CurrentUser() user: User,
+  ): Promise<PrescriptionRenewalTarget[] | null> {
+    return this.api.getPrescriptionRenewalTargets(user, prescriptionId)
   }
 
   /* Prescription Renewal */

@@ -129,6 +129,7 @@ const CaseTable: FC = () => {
   const {
     isOpeningCaseId,
     isOpeningDefendantIds,
+    isOpeningAppealCaseId,
     handleOpenCase,
     LoadingIndicator,
     showLoading,
@@ -165,17 +166,23 @@ const CaseTable: FC = () => {
 
   const getRow = (r: CaseTableRow) => {
     const getContextMenuItems = () => {
-      return r.contextMenuActions.map((a) => {
-        switch (a) {
-          case ContextMenuCaseActionType.DELETE_CASE:
-            return deleteCase(r.caseId)
-          case ContextMenuCaseActionType.WITHDRAW_APPEAL:
-            return withdrawAppeal(r.caseId)
-          case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
-          default: // Default to opening the case in a new tab
-            return openCaseInNewTab(r.caseId)
-        }
-      })
+      return r.contextMenuActions
+        .map((a) => {
+          switch (a) {
+            case ContextMenuCaseActionType.DELETE_CASE:
+              return deleteCase(r.caseId)
+            case ContextMenuCaseActionType.WITHDRAW_APPEAL:
+              return r.appealCaseId
+                ? withdrawAppeal(r.caseId, r.appealCaseId)
+                : null
+            case ContextMenuCaseActionType.OPEN_APPEAL_CASE_IN_NEW_TAB:
+              return openCaseInNewTab(r.caseId, r.appealCaseId)
+            case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
+            default: // Default to opening the case in a new tab
+              return openCaseInNewTab(r.caseId)
+          }
+        })
+        .filter((i) => i !== null)
     }
 
     const getRowClickAction = () => {
@@ -185,6 +192,20 @@ const CaseTable: FC = () => {
             onClick: () => cancelCase(r.caseId),
             isDisabled: cancelCaseId === r.caseId,
             isLoading: cancelCaseId === r.caseId && isCancelCaseLoading,
+          }
+        case CaseActionType.OPEN_APPEAL_CASE:
+          return {
+            onClick: () =>
+              handleOpenCase(r.caseId, false, r.defendantIds, r.appealCaseId),
+            isDisabled:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+              isOpeningAppealCaseId === r.appealCaseId,
+            isLoading:
+              isOpeningCaseId === r.caseId &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
+              isOpeningAppealCaseId === r.appealCaseId &&
+              showLoading,
           }
         case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab

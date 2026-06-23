@@ -12,6 +12,7 @@ query CurrentUser {
       mobileNumber
       nationalId
       canConfirmIndictment
+      canManageMessageSuspension
       institution {
         id
         type
@@ -32,6 +33,7 @@ query CurrentUser {
       mobileNumber
       nationalId
       canConfirmIndictment
+      canManageMessageSuspension
       institution {
         id
         type

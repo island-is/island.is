@@ -2,12 +2,13 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Option } from '@island.is/island-ui/core'
+import { Box, Option } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -15,16 +16,17 @@ import {
   FormFooter,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingModifiedAlert,
   UserContext,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
+  AppealCaseState,
   CaseIndictmentRulingDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -32,8 +34,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
-  ConfirmationModal,
   isReviewerAssignedModal,
+  ModalId,
   REVIEWER_ASSIGNED,
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
@@ -51,7 +53,7 @@ export const Overview = () => {
     useState<Option<string> | null>()
 
   const [confirmationModal, setConfirmationModal] = useState<
-    ConfirmationModal | undefined
+    ModalId | undefined
   >()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
@@ -143,22 +145,10 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
-          <div className={grid({ gap: 2 })}>
-            {workingCase.rulingModifiedHistory && (
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
-            )}
-            {verdictStatusAlerts}
-          </div>
+          <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
+          <AppealRulingModifiedAlert />
+          <RulingModifiedAlert />
           <Box component="section">
             <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
           </Box>
@@ -176,6 +166,13 @@ export const Overview = () => {
                   judgeName={workingCase.judge?.name}
                 />
               </Box>
+            )}
+          {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
+            workingCase.appealCase?.appealConclusion && (
+              <Conclusion
+                title="Úrskurðarorð Landsréttar"
+                conclusionText={workingCase.appealCase?.appealConclusion}
+              />
             )}
           <AllIndictmentCaseFiles />
           <Box component="section">

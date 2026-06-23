@@ -58,29 +58,22 @@ export const DetailedInfoCard = ({
     }
 
     return (
-      <Box marginTop={2}>
-        <Stack space={1}>
-          {detailLines?.slice(0, 5).map((d, index) => (
-            <Box
-              key={index}
-              display="flex"
-              flexDirection={'row'}
-              alignItems="center"
-              className={styles.iconBox}
-            >
-              <Icon
-                icon={d.icon}
-                size="medium"
-                type="outline"
-                color="blue400"
-              />
-              <Box marginLeft={2}>
-                <Text variant="small">{d.text}</Text>
-              </Box>
+      <Stack space={1}>
+        {detailLines?.slice(0, 5).map((d, index) => (
+          <Box
+            key={index}
+            display="flex"
+            flexDirection={'row'}
+            alignItems="center"
+            className={styles.iconBox}
+          >
+            <Icon icon={d.icon} size="medium" type="outline" color="blue400" />
+            <Box marginLeft={2}>
+              <Text variant="small">{d.text}</Text>
             </Box>
-          ))}
-        </Stack>
-      </Box>
+          </Box>
+        ))}
+      </Stack>
     )
   }
 
@@ -119,6 +112,7 @@ export const DetailedInfoCard = ({
         display="flex"
         flexDirection="row"
         justifyContent="spaceBetween"
+        marginBottom={2}
       >
         {subEyebrow ? (
           <Box>
@@ -144,7 +138,7 @@ export const DetailedInfoCard = ({
       return (
         <GridRow direction="row">
           <GridColumn span="8/12">
-            <Text variant="h3" color="blue400">
+            <Text variant="h3" color="blue400" lineHeight="sm">
               {title}
             </Text>
             {description && (
@@ -155,12 +149,11 @@ export const DetailedInfoCard = ({
               </Box>
             )}
           </GridColumn>
-          <GridColumn span="4/12">{renderDetails()}</GridColumn>
         </GridRow>
       )
     }
     return (
-      <Box marginTop={2}>
+      <Box display="flex" flexDirection="column" height="full">
         <Text variant="h3" color="blue400">
           {title}
         </Text>
@@ -171,24 +164,17 @@ export const DetailedInfoCard = ({
             </Text>
           </Box>
         )}
-        {renderDetails()}
       </Box>
     )
   }
 
   return (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      flexDirection="column"
-      height="full"
-    >
-      <div>
-        {renderHeader()}
-        {renderContent()}
-      </div>
-      <Box marginTop={3} display="flex" justifyContent="spaceBetween">
-        {renderTags()}
+    <Box display="flex" flexDirection="column" height="full">
+      {renderHeader()}
+      {renderContent()}
+      <Box marginTop={3} display="flex" flexDirection="column">
+        {renderDetails()}
+        <Box marginTop={3}>{renderTags()}</Box>
       </Box>
     </Box>
   )

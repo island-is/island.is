@@ -34,7 +34,7 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue, unregister } = useFormContext()
+  const { control, setValue, unregister, trigger } = useFormContext()
 
   const emailFromState = getValue(applicant, 'email') ?? ''
   const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
@@ -145,7 +145,10 @@ export const IndividualApplicant = ({
                       })
                     }
                   }}
-                  onBlur={field.onBlur}
+                  onBlur={() => {
+                    field.onBlur()
+                    trigger(field.name)
+                  }}
                   errorMessage={fieldState.error?.message}
                   required={true}
                   backgroundColor="blue"

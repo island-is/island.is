@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { EmailService } from '@island.is/email-service'
 
 import {
-  CaseNotificationType,
+  AppealCaseNotificationType,
   InstitutionType,
   User,
   UserRole,
@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -42,6 +42,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     createTestUsers(roles)
 
   const caseId = uuid()
+  const appealCaseId = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
   const appealCaseNumber = uuid()
@@ -63,9 +64,17 @@ describe('InternalNotificationController - Send appeal statement notifications',
     ) => {
       const then = {} as Then
 
+      const appealCase = {
+        appealReceivedByCourtDate: receivedDate,
+        appealCaseNumber,
+        appealAssistant: { name: assistant.name, email: assistant.email },
+        appealJudge1: { name: judge1.name, email: judge1.email },
+      } as AppealCase
+
       await internalNotificationController
-        .sendCaseNotification(
+        .sendAppealCaseNotification(
           caseId,
+          appealCaseId,
           {
             id: caseId,
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
@@ -74,16 +83,12 @@ describe('InternalNotificationController - Send appeal statement notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCase: {
-              appealReceivedByCourtDate: receivedDate,
-              appealCaseNumber,
-              appealAssistant: { name: assistant.name, email: assistant.email },
-              appealJudge1: { name: judge1.name, email: judge1.email },
-            },
+            appealCase,
           } as Case,
+          appealCase,
           {
             user,
-            type: CaseNotificationType.APPEAL_STATEMENT,
+            type: AppealCaseNotificationType.APPEAL_STATEMENT,
           },
         )
         .then((result) => (then.result = result))

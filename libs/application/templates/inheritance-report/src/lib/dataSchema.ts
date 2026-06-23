@@ -807,6 +807,9 @@ export const inheritanceReportSchema = z.object({
   assetsConfirmation: z.array(z.enum([YES])).length(1),
   debtsConfirmation: z.array(z.enum([YES])).length(1),
   heirsConfirmation: z.array(z.enum([YES])).length(1),
+  // Optional: applicant chooses to email a copy of the application to the
+  // parties (málsaðilar).
+  sendCopyToParties: z.array(z.enum([YES])).optional(),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

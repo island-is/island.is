@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import {
   View,
@@ -91,15 +91,17 @@ export default function PasskeyScreen() {
   const { registerPasskey } = useRegisterPasskey()
   const { authenticatePasskey } = useAuthenticatePasskey()
   const { openBrowser } = useBrowser()
+  const pendingBrowserUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     preferencesStore.setState({
       hasOnboardedPasskeys: true,
     })
     return () => {
-      if (url) {
+      const urlToOpen = pendingBrowserUrlRef.current ?? url
+      if (urlToOpen) {
         // We need to be sure the Passkey modal has been dismissed on iOS.
-        setTimeout(() => openBrowser(url), 1000)
+        setTimeout(() => openBrowser(urlToOpen), 1000)
       }
     }
   }, [])
@@ -199,19 +201,18 @@ export default function PasskeyScreen() {
                   const authenticationResponse = await authenticatePasskey()
 
                   if (authenticationResponse) {
-                    setIsLoading(false)
-                    clearLockScreenSuppression()
-                    router.back()
                     const urlWithLoginHint = addPasskeyAsLoginHint(
                       url,
                       authenticationResponse,
                     )
                     if (urlWithLoginHint) {
-                      openBrowser(urlWithLoginHint)
+                      pendingBrowserUrlRef.current = urlWithLoginHint
                     }
                   }
+
                   setIsLoading(false)
                   clearLockScreenSuppression()
+                  router.back()
                 }
               } catch (error) {
                 setIsLoading(false)

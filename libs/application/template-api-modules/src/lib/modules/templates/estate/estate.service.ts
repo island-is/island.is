@@ -8,10 +8,18 @@ import {
   EstateInfo,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
-import { estateSchema } from '@island.is/application/templates/estate'
+import {
+  estateSchema,
+  nationalIdsMatch,
+  // estate's checkbox/schema write its local YES ('Yes'); the opt-in guard
+  // below must compare against that value, not core YES ('yes'), otherwise
+  // the copy-email path never fires.
+  YES,
+} from '@island.is/application/templates/estate'
 import {
   estateTransformer,
   generateRawUploadData,
@@ -33,6 +41,7 @@ import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
+import { SharedTemplateApiService } from '../../shared'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -42,8 +51,139 @@ export class EstateTemplateService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly s3Service: S3Service,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.ESTATE)
+  }
+
+  // Optionally email a PDF copy of the application to the parties
+  // (málsaðilar) when the applicant opted in via the overview checkbox.
+  // Triggered during the submission transition; must never block
+  // submission (registered with throwOnError: false).
+  async sendApplicationCopyToParties({
+    application,
+    currentUserLocale,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as EstateSchema
+
+    const sendCopy = getValueViaPath<string[]>(
+      application.answers,
+      'sendCopyToParties',
+      [],
+    )
+    if (!sendCopy?.includes(YES)) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Idempotency: do not re-send when the state is re-entered/refreshed.
+    const alreadySent = getValueViaPath<boolean>(
+      application.externalData,
+      'sendApplicationCopyToParties.data.sent',
+      false,
+    )
+    if (alreadySent) {
+      return { sent: true, recipients: 0 }
+    }
+
+    const recipients = (answers?.estate?.estateMembers ?? []).filter(
+      (member) =>
+        member.enabled !== false &&
+        !!member.email &&
+        !!member.nationalId &&
+        !nationalIdsMatch(member.nationalId, application.applicant),
+    )
+
+    if (recipients.length === 0) {
+      return { sent: false, recipients: 0 }
+    }
+
+    // Build a PDF of the application data (same source as the syslumenn upload).
+    const externalData = application.externalData.syslumennOnEntry?.data as {
+      estate?: EstateSchema['estate']
+      estates?: Array<EstateSchema['estate']>
+    }
+    let estateData = externalData?.estates?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+    estateData = estateData ?? externalData?.estate ?? undefined
+    if (!estateData) {
+      this.logger.warn(
+        '[estate]: sendApplicationCopyToParties skipped - no estate data',
+      )
+      return { sent: false, recipients: 0 }
+    }
+
+    const uploadData = generateRawUploadData(answers, estateData, application)
+    // transformUploadDataToPDFStream mutates its input, so deep copy first.
+    const pdfData = structuredClone(uploadData)
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      pdfData,
+      application.id,
+    )
+    const fileContent = pdfBuffer.toString('binary')
+
+    const results = await Promise.allSettled(
+      recipients.map((member) =>
+        this.sharedTemplateAPIService.sendEmailWithAttachment(
+          (props, attachment, recipientEmail) => {
+            const isIcelandic = props.options.locale !== 'en'
+            const subject = isIcelandic
+              ? 'Afrit af umsókn um dánarbússkipti'
+              : 'Copy of estate division application'
+            const intro = isIcelandic
+              ? 'Meðfylgjandi er afrit af umsókn um dánarbússkipti sem þú ert málsaðili að.'
+              : 'Attached is a copy of an estate division application you are a party to.'
+
+            return {
+              from: {
+                name: props.options.email.sender,
+                address: props.options.email.address,
+              },
+              to: [
+                {
+                  name: member.name ?? '',
+                  address: recipientEmail,
+                },
+              ],
+              subject,
+              template: {
+                title: subject,
+                body: [
+                  { component: 'Heading', context: { copy: subject } },
+                  { component: 'Copy', context: { copy: intro } },
+                ],
+              },
+              attachments: [
+                {
+                  filename: 'Afrit_af_umsokn.pdf',
+                  content: attachment,
+                  encoding: 'binary',
+                },
+              ],
+            }
+          },
+          application,
+          fileContent,
+          member.email ?? '',
+          currentUserLocale,
+        ),
+      ),
+    )
+
+    const failed = results.filter((r) => r.status === 'rejected').length
+    if (failed > 0) {
+      this.logger.error(
+        `[estate]: Failed to email application copy to ${failed}/${recipients.length} parties`,
+      )
+    }
+
+    // Persist sent:true on partial success so re-entry does not re-send to
+    // parties that already received the copy. Only mark sent:false when every
+    // send failed, leaving the door open to retry.
+    return {
+      sent: failed < recipients.length,
+      recipients: recipients.length - failed,
+    }
   }
 
   async estateProvider({
@@ -170,6 +310,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   async completeApplication({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted via the signing state, skip re-submission
+    const existingResult = application.externalData?.completeApplication
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -268,7 +415,111 @@ export class EstateTemplateService extends BaseTemplateApiService {
       this.logger.error('[estate]: Failed to upload data - ', result.message)
       throw new Error('Application submission failed on syslumadur upload data')
     }
-    return { sucess: result.success, id: result.caseNumber }
+    this.logger.info(
+      '[estate]: completeApplication received caseNumber from uploadData',
+      { caseNumber: result.caseNumber },
+    )
+    return { success: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories({ application }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as EstateSchema
+    if (
+      answers.selectedEstate === EstateTypes.officialDivision ||
+      answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ) {
+      this.logger.info(
+        '[estate]: Skipping getSignatories API for estate type without signatories',
+        { selectedEstate: answers.selectedEstate },
+      )
+      return {
+        success: true,
+        signatories: [],
+      }
+    }
+
+    const syslumennData = application.externalData?.syslumennOnEntry?.data as
+      | { estates: Array<EstateInfo> }
+      | undefined
+
+    if (!syslumennData?.estates) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Estate data not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const estateData = syslumennData.estates
+
+    const selectedEstateData = estateData?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+
+    if (!selectedEstateData) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            'Selected estate not found for provided estateInfoSelection.',
+        },
+        400,
+      )
+    }
+
+    const deceasedNationalId = selectedEstateData.nationalIdOfDeceased || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const selectedEstate = answers.selectedEstate
+    const estateTypeMap: Record<string, SignatoryEstateTypes> = {
+      [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
+      [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
+    }
+
+    const estateType = estateTypeMap[selectedEstate]
+    if (!estateType) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: `Unknown estate type: ${selectedEstate}`,
+        },
+        400,
+      )
+    }
+
+    try {
+      this.logger.info('[estate]: Calling getSignatories API', { estateType })
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error('[estate]: Failed to get signatories', error)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
+    }
   }
 
   private async getFileContentBase64(fileName: string): Promise<string> {

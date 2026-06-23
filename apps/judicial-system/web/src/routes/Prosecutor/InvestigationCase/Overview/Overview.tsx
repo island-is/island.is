@@ -8,10 +8,12 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
+  Text,
 } from '@island.is/island-ui/core'
-import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -35,17 +37,22 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  PoliceDigitalCaseFilesAccordionItem,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
+  CaseOrigin,
   CaseState,
   CaseTransition,
-  NotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  usePoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -75,7 +82,6 @@ export const Overview = () => {
     prosecutor,
     caseType,
     victims,
-    showItem,
   } = useInfoCardItems()
 
   const [modal, setModal] = useState<
@@ -99,7 +105,10 @@ export const Overview = () => {
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      ? await sendNotification(
+          workingCase.id,
+          TrackedNotificationType.READY_FOR_COURT,
+        )
       : false
 
     // An SMS should have been sent
@@ -120,6 +129,9 @@ export const Overview = () => {
 
     setModal('caseSubmittedModal')
   }
+
+  const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
+    usePoliceDigitalCaseFile()
 
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
@@ -179,14 +191,10 @@ export const Overview = () => {
                   id: 'defendants-section',
                   items: [defendants({ caseType: workingCase.type })],
                 },
-                ...(showItem(victims)
-                  ? [
-                      {
-                        id: 'victims-section',
-                        items: [victims],
-                      },
-                    ]
-                  : []),
+                {
+                  id: 'victims-section',
+                  items: [victims],
+                },
                 {
                   id: 'case-info-section',
                   items: [
@@ -271,6 +279,13 @@ export const Overview = () => {
                   <CaseFileList caseId={workingCase.id} files={caseFiles} />
                 </Box>
               </AccordionItem>
+              {workingCase.origin === CaseOrigin.LOKE && (
+                <PoliceDigitalCaseFilesAccordionItem
+                  digitalCaseFiles={digitalCaseFiles}
+                  digitalCaseFilesLoading={digitalCaseFilesLoading}
+                  openDigitalCaseFileUrl={openDigitalCaseFileUrl}
+                />
+              )}
               {(workingCase.comments ||
                 workingCase.caseFilesComments ||
                 workingCase.caseResentExplanation) && (
@@ -296,7 +311,7 @@ export const Overview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

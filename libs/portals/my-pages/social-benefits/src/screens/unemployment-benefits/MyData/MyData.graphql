@@ -1,0 +1,52 @@
+query getApplicantRequestedAttachments {
+  vmstApplicantRequestedAttachments {
+    id
+    dataRequestId
+    attachmentId
+    attachmentTypeId
+  }
+}
+
+query getApplicantAvailableActions {
+  vmstApplicantAvailableActions {
+    canContact
+    canSubmitDocuments
+    canReportWork
+    canReportTravel
+    canUnregister
+    canConfirmJobSearch
+  }
+}
+
+query getAttachmentTypes {
+  vmstAttachmentTypes {
+    success
+    errorMessage
+    attachmentTypes {
+      id
+      name
+      english
+    }
+  }
+}
+
+query getApplicantAttachments {
+  vmstApplicantAttachments {
+    userSubmitted {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
+    letters {
+      id
+      typeId
+      name
+      contentType
+      created
+      downloadServiceUrl
+    }
+  }
+}

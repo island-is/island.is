@@ -110,6 +110,14 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allow65RenewalRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL_REDESIGN
+                    ],
+                  allowBTempRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
+                    ],
                   allowAdvanced:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
@@ -203,6 +211,9 @@ const DrivingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getCodes,
+        // Surface RLS's resolved submit-failure reason as a toast on the payment
+        // screen (the generic error screen is unchanged). Opt-in per template.
+        showSubmitErrorReason: true,
       }),
       [States.DONE]: {
         meta: {

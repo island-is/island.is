@@ -68,7 +68,7 @@ export const CategoryItems = ({
       <GridItems
         third
         mobileItemWidth={270}
-        mobileItemsRows={3}
+        mobileItemsRows={2}
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
@@ -101,7 +101,7 @@ export const CategoryItems = ({
                   {title}
                 </Text>
                 {description && (
-                  <Text paddingTop={2} variant="medium" fontWeight="light">
+                  <Text paddingTop={2} variant="default" fontWeight="light">
                     {description}
                   </Text>
                 )}

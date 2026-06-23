@@ -84,7 +84,16 @@ export const ImpactAmendingSelection = ({
       : searchResults ?? []
 
   return (
-    <div className={s.amendingSelectionOption}>
+    <div
+      className={s.amendingSelectionOption}
+      onKeyDown={(e) => {
+        // Prevent Enter from bubbling to the surrounding <form>, which would
+        // otherwise advance the application to the next step.
+        if (e.key === 'Enter') {
+          e.preventDefault()
+        }
+      }}
+    >
       <Text variant="eyebrow" color="blue400" marginBottom={1}>
         Reglugerð sem breytist
       </Text>
@@ -92,7 +101,14 @@ export const ImpactAmendingSelection = ({
         placeholder="Sláðu inn númer stofnreglugerðar (Dæmi: 438/2022)"
         onInputValueChange={(newValue) => updateValue(newValue)}
         loading={loading || isSearching}
-        onSubmit={(newValue) => {
+        onSubmit={(newValue, selectedOption) => {
+          if (
+            selectedOption &&
+            !('disabled' in selectedOption && selectedOption.disabled)
+          ) {
+            onSelect(selectedOption as SelRegOption)
+            return
+          }
           updateValue(newValue)
         }}
         options={options}

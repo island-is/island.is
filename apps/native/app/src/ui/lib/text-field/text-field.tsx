@@ -1,8 +1,10 @@
 import React, { useRef } from 'react'
 import {
   ActivityIndicator,
+  StyleProp,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -77,6 +79,7 @@ interface TextFieldProps extends TIProps {
   disabled?: boolean
   loading?: boolean
   errorMessage?: string
+  inputStyle?: StyleProp<TextStyle>
 }
 
 export const TextField = ({
@@ -84,6 +87,7 @@ export const TextField = ({
   onChange,
   value,
   style,
+  inputStyle,
   disabled = false,
   loading = false,
   errorMessage,
@@ -94,9 +98,9 @@ export const TextField = ({
   const inputRef = useRef<TextInput>(null)
 
   return (
-    <View>
-      <Host onPress={() => inputRef.current?.focus()} style={style as any}>
-        <View>
+    <View style={style}>
+      <Host onPress={() => inputRef.current?.focus()}>
+        <View style={{ flex: 1 }}>
           <Label readOnly={readOnly} variant="eyebrow">
             {label}
           </Label>
@@ -107,6 +111,7 @@ export const TextField = ({
             ref={inputRef}
             readOnly={readOnly}
             {...rest}
+            style={inputStyle}
           />
         </View>
         {loading && (

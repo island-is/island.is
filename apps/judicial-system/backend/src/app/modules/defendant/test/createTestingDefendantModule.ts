@@ -20,6 +20,7 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
+  CaseDefendantPoliceCaseNumber,
   CivilClaimant,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -29,6 +30,7 @@ import { CivilClaimantController } from '../civilClaimant.controller'
 import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
+import { InternalCivilClaimantController } from '../internalCivilClaimant.controller'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 
@@ -47,6 +49,7 @@ export const createTestingDefendantModule = async () => {
       DefendantController,
       LimitedAccessDefendantController,
       InternalDefendantController,
+      InternalCivilClaimantController,
       CivilClaimantController,
     ],
     providers: [
@@ -76,6 +79,12 @@ export const createTestingDefendantModule = async () => {
           update: jest.fn(),
           destroy: jest.fn(),
           findByPk: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(CaseDefendantPoliceCaseNumber),
+        useValue: {
+          findAll: jest.fn(),
         },
       },
       DefendantService,
@@ -126,6 +135,11 @@ export const createTestingDefendantModule = async () => {
     CivilClaimantController,
   )
 
+  const internalCivilClaimantController =
+    defendantModule.get<InternalCivilClaimantController>(
+      InternalCivilClaimantController,
+    )
+
   const queuedMessages: Message[] = []
   const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
   mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
@@ -145,6 +159,7 @@ export const createTestingDefendantModule = async () => {
     defendantService,
     defendantController,
     internalDefendantController,
+    internalCivilClaimantController,
     limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,

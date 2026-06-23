@@ -1,4 +1,4 @@
-import Clipboard from 'expo-clipboard'
+import { setStringAsync } from 'expo-clipboard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -13,6 +13,8 @@ import {
 } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
+
+import { useApolloClient } from '@apollo/client'
 
 import { StackScreen } from '@/components/stack-screen'
 import { DocumentComment, useGetDocumentQuery } from '@/graphql/types/schema'
@@ -65,11 +67,12 @@ export default function DocumentCommunicationsScreen() {
   const theme = useTheme()
   const intl = useIntl()
   const formatDate = useDateTimeFormatter()
-  const [shouldScroll, setShouldScroll] = useState(false)
   const [actionsHeight, setActionsHeight] = useState(0)
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
   const scrollY = useRef(new Animated.Value(0)).current
+
+  const client = useApolloClient()
 
   const docRes = useGetDocumentQuery({
     variables: {
@@ -77,6 +80,21 @@ export default function DocumentCommunicationsScreen() {
         id: documentId,
       },
       locale,
+    },
+    // The document detail screen marks the doc as opened in the local cache
+    // (see use-document.ts). This query's network response would overwrite
+    // that back to whatever the server has (still `opened: false` — there's
+    // no read-mutation yet), so re-assert it here.
+    onCompleted: (data) => {
+      const cacheId = client.cache.identify({
+        __typename: 'DocumentV2',
+        id: data.documentV2?.id,
+      })
+      if (!cacheId) return
+      client.cache.modify({
+        id: cacheId,
+        fields: { opened: () => true },
+      })
     },
   })
 
@@ -111,7 +129,11 @@ export default function DocumentCommunicationsScreen() {
 
   useEffect(() => {
     if (!isSkeleton && comments.length > 0) {
-      setShouldScroll(true)
+      // Scroll to the bottom of the list after the toggle animation duration
+      const timer = setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true })
+      }, TOGGLE_ANIMATION_DURATION)
+      return () => clearTimeout(timer)
     }
   }, [isSkeleton, comments.length])
 
@@ -143,32 +165,11 @@ export default function DocumentCommunicationsScreen() {
     [comments.length],
   )
 
-  const data = [
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-    ...comments,
-  ]
-
-  // const data = useMemo(
-  //   () => (isSkeleton ? createSkeletonArr(8) : comments),
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [isSkeleton, docRes.data],
-  // ) as FlatListItem[]
+  const data = useMemo(
+    () => (isSkeleton ? createSkeletonArr(8) : comments),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isSkeleton, docRes.data],
+  ) as FlatListItem[]
 
   const ticketIdValue = `#${document?.ticket?.id ?? ticketId ?? ''}`
 
@@ -186,7 +187,7 @@ export default function DocumentCommunicationsScreen() {
               </Typography>
               <Typography variant="body3">{ticketIdValue}</Typography>
               <TouchableOpacity
-                onPress={() => Clipboard.setStringAsync(ticketIdValue)}
+                onPress={() => setStringAsync(ticketIdValue)}
                 style={{ marginLeft: 4 }}
               >
                 <Image
@@ -201,6 +202,7 @@ export default function DocumentCommunicationsScreen() {
       />
       <View style={{ flexDirection: 'column', flex: 1 }}>
         <Animated.FlatList
+          ref={flatListRef}
           keyExtractor={keyExtractor}
           initialNumToRender={50}
           data={data}

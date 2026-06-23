@@ -48,7 +48,6 @@ import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
-  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
@@ -76,10 +75,12 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { TranslationModule } from './modules/translation/translation.module'
 import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/core'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 
 @Module({
   imports: [
@@ -129,7 +130,6 @@ import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/
         RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
-        HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
         HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -155,8 +155,10 @@ import { ApplicationTranslationRuntimeModule } from '@island.is/application/api/
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
         HmsRentalAgreementClientConfig,
+        HousingBenefitsConfig,
         ExemptionForTransportationClientConfig,
         ZendeskServiceConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],

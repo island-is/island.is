@@ -6,3 +6,5 @@ export const getFields = () => import('./fields/')
 
 export default EstateTemplate
 export { estateSchema }
+export { nationalIdsMatch } from './lib/utils/helpers'
+export { YES } from './lib/constants'

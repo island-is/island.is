@@ -4,6 +4,8 @@ import {
   ServiceBuilder,
   json,
   ref,
+  scheduledJob,
+  ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
@@ -103,6 +105,14 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM',
+      APPLE_PAY_MERCHANT_IDENTIFIER:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTIFIER',
+      APPLE_PAY_MERCHANT_IDENTITY_CERT:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT',
+      APPLE_PAY_MERCHANT_IDENTITY_KEY:
+        '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
+      APPLE_PAY_PAYMENT_PROCESSING_KEY:
+        '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
     })
     .ingress({
       primary: {
@@ -141,12 +151,17 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')
+    .grantNamespaces(
+      'application-system',
+      'services-form-system-api',
+      'nginx-ingress-internal',
+      'islandis',
+    )
 
 // worker setup
 export const serviceSetupForWorker =
-  (): ServiceBuilder<'services-payments-worker'> =>
-    service(workerName)
+  (): ScheduledJobBuilder<'services-payments-worker'> =>
+    scheduledJob(workerName)
       .namespace(namespace)
       .image(imageName)
       .serviceAccount(workerName)
@@ -157,8 +172,8 @@ export const serviceSetupForWorker =
       .xroad(Base, Client, ChargeFjsV2)
       .command('node')
       .args('main.cjs', '--job', 'worker')
-      .extraAttributes({
-        dev: { schedule: '*/5 * * * *' },
-        staging: { schedule: '*/5 * * * *' },
-        prod: { schedule: '*/5 * * * *' },
+      .schedule({
+        dev: '*/5 * * * *',
+        staging: '*/5 * * * *',
+        prod: '*/5 * * * *',
       })

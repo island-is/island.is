@@ -9,10 +9,15 @@ export interface DrivingLicenseType {
 
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
-export interface PostRenewal65AndOverInput {
-  districtId?: number
-  pickupPlasticAtDistrict?: boolean | null
-  sendPlasticToPerson?: boolean | null
+export interface NewRenewal65DrivingLicenseInput {
+  jurisdiction: number
+  primaryPhoneNumber: string
+  studentEmail: string
+  pickupPlasticAtDistrict?: boolean
+  sendPlasticToPerson?: boolean
+  contentList?: NewBEDrivingLicenseContentItem[]
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export enum Pickup {
@@ -36,6 +41,8 @@ export interface NewTemporaryDrivingLicenseInput {
   email: string
   phone: string
   sendLicenseInMail: boolean
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewBEDrivingLicenseContentItem {
@@ -67,7 +74,8 @@ export interface NewBEDrivingLicenseInput {
   contentList?: NewBEDrivingLicenseContentItem[]
   photoBiometricsId?: string | null
   signatureBiometricsId?: string | null
-  healthDeclarationModel?: NewBEHealthDeclaration
+  sendPlasticToPerson?: boolean
+  healthDeclarationModel: NewBEHealthDeclaration
 }
 
 export interface NewDrivingLicenseResult {
@@ -117,6 +125,12 @@ export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
   daysOfResidency?: number
+  // Raw RLS error code (when the unmet requirement came from a can-apply denial)
+  errorCode?: string
+  // RLS's own human-readable description for that code, both languages; the
+  // frontend renders the one matching the current locale.
+  messageIs?: string
+  messageEn?: string
 }
 
 export interface ApplicationEligibility {

@@ -6,6 +6,7 @@ import {
   ChargeFjsV2,
   Client,
   CriminalRecord,
+  DirectorateOfEquality,
   DirectorateOfImmigration,
   Disability,
   DistrictCommissionersLicenses,
@@ -14,11 +15,11 @@ import {
   DrivingLicenseBook,
   Education,
   EnergyFunds,
+  Farmers,
   Finance,
   Firearm,
   FishingLicense,
   Frigg,
-  HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
@@ -65,6 +66,7 @@ import {
   FireCompensation,
   VMSTUnemployment,
   GoProVerdicts,
+  RecyclingFund,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -314,6 +316,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      LYFJASTOFNUN_PHARMACIES_BASE_URL: {
+        dev: 'https://api.serlyfjaskra.is',
+        staging: 'https://api.serlyfjaskra.is',
+        prod: 'https://api.serlyfjaskra.is',
+      },
       HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
         dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
         staging:
@@ -350,6 +357,7 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -493,6 +501,8 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
+      VERDICTS_LANDSRETTUR_APPEALS_URL:
+        '/k8s/api/VERDICTS_LANDSRETTUR_APPEALS_URL',
       FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
       FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
@@ -503,6 +513,15 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
       FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
+      MATILDA_API_KEY: '/k8s/api/LANDSPITALI_MATILDA_API_KEY',
+      MATILDA_DISTRIBUTOR_ID: '/k8s/api/LANDSPITALI_MATILDA_DISTRIBUTOR_ID',
+      SKATTUR_TOLLUR_ALMENNT_BASE_URL:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_BASE_URL',
+      SKATTUR_TOLLUR_ALMENNT_USERNAME:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_USERNAME',
+      SKATTUR_TOLLUR_ALMENNT_PASSWORD:
+        '/k8s/api/SKATTUR_TOLLUR_ALMENNT_PASSWORD',
+      SKATTUR_TOLLUR_ALMENNT_API_KEY: '/k8s/api/SKATTUR_TOLLUR_ALMENNT_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -522,6 +541,7 @@ export const serviceSetup = (services: {
       NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
+      Farmers,
       Finance,
       FireCompensation,
       Education,
@@ -551,6 +571,7 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
+      DirectorateOfEquality,
       DirectorateOfImmigration,
       SignatureCollection,
       SocialInsuranceAdministration,
@@ -559,7 +580,6 @@ export const serviceSetup = (services: {
       OfficialJournalOfIcelandApplication,
       LegalGazette,
       Frigg,
-      HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
       WorkAccidents,
@@ -570,6 +590,7 @@ export const serviceSetup = (services: {
       PracticalExams,
       VMSTUnemployment,
       GoProVerdicts,
+      RecyclingFund,
     )
     .ingress({
       primary: {

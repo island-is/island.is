@@ -58,7 +58,7 @@ export const VehicleItem = React.memo(
             if (!item.permno) {
               return
             }
-            router.navigate({
+            router.push({
               pathname: '/more/vehicles/[id]',
               params: { id: item.permno, title: item.make },
             })

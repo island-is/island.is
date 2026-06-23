@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { View } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -128,7 +129,7 @@ export const DocumentListItem = ({
         highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
         hasTopBorder={hasTopBorder}
       >
-        <>
+        <View>
           <Host>
             <IconBackground>
               {!source ? (
@@ -158,7 +159,7 @@ export const DocumentListItem = ({
               {body ? <Markdown>{body}</Markdown> : null}
             </Body>
           </Animated.View>
-        </>
+        </View>
       </Wrapper>
     </Animated.View>
   )

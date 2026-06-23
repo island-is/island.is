@@ -30,6 +30,7 @@
 /libs/application/templates/signature-collection                                                                             @island-is/norda
 /libs/application/templates/social-insurance-administration/                                                                 @island-is/norda
 /libs/application/templates/transport-authority/                                                                             @island-is/norda
+/libs/application/templates/vmst/                                                                                            @island-is/norda
 /libs/application/template-api-modules/                                                                                      @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/                                                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/                                                       @island-is/norda
@@ -38,6 +39,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/inao/                                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/                                        @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/                                                       @island-is/norda
 
 /*                                                                                                                           @island-is/core
 /libs/api/domains/identity/                                                                                                  @island-is/core
@@ -190,6 +192,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/intellectual-properties/                                                                                   @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland-application/                                                                   @island-is/hugsmidjan
+/libs/api/domains/farmers/                                                                                                   @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                                         @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                                          @island-is/hugsmidjan
 /libs/api/domains/law-and-order/                                                                                             @island-is/hugsmidjan
@@ -208,6 +211,7 @@ codemagic.yaml                                                                  
 /libs/clients/smart-solutions-v2/                                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                                                @island-is/hugsmidjan @island-is/aranja
 /libs/clients/lsh/                                                                                                           @island-is/hugsmidjan
+/libs/clients/lyfjastofnun-pharmacies/                                                                                       @island-is/hugsmidjan
 /libs/clients/intellectual-properties/                                                                                       @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                                          @island-is/hugsmidjan
 /libs/clients/national-registry/v3-applications/                                                                             @island-is/juni
@@ -236,7 +240,9 @@ codemagic.yaml                                                                  
 /libs/clients/icelandic-health-insurance/rights-portal/                                                                      @island-is/hugsmidjan
 /libs/clients/health-directorate                                                                                             @island-is/hugsmidjan
 /libs/clients/health-directorate/src/lib/clients/occupational-license                                                        @island-is/hugsmidjan @island-is/origo
+/libs/clients/farmers/                                                                                                       @island-is/hugsmidjan
 /libs/clients/mms/grade                                                                                                      @island-is/hugsmidjan
+/libs/clients/mms/primary-school                                                                                             @island-is/hugsmidjan
 /libs/portals/admin/air-discount-scheme                                                                                      @island-is/hugsmidjan
 /libs/application/templates/official-journal-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/application/templates/legal-gazette/                                                                                   @island-is/hugsmidjan
@@ -252,10 +258,10 @@ codemagic.yaml                                                                  
 /libs/application/templates/financial-aid/                                                                                   @island-is/norda
 /libs/application/templates/funding-government-projects/                                                                     @island-is/norda
 /libs/application/templates/general-fishing-license/                                                                         @island-is/norda
-/libs/application/templates/grindavik-housing-buyout/                                                                        @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
 /libs/application/templates/hms/rental-agreement/                                                                            @island-is/norda
+/libs/application/templates/hms/housing-benefits/                                                                            @island-is/norda
 /libs/application/templates/home-support/                                                                                    @island-is/norda
 /libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
 /libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/norda
@@ -275,10 +281,10 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                                              @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/                                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                                    @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/rental-agreement/                                       @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/housing-benefits/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/norda
@@ -303,12 +309,14 @@ codemagic.yaml                                                                  
 /libs/clients/payment-schedule/                                                                                              @island-is/norda
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
+/libs/clients/rsk/customs                                                                                                    @island-is/stefna
 
 /libs/api/domains/company-registry                                                                                           @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda
 /libs/api/domains/fishing-license/                                                                                           @island-is/norda
 /libs/api/domains/health-insurance/                                                                                          @island-is/norda
 /libs/api/domains/payment-schedule/                                                                                          @island-is/norda
+/libs/api/domains/customs-general/                                                                                           @island-is/stefna
 
 /libs/shared/form-fields/                                                                                                    @island-is/norda @island-is/island-ui
 
@@ -336,9 +344,11 @@ codemagic.yaml                                                                  
 /libs/api/domains/email-signup/                                                                                              @island-is/stefna
 /libs/api/domains/fiskistofa/                                                                                                @island-is/stefna
 /libs/clients/fiskistofa/                                                                                                    @island-is/stefna
+/libs/clients/matilda/                                                                                                       @island-is/stefna
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
+/libs/api/domains/icelandic-medicines-agency/                                                                                @island-is/hugsmidjan
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
@@ -392,6 +402,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/car-recycling/                                                                                   @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                                              @island-is/deloitte
 /libs/clients/car-recycling/                                                                                                 @island-is/deloitte
+/libs/clients/recycling-fund                                                                                                 @island-is/deloitte
 /libs/application/templates/new-primary-school/                                                                              @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                                         @island-is/deloitte
 /libs/clients/mms/frigg                                                                                                      @island-is/deloitte
@@ -420,6 +431,11 @@ codemagic.yaml                                                                  
 
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                                        @island-is/origo
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
+/libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
+/libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
+/libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
+/libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
+/libs/application/templates/vmst/submit-documents                                                                            @island-is/origo
 /libs/clients/vmst-unemployment                                                                                              @island-is/origo
 /libs/api/domains/vmst-applications                                                                                          @island-is/origo
 
@@ -474,6 +490,7 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo
+/libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 
 /libs/application/templates/aosh/change-machine-supervisor                                                                   @island-is/origo
@@ -515,8 +532,17 @@ codemagic.yaml                                                                  
 /libs/api/domains/vmst-applications/                                                                                         @island-is/origo
 /libs/clients/vmst-unemployment/                                                                                             @island-is/origo
 
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-search                                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
+
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
+
 # DevOps
 /.github/                                                                                                                    @island-is/devops
+/scripts/ci/                                                                                                                 @island-is/devops
 /.githooks/                                                                                                                  @island-is/devops
 /apps/reference-backend/                                                                                                     @island-is/devops
 /apps/github-actions-cache/                                                                                                  @island-is/devops

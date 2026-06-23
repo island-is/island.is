@@ -1,13 +1,14 @@
-import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import {
   CountOptions,
   CreateOptions,
   FindAndCountOptions,
+  FindAttributeOptions,
   FindOptions,
   Transaction,
   UpdateOptions,
 } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   Inject,
@@ -20,30 +21,31 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseState,
+  CaseType,
   DateType,
   EventType,
   IndictmentDecision,
+  isIndictmentCase,
   StringType,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../models/appealCase.model'
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import {
-  appealCaseFields,
-  UpdateAppealCase,
-  UpdateCase,
-} from '../types/caseRepository.types'
+import { UpdateCase } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -98,11 +100,14 @@ interface SplitCaseOptions {
   transaction: Transaction
 }
 
-interface UpdateCaseOptions {
+interface DuplicateCaseOptions {
   transaction: Transaction
+  // The prosecutor that owns the new draft case
+  prosecutorId?: string
+  prosecutorsOfficeId?: string
 }
 
-interface UpsertAppealCaseOptions {
+interface UpdateCaseOptions {
   transaction: Transaction
 }
 
@@ -122,12 +127,53 @@ export class CaseRepositoryService {
     @InjectModel(Victim) private readonly victimModel: typeof Victim,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
+    @InjectModel(Offense) private readonly offenseModel: typeof Offense,
+    @InjectModel(CivilClaimant)
+    private readonly civilClaimantModel: typeof CivilClaimant,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
-    @InjectModel(AppealCase)
-    private readonly appealCaseModel: typeof AppealCase,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
+    private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  /**
+   * When the Sequelize query includes `policeCaseNumbers`, resolve that field from the junction table.
+   */
+  private shouldResolvePoliceCaseNumbers(
+    attributes?: FindAttributeOptions,
+  ): boolean {
+    if (!attributes) return true
+    if (Array.isArray(attributes)) {
+      return attributes.some((attr) => attr === 'policeCaseNumbers')
+    }
+    return !attributes.exclude?.includes('policeCaseNumbers')
+  }
+
+  private async resolvePoliceCaseNumbersForCaseGraph(
+    cases: Case[],
+    options?: { transaction?: Transaction },
+  ): Promise<void> {
+    const byId = new Map<string, Case>()
+
+    // Add merged cases so we resolve their police case numbers too
+    for (const c of cases) {
+      if (c.id) {
+        byId.set(c.id, c)
+      }
+      c.mergedCases?.forEach((mergedCase) => {
+        if (mergedCase.id) {
+          byId.set(mergedCase.id, mergedCase)
+        }
+      })
+    }
+
+    const toResolve = [...byId.values()]
+
+    await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+      toResolve,
+      { transaction: options?.transaction },
+    )
+  }
 
   async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
     try {
@@ -147,12 +193,44 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
 
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
       return result
     } catch (error) {
       this.logger.error(`Error finding case by ID ${id}:`, { error })
 
       throw error
     }
+  }
+
+  async findParentCaseId(id: string): Promise<string | null | undefined> {
+    const result = await this.caseModel.findByPk(id, {
+      attributes: ['parentCaseId'],
+    })
+    return result?.parentCaseId
+  }
+
+  async findOriginalAncestorId(theCase: Case): Promise<string> {
+    // Split indictment continuations point back to the original via splitCaseId
+    if (isIndictmentCase(theCase.type) && theCase.splitCaseId) {
+      return theCase.splitCaseId
+    }
+
+    // Extended request cases and duplicated indictment drafts point back to
+    // their origin via parentCaseId - walk the chain to the original ancestor
+    let originalAncestorId = theCase.id
+    let parentCaseId: string | null | undefined = theCase.parentCaseId
+
+    while (parentCaseId) {
+      originalAncestorId = parentCaseId
+      parentCaseId = await this.findParentCaseId(parentCaseId)
+    }
+
+    return originalAncestorId
   }
 
   async findOne(options?: FindOneOptions): Promise<Case | null> {
@@ -186,6 +264,12 @@ export class CaseRepositoryService {
       const result = await this.caseModel.findOne(findOptions)
 
       this.logger.debug(`Case ${result ? 'found' : 'not found'}`)
+
+      if (result && this.shouldResolvePoliceCaseNumbers(options?.attributes)) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
 
       return result
     } catch (error) {
@@ -245,6 +329,15 @@ export class CaseRepositoryService {
       const results = await this.caseModel.findAll(findOptions)
 
       this.logger.debug(`Found ${results.length} cases`)
+
+      if (
+        results.length > 0 &&
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
+      ) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results, {
+          transaction: options?.transaction,
+        })
+      }
 
       return results
     } catch (error) {
@@ -310,6 +403,16 @@ export class CaseRepositoryService {
         `Found and counted ${results.count} total cases, returning ${results.rows.length} rows`,
       )
 
+      if (
+        results.rows.length > 0 &&
+        !options?.raw &&
+        this.shouldResolvePoliceCaseNumbers(options?.attributes)
+      ) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results.rows, {
+          transaction: options?.transaction,
+        })
+      }
+
       return results
     } catch (error) {
       this.logger.error(
@@ -366,26 +469,20 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
-      const caseData = omit(data, appealCaseFields)
+      const { policeCaseNumbers, ...caseFields } = data
 
-      const result = await this.caseModel.create(caseData, options)
+      const result = await this.caseModel.create(caseFields, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
 
-      const appealData = pick(
-        data,
-        appealCaseFields,
-      ) as Partial<UpdateAppealCase>
-
-      if (Object.keys(appealData).length > 0) {
-        await this.upsertAppealCase(result.id, appealData as UpdateAppealCase, {
-          transaction: options.transaction,
-        })
-      }
-
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         result.id,
-        result.policeCaseNumbers ?? [],
+        policeCaseNumbers ?? [],
+        { transaction: options.transaction },
+      )
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
         { transaction: options.transaction },
       )
 
@@ -415,7 +512,6 @@ export class CaseRepositoryService {
         'type',
         'indictmentSubtypes',
         'description',
-        'policeCaseNumbers',
         'courtId',
         'demands',
         'comments',
@@ -468,9 +564,16 @@ export class CaseRepositoryService {
 
       const { id: splitCaseId } = result
 
+      const unassignedPoliceCaseNumbersForSplit =
+        await this.caseDefendantPoliceCaseNumberRepositoryService.findUnassignedPoliceCaseNumbersForSplit(
+          caseId,
+          defendantId,
+          { transaction },
+        )
+
       await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
         splitCaseId,
-        result.policeCaseNumbers ?? [],
+        unassignedPoliceCaseNumbersForSplit,
         { transaction },
       )
 
@@ -689,6 +792,11 @@ export class CaseRepositoryService {
         { transaction },
       )
 
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
+        { transaction },
+      )
+
       this.logger.debug(
         `Split defendant ${defendantId} from case ${caseId} into a new case ${result.id}`,
       )
@@ -697,6 +805,323 @@ export class CaseRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error splitting defendant ${defendantId} from case ${caseId} into a new case`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async duplicateIndictmentToDraft(
+    caseId: string,
+    options: DuplicateCaseOptions,
+  ): Promise<Case> {
+    try {
+      this.logger.debug(
+        `Duplicating indictment case ${caseId} into a new draft case`,
+      )
+
+      const { transaction, prosecutorId, prosecutorsOfficeId } = options
+
+      // Only data entered by the prosecution is copied - no court data. The new
+      // draft keeps a parentCaseId link to the original so that communication
+      // with the police system (LÖKE) resolves to the original ancestor case
+      // (see findOriginalAncestorId).
+      const prosecutorFieldsToCopy: (keyof Case)[] = [
+        'origin',
+        'type',
+        'indictmentSubtypes',
+        'description',
+        'crimeScenes',
+        'courtId',
+        'comments',
+        'indictmentIntroduction',
+        'requestDriversLicenseSuspension',
+        'hasCivilClaims',
+      ]
+
+      const caseToDuplicate = await this.findById(caseId, { transaction })
+
+      if (!caseToDuplicate) {
+        // This is a programmer error, so we throw an exception
+        throw new InternalServerErrorException(`Case ${caseId} not found`)
+      }
+
+      // Create the new draft case
+      const createOptions: CreateOptions = {}
+
+      if (transaction) {
+        createOptions.transaction = transaction
+      }
+
+      const result = await this.caseModel.create(
+        {
+          ...pick(caseToDuplicate, prosecutorFieldsToCopy),
+          state: CaseState.DRAFT,
+          // Keep the link to the original case so the original ancestor can be
+          // resolved for police system (LÖKE) communication
+          parentCaseId: caseId,
+          // The new case should have court session support
+          withCourtSessions: true,
+          // The current prosecutor owns the new draft case
+          creatingProsecutorId: prosecutorId,
+          prosecutorId,
+          prosecutorsOfficeId,
+        },
+        createOptions,
+      )
+
+      const { id: newCaseId } = result
+
+      const promises: Promise<unknown>[] = []
+
+      // Maintain the connection to the police system by copying all police
+      // case numbers as unassigned rows on the new case
+      const policeCaseNumbersMap =
+        await this.caseDefendantPoliceCaseNumberRepositoryService.findDistinctPoliceCaseNumbersByCaseIds(
+          [caseId],
+          { transaction },
+        )
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
+        newCaseId,
+        policeCaseNumbersMap.get(caseId) ?? [],
+        { transaction },
+      )
+
+      // Copy defendants (prosecutor entered data only), building a map from the
+      // original defendant ids to the new ones for later remapping
+      const defendants = await this.defendantModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      const defendantIdMap = new Map<string, string>()
+
+      for (const defendant of defendants) {
+        const newDefendant = await this.defendantModel.create(
+          {
+            caseId: newCaseId,
+            noNationalId: defendant.noNationalId,
+            nationalId: defendant.nationalId,
+            dateOfBirth: defendant.dateOfBirth,
+            name: defendant.name,
+            gender: defendant.gender,
+            address: defendant.address,
+            citizenship: defendant.citizenship,
+            defendantPlea: defendant.defendantPlea,
+          },
+          { transaction },
+        )
+
+        defendantIdMap.set(defendant.id, newDefendant.id)
+      }
+
+      // Recreate the per-defendant police case number assignments against the
+      // new defendants
+      const assignedLinks =
+        await this.caseDefendantPoliceCaseNumberRepositoryService.findAssignedLinksByCaseId(
+          caseId,
+          { transaction },
+        )
+
+      const newAssignedLinks = assignedLinks
+        .map((link) => ({
+          defendantId: defendantIdMap.get(link.defendantId),
+          policeCaseNumber: link.policeCaseNumber,
+        }))
+        .filter(
+          (link): link is { defendantId: string; policeCaseNumber: string } =>
+            Boolean(link.defendantId),
+        )
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.assignDefendantPoliceCaseNumbers(
+        newCaseId,
+        newAssignedLinks,
+        { transaction },
+      )
+
+      // Copy all indictment counts and their offenses to the new case
+      const indictmentCounts = await this.indictmentCountModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      for (const indictmentCount of indictmentCounts) {
+        const newIndictmentCount = await this.indictmentCountModel.create(
+          { ...indictmentCount.toJSON(), id: undefined, caseId: newCaseId },
+          { transaction },
+        )
+
+        const offenses = await this.offenseModel.findAll({
+          where: { indictmentCountId: indictmentCount.id },
+          transaction,
+        })
+
+        for (const offense of offenses) {
+          promises.push(
+            this.offenseModel.create(
+              {
+                ...offense.toJSON(),
+                id: undefined,
+                indictmentCountId: newIndictmentCount.id,
+              },
+              { transaction },
+            ),
+          )
+        }
+      }
+
+      // Copy all victims to the new case
+      const victims = await this.victimModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      for (const victim of victims) {
+        promises.push(
+          this.victimModel.create(
+            { ...victim.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction },
+          ),
+        )
+      }
+
+      // Copy the prosecutor entered case strings (civil demands and penalties)
+      // to the new case. Other string types are court/process data.
+      const caseStringsToCopy = await this.caseStringModel.findAll({
+        where: {
+          caseId,
+          stringType: [StringType.CIVIL_DEMANDS, StringType.PENALTIES],
+        },
+        transaction,
+      })
+
+      for (const caseString of caseStringsToCopy) {
+        promises.push(
+          this.caseStringModel.create(
+            { ...caseString.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction },
+          ),
+        )
+      }
+
+      // Copy all civil claimants, remapping their defendant references. These
+      // are created sequentially so we can build a map from the original civil
+      // claimant ids to the new ones for later file remapping.
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const remappedDefendantIds = civilClaimant.defendantIds
+          ?.map((defendantId) => defendantIdMap.get(defendantId))
+          .filter((defendantId): defendantId is string => Boolean(defendantId))
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      // Copy all prosecutor uploaded case files to the new case. The new case
+      // is fully independent, so each S3 object is copied to a new key rather
+      // than shared, and the files are reset to a draft (RVG) state.
+      const caseFilesCategoriesToCopy = [
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+        CaseFileCategory.CASE_FILE_RECORD,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIM,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      ]
+
+      const filesToCopy = await this.caseFileModel.findAll({
+        where: { caseId, category: caseFilesCategoriesToCopy },
+        transaction,
+      })
+
+      for (const file of filesToCopy) {
+        // Files without an accessible S3 object cannot be copied
+        if (!file.isKeyAccessible || !file.key) {
+          continue
+        }
+
+        // The key is `${caseId}/${uuid}/${filename}` - keep the filename but
+        // point the object at the new case under a fresh uuid
+        const filename = file.key.split('/').slice(2).join('/')
+        const newKey = `${newCaseId}/${uuid()}/${filename}`
+
+        try {
+          await this.awsS3Service.copyObject(
+            CaseType.INDICTMENT,
+            file.key,
+            newKey,
+          )
+        } catch (error) {
+          // Tolerate failure of a single file, but log error and skip it
+          this.logger.error(
+            `Failed to copy S3 object for case file ${file.id}`,
+            { error },
+          )
+
+          continue
+        }
+
+        promises.push(
+          this.caseFileModel.create(
+            {
+              ...file.toJSON(),
+              id: undefined,
+              caseId: newCaseId,
+              key: newKey,
+              state: CaseFileState.STORED_IN_RVG,
+              defendantId: file.defendantId
+                ? defendantIdMap.get(file.defendantId)
+                : undefined,
+              civilClaimantId: file.civilClaimantId
+                ? civilClaimantIdMap.get(file.civilClaimantId)
+                : undefined,
+              // Don't carry over the police system reference
+              policeFileId: undefined,
+              // The hash was computed for the original key and is no longer valid
+              hash: undefined,
+              hashAlgorithm: undefined,
+            },
+            { transaction },
+          ),
+        )
+      }
+
+      await Promise.all(promises)
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [result],
+        { transaction },
+      )
+
+      this.logger.debug(
+        `Duplicated indictment case ${caseId} into a new draft case ${newCaseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error duplicating indictment case ${caseId} into a new draft case`,
         { error },
       )
 
@@ -719,17 +1144,14 @@ export class CaseRepositoryService {
         transaction: options.transaction,
       }
 
-      const caseData = omit(data, appealCaseFields)
+      const { policeCaseNumbers, ...caseFields } = data
 
       let updatedCase: Case
 
-      if (Object.keys(caseData).length > 0) {
+      if (Object.keys(caseFields).length > 0) {
         const [numberOfAffectedRows, cases] = await this.caseModel.update(
-          caseData,
-          {
-            ...updateOptions,
-            returning: true,
-          },
+          caseFields,
+          { ...updateOptions, returning: true },
         )
 
         if (numberOfAffectedRows < 1) {
@@ -763,24 +1185,18 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Updated case ${caseId}`)
 
-      const appealData = pick(
-        data,
-        appealCaseFields,
-      ) as Partial<UpdateAppealCase>
-
-      if (Object.keys(appealData).length > 0) {
-        await this.upsertAppealCase(caseId, appealData as UpdateAppealCase, {
-          transaction: options.transaction,
-        })
-      }
-
-      if ('policeCaseNumbers' in data) {
+      if (policeCaseNumbers) {
         await this.caseDefendantPoliceCaseNumberRepositoryService.replaceUnassignedFromPoliceCaseNumbersArray(
           caseId,
-          updatedCase.policeCaseNumbers ?? [],
+          policeCaseNumbers ?? [],
           { transaction: options.transaction },
         )
       }
+
+      await this.caseDefendantPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases(
+        [updatedCase],
+        { transaction: options.transaction },
+      )
 
       return updatedCase
     } catch (error) {
@@ -788,43 +1204,6 @@ export class CaseRepositoryService {
         data: Object.keys(data),
         error,
       })
-
-      throw error
-    }
-  }
-
-  async upsertAppealCase(
-    caseId: string,
-    data: UpdateAppealCase,
-    options: UpsertAppealCaseOptions,
-  ): Promise<AppealCase> {
-    try {
-      this.logger.debug(`Upserting appeal case for case ${caseId} with data:`, {
-        data: Object.keys(data),
-      })
-
-      const existing = await this.appealCaseModel.findOne({
-        where: { caseId },
-        transaction: options.transaction,
-      })
-
-      const [result] = await this.appealCaseModel.upsert(
-        { ...existing?.toJSON(), ...data, caseId },
-        {
-          transaction: options.transaction,
-          returning: true,
-          conflictFields: ['case_id'],
-        },
-      )
-
-      this.logger.debug(`Upserted appeal case for case ${caseId}`)
-
-      return result
-    } catch (error) {
-      this.logger.error(
-        `Error upserting appeal case for case ${caseId} with data:`,
-        { data: Object.keys(data), error },
-      )
 
       throw error
     }

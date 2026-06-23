@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionInfo } from '../../../../dataTypes/sectionInfo.model'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { ApplicationEventDto } from './applicationEvent.dto'
@@ -74,17 +74,14 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: CompletedSectionInfo })
-  completedSectionInfo?: CompletedSectionInfo
+  @ApiPropertyOptional({ type: SectionInfo })
+  sectionInfo?: SectionInfo
 
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
   @ApiPropertyOptional()
   useValidate?: boolean
-
-  @ApiPropertyOptional()
-  usePopulate?: boolean
 
   @ApiPropertyOptional()
   submissionServiceUrl?: string

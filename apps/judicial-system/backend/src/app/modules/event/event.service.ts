@@ -45,6 +45,7 @@ type CaseEvent =
   | 'ARCHIVE'
   | 'CREATE'
   | 'CREATE_XRD'
+  | 'DUPLICATE'
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_ARRAIGNMENT_DATE'
@@ -65,9 +66,11 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
   CREATE: ':new: Mál stofnað',
   CREATE_APPEAL: ':judge: Kæra',
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  DUPLICATE: ':recycle: Mál afritað í drög',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
@@ -77,7 +80,7 @@ const eventHeading: Record<Event, string> = {
   [CaseTransition.RECEIVE]: ':eyes: Móttekið',
   [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
   [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
+  [CaseTransition.REOPEN]: ':recycle: Mál enduropnað',
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
@@ -135,9 +138,12 @@ export class EventService {
             ).join(', ')})`
           : ''
       } *${theCase.id}*`
+      const policeCaseNumbersText = theCase.policeCaseNumbers?.length
+        ? theCase.policeCaseNumbers.join(', ')
+        : 'LÖKE númer ekki skráð'
       const prosecutionText = `${
         theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
-      }*${theCase.policeCaseNumbers.join(', ')}*`
+      }*${policeCaseNumbersText}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
@@ -156,7 +162,7 @@ export class EventService {
               formatDate(
                 DateLog.courtDate(theCase.dateLogs)?.date ??
                   DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                'Pp',
+                'dd.MM.y HH:mm',
               ) ?? 'er ekki skráð'
             }`
           : ''
@@ -386,7 +392,7 @@ export class EventService {
         extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??
             DateLog.arraignmentDate(theCase.dateLogs)?.date,
-          'Pp',
+          'dd.MM.y HH:mm',
         )}`
         break
       default:

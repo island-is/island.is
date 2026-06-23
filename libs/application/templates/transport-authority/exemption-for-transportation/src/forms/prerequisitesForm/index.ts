@@ -11,7 +11,7 @@ import { FormModes } from '@island.is/application/types'
 import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import {
   ExemptionRulesApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
@@ -33,7 +33,7 @@ export const Prerequisites = buildForm({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

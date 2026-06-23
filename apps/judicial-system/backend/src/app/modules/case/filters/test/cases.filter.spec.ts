@@ -38,7 +38,7 @@ describe('getCasesQueryFilter', () => {
               [Op.and]: [
                 { type: [...restrictionCases, ...investigationCases] },
                 {
-                  defender_national_id: [user.nationalId, user.nationalId],
+                  defender_national_id: user.nationalId,
                 },
                 {
                   [Op.or]: [
@@ -90,7 +90,7 @@ describe('getCasesQueryFilter', () => {
                             [Op.in]: Sequelize.literal(`
                         (SELECT case_id
                           FROM victim
-                          WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                          WHERE lawyer_national_id = '${user.nationalId}'
                           AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
                       `),
                           },
@@ -106,7 +106,7 @@ describe('getCasesQueryFilter', () => {
                             [Op.in]: Sequelize.literal(`
                           (SELECT case_id
                             FROM victim
-                            WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                            WHERE lawyer_national_id = '${user.nationalId}'
                             AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
                         `),
                           },
@@ -159,7 +159,7 @@ describe('getCasesQueryFilter', () => {
                         [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM defendant
-                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}')
+                        WHERE defender_national_id = '${user.nationalId}'
                           AND is_defender_choice_confirmed = true)
                     `),
                       },
@@ -170,7 +170,7 @@ describe('getCasesQueryFilter', () => {
                       (SELECT case_id
                         FROM civil_claimant
                         WHERE has_spokesperson = true
-                          AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}')
+                          AND spokesperson_national_id = '${user.nationalId}'
                           AND is_spokesperson_confirmed = true)
                     `),
                       },

@@ -2,8 +2,8 @@ import { FC, Fragment, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE } from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -15,19 +15,19 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
+  AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseScheduledCard,
-  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
-  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingModifiedAlert,
   serviceAnnouncementsStrings,
   UserContext,
   ZipButton,
@@ -43,7 +43,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -80,7 +80,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
         ? 'Rafrænt pósthólf island.is'
         : servedBy
 
-    return [processServer, formatDate(serviceDate, 'Pp')]
+    return [processServer, formatDate(serviceDate, 'dd.MM.y HH:mm')]
       .filter(Boolean)
       .join(', ')
   }
@@ -105,9 +105,10 @@ const IndictmentOverview: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { appealBanner, appealModals } = useAppealCase()
+  const { appealBanner, appealModals } = useAppealCaseBanner()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
@@ -154,17 +155,18 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer>
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <AlertMessage
-              type="info"
-              title="Mál leiðrétt"
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.rulingModifiedHistory}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
+          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
+            <Box marginBottom={2}>
+              <AlertMessage
+                title="Mál enduropnað"
+                message={
+                  <Text variant="small" whiteSpace="preWrap">
+                    {workingCase.reopenReason}
+                  </Text>
+                }
+                type="info"
+              />
+            </Box>
           )}
           {workingCase.defendants?.map(
             (defendant) =>
@@ -205,13 +207,16 @@ const IndictmentOverview: FC = () => {
             </Fragment>
           ))}
           <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
               workingCase.court &&
               latestDate?.date &&
               workingCase.indictmentDecision !==
                 IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
-                IndictmentDecision.REDISTRIBUTING && (
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
                 <Box component="section">
                   <IndictmentCaseScheduledCard
                     court={workingCase.court}
@@ -253,8 +258,17 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}
+              forceDisplayAdditionalFiles={canAddFiles}
             />
             {canAddFiles && (
               <Box display="flex" justifyContent="flexEnd">
@@ -263,7 +277,7 @@ const IndictmentOverview: FC = () => {
                   icon="add"
                   onClick={() =>
                     router.push(
-                      `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                      `${DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
                     )
                   }
                 >

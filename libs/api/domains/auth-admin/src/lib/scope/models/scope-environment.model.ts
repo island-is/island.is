@@ -82,11 +82,20 @@ export class ScopeEnvironment {
   })
   requiresConfirmation!: boolean
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
+
   @Field(() => [String], { defaultValue: [] })
   categoryIds!: string[]
 
   @Field(() => [String], { defaultValue: [] })
   tagIds!: string[]
+
+  @Field(() => [String], { defaultValue: [] })
+  userNationalIds!: string[]
 
   @Field(() => Date, { nullable: true })
   modified?: Date

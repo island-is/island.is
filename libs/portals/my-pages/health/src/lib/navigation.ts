@@ -25,87 +25,7 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
-      name: messages.myHealthOverview,
-      searchHide: true,
-      navHide: true,
-      path: HealthPaths.HealthBasicOld,
-    },
-    {
-      name: messages.appointments,
-      searchHide: false,
-      path: HealthPaths.HealthAppointments,
-      searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
-      children: [
-        {
-          name: messages.appointmentDetail,
-          path: HealthPaths.HealthAppointmentDetail,
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: messages.referrals,
-      path: HealthPaths.HealthReferrals,
-      searchTags: [s.healthReferrals],
-      children: [
-        {
-          name: messages.singleReferral,
-          path: HealthPaths.HealthReferralsDetail,
-          navHide: true,
-        },
-      ],
-    },
-
-    {
-      name: messages.paymentsAndRights,
-      description: m.paymentsIntro,
-      path: HealthPaths.HealthPayments,
-      searchTags: [
-        s.healthInsuranceCard,
-        s.healthInsuranceEhicCard,
-        s.healthInsuranceEhicCardLong,
-        s.healthPaymentParticipation,
-        s.healthPaymentOverview,
-      ],
-      children: [
-        {
-          name: messages.paymentParticipation,
-          path: HealthPaths.HealthPaymentParticipation,
-          searchTags: [s.healthPaymentParticipation],
-          navHide: true,
-        },
-        {
-          name: messages.paymentOverview,
-          path: HealthPaths.HealthPaymentOverview,
-          children: [
-            {
-              name: messages.paymentOverviewInvoices,
-              path: HealthPaths.HealthPaymentOverviewInvoices,
-              navHide: true,
-            },
-            {
-              name: messages.paymentOverviewTotals,
-              path: HealthPaths.HealthPaymentOverviewTotals,
-              navHide: true,
-            },
-          ],
-          navHide: true,
-          searchTags: [s.healthPaymentOverview],
-        },
-        {
-          name: messages.rights,
-          path: HealthPaths.HealthPaymentRights,
-          searchTags: [
-            s.healthInsuranceCard,
-            s.healthInsuranceEhicCard,
-            s.healthInsuranceEhicCardLong,
-          ],
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: m.medicine,
+      name: messages.myMedicine,
       path: HealthPaths.HealthMedicine,
       children: [
         {
@@ -178,60 +98,51 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: m.aidsAndNutrition,
-      description: m.aidsAndNutritionIntro,
-      path: HealthPaths.HealthAidsAndNutrition,
-    },
-    {
-      name: m.therapies,
-      path: HealthPaths.HealthTherapies,
+      name: messages.appointments,
+      searchHide: false,
+      breadcrumbHide: true,
+      path: HealthPaths.HealthAppointments,
+      searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
       children: [
         {
-          name: messages.physicalTherapy,
-          path: HealthPaths.HealthTherapiesPhysical,
+          name: messages.appointmentDetail,
+          path: HealthPaths.HealthAppointmentDetail,
           navHide: true,
-        },
-        {
-          name: messages.speechTherapy,
-          path: HealthPaths.HealthTherapiesSpeech,
-          navHide: true,
-        },
-        {
-          name: messages.occupationalTherapy,
-          path: HealthPaths.HealthTherapiesOccupational,
-          navHide: true,
+          breadcrumbHide: true,
         },
       ],
     },
     {
-      name: m.vaccinations,
-      description: m.vaccinationsIntro,
-      path: HealthPaths.HealthVaccinations,
+      name: m.messages,
+      path: HealthPaths.HealthConversations,
+      searchTags: [s.healthShorter],
       children: [
         {
-          name: messages.generalVaccinations,
-          path: HealthPaths.HealthVaccinationsGeneral,
+          name: m.messages,
+          path: HealthPaths.HealthConversationsDetail,
           navHide: true,
         },
         {
-          name: messages.otherVaccinations,
-          path: HealthPaths.HealthVaccinationsOther,
+          name: messages.healthConversationsNewTitle,
+          path: HealthPaths.HealthConversationsNew,
           navHide: true,
+          breadcrumbHide: true,
         },
       ],
     },
     {
-      name: messages.waitlists,
-      path: HealthPaths.HealthWaitlists,
-      searchTags: [s.healthWaiting],
+      name: messages.referrals,
+      path: HealthPaths.HealthReferrals,
+      searchTags: [s.healthReferrals],
       children: [
         {
-          name: messages.singleWaitlist,
-          path: HealthPaths.HealthWaitlistsDetail,
+          name: messages.singleReferral,
+          path: HealthPaths.HealthReferralsDetail,
           navHide: true,
         },
       ],
     },
+
     {
       name: messages.questionnaires,
       path: HealthPaths.HealthQuestionnaires,
@@ -258,10 +169,119 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: messages.paymentsAndRights,
+      description: m.paymentsIntro,
+      path: HealthPaths.HealthPayments,
+      searchTags: [
+        s.healthInsuranceCard,
+        s.healthInsuranceEhicCard,
+        s.healthInsuranceEhicCardLong,
+        s.healthPaymentParticipation,
+        s.healthPaymentOverview,
+      ],
+      children: [
+        {
+          name: messages.paymentParticipation,
+          path: HealthPaths.HealthPaymentParticipation,
+          searchTags: [s.healthPaymentParticipation],
+          navHide: true,
+        },
+        {
+          name: messages.paymentOverview,
+          path: HealthPaths.HealthPaymentOverview,
+          children: [
+            {
+              name: messages.paymentOverviewInvoices,
+              path: HealthPaths.HealthPaymentOverviewInvoices,
+              navHide: true,
+            },
+            {
+              name: messages.paymentOverviewTotals,
+              path: HealthPaths.HealthPaymentOverviewTotals,
+              navHide: true,
+            },
+          ],
+          navHide: true,
+          searchTags: [s.healthPaymentOverview],
+        },
+        {
+          name: messages.rights,
+          path: HealthPaths.HealthPaymentRights,
+          searchTags: [
+            s.healthInsuranceCard,
+            s.healthInsuranceEhicCard,
+            s.healthInsuranceEhicCardLong,
+          ],
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.therapiesAndAids,
+      path: HealthPaths.HealthTherapiesAndAids,
+      children: [
+        {
+          name: m.therapies,
+          path: HealthPaths.HealthTherapies,
+          children: [
+            {
+              name: messages.physicalTherapy,
+              path: HealthPaths.HealthTherapiesPhysical,
+              navHide: true,
+            },
+            {
+              name: messages.speechTherapy,
+              path: HealthPaths.HealthTherapiesSpeech,
+              navHide: true,
+            },
+            {
+              name: messages.occupationalTherapy,
+              path: HealthPaths.HealthTherapiesOccupational,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: m.aidsAndNutrition,
+          description: m.aidsAndNutritionIntro,
+          path: HealthPaths.HealthAidsAndNutrition,
+        },
+      ],
+    },
+    {
       name: messages.patientData,
       path: HealthPaths.HealthPatientData,
       searchTags: [s.healthPatientData],
       children: [
+        {
+          name: messages.waitlists,
+          path: HealthPaths.HealthWaitlists,
+          searchTags: [s.healthWaiting],
+          children: [
+            {
+              name: messages.singleWaitlist,
+              path: HealthPaths.HealthWaitlistsDetail,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: m.vaccinations,
+          description: m.vaccinationsIntro,
+          path: HealthPaths.HealthVaccinations,
+          children: [
+            {
+              name: messages.generalVaccinations,
+              path: HealthPaths.HealthVaccinationsGeneral,
+              navHide: true,
+            },
+            {
+              name: messages.otherVaccinations,
+              path: HealthPaths.HealthVaccinationsOther,
+              navHide: true,
+            },
+          ],
+        },
         {
           name: messages.patientDataPermit,
           path: HealthPaths.HealthPatientDataPermits,

@@ -42,12 +42,15 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isDistrictCourtUser,
+  isIndictmentCase,
   isPublicProsecutionOfficeUser,
   isRequestCase,
   restrictionCases,
@@ -88,12 +91,6 @@ import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import {
-  courtOfAppealsAssistantTransitionRule,
-  courtOfAppealsAssistantUpdateRule,
-  courtOfAppealsJudgeTransitionRule,
-  courtOfAppealsJudgeUpdateRule,
-  courtOfAppealsRegistrarTransitionRule,
-  courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
   districtCourtJudgeSignRulingRule,
@@ -179,9 +176,6 @@ export class CaseController {
     districtCourtJudgeUpdateRule,
     districtCourtRegistrarUpdateRule,
     districtCourtAssistantUpdateRule,
-    courtOfAppealsJudgeUpdateRule,
-    courtOfAppealsRegistrarUpdateRule,
-    courtOfAppealsAssistantUpdateRule,
     publicProsecutorStaffUpdateRule,
   )
   @UseInterceptors(CaseInterceptor)
@@ -228,30 +222,6 @@ export class CaseController {
         )
       }
 
-      if (update.appealAssistantId) {
-        await this.validateAssignedUser(update.appealAssistantId, [
-          UserRole.COURT_OF_APPEALS_ASSISTANT,
-        ])
-      }
-
-      if (update.appealJudge1Id) {
-        await this.validateAssignedUser(update.appealJudge1Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
-      if (update.appealJudge2Id) {
-        await this.validateAssignedUser(update.appealJudge2Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
-      if (update.appealJudge3Id) {
-        await this.validateAssignedUser(update.appealJudge3Id, [
-          UserRole.COURT_OF_APPEALS_JUDGE,
-        ])
-      }
-
       if (update.rulingModifiedHistory) {
         const history = theCase.rulingModifiedHistory
           ? `${theCase.rulingModifiedHistory}\n\n`
@@ -274,24 +244,20 @@ export class CaseController {
         }
       }
 
-      if (update.prosecutorStatementDate) {
-        update.prosecutorStatementDate = nowFactory()
-      }
-
-      if (update.appealRulingModifiedHistory) {
-        const history = theCase.appealCase?.appealRulingModifiedHistory
-          ? `${theCase.appealCase.appealRulingModifiedHistory}\n\n`
-          : ''
-        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-        update.appealRulingModifiedHistory = `${history}${today} - ${
-          user.name
-        } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
-      }
-
       if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
         throw new BadRequestException(
           'Cannot merge case that is not in a received state',
         )
+      }
+
+      if (update.reopenReason !== undefined) {
+        if (!isIndictmentCase(theCase.type)) {
+          throw new BadRequestException('Cannot reopen a non-indictment case')
+        }
+
+        if (!update.reopenReason.trim()) {
+          throw new BadRequestException('Reopen reason cannot be empty')
+        }
       }
 
       // This probably belongs inside the case service
@@ -345,9 +311,6 @@ export class CaseController {
     districtCourtJudgeTransitionRule,
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
-    courtOfAppealsJudgeTransitionRule,
-    courtOfAppealsRegistrarTransitionRule,
-    courtOfAppealsAssistantTransitionRule,
   )
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/state')
@@ -411,28 +374,35 @@ export class CaseController {
   @UseInterceptors(CompletedAppealAccessedInterceptor, CaseInterceptor)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case by id' })
-  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
-    this.logger.debug(`Getting case ${caseId} by id`)
-
-    return theCase
-  }
-
-  @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @RolesRules(
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @UseInterceptors(CasesInterceptor)
-  @Get('case/:caseId/connectedCases')
-  @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
-  getConnectedCases(
+  async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<Case[]> {
-    this.logger.debug(`Getting connected cases for case ${caseId}`)
+    @CurrentHttpUser() user: User,
+  ): Promise<Case> {
+    this.logger.debug(`Getting case ${caseId} by id`)
 
-    return this.caseService.getConnectedIndictmentCases(theCase)
+    if (
+      isDistrictCourtUser(user) &&
+      isIndictmentCase(theCase.type) &&
+      theCase.defendants?.length
+    ) {
+      const connectedCases = await this.caseService.getConnectedIndictmentCases(
+        theCase,
+      )
+
+      for (const defendant of theCase.defendants) {
+        defendant.connectedCases = connectedCases.filter((cc) =>
+          cc.defendants?.some((d) =>
+            defendant.noNationalId
+              ? d.nationalId === defendant.nationalId &&
+                d.name === defendant.name
+              : d.nationalId === defendant.nationalId,
+          ),
+        )
+      }
+    }
+
+    return theCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
@@ -562,6 +532,7 @@ export class CaseController {
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRepresentativeRule,
   )
   @Get([
     'case/:caseId/courtRecord',
@@ -1026,6 +997,50 @@ export class CaseController {
     this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    CaseCompletedGuard,
+  )
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/duplicate')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new draft indictment case based on a revoked indictment case',
+  })
+  async duplicate(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(`Duplicating indictment case ${caseId} into a new draft`)
+
+    // Only indictments that were revoked after being sent to court can be
+    // duplicated into a new draft case
+    if (
+      theCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.WITHDRAWAL &&
+      theCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.CANCELLATION
+    ) {
+      throw new ForbiddenException(
+        `Cannot duplicate indictment case ${caseId} - it has not been revoked`,
+      )
+    }
+
+    const duplicatedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+    )
+
+    this.eventService.postEvent('DUPLICATE', duplicatedCase)
+
+    return duplicatedCase
   }
 
   @UseGuards(

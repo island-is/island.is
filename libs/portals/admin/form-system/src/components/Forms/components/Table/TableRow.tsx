@@ -3,6 +3,7 @@ import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import {
   COPY_FORM,
+  GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
   UPDATE_FORM_STATUS,
 } from '@island.is/form-system/graphql'
@@ -25,7 +26,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { hasEnglishForAllNameFields } from '../../../../lib/utils/validateNameTranslations'
 import { StatusTag } from '../../../StatusTag/StatusTag'
@@ -44,6 +45,7 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
   url?: string
+  lastModifiedBy?: string
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -65,6 +67,7 @@ export const TableRow = ({
   id,
   name,
   lastModified,
+  lastModifiedBy,
   setFormsState,
   slug,
   status,
@@ -76,12 +79,17 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
-
+  const [getJsonSample] = useLazyQuery(GET_APPLICATION_JSON_SAMPLE, {
+    fetchPolicy: 'no-cache',
+  })
+  const location = useLocation()
   const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
     const copy = {
       title: formatMessage(m.copy),
+      icon: 'copy' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await copyForm({
@@ -103,6 +111,8 @@ export const TableRow = ({
 
     const changePublishedForm = {
       title: formatMessage(m.edit),
+      icon: 'pencil' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await updateFormStatus({
@@ -127,6 +137,8 @@ export const TableRow = ({
 
     const publish = {
       title: formatMessage(m.publish),
+      icon: 'star' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         const { data: formData } = await getForm({
           variables: { input: { id } },
@@ -158,6 +170,8 @@ export const TableRow = ({
 
     const publishChanged = {
       title: formatMessage(m.publish),
+      icon: 'star' as const,
+      iconType: 'outline' as const,
       onClick: async () => {
         try {
           const { data } = await updateFormStatus({
@@ -198,6 +212,8 @@ export const TableRow = ({
 
     const test = {
       title: formatMessage(m.tryOut),
+      icon: 'open' as const,
+      iconType: 'outline' as const,
       onClick: () => {
         if (slug) {
           window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer')
@@ -212,8 +228,72 @@ export const TableRow = ({
       },
     }
 
+    const getJson = {
+      title: formatMessage(m.getJson),
+      icon: 'download' as const,
+      iconType: 'outline' as const,
+      onClick: async (_event: any, menu: any) => {
+        if (!id) return
+
+        try {
+          const { data } = await getJsonSample({
+            variables: { input: { id } },
+          })
+
+          const jsonSample = data?.formSystemApplicationJsonSample?.jsonSample
+          if (!jsonSample) return
+
+          // const trimmedJson = removeTypename(jsonSample)
+
+          const blob = new Blob(
+            [
+              JSON.stringify(
+                jsonSample,
+                (key, value) =>
+                  key === '__typename' || value === null ? undefined : value,
+                2,
+              ),
+            ],
+            {
+              type: 'application/json;charset=utf-8',
+            },
+          )
+          const blobUrl = URL.createObjectURL(blob)
+
+          const safeSlug = (slug?.trim() || 'form').replace(
+            /[\\/:*?"<>|]/g,
+            '-',
+          )
+          const fileName = `${safeSlug}.json`
+
+          const a = document.createElement('a')
+          a.href = blobUrl
+          a.download = fileName
+          a.rel = 'noopener'
+          document.body.appendChild(a)
+          a.click()
+          a.remove()
+
+          menu?.hide?.()
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000)
+        } catch (e) {
+          // optionally toast / console.error here
+          console.error(e)
+        }
+      },
+    }
+
+    const getDelIcon = () => {
+      if (status === FormStatus.PUBLISHED) return 'archive' as const
+      if (status === FormStatus.PUBLISHED_BEING_CHANGED) return 'trash' as const
+      return 'trash' as const
+    }
+
     const del = {
       title: formatMessage(m.delete),
+      icon: getDelIcon(),
+      iconType: 'outline' as const,
       render: () => (
         <DialogPrompt
           title={
@@ -232,10 +312,26 @@ export const TableRow = ({
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="center"
+              width="full"
+              marginRight={2}
               paddingY={2}
+              paddingLeft={1}
               cursor="pointer"
             >
+              <Box
+                marginX={2}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon
+                  icon={getDelIcon()}
+                  size="small"
+                  color="red600"
+                  type="outline"
+                />
+              </Box>
+
               <Text variant="eyebrow" color="red600">
                 {status === FormStatus.PUBLISHED
                   ? formatMessage(m.unpublish)
@@ -273,12 +369,12 @@ export const TableRow = ({
     }
 
     if (status === FormStatus.PUBLISHED) {
-      return [changePublishedForm, copy, del]
+      return [getJson, copy, changePublishedForm, del]
     } else if (status === FormStatus.PUBLISHED_BEING_CHANGED) {
-      return [test, publishChanged, del]
+      return [test, getJson, publishChanged, del]
     }
 
-    return [test, copy, publish, del]
+    return [test, getJson, copy, publish, del]
   }, [
     id,
     slug,
@@ -306,26 +402,37 @@ export const TableRow = ({
       console.error('Error updating form:', error)
     }
 
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+        },
       },
-    })
+    )
   }
 
   const view = async () => {
-    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
-      state: {
-        id,
+    navigate(
+      `${FormSystemPaths.Form.replace(':formId', String(id))}${
+        location.search
+      }`,
+      {
+        state: {
+          id,
+          readOnly: true,
+        },
       },
-    })
+    )
   }
 
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
         <Row key={id}>
-          <Column span="7/12">
+          <Column span={['6/12', '7/12', '6/12', '7/12']}>
             <Inline space={2}>
               <Icon
                 icon={isOpen ? 'remove' : 'add'}
@@ -335,8 +442,8 @@ export const TableRow = ({
               <ColumnText text={name ? name : ''} isOpen={isOpen} />
             </Inline>
           </Column>
-          <Column span="2/12">
-            <Box display="flex" justifyContent="flexEnd">
+          <Column span="2/12" hiddenBelow="md">
+            <Box display="flex" justifyContent="flexStart">
               <Text variant="medium">
                 {formatDate(lastModified ? lastModified : new Date(), {
                   day: '2-digit',
@@ -347,13 +454,13 @@ export const TableRow = ({
             </Box>
           </Column>
 
-          <Column span="2/12">
-            <Box display="flex" justifyContent="center">
+          <Column span={['2/12', '2/12', '2/12', '1/12']}>
+            <Box display="flex" justifyContent="flexStart">
               <StatusTag status={status ?? ''} />
             </Box>
           </Column>
 
-          <Column span="1/12">
+          <Column span={['4/12', '3/12', '2/12', '2/12']}>
             <Box display="flex" justifyContent="flexEnd" alignItems="center">
               {(status === FormStatus.IN_DEVELOPMENT ||
                 status === FormStatus.PUBLISHED_BEING_CHANGED) && (
@@ -368,24 +475,25 @@ export const TableRow = ({
                     colorScheme="negative"
                     inline
                     onClick={() => updateForm(status)}
+                    title="Breyta"
                   />
                 </Box>
               )}
-              {status === FormStatus.PUBLISHED && (
-                <Box
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                >
-                  <Button
-                    icon="eye"
-                    circle
-                    colorScheme="negative"
-                    inline
-                    onClick={() => view()}
-                  />
-                </Box>
-              )}
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
+                <Button
+                  icon="eye"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={() => view()}
+                  title="Skoða"
+                />
+              </Box>
+
               <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}
@@ -456,6 +564,11 @@ export const TableRow = ({
               <Row>
                 <Text variant="medium" className={styles.capitalizeText}>
                   <strong>Móttökukerfi:</strong> {url || '—'}
+                </Text>
+              </Row>
+              <Row>
+                <Text variant="medium">
+                  <strong>Síðast breytt af:</strong> {lastModifiedBy ?? '—'}
                 </Text>
               </Row>
             </Stack>

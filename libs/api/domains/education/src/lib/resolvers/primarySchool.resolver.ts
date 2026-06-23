@@ -1,5 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { AssessmentHistoryInput } from '../dto/assessmentHistory.input'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -54,8 +55,10 @@ export class PrimarySchoolResolver {
   async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
-    @Args('assessmentId', { nullable: true }) assessmentId?: string,
+    @Args('input', { type: () => AssessmentHistoryInput, nullable: true })
+    input: AssessmentHistoryInput = new AssessmentHistoryInput(),
   ) {
+    const { assessmentId } = input
     const subjects = await this.primarySchoolService.getAssessmentSubjects(
       user,
       student.id,

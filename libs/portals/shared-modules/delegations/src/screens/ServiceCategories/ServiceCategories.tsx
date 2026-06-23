@@ -1,6 +1,7 @@
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
+import { AuthDelegationDirection } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
 import {
@@ -32,18 +33,17 @@ export const ServiceCategories = () => {
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang },
+    variables: { lang, direction: AuthDelegationDirection.outgoing },
   })
   const {
     data: tagsData,
     loading: tagsLoading,
     error: tagsError,
   } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
-    variables: { lang },
+    variables: { lang, direction: AuthDelegationDirection.outgoing },
   })
 
-  // const categories = data?.authScopeCategories || []
-  const tags = tagsData?.authScopeTags || []
+  const tags = (tagsData?.authScopeTags || []).filter((tag) => tag.showAsCard)
   const categories = categoriesData?.authScopeCategories || []
 
   const loading = categoriesLoading || tagsLoading

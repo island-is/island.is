@@ -11,7 +11,7 @@ import { IntroHeader } from '@island.is/portals/core'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { AuthApiScope } from '@island.is/api/schema'
+import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context/DelegationFormContext'
 import add from 'date-fns/add'
 import { useEffect, useState } from 'react'
@@ -34,7 +34,11 @@ export const CategoryDetails = () => {
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery<AuthScopeCategoryBySlugQuery>(AuthScopeCategoryBySlugDocument, {
-    variables: { slug: slug ?? '', lang },
+    variables: {
+      slug: slug ?? '',
+      lang,
+      direction: AuthDelegationDirection.outgoing,
+    },
     skip: !slug,
   })
   const {
@@ -42,7 +46,11 @@ export const CategoryDetails = () => {
     loading: tagsLoading,
     error: tagsError,
   } = useQuery<AuthScopeTagBySlugQuery>(AuthScopeTagBySlugDocument, {
-    variables: { slug: slug ?? '', lang },
+    variables: {
+      slug: slug ?? '',
+      lang,
+      direction: AuthDelegationDirection.outgoing,
+    },
     skip: !slug,
   })
   const { selectedScopes, setSelectedScopes, setIdentities, clearForm } =
@@ -121,6 +129,7 @@ export const CategoryDetails = () => {
               <ScopesTable
                 scopes={data?.scopes as AuthApiScope[]}
                 showCheckbox
+                showSelectAll
                 onSelectScope={onSelectScope}
               />
               {loading && (

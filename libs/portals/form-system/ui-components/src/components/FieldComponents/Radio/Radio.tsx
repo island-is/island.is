@@ -29,41 +29,37 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
     [item.list],
   )
 
-  // The reducer/dependency logic elsewhere compares against label.is,
-  // so keep the stored value consistent with that.
-  const selected = useMemo(
-    () => item?.list?.find((listItem) => listItem?.isSelected === true),
-    [item?.list],
-  )
-
-  const defaultSelectedValue =
-    getValue(item, 'listValue', valueIndex) ?? selected?.label?.is ?? ''
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
 
   const fieldName = `${item.id}.${valueIndex}`
 
   useEffect(() => {
-    if (!dispatch) return
-    if (!selected) return
+    if (!dispatch || !selected) return
 
-    const existing = getValue(item, 'listValue', valueIndex)
+    const existing = getValue(item, 'label', valueIndex)
     if (existing) return
-
-    const seededValue = selected.label?.is ?? ''
-    if (!seededValue) return
 
     dispatch({
       type: 'SET_LIST_VALUE',
-      payload: { id: item.id, value: seededValue, valueIndex },
+      payload: {
+        id: item.id,
+        value: { label: selected.label, value: selected.value },
+        valueIndex,
+      },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const selectedLabel = selected?.label?.[lang] ?? ''
 
   return (
     <Controller
       key={`${item.id}-${valueIndex}`}
       name={fieldName}
       control={control}
-      defaultValue={defaultSelectedValue}
+      defaultValue={
+        getValue(item, 'label', valueIndex)?.[lang] ?? selectedLabel
+      }
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -75,7 +71,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
           <Inline space={1}>
             <Text variant="h4">{item?.name?.[lang]}</Text>
             {item?.isRequired && (
-              <Text variant="h4" as="span">
+              <Text variant="h4" as="span" fontWeight="medium" color="red600">
                 *
               </Text>
             )}
@@ -91,7 +87,7 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
 
           <Box display="flex" flexDirection="row" flexWrap="wrap">
             {radioButtons.map((rb, index) => {
-              const rbValue = rb.label?.is ?? ''
+              const rbValue = rb.label?.[lang] ?? ''
 
               return (
                 <Box
@@ -104,7 +100,11 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
                     if (!dispatch) return
                     dispatch({
                       type: 'SET_LIST_VALUE',
-                      payload: { id: item.id, value: rbValue, valueIndex },
+                      payload: {
+                        id: item.id,
+                        value: { label: rb.label, value: rb.value },
+                        valueIndex,
+                      },
                     })
                   }}
                   key={rb.id ?? `${item.id}-${valueIndex}-${index}`}
@@ -126,7 +126,11 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
                       if (!dispatch) return
                       dispatch({
                         type: 'SET_LIST_VALUE',
-                        payload: { id: item.id, value: rbValue, valueIndex },
+                        payload: {
+                          id: item.id,
+                          value: { label: rb.label, value: rb.value },
+                          valueIndex,
+                        },
                       })
                     }}
                   />

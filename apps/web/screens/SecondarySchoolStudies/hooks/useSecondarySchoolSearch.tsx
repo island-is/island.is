@@ -1,9 +1,8 @@
 import Fuse from 'fuse.js'
 
-import { SecondarySchoolAllProgrammesQuery } from '@island.is/web/graphql/schema'
+import { SecondarySchoolProgrammeSimple } from '@island.is/web/graphql/schema'
 
-type SecondarySchoolProgramme =
-  SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes'][0]
+type SecondarySchoolProgramme = SecondarySchoolProgrammeSimple
 
 interface FilterProps {
   key: string

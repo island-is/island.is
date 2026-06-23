@@ -5,11 +5,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case, User } from '../../repository'
+import { AppealCase, Case, User } from '../../repository'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
 const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
-  'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
 ]
 
@@ -105,53 +104,84 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
+// Determines whether the prosecution is the appellant of the appeal case being
+// transitioned. Considers the current appeal case so both case-level and
+// ruling-order appeals are handled.
+const prosecutionAppealedAppealCase = (request: {
+  case?: Case
+  appealCase?: AppealCase
+}): boolean => {
+  const theCase = request.case
+  const appealCase = request.appealCase
+
+  if (!theCase || !appealCase) {
+    return false
+  }
+
+  // Ruling-order appeals (indictment cases) record the appellant on the appeal
+  // case itself: a defence national id means the defence appealed, so the
+  // absence of one means the prosecution is the appellant.
+  if (appealCase.rulingFileId) {
+    return !appealCase.appealedByNationalId
+  }
+
+  // Case-level appeals: the prosecution appealed iff the postponed appeal date
+  // was set on the case.
+  return Boolean(theCase.prosecutorPostponedAppealDate)
+}
+
+// Determines whether the given defender is the appellant of the appeal case
+// being transitioned. Considers the current appeal case so both case-level and
+// ruling-order appeals are handled.
+const defenderAppealedAppealCase = (request: {
+  user?: { currentUser?: User }
+  case?: Case
+  appealCase?: AppealCase
+}): boolean => {
+  const user = request.user?.currentUser
+  const theCase = request.case
+  const appealCase = request.appealCase
+
+  if (!user || !theCase || !appealCase) {
+    return false
+  }
+
+  // Ruling-order appeals are only available on indictment cases, so only the
+  // specific defender who appealed (recorded on the appeal case) can withdraw.
+  if (appealCase.rulingFileId) {
+    return appealCase.appealedByNationalId === user.nationalId
+  }
+
+  // Deny withdrawal if the defence did not appeal the case
+  if (!theCase.accusedPostponedAppealDate) {
+    return false
+  }
+
+  // For indictment cases, only the specific defender who appealed can withdraw
+  if (
+    isIndictmentCase(theCase.type) &&
+    appealCase.appealedByNationalId !== user.nationalId
+  ) {
+    return false
+  }
+
+  return true
+}
+
 // Prosecutor transition rules
 export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const theCase: Case = request.case
-
-    if (!theCase) {
-      return false
-    }
-
-    // Deny withdrawal if prosecutor did not appeal the case
-    if (!theCase.prosecutorPostponedAppealDate) {
-      return false
-    }
-
-    return true
-  },
+  canActivate: (request) => prosecutionAppealedAppealCase(request),
 }
 export const prosecutorRepresentativeTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const theCase: Case = request.case
-
-    if (!theCase) {
-      return false
-    }
-
-    // Deny withdrawal if prosecutor did not appeal the case
-    if (!theCase.prosecutorPostponedAppealDate) {
-      return false
-    }
-
-    return true
-  },
-}
-
-// Defender update rules (statement date)
-export const defenderUpdateRule: RolesRule = {
-  role: UserRole.DEFENDER,
-  type: RulesType.FIELD,
-  dtoFields: ['defendantStatementDate'],
+  canActivate: (request) => prosecutionAppealedAppealCase(request),
 }
 
 export const defenderTransitionRule: RolesRule = {
@@ -159,28 +189,5 @@ export const defenderTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => {
-    const user: User = request.user?.currentUser
-    const theCase: Case = request.case
-
-    if (!user || !theCase) {
-      return false
-    }
-
-    // Deny withdrawal if defender did not appeal the case
-    if (!theCase.accusedPostponedAppealDate) {
-      return false
-    }
-
-    // For indictment cases, only the specific defender who appealed can withdraw
-    if (
-      isIndictmentCase(theCase.type) &&
-      (!theCase.appealCase?.appealedByNationalId ||
-        theCase.appealCase?.appealedByNationalId !== user.nationalId)
-    ) {
-      return false
-    }
-
-    return true
-  },
+  canActivate: (request) => defenderAppealedAppealCase(request),
 }

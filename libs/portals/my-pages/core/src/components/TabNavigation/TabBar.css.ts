@@ -4,13 +4,6 @@ import { style } from '@vanilla-extract/css'
 export const tabBar = style({
   display: 'inline-flex',
   background: theme.color.blue100,
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      height: 0,
-      overflow: 'hidden',
-      display: 'none',
-    },
-  },
 })
 
 export const alternativeTabDivider = style({
