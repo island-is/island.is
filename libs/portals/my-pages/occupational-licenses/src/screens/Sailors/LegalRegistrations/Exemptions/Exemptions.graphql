@@ -7,7 +7,7 @@ query ShipRegistrySailorRegistrationExemptions {
         shipName
         rank
         advertised
-        exemptionLowerStatus
+        exemptionLowerCertificateStatus
         dateFrom
         dateTo
         numberOfDays
