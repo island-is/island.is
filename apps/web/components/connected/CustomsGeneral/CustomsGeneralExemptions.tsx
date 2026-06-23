@@ -173,7 +173,7 @@ const CustomsGeneralExemptions = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [system, setSystem] = useState<'I' | 'U'>('I')
   const [selectedItem, setSelectedItem] = useState<ExemptionItem | null>(null)
-  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
+  const handleBack = useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -211,7 +211,7 @@ const CustomsGeneralExemptions = () => {
         item={selectedItem}
         date={selectedDate}
         system={system}
-        onBack={() => window.history.back()}
+        onBack={handleBack}
       />
     )
   }

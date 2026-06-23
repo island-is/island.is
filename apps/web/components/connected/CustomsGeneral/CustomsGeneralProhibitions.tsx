@@ -124,7 +124,7 @@ const CustomsGeneralProhibitions = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedItem, setSelectedItem] = useState<ProhibitionItem | null>(null)
-  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
+  const handleBack = useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -160,7 +160,7 @@ const CustomsGeneralProhibitions = () => {
       <ProhibitionDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={() => window.history.back()}
+        onBack={handleBack}
       />
     )
   }

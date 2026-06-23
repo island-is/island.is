@@ -151,7 +151,7 @@ const CustomsGeneralCharges = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedItem, setSelectedItem] = useState<ChargeItem | null>(null)
-  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
+  const handleBack = useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -188,7 +188,7 @@ const CustomsGeneralCharges = () => {
       <ChargeDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={() => window.history.back()}
+        onBack={handleBack}
       />
     )
   }
