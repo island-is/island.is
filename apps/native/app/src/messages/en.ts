@@ -269,6 +269,15 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.buttonReply': 'Reply',
   'documentDetail.buttonCommunications': 'Communications',
+  'documentDetail.archiveSuccess': 'Document archived',
+  'documentDetail.unarchiveSuccess': 'Document unarchived',
+  'documentDetail.bookmarkSuccess': 'Document starred',
+  'documentDetail.unbookmarkSuccess': 'Star removed',
+  'documentDetail.archiveError': 'Could not archive document',
+  'documentDetail.unarchiveError': 'Could not unarchive document',
+  'documentDetail.bookmarkError': 'Could not star document',
+  'documentDetail.unbookmarkError': 'Could not unstar document',
+  'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
   'documentReply.to': 'To',
@@ -277,6 +286,8 @@ export const en: TranslatedMessages = {
   'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
+  'documentReply.sendMessageError': 'Could not send reply',
+  'documentReply.pleaseTryAgain': 'Please try again later',
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
