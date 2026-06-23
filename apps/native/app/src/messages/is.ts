@@ -829,7 +829,7 @@ export const is = {
   'health.appointments.organization': 'Stofnun',
   'health.appointments.videoCall': 'Myndsímtal',
   'health.appointments.videoCallInfoWithLink':
-    'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðann tíma.',
+    'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma.',
   'health.appointments.videoCallInfoWithLinkActive':
     'Ýttu hnappinn til að hefja myndsímtalið.',
   'health.appointments.videoCallInfoNoLink':
