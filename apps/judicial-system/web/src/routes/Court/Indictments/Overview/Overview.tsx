@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AppealRulingModifiedAlert,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -72,6 +73,7 @@ const OverviewBody = ({
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <AppealRulingModifiedAlert />
           {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
             <AlertMessage
               title="Mál enduropnað"
