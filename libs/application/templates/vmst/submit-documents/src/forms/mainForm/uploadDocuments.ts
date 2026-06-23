@@ -107,9 +107,14 @@ export const uploadDocumentsSection = buildSection({
             },
             file: {
               component: 'fileUpload',
-              required: true,
               label: udm.fileLabel,
               uploadAccept: '.pdf,.docx,.rtf,.doc,.jpg,.jpeg,.png,.heic',
+              condition: (_, activeField) => {
+                const checkbox =
+                  activeField?.checkbox as unknown as Array<string>
+                if (checkbox && checkbox.includes(YES)) return false
+                return true
+              },
             },
             comment: {
               component: 'input',

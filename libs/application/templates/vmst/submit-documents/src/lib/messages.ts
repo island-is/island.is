@@ -68,7 +68,7 @@ export const uploadDocuments = defineMessages({
   },
   uploadDocSaveButton: {
     id: 'vmst.vsd.application:uploadDocuments.uploadDocSaveButton',
-    defaultMessage: 'Hlaða upp skjali',
+    defaultMessage: 'Hlaða upp',
     description: 'Submit application button',
   },
 })
@@ -161,5 +161,16 @@ export const errorMessages = defineMessages({
     id: 'vmst.vsd.application:error.documentsMaxError',
     defaultMessage: 'Þú getur ekki skilað fleiri en {max} skjölum',
     description: 'Error message when too many documents are submitted',
+  },
+  documentsNoDocNoCommentError: {
+    id: 'vmst.vsd.application:error.documentsNoDocNoCommentError',
+    defaultMessage:
+      'Vinsamlegast gefðu frekari skýringar til að geta haldið áfram',
+    description: 'Error message when no document is chosen and no comment',
+  },
+  documentsNoDocNoCheckbox: {
+    id: 'vmst.vsd.application:error.documentsNoDocNoCheckbox',
+    defaultMessage: 'Vinsamlegast hlaðaðu upp skjali til að geta haldið áfram',
+    description: 'Error message when no document is chosen and no checkbox',
   },
 })

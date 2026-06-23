@@ -13,8 +13,9 @@ import { errorMessages } from '@island.is/application/templates/vmst/submit-docu
 
 interface DocumentEntry {
   type: string
-  file: Array<{ key: string; name: string }>
+  file?: Array<{ key: string; name: string }>
   comment?: string
+  checkbox?: Array<string>
 }
 
 interface CreatedAttachment {
@@ -179,7 +180,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
 
     // Flatten all files with their parent document type for processing
     const fileEntries = documents.flatMap((document) =>
-      document.file.map((file) => ({
+      (document.file ?? []).map((file) => ({
         file,
         attachmentTypeId: document.type,
         description: document.comment ?? null,
@@ -299,7 +300,7 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
           .value,
     )
 
-    // Phase 3: Link created attachments to the applicant
+    // Phase 3: Link created attachments + comment-only entries to the applicant
     const applicantId =
       getValueViaPath<string>(
         application.externalData,
