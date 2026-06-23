@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
+import { AlertMessage, Box, LoadingDots } from '@island.is/island-ui/core'
 import { GET_CUSTOMS_GENERAL_COUNTRY_CURRENCIES } from '@island.is/web/screens/queries/CustomsGeneral'
 
-import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { SortableTable } from '../../SortableTable/SortableTable'
+import { toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
 
 const CustomsGeneralCountryCurrencies = () => {
   const { formatMessage } = useIntl()
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedDate] = useState<Date>(new Date())
 
   const columns = [
     {
@@ -51,18 +53,25 @@ const CustomsGeneralCountryCurrencies = () => {
     }),
   )
 
-  return (
-    <CustomsGeneralDateTable
-      columns={columns}
-      data={items}
-      loading={loading}
-      error={error}
-      selectedDate={selectedDate}
-      onDateChange={setSelectedDate}
-      dateLabel={formatMessage(m.dateLabel)}
-      errorTitle={formatMessage(m.errorTitle)}
-    />
-  )
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <LoadingDots />
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <AlertMessage
+        type="error"
+        title={formatMessage(m.errorTitle)}
+        message={formatMessage(m.errorMessage)}
+      />
+    )
+  }
+
+  return <SortableTable columns={columns} data={items} />
 }
 
 export default CustomsGeneralCountryCurrencies

@@ -9,7 +9,7 @@ import { m } from './translation.strings'
 
 const CustomsGeneralDeliveryTerms = () => {
   const { formatMessage } = useIntl()
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedDate] = useState<Date>(new Date())
 
   const columns = [
     { key: 'code' as const, label: formatMessage(m.columnCode) },
@@ -36,8 +36,6 @@ const CustomsGeneralDeliveryTerms = () => {
       data={items}
       loading={loading}
       error={error}
-      selectedDate={selectedDate}
-      onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
     />
