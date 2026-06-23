@@ -56,6 +56,10 @@ const Row = styled.View`
 `
 
 const AppointmentsContainer = styled.View`
+  row-gap: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const AppointmentsSkeletonGroup = styled.View`
   row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -497,15 +501,23 @@ export default function HealthOverviewScreen() {
               }
             />
             {(!hasBeenFocused || appointmentsRes.loading) && (
-              <AppointmentsContainer>
+              <AppointmentsSkeletonGroup>
                 {Array.from({ length: 2 }).map((_, index) => (
-                  <GeneralCardSkeleton height={100} key={index} />
+                  <GeneralCardSkeleton height={140} key={index} />
                 ))}
-              </AppointmentsContainer>
+              </AppointmentsSkeletonGroup>
             )}
             {appointmentsRes.error && !appointmentsRes.data && (
               <AppointmentsContainer>
-                <Problem error={appointmentsRes.error} size="small" />
+                <Problem
+                  type="error"
+                  size="small"
+                  title={intl.formatMessage({ id: 'problem.error.title' })}
+                  message={intl.formatMessage({
+                    id: 'health.appointments.errorMessage',
+                  })}
+                  tag={appointmentsRes.error.message}
+                />
               </AppointmentsContainer>
             )}
             {hasBeenFocused &&
