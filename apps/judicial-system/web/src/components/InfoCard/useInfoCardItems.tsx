@@ -146,7 +146,7 @@ const useInfoCardItems = () => {
           <Text>
             {formatDate(
               defendant.indictmentCancelledOrDismissedState?.time,
-              'P',
+              'dd.MM.y',
             )}
           </Text>
         </div>,

@@ -2406,6 +2406,18 @@ export class CaseService {
     return extendedCase
   }
 
+  async duplicateIndictmentCase(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
+    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
+      transaction,
+      prosecutorId: user.id,
+      prosecutorsOfficeId: user.institution?.id,
+    })
+  }
+
   async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
