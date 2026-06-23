@@ -138,6 +138,11 @@ export const application = defineMessages({
     defaultMessage: 'Gagnaskil móttekin',
     description: 'History log message when application is sent',
   },
+  newApplicationButton: {
+    id: 'vmst.vsd.application:newApplicationButton',
+    defaultMessage: 'Ný aðgerð',
+    description: `new application's button`,
+  },
 })
 
 export const errorMessages = defineMessages({
