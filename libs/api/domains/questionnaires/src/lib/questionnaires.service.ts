@@ -16,7 +16,7 @@ import {
   LshClientService,
   Questionnaire as LshQuestionnaireType,
 } from '@island.is/clients/lsh'
-import { IntlService } from '@island.is/cms-translations'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
@@ -26,6 +26,7 @@ import {
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../models/questionnaires.model'
+import { QuestionnaireReply } from './dto/questionnaire-reply.types'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { mapToElAnswer } from './transform-mappers/el/answer/mapToELAnswer'
 import {
@@ -302,8 +303,11 @@ export class QuestionnairesService {
         return null
       }
 
-      const repliesMap = new Map(
-        ELdata.replies?.map((reply) => [reply.questionId, reply]) ?? [],
+      const repliesMap = new Map<string, QuestionnaireReply>(
+        ELdata.replies?.map((reply): [string, QuestionnaireReply] => [
+          reply.questionId,
+          reply,
+        ]) ?? [],
       )
 
       const submission = {
@@ -322,37 +326,9 @@ export class QuestionnairesService {
                 group.items?.map((item) => {
                   const reply = repliesMap.get(item.id)
 
-                  // Extract values based on reply type
-                  let values: string[] = []
-                  if (reply) {
-                    if ('rows' in reply) {
-                      // TableReplyViewDto — one string per row, cells joined by " | "
-                      values = reply.rows.map((row) =>
-                        row
-                          .map((cell) =>
-                            'answer' in cell
-                              ? String(cell.answer)
-                              : cell.values.map((v) => v.answer).join(', '),
-                          )
-                          .join(' | '),
-                      )
-                    } else if ('values' in reply) {
-                      // ListReplyDto
-                      values = reply.values.map((v) => v.answer)
-                    } else if ('answer' in reply) {
-                      if (reply.answer === true || reply.answer === false) {
-                        // BooleanReplyDto
-                        values = [
-                          reply.answer
-                            ? formatMessage(m.yes)
-                            : formatMessage(m.no),
-                        ]
-                      } else if (reply.answer != null) {
-                        // StringReplyDto, NumberReplyDto, DateReplyDto
-                        values = [String(reply.answer)]
-                      }
-                    }
-                  }
+                  const values = reply
+                    ? this.extractReplyValues(reply, formatMessage)
+                    : []
 
                   return {
                     id: item.id,
@@ -493,6 +469,35 @@ export class QuestionnairesService {
     return input.includeQuestions
       ? mapElQuestionnaireForm(elData, formatMessage)
       : mapElQuestionnaireOverview(elData, formatMessage)
+  }
+
+  private extractReplyValues(
+    reply: QuestionnaireReply,
+    formatMessage: FormatMessage,
+  ): string[] {
+    if ('rows' in reply) {
+      return reply.rows.map((row) =>
+        row
+          .map((cell) =>
+            'answer' in cell
+              ? String(cell.answer)
+              : cell.values.map((v) => v.answer).join(', '),
+          )
+          .join(' | '),
+      )
+    } else if ('values' in reply) {
+      return reply.values.map((v) => v.answer)
+    } else if ('answer' in reply) {
+      if (reply.answer === true || reply.answer === false) {
+        return [reply.answer ? formatMessage(m.yes) : formatMessage(m.no)]
+      } else if (reply.answer != null) {
+        return [String(reply.answer)]
+      }
+      return []
+    } else {
+      this.logger.error('Unhandled reply type', { reply })
+      return []
+    }
   }
 
   private formatDate(date?: Date | string | null): string | undefined {
