@@ -94,6 +94,8 @@ export const SortableTable = <T extends Record<string, any>>({
               <T.Data key={String(key)}>
                 {colIdx === 0 && onRowClick && (
                   <button
+                    type="button"
+                    aria-label={String(item[key])}
                     onClick={() => onRowClick(item)}
                     style={{
                       position: 'absolute',
