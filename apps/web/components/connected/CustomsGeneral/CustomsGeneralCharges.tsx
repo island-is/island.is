@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_CUSTOMS_GENERAL_CHARGES } from '@island.is/web/screens/queries/CustomsGeneral'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -23,7 +24,6 @@ interface ChargeItem {
   validTo: string
   taxtiUpphaed: string
   taxtiProsenta: string
-  alagsgrunnur: string
 }
 
 const LABEL_WIDTH = 220
@@ -37,8 +37,9 @@ interface DetailViewProps {
 const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
   const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
 
-  const queryDate = formatDate(date, activeLocale, 'dd.MM.yyyy') ?? ''
+  const queryDate = format(date, 'dd.MM.yyyy') ?? ''
   const indefinite = formatMessage(m.exemptionIndefinite)
   const validFrom = formatValidityDate(item.validFrom, indefinite, activeLocale)
   const validTo = formatValidityDate(item.validTo, indefinite, activeLocale)
@@ -133,16 +134,7 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
           </Box>
         )}
 
-        {item.alagsgrunnur && (
-          <Box display="flex" flexDirection="row" alignItems="flexStart">
-            <Box style={{ minWidth: LABEL_WIDTH }}>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.chargesAlagsgrunnur)}
-              </Text>
-            </Box>
-            <Text>{item.alagsgrunnur}</Text>
-          </Box>
-        )}
+
       </Box>
 
       {descriptionParagraphs.length > 0 && (
@@ -193,7 +185,6 @@ const CustomsGeneralCharges = () => {
       validTo: item.validTo ?? '',
       taxtiUpphaed: item.taxtiUpphaed ?? '',
       taxtiProsenta: item.taxtiProsenta ?? '',
-      alagsgrunnur: item.alagsgrunnur ?? '',
     }),
   )
 

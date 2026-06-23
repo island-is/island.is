@@ -177,7 +177,7 @@ export const m = defineMessages({
   },
   permitsLeyfiVeitir: {
     id: 'web.customsGeneral:leyfiVeitir',
-    defaultMessage: 'Leyfi ­veitir',
+    defaultMessage: 'Leyfi veitir',
     description: 'Permits detail view section: permit provider',
   },
   permitsDescription: {
@@ -219,12 +219,6 @@ export const m = defineMessages({
     defaultMessage: 'Taxti',
     description: 'Charges detail view label: tax rate',
   },
-  chargesAlagsgrunnur: {
-    id: 'web.customsGeneral:gjoldAlagsgrunnur',
-    defaultMessage: 'Álagsgrunnur',
-    description: 'Charges detail view label: charge basis',
-  },
-
   // Prohibitions specific
   prohibitionBackToList: {
     id: 'web.customsGeneral:bonnBackToList',

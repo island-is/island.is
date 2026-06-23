@@ -33,7 +33,6 @@ export const GET_CUSTOMS_GENERAL_CHARGES = gql`
       validTo
       taxtiUpphaed
       taxtiProsenta
-      alagsgrunnur
     }
   }
 `

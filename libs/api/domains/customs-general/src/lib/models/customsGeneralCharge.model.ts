@@ -22,7 +22,4 @@ export class CustomsGeneralCharge {
 
   @Field(() => String, { nullable: true })
   taxtiProsenta?: string
-
-  @Field(() => String, { nullable: true })
-  alagsgrunnur?: string
 }

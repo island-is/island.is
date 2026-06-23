@@ -84,7 +84,6 @@ export class CustomsGeneralService {
       validTo: item.DagsTil,
       taxtiUpphaed: item.TaxtiUpphaed ?? undefined,
       taxtiProsenta: item.TaxtiProsenta ?? undefined,
-      alagsgrunnur: (item as any).Alagsgrunnur?.Heiti ?? undefined,
     }))
   }
 
