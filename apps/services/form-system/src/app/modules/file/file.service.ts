@@ -121,7 +121,7 @@ export class FileService {
         { bucket, key },
         'base64',
       )
-      if (!file) {
+      if (file === null || file === undefined) {
         this.logger.warn(`File ${key} not found in bucket ${bucket}`)
         throw new NotFoundException(`File with key ${key} not found`)
       }
