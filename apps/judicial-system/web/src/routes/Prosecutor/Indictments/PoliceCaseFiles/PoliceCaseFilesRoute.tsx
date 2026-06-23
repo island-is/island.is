@@ -214,7 +214,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
                     policeCaseFilesData?.files?.filter(
                       (file) => file.policeCaseNumber === policeCaseNumber,
                     ) ?? [],
-                  isLoading: !!policeCaseFilesData?.isLoading,
+                  isLoading: policeCaseFilesData?.isLoading ?? true,
                   hasError: !!policeCaseFilesData?.hasError,
                   errorCode: policeCaseFilesData?.errorCode,
                 }}
