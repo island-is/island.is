@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
@@ -11,9 +10,8 @@ import { formatDate } from '@island.is/web/utils/formatDate'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
+import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralPermits.css'
-
-const QUERY_PARAM = 'leyfiKodi'
 
 interface PermitItem {
   code: string
@@ -125,11 +123,10 @@ const PermitDetailView = ({ item, date, onBack }: DetailViewProps) => {
 
 const CustomsGeneralPermits = () => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [system, setSystem] = useState<'I' | 'U'>('I')
-
-  const selectedCode = router.query[QUERY_PARAM] as string | undefined
+  const [selectedItem, setSelectedItem] = useState<PermitItem | null>(null)
+  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -160,29 +157,13 @@ const CustomsGeneralPermits = () => {
     }),
   )
 
-  const selectedItem = selectedCode
-    ? items.find((item) => item.code === selectedCode) ?? null
-    : null
-
-  const handleRowClick = (row: PermitItem) => {
-    router.push(
-      { query: { ...router.query, [QUERY_PARAM]: row.code } },
-      undefined,
-      { shallow: true },
-    )
-  }
-
-  const handleBack = () => {
-    router.back()
-  }
-
   if (selectedItem) {
     return (
       <PermitDetailView
         item={selectedItem}
         date={selectedDate}
         system={system}
-        onBack={handleBack}
+        onBack={() => window.history.back()}
       />
     )
   }
@@ -199,7 +180,7 @@ const CustomsGeneralPermits = () => {
       errorTitle={formatMessage(m.errorTitle)}
       system={system}
       onSystemChange={setSystem}
-      onRowClick={(row) => handleRowClick(row as PermitItem)}
+      onRowClick={(row) => setSelectedItem(row as PermitItem)}
     />
   )
 }

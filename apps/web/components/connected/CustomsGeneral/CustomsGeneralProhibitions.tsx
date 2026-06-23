@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
@@ -11,9 +10,8 @@ import { formatDate } from '@island.is/web/utils/formatDate'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
+import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralProhibitions.css'
-
-const QUERY_PARAM = 'bonnKodi'
 
 interface ProhibitionItem {
   code: string
@@ -124,10 +122,9 @@ const ProhibitionDetailView = ({ item, date, onBack }: DetailViewProps) => {
 
 const CustomsGeneralProhibitions = () => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-
-  const selectedCode = router.query[QUERY_PARAM] as string | undefined
+  const [selectedItem, setSelectedItem] = useState<ProhibitionItem | null>(null)
+  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -158,28 +155,12 @@ const CustomsGeneralProhibitions = () => {
     }),
   )
 
-  const selectedItem = selectedCode
-    ? items.find((item) => item.code === selectedCode) ?? null
-    : null
-
-  const handleRowClick = (row: ProhibitionItem) => {
-    router.push(
-      { query: { ...router.query, [QUERY_PARAM]: row.code } },
-      undefined,
-      { shallow: true },
-    )
-  }
-
-  const handleBack = () => {
-    router.back()
-  }
-
   if (selectedItem) {
     return (
       <ProhibitionDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={handleBack}
+        onBack={() => window.history.back()}
       />
     )
   }
@@ -194,7 +175,7 @@ const CustomsGeneralProhibitions = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      onRowClick={(row) => handleRowClick(row as ProhibitionItem)}
+      onRowClick={(row) => setSelectedItem(row as ProhibitionItem)}
     />
   )
 }

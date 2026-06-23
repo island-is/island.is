@@ -8,6 +8,7 @@ import { GET_CUSTOMS_GENERAL_EXEMPTIONS } from '@island.is/web/screens/queries/C
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { m } from './translation.strings'
+import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralExemptions.css'
 
 interface ExemptionItem {
@@ -172,6 +173,7 @@ const CustomsGeneralExemptions = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [system, setSystem] = useState<'I' | 'U'>('I')
   const [selectedItem, setSelectedItem] = useState<ExemptionItem | null>(null)
+  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -197,6 +199,8 @@ const CustomsGeneralExemptions = () => {
       name: item.name ?? '',
       description: item.description ?? '',
       legalArticle: item.legalArticle ?? '',
+      validFrom: item.validFrom ?? '',
+      validTo: item.validTo ?? '',
       system: item.system ?? '',
     }),
   )
@@ -207,7 +211,7 @@ const CustomsGeneralExemptions = () => {
         item={selectedItem}
         date={selectedDate}
         system={system}
-        onBack={() => setSelectedItem(null)}
+        onBack={() => window.history.back()}
       />
     )
   }

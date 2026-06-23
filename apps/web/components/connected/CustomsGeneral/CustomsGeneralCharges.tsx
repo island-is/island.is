@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
@@ -12,9 +11,8 @@ import { formatCurrency } from '@island.is/web/utils/currency'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
+import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralCharges.css'
-
-const QUERY_PARAM = 'gjoldKodi'
 
 interface ChargeItem {
   code: string
@@ -133,8 +131,6 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
             <Text>{item.taxtiProsenta} %</Text>
           </Box>
         )}
-
-
       </Box>
 
       {descriptionParagraphs.length > 0 && (
@@ -153,10 +149,9 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
 
 const CustomsGeneralCharges = () => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-
-  const selectedCode = router.query[QUERY_PARAM] as string | undefined
+  const [selectedItem, setSelectedItem] = useState<ChargeItem | null>(null)
+  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -188,28 +183,12 @@ const CustomsGeneralCharges = () => {
     }),
   )
 
-  const selectedItem = selectedCode
-    ? items.find((item) => item.code === selectedCode) ?? null
-    : null
-
-  const handleRowClick = (row: ChargeItem) => {
-    router.push(
-      { query: { ...router.query, [QUERY_PARAM]: row.code } },
-      undefined,
-      { shallow: true },
-    )
-  }
-
-  const handleBack = () => {
-    router.back()
-  }
-
   if (selectedItem) {
     return (
       <ChargeDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={handleBack}
+        onBack={() => window.history.back()}
       />
     )
   }
@@ -224,7 +203,7 @@ const CustomsGeneralCharges = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      onRowClick={(row) => handleRowClick(row as ChargeItem)}
+      onRowClick={(row) => setSelectedItem(row as ChargeItem)}
     />
   )
 }

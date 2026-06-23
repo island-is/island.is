@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
@@ -11,9 +10,8 @@ import { formatDate } from '@island.is/web/utils/formatDate'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
 import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
+import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralTariffs.css'
-
-const QUERY_PARAM = 'tollarTollur'
 
 interface TariffItem {
   name: string
@@ -111,10 +109,9 @@ const TariffDetailView = ({ item, date, onBack }: DetailViewProps) => {
 
 const CustomsGeneralTariffs = () => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-
-  const selectedName = router.query[QUERY_PARAM] as string | undefined
+  const [selectedItem, setSelectedItem] = useState<TariffItem | null>(null)
+  useDetailViewBack(!!selectedItem, () => setSelectedItem(null))
 
   const columns = [
     {
@@ -139,28 +136,12 @@ const CustomsGeneralTariffs = () => {
     }),
   )
 
-  const selectedItem = selectedName
-    ? items.find((item) => item.name === selectedName) ?? null
-    : null
-
-  const handleRowClick = (row: TariffItem) => {
-    router.push(
-      { query: { ...router.query, [QUERY_PARAM]: row.name } },
-      undefined,
-      { shallow: true },
-    )
-  }
-
-  const handleBack = () => {
-    router.back()
-  }
-
   if (selectedItem) {
     return (
       <TariffDetailView
         item={selectedItem}
         date={selectedDate}
-        onBack={handleBack}
+        onBack={() => window.history.back()}
       />
     )
   }
@@ -175,7 +156,7 @@ const CustomsGeneralTariffs = () => {
       onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
-      onRowClick={(row) => handleRowClick(row as TariffItem)}
+      onRowClick={(row) => setSelectedItem(row as TariffItem)}
     />
   )
 }
