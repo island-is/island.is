@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class CustomsGeneralEntry {
+export class CustomsGeneralCharge {
   @Field(() => String, { nullable: true })
   code?: string
 
@@ -16,4 +16,10 @@ export class CustomsGeneralEntry {
 
   @Field(() => Date, { nullable: true })
   validTo?: Date
+
+  @Field(() => String, { nullable: true })
+  taxtiUpphaed?: string
+
+  @Field(() => String, { nullable: true })
+  taxtiProsenta?: string
 }
