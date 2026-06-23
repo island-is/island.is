@@ -828,8 +828,12 @@ export const is = {
   'health.appointments.phoneNumber': 'Símanúmer',
   'health.appointments.organization': 'Stofnun',
   'health.appointments.videoCall': 'Myndsímtal',
-  'health.appointments.videoCallInfo':
-    'Tengill á myndsímtalið verður sendur til þín fyrir tímann.',
+  'health.appointments.videoCallInfoWithLink':
+    'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðann tíma.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Ýttu hnappinn til að hefja myndsímtalið.',
+  'health.appointments.videoCallInfoNoLink':
+    'Þessi tímabókun inniheldur myndsímtal. Þú færð sendan hlekk á myndsímtalið stuttu fyrir bókaðan tíma. Ef enginn hlekkur finnst, vinsamlegast hafðu samband við viðeigandi stofnun.',
   'health.appointments.startVideoCall': 'Hefja myndsímtal',
   'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
   'health.appointments.noAppointmentsText':

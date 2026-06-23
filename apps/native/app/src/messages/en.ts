@@ -830,8 +830,12 @@ export const en: TranslatedMessages = {
   'health.appointments.phoneNumber': 'Phone number',
   'health.appointments.organization': 'Organization',
   'health.appointments.videoCall': 'Video call',
-  'health.appointments.videoCallInfo':
-    'A link to the video call will be sent to you before the appointment.',
+  'health.appointments.videoCallInfoWithLink':
+    'The video call button becomes active 5 minutes before the booked time.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Tap the button to start the video call.',
+  'health.appointments.videoCallInfoNoLink':
+    'This appointment includes a video call. You will receive a link to the video call shortly before the booked time. If no link is found, please contact the relevant institution.',
   'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':

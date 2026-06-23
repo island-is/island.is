@@ -26,15 +26,7 @@ import {
   HealthDirectorateAppointmentModality,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
-import {
-  Alert,
-  Button,
-  Icon,
-  Input,
-  InputRow,
-  Problem,
-  Typography,
-} from '@/ui'
+import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const Header = styled.View`
@@ -131,38 +123,41 @@ export default function AppointmentDetailScreen() {
     (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
   )?.url
 
-  const [isVideoCallActive, setIsVideoCallActive] = useState(false)
+  type VideoCallPhase = 'before' | 'active' | 'expired'
+  const [videoCallPhase, setVideoCallPhase] =
+    useState<VideoCallPhase>('before')
 
   useEffect(() => {
     if (!appointment?.date) {
-      setIsVideoCallActive(false)
+      setVideoCallPhase('before')
       return
     }
     const appointmentMs = new Date(appointment.date).getTime()
     const activateAtMs = appointmentMs - 5 * 60 * 1000
-    const deactivateAtMs = appointmentMs + 2 * 60 * 60 * 1000
+    // 1 hour after the appointment start time, we stop showing anything related to the link
+    const deactivateAtMs = appointmentMs + 60 * 60 * 1000
     const now = Date.now()
 
     if (now >= deactivateAtMs) {
-      setIsVideoCallActive(false)
+      setVideoCallPhase('expired')
       return
     }
 
     if (now >= activateAtMs) {
-      setIsVideoCallActive(true)
+      setVideoCallPhase('active')
       const deactivateTimeout = setTimeout(
-        () => setIsVideoCallActive(false),
+        () => setVideoCallPhase('expired'),
         deactivateAtMs - now,
       )
       return () => clearTimeout(deactivateTimeout)
     }
 
-    setIsVideoCallActive(false)
+    setVideoCallPhase('before')
     const activateTimeout = setTimeout(() => {
-      setIsVideoCallActive(true)
+      setVideoCallPhase('active')
     }, activateAtMs - now)
     const deactivateTimeout = setTimeout(
-      () => setIsVideoCallActive(false),
+      () => setVideoCallPhase('expired'),
       deactivateAtMs - now,
     )
     return () => {
@@ -171,11 +166,22 @@ export default function AppointmentDetailScreen() {
     }
   }, [appointment?.date])
 
+  const isVideoCallActive = videoCallPhase === 'active'
+  const isVideoCallExpired = videoCallPhase === 'expired'
+
   const handleStartVideoCall = useCallback(() => {
     if (videoCallLink) {
       Linking.openURL(videoCallLink)
     }
   }, [videoCallLink])
+
+  // We want to show different messages depending on whether the video call link is available,
+  // and whether the video call is active or not.
+  const videoCallInfoMessageId = videoCallLink
+    ? isVideoCallActive
+      ? 'health.appointments.videoCallInfoWithLinkActive'
+      : 'health.appointments.videoCallInfoWithLink'
+    : 'health.appointments.videoCallInfoNoLink'
 
   const {
     weekday,
@@ -192,7 +198,7 @@ export default function AppointmentDetailScreen() {
       !!appointment.location?.organization)
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} collapsable={false}>
       <StackScreen
         closeable
         networkStatus={networkStatus}
@@ -203,7 +209,7 @@ export default function AppointmentDetailScreen() {
         contentContainerStyle={{ paddingBottom: 64 }}
         contentInsetAdjustmentBehavior="automatic"
       >
-        {error && (
+        {error && !appointment && (
           <ProblemContainer>
             <Problem
               type="error"
@@ -228,7 +234,7 @@ export default function AppointmentDetailScreen() {
           </ProblemContainer>
         )}
 
-        {!loading && !error && appointment && (
+        {appointment && (
           <>
             <Header>
               {appointment.title && (
@@ -358,10 +364,7 @@ export default function AppointmentDetailScreen() {
                       </Typography>
                     </IconRow>
                     <MapLink onPress={() => Linking.openURL(locationLink)}>
-                      <Typography
-                        variant="eyebrow"
-                        color={theme.color.blue400}
-                      >
+                      <Typography variant="eyebrow" color={theme.color.blue400}>
                         {intl.formatMessage({
                           id: 'health.appointments.seeMore',
                         })}
@@ -445,14 +448,12 @@ export default function AppointmentDetailScreen() {
         )}
       </ScrollView>
 
-      {isVideo && (
+      {isVideo && !isVideoCallExpired && (
         <StickyFooter>
           <Alert
             type="info"
             hasBorder
-            message={intl.formatMessage({
-              id: 'health.appointments.videoCallInfo',
-            })}
+            message={intl.formatMessage({ id: videoCallInfoMessageId })}
           />
           {videoCallLink && (
             <Button
