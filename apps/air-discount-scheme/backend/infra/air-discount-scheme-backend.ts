@@ -62,6 +62,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           prod: {},
         },
         paths: ['/api/swagger', '/api/public'],
+        public: true,
       },
     })
     .readiness('/liveness')
