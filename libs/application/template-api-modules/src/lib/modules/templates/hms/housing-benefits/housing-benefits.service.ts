@@ -65,8 +65,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
 
-  // Trigger deployment
-
   private getClientLocationOrigin(): string {
     return getConfigValue(this.configService, 'clientLocationOrigin') as string
   }
@@ -649,20 +647,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     try {
-      const res = await this.hmsHousingBenefitsClientService.hmsPaymentHistory(
-        auth,
-        {
-          version: '1',
-          dateFrom: new Date('2026-01-01'),
-          dateTo: new Date(),
-          pageNumber: 1,
-          pageSize: 100,
-        },
-      )
-      // console.log('--------------------------------')
-      // console.log('payment history response')
-      // console.dir(res, { depth: null, colors: true })
-      // console.log('--------------------------------')
       const model = mapApplicationToHousingBenefitsModel(application)
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(

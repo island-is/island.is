@@ -61,8 +61,6 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 
-// Trigger deployment
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
