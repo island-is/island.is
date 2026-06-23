@@ -504,7 +504,7 @@ export const ApplicationConfigurations: Record<
     translation: ['fca.application', 'uiForms.application'],
   },
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF]: {
-    slug: 'endurmat-brunabotamats2',
+    slug: 'endurmat-brunabotamats-sdf',
     translation: ['fca.application', 'uiForms.application'],
     useSdf: true,
   },

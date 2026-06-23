@@ -11,5 +11,5 @@
  */
 export const SDF_ENABLED_APPLICATION_SLUGS: readonly string[] = [
   'example-inputs-sdf',
-  'endurmat-brunabotamats2',
+  'endurmat-brunabotamats-sdf',
 ]

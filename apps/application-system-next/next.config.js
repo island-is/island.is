@@ -9,6 +9,18 @@ const {
 
 const graphqlPath = '/api/graphql'
 
+// In every deployed environment this app shares its ingress host with the
+// `web` app, which owns `/` (and therefore `/_next`). Our pages are only
+// routed here under `/umsoknir/sdf`, so Next's default root-level
+// `/_next/static/*` asset URLs would be sent to `web` and 404. Prefixing the
+// assets with an app-owned path that the ingress routes here keeps JS/CSS/font
+// requests on this service. `assetPrefix` (rather than `basePath`) is used so
+// pages can still be served under multiple prefixes (`/umsoknir/sdf/<slug>`
+// and the allowlisted `/umsoknir/<slug>`). Only applied for production builds;
+// local `nx serve` keeps assets at `/_next/*`.
+const isProd = process.env.NODE_ENV === 'production'
+const ASSET_PREFIX = '/umsoknir/sdf'
+
 /** @type {import('@nx/next/plugins/with-nx').WithNxOptions} */
 const nextConfig = {
   webpack: (config, { isServer, dev }) => {
@@ -60,16 +72,40 @@ const nextConfig = {
   publicRuntimeConfig: {
     graphqlEndpoint: graphqlPath,
   },
+  ...(isProd ? { assetPrefix: ASSET_PREFIX } : {}),
   async rewrites() {
-    return [
-      {
-        source: '/bff/:path*',
-        destination: `${BFF_PROXY_TARGET}/bff/:path*`,
-      },
-    ]
+    return {
+      // Assets are emitted at `/_next/*` but referenced via `assetPrefix`
+      // (`/umsoknir/sdf/_next/*`) so the ingress routes them to this app. Map
+      // the prefixed request back to the real path Next serves from.
+      beforeFiles: isProd
+        ? [
+            {
+              source: `${ASSET_PREFIX}/_next/:path*`,
+              destination: '/_next/:path*',
+            },
+          ]
+        : [],
+      afterFiles: [
+        {
+          source: '/bff/:path*',
+          destination: `${BFF_PROXY_TARGET}/bff/:path*`,
+        },
+      ],
+    }
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  // The `/bff/:path*` rewrite below proxies through Next's router proxy, which
+  // applies a default `proxyTimeout` of 30s and aborts the upstream socket once
+  // it elapses ("Failed to proxy … socket hang up"). SDF submits run the full
+  // onSubmit template-api actions + state transition synchronously on the API
+  // before responding, which can exceed 30s. Raise the ceiling so the proxy
+  // waits for the real backend response. (Note: `0` is falsy and falls back to
+  // 30s in Next; use a positive value, or `null` to disable entirely.)
+  experimental: {
+    proxyTimeout: null,
   },
   basePath: '',
   nx: {
