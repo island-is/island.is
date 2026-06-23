@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -80,6 +81,7 @@ import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -238,6 +240,7 @@ export class CaseService {
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -1421,6 +1424,63 @@ export class CaseService {
     }
   }
 
+  // Dual-write: mirrors the legacy request-case appeal decision fields into
+  // the in-court appeal_decision rows - one prosecution row and one collective
+  // defence row (no defendantId). Indictment decisions are not stored here.
+  // The legacy columns remain the source of truth until later.
+  private async handleAppealDecisionUpdates(
+    theCase: Case,
+    update: UpdateCase,
+    transaction: Transaction,
+  ): Promise<void> {
+    if (!isRequestCase(theCase.type)) {
+      return
+    }
+
+    // Mirror whenever a decision or announcement is touched. decision is
+    // nullable, so an announcement entered before a decision is picked is
+    // still persisted (and not lost on refresh / column drop).
+    if (
+      update.prosecutorAppealDecision !== undefined ||
+      update.prosecutorAppealAnnouncement !== undefined
+    ) {
+      await this.appealDecisionRepositoryService.upsert(
+        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.PROSECUTOR },
+        {
+          decision:
+            update.prosecutorAppealDecision ??
+            theCase.prosecutorAppealDecision ??
+            null,
+          announcement:
+            update.prosecutorAppealAnnouncement ??
+            theCase.prosecutorAppealAnnouncement ??
+            null,
+        },
+        { transaction },
+      )
+    }
+
+    if (
+      update.accusedAppealDecision !== undefined ||
+      update.accusedAppealAnnouncement !== undefined
+    ) {
+      await this.appealDecisionRepositoryService.upsert(
+        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.DEFENDANT },
+        {
+          decision:
+            update.accusedAppealDecision ??
+            theCase.accusedAppealDecision ??
+            null,
+          announcement:
+            update.accusedAppealAnnouncement ??
+            theCase.accusedAppealAnnouncement ??
+            null,
+        },
+        { transaction },
+      )
+    }
+  }
+
   private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -1875,6 +1935,7 @@ export class CaseService {
 
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
+    await this.handleAppealDecisionUpdates(theCase, caseUpdate, transaction)
 
     // Handle appealed in court
     if (isCompletingRequestCase) {
@@ -1896,9 +1957,16 @@ export class CaseService {
           caseUpdate.accusedPostponedAppealDate = update.rulingDate
         }
 
+        // The in-court appeal itself is recorded by decision = APPEAL on the
+        // appeal_decision rows (written when the decision was set); here we
+        // only create the appeal case it produces.
         await this.appealCaseRepositoryService.create(
           theCase.id,
-          { appealState: AppealCaseState.APPEALED },
+          {
+            appealState: AppealCaseState.APPEALED,
+            // An in-court appeal happened when the case completed
+            appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,
+          },
           { transaction },
         )
       }

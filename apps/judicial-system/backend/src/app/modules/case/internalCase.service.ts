@@ -69,6 +69,8 @@ import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import {
   AppealCase,
+  AppealDecision,
+  AppealDecisionRepositoryService,
   Case,
   CaseArchiveRepositoryService,
   CaseFile,
@@ -129,6 +131,10 @@ const appealCaseEncryptionProperties: (keyof AppealCase)[] = [
   'appealRulingModifiedHistory',
 ]
 
+const appealDecisionEncryptionProperties: (keyof AppealDecision)[] = [
+  'announcement',
+]
+
 const defendantEncryptionProperties: (keyof Defendant)[] = [
   'nationalId',
   'name',
@@ -177,6 +183,8 @@ export class InternalCaseService {
     private readonly caseStringModel: typeof CaseString,
     @Inject(forwardRef(() => CaseArchiveRepositoryService))
     private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
+    @Inject(forwardRef(() => AppealDecisionRepositoryService))
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
@@ -615,6 +623,7 @@ export class InternalCaseService {
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
         { model: AppealCase, as: 'appealCase' },
+        { model: AppealDecision, as: 'appealDecisions' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
@@ -626,6 +635,7 @@ export class InternalCaseService {
         [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
         [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
+        [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
       ],
       where: archiveFilter,
       transaction,
@@ -706,6 +716,22 @@ export class InternalCaseService {
       })
     }
 
+    const appealDecisionsArchive = []
+    for (const appealDecision of theCase.appealDecisions ?? []) {
+      const [clearedAppealDecisionProperties, appealDecisionArchive] =
+        collectEncryptionProperties(
+          appealDecisionEncryptionProperties,
+          appealDecision,
+        )
+      appealDecisionsArchive.push(appealDecisionArchive)
+
+      await this.appealDecisionRepositoryService.update(
+        appealDecision.id,
+        clearedAppealDecisionProperties,
+        { transaction },
+      )
+    }
+
     await this.caseArchiveRepositoryService.create(
       theCase.id,
       {
@@ -716,6 +742,7 @@ export class InternalCaseService {
           caseFiles: caseFilesArchive,
           indictmentCounts: indictmentCountsArchive,
           caseStrings: caseStringsArchive,
+          appealDecisions: appealDecisionsArchive,
         }),
       },
       { transaction },
