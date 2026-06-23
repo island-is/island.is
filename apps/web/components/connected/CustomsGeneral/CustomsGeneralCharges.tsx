@@ -104,7 +104,7 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
           </Box>
         )}
 
-        {item.taxtiUpphaed && (
+        {item.taxtiUpphaed && !isNaN(parseFloat(item.taxtiUpphaed)) && (
           <Box
             display="flex"
             flexDirection="row"
