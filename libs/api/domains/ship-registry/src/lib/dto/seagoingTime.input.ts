@@ -1,4 +1,10 @@
-import { Field, Float, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  InputType,
+  Int,
+} from '@nestjs/graphql'
 import { IsDate, IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator'
 
 @InputType('ShipRegistrySeagoingTimeInput')

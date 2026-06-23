@@ -119,4 +119,3 @@ const CompetencyCertificates = () => {
 }
 
 export default CompetencyCertificates
-

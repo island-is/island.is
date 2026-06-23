@@ -128,4 +128,3 @@ const RightCertificates = () => {
 }
 
 export default RightCertificates
-

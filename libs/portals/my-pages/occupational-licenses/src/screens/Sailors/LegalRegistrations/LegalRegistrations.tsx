@@ -70,4 +70,3 @@ const LegalRegistrations = () => {
 }
 
 export default LegalRegistrations
-
