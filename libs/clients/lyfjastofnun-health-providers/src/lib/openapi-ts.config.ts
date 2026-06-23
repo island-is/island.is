@@ -1,9 +1,9 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: './libs/clients/lyfjastofnun-pharmacies/src/clientConfig.json',
+  input: './libs/clients/lyfjastofnun-health-providers/src/clientConfig.json',
   output: {
-    path: './libs/clients/lyfjastofnun-pharmacies/gen/fetch',
+    path: './libs/clients/lyfjastofnun-health-providers/gen/fetch',
     format: 'prettier',
     lint: 'eslint',
   },

@@ -2,7 +2,7 @@ import {
   MedicalClinic,
   Pharmacy,
   Wholesaler,
-} from '@island.is/clients/lyfjastofnun-pharmacies'
+} from '@island.is/clients/lyfjastofnun-health-providers'
 
 import { IcelandicMedicinesAgencyMedicalClinic } from './models/medicalClinic.model'
 import { IcelandicMedicinesAgencyPharmacy } from './models/pharmacy.model'

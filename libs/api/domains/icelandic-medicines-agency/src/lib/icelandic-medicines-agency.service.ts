@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { LyfjastofnunPharmaciesClientService } from '@island.is/clients/lyfjastofnun-pharmacies'
+import { LyfjastofnunHealthProvidersClientService } from '@island.is/clients/lyfjastofnun-health-providers'
 
 import { IcelandicMedicinesAgencyMedicalClinicsCollection } from './models/medicalClinicsCollection.model'
 import { IcelandicMedicinesAgencyPharmaciesCollection } from './models/pharmaciesCollection.model'
@@ -10,11 +10,11 @@ import { mapToMedicalClinic, mapToPharmacy, mapToWholesaler } from './mapper'
 @Injectable()
 export class IcelandicMedicinesAgencyService {
   constructor(
-    private readonly lyfjastofnunPharmaciesClientService: LyfjastofnunPharmaciesClientService,
+    private readonly lyfjastofnunHealthProvidersClientService: LyfjastofnunHealthProvidersClientService,
   ) {}
 
   async getPharmacies(): Promise<IcelandicMedicinesAgencyPharmaciesCollection> {
-    const data = await this.lyfjastofnunPharmaciesClientService.getPharmacies()
+    const data = await this.lyfjastofnunHealthProvidersClientService.getPharmacies()
     const pharmacies = data
       .map(mapToPharmacy)
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -28,7 +28,7 @@ export class IcelandicMedicinesAgencyService {
 
   async getMedicalClinics(): Promise<IcelandicMedicinesAgencyMedicalClinicsCollection> {
     const data =
-      await this.lyfjastofnunPharmaciesClientService.getMedicalClinics()
+      await this.lyfjastofnunHealthProvidersClientService.getMedicalClinics()
     const clinics = data
       .map(mapToMedicalClinic)
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -42,7 +42,7 @@ export class IcelandicMedicinesAgencyService {
 
   async getWholesalers(): Promise<IcelandicMedicinesAgencyWholesalersCollection> {
     const data =
-      await this.lyfjastofnunPharmaciesClientService.getWholesalers()
+      await this.lyfjastofnunHealthProvidersClientService.getWholesalers()
     const wholesalers = data
       .map(mapToWholesaler)
       .sort((a, b) => a.name.localeCompare(b.name))

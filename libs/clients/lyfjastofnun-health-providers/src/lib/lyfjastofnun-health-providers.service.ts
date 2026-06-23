@@ -104,7 +104,7 @@ const mapWholesaler = (dto: Lyfjaheildsala): Wholesaler | undefined => {
 }
 
 @Injectable()
-export class LyfjastofnunPharmaciesClientService {
+export class LyfjastofnunHealthProvidersClientService {
   public getPharmacies = async (): Promise<Pharmacy[]> => {
     const { data, error } = await getApiV1EftirlitLyfjabudir()
     if (error) throw error
