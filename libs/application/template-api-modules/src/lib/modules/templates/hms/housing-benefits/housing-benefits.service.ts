@@ -65,6 +65,8 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
 
+  // Trigger deployment
+
   private getClientLocationOrigin(): string {
     return getConfigValue(this.configService, 'clientLocationOrigin') as string
   }
