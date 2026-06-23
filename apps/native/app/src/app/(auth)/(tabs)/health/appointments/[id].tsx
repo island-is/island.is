@@ -105,11 +105,23 @@ export default function AppointmentDetailScreen() {
       ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
       : null
 
-  const handleOpenMap = useCallback(() => {
-    if (mapsLink) {
-      Linking.openURL(mapsLink)
+  const openExternalUrl = useCallback(async (url?: string | null) => {
+    if (!url) {
+      return
     }
-  }, [mapsLink])
+    try {
+      const canOpen = await Linking.canOpenURL(url)
+      if (canOpen) {
+        await Linking.openURL(url)
+      }
+    } catch {
+      // Swallow to avoid unhandled rejection if the OS cannot process the URL.
+    }
+  }, [])
+
+  const handleOpenMap = useCallback(() => {
+    void openExternalUrl(mapsLink)
+  }, [mapsLink, openExternalUrl])
 
   const locationLinks = appointment?.location?.locationLinks
   const locationLink =
@@ -178,10 +190,8 @@ export default function AppointmentDetailScreen() {
   const isVideoCallExpired = videoCallPhase === 'expired'
 
   const handleStartVideoCall = useCallback(() => {
-    if (videoCallLink) {
-      Linking.openURL(videoCallLink)
-    }
-  }, [videoCallLink])
+    void openExternalUrl(videoCallLink)
+  }, [videoCallLink, openExternalUrl])
 
   // We want to show different messages depending on whether the video call link is available,
   // and whether the video call is active or not.
@@ -276,7 +286,7 @@ export default function AppointmentDetailScreen() {
                   </IconRow>
                 )}
 
-                {appointment.duration && (
+                {!!appointment.duration && (
                   <IconRow>
                     <Icon
                       source={hourglassIcon as ImageSourcePropType}
@@ -371,7 +381,7 @@ export default function AppointmentDetailScreen() {
                         })}
                       </Typography>
                     </IconRow>
-                    <MapLink onPress={() => Linking.openURL(locationLink)}>
+                    <MapLink onPress={() => void openExternalUrl(locationLink)}>
                       <Typography variant="eyebrow" color={theme.color.blue400}>
                         {intl.formatMessage({
                           id: 'health.appointments.seeMore',
