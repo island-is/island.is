@@ -23,9 +23,6 @@ export class HmsHousingBenefitsClientService {
     user: User,
     model: HousingBenefitsApplicationModel,
   ) {
-    console.log('--------------------------------')
-    console.log('createHousingBenefitsApplication', model)
-    console.log('--------------------------------')
     return this.applicationApi
       .withMiddleware(new AuthMiddleware(user as Auth))
       .apiVversionApplicationCreateHousingBenefitsApplicationPost({
