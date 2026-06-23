@@ -1165,3 +1165,90 @@ describe('InternalNotificationController - Ruling-order appeal uses the ruling o
     )
   })
 })
+
+// ─── 8. APPEAL_COMPLETED for a corrected ruling-order appeal ────────────────
+
+describe('InternalNotificationController - Corrected ruling-order appeal sends the corrected-ruling email identified by file name', () => {
+  const { prosecutor, judge } = createTestUsers(['prosecutor', 'judge'])
+
+  const caseId = uuid()
+  const appealCaseId = uuid()
+  const appealCaseNumber = uuid()
+  const courtCaseNumber = uuid()
+  const rulingFileId = uuid()
+  const rulingOrderFileName = 'Úrskurður 15-2026'
+
+  let mockEmailService: EmailService
+
+  type GivenWhenThen = () => Promise<Then>
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
+
+    mockEmailService = emailService
+
+    givenWhenThen = async () => {
+      const then = {} as Then
+
+      const appealCase = {
+        appealState: AppealCaseState.COMPLETED,
+        appealCaseNumber,
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingModifiedHistory: 'Leiðrétting á úrskurði',
+        rulingFileId,
+      } as AppealCase
+
+      await internalNotificationController
+        .sendAppealCaseNotification(
+          caseId,
+          appealCaseId,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
+            prosecutor: { name: prosecutor.name, email: prosecutor.email },
+            judge: { name: judge.name, email: judge.email },
+            court: { name: 'Héraðsdómur Reykjavíkur' },
+            courtCaseNumber,
+            defendants,
+            civilClaimants,
+            caseFiles: [
+              { id: rulingFileId, userGeneratedFilename: rulingOrderFileName },
+            ],
+            appealCase,
+            rulingOrderAppealCases: [appealCase],
+          } as Case,
+          appealCase,
+          {
+            user: { id: uuid() } as User,
+            type: AppealCaseNotificationType.APPEAL_COMPLETED,
+          },
+        )
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  it('sends the corrected-ruling email with the ruling order file name in the subject', async () => {
+    const then = await givenWhenThen()
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: [{ name: judge.name, address: judge.email }],
+        subject: `Leiðréttur úrskurður í landsréttarmáli ${appealCaseNumber} (${rulingOrderFileName})`,
+      }),
+    )
+
+    expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: `Leiðréttur úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+      }),
+    )
+
+    expect(then.result).toEqual({ delivered: true })
+  })
+})
