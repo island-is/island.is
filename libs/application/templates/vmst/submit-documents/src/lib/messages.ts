@@ -69,7 +69,7 @@ export const uploadDocuments = defineMessages({
   uploadDocSaveButton: {
     id: 'vmst.vsd.application:uploadDocuments.uploadDocSaveButton',
     defaultMessage: 'Hlaða upp',
-    description: 'Submit application button',
+    description: 'Save document button',
   },
 })
 
