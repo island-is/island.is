@@ -217,6 +217,8 @@ export default function DocumentReplyScreen() {
                   })}
                   autoFocus
                   multiline
+                  numberOfLines={3}
+                  inputStyle={{ minHeight: 60 }}
                 />
               </Row>
             </KeyboardAvoidingView>
