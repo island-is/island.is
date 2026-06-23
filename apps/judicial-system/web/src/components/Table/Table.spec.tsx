@@ -340,16 +340,18 @@ describe('Table', () => {
     await user.click(
       screen.getByRole('button', { name: 'Raða eftir dálki: Title' }),
     )
-    expect(
-      screen.getByRole('columnheader', { name: /Title/ }),
-    ).toHaveAttribute('aria-sort', 'ascending')
+    expect(screen.getByRole('columnheader', { name: /Title/ })).toHaveAttribute(
+      'aria-sort',
+      'ascending',
+    )
 
     await user.click(
       screen.getByRole('button', { name: 'Raða eftir dálki: Title' }),
     )
-    expect(
-      screen.getByRole('columnheader', { name: /Title/ }),
-    ).toHaveAttribute('aria-sort', 'descending')
+    expect(screen.getByRole('columnheader', { name: /Title/ })).toHaveAttribute(
+      'aria-sort',
+      'descending',
+    )
   })
 
   it('gives rows a descriptive accessible name and keyboard activation', async () => {
