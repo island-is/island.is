@@ -86,8 +86,6 @@ describe('AppealRulingModifiedAlert', () => {
     expect(
       screen.getByText('Úrskurður Landsréttar leiðréttur'),
     ).toBeInTheDocument()
-    expect(
-      screen.getByText('Leiðrétting án skráarnafns'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Leiðrétting án skráarnafns')).toBeInTheDocument()
   })
 })
