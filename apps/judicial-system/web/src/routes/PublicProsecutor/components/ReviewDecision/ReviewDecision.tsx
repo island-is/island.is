@@ -19,15 +19,15 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
+import { isConfirmProsecutorDecisionModal, ModalId } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
   defendant: Defendant
-  modalVisible?: ConfirmationModal
-  setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
+  modalVisible?: ModalId
+  setModalVisible: Dispatch<SetStateAction<ModalId | undefined>>
   isFine: boolean
 }
 
