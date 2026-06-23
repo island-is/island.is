@@ -461,33 +461,42 @@ export class DrivingLicenseBookClientApiFactory {
       )
     }
 
-    try {
-      // A student can be taking several categories (e.g. B and BE) at once –
-      // update the instructor on every active book.
-      await Promise.all(
-        activeBooks.map((book) =>
-          api.apiStudentUpdateLicenseBookIdPut({
-            id: book.id,
-            digitalBookUpdateRequestBody: {
-              createdOn: book.createdOn,
-              teacherSsn: newTeacherSsn,
-              schoolSsn: book.schoolSsn,
-              studentEmail: book.studentEmail,
-              studentPrimaryPhoneNumber: book.studentPrimaryPhoneNumber,
-              studentSecondaryPhoneNumber: book.studentSecondaryPhoneNumber,
-              practiceDriving: book.practiceDriving,
-            },
-          }),
-        ),
-      )
-      return { success: true }
-    } catch (e) {
+    // A student can be taking several categories (e.g. B and BE) at once –
+    // update the instructor on every active book. Use allSettled so every PUT
+    // is awaited even when one fails, and we can report exactly which book(s)
+    // failed instead of aborting on the first rejection.
+    const results = await Promise.allSettled(
+      activeBooks.map((book) =>
+        api.apiStudentUpdateLicenseBookIdPut({
+          id: book.id,
+          digitalBookUpdateRequestBody: {
+            createdOn: book.createdOn,
+            teacherSsn: newTeacherSsn,
+            schoolSsn: book.schoolSsn,
+            studentEmail: book.studentEmail,
+            studentPrimaryPhoneNumber: book.studentPrimaryPhoneNumber,
+            studentSecondaryPhoneNumber: book.studentSecondaryPhoneNumber,
+            practiceDriving: book.practiceDriving,
+          },
+        }),
+      ),
+    )
+
+    const failures = results.flatMap((result, index) =>
+      result.status === 'rejected'
+        ? [{ bookId: activeBooks[index].id, reason: result.reason }]
+        : [],
+    )
+
+    if (failures.length > 0) {
       this.logger.error(
         `${LOGTAG} Error updating driving license book instructor`,
-        e,
+        failures,
       )
       return { success: false }
     }
+
+    return { success: true }
   }
 
   async getTeacher(nationalId: string): Promise<TeacherRights> {
