@@ -124,8 +124,7 @@ export default function AppointmentDetailScreen() {
   )?.url
 
   type VideoCallPhase = 'before' | 'active' | 'expired'
-  const [videoCallPhase, setVideoCallPhase] =
-    useState<VideoCallPhase>('before')
+  const [videoCallPhase, setVideoCallPhase] = useState<VideoCallPhase>('before')
 
   useEffect(() => {
     if (!appointment?.date) {
