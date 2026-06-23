@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react'
-import userEvent, { UserEvent } from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 
 import GenericTable from './GenericTable'
 
 import '@testing-library/react'
 
 describe('GenericTable', () => {
-  let user: UserEvent
+  let user: ReturnType<typeof userEvent.setup>
 
   const columns = [
     {

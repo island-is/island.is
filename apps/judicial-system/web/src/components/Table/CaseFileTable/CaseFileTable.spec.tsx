@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import userEvent, { UserEvent } from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -18,7 +18,7 @@ jest.mock('next/router', () => ({
 }))
 
 describe('CaseFileTable', () => {
-  let user: UserEvent
+  let user: ReturnType<typeof userEvent.setup>
 
   const caseFiles = [
     {
