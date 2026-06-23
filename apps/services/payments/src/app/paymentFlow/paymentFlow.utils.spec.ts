@@ -46,10 +46,16 @@ describe('paymentFlow.utils', () => {
     it('should map the FJS TRANSFER token to bank transfer when common to all charges', () => {
       const charges = [
         {
-          paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.BANK_TRANSFER],
+          paymentOptions: [
+            FjsPaymentMethod.CARD,
+            FjsPaymentMethod.BANK_TRANSFER,
+          ],
         },
         {
-          paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.BANK_TRANSFER],
+          paymentOptions: [
+            FjsPaymentMethod.CARD,
+            FjsPaymentMethod.BANK_TRANSFER,
+          ],
         },
       ] as CatalogItemWithQuantity[]
 

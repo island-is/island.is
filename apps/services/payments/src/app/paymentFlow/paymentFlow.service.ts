@@ -1068,10 +1068,10 @@ export class PaymentFlowService {
     try {
       await this.requestFjsChargeDeletion(paymentFlowId)
     } catch (error) {
-      this.logger.error(
-        `[${paymentFlowId}] Failed to delete FJS charge`,
-        { error: error.message, stack: error.stack },
-      )
+      this.logger.error(`[${paymentFlowId}] Failed to delete FJS charge`, {
+        error: error.message,
+        stack: error.stack,
+      })
       if (throwOnError) {
         throw error
       }

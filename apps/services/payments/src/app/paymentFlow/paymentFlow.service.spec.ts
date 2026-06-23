@@ -8,7 +8,11 @@ import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
 
 import { setupTestApp } from '../../../test/setup'
-import { CatalogItemWithQuantity, PaymentMethod, PaymentStatus } from '../../types'
+import {
+  CatalogItemWithQuantity,
+  PaymentMethod,
+  PaymentStatus,
+} from '../../types'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
@@ -41,9 +45,7 @@ describe('PaymentFlowService', () => {
     // it on so the individuals-only tests exercise the kennitala gate. The
     // flag-off case is asserted explicitly below.
     featureFlagService = app.get<FeatureFlagService>(FeatureFlagService)
-    jest
-      .spyOn(featureFlagService, 'getValue')
-      .mockResolvedValue(true as never)
+    jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
   })
 
   afterAll(() => {
@@ -101,14 +103,12 @@ describe('PaymentFlowService', () => {
     ]
 
     const createFlowAndReadMethods = async (payerNationalId: string) => {
-      jest
-        .spyOn(service, 'getPaymentFlowChargeDetails')
-        .mockResolvedValue({
-          firstProductTitle: 'Test product',
-          totalPrice: 0,
-          catalogItems:
-            bankTransferCharges as unknown as CatalogItemWithQuantity[],
-        })
+      jest.spyOn(service, 'getPaymentFlowChargeDetails').mockResolvedValue({
+        firstProductTitle: 'Test product',
+        totalPrice: 0,
+        catalogItems:
+          bankTransferCharges as unknown as CatalogItemWithQuantity[],
+      })
 
       const paymentFlowModel = app.get<typeof PaymentFlow>(
         getModelToken(PaymentFlow),
@@ -128,10 +128,7 @@ describe('PaymentFlowService', () => {
     it('should offer bank transfer to an individual payer', async () => {
       const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala
 
-      expect(methods).toEqual([
-        PaymentMethod.CARD,
-        PaymentMethod.BANK_TRANSFER,
-      ])
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
     })
 
     it('should not offer bank transfer to a company payer', async () => {
@@ -581,9 +578,9 @@ describe('PaymentFlowService', () => {
       const chargeFjsService = app.get<ChargeFjsV2ClientService>(
         ChargeFjsV2ClientService,
       )
-      jest.spyOn(chargeFjsService, 'deleteCharge').mockResolvedValueOnce(
-        undefined as never,
-      )
+      jest
+        .spyOn(chargeFjsService, 'deleteCharge')
+        .mockResolvedValueOnce(undefined as never)
       const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
       jest
         .spyOn(fjsChargeModel, 'update')
@@ -591,9 +588,7 @@ describe('PaymentFlowService', () => {
 
       // Throwing here would roll the saga back and resurrect the PAID state — it must not throw,
       // even with the default throwOnError=true.
-      await expect(
-        service.deleteFjsCharge(uuid()),
-      ).resolves.toBeUndefined()
+      await expect(service.deleteFjsCharge(uuid())).resolves.toBeUndefined()
     })
 
     it('treats an "already cancelled" FJS error as success and syncs local state', async () => {
