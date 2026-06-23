@@ -10,4 +10,10 @@ export class CustomsGeneralEntry {
 
   @Field(() => String, { nullable: true })
   description?: string
+
+  @Field(() => Date, { nullable: true })
+  validFrom?: Date
+
+  @Field(() => Date, { nullable: true })
+  validTo?: Date
 }

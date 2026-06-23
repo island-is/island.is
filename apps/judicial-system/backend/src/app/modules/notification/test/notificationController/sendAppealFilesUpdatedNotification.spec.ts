@@ -3,13 +3,13 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
-  RequestCaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
-import { Case } from '../../../repository'
+import { AppealCase, Case } from '../../../repository'
+import { UserInitiatedAppealNotificationType } from '../../dto/appealNotification.dto'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
 
 jest.mock('../../../../factories')
@@ -39,13 +39,13 @@ describe('NotificationController - Send appeal files updated notifications', () 
       const then = {} as Then
 
       await notificationController
-        .sendCaseNotification(
+        .sendAppealNotification(
           caseId,
           user,
           { id: caseId, appealCase: { id: appealCaseId } } as Case,
+          { id: appealCaseId } as AppealCase,
           {
-            type: AppealCaseNotificationType.APPEAL_CASE_FILES_UPDATED as unknown as RequestCaseNotificationType,
-            properties: { appealCaseId },
+            type: UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED,
           },
         )
         .then((result) => (then.result = result))

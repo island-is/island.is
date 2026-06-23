@@ -72,9 +72,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
       let mileage = 0
       let modelYear = null
 
-      // If mileage is provided, convert it to a number and remove the dot
+      // If mileage is provided, convert it to a number and remove thousand separators
       if (vehicle.mileage) {
-        mileage = +vehicle.mileage.trim().replace(/\./g, '')
+        const parsed = +vehicle.mileage.trim().replace(/[.,\s]/g, '')
+        mileage = Number.isFinite(parsed) ? parsed : 0
       }
 
       // If no mileage is provided, use the latest mileage

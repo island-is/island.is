@@ -9,7 +9,7 @@ import { m } from './translation.strings'
 
 const CustomsGeneralErrors = () => {
   const { formatMessage } = useIntl()
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedDate] = useState<Date>(new Date())
 
   const [system, setSystem] = useState<'I' | 'U'>('I')
   const columns = [
@@ -34,8 +34,6 @@ const CustomsGeneralErrors = () => {
       data={items}
       loading={loading}
       error={error}
-      selectedDate={selectedDate}
-      onDateChange={setSelectedDate}
       dateLabel={formatMessage(m.dateLabel)}
       errorTitle={formatMessage(m.errorTitle)}
       system={system}

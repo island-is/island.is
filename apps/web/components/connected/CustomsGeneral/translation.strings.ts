@@ -169,6 +169,73 @@ export const m = defineMessages({
     description: 'Exemptions detail view: back to list button label',
   },
 
+  // Permits specific
+  permitsBackToList: {
+    id: 'web.customsGeneral:leyfiBackToList',
+    defaultMessage: 'Sjá lista yfir leyfi',
+    description: 'Permits detail view: back to list button label',
+  },
+  permitsLeyfiVeitir: {
+    id: 'web.customsGeneral:leyfiVeitir',
+    defaultMessage: 'Leyfi veitir',
+    description: 'Permits detail view section: permit provider',
+  },
+  permitsDescription: {
+    id: 'web.customsGeneral:leyfiLysing',
+    defaultMessage: 'Lýsing',
+    description: 'Permits detail view section: description',
+  },
+
+  // Tariffs specific
+  tariffBackToList: {
+    id: 'web.customsGeneral:tollarBackToList',
+    defaultMessage: 'Sjá lista yfir tolla',
+    description: 'Tariffs detail view: back to list button label',
+  },
+  tariffName: {
+    id: 'web.customsGeneral:tollarHeitiTolls',
+    defaultMessage: 'Heiti tolls',
+    description: 'Tariffs detail view label: tariff name',
+  },
+  tariffDescription: {
+    id: 'web.customsGeneral:tollarSkilmalar',
+    defaultMessage: 'Tollskilmálar',
+    description: 'Tariffs detail view section: tariff conditions',
+  },
+
+  // Charges specific
+  chargesBackToList: {
+    id: 'web.customsGeneral:gjoldBackToList',
+    defaultMessage: 'Sjá lista yfir gjöld',
+    description: 'Charges detail view: back to list button label',
+  },
+  chargesDescription: {
+    id: 'web.customsGeneral:gjoldLysing',
+    defaultMessage: 'Lýsing',
+    description: 'Charges detail view section: description',
+  },
+  chargesTaxti: {
+    id: 'web.customsGeneral:gjoldTaxti',
+    defaultMessage: 'Taxti',
+    description: 'Charges detail view label: tax rate',
+  },
+  // Prohibitions specific
+  prohibitionBackToList: {
+    id: 'web.customsGeneral:bonnBackToList',
+    defaultMessage: 'Sjá lista yfir bönn',
+    description: 'Prohibitions detail view: back to list button label',
+  },
+  prohibitionExemptionProvider: {
+    id: 'web.customsGeneral:bonnUnanthaga',
+    defaultMessage: 'Undanþága',
+    description: 'Prohibitions detail view section: exemption provider',
+  },
+  prohibitionReason: {
+    id: 'web.customsGeneral:bonnAstaeda',
+    defaultMessage: 'Ástæða',
+    description: 'Prohibitions detail view section: reason/description',
+  },
+
   // AssessmentLocations columns
   assessmentLocationLocation: {
     id: 'web.customsGeneral:akvordunarstadirLocation',
