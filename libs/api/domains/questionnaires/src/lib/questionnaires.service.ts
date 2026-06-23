@@ -325,7 +325,18 @@ export class QuestionnairesService {
                   // Extract values based on reply type
                   let values: string[] = []
                   if (reply) {
-                    if ('values' in reply) {
+                    if ('rows' in reply) {
+                      // TableReplyViewDto — one string per row, cells joined by " | "
+                      values = reply.rows.map((row) =>
+                        row
+                          .map((cell) =>
+                            'answer' in cell
+                              ? String(cell.answer)
+                              : cell.values.map((v) => v.answer).join(', '),
+                          )
+                          .join(' | '),
+                      )
+                    } else if ('values' in reply) {
                       // ListReplyDto
                       values = reply.values.map((v) => v.answer)
                     } else if ('answer' in reply) {
