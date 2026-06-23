@@ -125,7 +125,9 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
           {subtitleIcon &&
             (subtitleIconTooltip ? (
               <Tooltip text={subtitleIconTooltip} placement="top">
-                <Icon icon={subtitleIcon} color={subtitleIconColor} />
+                <span>
+                  <Icon icon={subtitleIcon} color={subtitleIconColor} />
+                </span>
               </Tooltip>
             ) : (
               <Icon icon={subtitleIcon} color={subtitleIconColor} />
