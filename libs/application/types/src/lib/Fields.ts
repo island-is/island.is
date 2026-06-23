@@ -684,6 +684,9 @@ export interface RedirectToServicePortalField extends BaseField {
 export interface PaymentPendingField extends BaseField {
   readonly type: FieldTypes.PAYMENT_PENDING
   component: FieldComponents.PAYMENT_PENDING
+  // Opt-in: when a post-payment submit fails with a structured provider
+  // errorReason, surface that reason to the applicant as a toast. Defaults off.
+  readonly showSubmitErrorReason?: boolean
 }
 
 export interface MessageWithLinkButtonField extends BaseField {

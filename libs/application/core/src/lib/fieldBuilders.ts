@@ -683,12 +683,14 @@ export const buildRedirectToServicePortalField = (data: {
 export const buildPaymentPendingField = (data: {
   id: string
   title: FormText
+  showSubmitErrorReason?: boolean
 }): PaymentPendingField => {
-  const { id, title } = data
+  const { id, title, showSubmitErrorReason } = data
   return {
     children: undefined,
     id,
     title,
+    showSubmitErrorReason,
     type: FieldTypes.PAYMENT_PENDING,
     component: FieldComponents.PAYMENT_PENDING,
   }
