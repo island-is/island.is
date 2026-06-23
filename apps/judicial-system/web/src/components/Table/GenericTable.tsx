@@ -25,6 +25,7 @@ interface GenericTableProps<Cell> {
     onClick: () => void
     isDisabled: boolean
     isLoading: boolean
+    label?: string
   }[]
   loadingIndicator: () => JSX.Element
 }
@@ -71,7 +72,13 @@ const GenericTable = <Cell,>({
       <thead className={styles.thead}>
         <tr>
           {columns.map((c, idx) => (
-            <th key={idx} className={styles.th}>
+            <th
+              key={idx}
+              className={styles.th}
+              aria-sort={
+                sortConfig?.column === idx ? sortConfig.direction : 'none'
+              }
+            >
               <SortButton
                 title={c.title}
                 onClick={() =>
@@ -105,10 +112,19 @@ const GenericTable = <Cell,>({
           <tr
             key={idx}
             role="button"
-            aria-label="Opna kröfu"
+            tabIndex={r.isDisabled ? -1 : 0}
+            aria-label={r.label ? `Opna mál ${r.label}` : 'Opna mál'}
             aria-disabled={r.isDisabled}
             className={styles.tableRowContainer}
             onClick={() => !r.isDisabled && r.onClick()}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                if (!r.isDisabled) {
+                  r.onClick()
+                }
+              }
+            }}
           >
             {r.cells.map((cell, idx) => (
               <td key={idx}>{columns[idx].render(cell)}</td>

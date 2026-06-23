@@ -306,4 +306,84 @@ describe('Table', () => {
     expect(tableRows2[0]).toHaveTextContent('Sent')
     expect(tableRows2[1]).toHaveTextContent('Drög')
   })
+
+  it('reflects the sort state on the column header via aria-sort', async () => {
+    // 'courtCaseNumber' is not the default sort column, so the header starts
+    // unsorted ('none').
+    const thead = [
+      {
+        title: 'Title',
+        sortBy: 'courtCaseNumber' as sortableTableColumn,
+      },
+    ]
+
+    const data: CaseListEntry[] = [
+      { id: faker.datatype.uuid(), courtCaseNumber: 'R-1/2021' },
+      { id: faker.datatype.uuid(), courtCaseNumber: 'R-2/2021' },
+    ]
+
+    const columns = [
+      { cell: (row: CaseListEntry) => <p>{row.courtCaseNumber}</p> },
+    ]
+
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <Table thead={thead} data={data} columns={columns} />
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    const header = screen.getByRole('columnheader', { name: /Title/ })
+    expect(header).toHaveAttribute('aria-sort', 'none')
+
+    await user.click(
+      screen.getByRole('button', { name: 'Raða eftir dálki: Title' }),
+    )
+    expect(
+      screen.getByRole('columnheader', { name: /Title/ }),
+    ).toHaveAttribute('aria-sort', 'ascending')
+
+    await user.click(
+      screen.getByRole('button', { name: 'Raða eftir dálki: Title' }),
+    )
+    expect(
+      screen.getByRole('columnheader', { name: /Title/ }),
+    ).toHaveAttribute('aria-sort', 'descending')
+  })
+
+  it('gives rows a descriptive accessible name and keyboard activation', async () => {
+    const onClick = jest.fn(() => true)
+
+    const thead = [{ title: 'Title' }]
+    const data: CaseListEntry[] = [
+      { id: faker.datatype.uuid(), courtCaseNumber: 'R-123/2021' },
+    ]
+    const columns = [
+      { cell: (row: CaseListEntry) => <p>{row.courtCaseNumber}</p> },
+    ]
+
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <Table
+            thead={thead}
+            data={data}
+            columns={columns}
+            onClick={onClick}
+          />
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    const row = screen.getByRole('button', { name: 'Opna mál R-123/2021' })
+    expect(row).toHaveAttribute('tabindex', '0')
+
+    row.focus()
+    await user.keyboard('{Enter}')
+    expect(onClick).toHaveBeenCalledTimes(1)
+
+    await user.keyboard(' ')
+    expect(onClick).toHaveBeenCalledTimes(2)
+  })
 })

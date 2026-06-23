@@ -89,13 +89,19 @@ const CaseFileTable: FC<Props> = ({
         loading={loading}
         tableHeader={
           <>
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('name') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.caseFileName), 'name')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.caseFileDate)} />
-            <th className={tableStyles.th}>
+            <th
+              className={tableStyles.th}
+              aria-sort={getClassNamesFor('created') ?? 'none'}
+            >
               <SortButton
                 {...createSortProps(formatMessage(tables.received), 'created')}
               />
