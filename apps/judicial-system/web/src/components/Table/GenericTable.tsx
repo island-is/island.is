@@ -2,10 +2,10 @@ import { useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 import { AnimatePresence, motion } from 'motion/react'
 
+import { Icon } from '@island.is/island-ui/core'
 import {
   ContextMenu,
   ContextMenuItem,
-  IconButton,
 } from '@island.is/judicial-system-web/src/components'
 
 import SortButton from './SortButton/SortButton'
@@ -68,111 +68,115 @@ const GenericTable = <Cell,>({
   }, [columns, rows, sortConfig])
 
   return (
-    <table className={styles.table}>
-      <thead className={styles.thead}>
-        <tr>
-          {columns.map((c, idx) => (
-            <th
-              key={idx}
-              className={styles.th}
-              aria-sort={
-                sortConfig?.column === idx ? sortConfig.direction : 'none'
-              }
-            >
-              <SortButton
-                title={c.title}
-                onClick={() =>
-                  setSortConfig({
-                    column: idx,
-                    direction:
-                      sortConfig &&
-                      sortConfig.column === idx &&
-                      sortConfig.direction === 'ascending'
-                        ? 'descending'
-                        : 'ascending',
-                  })
+    <div className={styles.tableWrapper}>
+      <table className={styles.table}>
+        <thead className={styles.thead}>
+          <tr>
+            {columns.map((c, idx) => (
+              <th
+                key={idx}
+                className={styles.th}
+                aria-sort={
+                  sortConfig?.column === idx ? sortConfig.direction : 'none'
                 }
-                sortAsc={
-                  sortConfig?.column === idx &&
-                  sortConfig?.direction === 'ascending'
-                }
-                sortDes={
-                  sortConfig?.column === idx &&
-                  sortConfig?.direction === 'descending'
-                }
-                isActive={sortConfig?.column === idx}
-              />
-            </th>
-          ))}
-          {<th className={styles.th} />}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, idx) => (
-          <tr
-            key={idx}
-            role="button"
-            tabIndex={r.isDisabled ? -1 : 0}
-            aria-label={r.label ? `Opna mál ${r.label}` : 'Opna mál'}
-            aria-disabled={r.isDisabled}
-            className={styles.tableRowContainer}
-            onClick={() => !r.isDisabled && r.onClick()}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                if (!r.isDisabled) {
-                  r.onClick()
-                }
-              }
-            }}
-          >
-            {r.cells.map((cell, idx) => (
-              <td key={idx}>{columns[idx].render(cell)}</td>
+              >
+                <SortButton
+                  title={c.title}
+                  onClick={() =>
+                    setSortConfig({
+                      column: idx,
+                      direction:
+                        sortConfig &&
+                        sortConfig.column === idx &&
+                        sortConfig.direction === 'ascending'
+                          ? 'descending'
+                          : 'ascending',
+                    })
+                  }
+                  sortAsc={
+                    sortConfig?.column === idx &&
+                    sortConfig?.direction === 'ascending'
+                  }
+                  sortDes={
+                    sortConfig?.column === idx &&
+                    sortConfig?.direction === 'descending'
+                  }
+                  isActive={sortConfig?.column === idx}
+                />
+              </th>
             ))}
-            <td width="4%">
-              <AnimatePresence initial={false} mode="popLayout">
-                {r.isLoading ? (
-                  <motion.div
-                    className={styles.smallContainer}
-                    key={r.id}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 1 }}
-                    exit={{
-                      opacity: 0,
-                      y: 5,
-                    }}
-                    transition={{ type: 'spring' }}
-                  >
-                    <LoadingIndicator />
-                  </motion.div>
-                ) : (
-                  r.contextMenuItems.length > 0 && (
-                    <ContextMenu
-                      items={r.contextMenuItems}
-                      render={
-                        <motion.div
-                          className={styles.smallContainer}
-                          key={r.id}
-                          initial={{ opacity: 1 }}
-                          animate={{ opacity: 1, y: 1 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          onClick={(evt) => evt.stopPropagation()}
-                        >
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
-                          />
-                        </motion.div>
-                      }
-                    />
-                  )
-                )}
-              </AnimatePresence>
-            </td>
+            {<th className={styles.th} />}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((r, idx) => (
+            <tr
+              key={idx}
+              role="button"
+              tabIndex={r.isDisabled ? -1 : 0}
+              aria-label={r.label ? `Opna mál ${r.label}` : 'Opna mál'}
+              aria-disabled={r.isDisabled}
+              className={styles.tableRowContainer}
+              onClick={() => !r.isDisabled && r.onClick()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  if (!r.isDisabled) {
+                    r.onClick()
+                  }
+                }
+              }}
+            >
+              {r.cells.map((cell, idx) => (
+                <td key={idx}>{columns[idx].render(cell)}</td>
+              ))}
+              <td width="4%">
+                <AnimatePresence initial={false} mode="popLayout">
+                  {r.isLoading ? (
+                    <motion.div
+                      className={styles.smallContainer}
+                      key={r.id}
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 1 }}
+                      exit={{
+                        opacity: 0,
+                        y: 5,
+                      }}
+                      transition={{ type: 'spring' }}
+                    >
+                      <LoadingIndicator />
+                    </motion.div>
+                  ) : (
+                    r.contextMenuItems.length > 0 && (
+                      <ContextMenu
+                        items={r.contextMenuItems}
+                        render={
+                          <motion.div
+                            className={styles.contextMenuButton}
+                            aria-label="Valmynd"
+                            key={r.id}
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: 1, y: 1 }}
+                            exit={{ opacity: 0, y: 5 }}
+                            onClick={(evt) => evt.stopPropagation()}
+                          >
+                            <Icon
+                              icon="ellipsisVertical"
+                              color="blue400"
+                              size="small"
+                            />
+                          </motion.div>
+                        }
+                      />
+                    )
+                  )}
+                </AnimatePresence>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

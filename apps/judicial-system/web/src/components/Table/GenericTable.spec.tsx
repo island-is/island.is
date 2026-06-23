@@ -17,7 +17,11 @@ describe('GenericTable', () => {
     },
   ]
 
-  const renderTable = (onClick = jest.fn(), isDisabled = false) =>
+  const renderTable = (
+    onClick = jest.fn(),
+    isDisabled = false,
+    contextMenuItems: { title: string; onClick: () => void }[] = [],
+  ) =>
     render(
       <GenericTable
         tableId="test-table"
@@ -26,7 +30,7 @@ describe('GenericTable', () => {
           {
             id: '1',
             cells: ['R-123/2021'],
-            contextMenuItems: [],
+            contextMenuItems,
             onClick,
             isDisabled,
             isLoading: false,
@@ -93,5 +97,16 @@ describe('GenericTable', () => {
     row.focus()
     await user.keyboard('{Enter}')
     expect(onClick).not.toHaveBeenCalled()
+  })
+
+  it('exposes the context menu as a single named trigger', () => {
+    renderTable(jest.fn(), false, [{ title: 'Eyða', onClick: jest.fn() }])
+
+    // A single, accessibly-named menu trigger — not a duplicate tab stop with
+    // an empty-named wrapper plus a redundant inner button.
+    const triggers = screen.getAllByRole('button', { name: 'Valmynd' })
+    expect(triggers).toHaveLength(1)
+    expect(triggers[0]).toHaveAttribute('aria-haspopup', 'menu')
+    expect(triggers[0]).toHaveAttribute('tabindex', '0')
   })
 })
