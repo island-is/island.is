@@ -48,7 +48,7 @@ import {
   getApplicationCustomFieldMessageDescriptors,
 } from '@island.is/application/template-loader'
 import type { MessageDescriptor } from 'react-intl'
-import type { Locale } from '@island.is/shared/types'
+import type { Locale, BffUser } from '@island.is/shared/types'
 
 export interface ValidationMessageDescriptorInfo extends MessageDescriptorInfo {
   fieldPath: string
@@ -663,6 +663,33 @@ function stubApplicationForOptionPreview(): Application {
   } as unknown as Application
 }
 
+function stubUserForIdPreview(): BffUser {
+  const nationalId = '0000000000'
+  return {
+    nationalId,
+    profile: { nationalId },
+  } as unknown as BffUser
+}
+
+function extractStaticId(id: unknown): string {
+  if (id === undefined || id === null) return ''
+  if (typeof id === 'string') return id
+  if (typeof id === 'function') {
+    try {
+      const stubApp = stubApplicationForOptionPreview()
+      const stubUser = stubUserForIdPreview()
+      const result = (id as (application: Application, user: BffUser) => string)(
+        stubApp,
+        stubUser,
+      )
+      return typeof result === 'string' ? result : '[dynamic]'
+    } catch {
+      return '[dynamic]'
+    }
+  }
+  return String(id)
+}
+
 /**
  * Evaluate `MaybeWithApplicationAndFieldAndLocale<Option[]>` so radio/checkbox previews
  * can show labels when templates pass option factories (e.g. `getOtherFeesPayeeOptions`).
@@ -1091,9 +1118,10 @@ function buildTableRepeaterColumnHeaderDescriptors(
   )
   const tableItems = items.filter((x) => x.displayInTable !== false)
 
-  if (tr.table?.header && tr.table.header.length > 0) {
+  const tableHeader = tr.table?.header
+  if (Array.isArray(tableHeader) && tableHeader.length > 0) {
     const out: MessageDescriptorInfo[] = []
-    for (const h of tr.table.header) {
+    for (const h of tableHeader) {
       out.push(...extractMessageDescriptorsFromFormText(h as FormText))
     }
     return out
@@ -1389,7 +1417,7 @@ function walkTableRepeaterScreen(tr: TableRepeaterField): ScreenIntrospection {
 
   const formScreens: ScreenIntrospection[] = []
   for (const [key, item] of Object.entries(tr.fields ?? {})) {
-    const s = walkRepeaterItemToScreen(String(tr.id), key, item)
+    const s = walkRepeaterItemToScreen(extractStaticId(tr.id), key, item)
     formScreens.push(s)
     for (const d of s.messageDescriptors) {
       if (!descriptors.some((x) => x.id === d.id)) {
@@ -1399,7 +1427,7 @@ function walkTableRepeaterScreen(tr: TableRepeaterField): ScreenIntrospection {
   }
 
   return {
-    id: tr.id,
+    id: extractStaticId(tr.id),
     type: FieldTypes.TABLE_REPEATER,
     title: extractStaticText(tr.title as StaticText | undefined),
     description: extractStaticText(
@@ -1454,7 +1482,7 @@ function walkFieldsRepeaterScreen(fr: FieldsRepeaterField): ScreenIntrospection 
 
   const formScreens: ScreenIntrospection[] = []
   for (const [key, item] of Object.entries(fr.fields ?? {})) {
-    const s = walkRepeaterItemToScreen(String(fr.id), key, item)
+    const s = walkRepeaterItemToScreen(extractStaticId(fr.id), key, item)
     formScreens.push(s)
     for (const d of s.messageDescriptors) {
       if (!descriptors.some((x) => x.id === d.id)) {
@@ -1464,7 +1492,7 @@ function walkFieldsRepeaterScreen(fr: FieldsRepeaterField): ScreenIntrospection 
   }
 
   return {
-    id: fr.id,
+    id: extractStaticId(fr.id),
     type: FieldTypes.FIELDS_REPEATER,
     title: extractStaticText(fr.title as StaticText | undefined),
     description: extractStaticText(
@@ -1576,7 +1604,7 @@ function walkStaticTableScreen(st: StaticTableField): ScreenIntrospection {
   }
 
   return {
-    id: st.id && String(st.id).length > 0 ? st.id : 'staticTable',
+    id: extractStaticId(st.id) || 'staticTable',
     type: FieldTypes.STATIC_TABLE,
     title: extractStaticText(st.title as StaticText | undefined),
     description: extractStaticText(
@@ -1823,11 +1851,12 @@ function walkFormLeaf(
     subDescription = extractStaticText(edp.subDescription as StaticText | undefined)
     checkboxLabel = extractStaticText(edp.checkboxLabel as StaticText | undefined)
 
+    const externalDataLeafId = extractStaticId(leaf.id) || 'external'
     const dataProviders = (edp.dataProviders as DataProviderItem[] | undefined) ?? []
     for (const provider of dataProviders) {
       if (!provider?.id) continue
       const childScreen = walkExternalDataSourceItem(
-        `${leaf.id ?? 'external'}::${provider.id}`,
+        `${externalDataLeafId}::${extractStaticId(provider.id) || 'provider'}`,
         provider,
       )
       children.push(childScreen)
@@ -1839,7 +1868,7 @@ function walkFormLeaf(
     for (const permission of otherPermissions) {
       if (!permission?.id) continue
       const childScreen = walkExternalDataSourceItem(
-        `${leaf.id ?? 'external'}::perm::${permission.id}`,
+        `${externalDataLeafId}::perm::${extractStaticId(permission.id) || 'permission'}`,
         permission,
       )
       children.push(childScreen)
@@ -2077,7 +2106,7 @@ function walkFormLeaf(
       : {}
 
   return {
-    id: leaf.id ?? '',
+    id: extractStaticId(leaf.id),
     type: leaf.type ?? 'FIELD',
     component: (leafRecord.component as string) ?? null,
     title: extractStaticText(leaf.title as StaticText | undefined),
@@ -2138,7 +2167,7 @@ function walkSection(
   }
 
   return {
-    id: section.id ?? '',
+    id: extractStaticId(section.id),
     title: extractStaticText(section.title as StaticText | undefined),
     titleMessageDescriptor:
       extractMessageDescriptorsFromFormText(section.title as FormText)[0] ??
@@ -2159,7 +2188,7 @@ function walkSubSection(
   }
 
   return {
-    id: subSection.id ?? '',
+    id: extractStaticId(subSection.id),
     title: extractStaticText(subSection.title as StaticText | undefined),
     titleMessageDescriptor:
       extractMessageDescriptorsFromFormText(subSection.title as FormText)[0] ??

@@ -19,7 +19,10 @@ import type {
   ScreenIntrospection,
 } from '../types/translationWorkspace'
 import { previewWorkspaceInputBackgroundColor } from './translationWorkspaceFieldConstants'
-import { fieldPreviewLayoutProps } from './translationWorkspaceStaticText'
+import {
+  fieldPreviewLayoutProps,
+  staticTextToFormText,
+} from './translationWorkspaceStaticText'
 
 /** Mirrors `ScreenIntrospectionGql` / fragment fields not yet on manual `ScreenIntrospection`. */
 type MessageWithLinkIntrospectionSlice = Partial<
@@ -75,11 +78,14 @@ export const buildPreviewFieldFromScreen = (
         ''
       : ''
 
+  const resolveFormText = (staticText: string | null | undefined): FormText =>
+    staticTextToFormText(staticText, screen.messageDescriptors)
+
   const base = {
     id: screen.id,
     component: (screen.component ?? '') as Field['component'],
-    title: (screen.title ?? '') as FormText,
-    description: (screen.description ?? '') as FormText,
+    title: resolveFormText(screen.title),
+    description: resolveFormText(screen.description),
     marginTop: layout.marginTop,
     marginBottom: layout.marginBottom,
     width,
@@ -100,8 +106,8 @@ export const buildPreviewFieldFromScreen = (
         ...base,
         type: FieldTypes.DESCRIPTION,
         component: FieldComponents.DESCRIPTION,
-        description: (screen.description ?? '') as FormText,
-        title: (screen.title ?? '') as FormText,
+        description: resolveFormText(screen.description),
+        title: resolveFormText(screen.title),
         space: layout.paddingTop,
         titleVariant: (screen.titleVariant ?? undefined) as
           | TitleVariants
@@ -129,7 +135,7 @@ export const buildPreviewFieldFromScreen = (
           | 'success'
           | 'warning'
           | undefined,
-        message: (screen.alertMessage ?? '') as FormText,
+        message: resolveFormText(screen.alertMessage),
         shouldBlockInSetBeforeSubmitCallback: false,
       } as Field
 

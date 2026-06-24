@@ -1,3 +1,4 @@
+import type { FormText } from '@island.is/application/types'
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import type {
   MessageDescriptor,
@@ -27,19 +28,44 @@ export const fieldPreviewLayoutProps = (
  * `messageDescriptors` holds the real message ids. Match on defaultMessage so labels
  * and headings use the same strings as the translation editor (including live edits).
  */
+const findDescriptorForStaticText = (
+  staticText: string | null | undefined,
+  descriptors: MessageDescriptor[],
+): MessageDescriptor | undefined => {
+  if (staticText == null || staticText === '') {
+    return undefined
+  }
+  return descriptors.find((d) => d.defaultMessage === staticText)
+}
+
+/**
+ * Reconstruct template `FormText` for ui-fields preview so `formatTextWithLocale`
+ * resolves via message id (and Translation Workspace intl overrides), not raw strings.
+ */
+export const staticTextToFormText = (
+  staticText: string | null | undefined,
+  descriptors: MessageDescriptor[],
+): FormText => {
+  const match = findDescriptorForStaticText(staticText, descriptors)
+  if (match) {
+    return {
+      id: match.id,
+      defaultMessage: match.defaultMessage ?? '',
+    }
+  }
+  return staticText ?? ''
+}
+
 export const resolveTranslatableStaticText = (
   staticText: string | null | undefined,
   descriptors: MessageDescriptor[],
   resolvePreviewString: ResolvePreviewString,
 ): string => {
-  if (staticText == null || staticText === '') {
-    return ''
-  }
-  const match = descriptors.find((d) => d.defaultMessage === staticText)
+  const match = findDescriptorForStaticText(staticText, descriptors)
   if (match) {
     return resolvePreviewString(match.id, match.defaultMessage)
   }
-  return staticText
+  return staticText ?? ''
 }
 
 export const resolvePreviewLabel = (
