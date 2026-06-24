@@ -183,6 +183,47 @@ describe('TokenRefreshService', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith('Token refresh failed')
     })
 
+    it('should propagate an OAuth2 error (e.g. invalid_grant) so the session can be cleaned up', async () => {
+      // Arrange - identity server rejects with a dead/revoked refresh token
+      const oauthError = { body: { error: 'invalid_grant' } }
+      jest
+        .spyOn(idsService, 'refreshToken')
+        .mockRejectedValueOnce(oauthError)
+
+      // Act & Assert - the error must propagate (not be swallowed and returned as null)
+      // so the caller's ErrorService.handleAuthorizedError can clear the session.
+      await expect(
+        service.refreshToken({
+          cacheKey: testCacheKey,
+          encryptedRefreshToken: testRefreshToken,
+        }),
+      ).rejects.toBe(oauthError)
+
+      expect(idsService.refreshToken).toHaveBeenCalledWith(testRefreshToken)
+    })
+
+    it('should return the cached token on OAuth2 error if a concurrent refresh already succeeded (rotation race)', async () => {
+      // Arrange - our refresh fails with invalid_grant (token already rotated),
+      // but a concurrent request has stored a fresh, valid token in the cache.
+      jest
+        .spyOn(idsService, 'refreshToken')
+        .mockRejectedValueOnce({ body: { error: 'invalid_grant' } })
+      await cacheService.save({
+        key: `current_${testCacheKey}`,
+        value: mockTokenResponse,
+        ttl: 3600,
+      })
+
+      // Act
+      const result = await service.refreshToken({
+        cacheKey: testCacheKey,
+        encryptedRefreshToken: testRefreshToken,
+      })
+
+      // Assert - the valid session is preserved instead of being torn down
+      expect(result).toEqual(mockTokenResponse)
+    })
+
     it('should prevent concurrent refresh token requests', async () => {
       // Arrange
       const refreshPromises = []
