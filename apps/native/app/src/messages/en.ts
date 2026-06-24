@@ -831,18 +831,23 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.detailTitle': 'Healthcare appointment',
-  'health.appointments.dateAndTime': 'Date and time',
-  'health.appointments.duration': 'Duration',
-  'health.appointments.location': 'Location',
-  'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
-  'health.appointments.atTime': 'at {time}',
-  'health.appointments.timePrefix': 'at',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
-  'health.appointments.type': 'Type',
+  'health.appointments.locationInstructions': 'More about location',
+  'health.appointments.seeMore': 'See more',
+  'health.appointments.openingHours': 'Opening hours',
+  'health.appointments.phoneNumber': 'Phone number',
+  'health.appointments.organization': 'Organization',
+  'health.appointments.videoCall': 'Video call',
+  'health.appointments.videoCallInfoWithLink':
+    'The video call button becomes active 5 minutes before the booked time.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Tap the button to start the video call.',
+  'health.appointments.videoCallInfoNoLink':
+    'This appointment includes a video call. You will receive a link to the video call shortly before the booked time. If no link is found, please contact the relevant institution.',
+  'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',
@@ -851,6 +856,7 @@ export const en: TranslatedMessages = {
   'health.appointments.notFoundMessage':
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
+  'health.appointments.moreInfo': 'More information',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',
