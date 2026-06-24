@@ -353,10 +353,12 @@ const Questionnaires: FC = () => {
                 headingVariant="h4"
                 subText={questionnaire.description ?? ''}
                 eyebrow={
-                  questionnaire.organization ===
-                  QuestionnaireQuestionnairesOrganizationEnum.EL
-                    ? formatMessage(messages.healthDirectorate)
-                    : formatMessage(messages.landspitali)
+                  questionnaire.senderGroupName ?? (
+                    questionnaire.organization ===
+                    QuestionnaireQuestionnairesOrganizationEnum.EL
+                      ? formatMessage(messages.healthDirectorate)
+                      : formatMessage(messages.landspitali)
+                  )
                 }
                 eyebrowColor="purple400"
                 text={formatDate(questionnaire.sentDate)}

@@ -201,10 +201,12 @@ const QuestionnaireDetail: FC = () => {
             key="questionnaire-organization"
             label={formatMessage(messages.organization)}
             content={
-              questionnaire?.baseInformation.organization ===
-              QuestionnaireQuestionnairesOrganizationEnum.EL
-                ? formatMessage(messages.healthDirectorate)
-                : formatMessage(messages.landspitali)
+              questionnaire?.baseInformation.senderGroupName ?? (
+                questionnaire?.baseInformation.organization ===
+                QuestionnaireQuestionnairesOrganizationEnum.EL
+                  ? formatMessage(messages.healthDirectorate)
+                  : formatMessage(messages.landspitali)
+              )
             }
           />
           <InfoLine
