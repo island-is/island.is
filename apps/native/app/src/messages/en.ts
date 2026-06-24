@@ -168,15 +168,15 @@ export const en: TranslatedMessages = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Married}
+    MARRIED {Married or registered partnership}
     UNMARRIED {Unmarried}
     WIDOWED {Widowed}
     SEPARATED {Separated}
     DIVORCED {Divorced}
-    MARRIED_LIVING_SEPARATELY {Married}
-    MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    MARRIED_LIVING_SEPARATELY {Married, living separately}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Icelandic citizen married to a foreign citizen that does not fulfil registration requirements}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in foreign country; married to a non-registered foreign citizen}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in Iceland; relations with a foreigner not on record}
     other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
