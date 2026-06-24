@@ -33,5 +33,6 @@ query UserContract($id: ID!) {
       postalCode
     }
     latestDocumentDownloadUrl
+    canTerminate
   }
 }

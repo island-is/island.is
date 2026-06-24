@@ -10,6 +10,7 @@ import { Audit } from '@island.is/nest/audit'
 import { PaginatedRentalAgreementCollection } from '../models/rentalAgreements/rentalAgreementCollection.model'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
+import { AGREEMENT_STATUS_ORDER } from '../constants'
 import { mapToRentalAgreement } from '../mappers'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
@@ -46,7 +47,13 @@ export class RentalAgreementsResolver {
       user,
       hideInactiveAgreements,
     )
-    const data = dtos.map(mapToRentalAgreement)
+    const data = dtos
+      .map(mapToRentalAgreement)
+      .sort(
+        (a, b) =>
+          AGREEMENT_STATUS_ORDER.indexOf(a.status) -
+          AGREEMENT_STATUS_ORDER.indexOf(b.status),
+      )
 
     return {
       data,
@@ -77,7 +84,7 @@ export class RentalAgreementsResolver {
 
     return {
       ...mapped,
-      latestDocumentDownloadUrl: baseUrl,
+      latestDocumentDownloadUrl: dto.infoAvailable ? baseUrl : undefined,
       documents: mapped.documents?.map((doc) => ({
         ...doc,
         downloadUrl: `${baseUrl}/${doc.id}`,

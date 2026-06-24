@@ -89,4 +89,7 @@ export class RentalAgreement {
 
   @Field({ nullable: true })
   latestDocumentDownloadUrl?: string
+
+  @Field({ nullable: true })
+  canTerminate?: boolean
 }

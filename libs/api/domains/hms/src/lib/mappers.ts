@@ -111,5 +111,8 @@ export const mapToRentalAgreement = (
       id: d.id,
       name: d.name,
     })),
+    canTerminate:
+      dto.infoAvailable === true &&
+      AGREEMENT_STATUS_MAP[dto.status] === AgreementStatusType.VALID,
   }
 }

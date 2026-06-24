@@ -7,10 +7,7 @@ import {
   mapRentalAgreementDto,
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
-import {
-  AGREEMENT_STATUS_ORDER,
-  INACTIVE_AGREEMENT_STATUSES,
-} from './constants'
+import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
@@ -33,14 +30,7 @@ export class HmsRentalAgreementService {
   ): Promise<RentalAgreementDto[]> {
     const res = await this.apiWithAuth(user).contractGet()
 
-    const data = res
-      .map(mapRentalAgreementDto)
-      .filter(isDefined)
-      .sort(
-        (a, b) =>
-          AGREEMENT_STATUS_ORDER.indexOf(a.status) -
-          AGREEMENT_STATUS_ORDER.indexOf(b.status),
-      )
+    const data = res.map(mapRentalAgreementDto).filter(isDefined)
 
     if (hideInactiveAgreements) {
       return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))

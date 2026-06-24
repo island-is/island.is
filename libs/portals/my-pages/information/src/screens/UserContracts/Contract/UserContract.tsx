@@ -76,17 +76,14 @@ const UserContract = () => {
           >
             {formatMessage(m.getDocument)}
           </Button>,
-          ...(contract?.status === HmsRentalAgreementStatusType.VALID
-            ? [
-                <LinkButton
-                  key="terminate-button"
-                  to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
-                  text={formatMessage(cm.terminateRentalAgreement)}
-                  icon="open"
-                  variant="utility"
-                />,
-              ]
-            : []),
+          <LinkButton
+            key="terminate-button"
+            to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
+            text={formatMessage(cm.terminateRentalAgreement)}
+            icon="open"
+            variant="utility"
+            disabled={!contract?.canTerminate || loading}
+          />,
         ],
       }}
       desktopContentSpan="10/12"

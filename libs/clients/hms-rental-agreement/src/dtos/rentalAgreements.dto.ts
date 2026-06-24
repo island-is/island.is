@@ -23,6 +23,7 @@ export interface RentalAgreementDto {
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
   documents?: ContractDocumentMetadataDto[]
+  infoAvailable?: boolean
 }
 
 export const mapRentalAgreementDto = (
@@ -55,6 +56,7 @@ export const mapRentalAgreementDto = (
       contract.contractDocument
         ?.map(mapContractDocumentMetadataDto)
         .filter(isDefined) ?? undefined,
+    infoAvailable: contract.infoAvailable ?? undefined,
   }
 }
 
