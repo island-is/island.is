@@ -20,6 +20,7 @@ import {
 
 import { TransitionAppealCaseDocument } from './hooks/useAppealCase/transitionAppealCase.generated'
 import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
+import { CaseTableMembershipDocument } from './hooks/useCaseTableMembership/caseTableMembership.generated'
 
 export const mockCourt = {
   id: 'court_id',
@@ -172,6 +173,27 @@ export const mockTransitionAppealCaseMutation = (
           appealState: AppealCaseState.COMPLETED,
           appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
           appealRulingDate: '2021-09-09T12:00:00.000Z',
+        },
+      },
+    },
+  },
+]
+
+// BreadCrumbs (rendered via PageLayout) fires this query whenever the working
+// case has an id. Include it in MockedProvider mocks to avoid unmocked-query
+// warnings.
+export const mockCaseTableMembershipQuery = (caseId: string) => [
+  {
+    request: {
+      query: CaseTableMembershipDocument,
+      variables: {
+        caseId,
+      },
+    },
+    result: {
+      data: {
+        caseTableMembership: {
+          caseTableTypes: [],
         },
       },
     },
