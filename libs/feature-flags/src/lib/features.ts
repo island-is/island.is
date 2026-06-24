@@ -48,6 +48,9 @@ export enum Features {
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
+  // Read application template strings from the translation workspace DB instead of Contentful
+  applicationTranslationsFromWorkspace = 'isApplicationTranslationsFromWorkspaceEnabled',
+
   // Service portal modules
   servicePortalHealthPatientPermitsPageEnabled = 'isServicePortalHealthPatientPermitsPageEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
