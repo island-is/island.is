@@ -34,7 +34,7 @@ export const SeagoingTime = () => {
   const patchState = (patch: Partial<SeaServiceState>) =>
     setState((s) => ({ ...s, ...patch }))
 
-  const [execute, { data, loading, error }] =
+  const [execute, { data, loading, error, called }] =
     useShipRegistrySailorSeagoingTimeLazyQuery()
 
   const buildInput = (s: SeaServiceState) => ({
@@ -143,7 +143,6 @@ export const SeagoingTime = () => {
         cell: ({ getValue }) => getValue() ?? '-',
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [valueLabels],
   )
 
@@ -230,10 +229,10 @@ export const SeagoingTime = () => {
       />
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && entries.length === 0 && (
+      {!loading && !error && called && entries.length === 0 && (
         <Problem type="no_data" noBorder={false} />
       )}
-      {!loading && !error && entries.length > 0 && (
+      {!loading && !error && called && entries.length > 0 && (
         <>
           <Table
             columns={columns}
