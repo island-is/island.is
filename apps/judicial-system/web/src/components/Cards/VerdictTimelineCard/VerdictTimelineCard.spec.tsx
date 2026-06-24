@@ -209,9 +209,9 @@ describe('VerdictTimelineCard', () => {
 
     renderComponent(defendant)
 
-    expect(await screen.findByTestId('verdict-appeal-choice')).toHaveTextContent(
-      'disabled:true',
-    )
+    expect(
+      await screen.findByTestId('verdict-appeal-choice'),
+    ).toHaveTextContent('disabled:true')
   })
 
   it('shows error when invalid service date is selected', async () => {
