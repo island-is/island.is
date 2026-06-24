@@ -13,7 +13,6 @@ export const ApplicantSubmitForm = buildForm({
   renderLastScreenBackButton: true,
   logo: HmsLogo,
   children: [
-    // asdf
     infoSection,
     applicantSubmitAccessAgreementSection,
     applicantOverviewSection,
