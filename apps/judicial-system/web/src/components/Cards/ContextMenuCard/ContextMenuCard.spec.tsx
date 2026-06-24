@@ -26,7 +26,11 @@ jest.mock('../../ContextMenu/ContextMenu', () => {
 describe('ContextMenuCard', () => {
   const renderComponent = (contextMenuItems?: ContextMenuItem[]) =>
     render(
-      <ContextMenuCard title="Card title" contextMenuItems={contextMenuItems}>
+      <ContextMenuCard
+        title="Card title"
+        menuLabel="Valmynd fyrir Card title"
+        contextMenuItems={contextMenuItems}
+      >
         <div>Card content</div>
       </ContextMenuCard>,
     )
@@ -41,13 +45,17 @@ describe('ContextMenuCard', () => {
   it('disables menu button when contextMenuItems are missing', () => {
     renderComponent()
 
-    expect(screen.getByRole('button', { name: 'Valmynd' })).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+    ).toBeDisabled()
   })
 
   it('enables menu button when contextMenuItems are provided', () => {
     renderComponent([{ title: 'Action' }])
 
-    expect(screen.getByRole('button', { name: 'Valmynd' })).toBeEnabled()
+    expect(
+      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+    ).toBeEnabled()
   })
 
   it('stops click propagation when menu button is clicked', () => {
@@ -56,13 +64,19 @@ describe('ContextMenuCard', () => {
     render(
       // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
       <div onClick={parentOnClick}>
-        <ContextMenuCard title="Card title" contextMenuItems={[{ title: 'A' }]}>
+        <ContextMenuCard
+          title="Card title"
+          menuLabel="Valmynd fyrir Card title"
+          contextMenuItems={[{ title: 'A' }]}
+        >
           <div>Card content</div>
         </ContextMenuCard>
       </div>,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'Valmynd' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+    )
 
     expect(parentOnClick).not.toHaveBeenCalled()
   })

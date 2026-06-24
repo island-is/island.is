@@ -145,6 +145,7 @@ const GenericTable = <Cell,>({
                           <IconButton
                             icon="ellipsisVertical"
                             colorScheme="transparent"
+                            ariaLabel="Frekari aðgerðir"
                           />
                         </motion.div>
                       }

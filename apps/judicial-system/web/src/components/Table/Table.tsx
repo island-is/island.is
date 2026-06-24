@@ -340,6 +340,11 @@ const Table: FC<TableProps> = (props) => {
                             <IconButton
                               icon="ellipsisVertical"
                               colorScheme="transparent"
+                              ariaLabel={`Valmynd fyrir mál ${
+                                row.courtCaseNumber ??
+                                row.policeCaseNumbers?.[0] ??
+                                ''
+                              }`}
                             />
                           </motion.div>
                         }

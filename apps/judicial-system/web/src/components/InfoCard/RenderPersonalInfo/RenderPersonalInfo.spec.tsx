@@ -174,4 +174,23 @@ describe('RenderPersonalInfo', () => {
       /^s. 111-1111$/,
     )
   })
+
+  test('should give the edit button a descriptive accessible name', async () => {
+    // Arrange
+    const name = 'Joe'
+
+    // Act
+    render(
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          {RenderPersonalData({ name, onClick: jest.fn() })}
+        </LocaleProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      await screen.findByRole('button', { name: 'Breyta Joe' }),
+    ).toBeInTheDocument()
+  })
 })
