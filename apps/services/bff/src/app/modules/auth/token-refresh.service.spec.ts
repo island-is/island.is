@@ -186,9 +186,7 @@ describe('TokenRefreshService', () => {
     it('should propagate an OAuth2 error (e.g. invalid_grant) so the session can be cleaned up', async () => {
       // Arrange - identity server rejects with a dead/revoked refresh token
       const oauthError = { body: { error: 'invalid_grant' } }
-      jest
-        .spyOn(idsService, 'refreshToken')
-        .mockRejectedValueOnce(oauthError)
+      jest.spyOn(idsService, 'refreshToken').mockRejectedValueOnce(oauthError)
 
       // Act & Assert - the error must propagate (not be swallowed and returned as null)
       // so the caller's ErrorService.handleAuthorizedError can clear the session.
