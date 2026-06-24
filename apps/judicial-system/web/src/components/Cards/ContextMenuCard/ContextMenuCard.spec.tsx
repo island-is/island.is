@@ -35,30 +35,30 @@ describe('ContextMenuCard', () => {
       </ContextMenuCard>,
     )
 
-  it('renders title and children', () => {
+  it('renders title and children', async () => {
     renderComponent()
 
-    expect(screen.getByText('Card title')).toBeInTheDocument()
+    expect(await screen.findByText('Card title')).toBeInTheDocument()
     expect(screen.getByText('Card content')).toBeInTheDocument()
   })
 
-  it('disables menu button when contextMenuItems are missing', () => {
+  it('disables menu button when contextMenuItems are missing', async () => {
     renderComponent()
 
     expect(
-      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+      await screen.findByRole('button', { name: 'Valmynd fyrir Card title' }),
     ).toBeDisabled()
   })
 
-  it('enables menu button when contextMenuItems are provided', () => {
+  it('enables menu button when contextMenuItems are provided', async () => {
     renderComponent([{ title: 'Action' }])
 
     expect(
-      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+      await screen.findByRole('button', { name: 'Valmynd fyrir Card title' }),
     ).toBeEnabled()
   })
 
-  it('stops click propagation when menu button is clicked', () => {
+  it('stops click propagation when menu button is clicked', async () => {
     const parentOnClick = jest.fn()
 
     render(
@@ -75,7 +75,7 @@ describe('ContextMenuCard', () => {
     )
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Valmynd fyrir Card title' }),
+      await screen.findByRole('button', { name: 'Valmynd fyrir Card title' }),
     )
 
     expect(parentOnClick).not.toHaveBeenCalled()
