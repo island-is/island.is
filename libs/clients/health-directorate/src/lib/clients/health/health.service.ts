@@ -542,7 +542,9 @@ export class HealthDirectorateHealthService {
     from?: Date,
     statuses?: UserVisibleAppointmentStatuses[],
   ): Promise<AppointmentBaseDto[] | null> {
-    const defaultFrom = new Date()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const defaultFrom = today
 
     const appointments = await withAuthContext(auth, () =>
       data(
