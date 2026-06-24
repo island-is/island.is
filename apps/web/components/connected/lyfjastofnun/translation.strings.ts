@@ -95,6 +95,7 @@ export const m = defineMessages({
   errorMessage: {
     id: 'web.lyfjastofnunHealthProviders:errorMessage',
     defaultMessage: 'Villa kom upp við að sækja gögn',
-    description: 'Error message shown when health provider data cannot be fetched',
+    description:
+      'Error message shown when health provider data cannot be fetched',
   },
 })

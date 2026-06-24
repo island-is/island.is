@@ -1,4 +1,7 @@
-import { ConnectedComponent, IcelandicMedicinesAgencyPharmacyRegion } from '@island.is/web/graphql/schema'
+import {
+  ConnectedComponent,
+  IcelandicMedicinesAgencyPharmacyRegion,
+} from '@island.is/web/graphql/schema'
 
 export type Datasource = 'pharmacies' | 'medicalClinics' | 'wholesalers'
 
