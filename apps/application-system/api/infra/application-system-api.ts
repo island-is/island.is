@@ -54,6 +54,7 @@ import {
   PracticalExams,
   RentalService,
   FireCompensation,
+  PropertySearch,
   VMSTUnemployment,
   RecyclingFund,
 } from '../../../../infra/src/dsl/xroad'
@@ -402,6 +403,7 @@ export const serviceSetup = (services: {
       EnergyFunds,
       Finance,
       FireCompensation,
+      PropertySearch,
       Properties,
       RskCompanyInfo,
       RskCarRentalRate,
