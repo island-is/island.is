@@ -33,6 +33,10 @@ const SelectCourtOfficials = () => {
     const previousJudge = workingCase.judge
     const selectedJudge = judges?.find((judge) => judge.value === judgeId)?.user
 
+    if (!selectedJudge) {
+      return
+    }
+
     // Optimistic update so the dropdown reflects the choice immediately
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
