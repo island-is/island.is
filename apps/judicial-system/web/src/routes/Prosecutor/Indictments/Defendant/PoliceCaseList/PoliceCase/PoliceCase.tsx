@@ -47,6 +47,7 @@ export interface PoliceCaseUpdate {
 interface Props {
   index: number
   policeCaseNumber: string
+  mainLokePoliceCaseNumber?: string
   setPoliceCase: (update: PoliceCaseUpdate) => void
   updatePoliceCase: (update?: PoliceCaseUpdate) => void
   deletePoliceCase?: () => void
@@ -55,6 +56,7 @@ interface Props {
 export const PoliceCase: FC<Props> = ({
   index,
   policeCaseNumber,
+  mainLokePoliceCaseNumber,
   setPoliceCase,
   updatePoliceCase,
   deletePoliceCase,
@@ -176,7 +178,7 @@ export const PoliceCase: FC<Props> = ({
 
   const isPoliceCaseNumberImmutable =
     workingCase.origin === CaseOrigin.LOKE &&
-    policeCaseNumber === workingCase.policeCaseNumbers?.[0]
+    policeCaseNumber === mainLokePoliceCaseNumber
 
   return (
     <BlueBox className={styles.grid}>

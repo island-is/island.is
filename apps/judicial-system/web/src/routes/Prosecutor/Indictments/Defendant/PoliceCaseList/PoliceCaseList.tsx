@@ -52,6 +52,18 @@ interface Checkpoint {
   update?: IndexedPoliceCaseUpdate
 }
 
+const getMainLokePoliceCaseNumber = (
+  origin: CaseOrigin | null | undefined,
+  policeCaseNumbers: string[] | null | undefined,
+): string | undefined => {
+  if (origin !== CaseOrigin.LOKE) {
+    return undefined
+  }
+
+  // Index 0 is the LOKE main identifier (first registered on the case).
+  return policeCaseNumbers?.[0]
+}
+
 export const PoliceCaseList = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
@@ -64,6 +76,15 @@ export const PoliceCaseList = () => {
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
     [workingCase.defendants],
+  )
+
+  const mainLokePoliceCaseNumber = useMemo(
+    () =>
+      getMainLokePoliceCaseNumber(
+        workingCase.origin,
+        workingCase.policeCaseNumbers,
+      ),
+    [workingCase.origin, workingCase.policeCaseNumbers],
   )
 
   const policeCases: TPoliceCase[] = useMemo(() => {
@@ -95,14 +116,14 @@ export const PoliceCaseList = () => {
     }
 
     if (policeCases.length > 1 && policeCases[0].number !== '') {
-      const mainPoliceCaseNumber = workingCase.policeCaseNumbers?.[0]
-
-      if (workingCase.origin === CaseOrigin.LOKE && mainPoliceCaseNumber) {
+      if (workingCase.origin === CaseOrigin.LOKE && mainLokePoliceCaseNumber) {
         const mainCase = policeCases.find(
-          (policeCase) => policeCase.number === mainPoliceCaseNumber,
+          (policeCase) => policeCase.number === mainLokePoliceCaseNumber,
         )
         const rest = policeCases
-          .filter((policeCase) => policeCase.number !== mainPoliceCaseNumber)
+          .filter(
+            (policeCase) => policeCase.number !== mainLokePoliceCaseNumber,
+          )
           .sort(byDate)
 
         if (mainCase) {
@@ -121,7 +142,7 @@ export const PoliceCaseList = () => {
     }, {} as { [key: string]: string })
 
     return policeCases
-  }, [workingCase])
+  }, [workingCase, mainLokePoliceCaseNumber])
 
   const getWorkingCaseUpdates = (
     policeCases: TPoliceCase[],
@@ -172,15 +193,13 @@ export const PoliceCaseList = () => {
       crimeScenes[number] = crimeScene
     })
 
-    const mainPoliceCaseNumber = workingCase.policeCaseNumbers?.[0]
-
     const policeCaseNumbers =
-      workingCase.origin === CaseOrigin.LOKE && mainPoliceCaseNumber
+      workingCase.origin === CaseOrigin.LOKE && mainLokePoliceCaseNumber
         ? // The main LÖKE number must stay at index 0 in the stored array
           [
-            mainPoliceCaseNumber,
+            mainLokePoliceCaseNumber,
             ...unsortedPoliceCaseNumbers
-              .filter((number) => number !== mainPoliceCaseNumber)
+              .filter((number) => number !== mainLokePoliceCaseNumber)
               .sort(compare),
           ]
         : unsortedPoliceCaseNumbers.sort(compare)
@@ -519,6 +538,7 @@ export const PoliceCaseList = () => {
                 <PoliceCase
                   index={index}
                   policeCaseNumber={policeCase.number}
+                  mainLokePoliceCaseNumber={mainLokePoliceCaseNumber}
                   setPoliceCase={(update: PoliceCaseUpdate) =>
                     handleSetPoliceCase({ index, update })
                   }
@@ -526,7 +546,7 @@ export const PoliceCaseList = () => {
                     workingCase.policeCaseNumbers.length > 1 &&
                     !(
                       workingCase.origin === CaseOrigin.LOKE &&
-                      policeCase.number === workingCase.policeCaseNumbers[0]
+                      policeCase.number === mainLokePoliceCaseNumber
                     )
                       ? () => handleDeletePoliceCase(index)
                       : undefined
