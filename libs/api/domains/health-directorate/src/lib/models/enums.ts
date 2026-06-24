@@ -105,6 +105,7 @@ export enum AppointmentAssigneeTypeEnum {
   EQUIPMENT = 'EQUIPMENT',
   SERVICE = 'SERVICE',
   OTHER = 'OTHER',
+  TEAM = 'TEAM',
 }
 
 registerEnumType(AppointmentAssigneeTypeEnum, {

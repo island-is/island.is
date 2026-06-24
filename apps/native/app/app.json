@@ -77,13 +77,27 @@
             {
               "scheme": "https",
               "host": "island.is",
-              "pathPrefix": [
-                "/minarsidur/postholf",
-                "/minarsidur/skirteini",
-                "/minarsidur/eignir/fasteignir",
-                "/minarsidur/eignir/okutaeki/min-okutaeki",
-                "/minarsidur/loftbru"
-              ]
+              "pathPrefix": "/minarsidur/postholf"
+            },
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": "/minarsidur/skirteini"
+            },
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": "/minarsidur/eignir/fasteignir"
+            },
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": "/minarsidur/eignir/okutaeki/min-okutaeki"
+            },
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": "/minarsidur/loftbru"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
