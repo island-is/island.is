@@ -1,6 +1,7 @@
 import {
   institutionMapper,
   ApplicationConfigurations,
+  getApplicationPath,
 } from '@island.is/application/types'
 import {
   ApplicationAdmin,
@@ -35,9 +36,7 @@ export const mapAppSystemCards = (
     progress: application.progress,
     slug: ApplicationConfigurations[application.typeId]?.slug,
     org: institutionMapper[application.typeId]?.slug,
-    applicationPath: `umsoknir/${
-      ApplicationConfigurations[application.typeId]?.slug
-    }/${application.id}`,
+    applicationPath: getApplicationPath(application.typeId, application.id),
     orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,

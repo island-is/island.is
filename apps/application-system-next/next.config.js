@@ -93,15 +93,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // The `/bff/:path*` rewrite above proxies through Next's router proxy, which
-  // applies a default `proxyTimeout` of 30s and aborts the upstream socket once
-  // it elapses ("Failed to proxy … socket hang up"). SDF submits run the full
-  // onSubmit template-api actions + state transition synchronously on the API
-  // before responding, which can exceed 30s. Raise the ceiling so the proxy
-  // waits for the real backend response. (Note: `0` is falsy and falls back to
-  // 30s in Next; use a positive value, or `null` to disable entirely.)
+
   experimental: {
-    proxyTimeout: null,
+    proxyTimeout: 5 * 60 * 1000,
   },
   nx: {
     svgr: false,
