@@ -168,7 +168,7 @@ describe('TokenRefreshService', () => {
     })
 
     it('should handle refresh token failure', async () => {
-      // Arrange
+      // Arrange - a transient (non-OAuth2) failure
       const error = new Error('Refresh token failed')
       jest.spyOn(idsService, 'refreshToken').mockRejectedValueOnce(error)
 
@@ -177,10 +177,14 @@ describe('TokenRefreshService', () => {
         cacheKey: testCacheKey,
         encryptedRefreshToken: testRefreshToken,
       })
-      //
-      expect(cachedTokenResponse).toBe(null)
 
-      expect(mockLogger.warn).toHaveBeenCalledWith('Token refresh failed')
+      // Assert - swallowed (returns null) and logged, so a blip does not tear
+      // down a potentially valid session.
+      expect(cachedTokenResponse).toBe(null)
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Failed to refresh tokens: ',
+        error,
+      )
     })
 
     it('should propagate an OAuth2 error (e.g. invalid_grant) so the session can be cleaned up', async () => {
