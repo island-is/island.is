@@ -714,6 +714,49 @@
             },
             "nullable": true
           },
+          "organisation_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisation_kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisation": {
+            "type": "string",
+            "nullable": true,
+            "writeOnly": true
+          },
+          "index_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_payment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractPayment"
+            },
+            "nullable": true
+          },
+          "pay_actual": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayActual"
+            },
+            "nullable": true
+          },
+          "contract_fire_report": {
+            "$ref": "#/components/schemas/ContractFireReport"
+          },
+          "fire_report_document": {
+            "nullable": true
+          },
+          "contract_condition_report": {
+            "$ref": "#/components/schemas/ContractConditionReport"
+          },
+          "condition_report_document": {
+            "nullable": true
+          },
           "contract_document": {
             "type": "array",
             "items": {
@@ -721,9 +764,9 @@
             },
             "nullable": true
           },
-          "organisation": {
-            "type": "string",
-            "nullable": true
+          "info_available": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -760,6 +803,43 @@
         },
         "additionalProperties": false
       },
+      "ContractConditionReport": {
+        "type": "object",
+        "properties": {
+          "contract_condition_report_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "report_done": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "who_carried_out": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "agent_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "report_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "report_time": {
+            "type": "string",
+            "nullable": true
+          },
+          "report_results": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ContractDocumentItem": {
         "type": "object",
         "properties": {
@@ -779,6 +859,11 @@
           "document_last_date": {
             "type": "string",
             "nullable": true
+          },
+          "document_lastdate": {
+            "type": "string",
+            "nullable": true,
+            "writeOnly": true
           },
           "document_mime": {
             "type": "string",
@@ -818,6 +903,11 @@
           "document_last_date": {
             "type": "string",
             "nullable": true
+          },
+          "document_lastdate": {
+            "type": "string",
+            "nullable": true,
+            "writeOnly": true
           },
           "document_mime": {
             "type": "string",
@@ -1103,6 +1193,59 @@
         },
         "additionalProperties": false
       },
+      "ContractFireReport": {
+        "type": "object",
+        "properties": {
+          "contract_fire_report_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "report_done": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "who_carried_out": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "agent_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "report_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "report_time": {
+            "type": "string",
+            "nullable": true
+          },
+          "fire_exit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "extinguisher_no": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "smoke_detector_no": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fire_blanket": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ContractParty": {
         "type": "object",
         "properties": {
@@ -1153,6 +1296,73 @@
             "nullable": true
           },
           "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractPayment": {
+        "type": "object",
+        "properties": {
+          "contract_payment_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pay_method": {
+            "type": "string",
+            "nullable": true
+          },
+          "pay_method_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "pay_frequency": {
+            "type": "string",
+            "nullable": true
+          },
+          "pay_frequency_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "payee_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "payer_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "first_pay": {
+            "type": "string",
+            "nullable": true
+          },
+          "pay_due_until": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "account_holder": {
+            "type": "string",
+            "nullable": true
+          },
+          "iban": {
+            "type": "string",
+            "nullable": true
+          },
+          "swift_bic": {
+            "type": "string",
+            "nullable": true
+          },
+          "party_share": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "payment_desc": {
             "type": "string",
             "nullable": true
           }
@@ -1235,6 +1445,17 @@
           },
           "property_details": {
             "type": "string",
+            "nullable": true
+          },
+          "reg_section_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "reg_usage_text": {
+            "type": "string",
+            "nullable": true
+          },
+          "property_meter": {
             "nullable": true
           }
         },
@@ -1556,6 +1777,26 @@
           },
           "address": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PayActual": {
+        "type": "object",
+        "properties": {
+          "payment_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "calculated_amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "calculated_amount_whole_month": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
