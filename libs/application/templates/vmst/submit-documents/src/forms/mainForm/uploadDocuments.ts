@@ -4,8 +4,9 @@ import {
   buildSection,
   buildSubmitField,
   buildTableRepeaterField,
-  coreMessages,
   getValueViaPath,
+  YES,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { uploadDocuments as udm } from '../../lib/messages'
@@ -71,6 +72,7 @@ export const uploadDocumentsSection = buildSection({
           id: 'documents',
           maxRows: MAX_DOCUMENTS,
           initActiveFieldIfEmpty: true,
+          saveItemButtonText: udm.uploadDocSaveButton,
           fields: {
             type: {
               component: 'select',
@@ -89,14 +91,39 @@ export const uploadDocumentsSection = buildSection({
                 }))
               },
             },
+            checkbox: {
+              component: 'checkbox',
+              required: false,
+              large: false,
+              spacing: 0,
+              backgroundColor: 'white',
+              options: [
+                {
+                  label: udm.checkboxLabel,
+                  value: YES,
+                },
+              ],
+              displayInTable: false,
+            },
             file: {
               component: 'fileUpload',
-              required: true,
               label: udm.fileLabel,
               uploadAccept: '.pdf,.docx,.rtf,.doc,.jpg,.jpeg,.png,.heic',
+              condition: (_, activeField) => {
+                const checkbox =
+                  activeField?.checkbox as unknown as Array<string>
+                if (checkbox && checkbox.includes(YES)) return false
+                return true
+              },
             },
             comment: {
               component: 'input',
+              required: (_, activeField) => {
+                const checkbox =
+                  activeField?.checkbox as unknown as Array<string>
+                if (checkbox && checkbox.includes(YES)) return true
+                return false
+              },
               label: udm.commentLabel,
               width: 'full',
               textarea: true,
@@ -132,7 +159,7 @@ export const uploadDocumentsSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: coreMessages.buttonNext,
+              name: udm.submitNextButton,
               type: 'primary',
             },
           ],
