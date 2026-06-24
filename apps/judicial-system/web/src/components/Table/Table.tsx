@@ -30,7 +30,10 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import { areAllDefenderDefendantsCancelledOrDismissed } from '../../utils/utils'
+import {
+  areAllDefenderDefendantsCancelledOrDismissed,
+  onEnterOrSpace,
+} from '../../utils/utils'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
@@ -323,14 +326,11 @@ const Table: FC<TableProps> = (props) => {
                     handleCaseClick(row)
                   }
                 }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    if (!isRowDisabled) {
-                      handleCaseClick(row)
-                    }
+                onKeyDown={onEnterOrSpace(() => {
+                  if (!isRowDisabled) {
+                    handleCaseClick(row)
                   }
-                }}
+                })}
                 data-testid="tableRow"
               >
                 {columns.map((td) => (

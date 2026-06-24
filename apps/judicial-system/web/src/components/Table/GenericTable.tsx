@@ -7,6 +7,7 @@ import {
   ContextMenu,
   ContextMenuItem,
 } from '@island.is/judicial-system-web/src/components'
+import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
@@ -118,14 +119,7 @@ const GenericTable = <Cell,>({
               aria-disabled={r.isDisabled}
               className={styles.tableRowContainer}
               onClick={() => !r.isDisabled && r.onClick()}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault()
-                  if (!r.isDisabled) {
-                    r.onClick()
-                  }
-                }
-              }}
+              onKeyDown={onEnterOrSpace(() => !r.isDisabled && r.onClick())}
             >
               {r.cells.map((cell, idx) => (
                 <td key={idx}>{columns[idx].render(cell)}</td>
