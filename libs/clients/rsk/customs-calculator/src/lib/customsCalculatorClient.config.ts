@@ -14,7 +14,7 @@ export const CustomsCalculatorClientConfig = defineConfig({
   schema,
   load: (env) => ({
     baseUrl: env.required(
-      'SKATTUR_TOLLUR_REIKNIVEL_BASE_PATH',
+      'SKATTUR_TOLLUR_REIKNIVEL_BASE_URL',
       'https://skatt-test.hysing.is/gateway/tollur-reiknivel/v1',
     ),
     username: env.required('SKATTUR_TOLLUR_REIKNIVEL_USERNAME', ''),
