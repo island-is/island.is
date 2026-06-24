@@ -10,14 +10,12 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   NationalRegistryV3UserApi,
-  TeachersApi,
   JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   QualityPhotoApi,
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
-  ExistingApplicationApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
@@ -90,7 +88,6 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryV3UserApi,
-                TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
@@ -105,14 +102,6 @@ const template: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
-                ExistingApplicationApi.configure({
-                  params: {
-                    states: [States.PAYMENT, States.DRAFT],
-                    where: {
-                      applicant: 'applicant',
-                    },
-                  },
-                }),
               ],
             },
           ],
