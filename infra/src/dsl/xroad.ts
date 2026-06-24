@@ -31,9 +31,8 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   }
 }
 
-export type XRoadEnvs<
-  T extends XroadSectionConfig
-> = T extends XroadSectionConfig ? keyof T['env'] : never
+export type XRoadEnvs<T extends XroadSectionConfig> =
+  T extends XroadSectionConfig ? keyof T['env'] : never
 
 export const Base = new XroadConf({
   env: {
@@ -204,11 +203,9 @@ export const Payment = new XroadConf({
       prod: 'IS/GOV/5402697509/FJS-Public',
     },
     XROAD_PAYMENT_BASE_CALLBACK_URL: {
-      dev:
-        'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
+      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
       staging: 'XROAD:',
-      prod:
-        'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
+      prod: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
     },
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
   },
@@ -238,14 +235,12 @@ export const Finance = new XroadConf({
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
     },
     XROAD_HMS_HOUSING_BENEFITS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
     },
   },
 })
@@ -265,8 +260,7 @@ export const FireCompensation = new XroadConf({
     XROAD_HMS_APPLICATION_SYSTEM_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
     },
     XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
@@ -281,8 +275,7 @@ export const Properties = new XroadConf({
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
     },
   },
   secrets: {
@@ -296,8 +289,7 @@ export const PropertySearch = new XroadConf({
     XROAD_HMS_PROPERTY_SEARCH_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
     },
     XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
@@ -312,8 +304,7 @@ export const RentalService = new XroadConf({
     XROAD_HMS_RENTAL_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
     },
     XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
@@ -556,8 +547,7 @@ export const NationalRegistryB2C = new XroadConf({
       prod: '636b16a3-7f61-4eca-84cb-71e2ad106adb',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev:
-        'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
+      dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
         'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
       prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
@@ -593,8 +583,7 @@ export const NationalRegistryAuthB2C = new XroadConf({
       prod: '4b24e151-0aac-4b88-8d32-301ef7fe9d54',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev:
-        'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
+      dev: 'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
       staging:
         'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token',
       prod: 'https://identity.skra.is/identity.skra.is/oauth2/v2.0/token',
@@ -773,8 +762,7 @@ export const VehiclesMileage = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
       staging:
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
     },
   },
 })
@@ -837,15 +825,13 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
       staging:
         'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
         'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
@@ -1005,12 +991,10 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
 export const JudicialSystemServicePortal = new XroadConf({
   env: {
     XROAD_JUDICIAL_SYSTEM_SP_PATH: {
-      dev:
-        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       staging:
         'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
-      prod:
-        'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
     },
   },
 })
