@@ -39,7 +39,7 @@ export const PrimarySchool = () => {
             type="no_data"
             noBorder={false}
             title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
+            message={formatMessage(psm.assessmentNoData)}
             imgSrc="./assets/images/sofa.svg"
           />
         </Box>
