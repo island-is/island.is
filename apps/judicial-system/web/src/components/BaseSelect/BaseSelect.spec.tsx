@@ -33,8 +33,6 @@ describe('<BaseSelect />', () => {
       />,
     )
 
-    expect(screen.getByRole('combobox')).toHaveAccessibleName(
-      'Veldu málsaðila',
-    )
+    expect(screen.getByRole('combobox')).toHaveAccessibleName('Veldu málsaðila')
   })
 })
