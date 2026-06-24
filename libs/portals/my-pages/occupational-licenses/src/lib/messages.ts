@@ -371,4 +371,16 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:sailor-sea-service-page-size',
     defaultMessage: 'Fjöldi á síðu',
   },
+  sailorSeaServiceClearFilters: {
+    id: 'sp.occupational-licenses:sailor-sea-service-clear-filters',
+    defaultMessage: 'Hreinsa síur',
+  },
+  sailorSeaServiceShipSpecs: {
+    id: 'sp.occupational-licenses:sailor-sea-service-ship-specs',
+    defaultMessage: 'Eiginleikar skips',
+  },
+  sailorSeaServiceDateRange: {
+    id: 'sp.occupational-licenses:sailor-sea-service-date-range',
+    defaultMessage: 'Veldu tímabil',
+  },
 })

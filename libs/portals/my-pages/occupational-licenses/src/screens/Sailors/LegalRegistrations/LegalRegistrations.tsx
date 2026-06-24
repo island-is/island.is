@@ -28,7 +28,7 @@ const LegalRegistrations = () => {
         tooltip: formatMessage(m.sailorsTooltip),
       }}
     >
-      <Box marginBottom={5}>
+      <Box marginTop={5} marginBottom={5}>
         <Tabs
           label={formatMessage(om.sailorCrewRegistrationsTabsLabel)}
           contentBackground="white"

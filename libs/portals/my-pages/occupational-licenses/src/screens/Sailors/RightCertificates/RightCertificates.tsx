@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, FilterInput, Stack, Text } from '@island.is/island-ui/core'
+import { Box, FilterInput, GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -10,6 +10,7 @@ import {
   formatDate,
   m,
   SAMGONGUSTOFA_SLUG,
+  useIsMobile,
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -23,15 +24,15 @@ const columnHelper = createColumnHelper<ShipRegistrySailorRightCertificate>()
 const RightCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage } = useLocale()
-
+  const { isMobile } = useIsMobile()
   const { data, loading, error } = useShipRegistrySailorRightCertificatesQuery()
-  const rightCertificates =
-    data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
 
   const [search, setSearch] = useState('')
   const filtered = useMemo(
     () =>
-      rightCertificates.filter(
+      (
+        data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
+      ).filter(
         (c) =>
           !search ||
           (c.type ?? '').toLowerCase().includes(search.toLowerCase()) ||
@@ -39,8 +40,7 @@ const RightCertificates = () => {
             .toLowerCase()
             .includes(search.toLowerCase()),
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rightCertificates, search],
+    [data, search],
   )
 
   const columns = useMemo(
@@ -64,22 +64,37 @@ const RightCertificates = () => {
     [formatMessage],
   )
 
-  const renderExpandedRow = (row: Row<ShipRegistrySailorRightCertificate>) => (
-    <NestedTable
-      data={[
-        {
-          title: formatMessage(om.licenseNumber),
-          value: row.original.certificateNumber ?? '-',
-        },
-        {
-          title: formatMessage(om.sailorRightCertificatesExpandIssueDate),
-          value: row.original.issueDate
-            ? formatDate(new Date(row.original.issueDate))
-            : '-',
-        },
-      ]}
-    />
-  )
+  const renderExpandedRow = (row: Row<ShipRegistrySailorRightCertificate>) => {
+    const nestedData = [
+      {
+        title: formatMessage(om.licenseNumber),
+        value: row.original.certificateNumber ?? '-',
+      },
+      {
+        title: formatMessage(om.sailorRightCertificatesExpandIssueDate),
+        value: row.original.issueDate
+          ? formatDate(new Date(row.original.issueDate))
+          : '-',
+      },
+    ]
+    if (isMobile) {
+      return (
+        <Box>
+          {nestedData.map(({ title, value }) => (
+            <Box key={title} display="flex" flexDirection="row" marginBottom={1}>
+              <Box width="half" display="flex" alignItems="center">
+                <Text fontWeight="semiBold">{title}</Text>
+              </Box>
+              <Box width="half">
+                <Text>{value}</Text>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      )
+    }
+    return <NestedTable data={nestedData} />
+  }
 
   return (
     <IntroWrapper
@@ -96,32 +111,36 @@ const RightCertificates = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && rightCertificates.length === 0 && (
+      {!loading && !error && !data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
         <Problem type="no_data" noBorder={false} />
       )}
-      {!loading && !error && rightCertificates.length > 0 && (
-        <Stack space={2}>
-          <Box width="half">
-            <FilterInput
-              name="rightCertificateSearch"
-              placeholder={formatMessage(m.inputSearchTerm)}
-              value={search}
-              onChange={(val) => setSearch(val)}
-              backgroundColor="blue"
-            />
-          </Box>
-          {filtered.length === 0 ? (
-            <Problem type="no_data" noBorder={false} />
-          ) : (
-            <Table
-              columns={columns}
-              data={filtered}
-              emptyMessage={om.sailorRightCertificatesEmpty}
-              mobileTitleKey="type"
-              renderExpandedRow={renderExpandedRow}
-            />
-          )}
-        </Stack>
+      {!loading && !error && !!data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
+        <Box marginTop={5}>
+          <Stack space={3}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <FilterInput
+                  name="rightCertificateSearch"
+                  placeholder={formatMessage(m.inputSearchTerm)}
+                  value={search}
+                  onChange={(val) => setSearch(val)}
+                  backgroundColor="blue"
+                />
+              </GridColumn>
+            </GridRow>
+            {filtered.length === 0 ? (
+              <Problem type="no_data" noBorder={false} />
+            ) : (
+              <Table
+                columns={columns}
+                data={filtered}
+                emptyMessage={om.sailorRightCertificatesEmpty}
+                mobileTitleKey="type"
+                renderExpandedRow={renderExpandedRow}
+              />
+            )}
+          </Stack>
+        </Box>
       )}
     </IntroWrapper>
   )

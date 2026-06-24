@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, FilterInput, Stack } from '@island.is/island-ui/core'
+import { Box, FilterInput, GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -10,6 +10,7 @@ import {
   formatDate,
   m,
   SAMGONGUSTOFA_SLUG,
+  useIsMobile,
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -23,7 +24,7 @@ const columnHelper = createColumnHelper<ShipRegistrySailorSchoolCertificate>()
 const CompetencyCertificates = () => {
   useNamespaces('sp.occupational-licenses')
   const { formatMessage } = useLocale()
-
+  const { isMobile } = useIsMobile()
   const { data, loading, error } =
     useShipRegistrySailorSchoolCertificatesQuery()
 
@@ -55,22 +56,37 @@ const CompetencyCertificates = () => {
     [formatMessage],
   )
 
-  const renderExpandedRow = (row: Row<ShipRegistrySailorSchoolCertificate>) => (
-    <NestedTable
-      data={[
-        {
-          title: formatMessage(om.sailorSchoolCertificatesExpandSchool),
-          value: row.original.school ?? '-',
-        },
-        {
-          title: formatMessage(om.sailorSchoolCertificatesExpandIssueDate),
-          value: row.original.issueDate
-            ? formatDate(new Date(row.original.issueDate))
-            : '-',
-        },
-      ]}
-    />
-  )
+  const renderExpandedRow = (row: Row<ShipRegistrySailorSchoolCertificate>) => {
+    const nestedData = [
+      {
+        title: formatMessage(om.sailorSchoolCertificatesExpandSchool),
+        value: row.original.school ?? '-',
+      },
+      {
+        title: formatMessage(om.sailorSchoolCertificatesExpandIssueDate),
+        value: row.original.issueDate
+          ? formatDate(new Date(row.original.issueDate))
+          : '-',
+      },
+    ]
+    if (isMobile) {
+      return (
+        <Box>
+          {nestedData.map(({ title, value }) => (
+            <Box key={title} display="flex" flexDirection="row" marginBottom={1}>
+              <Box width="half" display="flex" alignItems="center">
+                <Text fontWeight="semiBold">{title}</Text>
+              </Box>
+              <Box width="half">
+                <Text>{value}</Text>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      )
+    }
+    return <NestedTable data={nestedData} />
+  }
 
   return (
     <IntroWrapper
@@ -89,16 +105,19 @@ const CompetencyCertificates = () => {
         <Problem type="no_data" noBorder={false} />
       )}
       {!loading && !error && (filtered.length > 0 || search) && (
-        <Stack space={2}>
-          <Box width="half">
-            <FilterInput
-              name="schoolCertificateSearch"
-              placeholder={formatMessage(m.inputSearchTerm)}
-              value={search}
-              onChange={(val) => setSearch(val)}
-              backgroundColor="blue"
-            />
-          </Box>
+        <Box marginTop={5}>
+        <Stack space={3}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/12']}>
+              <FilterInput
+                name="schoolCertificateSearch"
+                placeholder={formatMessage(m.inputSearchTerm)}
+                value={search}
+                onChange={(val) => setSearch(val)}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
           {filtered.length === 0 ? (
             <Problem type="no_data" noBorder={false} />
           ) : (
@@ -111,6 +130,7 @@ const CompetencyCertificates = () => {
             />
           )}
         </Stack>
+        </Box>
       )}
     </IntroWrapper>
   )

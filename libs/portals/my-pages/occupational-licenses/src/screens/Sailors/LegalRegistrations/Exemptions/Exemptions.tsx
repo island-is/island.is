@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, FilterInput, Text } from '@island.is/island-ui/core'
+import { Box, FilterInput, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   LinkButton,
+  NestedLines,
   NestedTable,
   Table,
   createColumnHelper,
   formatDate,
   m,
+  useIsMobile,
   type Row,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -21,6 +23,7 @@ const columnHelper =
 
 export const Exemptions = () => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const [search, setSearch] = useState('')
 
   const { data, loading, error } =
@@ -67,30 +70,30 @@ export const Exemptions = () => {
     [formatMessage],
   )
 
-  const renderExpanded = (
-    row: Row<ShipRegistrySailorRegistrationExemption>,
-  ) => (
-    <NestedTable
-      data={[
-        {
-          title: formatMessage(om.sailorCrewRegistrationsExpandShipNo),
-          value: row.original.shipRegistrationNumber ?? '-',
-        },
-        {
-          title: formatMessage(om.sailorCrewRegistrationsExpandAdvertised),
-          value: row.original.advertised ?? '-',
-        },
-        {
-          title: formatMessage(om.sailorCrewRegistrationsExpandLowerRank),
-          value: row.original.exemptionLowerCertificateStatus ?? '-',
-        },
-        {
-          title: formatMessage(om.sailorCrewRegistrationsExpandDays),
-          value: String(row.original.numberOfDays ?? '-'),
-        },
-      ]}
-    />
-  )
+  const renderExpanded = (row: Row<ShipRegistrySailorRegistrationExemption>) => {
+    const nestedData = [
+      {
+        title: formatMessage(om.sailorCrewRegistrationsExpandShipNo),
+        value: row.original.shipRegistrationNumber ?? '-',
+      },
+      {
+        title: formatMessage(om.sailorCrewRegistrationsExpandAdvertised),
+        value: row.original.advertised ?? '-',
+      },
+      {
+        title: formatMessage(om.sailorCrewRegistrationsExpandLowerRank),
+        value: row.original.exemptionLowerCertificateStatus ?? '-',
+      },
+      {
+        title: formatMessage(om.sailorCrewRegistrationsExpandDays),
+        value: String(row.original.numberOfDays ?? '-'),
+      },
+    ]
+    if (isMobile) {
+      return <NestedLines data={nestedData} />
+    }
+    return <NestedTable data={nestedData} />
+  }
 
   return (
     <Box>
@@ -111,16 +114,20 @@ export const Exemptions = () => {
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>
-          <Box marginTop={6} width="half">
-            <FilterInput
-              name="exemptionSearch"
-              placeholder={formatMessage(m.inputSearchTerm)}
-              value={search}
-              onChange={(val) => setSearch(val)}
-              backgroundColor="blue"
-            />
+          <Box marginTop={6}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <FilterInput
+                  name="exemptionSearch"
+                  placeholder={formatMessage(m.inputSearchTerm)}
+                  value={search}
+                  onChange={(val) => setSearch(val)}
+                  backgroundColor="blue"
+                />
+              </GridColumn>
+            </GridRow>
           </Box>
-          <Box marginTop={2}>
+          <Box marginTop={3}>
             {filtered.length === 0 ? (
               <Problem type="no_data" noBorder={false} />
             ) : (

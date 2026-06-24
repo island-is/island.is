@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, FilterInput, Text } from '@island.is/island-ui/core'
+import { Box, FilterInput, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import {
   CardLoader,
   LinkButton,
@@ -74,16 +74,20 @@ export const SeaServiceBooks = () => {
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && (
         <>
-          <Box marginTop={6} width="half">
-            <FilterInput
-              name="maritimeSearch"
-              placeholder={formatMessage(m.inputSearchTerm)}
-              value={search}
-              onChange={(val) => setSearch(val)}
-              backgroundColor="blue"
-            />
+          <Box marginTop={6}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <FilterInput
+                  name="maritimeSearch"
+                  placeholder={formatMessage(m.inputSearchTerm)}
+                  value={search}
+                  onChange={(val) => setSearch(val)}
+                  backgroundColor="blue"
+                />
+              </GridColumn>
+            </GridRow>
           </Box>
-          <Box marginTop={2}>
+          <Box marginTop={3}>
             {filtered.length === 0 ? (
               <Problem type="no_data" noBorder={false} />
             ) : (
