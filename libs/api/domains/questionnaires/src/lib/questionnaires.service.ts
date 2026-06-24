@@ -336,7 +336,7 @@ export class QuestionnairesService {
                             ? formatMessage(m.yes)
                             : formatMessage(m.no),
                         ]
-                      } else {
+                      } else if (reply.answer != null) {
                         // StringReplyDto, NumberReplyDto, DateReplyDto
                         values = [String(reply.answer)]
                       }

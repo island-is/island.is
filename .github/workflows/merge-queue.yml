@@ -258,6 +258,13 @@ jobs:
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         uses: actions/checkout@v4
 
+      - name: Record deploy start time
+        id: dora-start
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        uses: ./.github/actions/dora-deployment
+        with:
+          mode: start
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
@@ -288,6 +295,15 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+
+      - name: Send DORA deployment events
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
+        uses: ./.github/actions/dora-deployment
+        with:
+          mode: finish
+          dd-api-key: ${{ secrets.DD_API_KEY }}
+          environment: ${{ contains(github.event.merge_group.base_ref || github.ref_name, 'release/') && 'prod' || 'dev' }}
+          started-at: ${{ steps.dora-start.outputs.started-at }}
       - name: Update judicial system
         id: judicial-system
         if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}

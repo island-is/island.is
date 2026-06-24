@@ -115,6 +115,10 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           userRole: UserRole.DEFENDER,
           defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
         },
         { transaction },
       )
@@ -149,6 +153,10 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
           appealCaseId,
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           userRole: UserRole.DEFENDER,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
         },
         { transaction },
       )

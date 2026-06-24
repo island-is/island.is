@@ -19,6 +19,29 @@ export const fieldReducer = (
       }
       return setMultipleFieldValues(state, id, values, valueIndex)
     }
+    case 'SET_ASSET_VALUE': {
+      const {
+        registrationNumber,
+        model,
+        color,
+        propertyNumber,
+        address,
+        postalCode,
+        municipality,
+        id,
+        valueIndex,
+      } = action.payload
+      const values = {
+        registrationNumber,
+        model,
+        color,
+        propertyNumber,
+        address,
+        postalCode,
+        municipality,
+      }
+      return setMultipleFieldValues(state, id, values, valueIndex)
+    }
     case 'SET_CHECKBOX_VALUE': {
       const { value, id, valueIndex } = action.payload
       return setFieldValue(state, 'checkboxValue', id, value, valueIndex)

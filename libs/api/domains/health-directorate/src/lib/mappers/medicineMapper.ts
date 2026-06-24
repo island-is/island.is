@@ -55,8 +55,10 @@ export const mapPrescriptionRenewalStatus = (
       return PrescribedItemRenewalStatusEnum.Rejected
     case PrescriptionRenewalStatusDisplay.DISMISSED:
       return PrescribedItemRenewalStatusEnum.Dismissed
-    default:
+    case PrescriptionRenewalStatusDisplay.PENDING:
       return PrescribedItemRenewalStatusEnum.Pending
+    default:
+      return PrescribedItemRenewalStatusEnum.Unknown
   }
 }
 
