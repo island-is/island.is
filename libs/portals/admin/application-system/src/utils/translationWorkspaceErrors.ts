@@ -1,8 +1,31 @@
 import { ApolloError } from '@apollo/client'
-import { findProblemInApolloError } from '@island.is/shared/problem'
+import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
 
 /** Toasts should not show multi-line stack traces or huge Sequelize messages. */
 export const TOAST_ERROR_MAX_LENGTH = 240
+
+export const isTranslationAccessForbiddenError = (
+  error: ApolloError,
+): boolean => {
+  const problem = findProblemInApolloError(error, [ProblemType.HTTP_FORBIDDEN])
+  if (problem) {
+    return true
+  }
+
+  if (
+    error.graphQLErrors.some(
+      (graphQlError) =>
+        graphQlError.message.includes('403') ||
+        graphQlError.message.includes('Forbidden') ||
+        graphQlError.message.includes('do not have access'),
+    )
+  ) {
+    return true
+  }
+
+  const networkError = error.networkError as { statusCode?: number } | null
+  return networkError?.statusCode === 403
+}
 
 export const shortenForToast = (text: string): string => {
   const firstLine = text.trim().split(/\r?\n/)[0] ?? ''

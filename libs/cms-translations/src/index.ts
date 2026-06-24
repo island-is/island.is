@@ -1,6 +1,7 @@
 export * from './lib/cms-translations.module'
 export * from './lib/cms-translations.resolver'
 export * from './lib/cms-translations.service'
+export * from './lib/application-translation.cache'
 export * from './lib/application-translation.namespaces'
 export * from './lib/application-translation-http.provider'
 export * from './lib/application-translation-http.module'

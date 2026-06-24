@@ -22,6 +22,7 @@ import type {
 } from '../../types/translationWorkspace'
 import {
   getTranslationSaveErrorDetail,
+  isTranslationAccessForbiddenError,
   shortenForToast,
 } from '../../utils/translationWorkspaceErrors'
 import { PREVIEW_EXCLUDED_FIELD_TYPES } from '../../utils/translationWorkspaceFieldConstants'
@@ -628,6 +629,9 @@ export const TranslationWorkspace = () => {
 
   const loadError = error ?? translationsError
   if (loadError) {
+    if (isTranslationAccessForbiddenError(loadError)) {
+      return <TranslationWorkspaceNotFound />
+    }
     return <TranslationWorkspaceError loadError={loadError} />
   }
 

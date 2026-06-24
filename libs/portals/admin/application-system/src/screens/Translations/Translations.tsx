@@ -12,25 +12,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ApplicationConfigurations } from '@island.is/application/types'
-
-interface TemplateItem {
-  typeId: string
-  slug: string
-  translationNamespaces: string[]
-}
+import { useGetApplicationTemplateListQuery } from '../../queries/translations.generated'
+import {
+  getTranslationSaveErrorDetail,
+  isTranslationAccessForbiddenError,
+} from '../../utils/translationWorkspaceErrors'
 
 const PAGE_SIZE = 20
-
-const allTemplates: TemplateItem[] = Object.entries(
-  ApplicationConfigurations,
-).map(([typeId, config]) => ({
-  typeId,
-  slug: config.slug,
-  translationNamespaces: Array.isArray(config.translation)
-    ? config.translation
-    : [config.translation],
-}))
 
 const Translations = () => {
   const { formatMessage } = useLocale()
@@ -38,14 +26,42 @@ const Translations = () => {
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1)
 
-  const filtered = allTemplates.filter(
-    (t) =>
-      t.slug.toLowerCase().includes(searchValue.toLowerCase()) ||
-      t.typeId.toLowerCase().includes(searchValue.toLowerCase()),
+  const { data, loading, error } = useGetApplicationTemplateListQuery({
+    ssr: false,
+  })
+
+  const templates = data?.applicationTemplateList ?? []
+
+  const filtered = templates.filter(
+    (template) =>
+      template.slug.toLowerCase().includes(searchValue.toLowerCase()) ||
+      template.typeId.toLowerCase().includes(searchValue.toLowerCase()),
   )
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  if (loading) {
+    return (
+      <Box>
+        <SkeletonLoader height={48} repeat={6} space={2} />
+      </Box>
+    )
+  }
+
+  if (error) {
+    const detail = getTranslationSaveErrorDetail(error)
+    const isForbidden = isTranslationAccessForbiddenError(error)
+    return (
+      <Box marginTop={3}>
+        <Text color="red600">
+          {isForbidden
+            ? 'You do not have access to view application translations.'
+            : detail || error.message}
+        </Text>
+      </Box>
+    )
+  }
 
   return (
     <Box>

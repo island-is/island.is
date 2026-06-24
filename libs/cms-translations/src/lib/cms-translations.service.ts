@@ -11,6 +11,8 @@ import { ContentfulRepository } from '@island.is/cms'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Locale } from '@island.is/shared/types'
 
+import { getApplicationTranslationCacheKey } from './application-translation.cache'
+
 export type TranslationsDict = Record<string, string>
 
 export const APPLICATION_TRANSLATION_PROVIDER =
@@ -83,11 +85,17 @@ export class CmsTranslationsService {
     )
   }
 
+  invalidateApplicationTranslationCache = async (
+    namespace: string,
+  ): Promise<void> => {
+    await this.cacheManager.del(getApplicationTranslationCacheKey(namespace))
+  }
+
   private getNamespaceMessagesFromDb = async (
     namespace: string,
     lang: Locale,
   ): Promise<Messages> => {
-    const cacheKey = `app-translation:${namespace}`
+    const cacheKey = getApplicationTranslationCacheKey(namespace)
     const cache = await this.cacheManager.get(cacheKey)
     if (cache) {
       return cache as Messages

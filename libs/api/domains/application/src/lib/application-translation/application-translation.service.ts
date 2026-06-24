@@ -1,4 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import type {
   ApplicationTranslationGql,
@@ -27,13 +35,13 @@ export class ApplicationTranslationApiService {
   private getAuthorizationHeader(user: User): string {
     const raw = user.authorization
     if (!raw) {
-      throw new Error(
+      throw new UnauthorizedException(
         'Missing authorization token for application translation API',
       )
     }
     const token = raw.replace(/^Bearer\s+/i, '').trim()
     if (!token) {
-      throw new Error(
+      throw new UnauthorizedException(
         'Invalid authorization token for application translation API',
       )
     }
@@ -61,7 +69,7 @@ export class ApplicationTranslationApiService {
         this.config.baseApiUrl.includes('127.0.0.1')
           ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
           : ''
-      throw new Error(
+      throw new ServiceUnavailableException(
         `Could not reach application system API at ${url}: ${
           err instanceof Error ? err.message : String(err)
         }.${hint}`,
@@ -73,14 +81,27 @@ export class ApplicationTranslationApiService {
       try {
         const text = await response.text()
         if (text) {
-          detail = ` — ${text.slice(0, 800)}`
+          detail = text.slice(0, 800)
         }
       } catch {
         // ignore
       }
-      throw new Error(
-        `Translation API error: ${response.status} ${response.statusText}${detail}`,
-      )
+      const message = detail
+        ? `Translation API error: ${response.status} ${response.statusText} — ${detail}`
+        : `Translation API error: ${response.status} ${response.statusText}`
+
+      switch (response.status) {
+        case 401:
+          throw new UnauthorizedException(message)
+        case 403:
+          throw new ForbiddenException(message)
+        case 404:
+          throw new NotFoundException(message)
+        case 503:
+          throw new ServiceUnavailableException(message)
+        default:
+          throw new InternalServerErrorException(message)
+      }
     }
 
     return response.json() as Promise<T>

@@ -28,6 +28,11 @@ import {
   RollbackTranslationsInput,
 } from './dto/application-translation.input'
 
+const TRANSLATION_SCOPES = [
+  AdminPortalScope.applicationSystemAdmin,
+  AdminPortalScope.applicationSystemInstitution,
+] as const
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationTranslationGql)
 export class ApplicationTranslationResolver {
@@ -37,10 +42,7 @@ export class ApplicationTranslationResolver {
   ) {}
 
   @Query(() => [ApplicationTranslationGql], { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTranslations(
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
@@ -49,10 +51,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => ApplicationTranslationStatus, { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTranslationStatus(
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
@@ -61,10 +60,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => [ApplicationTranslationStatus], { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTranslationAllStatus(
     @CurrentUser() user: User,
   ): Promise<ApplicationTranslationStatus[]> {
@@ -72,10 +68,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => ApplicationTranslationGql)
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async updateApplicationTranslation(
     @CurrentUser() user: User,
     @Args('input') input: UpdateApplicationTranslationInput,
@@ -89,10 +82,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => [ApplicationTranslationGql])
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async bulkUpdateApplicationTranslations(
     @CurrentUser() user: User,
     @Args('input') input: BulkUpdateApplicationTranslationsInput,
@@ -109,10 +99,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => ApplicationTranslationGql)
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async reviewApplicationTranslation(
     @CurrentUser() user: User,
     @Args('id') id: string,
@@ -121,10 +108,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => GoogleTranslateResultGql)
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async googleTranslateStrings(
     @Args('input') input: GoogleTranslateStringsInput,
   ): Promise<GoogleTranslateResultGql> {
@@ -135,10 +119,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => TranslationPublishGql)
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async publishApplicationTranslations(
     @CurrentUser() user: User,
     @Args('input') input: PublishTranslationsInput,
@@ -151,10 +132,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => [TranslationPublishGql], { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTranslationPublishHistory(
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
@@ -163,10 +141,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Mutation(() => TranslationPublishGql)
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async rollbackApplicationTranslations(
     @CurrentUser() user: User,
     @Args('input') input: RollbackTranslationsInput,
@@ -179,10 +154,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => [TemplateListItemGql], { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTemplateList(
     @CurrentUser() user: User,
   ): Promise<TemplateListItemGql[]> {
@@ -190,10 +162,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => TemplateIntrospectionGql, { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTemplateIntrospection(
     @CurrentUser() user: User,
     @Args('typeId') typeId: string,
@@ -202,10 +171,7 @@ export class ApplicationTranslationResolver {
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationTranslation,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(...TRANSLATION_SCOPES)
   async applicationTemplateRoleForm(
     @CurrentUser() user: User,
     @Args('typeId') typeId: string,

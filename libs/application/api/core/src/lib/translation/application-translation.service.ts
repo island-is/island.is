@@ -112,6 +112,10 @@ export class ApplicationTranslationService {
     })
   }
 
+  async getTranslationById(id: string): Promise<ApplicationTranslation | null> {
+    return this.translationModel.findByPk(id)
+  }
+
   /**
    * Saves to **draft** columns. Published values are untouched.
    */
@@ -166,7 +170,7 @@ export class ApplicationTranslationService {
     const created = await this.translationModel.create({
       namespace: input.namespace,
       messageKey: input.messageKey,
-      valueIs: input.valueIs ?? '',
+      valueIs: '',
       draftValueIs: input.valueIs,
       draftValueEn: input.valueEn,
       translatedBy: actor,
@@ -175,7 +179,7 @@ export class ApplicationTranslationService {
 
     await this.logModel.create({
       translationId: created.id,
-      newValue: input.valueEn ?? input.valueIs,
+      newValue: input.valueIs ?? input.valueEn,
       changedBy: actor,
       action: 'create',
     })
@@ -257,7 +261,11 @@ export class ApplicationTranslationService {
 
     // Copy drafts into published columns, then clear drafts
     for (const row of rows) {
-      const updates: Partial<ApplicationTranslation> = {}
+      const oldValueIs = row.valueIs
+      const updates: Partial<ApplicationTranslation> = {
+        draftValueIs: null as unknown as string,
+        draftValueEn: null as unknown as string,
+      }
       let changed = false
 
       if (row.draftValueIs != null) {
@@ -269,23 +277,15 @@ export class ApplicationTranslationService {
         changed = true
       }
 
-      updates.draftValueIs = undefined as unknown as string
-      updates.draftValueEn = undefined as unknown as string
+      await row.update(updates)
 
       if (changed) {
-        await row.update(updates)
         await this.logModel.create({
           translationId: row.id,
-          oldValue: row.valueIs,
-          newValue: updates.valueIs ?? row.valueIs,
+          oldValue: oldValueIs,
+          newValue: updates.valueIs ?? oldValueIs,
           changedBy: actor,
           action: 'publish',
-        })
-      } else {
-        // Still clear drafts even if they match published
-        await row.update({
-          draftValueIs: null as unknown as string,
-          draftValueEn: null as unknown as string,
         })
       }
     }
@@ -360,6 +360,8 @@ export class ApplicationTranslationService {
     for (const row of currentRows) {
       const snapshot = snapshotByKey.get(row.messageKey)
       if (snapshot) {
+        const oldValueIs = row.valueIs
+
         await row.update({
           valueIs: snapshot.valueIs,
           valueEn: snapshot.valueEn,
@@ -369,7 +371,7 @@ export class ApplicationTranslationService {
 
         await this.logModel.create({
           translationId: row.id,
-          oldValue: row.valueIs,
+          oldValue: oldValueIs,
           newValue: snapshot.valueIs,
           changedBy: actor,
           action: 'rollback',

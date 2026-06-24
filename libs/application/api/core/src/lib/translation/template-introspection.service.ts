@@ -2490,7 +2490,7 @@ export class TemplateIntrospectionService {
     }
   }
 
-  async listTemplates(): Promise<
+  async listTemplates(allowedTypeIds?: string[]): Promise<
     Array<{
       typeId: string
       name: string
@@ -2498,6 +2498,9 @@ export class TemplateIntrospectionService {
       translationNamespaces: string[]
     }>
   > {
+    const allowedSet =
+      allowedTypeIds != null ? new Set(allowedTypeIds) : undefined
+
     const templates: Array<{
       typeId: string
       name: string
@@ -2506,6 +2509,10 @@ export class TemplateIntrospectionService {
     }> = []
 
     for (const [typeId, config] of Object.entries(ApplicationConfigurations)) {
+      if (allowedSet && !allowedSet.has(typeId)) {
+        continue
+      }
+
       const translationNamespaces = Array.isArray(config.translation)
         ? config.translation
         : [config.translation]
