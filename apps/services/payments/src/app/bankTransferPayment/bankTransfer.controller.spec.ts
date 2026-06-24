@@ -16,6 +16,9 @@ import { BankTransferLocale } from './dtos/createBankTransfer.input'
 // so success responses come back as 201.
 const POST_SUCCESS = 201
 
+// Valid 12-digit payer account number (BBAN), required by CreateBankTransferInput.
+const BANK_ACCOUNT_NUMBER = '051226012345'
+
 describe('BankTransferController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
@@ -47,12 +50,17 @@ describe('BankTransferController', () => {
       const paymentFlowId = uuid()
       const response = await server
         .post('/v1/payments/bank-transfer/create')
-        .send({ paymentFlowId, locale: BankTransferLocale.IS })
+        .send({
+          paymentFlowId,
+          locale: BankTransferLocale.IS,
+          bankAccountNumber: BANK_ACCOUNT_NUMBER,
+        })
 
       expect(response.status).toBe(POST_SUCCESS)
       expect(createSpy).toHaveBeenCalledWith({
         paymentFlowId,
         locale: BankTransferLocale.IS,
+        bankAccountNumber: BANK_ACCOUNT_NUMBER,
       })
       expect(response.body.providerPaymentId).toBe('prov-1')
       expect(response.body.scaRedirectUrl).toBe('https://blikk/sca')
@@ -69,7 +77,11 @@ describe('BankTransferController', () => {
 
       const response = await server
         .post('/v1/payments/bank-transfer/create')
-        .send({ paymentFlowId: uuid(), locale: BankTransferLocale.IS })
+        .send({
+          paymentFlowId: uuid(),
+          locale: BankTransferLocale.IS,
+          bankAccountNumber: BANK_ACCOUNT_NUMBER,
+        })
 
       expect(response.status).toBe(400)
       expect(response.body.detail).toBe(
@@ -82,7 +94,11 @@ describe('BankTransferController', () => {
 
       const response = await server
         .post('/v1/payments/bank-transfer/create')
-        .send({ paymentFlowId: 'not-a-uuid', locale: BankTransferLocale.IS })
+        .send({
+          paymentFlowId: 'not-a-uuid',
+          locale: BankTransferLocale.IS,
+          bankAccountNumber: BANK_ACCOUNT_NUMBER,
+        })
 
       expect(response.status).toBe(400)
       expect(createSpy).not.toHaveBeenCalled()
