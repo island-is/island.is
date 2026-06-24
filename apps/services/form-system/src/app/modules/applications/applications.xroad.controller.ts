@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Inject,
   Param,
   Req,
   VERSION_NEUTRAL,
@@ -17,11 +18,13 @@ import {
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
 import { ApplicationJsonDto } from './models/dto/application.json.dto'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsXRoadController {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationsXRoadService: ApplicationsXRoadService,
   ) {}
 
@@ -71,6 +74,10 @@ export class ApplicationsXRoadController {
     @Req() req: Request,
   ): Promise<ApplicationJsonDto> {
     const xRoadClient = this.getValidatedXRoadClient(req)
+    this.logger.info('Fetching application by id via X-Road', {
+      id,
+      xRoadClient,
+    })
     return await this.applicationsXRoadService.getApplication(id, xRoadClient)
   }
 
@@ -88,6 +95,7 @@ export class ApplicationsXRoadController {
     @Req() req: Request,
   ): Promise<FileResponseDto> {
     const xRoadClient = this.getValidatedXRoadClient(req)
+    this.logger.info('Fetching file by id via X-Road', { id, xRoadClient })
     return await this.applicationsXRoadService.getFile(id, xRoadClient)
   }
 }
