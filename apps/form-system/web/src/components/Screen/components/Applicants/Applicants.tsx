@@ -17,10 +17,12 @@ interface Props {
 
 const individuals: ApplicantTypesEnum[] = [
   ApplicantTypesEnum.INDIVIDUAL,
-  ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
   ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
+  ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
   ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
   ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
+  ApplicantTypesEnum.LEGAL_GUARDIAN,
+  ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
 ]
 
 export const Applicants = ({ applicantField }: Props) => {

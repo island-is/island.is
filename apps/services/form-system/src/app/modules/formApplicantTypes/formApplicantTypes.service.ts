@@ -96,7 +96,9 @@ export class FormApplicantTypesService {
         applicantType: applicantType.id,
         ...(applicantType.id !== ApplicantTypesEnum.LEGAL_ENTITY &&
         applicantType.id !==
-          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
+          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER &&
+        applicantType.id !== ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION &&
+        applicantType.id !== ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
           ? {
               isPhoneRequired: true,
               isEmailRequired: true,
