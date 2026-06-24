@@ -62,7 +62,6 @@ const DateRow = styled.View`
 `
 
 const ContentRow = styled.View`
-  flex: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -70,8 +69,6 @@ const ContentRow = styled.View`
 
 const LeftContent = styled.View`
   flex: 1;
-  flex-shrink: 1;
-  min-width: 0px;
 `
 
 const RightContent = styled.View`

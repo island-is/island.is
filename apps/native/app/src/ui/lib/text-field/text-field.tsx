@@ -1,8 +1,10 @@
 import React, { useRef } from 'react'
 import {
   ActivityIndicator,
+  StyleProp,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
@@ -77,6 +79,7 @@ interface TextFieldProps extends TIProps {
   disabled?: boolean
   loading?: boolean
   errorMessage?: string
+  inputStyle?: StyleProp<TextStyle>
 }
 
 export const TextField = ({
@@ -84,6 +87,7 @@ export const TextField = ({
   onChange,
   value,
   style,
+  inputStyle,
   disabled = false,
   loading = false,
   errorMessage,
@@ -107,6 +111,7 @@ export const TextField = ({
             ref={inputRef}
             readOnly={readOnly}
             {...rest}
+            style={inputStyle}
           />
         </View>
         {loading && (

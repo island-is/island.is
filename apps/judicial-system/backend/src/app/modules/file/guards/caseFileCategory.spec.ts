@@ -6,11 +6,13 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CourtSession, Defendant } from '../../repository'
+import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
   getConfirmedDefendantsForDefender,
+  getDefenceUserVisiblePoliceCaseNumbers,
   getDefenderVisiblePoliceCaseNumbers,
+  getSpokespersonVisiblePoliceCaseNumbers,
   isConfirmedDefenderOfSpecificDefendant,
   isRulingOrderInConfirmedCourtSession,
 } from './caseFileCategory'
@@ -29,6 +31,24 @@ const makeDefendant = (
     isDefenderChoiceConfirmed: overrides.isDefenderChoiceConfirmed ?? false,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
   } as unknown as Defendant)
+
+const makeCivilClaimant = (
+  overrides: Partial<{
+    spokespersonNationalId: string
+    isSpokespersonConfirmed: boolean
+    caseFilesSharedWithSpokesperson: boolean
+    policeCaseNumbers: string[]
+    hasSpokesperson: boolean
+  }> = {},
+): CivilClaimant =>
+  ({
+    hasSpokesperson: overrides.hasSpokesperson ?? true,
+    isSpokespersonConfirmed: overrides.isSpokespersonConfirmed ?? true,
+    caseFilesSharedWithSpokesperson:
+      overrides.caseFilesSharedWithSpokesperson ?? true,
+    spokespersonNationalId: overrides.spokespersonNationalId ?? '1234567890',
+    policeCaseNumbers: overrides.policeCaseNumbers ?? [],
+  } as unknown as CivilClaimant)
 
 describe('getDefenderVisiblePoliceCaseNumbers', () => {
   it('should return all police case numbers when no defendants have police case numbers (legacy case)', () => {
@@ -52,7 +72,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return all police case numbers when defendants array is empty', () => {
@@ -64,7 +84,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return all police case numbers when defendants is undefined', () => {
@@ -76,7 +96,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(allNumbers.sort())
+    expect(result).toEqual(allNumbers)
   })
 
   it('should return only own defendant police case numbers plus unassigned', () => {
@@ -100,7 +120,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-3'].sort())
+    expect(result).toEqual(['007-2026-1', '007-2026-3'])
   })
 
   it('should return union when defender represents multiple defendants', () => {
@@ -129,7 +149,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-1', '007-2026-2'].sort())
+    expect(result).toEqual(['007-2026-1', '007-2026-2'])
   })
 
   it('should return only unassigned when defender is not found in defendants', () => {
@@ -148,7 +168,7 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
       allNumbers,
     )
 
-    expect(result.sort()).toEqual(['007-2026-3'].sort())
+    expect(result).toEqual(['007-2026-3'])
   })
 
   it('should treat unconfirmed defender choice as not being a defender', () => {
@@ -201,6 +221,145 @@ describe('getDefenderVisiblePoliceCaseNumbers', () => {
     )
 
     expect(result).toEqual(['007-2026-1'])
+  })
+})
+
+describe('getSpokespersonVisiblePoliceCaseNumbers', () => {
+  it('should return all police case numbers when civil claimant has no police case numbers', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2', '007-2026-3']
+    const civilClaimants = [
+      makeCivilClaimant({
+        spokespersonNationalId: '1234567890',
+        policeCaseNumbers: [],
+      }),
+    ]
+
+    const result = getSpokespersonVisiblePoliceCaseNumbers(
+      '1234567890',
+      civilClaimants,
+      [],
+      allNumbers,
+    )
+
+    expect(result).toEqual(allNumbers)
+  })
+
+  it('should return only civil claimant police case numbers plus unassigned', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2', '007-2026-3']
+    const civilClaimants = [
+      makeCivilClaimant({
+        spokespersonNationalId: '1234567890',
+        policeCaseNumbers: ['007-2026-1'],
+      }),
+    ]
+    const defendants = [
+      makeDefendant({
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+        policeCaseNumbers: ['007-2026-2'],
+      }),
+    ]
+
+    const result = getSpokespersonVisiblePoliceCaseNumbers(
+      '1234567890',
+      civilClaimants,
+      defendants,
+      allNumbers,
+    )
+
+    expect(result).toEqual(['007-2026-1', '007-2026-3'])
+  })
+
+  it('should return empty array when user is not a confirmed spokesperson', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2']
+    const civilClaimants = [
+      makeCivilClaimant({
+        spokespersonNationalId: '0987654321',
+        policeCaseNumbers: ['007-2026-1'],
+      }),
+    ]
+
+    const result = getSpokespersonVisiblePoliceCaseNumbers(
+      '1234567890',
+      civilClaimants,
+      [],
+      allNumbers,
+    )
+
+    expect(result).toEqual([])
+  })
+
+  it('should return empty array when case files are not shared with spokesperson', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2']
+    const civilClaimants = [
+      makeCivilClaimant({
+        spokespersonNationalId: '1234567890',
+        caseFilesSharedWithSpokesperson: false,
+        policeCaseNumbers: ['007-2026-1'],
+      }),
+    ]
+
+    const result = getSpokespersonVisiblePoliceCaseNumbers(
+      '1234567890',
+      civilClaimants,
+      [],
+      allNumbers,
+    )
+
+    expect(result).toEqual([])
+  })
+})
+
+describe('getDefenceUserVisiblePoliceCaseNumbers', () => {
+  it('should return union of defender and spokesperson visible numbers', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2', '007-2026-3']
+    const defendants = [
+      makeDefendant({
+        defenderNationalId: '1234567890',
+        isDefenderChoiceConfirmed: true,
+        policeCaseNumbers: ['007-2026-1'],
+      }),
+      makeDefendant({
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+        policeCaseNumbers: ['007-2026-2'],
+      }),
+    ]
+    const civilClaimants = [
+      makeCivilClaimant({
+        spokespersonNationalId: '1234567890',
+        policeCaseNumbers: ['007-2026-2'],
+      }),
+    ]
+
+    const result = getDefenceUserVisiblePoliceCaseNumbers(
+      '1234567890',
+      defendants,
+      civilClaimants,
+      allNumbers,
+    )
+
+    expect(result).toEqual(['007-2026-1', '007-2026-2', '007-2026-3'])
+  })
+
+  it('should apply defender visibility rules when user is neither defender nor spokesperson', () => {
+    const allNumbers = ['007-2026-1', '007-2026-2', '007-2026-3']
+    const defendants = [
+      makeDefendant({
+        defenderNationalId: '0987654321',
+        isDefenderChoiceConfirmed: true,
+        policeCaseNumbers: ['007-2026-1', '007-2026-2'],
+      }),
+    ]
+
+    const result = getDefenceUserVisiblePoliceCaseNumbers(
+      '1234567890',
+      defendants,
+      [],
+      allNumbers,
+    )
+
+    expect(result).toEqual(['007-2026-3'])
   })
 })
 

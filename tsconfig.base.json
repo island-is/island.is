@@ -2,9 +2,8 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["${configDir}/src/*"],
-      "@island.is/air-discount-scheme-web/*": [
-        "apps/air-discount-scheme/web/*"
+      "@/*": [
+        "${configDir}/src/*"
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
@@ -749,6 +748,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
