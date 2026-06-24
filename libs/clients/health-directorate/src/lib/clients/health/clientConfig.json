@@ -5984,7 +5984,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER"],
+            "enum": ["ROLE", "ROOM", "EQUIPMENT", "SERVICE", "OTHER", "TEAM"],
             "description": "Assignee type. PERSON assignees are surfaced under practitioners, not here."
           },
           "name": {

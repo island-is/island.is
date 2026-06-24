@@ -74,6 +74,8 @@ export const toAppointmentAssigneeTypeEnum = (
       return AppointmentAssigneeTypeEnum.EQUIPMENT
     case 'OTHER':
       return AppointmentAssigneeTypeEnum.OTHER
+    case 'TEAM':
+      return AppointmentAssigneeTypeEnum.TEAM
     default:
       return undefined
   }
