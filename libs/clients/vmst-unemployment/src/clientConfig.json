@@ -3117,6 +3117,11 @@
             "type": "string",
             "format": ""
           },
+          "periodTo": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
           "ratio": {
             "type": "integer",
             "format": "int32",
@@ -3138,6 +3143,11 @@
           "periodFrom": {
             "type": "string",
             "format": "date-time"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "ratio": {
             "type": "integer",
@@ -8181,6 +8191,10 @@
             "type": "string",
             "format": "guid",
             "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -9472,6 +9486,11 @@
           "unemploymentReasonQuestionResponse": {
             "type": "boolean",
             "description": "Getur þú lagt fram gögn sem sýna að þú hafir gert tilraun til að leysa málið áður...",
+            "nullable": true
+          },
+          "additionalUnemploymentReason": {
+            "type": "string",
+            "description": "Skýring ástæða atvinnuleysis",
             "nullable": true
           }
         }

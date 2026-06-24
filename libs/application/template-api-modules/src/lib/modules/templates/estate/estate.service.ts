@@ -15,6 +15,10 @@ import { infer as zinfer } from 'zod'
 import {
   estateSchema,
   nationalIdsMatch,
+  // estate's checkbox/schema write its local YES ('Yes'); the opt-in guard
+  // below must compare against that value, not core YES ('yes'), otherwise
+  // the copy-email path never fires.
+  YES,
 } from '@island.is/application/templates/estate'
 import {
   estateTransformer,
@@ -26,11 +30,7 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationAttachments,
   AttachmentPaths,

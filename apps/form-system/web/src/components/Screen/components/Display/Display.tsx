@@ -1,6 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
   ApplicantDisplay,
+  AssetDisplay,
   CheckBoxDisplay,
   DateDisplay,
   DefaultDisplay,
@@ -36,6 +37,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: DefaultDisplay,
   [FieldTypesEnum.APPLICANT]: ApplicantDisplay,
   [FieldTypesEnum.PAYMENT_QUANTITY]: DefaultDisplay,
+  [FieldTypesEnum.ASSETS]: AssetDisplay,
 } as const
 
 export const Display = ({
