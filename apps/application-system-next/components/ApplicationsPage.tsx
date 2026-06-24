@@ -185,9 +185,7 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
               <ApplicationList
                 applications={data.ApplicationSystemCard}
                 organizations={mappedOrganizations as Organization[]}
-                onClick={(applicationUrl) =>
-                  router.push(`/${applicationUrl}`)
-                }
+                onClick={(applicationUrl) => router.push(`/${applicationUrl}`)}
                 refetch={refetch}
               />
             )}
