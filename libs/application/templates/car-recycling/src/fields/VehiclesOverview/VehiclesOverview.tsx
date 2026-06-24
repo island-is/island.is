@@ -256,7 +256,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                   type="number"
                   defaultValue={vehicle.mileage}
                   thousandSeparator
-                  suffix=" "
                   error={
                     errors &&
                     getErrorViaPath(
@@ -265,9 +264,12 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                     )
                   }
                   onChange={(e) => {
+                    const rawValue = e.target.value
+                      .replace(/[.,\s]/g, '')
+                      .trim()
                     const list = selectedVehiclesList.map((prevVehicle) =>
                       vehicle.permno === prevVehicle.permno
-                        ? { ...vehicle, mileage: e.target.value }
+                        ? { ...vehicle, mileage: rawValue }
                         : prevVehicle,
                     )
 

@@ -102,6 +102,11 @@ describe('AppealCaseController - Create event log', () => {
           appealCaseId,
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           userRole: UserRole.PROSECUTOR,
+          userId: prosecutor.id,
+          nationalId: prosecutor.nationalId,
+          userName: prosecutor.name,
+          userTitle: prosecutor.title,
+          institutionName: prosecutor.institution?.name,
         },
         { transaction },
       )
@@ -147,6 +152,10 @@ describe('AppealCaseController - Create event log', () => {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           userRole: UserRole.DEFENDER,
           defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
         },
         { transaction },
       )
@@ -177,6 +186,10 @@ describe('AppealCaseController - Create event log', () => {
           appealCaseId,
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           userRole: UserRole.DEFENDER,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
         },
         { transaction },
       )

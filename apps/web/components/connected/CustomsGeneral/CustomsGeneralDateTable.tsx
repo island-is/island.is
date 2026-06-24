@@ -20,8 +20,8 @@ interface Props<T extends Record<string, any>> {
   data: T[]
   loading: boolean
   error?: Error
-  selectedDate: Date
-  onDateChange: (date: Date) => void
+  selectedDate?: Date
+  onDateChange?: (date: Date) => void
   dateLabel: string
   errorTitle: string
   id?: string
@@ -54,19 +54,21 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
   return (
     <Stack space={3}>
       <Inline alignY="center" space={3} justifyContent="spaceBetween">
-        <Box style={{ maxWidth: 280 }}>
-          <DatePicker
-            id={id}
-            name={id}
-            locale={activeLocale}
-            label={dateLabel}
-            placeholderText={dateLabel}
-            selected={selectedDate}
-            handleChange={onDateChange}
-            size="sm"
-            backgroundColor="blue"
-          />
-        </Box>
+        {Boolean(onDateChange) && Boolean(selectedDate) && (
+          <Box style={{ maxWidth: 280 }}>
+            <DatePicker
+              id={id}
+              name={id}
+              locale={activeLocale}
+              label={dateLabel}
+              placeholderText={dateLabel}
+              selected={selectedDate}
+              handleChange={onDateChange}
+              size="sm"
+              backgroundColor="blue"
+            />
+          </Box>
+        )}
         {Boolean(system) && (
           <Inline alignY="center" space={1}>
             <Tag active={system === 'I'} onClick={() => onSystemChange?.('I')}>

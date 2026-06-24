@@ -14,6 +14,8 @@ import {
 import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
+import { useApolloClient } from '@apollo/client'
+
 import { StackScreen } from '@/components/stack-screen'
 import { DocumentComment, useGetDocumentQuery } from '@/graphql/types/schema'
 import { useDateTimeFormatter } from '@/hooks/use-date-time-formatter'
@@ -70,12 +72,29 @@ export default function DocumentCommunicationsScreen() {
   const flatListRef = useRef<Animated.FlatList>(null)
   const scrollY = useRef(new Animated.Value(0)).current
 
+  const client = useApolloClient()
+
   const docRes = useGetDocumentQuery({
     variables: {
       input: {
         id: documentId,
       },
       locale,
+    },
+    // The document detail screen marks the doc as opened in the local cache
+    // (see use-document.ts). This query's network response would overwrite
+    // that back to whatever the server has (still `opened: false` — there's
+    // no read-mutation yet), so re-assert it here.
+    onCompleted: (data) => {
+      const cacheId = client.cache.identify({
+        __typename: 'DocumentV2',
+        id: data.documentV2?.id,
+      })
+      if (!cacheId) return
+      client.cache.modify({
+        id: cacheId,
+        fields: { opened: () => true },
+      })
     },
   })
 

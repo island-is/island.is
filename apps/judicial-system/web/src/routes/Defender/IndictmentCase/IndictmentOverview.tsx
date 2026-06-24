@@ -80,7 +80,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
         ? 'Rafrænt pósthólf island.is'
         : servedBy
 
-    return [processServer, formatDate(serviceDate, 'Pp')]
+    return [processServer, formatDate(serviceDate, 'dd.MM.y HH:mm')]
       .filter(Boolean)
       .join(', ')
   }

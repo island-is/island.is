@@ -13,8 +13,9 @@ import { errorMessages } from '@island.is/application/templates/vmst/submit-docu
 
 interface DocumentEntry {
   type: string
-  file: Array<{ key: string; name: string }>
+  file?: Array<{ key: string; name: string }>
   comment?: string
+  checkbox?: Array<string>
 }
 
 interface CreatedAttachment {
@@ -62,9 +63,14 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     try {
       const { applicantId } =
         await this.vmstUnemploymentClientService.resolveApplicant(auth)
-      return await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
-        applicantId,
-      )
+      const response =
+        await this.vmstUnemploymentClientService.getApplicantRequestedAttachments(
+          applicantId,
+        )
+      // We filter out those that have attachmentId because they have already been handed in but not 'reviewed' by VMST.
+      // We do this so we only show the user attachment types he has not turned in. In cases where a document is rejected in some way
+      // VMST requests that type again.
+      return response.filter((i) => !i.attachmentId)
     } catch {
       return [] // Better to return nothing than fail prereq as this is not vital.
     }
@@ -177,9 +183,16 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       )
     }
 
+    const documentsWithFile = documents.filter(
+      (document) => document.file && document.file.length > 0,
+    )
+    const documentsWithoutFile = documents
+      .filter((document) => !document.file || document.file.length === 0)
+      .map((doc) => ({ attachmentTypeId: doc.type, description: doc.comment }))
+
     // Flatten all files with their parent document type for processing
-    const fileEntries = documents.flatMap((document) =>
-      document.file.map((file) => ({
+    const fileEntries = documentsWithFile.flatMap((document) =>
+      (document.file ?? []).map((file) => ({
         file,
         attachmentTypeId: document.type,
         description: document.comment ?? null,
@@ -225,45 +238,31 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
       }),
     )
 
-    // Phase 2: Create attachments in parallel in Galdur
-    const results = await Promise.allSettled(
-      fileEntries.map(async ({ attachmentTypeId, description }, i) => {
-        const { content, fileName } = fileContents[i]
-        const mimeType = getMimeType(fileName)
-
-        const response =
-          await this.vmstUnemploymentClientService.createAttachmentForApplication(
-            {
-              galdurDomainModelsAttachmentsCreateAttachmentRequest: {
-                attachmentTypeId,
-                fileName,
-                fileType: mimeType,
-                data: content,
-              },
-            },
-          )
-
-        if (!response.success) {
-          throw new Error(`API rejected attachment: ${response.errorMessage}`)
-        }
-
-        if (!response.attachment?.id) {
-          throw new Error('Attachment created but no ID returned')
-        }
-
-        return {
-          attachmentId: response.attachment.id,
+    // Phase 2: Create attachments in parallel in Galdur. Files are matched to their fetched content by index;
+    // Comment-only documents are created with no file data.
+    // Keep entries in a single ordered list so the index lines up with `results` for logging below.
+    const allEntries = [...fileEntries, ...documentsWithoutFile]
+    const results = await Promise.allSettled([
+      ...fileEntries.map(({ attachmentTypeId, description }, i) =>
+        this.createAttachment({
           attachmentTypeId,
-          fileName,
           description,
-        }
-      }),
-    )
+          fileName: fileContents[i].fileName,
+          content: fileContents[i].content,
+        }),
+      ),
+      ...documentsWithoutFile.map(({ attachmentTypeId, description }) =>
+        this.createAttachment({
+          attachmentTypeId,
+          description: description ?? null,
+        }),
+      ),
+    ])
 
     // Log outcome for each file (no file names to avoid PII exposure)
     for (let i = 0; i < results.length; i++) {
       const result = results[i]
-      const { attachmentTypeId } = fileEntries[i]
+      const { attachmentTypeId } = allEntries[i]
       if (result.status === 'fulfilled') {
         this.logger.info(
           `[VMST-Submit-Documents] - Attachment created successfully: index=${i}, typeId=${attachmentTypeId}, attachmentId=${result.value.attachmentId}`,
@@ -294,12 +293,10 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     }
 
     const createdAttachments: CreatedAttachment[] = results.map(
-      (r) =>
-        (r as PromiseFulfilledResult<CreatedAttachment & { fileName: string }>)
-          .value,
+      (r) => (r as PromiseFulfilledResult<CreatedAttachment>).value,
     )
 
-    // Phase 3: Link created attachments to the applicant
+    // Phase 3: Link created attachments + comment-only entries to the applicant
     const applicantId =
       getValueViaPath<string>(
         application.externalData,
@@ -352,5 +349,45 @@ export class SubmitDocumentsService extends BaseTemplateApiService {
     }
 
     return createdAttachments
+  }
+
+  // Creates a single attachment in Galdur.
+  // File-backed documents pass fileName/content
+  // Comment-only documents are created without file data.
+  private async createAttachment({
+    attachmentTypeId,
+    description,
+    fileName,
+    content,
+  }: {
+    attachmentTypeId: string
+    description: string | null
+    fileName?: string
+    content?: string
+  }): Promise<CreatedAttachment> {
+    const response =
+      await this.vmstUnemploymentClientService.createAttachmentForApplication({
+        galdurDomainModelsAttachmentsCreateAttachmentRequest: {
+          attachmentTypeId,
+          fileName,
+          fileType: fileName ? getMimeType(fileName) : undefined,
+          data: content,
+          description,
+        },
+      })
+
+    if (!response.success) {
+      throw new Error(`API rejected attachment: ${response.errorMessage}`)
+    }
+
+    if (!response.attachment?.id) {
+      throw new Error('Attachment created but no ID returned')
+    }
+
+    return {
+      attachmentId: response.attachment.id,
+      attachmentTypeId,
+      description,
+    }
   }
 }

@@ -51,9 +51,9 @@ const ContentContainer = styled.View`
   align-items: center;
 `
 
-const Trailing = styled.View`
+const Trailing = styled.View<{ hasLink?: boolean }>`
   flex-shrink: 0;
-  width: 24px;
+  width: ${({ hasLink }) => (hasLink ? 'auto' : '24px')};
   align-items: center;
   justify-content: center;
   margin-left: ${({ theme }) => theme.spacing[1]}px;
@@ -272,7 +272,7 @@ export function LicenseListCard({
             )}
           </Content>
         </TextContent>
-        <Trailing>
+        <Trailing hasLink={!!props.link}>
           {props.link ? (
             props.link
           ) : (
