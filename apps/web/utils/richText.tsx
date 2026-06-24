@@ -298,7 +298,6 @@ export const webRenderConnectedComponent = (
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />
       break
-    case 'Lyfjastofnun/Pharmacies':
     case 'Lyfjastofnun/LicensedOperations':
       connectedComponent = <LyfjastofnunAccordion slice={slice} />
       break

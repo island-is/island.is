@@ -66,7 +66,8 @@ const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
 
 const LyfjastofnunAccordion = ({ slice }: Props) => {
   const { formatMessage } = useIntl()
-  const raw = slice.json?.datasource
+  // configJson must contain { "datasource": "pharmacies" | "medicalClinics" | "wholesalers" }; falls back to "pharmacies" if missing or invalid
+  const raw = slice.configJson?.datasource
   const datasource: Datasource = isDatasource(raw) ? raw : 'pharmacies'
 
   const {
