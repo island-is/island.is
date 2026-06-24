@@ -365,6 +365,21 @@ export const m = defineMessages({
     defaultMessage: 'Listasmiður',
     description: 'List builder',
   },
+  listBuilderSubtitle: {
+    id: 'form.system:list-builder-subtitle',
+    defaultMessage: 'Veldu lista til að skoða og breyta gildum.',
+    description: 'List builder subtitle',
+  },
+  noListSelected: {
+    id: 'form.system:no-list-selected',
+    defaultMessage: 'Enginn listi',
+    description: 'Empty-state heading when no list is selected',
+  },
+  noListSelectedDescription: {
+    id: 'form.system:no-list-selected-description',
+    defaultMessage: 'Veldu lista eða bættu við gildum',
+    description: 'Empty-state helper text when no list is selected',
+  },
   homestayNumber: {
     id: 'form.system:homestay-number',
     defaultMessage: 'Heimagistingarnúmer',
@@ -485,6 +500,13 @@ export const m = defineMessages({
     id: 'form.system:choose-list-type',
     defaultMessage: 'Veldu lista',
     description: 'Choose list',
+  },
+  overwriteListConfirm: {
+    id: 'form.system:overwrite-list-confirm',
+    defaultMessage:
+      'Núverandi listi verður yfirskrifaður. Ertu viss um að þú viljir halda áfram?',
+    description:
+      'The existing list will be overwritten. Are you sure you want to continue?',
   },
   addLink: {
     id: 'form.system:add-link',
@@ -1271,5 +1293,30 @@ export const m = defineMessages({
     id: 'form.system:missing-value',
     defaultMessage: 'Vantar gildi',
     description: 'Missing value',
+  },
+  registrationNumber: {
+    id: 'form.system:registration-number',
+    defaultMessage: 'Skráningarnúmer',
+    description: 'Registration number',
+  },
+  model: {
+    id: 'form.system:model',
+    defaultMessage: 'Tegund',
+    description: 'Model',
+  },
+  color: {
+    id: 'form.system:color',
+    defaultMessage: 'Litur',
+    description: 'Color',
+  },
+  vehicleNotFoundError: {
+    id: 'form.system:vehicle-not-found-error',
+    defaultMessage: 'Ekkert ökutæki fannst með þessu skráningarnúmeri',
+    description: 'No vehicle found with this registration number',
+  },
+  vehiclePlaceholder: {
+    id: 'form.system:vehicle-placeholder',
+    defaultMessage: 'Sláðu inn skráningarnúmer',
+    description: 'Enter registration number',
   },
 })

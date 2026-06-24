@@ -2,9 +2,8 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["${configDir}/src/*"],
-      "@island.is/air-discount-scheme-web/*": [
-        "apps/air-discount-scheme/web/*"
+      "@/*": [
+        "${configDir}/src/*"
       ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
@@ -56,6 +55,9 @@
       ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
+      ],
+      "@island.is/api/domains/customs-general": [
+        "libs/api/domains/customs-general/src/index.ts"
       ],
       "@island.is/api/domains/course-charges": [
         "libs/api/domains/course-charges/src/index.ts"
@@ -746,11 +748,15 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
+      ],
+      "@island.is/clients/rsk/customs/general": [
+        "libs/clients/rsk/customs/general/src/index.ts"
       ],
       "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [

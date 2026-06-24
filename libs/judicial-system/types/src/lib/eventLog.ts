@@ -34,6 +34,10 @@ export const defendantEventTypes = Object.values(DefendantEventType)
 
 export enum AppealEventType {
   APPEAL_STATEMENT_SENT = 'APPEAL_STATEMENT_SENT',
+  // A party's appeal was registered - in court (recorded by the judge at
+  // court session confirmation) or directly by the party within the appeal deadline
+  APPEALED = 'APPEALED',
+  APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

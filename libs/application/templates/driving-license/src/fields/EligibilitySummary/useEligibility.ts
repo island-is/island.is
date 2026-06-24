@@ -28,6 +28,8 @@ const QUERY = gql`
         key
         requirementMet
         daysOfResidency
+        messageIs
+        messageEn
       }
     }
   }

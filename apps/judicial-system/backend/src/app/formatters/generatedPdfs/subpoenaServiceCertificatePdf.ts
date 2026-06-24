@@ -172,7 +172,7 @@ export const createSubpoenaServiceCertificate = (
     doc,
     `${
       subpoena.arraignmentDate
-        ? formatDate(new Date(subpoena.arraignmentDate), 'Pp')
+        ? formatDate(new Date(subpoena.arraignmentDate), 'dd.MM.y HH:mm')
         : 'Ekki skráð'
     }`,
     'Times-Roman',

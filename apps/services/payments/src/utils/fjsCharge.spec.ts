@@ -1,5 +1,7 @@
 import { PayInfoPaymentMeansEnum } from '@island.is/clients/charge-fjs-v2'
+import { FjsErrorCode } from '@island.is/shared/constants'
 import {
+  fjsErrorMessageToCode,
   generateChargeFJSPayload,
   GenerateChargeFJSPayloadInput,
 } from './fjsCharge'
@@ -273,5 +275,29 @@ describe('generateChargeFJSPayload', () => {
     })
 
     expect(result.charges[0].reference).toBe('')
+  })
+})
+
+describe('fjsErrorMessageToCode', () => {
+  it('maps the "charge already created" message to AlreadyCreatedCharge', () => {
+    expect(fjsErrorMessageToCode('Búið að taka á móti álagningu')).toBe(
+      FjsErrorCode.AlreadyCreatedCharge,
+    )
+  })
+
+  it('maps the "cancellation already received" message to AlreadyDeletedCharge', () => {
+    expect(
+      fjsErrorMessageToCode('Búið að taka á móti niðurfellingu á álagningu'),
+    ).toBe(FjsErrorCode.AlreadyDeletedCharge)
+  })
+
+  it('defaults to FailedToCreateCharge for unknown messages', () => {
+    expect(fjsErrorMessageToCode('some other error')).toBe(
+      FjsErrorCode.FailedToCreateCharge,
+    )
+  })
+
+  it('returns null for unknown messages when onlyKnownCode is set', () => {
+    expect(fjsErrorMessageToCode('some other error', true)).toBeNull()
   })
 })

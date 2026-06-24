@@ -153,6 +153,8 @@ export enum Features {
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
+  isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -204,6 +206,8 @@ export enum Features {
   servicePortalUniversityMicroCredentialsEnabled = 'isServicePortalUniversityMicroCredentialsPageEnabled',
   // Car recycling
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
+  // Housing Benefits
+  isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 }
