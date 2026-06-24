@@ -91,7 +91,6 @@ const lineGap = 2
 export const createIndictmentCourtRecordPdf = (
   theCase: Case,
   showOpenCourtSession: boolean,
-  useTinyMCE: boolean,
   confirmation: Confirmation | undefined,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -320,15 +319,11 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc, 2)
-    if (useTinyMCE) {
-      addRichText(
-        doc,
-        courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
-        lineGap,
-      )
-    } else {
-      addNormalText(doc, courtSession.entries ?? 'Engar bókanir voru skráðar.')
-    }
+    addRichText(
+      doc,
+      courtSession.entries ?? '<p>Engar bókanir voru skráðar.</p>',
+      lineGap,
+    )
 
     if (courtSession.rulingType !== CourtSessionRulingType.NONE) {
       addEmptyLines(doc)

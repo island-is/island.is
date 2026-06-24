@@ -23,6 +23,8 @@ export interface GenerateChargeFJSPayloadInput {
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
+  // The moment the payment actually completed. Sent to FJS (as `effictiveDate`, yyyy-mm-dd) so it
+  // knows when the payment was made — distinct from when the charge happens to be created.
   effectiveDate?: Date
 }
 
@@ -86,6 +88,11 @@ export const fjsErrorMessageToCode = (
   message: string,
   onlyKnownCode = false,
 ): FjsErrorCode | null => {
+  if (message.startsWith('Búið að taka á móti niðurfellingu á álagningu')) {
+    // FJS already received the charge's cancellation — it is already deleted.
+    return FjsErrorCode.AlreadyDeletedCharge
+  }
+
   if (message.startsWith('Búið að taka á móti álagningu')) {
     return FjsErrorCode.AlreadyCreatedCharge
   }
