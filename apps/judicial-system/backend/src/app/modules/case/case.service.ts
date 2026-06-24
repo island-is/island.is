@@ -65,6 +65,7 @@ import {
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
@@ -817,7 +818,9 @@ export class CaseService {
       },
     )
 
-    for (const caseFile of theCase.caseFiles ?? []) {
+    const sortedCaseFiles = sortCaseFiles(theCase.caseFiles ?? [])
+
+    for (const caseFile of sortedCaseFiles) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&
