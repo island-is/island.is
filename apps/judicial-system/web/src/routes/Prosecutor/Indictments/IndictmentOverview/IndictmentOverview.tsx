@@ -3,10 +3,14 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
+  isProsecutionUser,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -22,6 +26,7 @@ import {
   IndictmentCaseScheduledCard,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -39,13 +44,18 @@ import {
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealCaseBanner,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
   CONFIRM_PROSECUTOR_DECISION,
-  ConfirmationModal,
+  DUPLICATE_INDICTMENT,
+  isDuplicateIndictmentModal,
+  ModalId,
 } from '../../../PublicProsecutor/components/utils'
 import { strings } from './IndictmentOverview.strings'
 
@@ -56,6 +66,7 @@ const IndictmentOverview: FC = () => {
 
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { duplicateIndictmentCase, isDuplicatingIndictmentCase } = useCase()
 
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -74,9 +85,27 @@ const IndictmentOverview: FC = () => {
     (defendant) => !defendant.indictmentReviewDecision,
   )
 
-  const [modalVisible, setModalVisible] = useState<
-    ConfirmationModal | undefined
-  >()
+  const [modalVisible, setModalVisible] = useState<ModalId | undefined>()
+
+  // A revoked indictment (withdrawn by the prosecution or cancelled by the
+  // court) can be copied into a new draft case by the prosecution
+  const canDuplicateIndictment =
+    isProsecutionUser(user) &&
+    caseIsClosed &&
+    (workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.WITHDRAWAL ||
+      workingCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.CANCELLATION)
+
+  const handleDuplicateIndictment = async () => {
+    const duplicatedCase = await duplicateIndictmentCase(workingCase.id)
+
+    if (duplicatedCase) {
+      router.push(
+        `${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${duplicatedCase.id}`,
+      )
+    }
+  }
 
   const { appealBanner, appealModals } = useAppealCaseBanner()
 
@@ -266,19 +295,50 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={!shouldDisplayReviewDecision}
-            nextIsDisabled={isReviewMissing || !hasReviewDecisionChanged}
+            hideNextButton={
+              !shouldDisplayReviewDecision && !canDuplicateIndictment
+            }
+            nextIsDisabled={
+              !canDuplicateIndictment &&
+              shouldDisplayReviewDecision &&
+              (isReviewMissing || !hasReviewDecisionChanged)
+            }
+            nextIsLoading={
+              canDuplicateIndictment && isDuplicatingIndictmentCase
+            }
             nextButtonText={
-              workingCase.indictmentReviewedDate
+              canDuplicateIndictment
+                ? 'Afrita mál í drög'
+                : workingCase.indictmentReviewedDate
                 ? 'Breyta ákvörðun'
                 : 'Ljúka yfirlestri'
             }
             onNextButtonClick={() =>
-              setModalVisible(CONFIRM_PROSECUTOR_DECISION)
+              setModalVisible(
+                canDuplicateIndictment
+                  ? DUPLICATE_INDICTMENT
+                  : CONFIRM_PROSECUTOR_DECISION,
+              )
             }
           />
         </FormContentContainer>
         {appealModals}
+        {isDuplicateIndictmentModal(modalVisible) && (
+          <Modal
+            title="Viltu afrita mál í drög?"
+            text="Nýtt mál verður til í drögum. Innihald ákæru ásamt gögnum afritast yfir á nýja málið."
+            primaryButton={{
+              text: 'Afrita mál í drög',
+              onClick: handleDuplicateIndictment,
+              isLoading: isDuplicatingIndictmentCase,
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+              isDisabled: isDuplicatingIndictmentCase,
+            }}
+          />
+        )}
       </PageLayout>
     </>
   )

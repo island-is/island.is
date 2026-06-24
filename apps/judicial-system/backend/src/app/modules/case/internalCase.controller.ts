@@ -33,6 +33,7 @@ import { EventService } from '../event'
 import { AppealCase, Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
+import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -313,6 +314,32 @@ export class InternalCaseController {
       theCase,
       deliverDto.withCourtCaseNumber,
       deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment conclusion to court',
+  })
+  deliverIndictmentConclusionToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverIndictmentConclusionDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the conclusion for indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentConclusionToCourt(
+      theCase,
+      deliverDto.user,
+      deliverDto,
     )
   }
 

@@ -344,6 +344,61 @@ describe('LimitedAccessCaseFileInterceptor', () => {
     })
   })
 
+  describe('police case number filtering', () => {
+    describe.each(indictmentCases)('for %s cases', (type) => {
+      describe('spokesperson assigned to civil claimant', () => {
+        let then: Then
+
+        beforeEach(async () => {
+          const nationalId = uuid()
+          const spokespersonPoliceCaseNumber = '007-2026-1'
+          const otherPoliceCaseNumber = '007-2026-2'
+          const unassignedPoliceCaseNumber = '007-2026-3'
+          const theCase = {
+            type: type as CaseType,
+            state: CaseState.COMPLETED,
+            policeCaseNumbers: [
+              spokespersonPoliceCaseNumber,
+              otherPoliceCaseNumber,
+              unassignedPoliceCaseNumber,
+            ],
+            defendants: [
+              {
+                id: uuid(),
+                defenderNationalId: uuid(),
+                isDefenderChoiceConfirmed: true,
+                policeCaseNumbers: [otherPoliceCaseNumber],
+              },
+            ],
+            civilClaimants: [
+              {
+                id: uuid(),
+                hasSpokesperson: true,
+                isSpokespersonConfirmed: true,
+                caseFilesSharedWithSpokesperson: true,
+                spokespersonNationalId: nationalId,
+                policeCaseNumbers: [spokespersonPoliceCaseNumber],
+              },
+            ],
+            caseFiles: [],
+          }
+
+          mockRequest.mockImplementationOnce(() => ({
+            user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+          }))
+          mockHandle.mockReturnValueOnce(of(theCase))
+
+          then = await givenWhenThen()
+        })
+
+        it('should only include spokesperson-visible police case numbers', () => {
+          const result = then.result as { policeCaseNumbers: string[] }
+          expect(result.policeCaseNumbers).toEqual(['007-2026-1', '007-2026-3'])
+        })
+      })
+    })
+  })
+
   describe('DEFENDANT_RULING filtering', () => {
     describe.each(indictmentCases)('for %s cases', (type) => {
       describe('defender is always denied access to DEFENDANT_RULING files', () => {

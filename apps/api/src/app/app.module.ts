@@ -267,6 +267,8 @@ import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
+import { CustomsGeneralDomainModule } from '@island.is/api/domains/customs-general'
+import { CustomsGeneralClientConfig } from '@island.is/clients/rsk/customs/general'
 
 const environment = getConfig
 
@@ -417,6 +419,7 @@ const environment = getConfig
     PracticalExamsModule,
     VmstApplicationsModule,
     LandspitaliModule,
+    CustomsGeneralDomainModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -546,6 +549,7 @@ const environment = getConfig
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
         RecyclingFundClientConfig,
+        CustomsGeneralClientConfig,
       ],
     }),
   ],
