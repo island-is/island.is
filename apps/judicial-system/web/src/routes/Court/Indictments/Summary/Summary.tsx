@@ -116,6 +116,10 @@ const Summary: FC = () => {
       workingCase.id,
       CaseTransition.COMPLETE,
       setWorkingCase,
+      {
+        indictmentDecision: workingCase.indictmentDecision,
+        indictmentRulingDecision: workingCase.indictmentRulingDecision,
+      },
     )
 
     if (!transitionSuccess) {
