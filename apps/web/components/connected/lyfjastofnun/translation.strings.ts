@@ -21,6 +21,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: 'Label for pharmacy email address',
   },
+  fax: {
+    id: 'web.lyfjastofnunHealthProviders:fax',
+    defaultMessage: 'Fax',
+    description: 'Label for fax number',
+  },
   licenseHolder: {
     id: 'web.lyfjastofnunHealthProviders:licenseHolder',
     defaultMessage: 'Lyfsöluleyfishafi',
@@ -86,5 +91,10 @@ export const m = defineMessages({
     defaultMessage: 'Allir landshlutar',
     description:
       'Placeholder shown in region dropdown when no region is selected',
+  },
+  errorMessage: {
+    id: 'web.lyfjastofnunHealthProviders:errorMessage',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Error message shown when health provider data cannot be fetched',
   },
 })

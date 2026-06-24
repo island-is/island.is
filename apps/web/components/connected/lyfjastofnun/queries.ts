@@ -33,6 +33,7 @@ export const GET_PHARMACIES = gql`
           category
         }
       }
+      // kept for potential future pagination; API currently returns full dataset
       totalCount
       pageInfo {
         hasNextPage

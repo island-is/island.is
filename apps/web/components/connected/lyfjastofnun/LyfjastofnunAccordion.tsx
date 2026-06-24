@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { createParser, useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client'
 
@@ -18,40 +18,16 @@ import {
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import {
-  ConnectedComponent,
   IcelandicMedicinesAgencyPharmacyRegion,
   Query,
 } from '@island.is/web/graphql/schema'
 
+import { REGION_LABEL_MAP } from './constants'
 import { m as clinicStrings } from './medicalClinics.strings'
 import { GET_MEDICAL_CLINICS, GET_PHARMACIES, GET_WHOLESALERS } from './queries'
 import { m as pharmacyStrings } from './translation.strings'
+import { Datasource, isDatasource, Item, Props } from './types'
 import { m as wholesalerStrings } from './wholesalers.strings'
-
-type Datasource = 'pharmacies' | 'medicalClinics' | 'wholesalers'
-
-const isDatasource = (v: unknown): v is Datasource =>
-  v === 'pharmacies' || v === 'medicalClinics' || v === 'wholesalers'
-
-interface Props {
-  slice: ConnectedComponent
-}
-
-const REGION_LABEL_MAP: Record<
-  IcelandicMedicinesAgencyPharmacyRegion,
-  MessageDescriptor
-> = {
-  [IcelandicMedicinesAgencyPharmacyRegion.Hofudborgarsvaedid]:
-    pharmacyStrings.regionCapital,
-  [IcelandicMedicinesAgencyPharmacyRegion.SudurlandOgReykjanes]:
-    pharmacyStrings.regionSouth,
-  [IcelandicMedicinesAgencyPharmacyRegion.VesturlandOgVestfirdir]:
-    pharmacyStrings.regionWest,
-  [IcelandicMedicinesAgencyPharmacyRegion.Nordurland]:
-    pharmacyStrings.regionNorth,
-  [IcelandicMedicinesAgencyPharmacyRegion.Austurland]:
-    pharmacyStrings.regionEast,
-}
 
 const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
   parse(s) {
@@ -91,6 +67,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
   const loading = pharmacyLoading || clinicLoading || wholesalerLoading
   const error = pharmacyError ?? clinicError ?? wholesalerError
 
+  // not URL-persisted: multiple instances on the same page would share the param and filter together
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRegion, setSelectedRegion] = useQueryState(
     'region',
@@ -113,38 +90,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
   }
 
   if (error) {
-    return null
-  }
-
-  type Item = {
-    id: string
-    name: string
-    address?: string | null
-    postalCode?: string | null
-    city?: string | null
-    phone?: string | null
-    fax?: string | null
-    email?: string | null
-    licenseHolder?: string | null
-    region?: IcelandicMedicinesAgencyPharmacyRegion | null
-    operator?: {
-      name: string
-      address?: string | null
-      postalCode?: string | null
-      city?: string | null
-      phone?: string | null
-      nationalId?: string | null
-    } | null
-    branches?: Array<{
-      name: string
-      address?: string | null
-      postalCode?: string | null
-      city?: string | null
-      phone?: string | null
-      fax?: string | null
-      email?: string | null
-      category?: string | null
-    }> | null
+    return <Text>{formatMessage(pharmacyStrings.errorMessage)}</Text>
   }
 
   const items: Item[] =
@@ -182,7 +128,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
           <Input
             name="licensed-operation-search"
             placeholder={formatMessage(strings.searchPlaceholder)}
-            label={formatMessage(strings.search)}
+            label={formatMessage(pharmacyStrings.search)}
             backgroundColor="blue"
             size="xs"
             icon={{ name: 'search', type: 'outline' }}
@@ -227,7 +173,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
       </GridRow>
 
       {filtered.length === 0 ? (
-        <Text>{formatMessage(strings.noResults)}</Text>
+        <Text>{formatMessage(pharmacyStrings.noResults)}</Text>
       ) : (
         <Accordion>
           {filtered.map((item) => (
@@ -268,6 +214,14 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
                         >
                           {item.phone}
                         </LinkV2>
+                      </Box>
+                    )}
+                    {item.fax && (
+                      <Box>
+                        <Text variant="eyebrow">
+                          {formatMessage(pharmacyStrings.fax)}
+                        </Text>
+                        <Text>{item.fax}</Text>
                       </Box>
                     )}
                     {item.email && (
@@ -329,6 +283,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
                       <Box>
                         <Stack space={2}>
                           {item.branches.map((branch, i) => (
+                            // branches have no stable id from the API; index is safe since the list is render-only
                             <Box key={i}>
                               <Text variant="eyebrow">{branch.name}</Text>
                               {branch.address && <Text>{branch.address}</Text>}
