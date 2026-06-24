@@ -88,6 +88,16 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
         prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
       },
+      BLIKK_API_BASE_URL: {
+        dev: 'https://stage.blikk.tech',
+        staging: 'https://stage.blikk.tech',
+        prod: 'https://api.blikk.tech',
+      },
+      BLIKK_PAYMENT_TTL_SECONDS: {
+        dev: '300', // 5 minutes
+        staging: '300', // 5 minutes
+        prod: '600', // 10 minutes
+      },
     })
     .secrets({
       ...secrets,
@@ -113,6 +123,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY',
       APPLE_PAY_PAYMENT_PROCESSING_KEY:
         '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY',
+      BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
     })
     .ingress({
       primary: {

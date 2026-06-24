@@ -2,12 +2,20 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { SubmitHandler } from 'react-hook-form'
 
-import { CardErrorCode } from '@island.is/shared/constants'
+import {
+  PaymentsBankTransferFailureReason,
+  PaymentsGetFlowPaymentStatus,
+} from '@island.is/api/schema'
+import {
+  BankTransferErrorCode,
+  CardErrorCode,
+} from '@island.is/shared/constants'
 import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
+import { useBankTransferPayment } from './useBankTransferPayment'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -16,6 +24,25 @@ interface UsePaymentOrchestrationProps {
     title: string
   }
   isApplePayPaymentEnabledForUser: boolean
+}
+
+const deriveInitialBankTransferError = (
+  paymentFlow: UsePaymentOrchestrationProps['paymentFlow'],
+): PaymentError | null => {
+  if (
+    paymentFlow?.paymentStatus !==
+    PaymentsGetFlowPaymentStatus.bank_transfer_failed
+  ) {
+    return null
+  }
+  switch (paymentFlow.lastBankTransferFailure) {
+    case PaymentsBankTransferFailureReason.rejected:
+      return { code: BankTransferErrorCode.BankTransferRejected }
+    case PaymentsBankTransferFailureReason.cancelled:
+      return { code: BankTransferErrorCode.BankTransferCancelled }
+    default:
+      return { code: BankTransferErrorCode.BankTransferGenericError }
+  }
 }
 
 export const usePaymentOrchestration = ({
@@ -29,13 +56,15 @@ export const usePaymentOrchestration = ({
   )
   // This local submitting state is for the brief period before a specific hook takes over
   const [isInitiatingSubmit, setIsInitiatingSubmit] = useState(false)
-  const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
+  const [paymentError, setPaymentError] = useState<PaymentError | null>(() =>
+    deriveInitialBankTransferError(paymentFlow),
+  )
 
   const [isThreeDSecureModalActive, setIsThreeDSecureModalActive] =
     useState(false)
 
   const commonOnPaymentSuccess = useCallback(
-    (paymentMethod: 'card' | 'invoice') => {
+    (paymentMethod: 'card' | 'invoice' | 'bank_transfer') => {
       if (paymentMethod === 'invoice') {
         if (
           paymentFlow?.redirectOnInvoiceCreation &&
@@ -83,6 +112,11 @@ export const usePaymentOrchestration = ({
     onPaymentError: commonOnPaymentError,
   })
 
+  const bankTransferPayment = useBankTransferPayment({
+    paymentFlowId: paymentFlow?.id,
+    onPaymentError: commonOnPaymentError,
+  })
+
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
     async (data) => {
       setIsInitiatingSubmit(true)
@@ -110,6 +144,18 @@ export const usePaymentOrchestration = ({
           })
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
+        } else if (selectedPaymentMethod === 'bank_transfer') {
+          const { bankAccountNumber } = data
+          if (!bankAccountNumber) {
+            setPaymentError({
+              code: BankTransferErrorCode.MissingBankAccountNumber,
+            })
+            setIsInitiatingSubmit(false)
+            return
+          }
+          await bankTransferPayment.processBankTransferPayment(
+            bankAccountNumber,
+          )
         }
       } catch (e: unknown) {
         if (
@@ -124,13 +170,17 @@ export const usePaymentOrchestration = ({
         setIsInitiatingSubmit(false)
       }
     },
-    [selectedPaymentMethod, cardPayment, invoicePayment],
+    [selectedPaymentMethod, cardPayment, invoicePayment, bankTransferPayment],
   )
 
   const combinedIsProcessing =
     selectedPaymentMethod === 'card'
       ? cardPayment.isCardPaymentProcessing
-      : invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'invoice'
+      ? invoicePayment.isInvoicePaymentProcessing
+      : selectedPaymentMethod === 'bank_transfer'
+      ? bankTransferPayment.isBankTransferPaymentProcessing
+      : false
 
   // Overall submitting state combines the local initiation with the hook's processing state.
   const overallIsSubmitting = isInitiatingSubmit || combinedIsProcessing
