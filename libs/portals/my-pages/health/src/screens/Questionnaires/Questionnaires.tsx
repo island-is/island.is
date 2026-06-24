@@ -109,6 +109,7 @@ const Questionnaires: FC = () => {
         const searchLower = filterValues.searchQuery.toLowerCase()
         const matchesSearch =
           !searchLower ||
+          item.senderGroupName?.toLowerCase().includes(searchLower) ||
           item.organization?.toLowerCase().includes(searchLower) ||
           item.title?.toLowerCase().includes(searchLower)
 
