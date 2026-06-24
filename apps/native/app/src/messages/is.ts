@@ -268,6 +268,15 @@ export const is = {
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.buttonReply': 'Svara pósti',
   'documentDetail.buttonCommunications': 'Samskipti',
+  'documentDetail.archiveSuccess': 'Skjal sett í geymslu',
+  'documentDetail.unarchiveSuccess': 'Skjal tekið úr geymslu',
+  'documentDetail.bookmarkSuccess': 'Skjal stjörnumerkt',
+  'documentDetail.unbookmarkSuccess': 'Stjörnumerking fjarlægð',
+  'documentDetail.archiveError': 'Ekki tókst að setja skjal í geymslu',
+  'documentDetail.unarchiveError': 'Ekki tókst að taka skjal úr geymslu',
+  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
+  'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
+  'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document reply
   'documentReply.to': 'Til',
@@ -276,6 +285,8 @@ export const is = {
   'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
+  'documentReply.sendMessageError': 'Ekki tókst að senda svar',
+  'documentReply.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document communications
   'documentCommunications.caseNumber': 'Málsnúmer',
@@ -789,6 +800,8 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.show-expired': 'Sýna útrunna',
+  'health.questionnaires.action.hide-expired': 'Fela útrunna',
   'health.questionnaires.detail.description':
     'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
@@ -818,18 +831,23 @@ export const is = {
   'health.appointments.title': 'Tímabókanir',
   'health.appointments.description':
     'Hér getur þú séð tímabókanir þínar í heilbrigðiskerfinu.',
-  'health.appointments.detailTitle': 'Tímabókun hjá heilsugæslunni',
-  'health.appointments.dateAndTime': 'Dagsetning og tími',
-  'health.appointments.duration': 'Lengd',
-  'health.appointments.location': 'Staðsetning',
-  'health.appointments.address': 'Heimilisfang',
   'health.appointments.practitioners': 'Tími hjá: {practitioner}',
   'health.appointments.appointmentWith': 'Tími hjá',
-  'health.appointments.atTime': 'kl {time}',
-  'health.appointments.timePrefix': 'kl',
   'health.appointments.instructions': 'Leiðbeiningar',
-  'health.appointments.openMap': 'Sjá á korti',
-  'health.appointments.type': 'Tegund',
+  'health.appointments.openMap': 'Opna kort',
+  'health.appointments.locationInstructions': 'Nánar um staðsetningu',
+  'health.appointments.seeMore': 'Sjá nánar',
+  'health.appointments.openingHours': 'Opnunartímar',
+  'health.appointments.phoneNumber': 'Símanúmer',
+  'health.appointments.organization': 'Stofnun',
+  'health.appointments.videoCall': 'Myndsímtal',
+  'health.appointments.videoCallInfoWithLink':
+    'Hnappurinn fyrir myndsímtalið verður virkur 5 mínútum fyrir bókaðan tíma.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Ýttu hnappinn til að hefja myndsímtalið.',
+  'health.appointments.videoCallInfoNoLink':
+    'Þessi tímabókun inniheldur myndsímtal. Þú færð sendan hlekk á myndsímtalið stuttu fyrir bókaðan tíma. Ef enginn hlekkur finnst, vinsamlegast hafðu samband við viðeigandi stofnun.',
+  'health.appointments.startVideoCall': 'Hefja myndsímtal',
   'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
   'health.appointments.noAppointmentsText':
     'Þú ert ekki með neinar komandi tímabókanir.',
@@ -838,6 +856,7 @@ export const is = {
   'health.appointments.notFoundMessage':
     'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
   'health.appointments.minutesFormat': '{minutes} mínútur',
+  'health.appointments.moreInfo': 'Nánari upplýsingar',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',

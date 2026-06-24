@@ -6,6 +6,7 @@ fragment AppointmentFragment on HealthDirectorateAppointment {
   date
   status
   duration
+  modality
   location {
     __typename
     name
