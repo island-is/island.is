@@ -39,7 +39,10 @@ export const middleware = (request: NextRequest) => {
 
   // Not an SDF app → hand back to the legacy form under `/umsoknir/<slug>`,
   // preserving the full path and query string.
-  const legacyUrl = new URL(`/umsoknir${pathname}`, LEGACY_SPA_BASE ?? request.url)
+  const legacyUrl = new URL(
+    `/umsoknir${pathname}`,
+    LEGACY_SPA_BASE ?? request.url,
+  )
   legacyUrl.search = request.nextUrl.search
   return NextResponse.redirect(legacyUrl)
 }
