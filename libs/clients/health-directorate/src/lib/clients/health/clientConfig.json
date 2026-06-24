@@ -6236,7 +6236,7 @@
           },
           "duration": {
             "type": "number",
-            "description": "The duration of the appointment"
+            "description": "The duration of the appointment in whole minutes, only calculated when endTime is present"
           },
           "status": {
             "type": "string",
@@ -6282,8 +6282,6 @@
         "required": [
           "id",
           "startTime",
-          "endTime",
-          "duration",
           "status",
           "modality",
           "description",
