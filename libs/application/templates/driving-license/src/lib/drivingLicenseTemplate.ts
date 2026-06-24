@@ -211,6 +211,9 @@ const DrivingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getCodes,
+        // Surface RLS's resolved submit-failure reason as a toast on the payment
+        // screen (the generic error screen is unchanged). Opt-in per template.
+        showSubmitErrorReason: true,
       }),
       [States.DONE]: {
         meta: {

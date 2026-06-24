@@ -15,7 +15,7 @@ import {
   Select,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
@@ -28,7 +28,12 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
 
-export const MainContent = () => {
+interface Props {
+  openPreview: boolean
+  setOpenPreview: Dispatch<SetStateAction<boolean>>
+}
+
+export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const {
     control,
     controlDispatch,
@@ -38,7 +43,6 @@ export const MainContent = () => {
     getTranslation,
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
-  const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
   const showIdentifier =
@@ -64,6 +68,10 @@ export const MainContent = () => {
   // 3) Disable only when checkbox is checked AND there are multiset fields
   const disableAllowMultiple =
     (activeScreen?.isMulti ?? false) && screenHasMultisetFields
+
+  if (!activeItem.data) {
+    return null
+  }
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>

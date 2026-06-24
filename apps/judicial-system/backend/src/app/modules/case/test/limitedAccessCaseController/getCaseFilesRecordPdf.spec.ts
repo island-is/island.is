@@ -188,7 +188,64 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     it('should return ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toEqual(
-        `Defender does not have access to police case number ${otherDefenderPoliceCaseNumber}`,
+        `Defence user does not have access to police case number ${otherDefenderPoliceCaseNumber}`,
+      )
+    })
+  })
+
+  describe('spokesperson does not have access to police case number', () => {
+    const otherSpokespersonPoliceCaseNumber = theCase.policeCaseNumbers[0]
+    let then: Then
+
+    beforeEach(async () => {
+      const caseWithCivilClaimants = {
+        ...theCase,
+        defendants: [
+          {
+            defenderNationalId: '8888888888',
+            isDefenderChoiceConfirmed: true,
+            policeCaseNumbers: [otherSpokespersonPoliceCaseNumber],
+          },
+        ],
+        civilClaimants: [
+          {
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            caseFilesSharedWithSpokesperson: true,
+            spokespersonNationalId: user.nationalId,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+          {
+            hasSpokesperson: true,
+            isSpokespersonConfirmed: true,
+            caseFilesSharedWithSpokesperson: true,
+            spokespersonNationalId: '9999999999',
+            policeCaseNumbers: [otherSpokespersonPoliceCaseNumber],
+          },
+        ],
+      } as Case
+
+      const then2 = {} as Then
+
+      try {
+        await limitedAccessCaseController.getCaseFilesRecordPdf(
+          caseId,
+          otherSpokespersonPoliceCaseNumber,
+          user,
+          caseWithCivilClaimants,
+          res,
+        )
+      } catch (error) {
+        then2.error = error as Error
+      }
+
+      then = then2
+    })
+
+    it('should return ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toEqual(
+        `Defence user does not have access to police case number ${otherSpokespersonPoliceCaseNumber}`,
       )
     })
   })
