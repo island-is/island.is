@@ -84,6 +84,35 @@ export const PoliceCaseList = () => {
           }))
         : [{ number: '' }]
 
+    const byDate = (a: TPoliceCase, b: TPoliceCase) => {
+      const at = a.date?.getTime()
+      const bt = b.date?.getTime()
+
+      if (at === undefined) return bt === undefined ? 0 : 1
+      if (bt === undefined) return -1
+
+      return at - bt
+    }
+
+    if (policeCases.length > 1 && policeCases[0].number !== '') {
+      const mainPoliceCaseNumber = workingCase.policeCaseNumbers?.[0]
+
+      if (workingCase.origin === CaseOrigin.LOKE && mainPoliceCaseNumber) {
+        const mainCase = policeCases.find(
+          (policeCase) => policeCase.number === mainPoliceCaseNumber,
+        )
+        const rest = policeCases
+          .filter((policeCase) => policeCase.number !== mainPoliceCaseNumber)
+          .sort(byDate)
+
+        if (mainCase) {
+          policeCases.splice(0, policeCases.length, mainCase, ...rest)
+        }
+      } else {
+        policeCases.sort(byDate)
+      }
+    }
+
     const current = policeCaseIds.current
     policeCaseIds.current = policeCases.reduce((acc, c) => {
       acc[c.number] = current[c.number] ?? uuid()
@@ -143,12 +172,17 @@ export const PoliceCaseList = () => {
       crimeScenes[number] = crimeScene
     })
 
-    const [first, ...rest] = unsortedPoliceCaseNumbers
+    const mainPoliceCaseNumber = workingCase.policeCaseNumbers?.[0]
 
     const policeCaseNumbers =
-      workingCase.origin === CaseOrigin.LOKE
-        ? // If the case is a LÖKE case, we never change the first police case number
-          [first, ...rest.sort(compare)]
+      workingCase.origin === CaseOrigin.LOKE && mainPoliceCaseNumber
+        ? // The main LÖKE number must stay at index 0 in the stored array
+          [
+            mainPoliceCaseNumber,
+            ...unsortedPoliceCaseNumbers
+              .filter((number) => number !== mainPoliceCaseNumber)
+              .sort(compare),
+          ]
         : unsortedPoliceCaseNumbers.sort(compare)
 
     return { policeCaseNumbers, indictmentSubtypes, crimeScenes }
@@ -183,10 +217,15 @@ export const PoliceCaseList = () => {
       // Assumptions:
       // 1. At most one update per indictment count
       // 2. For each update, only one of the updates is set
+      const policeCaseNumber =
+        policeCases[index]?.number ?? oldPoliceCaseNumbers[index]
+
+      if (policeCaseNumber === undefined) {
+        continue
+      }
+
       updatedIndictmentCounts = updatedIndictmentCounts.map(
         (indictmentCount) => {
-          const policeCaseNumber = oldPoliceCaseNumbers[index]
-
           if (indictmentCount.policeCaseNumber !== policeCaseNumber) {
             return indictmentCount
           }
@@ -479,12 +518,16 @@ export const PoliceCaseList = () => {
               {workingCase.policeCaseNumbers && (
                 <PoliceCase
                   index={index}
+                  policeCaseNumber={policeCase.number}
                   setPoliceCase={(update: PoliceCaseUpdate) =>
                     handleSetPoliceCase({ index, update })
                   }
                   deletePoliceCase={
                     workingCase.policeCaseNumbers.length > 1 &&
-                    !(workingCase.origin === CaseOrigin.LOKE && index === 0)
+                    !(
+                      workingCase.origin === CaseOrigin.LOKE &&
+                      policeCase.number === workingCase.policeCaseNumbers[0]
+                    )
                       ? () => handleDeletePoliceCase(index)
                       : undefined
                   }
