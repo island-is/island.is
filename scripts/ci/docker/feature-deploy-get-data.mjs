@@ -57,12 +57,6 @@ async function main(testContext = null) {
   const globPattern = _MANIFEST_PATHS.map((path) => `${path}/**/*.yaml`)
   const files = await glob(globPattern)
 
-  if (files && files.length > 0) {
-    console.log('we got some files')
-  } else {
-    console.log('we got no files')
-  }
-
   for (const file of files) {
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
@@ -75,14 +69,13 @@ async function main(testContext = null) {
       content.image.repository &&
       typeof content.image.repository === 'string'
     ) {
-      if (file.includes('ids-features/deployments')) {
-        // Hard code image tag for ids for testing purposes
+      if (file.includes('identity-server')) {
         content.image.tag = 'main_20260522_VBHs2N1jBfMDePuv'
-        fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       } else {
         content.image.tag = imageTag
-        fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       }
+
+      fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
       changedFiles.add(file)
     } else if (file.includes('bootstrap-fd-job') && !changedFiles.has(file)) {
