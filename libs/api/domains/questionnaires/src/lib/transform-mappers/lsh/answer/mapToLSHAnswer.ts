@@ -41,11 +41,14 @@ export const mapToLshAnswer = (
   input: QuestionnaireInput,
 ): QuestionnaireAnswers => {
   return {
-    answers: input.entries.map((entry) => ({
-      entryID: entry.entryId,
-      type: typeMapper(entry.type),
-      values: entry.answers.map((a) => a.value),
-    })),
+    answers: input.entries.flatMap((entry) => {
+      if (!entry.answers?.length) return []
+      return [{
+        entryID: entry.entryId,
+        type: typeMapper(entry.type),
+        values: entry.answers.map((a) => a.value),
+      }]
+    }),
     formID: input.formId,
     gUID: input.id,
     instanceID: '', // Should be empty
