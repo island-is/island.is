@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   ParseUUIDPipe,
@@ -10,10 +11,13 @@ import {
   Query,
   Headers,
   BadRequestException,
+  forwardRef,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 
+import { PaymentStatus } from '../../types'
+import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { PaymentFlowService } from './paymentFlow.service'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
@@ -35,7 +39,11 @@ import { GetPaymentFlowsInput } from './dtos/getPaymentFlows.input'
   version: ['1'],
 })
 export class PaymentFlowController {
-  constructor(private readonly paymentFlowService: PaymentFlowService) {}
+  constructor(
+    private readonly paymentFlowService: PaymentFlowService,
+    @Inject(forwardRef(() => BankTransferService))
+    private readonly bankTransferService: BankTransferService,
+  ) {}
 
   @Get('/')
   @Documentation({
@@ -67,11 +75,31 @@ export class PaymentFlowController {
     description: 'Retrieves payment flow information by ID.',
     response: { status: 200, type: GetPaymentFlowDTO },
   })
-  getPaymentFlow(
+  async getPaymentFlow(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Query('includeEvents') includeEvents?: boolean,
   ): Promise<GetPaymentFlowDTO | null> {
-    return this.paymentFlowService.getPaymentFlow(id, includeEvents)
+    const base = await this.paymentFlowService.getPaymentFlow(id, includeEvents)
+    // Only UNPAID flows can have a bank-transfer overlay; PAID/INVOICE_PENDING short-circuit.
+    if (!base || base.paymentStatus !== PaymentStatus.UNPAID) {
+      return base
+    }
+
+    // getBankTransferStatus may finalize a just-settled transfer and report PAID, so we fold its
+    // result in rather than trusting the pre-overlay `base` snapshot.
+    const overlay = await this.bankTransferService.getBankTransferStatus(id)
+    if (!overlay) {
+      return base
+    }
+
+    return {
+      ...base,
+      paymentStatus: overlay.paymentStatus,
+      updatedAt: overlay.updatedAt,
+      bankTransferScaRedirectUrl: overlay.bankTransferScaRedirectUrl,
+      lastBankTransferFailure: overlay.lastBankTransferFailure,
+      bankTransferExpiresAt: overlay.bankTransferExpiresAt,
+    }
   }
 
   @Get(':id/status')
