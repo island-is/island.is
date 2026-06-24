@@ -440,9 +440,7 @@ export class ZendeskService {
 
               // Multi + multi-attribute: number once above all attributes (bold)
               if (isMulti && isMultiAttribute) {
-                parts.push(
-                  h(6, `<strong>${itemNo}.</strong>`, `margin:0;${indent(30)}`),
-                )
+                parts.push(p0(`<strong>${itemNo}.</strong>`, indent(30)))
               }
 
               for (const [key, raw] of entries) {
@@ -579,21 +577,72 @@ export class ZendeskService {
               return
             }
 
-            let value = ''
-            const json = field.values?.[0]?.json ?? {}
+            const values: string[] = []
+            const isMulti = (field.values?.length ?? 0) > 1
 
-            const firstEntry = Object.entries(json)[0]
-            if (firstEntry) {
-              const [, rawVal] = firstEntry
-              value = this.formatValue(rawVal, field.fieldType)
+            for (
+              let valueIndex = 0;
+              valueIndex < (field.values?.length ?? 0);
+              valueIndex++
+            ) {
+              const fieldValue = field.values?.[valueIndex]
+              const rawJson = fieldValue?.json
+              const json =
+                rawJson && typeof rawJson === 'object'
+                  ? (rawJson as Record<string, unknown>)
+                  : {}
+
+              const formattedEntries = Object.entries(json)
+                .map(([key, rawVal]) => {
+                  if (rawVal === null || rawVal === undefined) {
+                    return undefined
+                  }
+
+                  let value = this.formatValue(rawVal, field.fieldType)
+
+                  if (!value) {
+                    return undefined
+                  }
+
+                  // if field is a checkbox and value is false, do not include it in custom fields
+                  if (field.fieldType === FieldTypesEnum.CHECKBOX) {
+                    if (value === this.CHECKBOX_FALSE) {
+                      return undefined
+                    }
+                    value = field.name.is
+                  }
+
+                  return {
+                    key,
+                    value,
+                  }
+                })
+                .filter((entry): entry is { key: string; value: string } =>
+                  Boolean(entry),
+                )
+
+              if (formattedEntries.length === 0) {
+                continue
+              }
+
+              const itemValue =
+                formattedEntries.length > 1
+                  ? formattedEntries
+                      .map(({ key, value }) => {
+                        const attribute =
+                          getLanguageTypeForValueTypeAttribute(key)
+                        return `${attribute.is}: ${value}`
+                      })
+                      .join(' | ')
+                  : formattedEntries[0].value
+
+              values.push(
+                isMulti ? `${valueIndex + 1}. ${itemValue}` : itemValue,
+              )
             }
 
-            // if field is a checkbox and value is false, do not include it in custom fields
-            if (field.fieldType === FieldTypesEnum.CHECKBOX) {
-              if (value === this.CHECKBOX_FALSE) {
-                return
-              }
-              value = field.name.is
+            if (values.length === 0) {
+              return
             }
 
             // iterate through customFields and check if id already exists.
@@ -603,11 +652,11 @@ export class ZendeskService {
               (f) => f.id === customFieldId,
             )
             if (existingField) {
-              existingField.value += `, ${value}`
+              existingField.value += `, ${values.join(', ')}`
             } else {
               customFields.push({
                 id: customFieldId,
-                value: value,
+                value: values.join(', '),
               })
             }
           }
@@ -636,9 +685,15 @@ export class ZendeskService {
       fieldType === FieldTypesEnum.DROPDOWN_LIST ||
       fieldType === FieldTypesEnum.RADIO_BUTTONS
     ) {
-      if (val == null || val === '' || typeof val !== 'object' || !val.is)
+      if (val === null || val === '' || typeof val !== 'object' || !val.is)
         return ''
       return String(val.is)
+    }
+
+    if (fieldType === FieldTypesEnum.ASSETS) {
+      if (typeof val === 'object' && val !== null && val.is) {
+        return String(val.is)
+      }
     }
 
     if (fieldType === FieldTypesEnum.DATE_PICKER) {

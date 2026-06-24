@@ -25,6 +25,7 @@ import { DocumentV2 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useDocument } from '@/hooks/use-document'
 import { toggleAction } from '@/lib/post-mail-action'
+import { toast } from '@/components/toast'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
@@ -136,14 +137,50 @@ export default function DocumentScreen() {
       content: contentType !== 'pdf' ? document.content?.value : undefined,
     })
 
-  const onToggleArchive = () => {
-    if (document.id)
-      toggleAction(document.archived ? 'unarchive' : 'archive', document.id)
+  const showActionError = (
+    action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
+  ) => {
+    toast.error(intl.formatMessage({ id: `documentDetail.${action}Error` }), {
+      message: intl.formatMessage({ id: 'documentDetail.pleaseTryAgain' }),
+    })
   }
 
-  const onToggleBookmark = () => {
-    if (document.id)
-      toggleAction(document.bookmarked ? 'unbookmark' : 'bookmark', document.id)
+  const onToggleArchive = async () => {
+    if (!document.id) {
+      return
+    }
+    const action = document.archived ? 'unarchive' : 'archive'
+    try {
+      const result = await toggleAction(action, document.id)
+      if (!result.data?.postMailActionV2?.success) {
+        showActionError(action)
+        return
+      }
+      toast.success(
+        intl.formatMessage({ id: `documentDetail.${action}Success` }),
+      )
+    } catch {
+      showActionError(action)
+    }
+  }
+
+  const onToggleBookmark = async () => {
+    if (!document.id) {
+      return
+    }
+    const action = document.bookmarked ? 'unbookmark' : 'bookmark'
+    try {
+      const result = await toggleAction(action, document.id)
+      if (!result.data?.postMailActionV2?.success) {
+        showActionError(action)
+        return
+      }
+      toast.success(
+        intl.formatMessage({ id: `documentDetail.${action}Success` }),
+      )
+    } catch {
+      showActionError(action)
+    }
   }
 
   const hasAlert =

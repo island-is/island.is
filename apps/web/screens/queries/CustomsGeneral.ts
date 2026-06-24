@@ -16,6 +16,9 @@ export const GET_CUSTOMS_GENERAL_PROHIBITIONS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      exemptionProvider
     }
   }
 `
@@ -26,6 +29,10 @@ export const GET_CUSTOMS_GENERAL_CHARGES = gql`
       code
       name
       description
+      validFrom
+      validTo
+      taxtiUpphaed
+      taxtiProsenta
     }
   }
 `
@@ -36,6 +43,9 @@ export const GET_CUSTOMS_GENERAL_PERMITS = gql`
       code
       name
       description
+      validFrom
+      validTo
+      leyfiVeitir
     }
   }
 `
@@ -43,9 +53,10 @@ export const GET_CUSTOMS_GENERAL_PERMITS = gql`
 export const GET_CUSTOMS_GENERAL_TARIFFS = gql`
   query CustomsGeneralTariffs($input: CustomsGeneralInput!) {
     customsGeneralTariffs(input: $input) {
-      code
       name
       description
+      validFrom
+      validTo
     }
   }
 `
