@@ -4,7 +4,7 @@ import * as styles from './Loading.css'
 
 const Loading = () => {
   return (
-    <Box className={styles.loadingContainer}>
+    <Box className={styles.loadingContainer} role="status" aria-live="polite">
       <Box className={styles.animatedLoadingContainer}>
         <Text variant="h2" color="dark200">
           Sæki gögn
