@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import IconButton from './IconButton'
 
 describe('IconButton', () => {
-  it('exposes the provided ariaLabel as the accessible name', () => {
+  it('exposes the provided ariaLabel as the accessible name', async () => {
     render(
       <IconButton
         icon="trash"
@@ -14,11 +14,11 @@ describe('IconButton', () => {
     )
 
     expect(
-      screen.getByRole('button', { name: 'Eyða skjali' }),
+      await screen.findByRole('button', { name: 'Eyða skjali' }),
     ).toBeInTheDocument()
   })
 
-  it('calls onClick when activated', () => {
+  it('calls onClick when activated', async () => {
     const onClick = jest.fn()
 
     render(
@@ -30,12 +30,12 @@ describe('IconButton', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'Breyta' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Breyta' }))
 
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  it('still exposes the accessible name when wrapped in a tooltip', () => {
+  it('still exposes the accessible name when wrapped in a tooltip', async () => {
     render(
       <IconButton
         icon="ellipsisVertical"
@@ -46,7 +46,7 @@ describe('IconButton', () => {
     )
 
     expect(
-      screen.getByRole('button', { name: 'Valmynd fyrir skjal' }),
+      await screen.findByRole('button', { name: 'Valmynd fyrir skjal' }),
     ).toBeInTheDocument()
   })
 })
