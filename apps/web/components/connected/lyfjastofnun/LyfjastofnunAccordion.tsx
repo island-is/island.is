@@ -107,9 +107,34 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
 
   const filtered = items.filter((item) => {
     const q = searchQuery.toLowerCase()
+    const textFields = [
+      item.name,
+      item.address,
+      item.postalCode,
+      item.city,
+      item.phone,
+      item.fax,
+      item.email,
+      item.licenseHolder,
+      item.operator?.name,
+      item.operator?.address,
+      item.operator?.postalCode,
+      item.operator?.city,
+      item.operator?.phone,
+      item.operator?.nationalId,
+      ...(item.branches ?? []).flatMap((b) => [
+        b.name,
+        b.address,
+        b.postalCode,
+        b.city,
+        b.phone,
+        b.fax,
+        b.email,
+        b.category,
+      ]),
+    ]
     const matchesSearch =
-      item.name.toLowerCase().includes(q) ||
-      (item.address ?? '').toLowerCase().includes(q)
+      !q || textFields.some((f) => f?.toLowerCase().includes(q))
     const matchesRegion =
       !hasRegion || selectedRegion == null || item.region === selectedRegion
     return matchesSearch && matchesRegion
