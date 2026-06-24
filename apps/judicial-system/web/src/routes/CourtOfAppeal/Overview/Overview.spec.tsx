@@ -29,18 +29,18 @@ describe('Overview', () => {
     render(
       <MockedProvider addTypename={false}>
         <IntlProviderWrapper>
-        <FormContextWrapper
-          theCase={{
-            ...mockCase(CaseType.CUSTODY),
-            appealCase: {
-              id: 'test_appeal_case_id',
-              appealState: AppealCaseState.RECEIVED,
-              requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
-            },
-          }}
-        >
-          <Overview />
-        </FormContextWrapper>
+          <FormContextWrapper
+            theCase={{
+              ...mockCase(CaseType.CUSTODY),
+              appealCase: {
+                id: 'test_appeal_case_id',
+                appealState: AppealCaseState.RECEIVED,
+                requestAppealRulingNotToBePublished: [UserRole.PROSECUTOR],
+              },
+            }}
+          >
+            <Overview />
+          </FormContextWrapper>
         </IntlProviderWrapper>
       </MockedProvider>,
     )
