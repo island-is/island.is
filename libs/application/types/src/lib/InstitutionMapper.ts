@@ -216,6 +216,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.ADDITIONAL_DRIVING_LICENSE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,

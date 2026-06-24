@@ -18,7 +18,6 @@ export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
   const currentLicense = (() => {
     switch (fakeData.currentLicense) {
       case 'temp':
-        return 'B'
       case 'B':
       case 'C':
       case 'C1':
