@@ -268,6 +268,15 @@ export const is = {
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.buttonReply': 'Svara pósti',
   'documentDetail.buttonCommunications': 'Samskipti',
+  'documentDetail.archiveSuccess': 'Skjal sett í geymslu',
+  'documentDetail.unarchiveSuccess': 'Skjal tekið úr geymslu',
+  'documentDetail.bookmarkSuccess': 'Skjal stjörnumerkt',
+  'documentDetail.unbookmarkSuccess': 'Stjörnumerking fjarlægð',
+  'documentDetail.archiveError': 'Ekki tókst að setja skjal í geymslu',
+  'documentDetail.unarchiveError': 'Ekki tókst að taka skjal úr geymslu',
+  'documentDetail.bookmarkError': 'Ekki tókst að stjörnumerkja skjal',
+  'documentDetail.unbookmarkError': 'Ekki tókst að fjarlægja stjörnumerkingu',
+  'documentDetail.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document reply
   'documentReply.to': 'Til',
@@ -276,6 +285,8 @@ export const is = {
   'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
+  'documentReply.sendMessageError': 'Ekki tókst að senda svar',
+  'documentReply.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document communications
   'documentCommunications.caseNumber': 'Málsnúmer',

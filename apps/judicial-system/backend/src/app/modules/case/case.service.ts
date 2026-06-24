@@ -36,6 +36,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -80,6 +81,7 @@ import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
   Case,
   caseInclude,
   CaseRepositoryService,
@@ -238,6 +240,7 @@ export class CaseService {
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
+    private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -850,10 +853,30 @@ export class CaseService {
     }
   }
 
+  private addMessagesForIndictmentConclusionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (
+      !theCase.courtCaseNumber ||
+      !theCase.indictmentRulingDecision ||
+      !theCase.rulingDate
+    )
+      return
+
+    addMessagesToQueue({
+      type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+      user,
+      caseId: theCase.id,
+    })
+  }
+
   private addMessagesForCompletedIndictmentCaseToQueue(
     updatedCase: Case,
     user: TUser,
   ): void {
+    this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+
     for (const caseFile of updatedCase.caseFiles ?? []) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
@@ -1043,7 +1066,9 @@ export class CaseService {
         }
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
-          if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
+          if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+            this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+          } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
           }
         } else {
@@ -1078,6 +1103,22 @@ export class CaseService {
             updatedCase,
             user,
           )
+
+          if (updatedCase.splitCaseId) {
+            const splitDefendant = updatedCase.defendants?.[0]
+            if (splitDefendant?.id) {
+              addMessagesToQueue({
+                type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+                user,
+                caseId: updatedCase.splitCaseId,
+                body: {
+                  defendantId: splitDefendant.id,
+                  splitCaseNumber: updatedCase.courtCaseNumber,
+                  rulingDate: updatedCase.created?.toISOString(),
+                },
+              })
+            }
+          }
         } else {
           this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         }
@@ -1421,6 +1462,63 @@ export class CaseService {
     }
   }
 
+  // Dual-write: mirrors the legacy request-case appeal decision fields into
+  // the in-court appeal_decision rows - one prosecution row and one collective
+  // defence row (no defendantId). Indictment decisions are not stored here.
+  // The legacy columns remain the source of truth until later.
+  private async handleAppealDecisionUpdates(
+    theCase: Case,
+    update: UpdateCase,
+    transaction: Transaction,
+  ): Promise<void> {
+    if (!isRequestCase(theCase.type)) {
+      return
+    }
+
+    // Mirror whenever a decision or announcement is touched. decision is
+    // nullable, so an announcement entered before a decision is picked is
+    // still persisted (and not lost on refresh / column drop).
+    if (
+      update.prosecutorAppealDecision !== undefined ||
+      update.prosecutorAppealAnnouncement !== undefined
+    ) {
+      await this.appealDecisionRepositoryService.upsert(
+        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.PROSECUTOR },
+        {
+          decision:
+            update.prosecutorAppealDecision ??
+            theCase.prosecutorAppealDecision ??
+            null,
+          announcement:
+            update.prosecutorAppealAnnouncement ??
+            theCase.prosecutorAppealAnnouncement ??
+            null,
+        },
+        { transaction },
+      )
+    }
+
+    if (
+      update.accusedAppealDecision !== undefined ||
+      update.accusedAppealAnnouncement !== undefined
+    ) {
+      await this.appealDecisionRepositoryService.upsert(
+        { caseId: theCase.id, partyRole: AppealDecisionPartyRole.DEFENDANT },
+        {
+          decision:
+            update.accusedAppealDecision ??
+            theCase.accusedAppealDecision ??
+            null,
+          announcement:
+            update.accusedAppealAnnouncement ??
+            theCase.accusedAppealAnnouncement ??
+            null,
+        },
+        { transaction },
+      )
+    }
+  }
+
   private handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -1756,6 +1854,25 @@ export class CaseService {
         )
       }),
     )
+
+    if (theCase.courtCaseNumber) {
+      for (const { defendantId, rulingDecision, rulingDate } of decisions) {
+        if (!rulingDate) {
+          continue
+        }
+
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId: theCase.id,
+          body: {
+            defendantId,
+            indictmentRulingDecision: rulingDecision,
+            rulingDate,
+          },
+        })
+      }
+    }
   }
 
   private async handleEventLogUpdates(
@@ -1875,6 +1992,7 @@ export class CaseService {
 
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
+    await this.handleAppealDecisionUpdates(theCase, caseUpdate, transaction)
 
     // Handle appealed in court
     if (isCompletingRequestCase) {
@@ -1896,9 +2014,16 @@ export class CaseService {
           caseUpdate.accusedPostponedAppealDate = update.rulingDate
         }
 
+        // The in-court appeal itself is recorded by decision = APPEAL on the
+        // appeal_decision rows (written when the decision was set); here we
+        // only create the appeal case it produces.
         await this.appealCaseRepositoryService.create(
           theCase.id,
-          { appealState: AppealCaseState.APPEALED },
+          {
+            appealState: AppealCaseState.APPEALED,
+            // An in-court appeal happened when the case completed
+            appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,
+          },
           { transaction },
         )
       }
