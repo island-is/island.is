@@ -10,16 +10,19 @@ const {
 const graphqlPath = '/api/graphql'
 
 // In every deployed environment this app shares its ingress host with the
-// `web` app, which owns `/` (and therefore `/_next`). Our pages are only
-// routed here under `/umsoknir/sdf`, so Next's default root-level
-// `/_next/static/*` asset URLs would be sent to `web` and 404. Prefixing the
-// assets with an app-owned path that the ingress routes here keeps JS/CSS/font
-// requests on this service. `assetPrefix` (rather than `basePath`) is used so
-// pages can still be served under multiple prefixes (`/umsoknir/sdf/<slug>`
-// and the allowlisted `/umsoknir/<slug>`). Only applied for production builds;
-// local `nx serve` keeps assets at `/_next/*`.
-const isProd = process.env.NODE_ENV === 'production'
-const ASSET_PREFIX = '/umsoknir/sdf'
+// `web` app, which owns `/` (and therefore `/_next`), and with
+// `application-system-form`, which owns `/umsoknir`. Our pages are routed here
+// only under `/umsoknir/sdf` (most-specific path-prefix match, no rewrite), so
+// `basePath` makes Next serve both pages *and* assets under that prefix
+// (`/umsoknir/sdf/<slug>` and `/umsoknir/sdf/_next/*`). The ingress then keeps
+// every page/JS/CSS/font request on this service, with no collision against
+// `web`'s `/_next` or the form's `/umsoknir`. Applied in all environments so
+// local (`:4250`) and deployed URLs are identical.
+//
+// NB: a path-based `assetPrefix` was used here previously; it is wrong for this
+// setup because Next strips it from *incoming* request URLs, turning
+// `/umsoknir/sdf/<slug>` into `/<slug>` → no route → 404.
+const BASE_PATH = '/umsoknir/sdf'
 
 /** @type {import('@nx/next/plugins/with-nx').WithNxOptions} */
 const nextConfig = {
@@ -72,24 +75,17 @@ const nextConfig = {
   publicRuntimeConfig: {
     graphqlEndpoint: graphqlPath,
   },
-  ...(isProd ? { assetPrefix: ASSET_PREFIX } : {}),
+  basePath: BASE_PATH,
   async rewrites() {
     return {
-      // Assets are emitted at `/_next/*` but referenced via `assetPrefix`
-      // (`/umsoknir/sdf/_next/*`) so the ingress routes them to this app. Map
-      // the prefixed request back to the real path Next serves from.
-      beforeFiles: isProd
-        ? [
-            {
-              source: `${ASSET_PREFIX}/_next/:path*`,
-              destination: '/_next/:path*',
-            },
-          ]
-        : [],
       afterFiles: [
         {
+          // `basePath: false` keeps this matching the un-prefixed `/bff/*` that
+          // the client BFF generator still calls today. When the BFF is moved
+          // under the app prefix (`/umsoknir/sdf/bff`), drop this flag.
           source: '/bff/:path*',
           destination: `${BFF_PROXY_TARGET}/bff/:path*`,
+          basePath: false,
         },
       ],
     }
@@ -97,7 +93,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // The `/bff/:path*` rewrite below proxies through Next's router proxy, which
+  // The `/bff/:path*` rewrite above proxies through Next's router proxy, which
   // applies a default `proxyTimeout` of 30s and aborts the upstream socket once
   // it elapses ("Failed to proxy … socket hang up"). SDF submits run the full
   // onSubmit template-api actions + state transition synchronously on the API
@@ -107,7 +103,6 @@ const nextConfig = {
   experimental: {
     proxyTimeout: null,
   },
-  basePath: '',
   nx: {
     svgr: false,
   },

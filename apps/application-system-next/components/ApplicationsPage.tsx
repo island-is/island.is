@@ -31,13 +31,9 @@ import { useHeaderInfo } from './HeaderInfoProvider'
 
 interface ApplicationsPageProps {
   slug: string
-  basePath?: string
 }
 
-export const ApplicationsPage = ({
-  slug,
-  basePath = '/umsoknir',
-}: ApplicationsPageProps) => {
+export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
   const router = useRouter()
   const { formatMessage } = useLocale()
   const { clearInfo } = useHeaderInfo()
@@ -82,7 +78,9 @@ export const ApplicationsPage = ({
     {
       onCompleted({ createApplication }) {
         if (slug) {
-          router.push(`${basePath}/${slug}/${createApplication.id}`)
+          // Root-relative; Next prepends the configured `basePath`
+          // (`/umsoknir/sdf`) automatically.
+          router.push(`/${slug}/${createApplication.id}`)
         }
       },
     },
@@ -188,7 +186,7 @@ export const ApplicationsPage = ({
                 applications={data.ApplicationSystemCard}
                 organizations={mappedOrganizations as Organization[]}
                 onClick={(applicationUrl) =>
-                  router.push(`${basePath}/${applicationUrl}`)
+                  router.push(`/${applicationUrl}`)
                 }
                 refetch={refetch}
               />

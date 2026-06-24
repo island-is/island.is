@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import { InitialScreenGate } from '../../../../../components/InitialScreenGate'
-import { ShellSkeleton } from '../../../../../components/ShellSkeleton'
+import { InitialScreenGate } from '../../../components/InitialScreenGate'
+import { ShellSkeleton } from '../../../components/ShellSkeleton'
 
 interface ApplicationPageProps {
   params: { slug: string; id: string }
