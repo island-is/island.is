@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, FilterInput, GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  GridColumn,
+  GridRow,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -73,7 +80,12 @@ const CompetencyCertificates = () => {
       return (
         <Box>
           {nestedData.map(({ title, value }) => (
-            <Box key={title} display="flex" flexDirection="row" marginBottom={1}>
+            <Box
+              key={title}
+              display="flex"
+              flexDirection="row"
+              marginBottom={1}
+            >
               <Box width="half" display="flex" alignItems="center">
                 <Text fontWeight="semiBold">{title}</Text>
               </Box>
@@ -106,30 +118,30 @@ const CompetencyCertificates = () => {
       )}
       {!loading && !error && (filtered.length > 0 || search) && (
         <Box marginTop={5}>
-        <Stack space={3}>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '6/12']}>
-              <FilterInput
-                name="schoolCertificateSearch"
-                placeholder={formatMessage(m.inputSearchTerm)}
-                value={search}
-                onChange={(val) => setSearch(val)}
-                backgroundColor="blue"
+          <Stack space={3}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <FilterInput
+                  name="schoolCertificateSearch"
+                  placeholder={formatMessage(m.inputSearchTerm)}
+                  value={search}
+                  onChange={(val) => setSearch(val)}
+                  backgroundColor="blue"
+                />
+              </GridColumn>
+            </GridRow>
+            {filtered.length === 0 ? (
+              <Problem type="no_data" noBorder={false} />
+            ) : (
+              <Table
+                columns={columns}
+                data={filtered}
+                emptyMessage={om.sailorSchoolCertificatesEmpty}
+                mobileTitleKey="title"
+                renderExpandedRow={renderExpandedRow}
               />
-            </GridColumn>
-          </GridRow>
-          {filtered.length === 0 ? (
-            <Problem type="no_data" noBorder={false} />
-          ) : (
-            <Table
-              columns={columns}
-              data={filtered}
-              emptyMessage={om.sailorSchoolCertificatesEmpty}
-              mobileTitleKey="title"
-              renderExpandedRow={renderExpandedRow}
-            />
-          )}
-        </Stack>
+            )}
+          </Stack>
         </Box>
       )}
     </IntroWrapper>

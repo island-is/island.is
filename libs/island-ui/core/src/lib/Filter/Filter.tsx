@@ -260,7 +260,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         }
       >
         {usePopoverDiscloureButtonStyling ? (
-          <Box background="white" borderRadius="large" width={fluidDisclosure ? 'full' : undefined}>
+          <Box
+            background="white"
+            borderRadius="large"
+            width={fluidDisclosure ? 'full' : undefined}
+          >
             <Button
               unfocusable
               as="span"

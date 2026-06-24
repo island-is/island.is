@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, FilterInput, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   LinkButton,

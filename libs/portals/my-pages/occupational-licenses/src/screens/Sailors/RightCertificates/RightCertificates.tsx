@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, FilterInput, GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  GridColumn,
+  GridRow,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   IntroWrapper,
@@ -30,9 +37,7 @@ const RightCertificates = () => {
   const [search, setSearch] = useState('')
   const filtered = useMemo(
     () =>
-      (
-        data?.shipRegistrySailor?.certificates?.rightCertificates ?? []
-      ).filter(
+      (data?.shipRegistrySailor?.certificates?.rightCertificates ?? []).filter(
         (c) =>
           !search ||
           (c.type ?? '').toLowerCase().includes(search.toLowerCase()) ||
@@ -81,7 +86,12 @@ const RightCertificates = () => {
       return (
         <Box>
           {nestedData.map(({ title, value }) => (
-            <Box key={title} display="flex" flexDirection="row" marginBottom={1}>
+            <Box
+              key={title}
+              display="flex"
+              flexDirection="row"
+              marginBottom={1}
+            >
               <Box width="half" display="flex" alignItems="center">
                 <Text fontWeight="semiBold">{title}</Text>
               </Box>
@@ -111,37 +121,41 @@ const RightCertificates = () => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && !data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
-        <Problem type="no_data" noBorder={false} />
-      )}
-      {!loading && !error && !!data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
-        <Box marginTop={5}>
-          <Stack space={3}>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <FilterInput
-                  name="rightCertificateSearch"
-                  placeholder={formatMessage(m.inputSearchTerm)}
-                  value={search}
-                  onChange={(val) => setSearch(val)}
-                  backgroundColor="blue"
+      {!loading &&
+        !error &&
+        !data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
+          <Problem type="no_data" noBorder={false} />
+        )}
+      {!loading &&
+        !error &&
+        !!data?.shipRegistrySailor?.certificates?.rightCertificates?.length && (
+          <Box marginTop={5}>
+            <Stack space={3}>
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <FilterInput
+                    name="rightCertificateSearch"
+                    placeholder={formatMessage(m.inputSearchTerm)}
+                    value={search}
+                    onChange={(val) => setSearch(val)}
+                    backgroundColor="blue"
+                  />
+                </GridColumn>
+              </GridRow>
+              {filtered.length === 0 ? (
+                <Problem type="no_data" noBorder={false} />
+              ) : (
+                <Table
+                  columns={columns}
+                  data={filtered}
+                  emptyMessage={om.sailorRightCertificatesEmpty}
+                  mobileTitleKey="type"
+                  renderExpandedRow={renderExpandedRow}
                 />
-              </GridColumn>
-            </GridRow>
-            {filtered.length === 0 ? (
-              <Problem type="no_data" noBorder={false} />
-            ) : (
-              <Table
-                columns={columns}
-                data={filtered}
-                emptyMessage={om.sailorRightCertificatesEmpty}
-                mobileTitleKey="type"
-                renderExpandedRow={renderExpandedRow}
-              />
-            )}
-          </Stack>
-        </Box>
-      )}
+              )}
+            </Stack>
+          </Box>
+        )}
     </IntroWrapper>
   )
 }
