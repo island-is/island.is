@@ -3,16 +3,9 @@ import {
   buildSection,
   buildMultiField,
   buildTextField,
-  buildRadioField,
-  YES,
-  NO,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
-import {
-  nationalIdPreface,
-  getNationalIdPrefix,
-} from '../../../utils/assigneeUtils'
+import { nationalIdPreface } from '../../../utils/assigneeUtils'
 import { doesAssigneeAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 
 export const assetDeclerationSection = buildSection({
@@ -34,31 +27,13 @@ export const assetDeclerationSection = buildSection({
           description: m.assigneeDraft.assetDeclerationDescription2,
           marginBottom: 4,
         }),
-        buildRadioField({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assetDeclerationRadio'),
-          title: m.assigneeDraft.assetDeclerationRadioTitle,
-          description: m.assigneeDraft.assetDeclerationRadioDescription,
-          options: [
-            { label: m.miscMessages.yes, value: YES },
-            { label: m.miscMessages.no, value: NO },
-          ],
-          marginBottom: 4,
-        }),
         buildTextField({
-          condition: (answers, _externalData, user) => {
-            if (!user) return false
-            const prefix = getNationalIdPrefix(user)
-            return (
-              getValueViaPath(answers, `${prefix}.assetDeclerationRadio`) ===
-              YES
-            )
-          },
           id: (application, user) =>
             nationalIdPreface(application, user, 'assetDeclerationTextField'),
-          description: m.assigneeDraft.assetDeclerationTextFieldDescription,
+          title: m.assigneeDraft.assetDeclerationTextFieldDescription,
           variant: 'textarea',
           rows: 10,
+          required: true,
         }),
       ],
     }),
