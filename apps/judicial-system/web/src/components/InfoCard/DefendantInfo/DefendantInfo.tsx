@@ -222,7 +222,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               : 'Niðurfellt'
           } ${formatDate(
             defendant.indictmentCancelledOrDismissedState.time,
-            'P',
+            'dd.MM.y',
           )}`}</Text>
         )}
         {displayOpenCaseReference && (

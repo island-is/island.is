@@ -165,6 +165,11 @@ export class WorkerService {
       totalPrice: cardPaymentDetails.totalPrice,
       systemId: environment.chargeFjs.systemId,
       merchantReferenceData: cardPaymentDetails.merchantReferenceData,
+      // CardPaymentDetails.id is the per-attempt correlationId (see createCardPaymentConfirmation).
+      correlationId: cardPaymentDetails.id,
+      // The card confirmation row is created when the payment succeeds — its `created` is the
+      // payment-completion date, not this (possibly later) worker run.
+      effectiveDate: new Date(cardPaymentDetails.created),
     })
 
     const newCharge = await retry(

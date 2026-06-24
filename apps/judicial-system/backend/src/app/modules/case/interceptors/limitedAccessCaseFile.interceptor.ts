@@ -16,9 +16,10 @@ import {
 
 import {
   canLimitedAccessUserViewCaseFile,
-  getDefenderVisiblePoliceCaseNumbers,
+  getDefenceUserVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../../file'
-import { Defendant } from '../../repository'
+import { CivilClaimant, Defendant } from '../../repository'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -30,6 +31,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
           ({
+            id,
             category,
             submittedBy,
             fileRepresentative,
@@ -37,6 +39,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
             created,
             civilClaimantId,
           }: {
+            id: string
             category: CaseFileCategory
             submittedBy: string
             fileRepresentative: string
@@ -56,6 +59,8 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               defendantId,
               fileCreated: created,
               civilClaimantId,
+              isRulingOrderInConfirmedCourtSession:
+                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
             }),
         )
 
@@ -65,14 +70,19 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
           isDefenceUser(user) &&
           isIndictmentCase(theCase.type) &&
           theCase.policeCaseNumbers &&
-          Defendant.isConfirmedDefenderOfDefendant(
+          (Defendant.isConfirmedDefenderOfDefendant(
             user.nationalId,
             theCase.defendants,
-          )
+          ) ||
+            CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+              user.nationalId,
+              theCase.civilClaimants,
+            ))
         ) {
-          policeCaseNumbers = getDefenderVisiblePoliceCaseNumbers(
+          policeCaseNumbers = getDefenceUserVisiblePoliceCaseNumbers(
             user.nationalId,
             theCase.defendants,
+            theCase.civilClaimants,
             theCase.policeCaseNumbers,
           )
         }

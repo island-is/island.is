@@ -1,17 +1,19 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  ListItemsControllerCreateRequest,
   ListItemsApi,
+  ListItemsControllerApplyTemplateListRequest,
+  ListItemsControllerCreateRequest,
   ListItemsControllerDeleteRequest,
-  ListItemsControllerUpdateRequest,
   ListItemsControllerUpdateDisplayOrderRequest,
+  ListItemsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   CreateListItemInput,
   DeleteListItemInput,
+  TemplateListInput,
   UpdateListItemDisplayOrderInput,
   UpdateListItemInput,
 } from '../../dto/listItem.input'
@@ -70,5 +72,21 @@ export class ListItemsService {
     await this.listItemsApiWithAuth(auth).listItemsControllerUpdateDisplayOrder(
       input as ListItemsControllerUpdateDisplayOrderRequest,
     )
+  }
+
+  async applyTemplateList(
+    auth: User,
+    input: TemplateListInput,
+  ): Promise<ListItem[]> {
+    const response = await this.listItemsApiWithAuth(
+      auth,
+    ).listItemsControllerApplyTemplateList({
+      templateListDto: {
+        fieldId: input.fieldId,
+        templateListType: input.templateListType,
+      },
+    } as ListItemsControllerApplyTemplateListRequest)
+
+    return response as ListItem[]
   }
 }

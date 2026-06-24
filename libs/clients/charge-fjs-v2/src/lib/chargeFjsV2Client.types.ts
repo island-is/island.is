@@ -40,6 +40,8 @@ interface PayInfo {
   authCode: string
   PAN: string
   payableAmount: number
+  /** Internal per-attempt id, threaded through for FJS↔our-system reconciliation. */
+  correlationId?: string
 }
 
 export interface ExtraData {

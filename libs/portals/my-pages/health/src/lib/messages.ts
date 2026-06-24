@@ -810,12 +810,8 @@ export const messages = defineMessages({
     id: 'sp.health:location',
   },
   locationInstructions: {
-    defaultMessage: 'Leiðbeiningar um staðsetningu',
-    id: 'sp.health:location-instructions',
-  },
-  locationDetails: {
     defaultMessage: 'Nánar um staðsetningu',
-    id: 'sp.health:location-details',
+    id: 'sp.health:location-instructions',
   },
   LOTT: {
     defaultMessage: 'Lífeyrisþegi með óskerta tekjutryggingu',
@@ -2627,6 +2623,10 @@ export const messages = defineMessages({
   renewalStatusRejected: {
     defaultMessage: 'Hafnað',
     id: 'sp.health:renewal-status-rejected',
+  },
+  renewalStatusUnknown: {
+    defaultMessage: 'Óþekkt',
+    id: 'sp.health:renewal-status-unknown',
   },
   renewalSendTo: {
     defaultMessage: 'Sendist til',

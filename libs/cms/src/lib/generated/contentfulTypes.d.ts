@@ -4688,6 +4688,7 @@ export interface ISliceConnectedComponentFields {
     | 'KVTH/Rulings'
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
+    | 'ECOI/Calculator'
     | undefined
 
   /** Localized JSON */

@@ -5,15 +5,18 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CaseType } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../aws-s3/awsS3.service'
 import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { DateLog } from '../models/dateLog.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 import { EventLog } from '../models/eventLog.model'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
@@ -73,12 +76,18 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
           provide: getModelToken(IndictmentCount),
           useValue: mockSequelizeModel(),
         },
+        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
+        {
+          provide: getModelToken(CivilClaimant),
+          useValue: mockSequelizeModel(),
+        },
         { provide: getModelToken(CaseFile), useValue: mockSequelizeModel() },
         { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {},
         },
+        { provide: AwsS3Service, useValue: {} },
         CaseRepositoryService,
       ],
     }).compile()
@@ -110,6 +119,22 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
 
       expect(result).toBe('indictment-id')
       expect(caseModel.findByPk).not.toHaveBeenCalled()
+    })
+
+    it('walks the parent chain for a duplicated indictment draft', async () => {
+      // duplicate -> original (root)
+      stubParentChain({ 'original-id': null })
+
+      const theCase = {
+        id: 'duplicate-id',
+        type: CaseType.INDICTMENT,
+        parentCaseId: 'original-id',
+      } as Case
+
+      const result = await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(result).toBe('original-id')
+      expect(caseModel.findByPk).toHaveBeenCalledTimes(1)
     })
   })
 
