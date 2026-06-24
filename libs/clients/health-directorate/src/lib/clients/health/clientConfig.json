@@ -3722,7 +3722,7 @@
       },
       "PrescriptionRenewalStatusDisplay": {
         "type": "string",
-        "enum": ["pending", "approved", "rejected", "dismissed"]
+        "enum": ["pending", "approved", "rejected", "dismissed", "unknown"]
       },
       "RenewalDto": {
         "type": "object",

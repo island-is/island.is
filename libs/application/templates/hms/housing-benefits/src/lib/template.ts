@@ -59,6 +59,7 @@ import { mapUserToRole } from '../utils/mapUserToRole'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -70,6 +71,7 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
+  featureFlag: Features.isHousingBenefitsEnabled,
   dataSchema,
   allowedDelegations: [
     {
