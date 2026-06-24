@@ -16,7 +16,12 @@ describe('<CaseFile />', () => {
     const onClick = jest.fn()
 
     render(
-      <CaseFile name="document.pdf" color={color} id="file-1" onClick={onClick} />,
+      <CaseFile
+        name="document.pdf"
+        color={color}
+        id="file-1"
+        onClick={onClick}
+      />,
     )
 
     const button = screen.getByRole('button', { name: 'Opna document.pdf' })
@@ -27,7 +32,12 @@ describe('<CaseFile />', () => {
     const onClick = jest.fn()
 
     render(
-      <CaseFile name="document.pdf" color={color} id="file-1" onClick={onClick} />,
+      <CaseFile
+        name="document.pdf"
+        color={color}
+        id="file-1"
+        onClick={onClick}
+      />,
     )
 
     const button = screen.getByRole('button', { name: 'Opna document.pdf' })
