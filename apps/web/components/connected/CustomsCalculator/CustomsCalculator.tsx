@@ -83,8 +83,6 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
   const [inputState, setInputState] = useState({
     searchInput: '',
-    currency: currencyOptions?.[0],
-    priceWithShipping: '',
   })
 
   const productCategoriesResponse =
@@ -383,6 +381,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
       {Boolean(unitsResponse.data?.customsCalculatorUnits?.units) && (
         <Units
+          key={selectedBottomLevelCategory?.tariffNumber ?? ''}
           unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
           currencyOptions={currencyOptions}
           tariffNumber={selectedBottomLevelCategory?.tariffNumber ?? ''}

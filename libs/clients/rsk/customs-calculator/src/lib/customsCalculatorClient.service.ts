@@ -39,7 +39,7 @@ export class CustomsCalculatorClientService {
           label: String(item.Voruflokkur ?? '').trim(),
           tariffNumber: String(item.Tollnumer ?? '').trim(),
           description: String(item.Lysing ?? '').trim(),
-        })) ?? []
+        }))
     )
   }
 

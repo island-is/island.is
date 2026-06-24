@@ -55,7 +55,8 @@ export class CustomsCalculatorService {
 
     for (const bottomLevelCategory of bottomLevelCategories) {
       let currentLabel = bottomLevelCategory.parentLabels[0]
-      while (currentLabel) {
+      let depth = 0
+      while (currentLabel && depth++ < 50) {
         let found = false
         for (const category of allCategories) {
           if (category.id === bottomLevelCategory.id) continue

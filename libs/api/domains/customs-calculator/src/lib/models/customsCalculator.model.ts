@@ -1,18 +1,6 @@
 import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 
-@ObjectType()
-export class CustomsCalculatorStatus {
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  code?: string
-
-  @Field({ nullable: true })
-  message?: string
-}
-
 @ObjectType('CustomsCalculatorTopLevelProductCategory')
 export class TopLevelProductCategory {
   @Field(() => ID)

@@ -25,6 +25,7 @@ export class CustomsCalculatorResolver {
     return this.customsCalculatorService.getProductCategories()
   }
 
+  @CacheControl(defaultCache)
   @Query(() => CustomsCalculatorUnitsResponse, {
     name: 'customsCalculatorUnits',
   })
@@ -34,6 +35,7 @@ export class CustomsCalculatorResolver {
     return this.customsCalculatorService.getProductCategoryUnits(tariffNumber)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => CustomsCalculatorCalculationResponse, {
     name: 'customsCalculatorCalculate',
   })
