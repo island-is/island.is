@@ -343,7 +343,7 @@ const Table: FC<TableProps> = (props) => {
                               ariaLabel={`Valmynd fyrir mál ${
                                 row.courtCaseNumber ??
                                 row.policeCaseNumbers?.[0] ??
-                                ''
+                                row.id
                               }`}
                             />
                           </motion.div>

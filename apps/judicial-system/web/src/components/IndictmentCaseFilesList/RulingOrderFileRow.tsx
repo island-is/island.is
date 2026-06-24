@@ -273,7 +273,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
                   <IconButton
                     icon="ellipsisVertical"
                     colorScheme="transparent"
-                    ariaLabel={`Valmynd fyrir ${fileName}`}
+                    ariaLabel={`Valmynd fyrir ${fileName || 'skjal'}`}
                     onClick={(evt) => {
                       evt.stopPropagation()
                     }}

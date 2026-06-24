@@ -145,7 +145,7 @@ const GenericTable = <Cell,>({
                           <IconButton
                             icon="ellipsisVertical"
                             colorScheme="transparent"
-                            ariaLabel="Frekari aðgerðir"
+                            ariaLabel={`Frekari aðgerðir fyrir mál ${r.id}`}
                           />
                         </motion.div>
                       }
