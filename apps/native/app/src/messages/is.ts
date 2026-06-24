@@ -800,6 +800,8 @@ export const is = {
   'health.questionnaires.action.answer': 'Svara lista',
   'health.questionnaires.action.continue-draft': 'Halda áfram',
   'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.show-expired': 'Sýna útrunna',
+  'health.questionnaires.action.hide-expired': 'Fela útrunna',
   'health.questionnaires.detail.description':
     'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
   'health.questionnaires.detail.status': 'Staða',
