@@ -6,7 +6,7 @@
  *   yarn ts-node libs/localization/scripts/sync-to-db.ts <glob-pattern>
  *
  * Example:
- *   yarn ts-node libs/localization/scripts/sync-to-db.ts "libs/application/templates/hms/rental-agreement/src/**/*.{ts,tsx}"
+ *   yarn ts-node libs/localization/scripts/sync-to-db.ts "libs/application/templates/hms/rental-agreement/src/**"
  *
  * Environment variables:
  *   DATABASE_URL - Postgres connection string
