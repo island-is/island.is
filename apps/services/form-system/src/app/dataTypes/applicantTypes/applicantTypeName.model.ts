@@ -67,4 +67,18 @@ export const ApplicantTypeNames: ApplicantTypeName[] = [
       en: 'Legal entity',
     },
   },
+  {
+    id: ApplicantTypesEnum.LEGAL_GUARDIAN,
+    name: {
+      is: 'Forsjáraðili',
+      en: 'Legal guardian',
+    },
+  },
+  {
+    id: ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
+    name: {
+      is: 'Umbjóðandi forsjáraðila',
+      en: 'Ward of legal guardian',
+    },
+  },
 ]

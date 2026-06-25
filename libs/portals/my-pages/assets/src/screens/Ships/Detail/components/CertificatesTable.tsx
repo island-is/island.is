@@ -23,7 +23,7 @@ interface Props {
 const columnHelper = createColumnHelper<ShipRegistryCertificate>()
 
 export const CertificatesTable = ({ certificates, loading }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const [search, setSearch] = useState('')
 
   const columns = useMemo(
@@ -71,8 +71,7 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
         },
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const filteredCertificates = useMemo(

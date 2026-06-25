@@ -28,6 +28,11 @@ const Appointments = styled.View`
   row-gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
+const SkeletonGroup = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
+  row-gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
 const ErrorWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
@@ -46,7 +51,7 @@ export default function AppointmentsScreen() {
   })
 
   const appointments =
-    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
+    appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -87,15 +92,15 @@ export default function AppointmentsScreen() {
         style={{ flex: 1 }}
       >
         <Host>
-          {(appointmentsRes.loading || refetching) && (
-            <Appointments>
+          {appointmentsRes.loading && !appointmentsRes.data && (
+            <SkeletonGroup>
               {Array.from({ length: 3 }).map((_, index) => (
-                <GeneralCardSkeleton height={100} key={index} />
+                <GeneralCardSkeleton height={140} key={index} />
               ))}
-            </Appointments>
+            </SkeletonGroup>
           )}
 
-          {appointmentsRes.error && (
+          {appointmentsRes.error && appointments.length === 0 && (
             <ErrorWrapper>
               <Problem
                 type="error"
@@ -108,7 +113,7 @@ export default function AppointmentsScreen() {
             </ErrorWrapper>
           )}
 
-          {!appointmentsRes.loading &&
+          {!!appointmentsRes.data &&
             !appointmentsRes.error &&
             appointments.length === 0 && (
               <EmptyList
@@ -128,23 +133,22 @@ export default function AppointmentsScreen() {
               />
             )}
 
-          {!appointmentsRes.loading &&
-            !appointmentsRes.error &&
-            appointments.length > 0 && (
-              <Appointments>
-                {appointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    id={appointment.id}
-                    title={appointment.title ?? ''}
-                    practitioners={appointment.practitioners}
-                    date={appointment.date ?? ''}
-                    location={appointment.location?.name ?? ''}
-                    onPress={handleAppointmentPress}
-                  />
-                ))}
-              </Appointments>
-            )}
+          {appointments.length > 0 && (
+            <Appointments>
+              {appointments.map((appointment) => (
+                <AppointmentCard
+                  key={appointment.id}
+                  id={appointment.id}
+                  title={appointment.title ?? ''}
+                  practitioners={appointment.practitioners}
+                  date={appointment.date ?? ''}
+                  location={appointment.location?.name ?? ''}
+                  modality={appointment.modality}
+                  onPress={handleAppointmentPress}
+                />
+              ))}
+            </Appointments>
+          )}
         </Host>
       </ScrollView>
     </View>

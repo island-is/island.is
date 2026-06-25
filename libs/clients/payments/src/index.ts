@@ -16,4 +16,7 @@ export {
   PaymentFlowEventDTOReasonEnum,
   GetPaymentFlowsPaginatedDTO,
   GetPaymentFlowStatusDTOPaymentStatusEnum,
+  CreateBankTransferInputLocaleEnum,
+  VerifyBankTransferResponseStatusEnum,
+  GetPaymentFlowDTOLastBankTransferFailureEnum,
 } from '../gen/fetch'

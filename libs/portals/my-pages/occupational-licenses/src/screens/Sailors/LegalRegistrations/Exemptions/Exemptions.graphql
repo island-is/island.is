@@ -1,0 +1,17 @@
+query ShipRegistrySailorRegistrationExemptions {
+  shipRegistrySailor {
+    certificates {
+      registrationExemptions {
+        id
+        shipRegistrationNumber
+        shipName
+        rank
+        advertised
+        exemptionLowerCertificateStatus
+        dateFrom
+        dateTo
+        numberOfDays
+      }
+    }
+  }
+}

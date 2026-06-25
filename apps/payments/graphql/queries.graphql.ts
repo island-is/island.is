@@ -33,6 +33,9 @@ export const GetPaymentFlow = gql`
       invoiceReturnUrl
       redirectOnInvoiceCreation
       updatedAt
+      lastBankTransferFailure
+      bankTransferScaRedirectUrl
+      bankTransferExpiresAt
     }
   }
 `

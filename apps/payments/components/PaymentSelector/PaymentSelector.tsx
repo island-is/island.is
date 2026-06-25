@@ -1,11 +1,13 @@
+import type { MessageDescriptor } from 'react-intl'
+
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { ButtonPayment as Button } from '../ButtonPayment/ButtonPayment'
 
-import { card, invoice } from '../../messages'
+import { bankTransfer, card, invoice } from '../../messages'
 
-export type PaymentMethod = 'card' | 'invoice'
+export type PaymentMethod = 'card' | 'invoice' | 'bank_transfer'
 
 interface PaymentSelectorProps {
   availablePaymentMethods: PaymentMethod[]
@@ -13,19 +15,31 @@ interface PaymentSelectorProps {
   onSelectPayment: (paymentMethod: PaymentMethod) => void
 }
 
+interface PaymentMethodOption {
+  method: PaymentMethod
+  title: MessageDescriptor
+}
+
+// Render order is the order the user sees the buttons in. Card → invoice → bank transfer
+const PAYMENT_METHOD_OPTIONS: readonly PaymentMethodOption[] = [
+  { method: 'card', title: card.paymentMethodTitle },
+  { method: 'invoice', title: invoice.paymentMethodTitle },
+  { method: 'bank_transfer', title: bankTransfer.paymentMethodTitle },
+]
+
 export const PaymentSelector = ({
   availablePaymentMethods,
   selectedPayment,
   onSelectPayment,
 }: PaymentSelectorProps) => {
   const { formatMessage } = useLocale()
-  const hasCard = availablePaymentMethods.includes('card')
-  const hasInvoice = availablePaymentMethods.includes('invoice')
 
-  // show card and invoice buttons if both are available
-  const showPaymentMethodOptions = hasCard && hasInvoice
+  const options = PAYMENT_METHOD_OPTIONS.filter((option) =>
+    availablePaymentMethods.includes(option.method),
+  )
 
-  if (!showPaymentMethodOptions) {
+  // Nothing to choose between — let the parent flow render the single available method directly.
+  if (options.length < 2) {
     return null
   }
 
@@ -36,21 +50,16 @@ export const PaymentSelector = ({
       justifyContent="spaceBetween"
       columnGap={1}
     >
-      <Button
-        isSelected={selectedPayment === 'card'}
-        onClick={() => onSelectPayment('card')}
-        type="card"
-      >
-        {formatMessage(card.paymentMethodTitle)}
-      </Button>
-
-      <Button
-        isSelected={selectedPayment === 'invoice'}
-        onClick={() => onSelectPayment('invoice')}
-        type="invoice"
-      >
-        {formatMessage(invoice.paymentMethodTitle)}
-      </Button>
+      {options.map((option) => (
+        <Button
+          key={option.method}
+          isSelected={selectedPayment === option.method}
+          onClick={() => onSelectPayment(option.method)}
+          type={option.method}
+        >
+          {formatMessage(option.title)}
+        </Button>
+      ))}
     </Box>
   )
 }
