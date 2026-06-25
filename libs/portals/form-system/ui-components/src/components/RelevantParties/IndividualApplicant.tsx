@@ -91,7 +91,7 @@ export const IndividualApplicant = ({
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />
-          <GridRow>
+          {/* <GridRow>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
               <Input
                 label={formatMessage(m.address)}
@@ -110,7 +110,7 @@ export const IndividualApplicant = ({
                 />
               </Box>
             </GridColumn>
-          </GridRow>
+          </GridRow> */}
 
           {applicant.fieldSettings?.isEmailRequired && (
             <Controller

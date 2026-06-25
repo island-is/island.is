@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -81,7 +88,17 @@ const IndictmentOverview: FC = () => {
   const indictmentAppealDeadlineIsInThePast =
     workingCase.indictmentVerdictAppealDeadlineExpired ?? false
 
-  const isReviewMissing = workingCase.defendants?.some(
+  // Defendants whose indictment was cancelled or dismissed (completed for some)
+  // do not receive a verdict, so no review decision is required for them.
+  const defendantsRequiringReview = useMemo(
+    () =>
+      workingCase.defendants?.filter(
+        (defendant) => !defendant.indictmentCancelledOrDismissedState,
+      ),
+    [workingCase.defendants],
+  )
+
+  const isReviewMissing = defendantsRequiringReview?.some(
     (defendant) => !defendant.indictmentReviewDecision,
   )
 
@@ -124,19 +141,19 @@ const IndictmentOverview: FC = () => {
   // Store original review decisions when workingCase loads to see if they change
   useEffect(() => {
     if (
-      workingCase.defendants?.length &&
-      workingCase.defendants.every((d) => d.id) &&
+      defendantsRequiringReview?.length &&
+      defendantsRequiringReview.every((d) => d.id) &&
       !Object.keys(originalReviewDecisions).length
     ) {
-      const decisions = workingCase.defendants.reduce((acc, defendant) => {
+      const decisions = defendantsRequiringReview.reduce((acc, defendant) => {
         acc[defendant.id] = defendant.indictmentReviewDecision
         return acc
       }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
       setOriginalReviewDecisions(decisions)
     }
-  }, [workingCase.defendants, originalReviewDecisions])
+  }, [defendantsRequiringReview, originalReviewDecisions])
 
-  const hasReviewDecisionChanged = workingCase.defendants?.some(
+  const hasReviewDecisionChanged = defendantsRequiringReview?.some(
     (defendant) =>
       defendant.indictmentReviewDecision !==
       originalReviewDecisions[defendant.id],
@@ -264,9 +281,9 @@ const IndictmentOverview: FC = () => {
                     </Text>
                   }
                 />
-                {workingCase.defendants && (
+                {defendantsRequiringReview && (
                   <div className={grid({ gap: 3 })}>
-                    {workingCase.defendants?.map((defendant) => (
+                    {defendantsRequiringReview.map((defendant) => (
                       <BlueBox key={`${defendant.id}_review_decision`}>
                         <SectionHeading
                           title={defendant.name ?? ''}

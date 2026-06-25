@@ -10,6 +10,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealEventType,
   CaseFileCategory,
   CaseType,
   User,
@@ -22,6 +23,8 @@ import { nowFactory } from '../../../../factories'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
 } from '../../../repository'
@@ -53,6 +56,8 @@ describe('LimitedAccessAppealCaseController - Create', () => {
   const now = new Date('2024-01-15T10:00:00Z')
 
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
+  let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
+  let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -63,11 +68,15 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     const {
       limitedAccessAppealCaseController,
       appealCaseRepositoryService,
+      appealDecisionRepositoryService,
+      appealEventLogRepositoryService,
       caseRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
+    mockAppealDecisionRepositoryService = appealDecisionRepositoryService
+    mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
@@ -95,10 +104,12 @@ describe('LimitedAccessAppealCaseController - Create', () => {
   })
 
   describe('defence user appeals a restriction case', () => {
+    const defendantId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
       caseFiles: [],
+      defendants: [{ id: defendantId }],
     } as unknown as Case
     let then: Then
 
@@ -109,10 +120,31 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     it('should create an appealed appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-        { appealState: AppealCaseState.APPEALED },
+        { appealState: AppealCaseState.APPEALED, appealDate: now },
         { transaction },
       )
       expect(then.result).toBe(createdAppealCase)
+    })
+
+    it('should not touch appeal_decision rows for an out-of-court appeal', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should record an APPEALED event for the defence side (no user id)', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          userId: undefined,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
+        { transaction },
+      )
     })
 
     it('should stamp the accused postponed appeal date on the case', () => {
@@ -136,6 +168,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
 
   describe('defence user appeals a ruling order on an indictment case', () => {
     const rulingFileId = uuid()
+    const defendantId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -146,10 +179,24 @@ describe('LimitedAccessAppealCaseController - Create', () => {
           category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
         },
       ],
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId,
+        },
+      ],
     } as unknown as Case
+    const createdRulingOrderAppeal = {
+      ...createdAppealCase,
+      rulingFileId,
+    } as AppealCase
     let then: Then
 
     beforeEach(async () => {
+      const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValue(createdRulingOrderAppeal)
+
       then = await givenWhenThen(theCase, { rulingFileId })
     })
 
@@ -159,11 +206,34 @@ describe('LimitedAccessAppealCaseController - Create', () => {
         {
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
+          appealDate: now,
           appealedByNationalId: defenderNationalId,
         },
         { transaction },
       )
-      expect(then.result).toBe(createdAppealCase)
+      expect(then.result).toBe(createdRulingOrderAppeal)
+    })
+
+    it('should not touch appeal_decision rows for an out-of-court appeal', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should record an APPEALED event tied to the represented defendant', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.DEFENDER,
+          userId: undefined,
+          defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
+        { transaction },
+      )
     })
   })
 

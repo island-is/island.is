@@ -223,4 +223,9 @@ export const assigneeDraft = defineMessages({
     defaultMessage: 'Vinsamlegast listaðu upp allar þínar eignir.',
     description: 'Assignee draft asset declaration text field description',
   },
+  validationAssetDeclerationTextFieldRequired: {
+    id: 'hb.application:assigneeDraft.validationAssetDeclerationTextFieldRequired',
+    defaultMessage: 'Vinsamlegast fylltu út eignayfirlýsingu',
+    description: 'Assignee draft asset declaration text field required',
+  },
 })
