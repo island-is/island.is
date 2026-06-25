@@ -8,9 +8,7 @@
   "paths": {
     "/api/v{version}/Application/createHousingBenefitsApplication": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "Creates a new housing benefits application.",
         "parameters": [
           {
@@ -101,9 +99,7 @@
     },
     "/api/v{version}/Application/hasTaxReturnForYear": {
       "get": {
-        "tags": [
-          "Tax"
-        ],
+        "tags": ["Tax"],
         "summary": "Check if a tax return exists for a specific year",
         "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) for the given income year (tekjuár).",
         "operationId": "HasTaxReturnForYear",
@@ -171,9 +167,7 @@
     },
     "/api/v{version}/Application/hasTaxReturnLastFiveYears": {
       "get": {
-        "tags": [
-          "Tax"
-        ],
+        "tags": ["Tax"],
         "summary": "Check if a tax return exists in the last 5 years",
         "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) in any of the last 5 income years (tekjuár). Returns true on the first year found.",
         "operationId": "HasTaxReturnLastFiveYears",
@@ -230,9 +224,7 @@
     },
     "/api/v{version}/Application/test": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "Simple POST test endpoint to verify API availability and authentication.",
         "parameters": [
           {
@@ -269,9 +261,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "Simple GET test endpoint to verify API availability from a browser.",
         "parameters": [
           {
@@ -310,9 +300,7 @@
     },
     "/api/v{version}/Application/diag-dal": {
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "TEMP DIAG: Runs DAL steps individually with timing. Returns partial results after 20s timeout.",
         "parameters": [
           {
@@ -343,9 +331,7 @@
     },
     "/api/v{version}/Application/diag-db": {
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "TEMP DIAG: Shows what connection strings the DAL actually resolves to.",
         "parameters": [
           {
@@ -367,9 +353,7 @@
     },
     "/api/v{version}/Application/diag-token": {
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "TEMP DIAG: Tests the full LeiguskraDAL flow - token + housing-benefit GET with contract_status filter.",
         "parameters": [
           {
@@ -400,9 +384,7 @@
     },
     "/api/v{version}/Payment/paymenthistory": {
       "post": {
-        "tags": [
-          "Payment"
-        ],
+        "tags": ["Payment"],
         "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system with pagination.",
         "parameters": [
           {
@@ -901,12 +883,7 @@
         "additionalProperties": false
       },
       "ModelValidationState": {
-        "enum": [
-          "unvalidated",
-          "invalid",
-          "valid",
-          "skipped"
-        ],
+        "enum": ["unvalidated", "invalid", "valid", "skipped"],
         "type": "string"
       },
       "NoContent": {
