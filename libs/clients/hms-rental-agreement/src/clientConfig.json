@@ -746,16 +746,20 @@
             "nullable": true
           },
           "contract_fire_report": {
+            "type": "object",
             "$ref": "#/components/schemas/ContractFireReport"
           },
           "fire_report_document": {
-            "nullable": true
+            "nullable": true,
+            "type": "object"
           },
           "contract_condition_report": {
+            "type": "object",
             "$ref": "#/components/schemas/ContractConditionReport"
           },
           "condition_report_document": {
-            "nullable": true
+            "nullable": true,
+            "type": "object"
           },
           "contract_document": {
             "type": "array",
