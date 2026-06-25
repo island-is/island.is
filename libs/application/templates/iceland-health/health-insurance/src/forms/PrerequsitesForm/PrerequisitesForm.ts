@@ -1,19 +1,12 @@
 import {
-  buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  ExternalData,
-  Form,
-  FormModes,
-  FormValue,
-} from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
   NationalRegistryV3UserApi,
@@ -21,7 +14,6 @@ import {
 } from '../../dataProviders'
 import { m } from '../../lib/messages/messages'
 import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
-import { prerequisitesFailed } from '../../healthInsuranceUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',

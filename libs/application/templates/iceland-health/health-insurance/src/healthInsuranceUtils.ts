@@ -1,4 +1,4 @@
-import { ExternalData } from '@island.is/application/types'
+import { ApplicationContext, ExternalData } from '@island.is/application/types'
 import { NationalRegistryAddress as Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 
@@ -26,7 +26,8 @@ export const hasNoIcelandicAddress = (externalData: ExternalData) => {
   return !address || (address && !(address.streetAddress && address.postalCode))
 }
 
-export const prerequisitesFailed = (externalData: ExternalData) => {
+export const isEligibleForApplication = (context: ApplicationContext) => {
+  const externalData = context.application.externalData
   return hasHealthInsurance(externalData) || hasNoIcelandicAddress(externalData)
 }
 
