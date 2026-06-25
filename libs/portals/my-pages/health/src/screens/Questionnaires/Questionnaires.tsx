@@ -111,6 +111,7 @@ const Questionnaires: FC = () => {
         const searchLower = filterValues.searchQuery.toLowerCase()
         const matchesSearch =
           !searchLower ||
+          item.senderGroupName?.toLowerCase().includes(searchLower) ||
           item.organization?.toLowerCase().includes(searchLower) ||
           item.title?.toLowerCase().includes(searchLower)
 
@@ -357,10 +358,11 @@ const Questionnaires: FC = () => {
                 headingVariant="h4"
                 subText={questionnaire.description ?? ''}
                 eyebrow={
-                  questionnaire.organization ===
+                  questionnaire.senderGroupName ??
+                  (questionnaire.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
                     ? formatMessage(messages.healthDirectorate)
-                    : formatMessage(messages.landspitali)
+                    : formatMessage(messages.landspitali))
                 }
                 eyebrowColor="purple400"
                 text={formatDate(questionnaire.sentDate)}
