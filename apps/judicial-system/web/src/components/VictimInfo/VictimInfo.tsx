@@ -168,10 +168,7 @@ export const VictimInfo: React.FC<Props> = ({
               Aðgangur réttargæslumanns að kröfu
               <RequiredStar />
             </Text>
-            <RadioGroup
-              legend="Aðgangur réttargæslumanns að kröfu"
-              hideLegend
-            >
+            <RadioGroup legend="Aðgangur réttargæslumanns að kröfu" hideLegend>
               <Box>
                 <RadioButton
                   name={`lawyer-access-${victim.id}`}
