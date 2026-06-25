@@ -8,7 +8,9 @@
   "paths": {
     "/api/v{version}/Application/createHousingBenefitsApplication": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "summary": "Creates a new housing benefits application.",
         "parameters": [
           {
@@ -43,7 +45,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Application created successfully",
             "content": {
               "text/plain": {
                 "schema": {
@@ -63,7 +65,7 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid model state",
             "content": {
               "text/plain": {
                 "schema": {
@@ -92,14 +94,315 @@
             }
           },
           "500": {
-            "description": "Server Error"
+            "description": "An internal server error occurred."
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/hasTaxReturnForYear": {
+      "get": {
+        "tags": [
+          "Tax"
+        ],
+        "summary": "Check if a tax return exists for a specific year",
+        "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) for the given income year (tekjuár).",
+        "operationId": "HasTaxReturnForYear",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "description": "The national ID (kennitala) of the individual.",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "description": "The income year (tekjuár) to check.",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns true if a tax return has been filed, false otherwise.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Kennitala or year is missing or invalid."
+          },
+          "500": {
+            "description": "An unexpected error occurred while querying RSK."
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/hasTaxReturnLastFiveYears": {
+      "get": {
+        "tags": [
+          "Tax"
+        ],
+        "summary": "Check if a tax return exists in the last 5 years",
+        "description": "Queries RSK to determine whether the individual identified by kennitala has filed a tax return (skattframtal) in any of the last 5 income years (tekjuár). Returns true on the first year found.",
+        "operationId": "HasTaxReturnLastFiveYears",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "description": "The national ID (kennitala) of the individual.",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns true if a tax return has been filed in any of the last 5 years, false otherwise.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Kennitala is missing or invalid."
+          },
+          "500": {
+            "description": "An unexpected error occurred while querying RSK."
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/test": {
+      "post": {
+        "tags": [
+          "Application"
+        ],
+        "summary": "Simple POST test endpoint to verify API availability and authentication.",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API is working",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Application"
+        ],
+        "summary": "Simple GET test endpoint to verify API availability from a browser.",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API is working",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/diag-dal": {
+      "get": {
+        "tags": [
+          "Application"
+        ],
+        "summary": "TEMP DIAG: Runs DAL steps individually with timing. Returns partial results after 20s timeout.",
+        "parameters": [
+          {
+            "name": "run",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": "no"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/diag-db": {
+      "get": {
+        "tags": [
+          "Application"
+        ],
+        "summary": "TEMP DIAG: Shows what connection strings the DAL actually resolves to.",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v{version}/Application/diag-token": {
+      "get": {
+        "tags": [
+          "Application"
+        ],
+        "summary": "TEMP DIAG: Tests the full LeiguskraDAL flow - token + housing-benefit GET with contract_status filter.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "default": "1910824439"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
     },
     "/api/v{version}/Payment/paymenthistory": {
       "post": {
-        "tags": ["Payment"],
+        "tags": [
+          "Payment"
+        ],
         "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system with pagination.",
         "parameters": [
           {
@@ -145,7 +448,7 @@
           {
             "name": "paymentOrigin",
             "in": "query",
-            "description": "Origin of payment, e.g.standard payments(Húsbót) or special payments(Sérstakar). 0= Both, 1= Almennar, 2=Sérstakar",
+            "description": "Origin of payment, e.g.standard payments(H�sb�t) or special payments(S�rstakar). 0= Both, 1= Almennar, 2=S�rstakar",
             "style": "form",
             "schema": {
               "type": "integer",
@@ -182,7 +485,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "List of payments",
             "content": {
               "text/plain": {
                 "schema": {
@@ -221,26 +524,6 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFound"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -260,6 +543,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -272,30 +575,45 @@
         "properties": {
           "kennitala": {
             "type": "string",
+            "description": "Kennitala of the household member that sent in the file",
             "nullable": true
           },
           "applicationNumber": {
             "type": "integer",
+            "description": "Application number of the application the file is attached to.",
             "format": "int32"
           },
           "fileUrl": {
             "type": "string",
+            "description": "Presigned URL that can be fetched within 5 min after submit. Husbot fetches immediately automatically.",
             "nullable": true
           },
           "fileName": {
             "type": "string",
+            "description": "Name of the file.",
             "nullable": true
           },
           "fileType": {
             "$ref": "#/components/schemas/ApplicationFileType"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a file attached to a household member."
       },
       "ApplicationFileType": {
-        "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        "type": "integer",
-        "format": "int32"
+        "enum": [
+          "visitationAgreement",
+          "incomeData",
+          "schoolCertificate",
+          "medicalCertificate",
+          "employmentContract",
+          "contractorIncome",
+          "foreignIncome",
+          "otherIncome",
+          "halfwayHouseConfirmation"
+        ],
+        "type": "string",
+        "description": "Represents the purpose of the application file.<br/><b>Members:</b><ul><li><i>1 - VisitationAgreement</i>: Visitation agreement. Original Icelandic name: Umgengnissamningur.</li><li><i>2 - IncomeData</i>: Income data.</li><li><i>3 - SchoolCertificate</i>: School certificate.</li><li><i>4 - MedicalCertificate</i>: Medical certificate.</li><li><i>5 - EmploymentContract</i>: Employment contract.</li><li><i>6 - ContractorIncome</i>: Contractor income.</li><li><i>7 - ForeignIncome</i>: Foreign income.</li><li><i>8 - OtherIncome</i>: Other income.</li><li><i>9 - HalfwayHouseConfirmation</i>: Confirmation of stay at a halfway house.</li></ul>"
       },
       "BadRequest": {
         "type": "object",
@@ -309,47 +627,63 @@
         "additionalProperties": false
       },
       "ExemptionType": {
-        "enum": [1, 2, 3, 4, 5, 6],
-        "type": "integer",
-        "format": "int32"
+        "enum": [
+          "education",
+          "illness",
+          "halfwayHouse",
+          "employment",
+          "discrepancy",
+          "relocation"
+        ],
+        "type": "string",
+        "description": "Represents the exemption types. Original Icelandic name: UndanthagaEnum."
       },
       "HouseholdMember": {
         "type": "object",
         "properties": {
           "kennitala": {
             "type": "string",
+            "description": "The national identification number.",
             "nullable": true
           },
           "address": {
             "type": "string",
+            "description": "The street address.",
             "nullable": true
           },
           "postalCode": {
             "type": "string",
+            "description": "The postal code.",
             "nullable": true
           },
           "email": {
             "type": "string",
+            "description": "The email address.",
             "nullable": true
           },
           "phoneNumber": {
             "type": "string",
+            "description": "The phone number.",
             "nullable": true
           },
           "acceptedPrivacyPolicy": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the privacy policy has been accepted."
           },
           "acceptedMunicipalityDataFetch": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether municipality data fetch has been accepted."
           },
           "acceptedDataFetch": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether data fetch has been accepted."
           },
           "exemptionNumber": {
             "$ref": "#/components/schemas/ExemptionType"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Contains information about a household member. Original Icelandic name: Heimilismadur."
       },
       "HousingBenefitsApplicationModel": {
         "required": [
@@ -369,91 +703,116 @@
         "properties": {
           "islandIsApplicationNumber": {
             "type": "integer",
+            "description": "The Island.is application number. This is used to link the application in Island.is to the application in Husbot. It is generated by Island.is when the application is created.",
             "format": "int32"
           },
           "kennitala": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The national identification number."
           },
           "address": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The address."
           },
           "municipality": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The municipality."
           },
           "postalCode": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The postal code."
           },
           "islandIsDateRegistered": {
             "type": "string",
+            "description": "The date the application was registered in Island.is.",
             "format": "date-time"
           },
           "phoneNumber": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The phone number."
           },
           "email": {
             "minLength": 1,
             "type": "string",
+            "description": "The email address.",
             "format": "email"
           },
           "bank": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The bank name."
           },
           "ledger": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The ledger number."
           },
           "accountNumber": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "description": "The account number."
           },
           "leaseContractNumber": {
             "type": "integer",
+            "description": "The lease contract number.",
             "format": "int32"
           },
           "propertyNumber": {
             "type": "string",
+            "description": "The property number.",
             "nullable": true
+          },
+          "propertyTypeNumber": {
+            "$ref": "#/components/schemas/PropertyType"
           },
           "foreignIncome": {
             "type": "string",
+            "description": "The foreign income.",
             "nullable": true
           },
           "contractorIncome": {
             "type": "string",
+            "description": "The contractor income.",
             "nullable": true
           },
           "otherIncome": {
             "type": "string",
+            "description": "The other income.",
             "nullable": true
           },
           "payToLandlord": {
             "type": "integer",
+            "description": "Indicates whether payment is made to the landlord.",
             "format": "int32"
           },
           "landlordBankAccountOwnerKennitala": {
             "type": "string",
+            "description": "The landlord's national identification number.",
             "nullable": true
           },
           "landlordBank": {
             "type": "string",
+            "description": "The landlord's bank.",
             "nullable": true
           },
           "landlordLedger": {
             "type": "string",
+            "description": "The landlord's ledger.",
             "nullable": true
           },
           "landlordAccountNumber": {
             "type": "string",
+            "description": "The landlord's account number.",
             "nullable": true
           },
           "hasAssetsAndIncome": {
             "type": "integer",
+            "description": "Indicates whether the applicant has assets and income.",
             "format": "int32"
           },
           "householdMembers": {
@@ -461,6 +820,7 @@
             "items": {
               "$ref": "#/components/schemas/HouseholdMember"
             },
+            "description": "The household members.",
             "nullable": true
           },
           "files": {
@@ -468,10 +828,12 @@
             "items": {
               "$ref": "#/components/schemas/ApplicationFile"
             },
+            "description": "The attached application files.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Model that represents the housing benefits application."
       },
       "HousingBenefitsApplicationReturnModel": {
         "type": "object",
@@ -479,7 +841,8 @@
           "applicationNumber": {
             "type": "integer",
             "description": "Application number. Original Icelandic name: UmsoknNr.",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "success": {
             "type": "boolean",
@@ -504,8 +867,8 @@
         "type": "object",
         "properties": {
           "rawValue": {
-            "nullable": true,
-            "type": "object"
+            "type": "object",
+            "nullable": true
           },
           "attemptedValue": {
             "type": "string",
@@ -538,9 +901,13 @@
         "additionalProperties": false
       },
       "ModelValidationState": {
-        "enum": [0, 1, 2, 3],
-        "type": "integer",
-        "format": "int32"
+        "enum": [
+          "unvalidated",
+          "invalid",
+          "valid",
+          "skipped"
+        ],
+        "type": "string"
       },
       "NoContent": {
         "type": "object",
@@ -717,6 +1084,17 @@
           }
         },
         "additionalProperties": false
+      },
+      "PropertyType": {
+        "enum": [
+          "privatelyOwned",
+          "stateOwned",
+          "dormitory",
+          "halfwayHouse",
+          "sharedHousingForDisabled"
+        ],
+        "type": "string",
+        "description": "Defines the type of property for an application.<br/><b>Members:</b><ul><li><i>1 - PrivatelyOwned</i>: Property is privately owned.</li><li><i>2 - StateOwned</i>: Property is owned by the state.</li><li><i>3 - Dormitory</i>: Property is a dormitory.</li><li><i>4 - HalfwayHouse</i>: Property is a halfway house.</li><li><i>5 - SharedHousingForDisabled</i>: Property is shared housing for people with disabilities.</li></ul>"
       }
     },
     "securitySchemes": {

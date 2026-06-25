@@ -411,6 +411,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
    *  - 'fiveYears': not filed for last year, filed for any earlier year
    */
   private async checkTaxReturnFiledForYear(
+    auth: Auth,
     taxMockMode: PersonalTaxMockMode,
     year: number,
     lastYear: number,
@@ -421,16 +422,32 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       case 'fiveYears':
         return year < lastYear
       default:
-        return true
+        if (auth.nationalId === undefined || auth.nationalId === null) {
+          throw new TemplateApiError('National ID is not set', 500)
+        }
+        const result =
+          await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
+            auth,
+            auth.nationalId,
+            year,
+          )
+        console.log('--------------------------------')
+        console.log('result', result)
+        console.log('--------------------------------')
+        return result
     }
   }
 
-  async getPersonalTaxReturn({ application }: TemplateApiModuleActionProps) {
+  async getPersonalTaxReturn({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
     const lastYear = new Date().getFullYear() - 1
 
     const taxMockMode = getPersonalTaxMockMode(application)
 
     const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      auth,
       taxMockMode,
       lastYear,
       lastYear,
@@ -445,7 +462,9 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
     let handedInLastFiveYears = false
     for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+      if (
+        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
+      ) {
         handedInLastFiveYears = true
         break
       }
@@ -473,6 +492,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     )
 
     const handedInLastYear = await this.checkTaxReturnFiledForYear(
+      auth,
       taxMockMode,
       lastYear,
       lastYear,
@@ -487,7 +507,9 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
     let handedInLastFiveYears = false
     for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (await this.checkTaxReturnFiledForYear(taxMockMode, year, lastYear)) {
+      if (
+        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
+      ) {
         handedInLastFiveYears = true
         break
       }
@@ -647,6 +669,15 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     try {
+      const taxReturnFiled = await this.checkTaxReturnFiledForYear(
+        auth,
+        'none',
+        2025,
+        2025,
+      )
+      console.log('--------------------------------')
+      console.log('taxReturnFiled', taxReturnFiled)
+      console.log('--------------------------------')
       const model = mapApplicationToHousingBenefitsModel(application)
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
