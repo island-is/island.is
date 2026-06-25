@@ -405,13 +405,12 @@ export class DrivingLicenseApi {
     category: string
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response = await this.v6.apiDrivinglicenseV6CanapplyforCategoryFullGet(
-      {
+    const response =
+      await this.v6.apiDrivinglicenseV6CanapplyforCategoryFullGet({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         category: params.category,
-      },
-    )
+      })
 
     return {
       result: !!response.result,
@@ -424,12 +423,11 @@ export class DrivingLicenseApi {
   public async getCanApplyForRenewal65(_params: {
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeRenewal65>> {
-    const response = await this.applicationV6.apiApplicationsV6CanapplyRenewal65Get(
-      {
+    const response =
+      await this.applicationV6.apiApplicationsV6CanapplyRenewal65Get({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      },
-    )
+      })
 
     return {
       result: !!response.result,
@@ -482,8 +480,8 @@ export class DrivingLicenseApi {
     signatureBiometricsId?: string | null
   }) {
     try {
-      const response = await this.v6.apiDrivinglicenseV6ApplicationsNewTemporaryPost(
-        {
+      const response =
+        await this.v6.apiDrivinglicenseV6ApplicationsNewTemporaryPost({
           apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
           apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
           modelsV6PostTemporaryLicense: {
@@ -497,8 +495,7 @@ export class DrivingLicenseApi {
             photoBiometricsId: params.photoBiometricsId,
             signatureBiometricsId: params.signatureBiometricsId,
           },
-        },
-      )
+        })
       if (!response.result) {
         throw new Error(
           `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
@@ -532,8 +529,8 @@ export class DrivingLicenseApi {
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
-    const response = await this.v6.apiDrivinglicenseV6ApplicationsNewCategoryPost(
-      {
+    const response =
+      await this.v6.apiDrivinglicenseV6ApplicationsNewCategoryPost({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         category: params.category,
@@ -546,8 +543,7 @@ export class DrivingLicenseApi {
           sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
-      },
-    )
+      })
 
     const handledResponse = handleCreateResponse(response)
 
@@ -571,8 +567,8 @@ export class DrivingLicenseApi {
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
   }): Promise<boolean> {
-    const response = await this.applicationV6.apiApplicationsV6ApplyforRenewal65Post(
-      {
+    const response =
+      await this.applicationV6.apiApplicationsV6ApplyforRenewal65Post({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
         modelsV6PostRenewal65: {
@@ -585,8 +581,7 @@ export class DrivingLicenseApi {
           signatureBiometricsId: params.signatureBiometricsId,
           userId: v6.DRIVING_LICENSE_API_USER_ID,
         },
-      },
-    )
+      })
 
     return response.result ?? false
   }
@@ -732,24 +727,22 @@ export class DrivingLicenseApi {
   }
 
   async getHasQualitySignature(_params: { token: string }): Promise<boolean> {
-    const result = await this.imageApiV6.apiImagecontrollerV6HasqualitysignatureGet(
-      {
+    const result =
+      await this.imageApiV6.apiImagecontrollerV6HasqualitysignatureGet({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      },
-    )
+      })
     return result > 0
   }
 
   async getQualitySignature(_params: {
     token: string
   }): Promise<QualitySignature | null> {
-    const image = await this.imageApiV6.apiImagecontrollerV6GetqualitysignatureGet(
-      {
+    const image =
+      await this.imageApiV6.apiImagecontrollerV6GetqualitysignatureGet({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      },
-    )
+      })
     return {
       data: image,
     }
@@ -759,12 +752,13 @@ export class DrivingLicenseApi {
     token: string
   }): Promise<QualityPhotoAndSignature | null> {
     try {
-      const res = await this.imageApiV6.apiImagecontrollerV6GetqualityphotoandsignatureGet(
-        {
-          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-        },
-      )
+      const res =
+        await this.imageApiV6.apiImagecontrollerV6GetqualityphotoandsignatureGet(
+          {
+            apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+            apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+          },
+        )
 
       return {
         imageId: res.imageId ?? null,
@@ -786,12 +780,11 @@ export class DrivingLicenseApi {
   async getHasQualityScannedPhoto(_params: {
     token: string
   }): Promise<boolean> {
-    const res = await this.imageApiV6.apiImagecontrollerV6HasqualityscannedphotoGet(
-      {
+    const res =
+      await this.imageApiV6.apiImagecontrollerV6HasqualityscannedphotoGet({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
         apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      },
-    )
+      })
 
     return res > 0
   }
@@ -799,12 +792,13 @@ export class DrivingLicenseApi {
   async getAllPhotosFromThjodskra(_params: {
     token: string
   }): Promise<DtoImagesFromThjodskraDto> {
-    const res = await this.imageApiV6.apiImagecontrollerV6FromnationalregistryWithagerestrictionGet(
-      {
-        apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
-        apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
-      },
-    )
+    const res =
+      await this.imageApiV6.apiImagecontrollerV6FromnationalregistryWithagerestrictionGet(
+        {
+          apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
+          apiVersion2: v6.DRIVING_LICENSE_API_VERSION_V6,
+        },
+      )
 
     return res
   }
