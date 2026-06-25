@@ -55,10 +55,10 @@ export class DrivingLicenseService {
     private nationalRegistryV3: NationalRegistryV3ApplicationsClientService,
   ) {}
 
-  async getDrivingLicense(token: string): Promise<DriversLicense | null> {
+  async getDrivingLicense(auth: Auth): Promise<DriversLicense | null> {
     try {
       return await this.drivingLicenseApi.getCurrentLicense({
-        token,
+        auth,
       })
     } catch (e) {
       return this.handleGetLicenseError(e)
@@ -66,10 +66,10 @@ export class DrivingLicenseService {
   }
 
   async getAllDriverLicenses(
-    token: string,
+    auth: Auth,
   ): Promise<DriverLicenseWithoutImages[]> {
     const drivingLicesnes = await this.drivingLicenseApi
-      .getAllDriverLicenses(token)
+      .getAllDriverLicenses(auth)
       .catch((e) => {
         this.logger.warn(`Error fetching all driver licenses`, {
           error: e,
@@ -81,12 +81,12 @@ export class DrivingLicenseService {
 
   async legacyGetDrivingLicense(
     nationalId: User['nationalId'],
-    token?: string,
+    auth?: Auth,
   ): Promise<DriversLicense | null> {
     try {
       return await this.drivingLicenseApi.legacyGetCurrentLicense({
         nationalId,
-        token,
+        auth,
       })
     } catch (e) {
       return this.handleGetLicenseError(e)
@@ -166,11 +166,11 @@ export class DrivingLicenseService {
   }
 
   async getTeachingRights(input: {
-    token: User['authorization']
+    auth: Auth
     nationalId: User['nationalId']
   }): Promise<TeachingRightsStatus> {
     const hasTeachingRights = await this.drivingLicenseApi.getIsTeacher({
-      token: input.token,
+      auth: input.auth,
     })
 
     return {
@@ -185,11 +185,11 @@ export class DrivingLicenseService {
   }
 
   async getDrivingAssessmentResult(
-    token: string,
+    auth: Auth,
   ): Promise<DrivingAssessment | null> {
     try {
       return await this.drivingLicenseApi.getDrivingAssessment({
-        token,
+        auth,
       })
     } catch (e) {
       if ((e as { status: number })?.status === 404) {
@@ -204,10 +204,7 @@ export class DrivingLicenseService {
     user: User,
     nationalId: string,
   ): Promise<ApplicationEligibility> {
-    const license = await this.legacyGetDrivingLicense(
-      nationalId,
-      user.authorization.replace('Bearer ', ''), // removes the Bearer prefix,
-    )
+    const license = await this.legacyGetDrivingLicense(nationalId, user)
 
     const year = 1000 * 3600 * 24 * 365.25
     const fiveYearsAgo = new Date(Date.now() - year * 5)
@@ -257,11 +254,10 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
-    const token = user.authorization.replace('Bearer ', '')
-    const assessmentResult = await this.getDrivingAssessmentResult(token)
+    const assessmentResult = await this.getDrivingAssessmentResult(user)
     const hasFinishedSchool =
       await this.drivingLicenseApi.getHasFinishedOkugerdi({
-        token,
+        auth: user,
       })
 
     const residenceHistory = await this.nationalRegistryV3.getResidenceHistory(
@@ -274,7 +270,7 @@ export class DrivingLicenseService {
     const localRecidencyHistory = hasResidenceHistory(residence)
     const localRecidency = hasLocalResidence(residence)
 
-    const canApply = await this.canApplyFor(type, token)
+    const canApply = await this.canApplyFor(type, user)
 
     // For an unmet can-apply denial, resolve RLS's own description for the raw
     // error code (both languages) so the UI can surface it instead of the
@@ -419,25 +415,25 @@ export class DrivingLicenseService {
 
   async canApplyFor(
     type: 'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65',
-    token: string,
+    auth: Auth,
   ) {
     if (type === 'B-full-renewal-65') {
       return this.drivingLicenseApi.getCanApplyForRenewal65({
-        token,
+        auth,
       })
     } else if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
-        token,
+        auth,
       })
     } else if (type === 'BE') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'BE',
-        token,
+        auth,
       })
     } else if (type === 'B-temp') {
       return this.drivingLicenseApi.getCanApplyForCategoryTemporary({
-        token,
+        auth,
       })
     } else {
       throw new Error('unhandled license type')
@@ -446,20 +442,20 @@ export class DrivingLicenseService {
 
   async studentCanGetPracticePermit(params: {
     studentSSN: string
-    token: string
+    auth: Auth
   }) {
-    const { studentSSN, token } = params
+    const { studentSSN, auth } = params
     return await this.drivingLicenseApi.postCanApplyForPracticePermit({
       studentSSN,
-      token,
+      auth,
     })
   }
 
   async canGetNewDuplicate(
-    token: string,
+    auth: Auth,
   ): Promise<DrivinglicenseDuplicateValidityStatus> {
     const license = await this.drivingLicenseApi.getCurrentLicense({
-      token,
+      auth,
     })
 
     if (license.comments?.some((comment) => comment?.nr == '400')) {
@@ -502,7 +498,7 @@ export class DrivingLicenseService {
 
   async drivingLicenseDuplicateSubmission(params: {
     districtId: number
-    token: string
+    auth: Auth
     stolenOrLost: boolean
     pickUpLicense: boolean
     imageBiometricsId: string | null
@@ -510,7 +506,7 @@ export class DrivingLicenseService {
   }): Promise<number> {
     const {
       districtId,
-      token,
+      auth,
       stolenOrLost,
       pickUpLicense,
       imageBiometricsId,
@@ -519,7 +515,7 @@ export class DrivingLicenseService {
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
       stolenOrLost,
-      token,
+      auth,
       pickUpLicense,
       imageBiometricsId,
       signatureBiometricsId,
@@ -544,7 +540,7 @@ export class DrivingLicenseService {
 
   async newTemporaryDrivingLicense(
     nationalId: User['nationalId'],
-    auth: User['authorization'],
+    auth: Auth,
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const success =
@@ -591,11 +587,11 @@ export class DrivingLicenseService {
   }
 
   async applyForRenewal65(
-    auth: User['authorization'],
+    auth: Auth,
     input: NewRenewal65DrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postApplyForRenewal65({
-      token: auth,
+      auth,
       districtId: input.jurisdiction,
       phoneNumber: input.primaryPhoneNumber,
       email: input.studentEmail,
@@ -637,12 +633,12 @@ export class DrivingLicenseService {
 
   async applyForBELicense(
     nationalId: User['nationalId'],
-    auth: User['authorization'],
+    auth: Auth,
     input: NewBEDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postApplyForBELicense({
       nationalIdApplicant: nationalId,
-      token: auth,
+      auth,
       jurisdictionId: input.jurisdiction,
       instructorSSN: input.instructorSSN,
       email: input.studentEmail,
@@ -667,8 +663,8 @@ export class DrivingLicenseService {
    * header. Passing the string would leave that header unset and every request
    * would come back 400, while unit tests carried on passing.
    *
-   * The neighbouring methods take a bare string; that is deliberate and stays.
-   * Unifying them is PR #23064's job.
+   * Every method here now takes `Auth` except `renewDrivingLicense65AndOver`,
+   * which still calls the v5 endpoint and so still takes the bare token.
    */
   async newDrivingLicenseWithHealthDeclaration(
     auth: Auth,
@@ -745,11 +741,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getQualityPhotoUri(
-    token: User['authorization'],
-  ): Promise<string | null> {
+  async getQualityPhotoUri(auth: Auth): Promise<string | null> {
     const image = await this.drivingLicenseApi.getQualityPhoto({
-      token,
+      auth,
     })
     const qualityPhoto = image?.data?.length
       ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
@@ -758,11 +752,9 @@ export class DrivingLicenseService {
     return qualityPhoto
   }
 
-  async getQualityPhoto(
-    token: User['authorization'],
-  ): Promise<QualityPhotoResult> {
+  async getQualityPhoto(auth: Auth): Promise<QualityPhotoResult> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      token,
+      auth,
     })
 
     return {
@@ -770,11 +762,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getQualitySignatureUri(
-    token: User['authorization'],
-  ): Promise<string | null> {
+  async getQualitySignatureUri(auth: Auth): Promise<string | null> {
     const image = await this.drivingLicenseApi.getQualitySignature({
-      token,
+      auth,
     })
     const qualitySignature = image?.data?.length
       ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
@@ -783,12 +773,10 @@ export class DrivingLicenseService {
     return qualitySignature
   }
 
-  async getQualitySignature(
-    token: User['authorization'],
-  ): Promise<QualitySignatureResult> {
+  async getQualitySignature(auth: Auth): Promise<QualitySignatureResult> {
     const hasQualitySignature =
       await this.drivingLicenseApi.getHasQualitySignature({
-        token,
+        auth,
       })
 
     return {
@@ -796,9 +784,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getDrivingAssessment(token: string): Promise<StudentAssessment | null> {
+  async getDrivingAssessment(auth: Auth): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseApi.getDrivingAssessment({
-      token,
+      auth,
     })
 
     if (!assessment) {
@@ -822,6 +810,10 @@ export class DrivingLicenseService {
     }
   }
 
+  // Legacy B-temp health-declaration submit, still on v5: it is the flag-OFF
+  // path, and flags are frozen into application answers, so in-flight drafts
+  // keep using it. Dies with `isBTempRedesignEnabled`, alongside the v5
+  // wrapper method it calls.
   async postHealthDeclaration(
     nationalId: User['nationalId'],
     healthDeclaration: HealthDeclaration,
