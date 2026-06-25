@@ -3,7 +3,7 @@ import { useWindowSize } from 'react-use'
 
 export const useIsMobile = () => {
   const { width } = useWindowSize()
-  const isMobile = !!width && width < theme.breakpoints.md
+  const isMobile = width != null && width < theme.breakpoints.md
 
   return {
     isMobile,
