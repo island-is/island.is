@@ -64,6 +64,12 @@ export const MOCK_USER = {
   userAgent: '',
 } as User
 
+// v6 dropped the jwttoken/ssn params and derives the caller's identity from the
+// forwarded X-Road end-user token, so caller-scoped handlers below read the
+// `authorization` header (set in tests via withAuthContext) instead of
+// `jwttoken`. The v4 handlers stay routed by the SSN in the URL (by-SSN lookups
+// that remain on v4), and the driving-assessment POST stays routed by the
+// instructorSSN in its body.
 export const requestHandlers = [
   rest.get(/api\/drivinglicense\/v4\/\d+$/, (req, res, ctx) => {
     // Possibly questionable given weak matching, should not be a problem in practice
@@ -119,15 +125,16 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(response))
   }),
 
-  rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+  rest.post(/api\/drivinglicense\/v6\/drivingassessment/, (req, res, ctx) => {
     const isTeacher =
       (req.body as { instructorSSN: string }).instructorSSN ===
       MOCK_NATIONAL_ID_TEACHER
     return res(ctx.status(isTeacher ? 200 : 400))
   }),
 
-  rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
-    const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_NO_ASSESSMENT
+  rest.get(/api\/drivinglicense\/v6\/drivingassessment/, (req, res, ctx) => {
+    const isFound =
+      req.headers.get('authorization') !== MOCK_TOKEN_NO_ASSESSMENT
     if (isFound) {
       return res(ctx.status(200), ctx.json(DrivingAssessment))
     } else {
@@ -136,9 +143,9 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    /api\/drivinglicense\/v5\/hasfinisheddrivingschool3/,
+    /api\/drivinglicense\/v6\/hasfinisheddrivingschool3/,
     (req, res, ctx) => {
-      const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_EXPIRED
+      const isFound = req.headers.get('authorization') !== MOCK_TOKEN_EXPIRED
       return res(
         ctx.status(200),
         ctx.json({ hasFinishedDrivingSchool3: isFound }),
@@ -146,8 +153,8 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(/api\/drivinglicense\/v5\/canapplyfor\/B\/full/, (req, res, ctx) => {
-    const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
+  rest.get(/api\/drivinglicense\/v6\/canapplyfor\/B\/full/, (req, res, ctx) => {
+    const canApply = req.headers.get('authorization') === MOCK_TOKEN
     return res(
       ctx.status(200),
       ctx.json({ result: canApply, errorCode: canApply ? '' : 'SOME REASON' }),
@@ -155,7 +162,7 @@ export const requestHandlers = [
   }),
 
   // Ignore calls to this endpoint and mock response in get All Driving Licenses
-  rest.get(/\/api\/drivinglicense\/v5\/deprivation/, (req, res, ctx) => {
+  rest.get(/\/api\/drivinglicense\/v6\/deprivation/, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -167,7 +174,7 @@ export const requestHandlers = [
 
   // Error-code catalogue. Deliberately omits 'SOME REASON' so an unknown code
   // resolves to no description (matching the eligibility denial test).
-  rest.get(/api\/codetables\/error-codes/, (_req, res, ctx) => {
+  rest.get(/api\/codetables\/v6\/error-codes/, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
@@ -188,9 +195,9 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
+    /api\/drivinglicense\/v6\/canapplyfor\/temporary/,
     (req, res, ctx) => {
-      const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
+      const canApply = req.headers.get('authorization') === MOCK_TOKEN
       return res(
         ctx.status(200),
         ctx.json({
@@ -201,10 +208,10 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (req, res, ctx) => {
+  rest.get(/api\/drivinglicense\/v6\/hasteachingrights/, (req, res, ctx) => {
     let teachingRights = 0
 
-    const token = req.headers.get('jwttoken')
+    const token = req.headers.get('authorization')
     if (token === MOCK_TOKEN_TEACHER) {
       teachingRights = 1
     }
@@ -212,16 +219,19 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(teachingRights))
   }),
 
+  // getTeachersV4 stays on v4 (reference data), so this handler must match v4.
   rest.get(/api\/drivinglicense\/v4\/drivinginstructors/, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(Teachers))
   }),
 
   rest.post(
-    /api\/drivinglicense\/v5\/applications\/new\/B/,
+    /api\/drivinglicense\/v6\/applications\/new\/B/,
     (req, res, ctx) => {
+      // v6 identifies the applicant via the forwarded token (the old
+      // personIdNumber body field is gone), so route by the authorization
+      // header set in the test.
       const hasAssessment =
-        (req.body as { personIdNumber: string }).personIdNumber !==
-        MOCK_NATIONAL_ID_NO_ASSESSMENT
+        req.headers.get('authorization') !== MOCK_TOKEN_NO_ASSESSMENT
       const newLicenseNumber = 1
       return res(
         ctx.status(hasAssessment ? 200 : 400),
@@ -231,9 +241,9 @@ export const requestHandlers = [
   ),
 
   rest.post(
-    /api\/drivinglicense\/v5\/applications\/new\/temporary/,
+    /api\/drivinglicense\/v6\/applications\/new\/temporary/,
     (req, res, ctx) => {
-      const token = req.headers.get('jwttoken')
+      const token = req.headers.get('authorization')
       const canApply = token !== MOCK_TOKEN_NO_ASSESSMENT
 
       if (canApply) {

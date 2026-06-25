@@ -26,10 +26,22 @@ import {
 const configFactory = (
   config: ConfigType<typeof DrivingLicenseApiConfig>,
   basePath: string,
+  // RLS v6 dropped the `jwttoken`/`ssn` params and derives the caller's
+  // identity from the forwarded X-Road end-user token instead. v6 providers
+  // therefore opt into `authSource: 'context'` so `withAuth` forwards the
+  // user's token from the async auth context; v1/v2/v4/v5 keep the default
+  // 'request' source (no token forwarded).
+  // TODO(v6 auth — gated on RLS/Maggi): if RLS requires a token-exchanged
+  // access token rather than the raw IDS token, add `autoAuth` here with the
+  // RLS-confirmed scope (mirror libs/clients/health-directorate).
+  forwardUserToken = false,
 ) => ({
   fetchApi: createEnhancedFetch({
-    name: 'clients-driving-license',
+    name: forwardUserToken
+      ? 'clients-driving-license-v6'
+      : 'clients-driving-license',
     organizationSlug: 'rikislogreglustjori',
+    authSource: forwardUserToken ? 'context' : 'request',
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
@@ -123,7 +135,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new ApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -134,7 +150,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new ApplicationApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -145,7 +165,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new CodeTableV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -156,7 +180,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new ImageApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -167,7 +195,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new LicenseOrderingApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -178,7 +210,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new LicenseServiceApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -189,7 +225,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new RLSApplicationProxyApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
@@ -200,7 +240,11 @@ export const exportedApis = [
     useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
       return new StatisticsApiV6(
         new ConfigV6(
-          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV6}`),
+          configFactory(
+            config,
+            `${config.xroadBaseUrl}/${config.xroadPathV6}`,
+            true,
+          ),
         ),
       )
     },
