@@ -44,13 +44,13 @@ export const draftMessages = {
     optionFixedTerm: {
       id: 'hb.application:draft.rentalAgreement.optionFixedTerm#markdown',
       defaultMessage:
-        'Leigusamningur **{contractId}** (*Tímabundin samningur*)\n\n{address}{apartmentNumber}\n\n{landlordsCount, plural, one {Leigusali} other {Leigusala}}: {landlords}\n\n{rentersCount, plural, one {Leigjandi} other {Leigjendur}}: {renters}',
+        'Leigusamningur **{contractId}** (*Tímabundin samningur*)\n\n{address}{apartmentNumber}{propertyNumberLine}\n\n{landlordsCount, plural, one {Leigusali} other {Leigusalar}}: {landlords}\n\n{rentersCount, plural, one {Leigjandi} other {Leigjendur}}: {renters}',
       description: 'Rental agreement option fixed term',
     },
     optionUnboundTerm: {
       id: 'hb.application:draft.rentalAgreement.optionUnboundTerm#markdown',
       defaultMessage:
-        'Leigusamningur **{contractId}** (*Ótímabundin samningur*)\n\n{address}{apartmentNumber}\n\n{landlordsCount, plural, one {Leigusali} other {Leigusalar}}: {landlords}\n\n{rentersCount, plural, one {Leigjandi} other {Leigjendur}}: {renters}',
+        'Leigusamningur **{contractId}** (*Ótímabundin samningur*)\n\n{address}{apartmentNumber}{propertyNumberLine}\n\n{landlordsCount, plural, one {Leigusali} other {Leigusalar}}: {landlords}\n\n{rentersCount, plural, one {Leigjandi} other {Leigjendur}}: {renters}',
       description: 'Rental agreement option unbound term',
     },
   }),
@@ -190,7 +190,7 @@ export const draftMessages = {
     nonCustodyMinorMissingAgreementAlertMessage: {
       id: 'hb.application:draft.householdMembersSection.nonCustodyMinorMissingAgreementAlertMessage#markdown',
       defaultMessage:
-        'Þú hefur skráð eftirfarandi heimilismenn undir 18 ára aldri sem ekki eru undir þinni forsjá:\n\n **{names}**.',
+        'Þú hefur skráð eftirfarandi heimilismenn undir 18 ára aldri sem ekki eru undir þinni forsjá:\\n\\n **{names}**.',
       description:
         'Body text for the non-custody minor missing custody agreement alert. {names} is a formatted list of household members (Icelandic name list).',
     },
@@ -264,7 +264,7 @@ export const draftMessages = {
     repeaterIntroDescriptionWithChildren: {
       id: 'hb.application:draft.accessAgreementSection.repeaterIntroDescriptionWithChildren#markdown',
       defaultMessage:
-        '* Ef annar heimilismaður er með forsjá, þá þarf ekki að setja inn umgengnissamning.\n\n* Ef annar heimilismaður er með umgengnissamning, þá má setja hann inn á seinni stigum umsóknarinnar.',
+        '* Ef annar heimilismaður er með forsjá, þá þarf ekki að setja inn umgengnissamning.\\n\\n* Ef annar heimilismaður er með umgengnissamning, þá má setja hann inn á seinni stigum umsóknarinnar.',
       description:
         'Intro for optional access-agreement repeater including formatted minor names',
     },
@@ -335,8 +335,8 @@ export const draftMessages = {
     },
     contractorDescriptionDescription: {
       id: 'hb.application:draft.incomeSection.contractorDescriptionDescription',
-      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
-      description: 'Text area description for contractor income',
+      defaultMessage: 'Upphæð tekna.',
+      description: 'Amount field description for contractor income',
     },
     contractorFilesTitle: {
       id: 'hb.application:draft.incomeSection.contractorFilesTitle',
@@ -356,8 +356,8 @@ export const draftMessages = {
     },
     foreignDescriptionDescription: {
       id: 'hb.application:draft.incomeSection.foreignDescriptionDescription',
-      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
-      description: 'Text area description for foreign income',
+      defaultMessage: 'Upphæð tekna.',
+      description: 'Amount field description for foreign income',
     },
     foreignFilesTitle: {
       id: 'hb.application:draft.incomeSection.foreignFilesTitle',
@@ -377,8 +377,8 @@ export const draftMessages = {
     },
     otherDescriptionDescription: {
       id: 'hb.application:draft.incomeSection.otherDescriptionDescription',
-      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
-      description: 'Text area description for other income',
+      defaultMessage: 'Upphæð tekna.',
+      description: 'Amount field description for other income',
     },
     otherFilesTitle: {
       id: 'hb.application:draft.incomeSection.otherFilesTitle',
@@ -391,10 +391,10 @@ export const draftMessages = {
         'Hlaðið upp skjölum sem styðja við upplýsingarnar (t.d. PDF eða Word).',
       description: 'File upload description for other income',
     },
-    validationCategoryDescriptionRequired: {
-      id: 'hb.application:draft.incomeSection.validationCategoryDescriptionRequired',
-      defaultMessage: 'Skýring er nauðsynleg þegar þessi tegund tekna er valin',
-      description: 'Validation: description required when income type checked',
+    validationCategoryAmountRequired: {
+      id: 'hb.application:draft.incomeSection.validationCategoryAmountRequired',
+      defaultMessage: 'Upphæð er nauðsynleg þegar þessi tegund tekna er valin',
+      description: 'Validation: amount required when income type checked',
     },
     description: {
       id: 'hb.application:draft.incomeSection.description',
@@ -600,6 +600,11 @@ export const draftMessages = {
       id: 'hb.application:draft.assetsDeclarationSection.textFieldDescription',
       defaultMessage: 'Vinsamlegast listaðu upp allar þínar eignir.',
       description: 'Assets declaration text field description',
+    },
+    validationTextFieldRequired: {
+      id: 'hb.application:draft.assetsDeclarationSection.validationTextFieldRequired',
+      defaultMessage: 'Vinsamlegast fylltu út eignayfirlýsingu',
+      description: 'Assets declaration text field required',
     },
   }),
   overviewSection: defineMessages({

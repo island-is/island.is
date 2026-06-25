@@ -3,10 +3,6 @@ import {
   buildSection,
   buildMultiField,
   buildTextField,
-  buildRadioField,
-  YES,
-  NO,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { isTaxReturnNotFiled } from '../../utils/utils'
 import { draftMessages } from '../../lib/messages/draftMessages'
@@ -31,23 +27,12 @@ export const assetsDeclarationSection = buildSection({
           description: m.description2,
           marginBottom: 4,
         }),
-        buildRadioField({
-          id: 'assetsDeclarationRadio',
-          title: m.radioTitle,
-          description: m.radioDescription,
-          options: [
-            { label: m.optionYes, value: YES },
-            { label: m.optionNo, value: NO },
-          ],
-          marginBottom: 4,
-        }),
         buildTextField({
-          condition: (answers) =>
-            getValueViaPath(answers, 'assetsDeclarationRadio') === YES,
           id: 'assetsDeclarationTextField',
-          description: m.textFieldDescription,
+          title: m.textFieldDescription,
           variant: 'textarea',
           rows: 10,
+          required: true,
         }),
       ],
     }),
