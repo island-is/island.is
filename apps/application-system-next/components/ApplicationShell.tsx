@@ -13,6 +13,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
+import { coreMessages } from '@island.is/application/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import * as institutionLogos from '@island.is/application/assets/institution-logos'
 
 import { useFormActions } from '../hooks/useFormActions'
@@ -45,6 +47,12 @@ export const ApplicationShell = ({
     submit,
     dispatch,
   } = useFormActions(applicationId, initialScreen)
+
+  // The back button label is the only client-rendered text on the form shell
+  // (the action buttons carry server-resolved `btn.text`), so it needs the
+  // `application.system` namespace loaded to translate on a locale switch.
+  useNamespaces('application.system')
+  const { formatMessage } = useLocale()
 
   const { setInfo } = useHeaderInfo()
 
@@ -211,7 +219,7 @@ export const ApplicationShell = ({
                                 onClick={prevPage}
                                 disabled={isPending}
                               >
-                                Til baka
+                                {formatMessage(coreMessages.buttonBack)}
                               </Button>
                             )}
                           </Box>

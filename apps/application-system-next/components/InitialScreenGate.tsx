@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useLocale } from '@island.is/localization'
 import { fetchScreen, GraphqlHttpError, type SdfScreen } from '../lib/graphql'
 import { ApplicationShell } from './ApplicationShell'
 import { BffLoginRedirect } from './BffLoginRedirect'
@@ -19,10 +20,17 @@ export const InitialScreenGate = ({
   const [error, setError] = useState<string | null>(null)
   const [loginTarget, setLoginTarget] = useState<string | null>(null)
 
+  // Seed the first fetch with the locale known at mount so there is no Icelandic
+  // flash when the user's preferred language is already resolved. Captured in a
+  // ref (not an effect dep) so a later language switch is handled in place by
+  // `useFormActions` rather than remounting the whole shell here.
+  const { lang } = useLocale()
+  const initialLangRef = useRef(lang)
+
   useEffect(() => {
     let isActive = true
 
-    fetchScreen(applicationId, step, 'is')
+    fetchScreen(applicationId, step, initialLangRef.current)
       .then((nextScreen) => {
         if (!isActive) {
           return

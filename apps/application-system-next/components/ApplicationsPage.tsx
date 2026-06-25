@@ -19,7 +19,7 @@ import {
 } from '@island.is/application/graphql'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { ErrorShell, useApplicationNamespaces } from '@island.is/application/ui-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 import {
   findProblemInApolloError,
@@ -38,6 +38,12 @@ export const ApplicationsPage = ({ slug }: ApplicationsPageProps) => {
   const { formatMessage } = useLocale()
   const { clearInfo } = useHeaderInfo()
   const type = getTypeFromSlug(slug)
+
+  // Register the `application.system` (+ template-specific) translation
+  // namespaces so the client-side title/button messages translate when the
+  // locale changes — mirrors the legacy Applications route. Without this,
+  // `formatMessage` falls back to each message's Icelandic defaultMessage.
+  useApplicationNamespaces(type)
 
   useEffect(() => {
     clearInfo()

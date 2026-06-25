@@ -30,9 +30,13 @@ describe('application-system-next next config', () => {
     const nextConfig = nextConfigModule.default ?? nextConfigModule
     const rewrites = await nextConfig.rewrites()
 
-    expect(rewrites).toContainEqual({
+    // `rewrites()` returns the phased `{ afterFiles }` shape (not a flat array)
+    // so the BFF proxy can opt out of `basePath` via `basePath: false` — the
+    // un-prefixed `/bff/*` the BFF client still calls. See next.config.js.
+    expect(rewrites.afterFiles).toContainEqual({
       source: '/bff/:path*',
       destination: 'http://localhost:3010/bff/:path*',
+      basePath: false,
     })
   })
 })

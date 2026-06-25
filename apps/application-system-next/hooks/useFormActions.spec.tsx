@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import { act, renderHook } from '@testing-library/react'
+import { IntlProvider } from 'react-intl'
 
 import type { SdfScreen } from '../lib/graphql'
 import { executeAction } from '../lib/graphql'
@@ -6,7 +8,17 @@ import { useFormActions } from './useFormActions'
 
 jest.mock('../lib/graphql', () => ({
   executeAction: jest.fn(),
+  fetchScreen: jest.fn(),
 }))
+
+// useFormActions reads the active locale via useLocale(), which relies on
+// react-intl's IntlProvider being in the tree. LocaleContext's default already
+// reports `lang: 'is'`, so no LocaleProvider is needed for these tests.
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <IntlProvider locale="is" messages={{}}>
+    {children}
+  </IntlProvider>
+)
 
 const screen: SdfScreen = {
   applicationId: 'app-1',
@@ -47,7 +59,9 @@ describe('useFormActions', () => {
       }),
     )
 
-    const { result } = renderHook(() => useFormActions('app-1', screen))
+    const { result } = renderHook(() => useFormActions('app-1', screen), {
+      wrapper,
+    })
 
     await act(async () => {
       await result.current.dispatch(
@@ -71,7 +85,9 @@ describe('useFormActions', () => {
   })
 
   it('publishes a fresh answer snapshot when local answers change', () => {
-    const { result } = renderHook(() => useFormActions('app-1', screen))
+    const { result } = renderHook(() => useFormActions('app-1', screen), {
+      wrapper,
+    })
 
     act(() => {
       result.current.onAnswerChange('input1', '23')

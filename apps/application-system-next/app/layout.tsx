@@ -4,6 +4,7 @@ import { Providers } from '../components/Providers'
 import { HeaderInfoProvider } from '../components/HeaderInfoProvider'
 import { AppHeader } from '../components/AppHeader'
 import { AppBffProvider } from '../components/AppBffProvider'
+import { AppUserProfileLocale } from '../components/AppUserProfileLocale'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
         <GlobalStylesProvider>
           <Providers>
             <AppBffProvider>
+              <AppUserProfileLocale />
               <HeaderInfoProvider>
                 <AppHeader />
                 {children}

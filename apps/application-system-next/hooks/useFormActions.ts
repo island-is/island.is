@@ -1,7 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
-import { executeAction as gqlExecuteAction, SdfScreen } from '../lib/graphql'
+import { useLocale } from '@island.is/localization'
+import {
+  executeAction as gqlExecuteAction,
+  fetchScreen,
+  SdfScreen,
+} from '../lib/graphql'
 
 export const useFormActions = (
   applicationId: string,
@@ -35,6 +40,49 @@ export const useFormActions = (
       forceRender((n) => n + 1)
     }
   }, [screen.page.index])
+
+  // SDF screen text (labels, descriptions, button copy) is resolved
+  // server-side per locale, so the IS/EN switcher cannot translate the form on
+  // its own — it only flips the shared LocaleContext. When that locale changes,
+  // refetch the current page in the new locale. We keep in-progress answers by
+  // letting local answers win over the persisted snapshot, so the form looks
+  // identical apart from the language.
+  const { lang } = useLocale()
+  useEffect(() => {
+    if (lang === localeRef.current) {
+      return
+    }
+    let isActive = true
+    localeRef.current = lang
+    startTransition(async () => {
+      try {
+        const result = await fetchScreen(
+          applicationId,
+          pageIndexRef.current,
+          lang,
+        )
+        if (!isActive) {
+          return
+        }
+        pageIndexRef.current = result.page.index
+        localeRef.current = result.locale ?? lang
+        setScreen(result)
+        answersRef.current = {
+          ...(result.answers ?? {}),
+          ...answersRef.current,
+        }
+        setAnswerSnapshot(answersRef.current)
+        forceRender((n) => n + 1)
+      } catch (e) {
+        if (isActive) {
+          setError(e instanceof Error ? e.message : 'Action failed')
+        }
+      }
+    })
+    return () => {
+      isActive = false
+    }
+  }, [lang, applicationId])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }

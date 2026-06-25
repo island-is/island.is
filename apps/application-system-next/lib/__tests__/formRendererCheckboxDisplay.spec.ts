@@ -100,9 +100,9 @@ describe('FormRenderer — Checkbox & DisplayField parity structure', () => {
     })
 
     it('uses shared SDF input spacing tokens instead of standalone display spacing', () => {
-      expect(block).toContain('SDF_FIELD_BLOCK_MARGIN_BOTTOM')
+      expect(block).toContain('getSdfFieldMargins')
       expect(block).toContain('SDF_FIELD_CONTROL_PADDING_TOP')
-      expect(block).toContain('marginBottom={SDF_FIELD_BLOCK_MARGIN_BOTTOM}')
+      expect(block).toContain('{...getSdfFieldMargins(component)}')
       expect(block).toContain('paddingTop={SDF_FIELD_CONTROL_PADDING_TOP}')
     })
 

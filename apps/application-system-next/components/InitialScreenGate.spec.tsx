@@ -2,9 +2,20 @@
  * @jest-environment jsdom
  */
 
+import type { ReactNode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import { IntlProvider } from 'react-intl'
 import { GraphqlHttpError, fetchScreen } from '../lib/graphql'
 import { InitialScreenGate } from './InitialScreenGate'
+
+// InitialScreenGate reads the active locale via useLocale(), which needs
+// react-intl's IntlProvider in the tree; LocaleContext's default reports
+// `lang: 'is'`, so the seeded fetch locale stays 'is'.
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <IntlProvider locale="is" messages={{}}>
+    {children}
+  </IntlProvider>
+)
 
 jest.mock('../lib/graphql', () => {
   const actual = jest.requireActual('../lib/graphql')
@@ -68,7 +79,7 @@ describe('InitialScreenGate', () => {
       },
     })
 
-    render(<InitialScreenGate applicationId="app-1" step={2} />)
+    render(<InitialScreenGate applicationId="app-1" step={2} />, { wrapper })
 
     await waitFor(() => {
       expect(mockedFetchScreen).toHaveBeenCalledWith('app-1', 2, 'is')
@@ -90,7 +101,7 @@ describe('InitialScreenGate', () => {
       new GraphqlHttpError(401, 'Unauthorized', 'Missing sid cookie'),
     )
 
-    render(<InitialScreenGate applicationId="app-1" step={2} />)
+    render(<InitialScreenGate applicationId="app-1" step={2} />, { wrapper })
 
     expect(
       await screen.findByText(
