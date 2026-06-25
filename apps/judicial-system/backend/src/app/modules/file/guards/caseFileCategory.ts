@@ -12,8 +12,27 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant, DefendantEventLog } from '../../repository'
+import {
+  CivilClaimant,
+  CourtSession,
+  Defendant,
+  DefendantEventLog,
+} from '../../repository'
 import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
+
+// A ruling order uploaded during the course of a case is only visible to
+// parties (everyone except district-court users) once it has been added to a
+// court session that has been confirmed. The court session's end date is used
+// for the ruling time and deadlines.
+export const isRulingOrderInConfirmedCourtSession = (
+  fileId: string,
+  courtSessions?: CourtSession[],
+): boolean =>
+  Boolean(
+    courtSessions?.some(
+      (session) => session.isConfirmed && session.rulingFileId === fileId,
+    ),
+  )
 
 const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -30,7 +49,6 @@ const defenderCaseFileCategoriesForRequestCases = [
 const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
-  CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
 ]
 
 const defenderCaseFileCategoriesForIndictmentCases =
@@ -176,6 +194,7 @@ const canDefenceUserViewCaseFile = ({
   defendantId,
   civilClaimantId,
   fileCreated,
+  isRulingOrderInConfirmedCourtSession,
 }: {
   nationalId: string
   userName: string
@@ -189,6 +208,7 @@ const canDefenceUserViewCaseFile = ({
   defendantId?: string
   civilClaimantId?: string | null
   fileCreated?: Date
+  isRulingOrderInConfirmedCourtSession?: boolean
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -203,6 +223,12 @@ const canDefenceUserViewCaseFile = ({
 
     if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
       return false
+    }
+
+    // A ruling order uploaded during the course of a case is only visible once
+    // it has been added to a confirmed court session.
+    if (caseFileCategory === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+      return Boolean(isRulingOrderInConfirmedCourtSession)
     }
 
     if (
@@ -283,6 +309,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendantId,
   civilClaimantId,
   fileCreated,
+  isRulingOrderInConfirmedCourtSession,
 }: {
   user: User
   caseType: CaseType
@@ -295,6 +322,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   defendantId?: string
   civilClaimantId?: string | null
   fileCreated?: Date
+  isRulingOrderInConfirmedCourtSession?: boolean
 }) => {
   if (!caseFileCategory) {
     return false
@@ -314,6 +342,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       defendantId,
       civilClaimantId,
       fileCreated,
+      isRulingOrderInConfirmedCourtSession,
     })
   }
 
@@ -369,6 +398,107 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   return allPoliceCaseNumbers.filter(
     (pcn) => assignedToMe.has(pcn) || !allAssigned.has(pcn),
+  )
+}
+
+export const getSpokespersonVisiblePoliceCaseNumbers = (
+  userNationalId: string,
+  civilClaimants: CivilClaimant[] | undefined,
+  defendants: Defendant[] | undefined,
+  allPoliceCaseNumbers: string[],
+): string[] => {
+  const myClaimants = (civilClaimants ?? []).filter(
+    (civilClaimant) =>
+      civilClaimant.hasSpokesperson &&
+      civilClaimant.isSpokespersonConfirmed &&
+      civilClaimant.caseFilesSharedWithSpokesperson &&
+      civilClaimant.spokespersonNationalId === userNationalId,
+  )
+
+  if (myClaimants.length === 0) {
+    return []
+  }
+
+  if (
+    myClaimants.some(
+      (civilClaimant) => !civilClaimant.policeCaseNumbers?.length,
+    )
+  ) {
+    return allPoliceCaseNumbers
+  }
+
+  const assignedToMe = new Set(
+    myClaimants.flatMap(
+      (civilClaimant) => civilClaimant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  const allAssignedToDefendants = new Set(
+    (defendants ?? []).flatMap(
+      (defendant) => defendant.policeCaseNumbers ?? [],
+    ),
+  )
+
+  if (allAssignedToDefendants.size === 0) {
+    return allPoliceCaseNumbers
+  }
+
+  return allPoliceCaseNumbers.filter(
+    (policeCaseNumber) =>
+      assignedToMe.has(policeCaseNumber) ||
+      !allAssignedToDefendants.has(policeCaseNumber),
+  )
+}
+
+export const getDefenceUserVisiblePoliceCaseNumbers = (
+  userNationalId: string,
+  defendants: Defendant[] | undefined,
+  civilClaimants: CivilClaimant[] | undefined,
+  allPoliceCaseNumbers: string[],
+): string[] => {
+  const isDefender = Defendant.isConfirmedDefenderOfDefendant(
+    userNationalId,
+    defendants,
+  )
+  const isSpokesperson =
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      userNationalId,
+      civilClaimants,
+    )
+
+  if (!isDefender && !isSpokesperson) {
+    return getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )
+  }
+
+  const visibleNumbers = new Set<string>()
+
+  if (isDefender) {
+    for (const policeCaseNumber of getDefenderVisiblePoliceCaseNumbers(
+      userNationalId,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  if (isSpokesperson) {
+    for (const policeCaseNumber of getSpokespersonVisiblePoliceCaseNumbers(
+      userNationalId,
+      civilClaimants,
+      defendants,
+      allPoliceCaseNumbers,
+    )) {
+      visibleNumbers.add(policeCaseNumber)
+    }
+  }
+
+  return allPoliceCaseNumbers.filter((policeCaseNumber) =>
+    visibleNumbers.has(policeCaseNumber),
   )
 }
 

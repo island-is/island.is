@@ -323,11 +323,17 @@ describe('getRulingOrderAppealInfo', () => {
     const caseFile = {
       id: 'file-id',
       category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-      submissionDate: new Date('2020-01-01T00:00:00.000Z'),
     } as CaseFile
     const theCase = {
       state: CaseState.RECEIVED,
       rulingOrderAppealCases: [],
+      courtSessions: [
+        {
+          isConfirmed: true,
+          rulingFileId: 'file-id',
+          endDate: new Date('2020-01-01T00:00:00.000Z'),
+        },
+      ],
     } as unknown as Case
 
     const info = getRulingOrderAppealInfo(caseFile, theCase)
@@ -338,6 +344,48 @@ describe('getRulingOrderAppealInfo', () => {
       isAppealDeadlineExpired: true,
     })
     expect(info.appealDeadline).toBeInstanceOf(Date)
+  })
+
+  it('derives the appeal deadline from the confirmed court session end date', () => {
+    const caseFile = {
+      id: 'file-id',
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    } as CaseFile
+    const endDate = new Date('2026-04-01T12:00:00.000Z')
+    const theCase = {
+      state: CaseState.RECEIVED,
+      rulingOrderAppealCases: [],
+      courtSessions: [{ isConfirmed: true, rulingFileId: 'file-id', endDate }],
+    } as unknown as Case
+
+    // The appeal deadline is three days after the ruling time (end of session)
+    expect(getRulingOrderAppealInfo(caseFile, theCase).appealDeadline).toEqual(
+      new Date('2026-04-04T12:00:00.000Z'),
+    )
+  })
+
+  it('has no appeal deadline until the ruling order is in a confirmed court session', () => {
+    const caseFile = {
+      id: 'file-id',
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+    } as CaseFile
+    const theCase = {
+      state: CaseState.RECEIVED,
+      rulingOrderAppealCases: [],
+      courtSessions: [
+        // Same ruling file, but the session is not confirmed yet
+        {
+          isConfirmed: false,
+          rulingFileId: 'file-id',
+          endDate: new Date('2026-04-01T12:00:00.000Z'),
+        },
+      ],
+    } as unknown as Case
+
+    const info = getRulingOrderAppealInfo(caseFile, theCase)
+
+    expect(info.appealDeadline).toBeUndefined()
+    expect(info.isAppealDeadlineExpired).toBeUndefined()
   })
 
   it('returns hasBeenAppealed true when an appeal exists for this ruling file', () => {
@@ -378,11 +426,17 @@ describe('getRulingOrderAppealInfo', () => {
     const caseFile = {
       id: 'file-id',
       category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-      submissionDate: new Date('1900-01-01T00:00:00.000Z'),
     } as CaseFile
     const theCase = {
       state: CaseState.RECEIVED,
       rulingOrderAppealCases: [],
+      courtSessions: [
+        {
+          isConfirmed: true,
+          rulingFileId: 'file-id',
+          endDate: new Date('1900-01-01T00:00:00.000Z'),
+        },
+      ],
     } as unknown as Case
 
     const info = getRulingOrderAppealInfo(caseFile, theCase)

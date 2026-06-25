@@ -5,6 +5,7 @@ import {
   formatText,
   formatTextWithLocale,
   getErrorViaPath,
+  resolveFieldClearOnChange,
 } from '@island.is/application/core'
 import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
@@ -196,7 +197,10 @@ export const BankAccountFormField = ({
               mask=""
               backgroundColor="blue"
               autoFocus
-              clearOnChange={clearOnChange}
+              clearOnChange={resolveFieldClearOnChange(
+                { clearOnChange },
+                application,
+              )}
               clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useBankNumberError}
@@ -218,7 +222,10 @@ export const BankAccountFormField = ({
               format="##"
               mask=""
               backgroundColor="blue"
-              clearOnChange={clearOnChange}
+              clearOnChange={resolveFieldClearOnChange(
+                { clearOnChange },
+                application,
+              )}
               clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useLedgerError}
@@ -237,7 +244,10 @@ export const BankAccountFormField = ({
               format="######"
               mask=""
               backgroundColor="blue"
-              clearOnChange={clearOnChange}
+              clearOnChange={resolveFieldClearOnChange(
+                { clearOnChange },
+                application,
+              )}
               clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useAccountNumberError}

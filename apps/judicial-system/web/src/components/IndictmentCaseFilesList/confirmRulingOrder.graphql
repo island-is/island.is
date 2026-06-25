@@ -1,0 +1,6 @@
+mutation ConfirmRulingOrder($input: ConfirmRulingOrderInput!) {
+  confirmRulingOrder(input: $input) {
+    id
+    submissionDate
+  }
+}

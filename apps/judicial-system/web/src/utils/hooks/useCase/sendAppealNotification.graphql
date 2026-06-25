@@ -1,0 +1,5 @@
+mutation SendAppealNotification($input: SendAppealNotificationInput!) {
+  sendAppealNotification(input: $input) {
+    notificationSent
+  }
+}

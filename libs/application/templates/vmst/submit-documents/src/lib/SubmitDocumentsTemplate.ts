@@ -32,6 +32,8 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.VMST_SUBMIT_DOCUMENTS,
   name: am.name,
+  applicationText: am.name,
+  newApplicationButtonLabel: am.newApplicationButton,
   codeOwner: CodeOwners.Origo,
   institution: am.institutionName,
   translationNamespaces:
@@ -131,7 +133,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },

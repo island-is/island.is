@@ -1,5 +1,11 @@
 # Judicial System — Agent Guide
 
+## Localization strings
+
+We are moving away from Contentful. **Do not add new strings to `.strings.ts`
+files.** New user-facing text should be hardcoded directly in code rather than
+introducing new entries in `.strings.ts` (and therefore Contentful).
+
 ## Codegen
 
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or
