@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 
-import { CaseType, UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
