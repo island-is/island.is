@@ -9,9 +9,8 @@ import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets
 import {
   DefaultEvents,
   FormModes,
-  IdentityApi,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import * as m from '../../lib/messages'
@@ -75,17 +74,12 @@ export const Prerequisites = buildForm({
               subTitle: m.prerequisite.myPagesText,
             }),
             buildDataProviderItem({
-              provider: IdentityApi,
-              title: m.prerequisite.healthDataTitle,
-              subTitle: m.prerequisite.healthDataText,
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
               title: m.prerequisite.rehabilitationTitle,
               subTitle: m.prerequisite.rehabilitationText,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.prerequisite.incomeTitle,
               subTitle: m.prerequisite.incomeText,
             }),
@@ -102,9 +96,6 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCountriesApi,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationLanguagesApi,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationMaritalStatusesApi,
