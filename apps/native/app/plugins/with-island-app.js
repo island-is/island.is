@@ -115,10 +115,57 @@ const withSigningConfig = (config) => {
   ])
 }
 
+/**
+ * Forces io.legere:pdfiumandroid to >=1.0.34 in android/build.gradle.
+ *
+ * @kishannareshpal/expo-pdf transitively pins io.legere:pdfiumandroid:1.0.32,
+ * which contains a bug where PdfPage.getPageLinks() always returns an empty
+ * list. Fix landed in PdfiumAndroidKt PR #35 (released as v1.0.34). Without
+ * this force, AndroidPdfViewer iterates an empty list and link annotations
+ * are inert on Android even though the PDF declares them properly.
+ *
+ * Remove once kishannareshpal/AndroidPdfViewer bumps its dependency.
+ */
+const withPdfiumVersionForce = (config) => {
+  return withDangerousMod(config, [
+    'android',
+    (mod) => {
+      const root = mod.modRequest.projectRoot
+      const gradlePath = path.join(root, 'android', 'build.gradle')
+      let gradle = fs.readFileSync(gradlePath, 'utf8')
+
+      if (gradle.includes("'io.legere:pdfiumandroid:1.0.35'")) {
+        return mod
+      }
+
+      // Append an additional allprojects { } block at the end of the file.
+      // Multiple allprojects blocks are valid Gradle and merge cleanly.
+      // Done as an appended block rather than splicing into the existing one
+      // to avoid brittle regex matching against the generated file.
+      gradle =
+        gradle.trimEnd() +
+        `
+
+allprojects {
+  configurations.all {
+    resolutionStrategy {
+      force 'io.legere:pdfiumandroid:1.0.35'
+    }
+  }
+}
+`
+
+      fs.writeFileSync(gradlePath, gradle, 'utf8')
+      return mod
+    },
+  ])
+}
+
 const withIslandApp = (config) => {
   config = withAndroidAppName(config)
   config = withAdaptiveIconInset(config)
   config = withSigningConfig(config)
+  config = withPdfiumVersionForce(config)
   return config
 }
 

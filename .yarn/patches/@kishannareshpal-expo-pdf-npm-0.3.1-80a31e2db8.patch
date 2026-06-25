@@ -1,8 +1,16 @@
 diff --git a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
-index c0ff8613559cdec72138493e5dcd91fa84b97d94..a7515031dfa0732a4918caf9300119fa7af526eb 100644
+index c0ff8613559cdec72138493e5dcd91fa84b97d94..cfb1f49d53517a6c1371d52af82df7ed08d9f4f6 100644
 --- a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
 +++ b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
-@@ -147,6 +147,10 @@ class KJExpoPdfView(context: Context, appContext: AppContext) : ExpoView(context
+@@ -7,6 +7,7 @@ import android.net.Uri
+ import expo.modules.kotlin.AppContext
+ import expo.modules.kotlin.views.ExpoView
+ import com.github.barteksc.pdfviewer.PDFView
++import com.github.barteksc.pdfviewer.link.DefaultLinkHandler
+ import expo.modules.kotlin.viewevent.EventDispatcher
+ import java.io.FileNotFoundException
+ import androidx.core.net.toUri
+@@ -147,6 +148,12 @@ class KJExpoPdfView(context: Context, appContext: AppContext) : ExpoView(context
      }
  
      pdfBuilder
@@ -10,6 +18,8 @@ index c0ff8613559cdec72138493e5dcd91fa84b97d94..a7515031dfa0732a4918caf9300119fa
 +      // are blank on Android because the underlying Pdfium FFLDraw pass is
 +      // gated on annotation rendering being enabled.
 +      .enableAnnotationRendering(true)
++      // Make link annotations clickable on Android (URI + GoTo).
++      .linkHandler(DefaultLinkHandler(this.pdfView))
        .pageFitPolicy(this.fitMode.toFitPolicy())
        .enableDoubletap(this.isDoubleTapZoomEnabled)
        .swipeHorizontal(this.isHorizontalModeEnabled)

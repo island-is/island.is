@@ -11262,12 +11262,12 @@ __metadata:
 
 "@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch":
   version: 0.3.1
-  resolution: "@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch::version=0.3.1&hash=4ae8c9"
+  resolution: "@kishannareshpal/expo-pdf@patch:@kishannareshpal/expo-pdf@npm%3A0.3.1#~/.yarn/patches/@kishannareshpal-expo-pdf-npm-0.3.1-80a31e2db8.patch::version=0.3.1&hash=a019ab"
   peerDependencies:
     expo: "*"
     react: "*"
     react-native: "*"
-  checksum: 10/54caa1b55c24aafefa3bf9b5b0422df67237053529b8661797e1ef16e1d490e68c7bc7174f6f4194ca56d2098e10e73bf5f3910d6a8fa535ac7e82bc08aae332
+  checksum: 10/6a7e316e67e1d10289c25ca920065b8546620afdaa0911c7e237e2c007962723166024473483f7f3d792a92728ddec3bedf5bb3070b48707480d407bd164b564
   languageName: node
   linkType: hard
 
