@@ -31,8 +31,7 @@ const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
 export class DrivingLicenseClient
-  implements LicenseClient<LicenseType.DrivingLicense>
-{
+  implements LicenseClient<LicenseType.DrivingLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
@@ -90,7 +89,7 @@ export class DrivingLicenseClient
     try {
       const licenseInfo = await this.drivingApi.getCurrentLicenseV5({
         nationalId: user.nationalId,
-        token: user.authorization.replace(/^bearer /i, ''),
+        auth: user,
       })
       return { ok: true, data: licenseInfo }
     } catch (e) {
@@ -221,7 +220,7 @@ export class DrivingLicenseClient
     const pass = await this.smartApi.generatePkPass(payload, () =>
       this.drivingApi.notifyOnPkPassCreation({
         nationalId: user.nationalId,
-        token: user.authorization.replace(/^bearer /i, ''),
+        auth: user,
       }),
     )
     return pass

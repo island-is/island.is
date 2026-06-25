@@ -284,7 +284,10 @@ describe('DrivingLicenseSubmissionService', () => {
       expect(applyForRenewal65).toHaveBeenCalledTimes(1)
 
       const [auth, input] = applyForRenewal65.mock.calls[0]
-      expect(auth).toBe(user.authorization)
+      // applyForRenewal65 now takes the full Auth object (v6 forwards the
+      // caller's token via withAuthContext); renewDrivingLicense65AndOver
+      // above still takes the raw authorization string, as it stays on v5.
+      expect(auth).toBe(user)
       expect(input).toMatchObject({
         jurisdiction: 37,
         primaryPhoneNumber: expect.any(String),
@@ -1158,7 +1161,7 @@ describe('DrivingLicenseSubmissionService', () => {
     })
 
     const reasonOf = (thrown: TemplateApiError) =>
-      (thrown.problem as unknown as { errorReason: ProviderErrorReason })
+      ((thrown.problem as unknown) as { errorReason: ProviderErrorReason })
         .errorReason
 
     // Capture the rejected TemplateApiError so we can run its reason through the
