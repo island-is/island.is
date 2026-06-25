@@ -161,4 +161,37 @@ export const translation = defineMessages({
     defaultMessage: 'Loka glugga',
     description: 'Aria-label for the close button in the category modal',
   },
+  categoriesErrorTitle: {
+    id: 'web.customsCalculator:categoriesErrorTitle',
+    defaultMessage: 'Ekki tókst að sækja vöruflokka',
+    description: 'Error title shown when the product categories query fails',
+  },
+  categoriesErrorMessage: {
+    id: 'web.customsCalculator:categoriesErrorMessage',
+    defaultMessage: 'Eitthvað fór úrskeiðis. Reyndu aftur síðar.',
+    description: 'Error message shown when the product categories query fails',
+  },
+  calculationErrorTitle: {
+    id: 'web.customsCalculator:calculationErrorTitle',
+    defaultMessage: 'Útreikningur mistókst',
+    description: 'Error title shown when the customs calculation query fails',
+  },
+  calculationErrorMessage: {
+    id: 'web.customsCalculator:calculationErrorMessage',
+    defaultMessage: 'Ekki tókst að reikna tollverð. Reyndu aftur síðar.',
+    description: 'Error message shown when the customs calculation query fails',
+  },
+  incompleteResultTitle: {
+    id: 'web.customsCalculator:incompleteResultTitle',
+    defaultMessage: 'Niðurstaðan gæti verið ófullkomin',
+    description:
+      'Warning title shown when one or more charge lines could not be computed',
+  },
+  incompleteResultMessage: {
+    id: 'web.customsCalculator:incompleteResultMessage',
+    defaultMessage:
+      'Ekki tókst að reikna öll gjöld, svo heildarupphæðin gæti verið of lág.',
+    description:
+      'Warning message shown when one or more charge lines could not be computed',
+  },
 })

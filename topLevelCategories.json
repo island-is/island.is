@@ -1,0 +1,2285 @@
+[
+  {
+    "parentLabel": "",
+    "label": "Áfengi (áfengisinnihald meira en 2,25 %)",
+    "tariffNumber": "#",
+    "description": "Áfengir vökvar flokkast í  <a href=\"https://vefskil.tollur.is/tollalinan/TAV/yfirlit.aspx?F=04&K=22\">22 kafla tollskrár</a> ásamt öðrum drykkjarvörum og ediki. Í reiknivélinni eru aðeins algengustu tegundir.",
+    "id": "fc53fa93-9dbc-46c7-b6c6-ea06a5ce73ed",
+    "children": [
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Bjór",
+        "tariffNumber": "22030094",
+        "description": "Með meira en 2,25% vínanda að rúmmáli.  Í einnota glerumbúðum, 500 ml og minni",
+        "id": "cee66ceb-b2e3-41b6-854c-78bdd5e8aa09",
+        "children": []
+      },
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Eplavín (cider), peruvín, mjöður, hrísgrjónavín 2,25% til 15% að styrkleika",
+        "tariffNumber": "22060043",
+        "description": "Gerjaðar drykkjarvörur, hvorki blandaðar öðrum gerjuðum drykkjarvörum né óáfengum drykkjarvörum öðrum en þeim sem er að finna í hinni íblönduðu drykkjarvöru, enda sé varan meira en 2,25% og að hámarki 15% að styrkleika og innihaldi eingöngu vínanda sem myndast hefur við gerjun án hvers kyns eimingar. Skilagjald getur verið mismunandi eftir tegund umbúða.",
+        "id": "00cb3e76-0076-48c4-8f90-91dc52831499",
+        "children": []
+      },
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Gosvín - breezer og fleira",
+        "tariffNumber": "22089085",
+        "description": "Gerjuð drykkjarvara eða blanda gerjaðra drykkjarvara og óáfengra drykkja. Skilagjald getur verið mismunandi eftir tegund umbúða.",
+        "id": "e26bc7dd-57aa-4b7d-ab2f-57b0c19e04d8",
+        "children": []
+      },
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Léttvín til dæmis rauðvín og hvítvín að styrkleika 2,25 til og með 15%",
+        "tariffNumber": "22042163",
+        "description": "Léttvín teljast vera gerjuð vín með áfengisinnihald að styrkleika 2,25% til og með 15%. Léttvín yfir 15% að styrkleika bera hærri gjöld.",
+        "id": "474cd1ba-ab3e-41a1-bcad-6554159fffdd",
+        "children": []
+      },
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Léttvín til dæmis rauðvín og hvítvín að styrkleika yfir 15% þó ekki styrkt vín",
+        "tariffNumber": "22042193",
+        "description": "",
+        "id": "c486f957-27cb-463a-8d62-b8f609fe73c0",
+        "children": []
+      },
+      {
+        "parentLabel": "Áfengi (áfengisinnihald meira en 2,25 %)",
+        "label": "Sterkt vín",
+        "tariffNumber": "22086013",
+        "description": "Sterkt áfengi telst vera áfengi með áfengisinnihald 21% eða meira.",
+        "id": "741b07a1-0e2c-479d-a991-94ab9102af7f",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Barnavörur",
+    "tariffNumber": "#",
+    "description": "Taktu eftir að í reiknivélinni eru barnaföt undir <strong>Fatnaður og skór</strong> og húsgögn í barnaherbergi eru undir <strong>Húsgögn</strong>.",
+    "id": "cd15fb78-fdf9-469f-b731-b5deb1686c8d",
+    "children": [
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Barnabílstólar (viðurkenndir)",
+        "tariffNumber": "94012002",
+        "description": "Barnabílstólar, viðurkenndir og E merktir skv. ECE-reglum nr. 44.04.\n\n1. júlí 2013 tóku gildi breytingar á reglugerð um notkun öryggis- og verndarbúnaðar í ökutækjum en eftir þann tíma má einungis nota, markaðssetja, flytja inn og selja öryggisbúnað (barnabílstól eða bílpúða með eða án baks) sem uppfyllir evrópskar kröfur í ökutækjum samkvæmt reglum ECE nr. 44. 04 með síðari breytingum.\n\n<a title=\"Opnast í nýjum glugga\" href=\"http://www.samgongustofa.is/umferd/fraedsla-og-oryggi/oryggi/born-i-bil/\" target=\"_blank\">Nánari upplýsingar á vef Samgöngustofu</a>",
+        "id": "8041fa08-63c1-48fa-99c4-661578dc91d3",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Barnareiðhjól",
+        "tariffNumber": "87120000",
+        "description": "",
+        "id": "757e7d5a-6466-4b21-9700-f27771d97551",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Barnavagnar og kerrur",
+        "tariffNumber": "87150000",
+        "description": "",
+        "id": "5b6d1187-1ac8-417a-a651-c8d0804d365d",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Bleiur einnota",
+        "tariffNumber": "96190011",
+        "description": "",
+        "id": "72aa2c5a-e816-47ee-b800-b7f8c6e32d64",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Bleiur, taubleiur, margnota",
+        "tariffNumber": "96190091",
+        "description": "",
+        "id": "b8c1c5d5-be32-40f9-b176-4f46aee90080",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Fjarstýrð leikföng",
+        "tariffNumber": "95030079",
+        "description": "Athugið að fjarstýrð leikföng (og önnur leikföng með sendibúnaði) þurfa að hafa CE merkingu.",
+        "id": "c92ba71c-1d49-4eb5-9192-8361fc7c979c",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Leikföng",
+        "tariffNumber": "95030079",
+        "description": "",
+        "id": "9f65ba1c-c0e2-4ccf-8bc5-89780581c550",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Leikföng á hjólum",
+        "tariffNumber": "95030019",
+        "description": "Leikföng á hjólum, til dæmis þríhjól, hlaupahjól, stignir bílar, brúðuvagnar, brúðukerrur og önnur leikföng á hjólum.",
+        "id": "57f05253-d44a-4686-93a1-b11da23b8cd6",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Snuð",
+        "tariffNumber": "39269090",
+        "description": "",
+        "id": "9509e9b2-066c-4499-afd3-f2fd87201b7c",
+        "children": []
+      },
+      {
+        "parentLabel": "Barnavörur",
+        "label": "Spil",
+        "tariffNumber": "95044000",
+        "description": "",
+        "id": "80527ee1-483d-48d5-b1a1-c75be2faa9da",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Byggingavörur",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "a2ee30d4-e5db-428c-989a-f6568fb03241",
+    "children": [
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Baðker og sturtubotnar",
+        "tariffNumber": "39221000",
+        "description": "",
+        "id": "b558936f-fcfe-48a9-9a54-7f4fa0803fd1",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Blöndunartæki",
+        "tariffNumber": "84818000",
+        "description": "",
+        "id": "a8309296-40fe-4a89-9acb-e47ddc0d2ea7",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Einingahús",
+        "tariffNumber": "94062000",
+        "description": "",
+        "id": "b82d2580-097b-4277-948f-af7b6c9f2cfb",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Flaggstangir úr fíberplasti",
+        "tariffNumber": "39259009",
+        "description": "",
+        "id": "2cfd9ee9-04ac-4234-bc81-be7cdebe1a31",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Flúrperur og flúrlampar",
+        "tariffNumber": "85393100",
+        "description": "",
+        "id": "7cbcfed9-af00-40e3-91ca-36c431763e90",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Gólfefni: mottur, teppi, flísar",
+        "tariffNumber": "57029900",
+        "description": "",
+        "id": "cec50322-b041-4b89-9e87-90810e11f6cf",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Heitir pottar og baðker með nuddi",
+        "tariffNumber": "90191011",
+        "description": "",
+        "id": "50b6dfa8-5722-4422-b32d-3f31649a4bd2",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Heitir pottar (skeljar)",
+        "tariffNumber": "39221000",
+        "description": "",
+        "id": "5c42d104-566f-45dc-a79a-467326c93f6d",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Innréttingar",
+        "tariffNumber": "94036009",
+        "description": "",
+        "id": "05a9ddca-ed6f-4f74-9c48-9a66d570b2c7",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Ljósaperur - glóperur og halogenperur",
+        "tariffNumber": "85392900",
+        "description": "",
+        "id": "67e03817-8ac9-466f-92c2-c0b745007f2e",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Ljósdíóðulampar (LED)",
+        "tariffNumber": "85395200",
+        "description": "",
+        "id": "b5e25d2a-b05a-4b3c-9cc7-df41d4705087",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Málning",
+        "tariffNumber": "32091001",
+        "description": "",
+        "id": "fa23750f-c6ce-4a27-bf4e-64eeddc1926f",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Olíumálning",
+        "tariffNumber": "32081001",
+        "description": "",
+        "id": "5baa13d5-8a71-4dab-913c-5cc7c48d4744",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Salerni og handlaugar",
+        "tariffNumber": "69101000",
+        "description": "Úr postulíni.",
+        "id": "ea40e193-e46b-4251-897f-74e6a28de5a6",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Sólarsellur",
+        "tariffNumber": "85414300",
+        "description": "",
+        "id": "5366c73d-9b8f-4049-a947-95b5928ba931",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Timbur",
+        "tariffNumber": "44111201",
+        "description": "",
+        "id": "4f816efe-cc58-4cfe-b40b-d01586df9dab",
+        "children": []
+      },
+      {
+        "parentLabel": "Byggingavörur",
+        "label": "Vindrafstöðvar",
+        "tariffNumber": "85023900",
+        "description": "",
+        "id": "81e120f3-567d-4dea-8df2-589e249e1fb8",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Dýravörur",
+    "tariffNumber": "#",
+    "description": "Vakin er athygli á að notaður búnaður fyrir dýr þarf að vera sótthreinsaður og í sumum tilfellum er innflutningur bannaður. Kynntu þér upplýsingar um smitvarnir á vef Matvælastofnunar.",
+    "id": "d20d08ac-d0e3-424d-80c1-a58c047ddd26",
+    "children": [
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Burstar og greiður",
+        "tariffNumber": "96032901",
+        "description": "",
+        "id": "2b1907df-52b7-4fcb-98a4-c40f7497f067",
+        "children": []
+      },
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Dýrabúr",
+        "tariffNumber": "39269090",
+        "description": "Til dæmis hunda eða kattabúr.",
+        "id": "15555971-9814-4bbc-89fb-ffb71d128f0d",
+        "children": []
+      },
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Dýrafatnaður",
+        "tariffNumber": "42010091",
+        "description": "",
+        "id": "68d369d9-ccf8-427a-947a-e026cd44f148",
+        "children": []
+      },
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Fléttaðar körfur",
+        "tariffNumber": "46019900",
+        "description": "",
+        "id": "99d54f0e-13ac-4837-a1e4-606adc5bd841",
+        "children": []
+      },
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Hárklippur",
+        "tariffNumber": "85102001",
+        "description": "",
+        "id": "0f6976eb-357f-4c47-879a-84b2245d0472",
+        "children": []
+      },
+      {
+        "parentLabel": "Dýravörur",
+        "label": "Taumar, reiðtygi og aktygi",
+        "tariffNumber": "42010011",
+        "description": "",
+        "id": "b2d18dba-93e8-4828-9320-cf3bc67db562",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Fatnaður og skór",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "fde4b7c3-a3d7-4d32-ae85-0cab59915366",
+    "children": [
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Belti, axlarólar",
+        "tariffNumber": "42033000",
+        "description": "",
+        "id": "32f7c2c5-339c-4468-889c-e886301c8513",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Fatnaður úr leðri",
+        "tariffNumber": "42031009",
+        "description": "Fatnaður og fylgihlutir, úr leðri eða samsettu leðri.",
+        "id": "109e3eac-a220-46d9-b2d4-7a507afe95b3",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Föt",
+        "tariffNumber": "61032300",
+        "description": "",
+        "id": "a6a86661-0147-47e9-bd53-dc636c99f76f",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Hanskar, vettlingar",
+        "tariffNumber": "61169900",
+        "description": "",
+        "id": "8279cae2-bc94-4e18-9507-d290df058823",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Höfuðfatnaður, hattar, húfur",
+        "tariffNumber": "65040000",
+        "description": "",
+        "id": "dabfdd84-37fd-45ef-b20f-686752ffb1fc",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Nærföt",
+        "tariffNumber": "61071100",
+        "description": "",
+        "id": "61cf3445-b6c7-4321-b75b-e5297bd53814",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Skór",
+        "tariffNumber": "64039900",
+        "description": "",
+        "id": "ec0429cd-648d-4816-8a16-85d93bb54727",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Treflar, sjöl, klútar",
+        "tariffNumber": "62149000",
+        "description": "",
+        "id": "e37a9d7c-8d89-4f19-8f7b-d32d6fa69c09",
+        "children": []
+      },
+      {
+        "parentLabel": "Fatnaður og skór",
+        "label": "Vörur úr loðskinni",
+        "tariffNumber": "43031000",
+        "description": "Fatnaður, fylgihlutir og aðrar vörur úr loðskinni.",
+        "id": "e55167c5-f708-428d-9dbe-449f892e1ef7",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Geisladiskar og DVD diskar",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "74e58e45-d5d4-4380-832a-82e60c164022",
+    "children": [
+      {
+        "parentLabel": "Geisladiskar og DVD diskar",
+        "label": "Með kvikmyndum",
+        "tariffNumber": "85234961",
+        "description": "",
+        "id": "9cc5dc19-9d15-4c08-a327-d26f8374adb3",
+        "children": []
+      },
+      {
+        "parentLabel": "Geisladiskar og DVD diskar",
+        "label": "Með leikjum",
+        "tariffNumber": "85234962",
+        "description": "",
+        "id": "8b076b72-6e56-4666-8c6c-a5b8435edc5f",
+        "children": []
+      },
+      {
+        "parentLabel": "Geisladiskar og DVD diskar",
+        "label": "Með tónlist",
+        "tariffNumber": "85234942",
+        "description": "",
+        "id": "d1f64cf0-e90b-454a-ad3f-b752bd6bd5e9",
+        "children": []
+      },
+      {
+        "parentLabel": "Geisladiskar og DVD diskar",
+        "label": "Tómir geisladiskar með 2GB minnisrýmd eða meiri",
+        "tariffNumber": "85234113",
+        "description": "",
+        "id": "d5f71a39-047d-4ddf-a1dd-de835d37e7b1",
+        "children": []
+      },
+      {
+        "parentLabel": "Geisladiskar og DVD diskar",
+        "label": "Tómir geisladiskar með allt að 2GB minnisrýmd",
+        "tariffNumber": "85234112",
+        "description": "",
+        "id": "0515bbc1-5a85-4a40-bb22-683d85836ca1",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Gleraugu, hlífðargleraugu",
+    "tariffNumber": "#",
+    "description": "Gleraugu, hlífðargleraugu og þess háttar, til sjónréttingar, verndar eða annars",
+    "id": "28bb85e8-2009-4fbc-81cf-0d03c166510f",
+    "children": [
+      {
+        "parentLabel": "Gleraugu, hlífðargleraugu",
+        "label": "Gleraugu og linsur",
+        "tariffNumber": "90049090",
+        "description": "",
+        "id": "71830edb-cd17-410b-9160-e42381a14f1b",
+        "children": []
+      },
+      {
+        "parentLabel": "Gleraugu, hlífðargleraugu",
+        "label": "Raf-, logsuðu- og önnur hlífðargleraugu",
+        "tariffNumber": "90049020",
+        "description": "",
+        "id": "d9d54cb4-dac8-4baa-9fad-c8db9065fc51",
+        "children": []
+      },
+      {
+        "parentLabel": "Gleraugu, hlífðargleraugu",
+        "label": "Sólgleraugu",
+        "tariffNumber": "90041000",
+        "description": "",
+        "id": "421aab46-9e6c-4904-8139-f95ddd2fd12a",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Heimilisbúnaður",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "6fa7974a-6110-484f-bbb8-1d534b655c8e",
+    "children": [
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Búsáhöld, borðbúnaður",
+        "tariffNumber": "39241090",
+        "description": "",
+        "id": "cc976612-fe4e-4d5c-9b84-eb62076094b9",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Dúkar, handklæði og fleira",
+        "tariffNumber": "63026000",
+        "description": "",
+        "id": "99dab0a6-4c66-4e8a-9813-bd625153f83e",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Eldhúshnífar",
+        "tariffNumber": "82119210",
+        "description": "",
+        "id": "7a5d2e32-c297-4ce3-8e78-777d101616c9",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Hnífapör",
+        "tariffNumber": "82159900",
+        "description": "Skeiðar, gafflar, sleifar, gatasleifar, kökuspaðar, fiskhnífar, smjörhnífar, sykurtengur og áþekkur eldhús- eða borðbúnaður.",
+        "id": "7228caaa-2ad0-4e02-86a1-d43cfbe6edb0",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Jólaskraut",
+        "tariffNumber": "95051000",
+        "description": "Hverskonar skraut til jólahalds",
+        "id": "7f612587-9dee-4f88-94c0-bd9733b47c5c",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Kertastjakar",
+        "tariffNumber": "94055000",
+        "description": "",
+        "id": "4eb16fcd-ceb5-4aad-9b29-1128b3fa7b8e",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Ljós og lampar",
+        "tariffNumber": "94052909",
+        "description": "Ljósaperur eru undir byggingavörur í reiknivélinni.",
+        "id": "f848eed3-2c57-4b26-9d5c-1b0426a72bf9",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Pottar",
+        "tariffNumber": "73239300",
+        "description": "",
+        "id": "9b01364b-be6f-4651-845b-e4d790b32374",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Skæri",
+        "tariffNumber": "82130000",
+        "description": "",
+        "id": "24305ebe-3009-4e96-8546-2ef6f0383531",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilisbúnaður",
+        "label": "Styttur - skrautmunir",
+        "tariffNumber": "69131000",
+        "description": "",
+        "id": "17ae7d45-92da-4cac-8d41-3829362487e2",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Heimilistæki",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "9fd7a08c-8b0e-41d7-bbdf-fcc271e4658d",
+    "children": [
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Brauðristar",
+        "tariffNumber": "85167200",
+        "description": "",
+        "id": "55aa4e88-8b6e-4811-aebe-8a8591678df5",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Eldavélar, ofnar, örbylgjuofnar",
+        "tariffNumber": "85166009",
+        "description": "",
+        "id": "e296fbfa-ea83-4d82-afc8-02b9ea07ad3a",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Gasgrill",
+        "tariffNumber": "73211100",
+        "description": "",
+        "id": "4dc76c69-030f-4f20-a5f5-1ff198c5edd5",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Hárþurrkur",
+        "tariffNumber": "85163100",
+        "description": "",
+        "id": "e25fbb99-1167-4eb9-8b76-d8ad6bb7d34f",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Hrærivélar, blandarar",
+        "tariffNumber": "85094001",
+        "description": "",
+        "id": "ddd0264e-43f8-4399-967a-dd8a9480bd3e",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Ísskápar, frystar",
+        "tariffNumber": "84182100",
+        "description": "Til heimilisnota",
+        "id": "30ad9717-4a72-4c9a-a467-e72a117d3147",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Kaffivélar",
+        "tariffNumber": "85167100",
+        "description": "",
+        "id": "797d0219-6a96-4a64-a4d7-b3c796674f57",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Ryksugur",
+        "tariffNumber": "85081900",
+        "description": "",
+        "id": "3a262cb4-baa0-4612-976b-530c5f03e999",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Saumavélar",
+        "tariffNumber": "84521001",
+        "description": "",
+        "id": "22d59508-7476-489e-ba3c-203483cc6c27",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Straujárn",
+        "tariffNumber": "85164009",
+        "description": "",
+        "id": "6db36b69-9e0b-4a10-8c6d-3b1503c77655",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Uppþvottavélar",
+        "tariffNumber": "84221100",
+        "description": "Til heimilisnota",
+        "id": "d5760ddc-46a8-4a1f-87d4-0cf6222b1671",
+        "children": []
+      },
+      {
+        "parentLabel": "Heimilistæki",
+        "label": "Þvottavélar, þurrkarar",
+        "tariffNumber": "84501100",
+        "description": "Til heimilisnota",
+        "id": "293a4b85-5762-46d8-8671-dab31d3cb233",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Hljóðfæri",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "5afdae72-ceda-45c5-8655-5c196c860359",
+    "children": [
+      {
+        "parentLabel": "Hljóðfæri",
+        "label": "Blásturshljóðfæri",
+        "tariffNumber": "92059000",
+        "description": "Til dæmis: klarínettur, trompetar og sekkjapípur.",
+        "id": "658ebab2-7648-496a-aa7d-ca7f127a8e2e",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóðfæri",
+        "label": "Píanó",
+        "tariffNumber": "92019000",
+        "description": "Píanó, þar með talin sjálfvirk píanó; harpsíkord og önnur strengjahljóðfæri með nótnaborði.",
+        "id": "b7aa8e0c-a455-4f8d-8e2d-201ed9dea9f7",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóðfæri",
+        "label": "Rafmagnshljóðfæri",
+        "tariffNumber": "92079000",
+        "description": "Hljóðfæri sem mynda hljóðið, eða verður að magna, með rafmagni (t.d. rafmagnsorgel og rafmagnsgítarar.",
+        "id": "740bf9cb-7a93-4ece-a381-b826dc60b01b",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóðfæri",
+        "label": "Slaghljóðfæri",
+        "tariffNumber": "92060000",
+        "description": "Til dæmis: trommur, sylófónar, symbalar, kastanjettur, hringlur (maracas).",
+        "id": "a42da0ef-3680-493a-8777-ebd5699e68b2",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóðfæri",
+        "label": "Strengjahljóðfæri",
+        "tariffNumber": "92029000",
+        "description": "Til dæmis: gítarar, fiðlur og hörpur.",
+        "id": "5b05d9ee-d4f5-4e98-b480-ee2fc2b62c46",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Hljóð og myndflutningstæki",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "f877c2d6-4855-460e-99c7-d0309a1c114b",
+    "children": [
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Fjarstýringar",
+        "tariffNumber": "85437001",
+        "description": "Með innrauðum geisla",
+        "id": "7c4c667a-aa9f-4120-bd6d-c6896d1558e5",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Hátalarar, magnarar",
+        "tariffNumber": "85184009",
+        "description": "",
+        "id": "4d93d952-1a6d-4d49-9396-bbb8d6f4d960",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Heyrnartól og eyrnatól, einnig með sambyggðum hljóðnema",
+        "tariffNumber": "85183009",
+        "description": "",
+        "id": "ea466b17-2972-4ca8-ac85-e837c373066f",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Hljómflutningstæki, myndflutningstæki",
+        "tariffNumber": "85219029",
+        "description": "Til dæmis: myndbandsupptökutæki, myndafspilunartæki, hljóðupptökutæki, hljóðafspilunartæki, margmiðlunarspilarar, sjónvarpsflakkarar.\n\nSjá einnig sjónvarpsflakkara og tónlistarspilara undir flokknum tölvur og tölvubúnaður í reiknivélinni.",
+        "id": "54e8ccb1-e692-4091-9fc5-19e1d714cef3",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Sjónvarpstæki, skjáir og myndvörpur",
+        "tariffNumber": "85287209",
+        "description": "Tæki ætluð til að horfa á sjónvarpsútsendingar, sjónvarpsefni, kvikmyndir (ekki tölvuskjáir)",
+        "id": "d8df4dc0-b59c-4e4e-b51d-43362070b0b9",
+        "children": []
+      },
+      {
+        "parentLabel": "Hljóð og myndflutningstæki",
+        "label": "Snúrur og kaplar",
+        "tariffNumber": "85444209",
+        "description": "",
+        "id": "0d7e33ff-f48d-49ca-8fbc-62bdc94ed36a",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Húsgögn",
+    "tariffNumber": "94036009",
+    "description": "Einnig garðhúsgögn.",
+    "id": "d84b7d2b-3168-4b1b-9344-516d983ea100",
+    "children": []
+  },
+  {
+    "parentLabel": "",
+    "label": "Íþróttavörur",
+    "tariffNumber": "#",
+    "description": "Hlutir og búnaður til almennrar líkamsræktar, fimleika, frjálsra íþrótta, annarra íþrótta (þar með talið borðtennis) eða útileikja, ót.a. í þessum kafla; sundlaugar og vaðlaugar. Taktu eftir að í reiknivélinni er íþróttafatnaður undir <strong>Fatnaður og skór</strong> og <strong>Reiðhjól</strong> undir ökutæki.",
+    "id": "d27b0472-678d-46ee-aa75-a5a564453c33",
+    "children": [
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Annar búnaður til íþrótta",
+        "tariffNumber": "95069990",
+        "description": "",
+        "id": "1348a216-f4b5-42f9-b07e-daf77b0fadec",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Boltar (knettir)",
+        "tariffNumber": "95066900",
+        "description": "",
+        "id": "174a92ae-90fe-4077-bb7a-aa74ed973948",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Golfkylfur og annar golfbúnaður",
+        "tariffNumber": "95063900",
+        "description": "",
+        "id": "e5765126-af0d-4a5b-a638-3eaaf9ec401b",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Hlutir og búnaður fyrir borðtennis",
+        "tariffNumber": "95064000",
+        "description": "",
+        "id": "67f170ee-1b45-4f6e-b71c-89a41bb104b1",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Sjóskíði, brimbretti, seglbretti og annar búnaður fyrir vatnaíþróttir",
+        "tariffNumber": "95062900",
+        "description": "",
+        "id": "2fd0f72a-b124-4ad3-b2b3-c3376bb8c91b",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Skautar og hjólaskautar",
+        "tariffNumber": "95067000",
+        "description": "",
+        "id": "83700a82-dd30-4981-b450-9da22ffc0810",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Snjóskíði og annar búnaður fyrir snjóskíði",
+        "tariffNumber": "95061900",
+        "description": "",
+        "id": "0e30b141-0f08-45cf-bd77-59ddb11eee0a",
+        "children": []
+      },
+      {
+        "parentLabel": "Íþróttavörur",
+        "label": "Tennis- og badmintonspaðar",
+        "tariffNumber": "95065900",
+        "description": "",
+        "id": "9b28f15a-7017-46d2-a432-5a9f90f6f5f5",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Jaðartæki",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "c5005b8f-aa1b-4f3e-9ca5-885a2f1d58e2",
+    "children": []
+  },
+  {
+    "parentLabel": "",
+    "label": "Leiðsögu- og mælitæki",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "807d3a06-f42c-4e48-9f92-125d9ffc4b72",
+    "children": [
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "Áttavitar",
+        "tariffNumber": "90141000",
+        "description": "",
+        "id": "2cdb2868-9298-4f0b-b2b6-63793f273696",
+        "children": []
+      },
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "GPS staðsetningartæki",
+        "tariffNumber": "90142000",
+        "description": "",
+        "id": "80c0de86-5195-421d-b293-b086a2a6e843",
+        "children": []
+      },
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "Sjónaukar",
+        "tariffNumber": "90051000",
+        "description": "",
+        "id": "c3c74270-85ab-43df-94d5-6861285eff16",
+        "children": []
+      },
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "Smásjár",
+        "tariffNumber": "90118000",
+        "description": "",
+        "id": "c1f4bf4e-5a22-4ba8-af7f-6f3f0d4ec8f6",
+        "children": []
+      },
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "Vindhraðamælar",
+        "tariffNumber": "90158000",
+        "description": "",
+        "id": "63fab022-b304-4775-ba0d-b46cce2aa460",
+        "children": []
+      },
+      {
+        "parentLabel": "Leiðsögu- og mælitæki",
+        "label": "Vogir",
+        "tariffNumber": "90160009",
+        "description": "",
+        "id": "e7a41d36-4f2a-4c02-b79c-2fa6cdbc909f",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Ljós- og kvikmyndavörur",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "fac61d72-2d49-43ee-8833-5e2e82afa023",
+    "children": [
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Filmur",
+        "tariffNumber": "37023100",
+        "description": "",
+        "id": "5123c0c2-af70-433b-829c-c51e5f87d6c0",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Fjarstýring (afsmellari)",
+        "tariffNumber": "85437001",
+        "description": "Með innrauðum geisla",
+        "id": "7daecb8e-b208-4081-be2b-5133932f1ef0",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Flass - Leifturljós",
+        "tariffNumber": "90066100",
+        "description": "",
+        "id": "963e0ebb-80d1-48d6-bd39-c9e3daeeb711",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Fylgihlutir véla",
+        "tariffNumber": "90069100",
+        "description": "",
+        "id": "3ea8cc88-382d-4984-b771-58ecd35f69e6",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Hleðsluraflöður í myndavélar og myndbandsupptökuvélar",
+        "tariffNumber": "85078090",
+        "description": "Skráið þyngd í Kg í lítrasvæði",
+        "id": "18af36b0-61d6-4643-b33d-e1f24cde84c4",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Hleðslutæki fyrir myndavélar og myndbandsupptökuvélar",
+        "tariffNumber": "85044000",
+        "description": "",
+        "id": "f1bcdc80-20b1-4791-8566-d85943a10da9",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Kvikmyndatökuvélar",
+        "tariffNumber": "90071000",
+        "description": "",
+        "id": "bb511100-e541-4c3a-a5cc-de509d0bbd85",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Ljósmyndavélar",
+        "tariffNumber": "90065900",
+        "description": "",
+        "id": "14e79857-185b-4224-9f47-d0aa953d4f2b",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Minniskort í myndavélar",
+        "tariffNumber": "85235119",
+        "description": "",
+        "id": "6312b819-7d69-418d-b164-bbd3c022a948",
+        "children": []
+      },
+      {
+        "parentLabel": "Ljós- og kvikmyndavörur",
+        "label": "Stafrænar (digital) myndavélar og myndbandsupptökuvélar",
+        "tariffNumber": "85258900",
+        "description": "",
+        "id": "18974d77-2a5c-4897-a366-be0d0fa558cb",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Matvæli",
+    "tariffNumber": "#",
+    "description": "Tollflokkun á matvælum er ekki einföld. Gjöld geta verið mismunandi meðal annars eftir efnainnihaldi vörunnar, innflutningur getur verið bannaður eða leyfi þurft til hans. Hér eru því aðeins tekin örfá dæmi um ýmislegt góðgæti.\n\nÓheimilt er að flytja til landsins eða markaðssetja matvæli, þ.m.t. fæðubótarefni, sem innihalda lyf.<br><a href=\"http://www.mast.is/inn-ogutflutningur/matvaeli/\" target=\"_blank\" title=\"Opnast í nýjum glugga\">Sjá nánar á vef Matvælastofnunar.</a>",
+    "id": "27235f83-7006-4172-b6f2-51659cfe4c34",
+    "children": [
+      {
+        "parentLabel": "Matvæli",
+        "label": "Kaffi",
+        "tariffNumber": "09012101",
+        "description": "",
+        "id": "191e89e0-ff1d-4f5c-9675-cb63e288e982",
+        "children": []
+      },
+      {
+        "parentLabel": "Matvæli",
+        "label": "Súkkulaði sem inniheldur kakó",
+        "tariffNumber": "#",
+        "description": "",
+        "id": "aa84c5e2-62cb-4d1a-a2a8-803baf28bcfe",
+        "children": [
+          {
+            "parentLabel": "Súkkulaði sem inniheldur kakó",
+            "label": "Fyllt súkkulaði",
+            "tariffNumber": "18063101",
+            "description": "",
+            "id": "5a88382b-70bd-4219-95e1-5653e1e08b25",
+            "children": []
+          },
+          {
+            "parentLabel": "Súkkulaði sem inniheldur kakó",
+            "label": "Í plötum",
+            "tariffNumber": "18063202",
+            "description": "",
+            "id": "a74a2c32-6b02-4e46-8538-1dbc298b7f5c",
+            "children": []
+          }
+        ]
+      },
+      {
+        "parentLabel": "Matvæli",
+        "label": "Sælgæti (þar með talið hvítt súkkulaði) án kakóinnihalds",
+        "tariffNumber": "17049009",
+        "description": "",
+        "id": "98ae8207-287d-406b-8efd-cdd4a0941df2",
+        "children": []
+      },
+      {
+        "parentLabel": "Matvæli",
+        "label": "Te",
+        "tariffNumber": "09024000",
+        "description": "",
+        "id": "1c61a000-abbf-44a6-86b5-c1289f2eb516",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Prentaðar vörur, bækur, tímarit og fleira",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "419ebca5-fc15-4044-8072-472e063a36f2",
+    "children": [
+      {
+        "parentLabel": "Prentaðar vörur, bækur, tímarit og fleira",
+        "label": "Aðrar prentvörur, þar með taldar prentaðar myndir og ljósmyndir",
+        "tariffNumber": "49119900",
+        "description": "",
+        "id": "3229212d-e48d-4fd2-a9f0-530c4c52cb7e",
+        "children": []
+      },
+      {
+        "parentLabel": "Prentaðar vörur, bækur, tímarit og fleira",
+        "label": "Bækur, einnig ljósmyndabækur",
+        "tariffNumber": "49019909",
+        "description": "",
+        "id": "59bb4f87-2a6d-4961-a0dc-2bf0250477ce",
+        "children": []
+      },
+      {
+        "parentLabel": "Prentaðar vörur, bækur, tímarit og fleira",
+        "label": "Tímarit",
+        "tariffNumber": "49021001",
+        "description": "",
+        "id": "5fc5ee1f-0281-4456-82b5-26a27b05e8b9",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Símar og fjarskiptatæki",
+    "tariffNumber": "#",
+    "description": "Athugið að símar og fjarskiptatæki þurfa að vera <strong>CE merkt</strong>. <br><a href=\"https://www.fjarskiptastofa.is/fjarskiptastofa/fjarskiptainnvidir/fjarskiptataeki-og-bunadur/\" target=\"_blank\">Sjá nánari upplýsingar á vef Póst og fjarskiptastofnunar.</a>",
+    "id": "30eb7f16-5675-40d9-b240-f10bc305d257",
+    "children": [
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Fjarstýringar með útvarpsbylgjusendi",
+        "tariffNumber": "85269201",
+        "description": "Fjarstýringar með útvarpsbylgjusendi (radíó) til dæmis til að opna bíla eða bílskýrshurðir.",
+        "id": "882306ab-94d5-4b8e-92e8-88ce34164664",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Handfrjáls búnaður fyrir farsíma",
+        "tariffNumber": "85183001",
+        "description": "",
+        "id": "a3b839f1-3662-4dff-9100-e85468635f13",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Hleðslurafhlöður",
+        "tariffNumber": "85078090",
+        "description": "Skráið þyngd í Kg í lítrasvæði",
+        "id": "c4914138-ab32-47ce-a822-c6c9051f3df4",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Hleðslutæki",
+        "tariffNumber": "85044000",
+        "description": "",
+        "id": "e686cda6-0aca-4bd1-90f3-1a6c7381c170",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Símar",
+        "tariffNumber": "85171800",
+        "description": "",
+        "id": "ea82e43f-2bb4-4386-b31f-c05a75ff9fd7",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Snjallsímar og farsímar",
+        "tariffNumber": "85171800",
+        "description": "",
+        "id": "18da7aec-67be-4adc-9953-ef9754ae2183",
+        "children": []
+      },
+      {
+        "parentLabel": "Símar og fjarskiptatæki",
+        "label": "Talstöðvar",
+        "tariffNumber": "85256009",
+        "description": "",
+        "id": "c92e7339-33fe-4db2-b888-2b4f765c5600",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Skartgripir",
+    "tariffNumber": "71131900",
+    "description": "",
+    "id": "dd9184aa-496f-4d89-b805-759303ea68ed",
+    "children": []
+  },
+  {
+    "parentLabel": "",
+    "label": "Snyrti- og hreinlætisvörur",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "7413369b-3829-44b7-85b2-4a5c4d4ec662",
+    "children": [
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Andlitsfarði og húðvörur",
+        "tariffNumber": "33049901",
+        "description": "",
+        "id": "4327dd58-4a5b-4045-8724-5002aa63ea5f",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Augnfarði",
+        "tariffNumber": "33042000",
+        "description": "",
+        "id": "530ebb9f-94dc-4529-8e3e-2f2783db5b27",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Greiður, hárspennur og þess háttar",
+        "tariffNumber": "96159000",
+        "description": "Greiður, hárspennur og þess háttar; hárnálar, hár-liðunarnálar, hárliðunarklemmur, krullupinnar og þess háttar, þó ekki vörur í vörulið nr. 8516 (rafmagnsvörur), og hlutar til þeirra.",
+        "id": "356845c7-11fc-4276-be42-5f12acfb2fc1",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Ilmvötn",
+        "tariffNumber": "33030001",
+        "description": "",
+        "id": "ba7723ea-6969-4b44-815f-78cf94eadbba",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Naglalakk og aðrar naglasnyrtivörur",
+        "tariffNumber": "33043010",
+        "description": "",
+        "id": "aa9addf3-d618-40e7-860d-14b293f00180",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Sápur",
+        "tariffNumber": "34011909",
+        "description": "",
+        "id": "7a36e822-b5e7-4b07-8f23-42b4586af08f",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Varalitur (Varafarði)",
+        "tariffNumber": "33041000",
+        "description": "",
+        "id": "0aa1f152-f494-4cc9-9c3b-fb999a25e10d",
+        "children": []
+      },
+      {
+        "parentLabel": "Snyrti- og hreinlætisvörur",
+        "label": "Vörur fyrir hár",
+        "tariffNumber": "33059000",
+        "description": "Hárþvottalögur (shampoo), efni til að liða eða afliða hár, hárlakk og aðrar vörur fyrir hár.",
+        "id": "3179e0f2-739e-4312-9dc3-d36d36c493f7",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Stangveiðibúnaður",
+    "tariffNumber": "#",
+    "description": "Veiðistangir, önglar og annar búnaður til veiða á línu; fiskháfar, fiðrildaháfar og áþekk net; tálfuglar (þó ekki í nr. 9208 eða 9705) og áþekkur veiði- eða skotbúnaður.\n\n<strong>Kynntu þér:</strong> <a href=\"https://tollur.is/einstaklingar/tollamal/ferdamenn/takmarkanir-og-bonn/sotthreinsun-veidibunadar/\" >Sótthreinsun veiðibúnaðar</a>",
+    "id": "e224cc89-8992-40cc-ab71-6f7a26010160",
+    "children": [
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Flugur og spúnar",
+        "tariffNumber": "95079010",
+        "description": "",
+        "id": "f1d58fce-0d99-4e39-aa72-2b74309371f0",
+        "children": []
+      },
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Háfar",
+        "tariffNumber": "95079091",
+        "description": "",
+        "id": "5f6fc67c-23a9-43e2-b8d1-5f30b5de2f37",
+        "children": []
+      },
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Veiðihjól",
+        "tariffNumber": "95073010",
+        "description": "",
+        "id": "514e63c1-46d8-44e9-840b-a8644c0b1fce",
+        "children": []
+      },
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Veiðistangir",
+        "tariffNumber": "95071001",
+        "description": "",
+        "id": "b423a917-bfe8-4b36-aa5f-f95a24bb4ba0",
+        "children": []
+      },
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Vöðlur",
+        "tariffNumber": "64019900",
+        "description": "",
+        "id": "7cb69159-16a8-4218-9b08-2e18c16ebf0e",
+        "children": []
+      },
+      {
+        "parentLabel": "Stangveiðibúnaður",
+        "label": "Önglar",
+        "tariffNumber": "95072010",
+        "description": "",
+        "id": "542f2868-f6de-44f8-9d73-176678c083a4",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Tölvur og tölvubúnaður",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "32912003-c728-409b-8893-96e979082149",
+    "children": [
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Fartölvur",
+        "tariffNumber": "84713001",
+        "description": "Sjálfvirkar ferðagagnavinnsluvélar sem ekki vega meira en 10 kg og fela í sér a.m.k.miðstöð, lyklaborð og skjá.",
+        "id": "84eeedb0-f597-4221-829f-85db592d0693",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Harðir diskar",
+        "tariffNumber": "84717000",
+        "description": "",
+        "id": "4e8029b8-e9e4-43ec-85e5-e576a9846561",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Hleðslurafhlöður",
+        "tariffNumber": "85078090",
+        "description": "Skráið þyngd í Kg í lítrasvæði",
+        "id": "81963ab2-d4c6-42dd-adbc-8891cf0fc811",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Hleðslutæki",
+        "tariffNumber": "85044000",
+        "description": "",
+        "id": "5231c381-fdf7-4640-977f-dfe4063fea09",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Jaðartæki fyrir tölvur",
+        "tariffNumber": "84716000",
+        "description": "",
+        "id": "ad03f0f4-4a63-4dd4-9474-f868551c0466",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Leikjatölvur",
+        "tariffNumber": "95045000",
+        "description": "Leikjatölvur svo sem PlayStation, Nintendo, Xbox og fleiri.",
+        "id": "57e450ea-3ee9-4a48-84fe-923c6be07af8",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Myndflutningstæki með þráðlaust net, sem geta gengið fyrir rafhlöðum",
+        "tariffNumber": "85219023",
+        "description": "Myndupptökutæki eða myndflutningstæki, sem geta gengið án ytri orkugjafa og eru tengjanleg þráðlaust við netkerfi. \n\nTil dæmis þær gerðir ipod spilara, sem þessi lýsing passar við.",
+        "id": "35ac030d-74b0-47f9-8ab8-c503f8d5781a",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Mýs og lyklaborð",
+        "tariffNumber": "84716000",
+        "description": "",
+        "id": "965f19eb-7226-433c-9718-1f037647f0c5",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Prentarar fyrir tölvur",
+        "tariffNumber": "84433200",
+        "description": "",
+        "id": "eee3eac9-35b7-4da4-95c9-8829550e7320",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Rafbókalesarar með þráðlaust net, sem geta gengið fyrir rafhlöðum",
+        "tariffNumber": "85437003",
+        "description": "Tæki til lesturs rafbóka sem geta gengið án ytri orkugjafa og eru tengjanleg þráðlaust við netkerfi. \n\nTil dæmis Kindle rafbókalesarar, sem þessi lýsing passar við.",
+        "id": "fab0cd87-5cab-4939-861c-17eb08c2dc3b",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Sjónvarpsflakkarar",
+        "tariffNumber": "85219029",
+        "description": "",
+        "id": "b099f9a1-0064-48dd-98b6-ac9d602a0ae3",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Skjáir og myndvörpur eingöngu nothæfir fyrir tölvur",
+        "tariffNumber": "85285200",
+        "description": "",
+        "id": "ed1b3e73-996e-44db-8986-1b432c5f8df3",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Spjaldtölvur",
+        "tariffNumber": "84713002",
+        "description": "",
+        "id": "65360807-87ad-464c-b77d-b489c799913a",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Tónlistarspilarar tengjanlegir við tölvur, sem geta gengið fyrir rafhlöðum",
+        "tariffNumber": "85198910",
+        "description": "Hljóðupptöku- eða hljóðflutningstæki, sem eru með innbyggðri geymslueiningu, geta gengið án ytri orkugjafa og eru tengjanleg við gagnavinnsluvélar (tölvur). \n\nTil dæmis þær gerðir ipod tónlistarspilara, sem þessi lýsing passar við.",
+        "id": "99ed94c6-2739-43a0-b48d-82d5bd2f6d9f",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Tölvuhátalarar",
+        "tariffNumber": "85182900",
+        "description": "",
+        "id": "542330d8-89f3-4a10-9120-6498173e4d33",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Tölvur",
+        "tariffNumber": "84714101",
+        "description": "",
+        "id": "1591fbc7-a86c-4173-a707-1a315ab1032e",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Tölvusnúrur og kaplar",
+        "tariffNumber": "85444209",
+        "description": "",
+        "id": "38ee67f2-cf24-4df4-b167-8e265bbc306b",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "USB minnislyklar",
+        "tariffNumber": "85235111",
+        "description": "",
+        "id": "e1de3760-596e-45b1-ae4f-2e7de3e10617",
+        "children": []
+      },
+      {
+        "parentLabel": "Tölvur og tölvubúnaður",
+        "label": "Vinnsluminni",
+        "tariffNumber": "84733000",
+        "description": "",
+        "id": "b55789ee-2bd1-4e6a-8b16-68d415840a34",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Úr og klukkur - einnig snjallúr",
+    "tariffNumber": "91019900",
+    "description": "",
+    "id": "9430278e-9b78-44ea-b63c-19dcbf04bffe",
+    "children": []
+  },
+  {
+    "parentLabel": "",
+    "label": "Vara- og aukahlutir fyrir ökutæki",
+    "tariffNumber": "#",
+    "description": "Vara- aukahlutir í ökutæki eru margvíslegrar gerðar og tollflokkast því í ýmsa <a href=\"https://vefskil.tollur.is/tollalinan/TAV/yfirlit.aspx\" target=\"_blank\">flokka og kafla tollskrárinnar</a> og geta borið mismunandi gjöld. \n\nSem dæmi flokkast margir rafmagnshlutir í 85. kafla, ýmsir járn- og stálhlutir í 73. kafla og legur, sveifarásar kambásar í 84 kafla. Hér er því aðeins sýnishorn af gjöldum á helstu hlutum. \n\nTakið eftir að sér flokkur er fyrir mótorhjólavarahluti.",
+    "id": "898f37d3-4bff-4a23-838a-7828120f2a7e",
+    "children": [
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Aðrir vara og aukahlutir (aðeins þeir, sem tollflokkast í 87 kafla tollskrár)",
+        "tariffNumber": "87089900",
+        "description": "Hlutar og fylgihlutar fyrir vélknúin ökutæki í nr. 8701-8705. Athugið að sumir vara og aukahlutir í bíla flokkast í aðra kafla tollskrár.",
+        "id": "ce8008bc-c41a-4e46-a693-7e1cceaba812",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Alternatorar (rafalar)",
+        "tariffNumber": "85115000",
+        "description": "",
+        "id": "9ef22fee-9301-46ee-b404-531b134669c2",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Bakkmyndavélar",
+        "tariffNumber": "85285900",
+        "description": "Hér er átt við sett sem inniheldur alla nauðsynlega hluta bakkmyndavélakerfis.",
+        "id": "5e0e930d-7102-4bee-8310-b3b8ca67c76e",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Baksýnisspeglar",
+        "tariffNumber": "70091000",
+        "description": "",
+        "id": "8d911b7f-ebfa-44c1-98e0-14037b97340c",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Bílvél dísilknúin",
+        "tariffNumber": "84082000",
+        "description": "Vélar í bíla og önnur ökutæki tollflokkast í 84 kafla tollskrár, hér er tekið dæmi um díselvél.",
+        "id": "88c9fdeb-106b-48c5-aba7-2a3df776cd8e",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Bílvél með neistakveikju (gas eða bensín)",
+        "tariffNumber": "84073400",
+        "description": "Vélar í bíla og önnur ökutæki tollflokkast í 84 kafla tollskrár, hér er tekið dæmi um bensínvél stærri en 1000cm3. Stimpil- eða hverfibrunahreyflar með neistakveikju: Brunahreyflar með stimpli til að knýja ökutæki í 87. kafla: með meira en 1000 cm3 sprengirými.",
+        "id": "79a3af94-6b75-46a6-b2cd-60233eb8d490",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Driföxlar með mismunadrifi, einnig búið öðrum drifskiptibúnaði og öxlar án drifs; hlutar til þeirra",
+        "tariffNumber": "87085000",
+        "description": "",
+        "id": "f0244ad1-8129-4208-a7ff-4a88d1c6e6b2",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Felgur",
+        "tariffNumber": "87087009",
+        "description": "Ökuhjól (felgur) og hlutar og fylgihlutir til þeirra.",
+        "id": "4be360bc-028c-430e-b45d-41cd1840e79b",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Felgur með hjólbörðum (dekkjum)",
+        "tariffNumber": "87087001",
+        "description": "",
+        "id": "9599eb42-28e9-4dea-82cf-b46c8a765d35",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Fjaðra- og höggdeyfibúnaður og hlutar til hans (einnig demparar)",
+        "tariffNumber": "87088000",
+        "description": "",
+        "id": "211fc0c5-aa29-408f-a38d-2abe830aabdf",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Gírkassar og hlutar til þeirra",
+        "tariffNumber": "87084000",
+        "description": "",
+        "id": "e3787e02-96fe-45ca-ba78-ca6b7a960f2b",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Grindur með hreyfli (vél)",
+        "tariffNumber": "87060009",
+        "description": "Fyrir vélknúin ökutæki í vörulið nr. 8701-8705.",
+        "id": "db134a1c-066d-4b97-bd4e-876f59103da1",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Hemlar og aflhemlar; hlutar til þeirra",
+        "tariffNumber": "87083009",
+        "description": "Varahlutir í hemla (bremsur)",
+        "id": "6a647b36-6e4e-438d-8e65-02e7a877c577",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Hjólbarðar (dekk)",
+        "tariffNumber": "40111000",
+        "description": "Hér er átt við nýja lofthjólbarða úr gúmmíi fyrir ýmis ökutæki og farartæki eins og reiðhjól, bíla, mótorhjól og flugvélar sem flokkast í <a href=\"https://vefskil.tollur.is/tollalinan/TAV/yfirlit.aspx?F=07&K=40&T=4011\">vörulið 4011 í tollskrá.</a>",
+        "id": "daff5437-27f6-4b4c-9750-db55ec39385e",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Hljóðdeyfar og útblástursrör; hlutar til þeirra",
+        "tariffNumber": "87089200",
+        "description": "",
+        "id": "1100c7f9-99c8-4b31-af4a-0945460dcc45",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Hlutar og fylgihlutar til yfirbygginga",
+        "tariffNumber": "87082900",
+        "description": "Boddýhlutir",
+        "id": "c6f372e9-7779-44b2-b82f-dd0534f533cc",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Kerti",
+        "tariffNumber": "85111000",
+        "description": "",
+        "id": "21baabe6-e5aa-404b-bf26-71706b03acce",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Kúlulegur, keflalegur",
+        "tariffNumber": "84829900",
+        "description": "",
+        "id": "92471c0e-61ca-486e-89e8-ef0f8157ca30",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Ljós",
+        "tariffNumber": "85122000",
+        "description": "",
+        "id": "0696bf48-ed0e-4b10-ad92-088113924151",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Mótorhjólavarahlutir",
+        "tariffNumber": "87141090",
+        "description": "Varahlutir og aukahlutir sem sérstaklega eru ætlaðir í mótorhjól (bifhjól).",
+        "id": "9025c455-7b27-4a10-9bea-c9e454958930",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Mótorhjóla- og reiðhjólahjálmar",
+        "tariffNumber": "65061090",
+        "description": "Kynntu þér upplýsingar um <a target=\"_blank\" href=\"http://www.samgongustofa.is/umferd/fraedsla-og-oryggi/fraedsla/bifhjol/oryggi-bifhjolamanna/\">öryggi bifhjólamanna</a> og <a target=\"_blank\" href=\"http://www.samgongustofa.is/umferd/fraedsla-og-oryggi/fraedsla/reidhjol/oryggisbunadur/\">öryggi hjólreiðamanna</a> á vef Samgöngustofu.",
+        "id": "6c3d57ab-7b30-4b9f-9593-edeec63bb09e",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Perur",
+        "tariffNumber": "85392900",
+        "description": "",
+        "id": "99b5a3cd-3700-494e-a5eb-8826f05975ac",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Startarar (ræsihreyflar)",
+        "tariffNumber": "85114000",
+        "description": "",
+        "id": "5ef67f82-121b-4a36-867a-3b1445b6b257",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Stuðarar og hlutar til þeirra",
+        "tariffNumber": "87081000",
+        "description": "",
+        "id": "5e498434-f8dd-42d7-b76b-a0cf9ebf6c1d",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Stýrishjól, stýrisstangir og stýrisvélar; hlutar til þeirra",
+        "tariffNumber": "87089400",
+        "description": "",
+        "id": "7d379e59-941a-4ca0-be4b-ab78c9459e5c",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Tengsli (kúplingar) og hlutar til þeirra",
+        "tariffNumber": "87089309",
+        "description": "",
+        "id": "3f394aa1-5efb-43fa-8e4e-b5e82cbe15e8",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Varahlutir í vélar ökutækja",
+        "tariffNumber": "84099900",
+        "description": "Hlutar eingöngu eða aðallega nothæfir til hreyfla í vöruliðum tollskrár nr. 8407 eða 8408.",
+        "id": "f0ab0732-93f6-48ba-8cdc-cfba0b0e9ae6",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Vatnskassar",
+        "tariffNumber": "87089100",
+        "description": "",
+        "id": "60d5e9ec-f357-4420-85f0-b4660eed7bf6",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Yfirbyggingar, pallhús",
+        "tariffNumber": "87079000",
+        "description": "Yfirbyggingar (einnig ökumannshús) fyrir vélknúin ökutæki í vöruliðum nr. 8701-8705.",
+        "id": "a7af1145-2a9b-4250-a33d-6f88bd5b926a",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Þjófavarnakerfi",
+        "tariffNumber": "85311000",
+        "description": "",
+        "id": "730263c6-e622-4f3c-95da-de5cd592e8a3",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Öryggisbelti",
+        "tariffNumber": "87082100",
+        "description": "",
+        "id": "132ae906-25d9-49f1-b2a6-d7061080539f",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Öryggisgler í bíla",
+        "tariffNumber": "70071101",
+        "description": "",
+        "id": "157b6100-d8af-4d07-904a-898170273646",
+        "children": []
+      },
+      {
+        "parentLabel": "Vara- og aukahlutir fyrir ökutæki",
+        "label": "Öryggisloftpúðar með uppblástursbúnaði; hlutar til þeirra",
+        "tariffNumber": "87089500",
+        "description": "",
+        "id": "b901e858-5551-4ed7-a606-691c13831ea4",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Verkfæri",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "e4a027dd-af40-4251-83f6-f58f4cdb2331",
+    "children": [
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Handverkfæri",
+        "tariffNumber": "82055100",
+        "description": "Til dæmis Hamrar, skrúfjárn, tangir o.s.frv.",
+        "id": "28aec41e-a3ff-4560-beac-c530fcee79e1",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Hleðslurafhlöður",
+        "tariffNumber": "85078090",
+        "description": "Skráið þyngd í Kg í lítrasvæði",
+        "id": "c99d47dd-9e9d-4ef2-92c7-ec65424893cc",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Hleðslutæki",
+        "tariffNumber": "85044000",
+        "description": "",
+        "id": "b4a5721d-5ca7-4641-a526-4c62dc7178c0",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Loftknúin handverkfæri",
+        "tariffNumber": "84671100",
+        "description": "Til dæmis borvélar og sagir",
+        "id": "07ec4fab-d2a5-4ae3-af5b-abd4303c08c5",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Rafknúin handverkfæri",
+        "tariffNumber": "84672100",
+        "description": "Til dæmis borvélar og sagir",
+        "id": "c2cbda49-d69c-4208-9224-c385a922d073",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Sláttuorf",
+        "tariffNumber": "84678901",
+        "description": "",
+        "id": "5996eef2-c257-4212-b956-1581f6972c5b",
+        "children": []
+      },
+      {
+        "parentLabel": "Verkfæri",
+        "label": "Sláttuvélar",
+        "tariffNumber": "84331101",
+        "description": "",
+        "id": "7f15cad3-8137-463c-9481-ca3edc522f87",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Vítamín og fæðubótarefni",
+    "tariffNumber": "#",
+    "description": "Óheimilt er að flytja til landsins eða markaðssetja matvæli, þ.m.t. fæðubótarefni, sem innihalda lyf.<br> <a href=\"http://www.mast.is/inn-ogutflutningur/matvaeli/innflutningurafaedubotarefnum/\" target=\"_blank\">Sjá nánar á vef Matvælastofnunar.</a>",
+    "id": "560ff0d4-651f-47e2-a78e-e0dc0e9ea054",
+    "children": [
+      {
+        "parentLabel": "Vítamín og fæðubótarefni",
+        "label": "Próteindrykkir og tilreidd drykkjarvöruefni einnig vítamín til drykkjar (duftform)",
+        "tariffNumber": "#",
+        "description": "",
+        "id": "b35c66da-227c-49d7-842c-4591bd255171",
+        "children": [
+          {
+            "parentLabel": "Próteindrykkir og tilreidd drykkjarvöruefni einnig vítamín til drykkjar (duftform)",
+            "label": "Tilreidd drykkjarvöruefni með kakó, sem innihalda próteín og/eða önnur næringarefni og fleira",
+            "tariffNumber": "18069012",
+            "description": "",
+            "id": "d0e0e955-2e08-4613-a2bf-bd386209f653",
+            "children": []
+          },
+          {
+            "parentLabel": "Próteindrykkir og tilreidd drykkjarvöruefni einnig vítamín til drykkjar (duftform)",
+            "label": "Tilreidd drykkjarvöruefni, sem innihalda próteín og/eða önnur næringarefni og fleira",
+            "tariffNumber": "21069020",
+            "description": "Tilreidd drykkjarvöruefni sem innihalda prótein og/eða önnur næringarefni, einnig vítamín, steinefni, jurtatrefjar, fjölómettaðar fitusýrur og bragðefni og innihalda minna en 50% af mjólkurafurðum. Ef mjólkurinnihald er meira en 50% þarf leyfi matvælastofnunar og þá er notað tollskrárnúmerið 2106.9021",
+            "id": "899e6327-cdac-4922-aea0-1ec7e4e9d147",
+            "children": []
+          },
+          {
+            "parentLabel": "Próteindrykkir og tilreidd drykkjarvöruefni einnig vítamín til drykkjar (duftform)",
+            "label": "Önnur drykkjarvöruefni",
+            "tariffNumber": "21069039",
+            "description": "",
+            "id": "96c62285-f57c-4488-8e2e-0fc815750921",
+            "children": []
+          }
+        ]
+      },
+      {
+        "parentLabel": "Vítamín og fæðubótarefni",
+        "label": "Vítamín í töfluformi",
+        "tariffNumber": "21069065",
+        "description": "",
+        "id": "ec8534d6-4a1d-445e-9e4f-a8682267741a",
+        "children": []
+      },
+      {
+        "parentLabel": "Vítamín og fæðubótarefni",
+        "label": "Önnur fæðubótarefni",
+        "tariffNumber": "21069066",
+        "description": "",
+        "id": "bb1e83fd-877e-4117-92ce-78c18a376c7a",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Vopn - skotveiðibúnaður",
+    "tariffNumber": "#",
+    "description": "Innflutningur vopna er ýmist bannaður eða leyfi þarf til hans, vinsamlega kynntu þér upplýsingar um leyfi og bönn, sem birtast þegar búið er að velja vöru.",
+    "id": "52eae920-32a0-4b79-a12c-ed602fefa92c",
+    "children": [
+      {
+        "parentLabel": "Vopn - skotveiðibúnaður",
+        "label": "Aukahlutir",
+        "tariffNumber": "93052000",
+        "description": "",
+        "id": "e198fa7a-1944-4156-9bb2-a2d03b9dde76",
+        "children": []
+      },
+      {
+        "parentLabel": "Vopn - skotveiðibúnaður",
+        "label": "Byssur",
+        "tariffNumber": "93039009",
+        "description": "",
+        "id": "b02e7d9d-2788-406b-980f-6cb99c10697e",
+        "children": []
+      },
+      {
+        "parentLabel": "Vopn - skotveiðibúnaður",
+        "label": "Sjónaukasigti",
+        "tariffNumber": "90131000",
+        "description": "",
+        "id": "e94a8f8a-9de2-4d46-bd09-d79a7351a01b",
+        "children": []
+      },
+      {
+        "parentLabel": "Vopn - skotveiðibúnaður",
+        "label": "Skotfæri",
+        "tariffNumber": "93063009",
+        "description": "",
+        "id": "7505d556-cdbe-4aa3-8a41-ded59d006785",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Ýmsar vörur",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "8399f75d-de8c-4b70-bbb7-86878431ec10",
+    "children": [
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Bækur eldri en 100 ára",
+        "tariffNumber": "97069010",
+        "description": "",
+        "id": "09c54c90-e7b1-4f24-8d37-30f3411b9121",
+        "children": []
+      },
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Forngripir eldri en 100 ára",
+        "tariffNumber": "97069090",
+        "description": "",
+        "id": "4a867e7f-de11-4d30-871d-450c0a422751",
+        "children": []
+      },
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Nuddtæki, þar með talin hjálpartæki ástarlífsins",
+        "tariffNumber": "90191019",
+        "description": "<font color=\"#F5F5F5\">Nuddtæki,kynlífshjálpartæki</font>",
+        "id": "6823df64-1b91-45ac-999d-53d99423e1c9",
+        "children": []
+      },
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Styttur og skrautmunir",
+        "tariffNumber": "83062900",
+        "description": "",
+        "id": "43a78342-fb82-4df7-9076-8d2a4bd93614",
+        "children": []
+      },
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Tjöld og viðlegubúnaður",
+        "tariffNumber": "63069090",
+        "description": "Yfirbreiðslur, skyggni og sóltjöld; tjöld (tjald); segl á báta, seglbretti eða landför; viðlegubúnaður",
+        "id": "a37901f2-c048-48dc-9c8e-6b36b7efd22d",
+        "children": []
+      },
+      {
+        "parentLabel": "Ýmsar vörur",
+        "label": "Töskur og ferðabúnaður",
+        "tariffNumber": "42029900",
+        "description": "Ferðakoffort, ferðatöskur, snyrtitöskur, skjalatöskur, skjalaveski, skólatöskur, og áþekkar vörur.",
+        "id": "c95189d1-1687-4a1f-9b29-e0921f7c516f",
+        "children": []
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Ökutæki",
+    "tariffNumber": "#",
+    "description": "<strong>Sjá upplýsingar um gjöld á ökutækjum og undanþágur frá þeim: </strong><a href=\"https://island.is/innflutningur-a-nyju-eda-notudu-oekutaeki\" target=\"_blank\">umfjöllun um gjöld af ökutækjum</a>.",
+    "id": "d48f3fc0-7641-468f-b878-470e5326e2f3",
+    "children": [
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Dráttarvélar",
+        "tariffNumber": "87019191",
+        "description": "",
+        "id": "490623a1-c8f8-42a9-84fd-1ad974362300",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Fjórhjól",
+        "tariffNumber": "87032401",
+        "description": "",
+        "id": "315609d9-b09d-4c1d-bdc9-2ffaad0af891",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Fólksbílar og húsbílar",
+        "tariffNumber": "87032420",
+        "description": "<p><strong>Skráið í reitina fyrir útblástur losunargildi koltvísýrings ökutækisins samkvæmt upplýsingum framleiðanda.</strong> Skrá má fleiri en eitt gildi sjá <a href=\"https://www.tollur.is/default.aspx?pageid=7fd23c62-ffa7-11e8-942f-005056bc530c\">upplýsingar um útreikning</a>.</p>\n<p><a href=\"https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting\" target=\"_blank\">Á vef Samgöngustofu er hægt að fletta upp skráðri losun eftir fastnúmeri ökutækis</a>.</p>",
+        "id": "e14198f2-2b2c-42af-8fc8-bdf1b400bf14",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Fólksflutningabifreiðar, rútur (sem taka yfir 10 manns)",
+        "tariffNumber": "#",
+        "description": "",
+        "id": "0ce69562-5917-40e4-96c7-1a3c27b26648",
+        "children": [
+          {
+            "parentLabel": "Fólksflutningabifreiðar, rútur (sem taka yfir 10 manns)",
+            "label": "Rútur - Heildarþyngd 5 tonn eða meira",
+            "tariffNumber": "87021019",
+            "description": "",
+            "id": "a01c862f-56bb-4f94-a4da-6c9358e9d389",
+            "children": []
+          },
+          {
+            "parentLabel": "Fólksflutningabifreiðar, rútur (sem taka yfir 10 manns)",
+            "label": "Rútur - Heildarþyngd að 5 tonnum",
+            "tariffNumber": "87021011",
+            "description": "",
+            "id": "02d45198-395d-4bd8-b1f3-f080de1e8e7f",
+            "children": []
+          }
+        ]
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Hjólhýsi, fellihýsi, tjaldvagnar",
+        "tariffNumber": "87161001",
+        "description": "Tengivagnar og festivagnar, til íbúðar eða ferðalaga.",
+        "id": "e078df61-0adf-4745-9cb1-e6023074135d",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Mótorhjól, bifhjól",
+        "tariffNumber": "#",
+        "description": "",
+        "id": "1f5188e2-5e8d-4946-ba60-a139df7672a4",
+        "children": [
+          {
+            "parentLabel": "Mótorhjól, bifhjól",
+            "label": "Með stimpilbrunahreyfli",
+            "tariffNumber": "87115001",
+            "description": "",
+            "id": "924d0b7b-032a-4067-8b11-3c5e971d72e5",
+            "children": []
+          },
+          {
+            "parentLabel": "Mótorhjól, bifhjól",
+            "label": "Rafknúin bifhjól og léttbifhjól, hámarkshraði yfir 25 km á klst",
+            "tariffNumber": "87116090",
+            "description": "Skráið þyngd blýsýrurafgeyma í lítratölureit. Ef ekki eru blýgeymar í ökutækinu skráið þá 0 í reitinn.",
+            "id": "96c5fc88-f4f2-43df-a6a7-5acc9c61705e",
+            "children": []
+          },
+          {
+            "parentLabel": "Mótorhjól, bifhjól",
+            "label": "Rafknúin ökutæki, hámarkshraði 25 km á klst",
+            "tariffNumber": "87116015",
+            "description": "Vespur og önnur lítil skráningarskyld rafknúin ökutæki, sem hönnuð eru til aksturs á hraða upp að 25 km á klst",
+            "id": "436e2866-3f54-4ec2-be7a-fae1c348f993",
+            "children": []
+          }
+        ]
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Rafmagnsbílar",
+        "tariffNumber": "87038010",
+        "description": "Fólksbílar eingöngu með rafhreyfli sem knúningsvél.<BR><strong>Skráið nettóþyngd drifrafhlöðu í lítrasvæði.</strong>",
+        "id": "9139e5f0-1e95-47f7-9227-35712d930a1e",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Rafmagnshlaupahjól",
+        "tariffNumber": "87116012",
+        "description": "Rafknúin hlaupahjól sem búin eru stigbretti, eru á hjólum og með stöng að framan sem á er stýri og eru hönnuð til aksturs á hraða upp að 25 km á klst.",
+        "id": "d20937d3-50bf-4357-adbc-7f444dd37e2b",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Rafmagnsreiðhjól",
+        "tariffNumber": "87116011",
+        "description": "Reiðhjól með hjálparvél (rafhjól) sem hönnuð eru til aksturs á hraða upp að 25 km á klst. <font color=\"#F5F5F5\">Rafmagnshjól</font>",
+        "id": "09cd8a80-3947-4b3f-9795-41ddee663663",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Reiðhjól",
+        "tariffNumber": "87120000",
+        "description": "",
+        "id": "5201a090-da89-422a-9b37-250d31129185",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Vélsleðar (beltabifhjól)",
+        "tariffNumber": "87031021",
+        "description": "",
+        "id": "3ecd866a-a15a-403e-998d-57557ac83f82",
+        "children": []
+      },
+      {
+        "parentLabel": "Ökutæki",
+        "label": "Vöruflutningabifreiðar",
+        "tariffNumber": "#",
+        "description": "Vöruflutningabifreiðar, sendibílar, vörubílar, pallbílar.",
+        "id": "ff354b00-c971-496d-ae5e-b182f95e72f5",
+        "children": [
+          {
+            "parentLabel": "Vöruflutningabifreiðar",
+            "label": "Með palli - hþ. 5 tonn eða minna",
+            "tariffNumber": "87042150",
+            "description": "Til dæmis pallbílar (pickup). <p><strong>Skráið í reitina fyrir útblástur losunargildi koltvísýrings ökutækisins samkvæmt upplýsingum framleiðanda.</strong> Skrá má fleiri en eitt gildi sjá <a href=\"https://www.tollur.is/default.aspx?pageid=7fd23c62-ffa7-11e8-942f-005056bc530c\">upplýsingar um útreikning</a>.</p>\n<p><a href=\"https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting\" target=\"_blank\">Á vef Samgöngustofu er hægt að fletta upp skráðri losun eftir fastnúmeri ökutækis</a>.</p>",
+            "id": "bea808a6-9e68-46ba-8a36-4451f63822d7",
+            "children": []
+          },
+          {
+            "parentLabel": "Vöruflutningabifreiðar",
+            "label": "Með palli - hþ. 5 tonn til og með 12 tonn",
+            "tariffNumber": "87042234",
+            "description": "",
+            "id": "da79d6eb-66c8-42c4-91a6-b81468654ff3",
+            "children": []
+          },
+          {
+            "parentLabel": "Vöruflutningabifreiðar",
+            "label": "Með palli - hþ. yfir 12 tonn til og með 20 tonn",
+            "tariffNumber": "87042244",
+            "description": "",
+            "id": "14ec772d-17b0-41f4-8bd3-fe1aec661ffc",
+            "children": []
+          },
+          {
+            "parentLabel": "Vöruflutningabifreiðar",
+            "label": "Með palli - Yfir 20 tonn að heildarþyngd",
+            "tariffNumber": "87042321",
+            "description": "",
+            "id": "bbf28ba9-d9fd-41d7-a432-bd58feb5f894",
+            "children": []
+          },
+          {
+            "parentLabel": "Vöruflutningabifreiðar",
+            "label": "Með vörurými",
+            "tariffNumber": "#",
+            "description": "",
+            "id": "a6072550-d16d-4489-a1b2-7aa40f33ecf2",
+            "children": [
+              {
+                "parentLabel": "Með vörurými",
+                "label": "Með vörurými - Að hþ. 5 tonn eða minna",
+                "tariffNumber": "87042191",
+                "description": "",
+                "id": "354f4e27-9629-420f-8ad4-40d78325ec9d",
+                "children": []
+              },
+              {
+                "parentLabel": "Með vörurými",
+                "label": "Með vörurými - hþ. yfir 12 tonn til og með 20 tonn",
+                "tariffNumber": "87042247",
+                "description": "",
+                "id": "330eb625-a3b0-462e-91a0-f6290239151e",
+                "children": []
+              },
+              {
+                "parentLabel": "Með vörurými",
+                "label": "Með vörurými - hþ. yfir 5 tonn til og með 12 tonn",
+                "tariffNumber": "87043237",
+                "description": "",
+                "id": "c19c7234-0723-429f-954e-1bf802769d7a",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "parentLabel": "",
+    "label": "Önnur farartæki",
+    "tariffNumber": "#",
+    "description": "",
+    "id": "ca1f7fd5-6d74-472c-9b9c-1e8108c91ce6",
+    "children": [
+      {
+        "parentLabel": "Önnur farartæki",
+        "label": "Loftför",
+        "tariffNumber": "#",
+        "description": "Kynntu þér <a href=\"http://www.caa.is/Logogreglur/AkvardanirFlugmalastjornar/Loftfor/\" target=\"_blank\" title=\"Opnast í nýjum glugga\">lög og reglur um loftför á vef Flugmálastjórnar Íslands</a>.",
+        "id": "6da8f903-f716-4d80-882d-1c864a15e7ac",
+        "children": [
+          {
+            "parentLabel": "Loftför",
+            "label": "Fallhlífar",
+            "tariffNumber": "88040000",
+            "description": "Fallhlífar (þar með taldar stýrifallhlífar og sviffallhlífar (paragliders)) og hverfifallhlífar; hlutar og fylgihlutir til þeirra.",
+            "id": "081acbe2-2fed-4647-8a8c-995d925ad8be",
+            "children": []
+          },
+          {
+            "parentLabel": "Loftför",
+            "label": "Flugvélar",
+            "tariffNumber": "88023000",
+            "description": "Önnur loftför (t.d. þyrlur, flugvélar); geimför (þar með taldir gervihnettir) og skotvagnar fyrir för sem fara neðar en á braut um jörðu (suborbital) og geimför.",
+            "id": "77d1a865-3996-4ca3-b043-ef288dfce62f",
+            "children": []
+          },
+          {
+            "parentLabel": "Loftför",
+            "label": "Svifflugur og svifdrekar",
+            "tariffNumber": "88010001",
+            "description": "Loftbelgir og loftskip; svifflugur, svifdrekar og önnur vélarlaus loftför.",
+            "id": "e9be1bed-3f0b-4b29-b73f-72a97b40c955",
+            "children": []
+          }
+        ]
+      },
+      {
+        "parentLabel": "Önnur farartæki",
+        "label": "Skip og bátar",
+        "tariffNumber": "#",
+        "description": "",
+        "id": "0f191b2e-6869-4a76-ad41-1663506871b0",
+        "children": [
+          {
+            "parentLabel": "Skip og bátar",
+            "label": "Skemmtibátar",
+            "tariffNumber": "89039909",
+            "description": "Snekkjur og önnur skemmtiför eða sportför; árabátar og kanóar.\n\nKynntu þér <a href=\"https://island.is/nyskraning-skemmtibata\" target=\"_blank\" title=\"Opnast í nýjum glugga\">reglur um innflutning skemmtibáta</a>, CE merkingar og fleira.",
+            "id": "1203a2de-7ab1-404e-b90b-e74f8d05af8d",
+            "children": []
+          },
+          {
+            "parentLabel": "Skip og bátar",
+            "label": "Önnur skip og bátar",
+            "tariffNumber": "89020099",
+            "description": "Kynntu þér upplýsingar um <a href=\"https://island.is/s/samgongustofa/skip-og-batar\" target=\"_blank\" title=\"Opnast í nýjum glugga\">kröfur til skipa og báta</a>.",
+            "id": "b38267e0-f446-4ebe-ab7e-697729ddcb27",
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

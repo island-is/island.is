@@ -1,5 +1,7 @@
 import Decimal from 'decimal.js'
 import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   getReiknivelVoruflokkar,
   getReiknivelEiningar,
@@ -8,11 +10,56 @@ import {
 import type { client as Client } from '../../gen/fetch/client.gen'
 import { CUSTOMS_CALCULATOR_CLIENT } from './customsCalculator.apiConfig'
 
+/**
+ * Parses a numeric string as returned by RSK into a Decimal.
+ *
+ * RSK is not guaranteed to return clean machine-readable numbers, so we
+ * normalize Icelandic/locale formatting before parsing:
+ *  - whitespace (incl. non-breaking space) used as a thousands separator
+ *  - ',' as the decimal separator (is-IS), e.g. "1.234,56" -> 1234.56
+ *  - repeated '.'/',' used purely as thousands separators
+ *
+ * Throws if the value cannot be parsed as a
+ * number, so callers can decide
+ * how to handle an unparseable line rather than silently producing NaN.
+ */
+export const parseRskAmount = (
+  raw: string | number | null | undefined,
+): Decimal => {
+  if (raw === null || raw === undefined) return new Decimal(0)
+  if (typeof raw === 'number') return new Decimal(raw)
+
+  // \s also matches the non-breaking space RSK may use for digit grouping.
+  let value = raw.replace(/\s/g, '')
+  if (!value) return new Decimal(0)
+
+  const hasComma = value.includes(',')
+  const hasDot = value.includes('.')
+
+  if (hasComma && hasDot) {
+    // is-IS grouping: '.' thousands, ',' decimal -> "1.234,56" => "1234.56"
+    value = value.replace(/\./g, '').replace(',', '.')
+  } else if (hasComma) {
+    const commaCount = (value.match(/,/g) ?? []).length
+    // A single comma is a decimal separator; multiple are grouping.
+    value = commaCount > 1 ? value.replace(/,/g, '') : value.replace(',', '.')
+  } else if (hasDot) {
+    const dotCount = (value.match(/\./g) ?? []).length
+    // Multiple dots can only be grouping (a single dot is left as decimal).
+    if (dotCount > 1) value = value.replace(/\./g, '')
+  }
+
+  // Decimal throws (DecimalError) on anything it cannot parse.
+  return new Decimal(value)
+}
+
 @Injectable()
 export class CustomsCalculatorClientService {
   constructor(
     @Inject(CUSTOMS_CALCULATOR_CLIENT)
     private readonly client: typeof Client,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async getProductCategories() {
@@ -131,12 +178,17 @@ export class CustomsCalculatorClientService {
       }
     }
 
+    // Round each charge once, then derive the totals from those rounded
+    // values, so the displayed breakdown always reconciles exactly with the
+    // displayed totals (rounding the components and the sum independently can
+    // leave them off by a few krónur).
     let additionalAmount = new Decimal(0)
+    let hasUnparseableCharge = false
 
     const charges: {
       code: string
       description: string
-      percentage: number
+      percentage: number | undefined
       unit: string
       amount: number
     }[] = []
@@ -144,30 +196,56 @@ export class CustomsCalculatorClientService {
     for (const line of data?.Response?.LinaGjald?.LinaGjaldLinur ?? []) {
       for (const charge of line?.LinaAlagningar ?? []) {
         if (!charge.bruttoupphaed) continue
+        let amount: Decimal
         try {
-          additionalAmount = additionalAmount.plus(charge.bruttoupphaed)
-          charges.push({
+          amount = parseRskAmount(charge.bruttoupphaed).round()
+        } catch (error) {
+          // Don't silently drop the line: a discarded charge understates the
+          // total with no indication to the user. Flag it so we can surface a
+          // "couldn't compute" state and leave a breadcrumb in the logs.
+          hasUnparseableCharge = true
+          this.logger.warn('Skipping customs charge with unparseable amount', {
             code: charge.kodi,
-            description: charge.heiti,
-            percentage: Number(charge.TaxtiPros),
-            unit: charge.TegTexti,
-            amount: Math.round(Number(charge.bruttoupphaed)),
+            bruttoupphaed: charge.bruttoupphaed,
+            error: error instanceof Error ? error.message : String(error),
           })
-        } catch {
           continue
         }
+
+        const percentage = Number(charge.TaxtiPros)
+        additionalAmount = additionalAmount.plus(amount)
+        charges.push({
+          code: charge.kodi,
+          description: charge.heiti,
+          percentage: Number.isFinite(percentage) ? percentage : undefined,
+          unit: charge.TegTexti,
+          amount: amount.toNumber(),
+        })
       }
     }
 
-    const startAmount =
-      data?.Response?.LinaGjald?.LinaGjaldLinur?.[0]?.Tollverd_ISK
+    let startAmount: Decimal
+    try {
+      startAmount = parseRskAmount(
+        data?.Response?.LinaGjald?.LinaGjaldLinur?.[0]?.Tollverd_ISK,
+      ).round()
+    } catch (error) {
+      hasUnparseableCharge = true
+      this.logger.warn(
+        'Customs calculation returned an unparseable customs value',
+        {
+          tariffNumber: input.tariffNumber,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      )
+      startAmount = new Decimal(0)
+    }
 
     return {
-      startAmount: Math.round(Number(startAmount ?? '0')),
-      additionalAmount: Math.round(additionalAmount.toNumber()),
-      totalAmount: Math.round(
-        additionalAmount.plus(startAmount ?? '0').toNumber(),
-      ),
+      startAmount: startAmount.toNumber(),
+      additionalAmount: additionalAmount.toNumber(),
+      totalAmount: startAmount.plus(additionalAmount).toNumber(),
+      hasUnparseableCharge,
       charges,
     }
   }

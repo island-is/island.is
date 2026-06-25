@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   AsyncSearch,
   AsyncSearchOption,
   Box,
@@ -210,6 +211,16 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     skip: !selectedBottomLevelCategory?.tariffNumber,
   })
 
+  if (productCategoriesResponse.error) {
+    return (
+      <AlertMessage
+        type="error"
+        title={formatMessage(translationStrings.categoriesErrorTitle)}
+        message={formatMessage(translationStrings.categoriesErrorMessage)}
+      />
+    )
+  }
+
   return (
     <Stack space={3}>
       {shortcuts.length > 0 && (
@@ -259,16 +270,21 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           inputValue={inputState.searchInput}
           onInputValueChange={(value) => {
             setInputState({ ...inputState, searchInput: value })
-            if (!value) setSelectedBottomLevelCategory(null)
-            else {
-              const bottomLevelCategory =
-                productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                  (category) => category.label === value,
-                )
-              if (bottomLevelCategory)
-                setSelectedBottomLevelCategory(bottomLevelCategory)
-              else setSelectedBottomLevelCategory(null)
+            if (!value) {
+              setSelectedBottomLevelCategory(null)
+              return
             }
+            // Multiple categories can share a display label (e.g. "Annað").
+            // Matching free-typed text by label alone would silently bind the
+            // wrong tariff, so only auto-select when the label is unambiguous;
+            // otherwise force an explicit pick (onChange resolves by id).
+            const matches =
+              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
+                (category) => category.label === value,
+              ) ?? []
+            setSelectedBottomLevelCategory(
+              matches.length === 1 ? matches[0] : null,
+            )
           }}
           onChange={(option) => {
             setInputState({

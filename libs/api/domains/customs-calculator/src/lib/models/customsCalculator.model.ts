@@ -83,4 +83,12 @@ export class CustomsCalculatorCalculationResponse {
 
   @Field(() => Int)
   totalAmount!: number
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'True when one or more charge lines could not be parsed and were ' +
+      'omitted from the breakdown and totals, so the result is incomplete.',
+  })
+  hasUnparseableCharge?: boolean
 }

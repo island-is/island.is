@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
@@ -35,6 +36,11 @@ interface UnitInputProps {
   label: string
   description?: string
   inputMode?: 'decimal' | 'numeric'
+  // Render as a decimal field that accepts a comma decimal separator (e.g. the
+  // alcohol strength percentage). Unlike currency mode this treats the bound
+  // value as a numeric string, so a typed "5,5" round-trips correctly instead
+  // of the stored "5.5" being re-read as "55".
+  allowDecimal?: boolean
   control: Control<UnitsFormValues>
 }
 
@@ -43,6 +49,7 @@ export const UnitInput = ({
   label,
   description,
   inputMode,
+  allowDecimal,
   control,
 }: UnitInputProps) => {
   return (
@@ -54,8 +61,10 @@ export const UnitInput = ({
         size="sm"
         backgroundColor="blue"
         type="number"
-        inputMode={inputMode}
-        currency={true}
+        inputMode={allowDecimal ? 'decimal' : inputMode}
+        currency={!allowDecimal}
+        thousandSeparator={allowDecimal ? true : undefined}
+        decimalScale={allowDecimal ? 2 : undefined}
         suffix=""
         control={control}
         allowNegative={false}
@@ -112,7 +121,7 @@ export const Units = ({
     },
   })
 
-  const [calculate, { data, loading, called }] =
+  const [calculate, { data, loading, called, error }] =
     useLazyQuery<CustomsCalculatorCalculateQuery>(
       GET_CUSTOMS_CALCULATOR_CALCULATE,
     )
@@ -207,6 +216,7 @@ export const Units = ({
                   name="percentage"
                   label={formatMessage(translationStrings.percentageLabel)}
                   control={control}
+                  allowDecimal={true}
                   description={formatMessage(
                     translationStrings.percentageDescription,
                   )}
@@ -318,7 +328,31 @@ export const Units = ({
         </Box>
         <Box ref={breakdownRef}>
           {called && loading && <SkeletonLoader height={480} />}
-          {data?.customsCalculatorCalculate && !loading && (
+          {!loading && error && (
+            <AlertMessage
+              type="error"
+              title={formatMessage(translationStrings.calculationErrorTitle)}
+              message={formatMessage(
+                translationStrings.calculationErrorMessage,
+              )}
+            />
+          )}
+          {data?.customsCalculatorCalculate?.hasUnparseableCharge &&
+            !loading &&
+            !error && (
+              <Box marginBottom={2}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(
+                    translationStrings.incompleteResultTitle,
+                  )}
+                  message={formatMessage(
+                    translationStrings.incompleteResultMessage,
+                  )}
+                />
+              </Box>
+            )}
+          {data?.customsCalculatorCalculate && !loading && !error && (
             <Box background="purple100" padding={[2, 2, 3]}>
               <Stack space={3}>
                 <Stack space={2}>

@@ -53,6 +53,7 @@ export const GET_CUSTOMS_CALCULATOR_CALCULATE = gql`
       startAmount
       additionalAmount
       totalAmount
+      hasUnparseableCharge
       charges {
         code
         description
