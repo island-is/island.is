@@ -46,10 +46,9 @@ type TranslationWorkspaceHeaderBridgeContextValue = {
   >
 }
 
-const TranslationWorkspaceHeaderBridgeContext =
-  createContext<TranslationWorkspaceHeaderBridgeContextValue | undefined>(
-    undefined,
-  )
+const TranslationWorkspaceHeaderBridgeContext = createContext<
+  TranslationWorkspaceHeaderBridgeContextValue | undefined
+>(undefined)
 
 export const TranslationWorkspaceHeaderBridgeProvider: FC<{
   children: ReactNode
@@ -80,9 +79,9 @@ export const useTranslationWorkspaceHeaderBridge =
     return ctx
   }
 
-export const useTranslationWorkspaceHeaderBridgeOptional =
-  (): TranslationWorkspaceHeaderBridgeContextValue | undefined =>
-    useContext(TranslationWorkspaceHeaderBridgeContext)
+export const useTranslationWorkspaceHeaderBridgeOptional = ():
+  | TranslationWorkspaceHeaderBridgeContextValue
+  | undefined => useContext(TranslationWorkspaceHeaderBridgeContext)
 
 /**
  * Registers translation workspace chrome (language tabs + save + publish) in the shell header.
@@ -160,10 +159,7 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
 
   const stableOnPublish = useCallback(() => onPublishRef.current(), [])
 
-  const stableOnOpenHistory = useCallback(
-    () => onOpenHistoryRef.current(),
-    [],
-  )
+  const stableOnOpenHistory = useCallback(() => onOpenHistoryRef.current(), [])
 
   const chrome = useMemo<TranslationWorkspaceHeaderChrome>(
     () => ({
@@ -302,7 +298,12 @@ export const TranslationWorkspaceHeaderSaveButton = () => {
         </Text>
       )}
       {chrome.hasUnsavedChanges && (
-        <Button size="small" variant="ghost" loading={chrome.saving} onClick={chrome.onSaveAll}>
+        <Button
+          size="small"
+          variant="ghost"
+          loading={chrome.saving}
+          onClick={chrome.onSaveAll}
+        >
           {chrome.formatMessage(m.translationSaveDraft)} ({chrome.unsavedCount})
         </Button>
       )}
@@ -320,11 +321,7 @@ export const TranslationWorkspaceHeaderPublishButton = () => {
 
   return (
     <Inline space={2} alignY="center">
-      <Button
-        size="small"
-        variant="ghost"
-        onClick={chrome.onOpenHistory}
-      >
+      <Button size="small" variant="ghost" onClick={chrome.onOpenHistory}>
         {chrome.formatMessage(m.translationPublishHistory)}
       </Button>
       {(chrome.hasDraftChanges || chrome.hasUnsavedChanges) && (

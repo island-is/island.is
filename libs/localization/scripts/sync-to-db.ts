@@ -100,10 +100,13 @@ async function main() {
       `\nSyncing namespace "${namespace}" (${extractedMessages.length} messages)`,
     )
 
-    const [existingRows] = await sequelize.query(
+    const [existingRows] = (await sequelize.query(
       'SELECT message_key, default_message FROM application_translation WHERE namespace = :namespace',
       { replacements: { namespace } },
-    ) as [Array<{ message_key: string; default_message: string | null }>, unknown]
+    )) as [
+      Array<{ message_key: string; default_message: string | null }>,
+      unknown,
+    ]
 
     const existingByKey = new Map(
       existingRows.map((r) => [r.message_key, r.default_message]),

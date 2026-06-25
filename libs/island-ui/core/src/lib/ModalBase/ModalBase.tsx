@@ -48,10 +48,10 @@ export const BackdropDiv = forwardRef(
             backdropTransparent
               ? 'transparent'
               : backdropWhite
-                ? 'white'
-                : backdropDark
-                  ? 'dark'
-                  : 'default'
+              ? 'white'
+              : backdropDark
+              ? 'dark'
+              : 'default'
           ],
         )}
         {...props}

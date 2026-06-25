@@ -100,10 +100,7 @@ describe('translationAccessUtils', () => {
 
     it('allows HMS applications for HMS institution user', () => {
       expect(
-        isTranslationTypeIdAllowed(
-          hmsUser,
-          ApplicationTypes.RENTAL_AGREEMENT,
-        ),
+        isTranslationTypeIdAllowed(hmsUser, ApplicationTypes.RENTAL_AGREEMENT),
       ).toBe(true)
     })
 
@@ -123,7 +120,9 @@ describe('translationAccessUtils', () => {
 
   describe('isTranslationNamespaceAllowed', () => {
     it('allows app namespace for HMS institution user', () => {
-      expect(isTranslationNamespaceAllowed(hmsUser, 'ra.application')).toBe(true)
+      expect(isTranslationNamespaceAllowed(hmsUser, 'ra.application')).toBe(
+        true,
+      )
     })
 
     it('denies unrelated namespace for HMS institution user', () => {
@@ -133,9 +132,9 @@ describe('translationAccessUtils', () => {
     })
 
     it('allows any namespace for super admin', () => {
-      expect(isTranslationNamespaceAllowed(superAdminUser, 'pa.application')).toBe(
-        true,
-      )
+      expect(
+        isTranslationNamespaceAllowed(superAdminUser, 'pa.application'),
+      ).toBe(true)
     })
 
     it('denies core namespace for institution user', () => {
@@ -148,9 +147,11 @@ describe('translationAccessUtils', () => {
   describe('getSharedTranslationNamespaces', () => {
     it('always includes application.system', () => {
       const namespaces = getSharedTranslationNamespaces()
-      expect(namespaces.some((entry) => entry.namespace === CORE_TRANSLATION_NAMESPACE)).toBe(
-        true,
-      )
+      expect(
+        namespaces.some(
+          (entry) => entry.namespace === CORE_TRANSLATION_NAMESPACE,
+        ),
+      ).toBe(true)
     })
 
     it('includes namespaces used by at least two application types', () => {
@@ -171,7 +172,9 @@ describe('translationAccessUtils', () => {
 
   describe('isSharedTranslationNamespace', () => {
     it('returns true for core and multi-app namespaces', () => {
-      expect(isSharedTranslationNamespace(CORE_TRANSLATION_NAMESPACE)).toBe(true)
+      expect(isSharedTranslationNamespace(CORE_TRANSLATION_NAMESPACE)).toBe(
+        true,
+      )
       expect(isSharedTranslationNamespace('uiForms.application')).toBe(true)
     })
 

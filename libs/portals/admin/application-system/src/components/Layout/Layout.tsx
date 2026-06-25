@@ -21,8 +21,8 @@ import {
 import { useMemo } from 'react'
 import { Organization } from '@island.is/shared/types'
 
-const Translations = lazy(
-  () => import('../../screens/Translations/Translations'),
+const Translations = lazy(() =>
+  import('../../screens/Translations/Translations'),
 )
 
 interface LayoutProps {

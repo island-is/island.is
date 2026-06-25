@@ -8,9 +8,9 @@ describe('SharedNamespaceIntrospectionService', () => {
   describe('listSharedNamespaces', () => {
     it('includes application.system', () => {
       const namespaces = service.listSharedNamespaces()
-      expect(namespaces.some((entry) => entry.namespace === 'application.system')).toBe(
-        true,
-      )
+      expect(
+        namespaces.some((entry) => entry.namespace === 'application.system'),
+      ).toBe(true)
     })
   })
 

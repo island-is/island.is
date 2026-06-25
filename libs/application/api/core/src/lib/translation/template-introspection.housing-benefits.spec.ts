@@ -17,13 +17,19 @@ describe('TemplateIntrospectionService HousingBenefits', () => {
     const parsed = JSON.parse(json) as typeof result
     const missingIds: string[] = []
 
-    const walkScreens = (screens: Array<{ id?: unknown; children?: unknown[] }>, path: string) => {
+    const walkScreens = (
+      screens: Array<{ id?: unknown; children?: unknown[] }>,
+      path: string,
+    ) => {
       for (const screen of screens ?? []) {
         if (typeof screen.id !== 'string' || screen.id.length === 0) {
           missingIds.push(path)
         }
         walkScreens(
-          (screen.children ?? []) as Array<{ id?: unknown; children?: unknown[] }>,
+          (screen.children ?? []) as Array<{
+            id?: unknown
+            children?: unknown[]
+          }>,
           `${path}/${String(screen.id)}`,
         )
       }
@@ -33,7 +39,10 @@ describe('TemplateIntrospectionService HousingBenefits', () => {
       for (const role of state.roles) {
         if (!role.form) continue
         for (const section of role.form.sections) {
-          walkScreens(section.screens, `${state.stateKey}/${role.roleId}/${section.id}`)
+          walkScreens(
+            section.screens,
+            `${state.stateKey}/${role.roleId}/${section.id}`,
+          )
           for (const sub of section.subSections) {
             walkScreens(
               sub.screens,

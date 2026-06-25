@@ -38,10 +38,7 @@ describe('TranslationAccessService', () => {
 
   it('allows institution user to access own typeId', () => {
     expect(() =>
-      service.assertTypeIdAccess(
-        hmsUser,
-        ApplicationTypes.RENTAL_AGREEMENT,
-      ),
+      service.assertTypeIdAccess(hmsUser, ApplicationTypes.RENTAL_AGREEMENT),
     ).not.toThrow()
   })
 

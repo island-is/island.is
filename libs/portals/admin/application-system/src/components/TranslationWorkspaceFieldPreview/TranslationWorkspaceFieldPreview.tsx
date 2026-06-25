@@ -100,10 +100,7 @@ type TranslationWorkspaceRepeaterNestedProps = {
 const inferTranslationWorkspaceShowFieldName = (
   screen: ScreenIntrospection,
 ): boolean => {
-  if (
-    screen.type === FieldTypes.RADIO ||
-    screen.type === FieldTypes.CHECKBOX
-  ) {
+  if (screen.type === FieldTypes.RADIO || screen.type === FieldTypes.CHECKBOX) {
     return false
   }
   if (
@@ -216,7 +213,11 @@ const DescriptionFieldPreview = ({
   return (
     <Box key={key} {...layout}>
       {titleText !== '' && (
-        <Text variant={titleV} as={titleV} marginBottom={descriptionResolved ? 1 : 0}>
+        <Text
+          variant={titleV}
+          as={titleV}
+          marginBottom={descriptionResolved ? 1 : 0}
+        >
           {titleText}
         </Text>
       )}
@@ -372,11 +373,7 @@ const StaticTableFieldPreview = ({
   const declaredRowCount = screen.staticTableRowCount ?? 0
   const rowsFromFn = screen.staticTableRowsFromFunction === true
 
-  const displayColCount = Math.max(
-    colCount,
-    headerDescriptors.length,
-    1,
-  )
+  const displayColCount = Math.max(colCount, headerDescriptors.length, 1)
 
   const bodyRows: MessageDescriptor[][] = []
   if (rowCells.length > 0) {
@@ -470,11 +467,11 @@ const StaticTableFieldPreview = ({
               : (rowsFromFn
                   ? [0]
                   : declaredRowCount > 0
-                    ? Array.from(
-                        { length: Math.min(declaredRowCount, 5) },
-                        (_, i) => i,
-                      )
-                    : [0]
+                  ? Array.from(
+                      { length: Math.min(declaredRowCount, 5) },
+                      (_, i) => i,
+                    )
+                  : [0]
                 ).map((rowIndex) => (
                   <T.Row key={`ph-row-${rowIndex}`}>
                     {Array.from({ length: displayColCount }, (_, i) => (
@@ -608,8 +605,8 @@ const RadioFieldLeafPreview = ({
       screen.radioBackgroundColor === 'blue')
       ? screen.radioBackgroundColor
       : large
-        ? 'blue'
-        : undefined
+      ? 'blue'
+      : undefined
 
   const split = screen.width === 'half' ? ('1/2' as const) : ('1/1' as const)
 
@@ -623,10 +620,7 @@ const RadioFieldLeafPreview = ({
 
   const resolveOptionLabel = (opt: RadioOptionIntrospection) => {
     if (opt.labelMessageId) {
-      return resolvePreviewString(
-        opt.labelMessageId,
-        opt.labelDefaultMessage,
-      )
+      return resolvePreviewString(opt.labelMessageId, opt.labelDefaultMessage)
     }
     return opt.labelDefaultMessage ?? opt.value
   }
@@ -703,8 +697,8 @@ const CheckboxFieldLeafPreview = ({
       screen.checkboxBackgroundColor === 'blue')
       ? screen.checkboxBackgroundColor
       : large
-        ? 'blue'
-        : undefined
+      ? 'blue'
+      : undefined
 
   const split = screen.width === 'half' ? ('1/2' as const) : ('1/1' as const)
   const spacing = screen.checkboxSpacing
@@ -713,10 +707,7 @@ const CheckboxFieldLeafPreview = ({
 
   const resolveOptionLabel = (opt: RadioOptionIntrospection) => {
     if (opt.labelMessageId) {
-      return resolvePreviewString(
-        opt.labelMessageId,
-        opt.labelDefaultMessage,
-      )
+      return resolvePreviewString(opt.labelMessageId, opt.labelDefaultMessage)
     }
     return opt.labelDefaultMessage ?? opt.value
   }
@@ -755,9 +746,7 @@ const CheckboxFieldLeafPreview = ({
                   checked={previewValue === opt.value}
                   onChange={noop}
                   label={
-                    <Markdown>
-                      {text.trim() === '' ? '\u00a0' : text}
-                    </Markdown>
+                    <Markdown>{text.trim() === '' ? '\u00a0' : text}</Markdown>
                   }
                 />
               </GridColumn>
@@ -868,10 +857,7 @@ const NationalIdWithNameFieldPreview = ({
       {(showPhone || showEmail) && (
         <GridRow>
           {phoneLabel ? (
-            <GridColumn
-              span={['1/1', '1/1', '1/1', '1/2']}
-              paddingTop={3}
-            >
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <Input
                 label={phoneLabel}
                 name={`${key}.__preview.phone`}
@@ -881,10 +867,7 @@ const NationalIdWithNameFieldPreview = ({
             </GridColumn>
           ) : null}
           {emailLabel ? (
-            <GridColumn
-              span={['1/1', '1/1', '1/1', '1/2']}
-              paddingTop={3}
-            >
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <Input
                 label={emailLabel}
                 name={`${key}.__preview.email`}
@@ -967,12 +950,7 @@ const FieldsRepeaterFieldPreview = ({
   return (
     <Box key={key} marginBottom={2} {...layout}>
       {mainTitle.trim() !== '' && (
-        <Text
-          as="h2"
-          variant="h2"
-          marginTop={1}
-          marginBottom={1}
-        >
+        <Text as="h2" variant="h2" marginTop={1} marginBottom={1}>
           {mainTitle}
         </Text>
       )}
@@ -1020,12 +998,7 @@ const FieldsRepeaterFieldPreview = ({
           })}
         </GridRow>
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="small"
-            icon="add"
-          >
+          <Button type="button" variant="ghost" size="small" icon="add">
             {addLabel}
           </Button>
         </Box>
@@ -1076,7 +1049,10 @@ const TableRepeaterFieldPreview = ({
       ).trim()
     : ''
 
-  const resolveOrCore = (staticText: string | null | undefined, coreMsg: { id: string; defaultMessage?: string | null }) => {
+  const resolveOrCore = (
+    staticText: string | null | undefined,
+    coreMsg: { id: string; defaultMessage?: string | null },
+  ) => {
     if (staticText) {
       const s = resolveTranslatableStaticText(
         staticText,
@@ -1097,8 +1073,7 @@ const TableRepeaterFieldPreview = ({
     coreMessages.reviewButtonSubmit,
   )
 
-  const hasStructuredPreview =
-    headers.length > 0 || formChildren.length > 0
+  const hasStructuredPreview = headers.length > 0 || formChildren.length > 0
 
   if (!hasStructuredPreview) {
     return (
@@ -1163,9 +1138,7 @@ const TableRepeaterFieldPreview = ({
 
         {formChildren.length > 0 && (
           <Stack space={2}>
-            {formTitle.length > 0 && (
-              <Text variant="h4">{formTitle}</Text>
-            )}
+            {formTitle.length > 0 && <Text variant="h4">{formTitle}</Text>}
             <GridRow rowGap={[2, 2, 2, 3]}>
               {formChildren.map((child, index) => {
                 const span = getTableRepeaterFormFieldSpan(child)
@@ -1181,9 +1154,7 @@ const TableRepeaterFieldPreview = ({
                       resolvePreviewString={resolvePreviewString}
                       formatMessage={formatMessage}
                       showValidationErrors={showValidationErrors}
-                      validationDescriptorsByPath={
-                        validationDescriptorsByPath
-                      }
+                      validationDescriptorsByPath={validationDescriptorsByPath}
                       focusedFieldId={focusedFieldId}
                       fieldErrorOverrides={fieldErrorOverrides}
                       previewFieldValues={previewFieldValues}
@@ -1194,11 +1165,7 @@ const TableRepeaterFieldPreview = ({
                 )
               })}
             </GridRow>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="flexEnd"
-            >
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
               <Button variant="ghost" type="button" size="small">
                 {cancelLabel}
               </Button>
@@ -1304,7 +1271,10 @@ const LeafFieldPreview = ({
     if (hasErrorOverride) {
       const descriptors = validationDescriptorsByPath?.[screen.id]
       if (descriptors && descriptors.length > 0) {
-        return resolvePreviewString(descriptors[0].id, descriptors[0].defaultMessage)
+        return resolvePreviewString(
+          descriptors[0].id,
+          descriptors[0].defaultMessage,
+        )
       }
       return formatMessage(coreErrorMessages.defaultError)
     }
@@ -1317,8 +1287,7 @@ const LeafFieldPreview = ({
 
   const registry = previewFields ?? {}
   const componentName = screen.component ?? ''
-  const PreviewCtrl =
-    componentName !== '' ? registry[componentName] : undefined
+  const PreviewCtrl = componentName !== '' ? registry[componentName] : undefined
 
   if (
     PreviewCtrl &&
@@ -1630,7 +1599,8 @@ const LeafFieldPreview = ({
           screen.messageDescriptors,
           resolvePreviewString,
         ).trim()
-      : label.trim() || formatMessage(coreDefaultFieldMessages.defaultFileUploadHeader)
+      : label.trim() ||
+        formatMessage(coreDefaultFieldMessages.defaultFileUploadHeader)
 
     const uploadDescription = screen.fileUploadDescription
       ? resolveTranslatableStaticText(
@@ -1716,7 +1686,7 @@ const LeafFieldPreview = ({
     const inputLabel =
       screen.displayLabelMessageId != null
         ? resolvePreviewString(screen.displayLabelMessageId, labelDm).trim()
-        : (screen.displayLabelStatic ?? '')
+        : screen.displayLabelStatic ?? ''
     const suffixText =
       screen.displaySuffixMessageId != null
         ? resolvePreviewString(screen.displaySuffixMessageId, suffixDm).trim()
@@ -1787,13 +1757,7 @@ const LeafFieldPreview = ({
   if (screen.type === FieldTypes.IMAGE) {
     const titleV: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' = (() => {
       const v = screen.titleVariant
-      if (
-        v === 'h1' ||
-        v === 'h2' ||
-        v === 'h3' ||
-        v === 'h4' ||
-        v === 'h5'
-      ) {
+      if (v === 'h1' || v === 'h2' || v === 'h3' || v === 'h4' || v === 'h5') {
         return v
       }
       return 'h4'
@@ -1977,7 +1941,9 @@ export const TranslationWorkspaceFieldPreview = ({
                 span={['1/1', '1/1', '1/1', span]}
                 paddingBottom={isLast ? 0 : space}
               >
-                <Box className={childIsFocused ? focusedFieldHighlight : undefined}>
+                <Box
+                  className={childIsFocused ? focusedFieldHighlight : undefined}
+                >
                   <LeafFieldPreview
                     screen={child}
                     resolvePreviewString={resolvePreviewString}
@@ -1999,8 +1965,7 @@ export const TranslationWorkspaceFieldPreview = ({
     )
   }
 
-  const isFocused =
-    focusedFieldId != null && screen.id === focusedFieldId
+  const isFocused = focusedFieldId != null && screen.id === focusedFieldId
 
   return (
     <Box className={isFocused ? focusedFieldHighlight : undefined}>

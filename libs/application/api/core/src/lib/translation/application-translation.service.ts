@@ -38,7 +38,9 @@ function truncateActorId(id: string | undefined): string | undefined {
   if (id === undefined) {
     return undefined
   }
-  return id.length <= MAX_ACTOR_ID_LENGTH ? id : id.slice(0, MAX_ACTOR_ID_LENGTH)
+  return id.length <= MAX_ACTOR_ID_LENGTH
+    ? id
+    : id.slice(0, MAX_ACTOR_ID_LENGTH)
 }
 
 @Injectable()
@@ -70,8 +72,7 @@ export class ApplicationTranslationService {
 
     const result: Record<string, string> = {}
     for (const t of translations) {
-      const value =
-        locale === 'en' ? (t.valueEn ?? t.valueIs) : t.valueIs
+      const value = locale === 'en' ? t.valueEn ?? t.valueIs : t.valueIs
       if (value != null && value !== '') {
         result[t.messageKey] = value
       }
@@ -91,8 +92,7 @@ export class ApplicationTranslationService {
 
     const result: Record<string, string> = {}
     for (const t of translations) {
-      const value =
-        locale === 'en' ? (t.valueEn ?? t.valueIs) : t.valueIs
+      const value = locale === 'en' ? t.valueEn ?? t.valueIs : t.valueIs
       if (value != null && value !== '') {
         result[t.messageKey] = value
       }
@@ -137,12 +137,18 @@ export class ApplicationTranslationService {
       let logOldValue: string | undefined
       let logNewValue: string | undefined
 
-      if (input.valueIs !== undefined && input.valueIs !== existing.draftValueIs) {
+      if (
+        input.valueIs !== undefined &&
+        input.valueIs !== existing.draftValueIs
+      ) {
         logOldValue = existing.draftValueIs ?? existing.valueIs
         logNewValue = input.valueIs
         updates.draftValueIs = input.valueIs
       }
-      if (input.valueEn !== undefined && input.valueEn !== existing.draftValueEn) {
+      if (
+        input.valueEn !== undefined &&
+        input.valueEn !== existing.draftValueEn
+      ) {
         logOldValue = existing.draftValueEn ?? existing.valueEn ?? undefined
         logNewValue = input.valueEn
         updates.draftValueEn = input.valueEn
@@ -293,9 +299,7 @@ export class ApplicationTranslationService {
     return publish
   }
 
-  async getPublishHistory(
-    namespace: string,
-  ): Promise<PublishHistoryItem[]> {
+  async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
     const publishes = await this.publishModel.findAll({
       where: { namespace },
       order: [['publishedAt', 'DESC']],

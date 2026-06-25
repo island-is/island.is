@@ -292,7 +292,9 @@ export class ApplicationTranslationApiService {
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
-      `${this.namespacePath(namespace, '/rollback')}/${encodeURIComponent(publishId)}`,
+      `${this.namespacePath(namespace, '/rollback')}/${encodeURIComponent(
+        publishId,
+      )}`,
       {
         method: 'POST',
       },

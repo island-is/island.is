@@ -24,6 +24,9 @@ export class ApplicationTranslationProviderImpl
     namespace: string,
     locale: Locale,
   ): Promise<Record<string, string>> {
-    return this.translationService.getTranslationsForNamespace(namespace, locale)
+    return this.translationService.getTranslationsForNamespace(
+      namespace,
+      locale,
+    )
   }
 }

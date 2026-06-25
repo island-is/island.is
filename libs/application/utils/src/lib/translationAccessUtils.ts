@@ -119,36 +119,40 @@ const getAllConfiguredTranslationNamespaces = (): string[] => {
   return [...namespaces]
 }
 
-export const getSharedTranslationNamespaces = (): SharedTranslationNamespaceInfo[] => {
-  const sharedNamespaces = new Map<string, SharedTranslationNamespaceInfo>()
+export const getSharedTranslationNamespaces =
+  (): SharedTranslationNamespaceInfo[] => {
+    const sharedNamespaces = new Map<string, SharedTranslationNamespaceInfo>()
 
-  sharedNamespaces.set(CORE_TRANSLATION_NAMESPACE, {
-    namespace: CORE_TRANSLATION_NAMESPACE,
-    usedByCount: 0,
-    usedByTypeIds: [],
-  })
+    sharedNamespaces.set(CORE_TRANSLATION_NAMESPACE, {
+      namespace: CORE_TRANSLATION_NAMESPACE,
+      usedByCount: 0,
+      usedByTypeIds: [],
+    })
 
-  for (const namespace of getAllConfiguredTranslationNamespaces()) {
-    const usedByTypeIds = getTypeIdsForNamespace(namespace)
-    if (usedByTypeIds.length < 2) {
-      continue
+    for (const namespace of getAllConfiguredTranslationNamespaces()) {
+      const usedByTypeIds = getTypeIdsForNamespace(namespace)
+      if (usedByTypeIds.length < 2) {
+        continue
+      }
+
+      sharedNamespaces.set(namespace, {
+        namespace,
+        usedByCount: usedByTypeIds.length,
+        usedByTypeIds,
+      })
     }
 
-    sharedNamespaces.set(namespace, {
-      namespace,
-      usedByCount: usedByTypeIds.length,
-      usedByTypeIds,
-    })
+    return [...sharedNamespaces.values()].sort((a, b) =>
+      a.namespace.localeCompare(b.namespace),
+    )
   }
 
-  return [...sharedNamespaces.values()].sort((a, b) =>
-    a.namespace.localeCompare(b.namespace),
-  )
-}
-
 export const isSharedTranslationNamespace = (namespace: string): boolean =>
-  getSharedTranslationNamespaces().some((entry) => entry.namespace === namespace)
+  getSharedTranslationNamespaces().some(
+    (entry) => entry.namespace === namespace,
+  )
 
 /** Encodes namespace for URL path segments (dots are not encoded by encodeURIComponent). */
-export const encodeTranslationNamespaceForUrlPath = (namespace: string): string =>
-  encodeURIComponent(namespace).replace(/\./g, '%2E')
+export const encodeTranslationNamespaceForUrlPath = (
+  namespace: string,
+): string => encodeURIComponent(namespace).replace(/\./g, '%2E')

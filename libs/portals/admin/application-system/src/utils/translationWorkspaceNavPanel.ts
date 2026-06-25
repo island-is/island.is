@@ -28,8 +28,19 @@ const SAMPLE_NAMES = [
 ]
 
 const SAMPLE_WORDS = [
-  'Lorem', 'ipsum', 'dolor', 'sit', 'amet', 'halló', 'heimur',
-  'gögn', 'umsókn', 'skjal', 'upplýsingar', 'þjónusta', 'skipulag',
+  'Lorem',
+  'ipsum',
+  'dolor',
+  'sit',
+  'amet',
+  'halló',
+  'heimur',
+  'gögn',
+  'umsókn',
+  'skjal',
+  'upplýsingar',
+  'þjónusta',
+  'skipulag',
 ]
 
 const randomSentence = (wordCount: number) => {
@@ -52,7 +63,9 @@ export const generatePreviewValueForField = (
       // Icelandic mobile: 7 digits starting with 6/7/8
       return `${randInt(6, 8)}${randDigits(6)}`
     case 'EMAIL':
-      return `${SAMPLE_NAMES[randInt(0, SAMPLE_NAMES.length - 1)].split(' ')[0].toLowerCase()}${randInt(1, 99)}@example.com`
+      return `${SAMPLE_NAMES[randInt(0, SAMPLE_NAMES.length - 1)]
+        .split(' ')[0]
+        .toLowerCase()}${randInt(1, 99)}@example.com`
     case 'BANK_ACCOUNT':
       // Icelandic: 4 bank + 2 ledger + 6 account = 12 digits
       return `${randDigits(4)}-${randDigits(2)}-${randDigits(6)}`

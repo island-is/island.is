@@ -5,7 +5,8 @@ import { Locale } from '@island.is/shared/types'
 import type { ApplicationTranslationProvider } from './cms-translations.service'
 import { getApplicationTranslationNamespaceSet } from './application-translation.namespaces'
 
-export const APPLICATION_TRANSLATION_HTTP_CONFIG = 'APPLICATION_TRANSLATION_HTTP_CONFIG'
+export const APPLICATION_TRANSLATION_HTTP_CONFIG =
+  'APPLICATION_TRANSLATION_HTTP_CONFIG'
 
 export interface ApplicationTranslationHttpConfig {
   /** Base URL of application-system API (e.g. https://application-system-api or http://localhost:3333) */
@@ -51,7 +52,9 @@ export class ApplicationTranslationHttpProvider
     if (!response.ok) {
       const text = await response.text().catch(() => '')
       throw new Error(
-        `Application translation HTTP ${response.status} ${response.statusText} for ${url}${text ? ` — ${text.slice(0, 500)}` : ''}`,
+        `Application translation HTTP ${response.status} ${
+          response.statusText
+        } for ${url}${text ? ` — ${text.slice(0, 500)}` : ''}`,
       )
     }
 

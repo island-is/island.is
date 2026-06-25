@@ -54,9 +54,9 @@ export const TranslationPublishHistory = ({
 
   const client = useApolloClient()
 
-  const [nameByNationalId, setNameByNationalId] = useState<Record<string, string>>(
-    {},
-  )
+  const [nameByNationalId, setNameByNationalId] = useState<
+    Record<string, string>
+  >({})
 
   const requestedIdsRef = useRef<Set<string>>(new Set())
 
@@ -71,11 +71,8 @@ export const TranslationPublishHistory = ({
         await refetch()
         onRollbackComplete()
       } catch (err) {
-        const detail =
-          err instanceof Error ? err.message : 'Unknown error'
-        toast.error(
-          formatMessage(m.translationRollbackFailed, { detail }),
-        )
+        const detail = err instanceof Error ? err.message : 'Unknown error'
+        toast.error(formatMessage(m.translationRollbackFailed, { detail }))
       }
     },
     [namespace, rollback, formatMessage, refetch, onRollbackComplete],
@@ -141,8 +138,10 @@ export const TranslationPublishHistory = ({
   const renderPersonLine = useCallback(
     (label: string, nationalIdRaw: string) => {
       const normalized = nationalIdRaw.replace(/\W/g, '')
-      const formatted = normalized.length === 10 ? formatNationalId(normalized) : nationalIdRaw
-      const name = normalized.length === 10 ? nameByNationalId[normalized] : undefined
+      const formatted =
+        normalized.length === 10 ? formatNationalId(normalized) : nationalIdRaw
+      const name =
+        normalized.length === 10 ? nameByNationalId[normalized] : undefined
 
       return (
         <Text variant="small" color="dark300">
@@ -165,9 +164,7 @@ export const TranslationPublishHistory = ({
       hideOnClickOutside
     >
       <Stack space={3}>
-        <Text variant="h3">
-          {formatMessage(m.translationPublishHistory)}
-        </Text>
+        <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
 
         {loading && <Text>...</Text>}
 
@@ -203,18 +200,16 @@ export const TranslationPublishHistory = ({
                   <Text variant="small" fontWeight="semiBold">
                     {dateStr}
                   </Text>
-                  {pub.publishedBy && (
+                  {pub.publishedBy &&
                     renderPersonLine(
                       formatMessage(m.nationalId),
                       pub.publishedBy,
-                    )
-                  )}
-                  {pub.actorNationalId && (
+                    )}
+                  {pub.actorNationalId &&
                     renderPersonLine(
                       formatMessage(m.procurer),
                       pub.actorNationalId,
-                    )
-                  )}
+                    )}
                   {pub.note && (
                     <Text variant="small" color="dark400">
                       {pub.note}

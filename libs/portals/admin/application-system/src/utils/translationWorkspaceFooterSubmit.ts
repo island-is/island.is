@@ -5,9 +5,7 @@ import type {
   SubmitActionIntrospection,
 } from '../types/translationWorkspace'
 
-export const isFooterPlacementSubmit = (
-  screen: ScreenIntrospection,
-): boolean =>
+export const isFooterPlacementSubmit = (screen: ScreenIntrospection): boolean =>
   screen.type === FieldTypes.SUBMIT && screen.submitPlacement !== 'screen'
 
 /**

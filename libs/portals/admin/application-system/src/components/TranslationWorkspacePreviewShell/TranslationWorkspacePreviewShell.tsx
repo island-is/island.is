@@ -102,15 +102,14 @@ export const TranslationWorkspacePreviewShell = ({
   }, [previewScreens, previewFieldValues, activeLocale])
 
   const localeCtx = useMemo(
-    () =>
-      ({
-        lang: activeLocale as Locale,
-        loadingMessages: false,
-        loadedNamespaces: [] as string[],
-        messages,
-        loadMessages: noop as (namespaces: string | string[]) => void,
-        changeLanguage: noop as (lang: Locale) => void,
-      }),
+    () => ({
+      lang: activeLocale as Locale,
+      loadingMessages: false,
+      loadedNamespaces: [] as string[],
+      messages,
+      loadMessages: noop as (namespaces: string | string[]) => void,
+      changeLanguage: noop as (lang: Locale) => void,
+    }),
     [activeLocale, messages],
   )
 

@@ -1,5 +1,8 @@
 import { ApolloError } from '@apollo/client'
-import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 /** Toasts should not show multi-line stack traces or huge Sequelize messages. */
 export const TOAST_ERROR_MAX_LENGTH = 240

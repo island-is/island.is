@@ -40,9 +40,7 @@ async function fetchContentfulNamespace(
   })
 
   if (!response.ok) {
-    console.error(
-      `Failed to fetch namespace ${namespace}: ${response.status}`,
-    )
+    console.error(`Failed to fetch namespace ${namespace}: ${response.status}`)
     return []
   }
 
