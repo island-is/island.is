@@ -74,8 +74,8 @@ export const TabsPanelStringsTab = ({
     stringsListScope === 'application'
       ? formatMessage(m.translationStringsAllApplicationHeading)
       : selectedScreen
-        ? selectedScreen.title ?? selectedScreen.id
-        : ''
+      ? selectedScreen.title ?? selectedScreen.id
+      : ''
 
   const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
     if (activeLocale === 'en') {
@@ -114,9 +114,7 @@ export const TabsPanelStringsTab = ({
             <Button
               type="button"
               size="small"
-              variant={
-                stringsListScope === 'application' ? 'primary' : 'ghost'
-              }
+              variant={stringsListScope === 'application' ? 'primary' : 'ghost'}
               onClick={() => onStringsListScopeChange('application')}
               aria-pressed={stringsListScope === 'application'}
             >

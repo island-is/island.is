@@ -301,9 +301,12 @@ function generateInvalidSkeleton(schema: z.ZodType): unknown {
     }
     return result
   }
-  if (schema instanceof z.ZodOptional) return generateInvalidSkeleton(schema.unwrap())
-  if (schema instanceof z.ZodNullable) return generateInvalidSkeleton(schema.unwrap())
-  if (schema instanceof z.ZodDefault) return generateInvalidSkeleton(schema._def.innerType)
+  if (schema instanceof z.ZodOptional)
+    return generateInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodNullable)
+    return generateInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodDefault)
+    return generateInvalidSkeleton(schema._def.innerType)
   if (schema instanceof z.ZodUnion) {
     const options = schema.options as z.ZodType[]
     return options.length > 0 ? generateInvalidSkeleton(options[0]) : undefined
@@ -314,16 +317,28 @@ function generateInvalidSkeleton(schema: z.ZodType): unknown {
   }
   if (schema instanceof z.ZodRecord) return {}
   if (schema instanceof z.ZodTuple) {
-    return (schema.items as z.ZodType[]).map((item) => generateInvalidSkeleton(item))
+    return (schema.items as z.ZodType[]).map((item) =>
+      generateInvalidSkeleton(item),
+    )
   }
-  if (schema instanceof z.ZodEffects) return generateInvalidSkeleton(schema.innerType())
+  if (schema instanceof z.ZodEffects)
+    return generateInvalidSkeleton(schema.innerType())
   if (schema instanceof z.ZodLazy) {
-    try { return generateInvalidSkeleton(schema.schema) } catch { return undefined }
+    try {
+      return generateInvalidSkeleton(schema.schema)
+    } catch {
+      return undefined
+    }
   }
   if (schema instanceof z.ZodIntersection) {
     const left = generateInvalidSkeleton(schema._def.left)
     const right = generateInvalidSkeleton(schema._def.right)
-    if (typeof left === 'object' && typeof right === 'object' && left !== null && right !== null) {
+    if (
+      typeof left === 'object' &&
+      typeof right === 'object' &&
+      left !== null &&
+      right !== null
+    ) {
       return { ...left, ...right }
     }
     return left
@@ -351,29 +366,48 @@ function generateAlternativeInvalidSkeleton(schema: z.ZodType): unknown {
     }
     return result
   }
-  if (schema instanceof z.ZodOptional) return generateAlternativeInvalidSkeleton(schema.unwrap())
-  if (schema instanceof z.ZodNullable) return generateAlternativeInvalidSkeleton(schema.unwrap())
-  if (schema instanceof z.ZodDefault) return generateAlternativeInvalidSkeleton(schema._def.innerType)
+  if (schema instanceof z.ZodOptional)
+    return generateAlternativeInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodNullable)
+    return generateAlternativeInvalidSkeleton(schema.unwrap())
+  if (schema instanceof z.ZodDefault)
+    return generateAlternativeInvalidSkeleton(schema._def.innerType)
   if (schema instanceof z.ZodUnion) {
     const options = schema.options as z.ZodType[]
-    return options.length > 0 ? generateAlternativeInvalidSkeleton(options[0]) : undefined
+    return options.length > 0
+      ? generateAlternativeInvalidSkeleton(options[0])
+      : undefined
   }
   if (schema instanceof z.ZodDiscriminatedUnion) {
     const options = schema.options as z.ZodType[]
-    return options.length > 0 ? generateAlternativeInvalidSkeleton(options[0]) : undefined
+    return options.length > 0
+      ? generateAlternativeInvalidSkeleton(options[0])
+      : undefined
   }
   if (schema instanceof z.ZodRecord) return {}
   if (schema instanceof z.ZodTuple) {
-    return (schema.items as z.ZodType[]).map((item) => generateAlternativeInvalidSkeleton(item))
+    return (schema.items as z.ZodType[]).map((item) =>
+      generateAlternativeInvalidSkeleton(item),
+    )
   }
-  if (schema instanceof z.ZodEffects) return generateAlternativeInvalidSkeleton(schema.innerType())
+  if (schema instanceof z.ZodEffects)
+    return generateAlternativeInvalidSkeleton(schema.innerType())
   if (schema instanceof z.ZodLazy) {
-    try { return generateAlternativeInvalidSkeleton(schema.schema) } catch { return undefined }
+    try {
+      return generateAlternativeInvalidSkeleton(schema.schema)
+    } catch {
+      return undefined
+    }
   }
   if (schema instanceof z.ZodIntersection) {
     const left = generateAlternativeInvalidSkeleton(schema._def.left)
     const right = generateAlternativeInvalidSkeleton(schema._def.right)
-    if (typeof left === 'object' && typeof right === 'object' && left !== null && right !== null) {
+    if (
+      typeof left === 'object' &&
+      typeof right === 'object' &&
+      left !== null &&
+      right !== null
+    ) {
       return { ...left, ...right }
     }
     return left
@@ -395,12 +429,12 @@ function collectDescriptorsFromIssues(
     seen.add(params.id)
     result.push({
       id: params.id,
-      defaultMessage: typeof params.defaultMessage === 'string'
-        ? params.defaultMessage
-        : undefined,
-      description: typeof params.description === 'string'
-        ? params.description
-        : undefined,
+      defaultMessage:
+        typeof params.defaultMessage === 'string'
+          ? params.defaultMessage
+          : undefined,
+      description:
+        typeof params.description === 'string' ? params.description : undefined,
       fieldPath: issue.path.join('.'),
     })
   }
@@ -450,12 +484,14 @@ export function extractValidationDescriptors(
             seen.add(params.id)
             result.push({
               id: params.id,
-              defaultMessage: typeof params.defaultMessage === 'string'
-                ? params.defaultMessage
-                : undefined,
-              description: typeof params.description === 'string'
-                ? params.description
-                : undefined,
+              defaultMessage:
+                typeof params.defaultMessage === 'string'
+                  ? params.defaultMessage
+                  : undefined,
+              description:
+                typeof params.description === 'string'
+                  ? params.description
+                  : undefined,
               fieldPath: [key, ...issue.path].join('.'),
             })
           }
@@ -518,9 +554,10 @@ function isMessageDescriptor(obj: unknown): obj is MessageDescriptor {
   )
 }
 
-function tryInvokeFormTextFunction(
-  fn: Function,
-): { descriptors: MessageDescriptorInfo[]; staticText: string | null } {
+function tryInvokeFormTextFunction(fn: Function): {
+  descriptors: MessageDescriptorInfo[]
+  staticText: string | null
+} {
   try {
     const mockApp = {
       answers: {},
@@ -622,7 +659,9 @@ function extractMessageDescriptorsFromPropsDeep(
     visited.add(value)
     const out: MessageDescriptorInfo[] = []
     for (const el of value) {
-      out.push(...extractMessageDescriptorsFromPropsDeep(el, depth + 1, visited))
+      out.push(
+        ...extractMessageDescriptorsFromPropsDeep(el, depth + 1, visited),
+      )
     }
     return out
   }
@@ -652,7 +691,9 @@ function walkExternalDataSourceItem(
     ),
   )
   descriptors.push(
-    ...extractMessageDescriptorsFromFormText(provider.title as FormText | undefined),
+    ...extractMessageDescriptorsFromFormText(
+      provider.title as FormText | undefined,
+    ),
   )
   descriptors.push(
     ...extractMessageDescriptorsFromFormText(
@@ -711,10 +752,9 @@ function extractStaticId(id: unknown): string {
     try {
       const stubApp = stubApplicationForOptionPreview()
       const stubUser = stubUserForIdPreview()
-      const result = (id as (application: Application, user: BffUser) => string)(
-        stubApp,
-        stubUser,
-      )
+      const result = (
+        id as (application: Application, user: BffUser) => string
+      )(stubApp, stubUser)
       return typeof result === 'string' ? result : '[dynamic]'
     } catch {
       return '[dynamic]'
@@ -772,7 +812,8 @@ function extractFieldOptionsForPreview(
       return {
         value: option.value,
         labelMessageId: String(label.id),
-        labelDefaultMessage: (label.defaultMessage as string | undefined) ?? null,
+        labelDefaultMessage:
+          (label.defaultMessage as string | undefined) ?? null,
       }
     }
     if (typeof label === 'function') {
@@ -902,8 +943,7 @@ function imageFieldIntrospectionFromLeaf(leaf: FormLeaf):
   } else if (typeof im.image === 'function') {
     const fn = im.image as Function & { displayName?: string }
     const name = (fn.displayName || fn.name || '').trim()
-    imageSvgComponentName =
-      name && name !== 'anonymous' ? name : null
+    imageSvgComponentName = name && name !== 'anonymous' ? name : null
   }
   return {
     imageUrl,
@@ -932,9 +972,7 @@ function extractMessageDescriptorsFromField(
     ),
   )
   descriptors.push(
-    ...extractMessageDescriptorsFromFormText(
-      f.tooltip as FormText | undefined,
-    ),
+    ...extractMessageDescriptorsFromFormText(f.tooltip as FormText | undefined),
   )
   descriptors.push(
     ...extractMessageDescriptorsFromFormText(
@@ -965,9 +1003,7 @@ function extractMessageDescriptorsFromField(
   if (Array.isArray(options)) {
     for (const option of options) {
       if (option && typeof option === 'object') {
-        descriptors.push(
-          ...extractMessageDescriptorsFromFormText(option.label),
-        )
+        descriptors.push(...extractMessageDescriptorsFromFormText(option.label))
         descriptors.push(
           ...extractMessageDescriptorsFromFormText(option.tooltip),
         )
@@ -1004,9 +1040,7 @@ function extractMessageDescriptorsFromField(
     ),
   )
   descriptors.push(
-    ...extractMessageDescriptorsFromFormText(
-      f.s3key as FormText | undefined,
-    ),
+    ...extractMessageDescriptorsFromFormText(f.s3key as FormText | undefined),
   )
 
   const propsRaw = f.props
@@ -1147,7 +1181,7 @@ function buildTableRepeaterColumnHeaderDescriptors(
 ): MessageDescriptorInfo[] {
   const fields = tr.fields ?? {}
   const items: Array<RepeaterItem & { id: string }> = Object.keys(fields).map(
-    (id) => ({ id, ...fields[id] }) as RepeaterItem & { id: string },
+    (id) => ({ id, ...fields[id] } as RepeaterItem & { id: string }),
   )
   const tableItems = items.filter((x) => x.displayInTable !== false)
 
@@ -1164,9 +1198,7 @@ function buildTableRepeaterColumnHeaderDescriptors(
   for (const item of tableItems) {
     if (item.component === 'nationalIdWithName') {
       out.push(
-        ...extractMessageDescriptorsFromFormText(
-          coreMessages.name as FormText,
-        ),
+        ...extractMessageDescriptorsFromFormText(coreMessages.name as FormText),
         ...extractMessageDescriptorsFromFormText(
           coreMessages.nationalId as FormText,
         ),
@@ -1211,8 +1243,7 @@ function walkRepeaterItemToScreen(
 
   if (item.component === 'description' && 'title' in item) {
     const t = (item as { title: StaticText }).title
-    const st =
-      typeof t === 'function' ? (t as (i: number) => StaticText)(0) : t
+    const st = typeof t === 'function' ? (t as (i: number) => StaticText)(0) : t
     pushText(st)
   } else if (item.component === 'fileUpload') {
     const fu = item as RepeaterItem & { component: 'fileUpload' }
@@ -1279,16 +1310,12 @@ function walkRepeaterItemToScreen(
   const labelStatic: StaticText | undefined = (() => {
     if (item.component === 'description' && 'title' in item) {
       const t = (item as { title: StaticText }).title
-      return typeof t === 'function'
-        ? (t as (i: number) => StaticText)(0)
-        : t
+      return typeof t === 'function' ? (t as (i: number) => StaticText)(0) : t
     }
     if (item.component === 'fileUpload' && 'title' in item) {
       const t = (item as { title?: StaticText }).title
       if (!t) return undefined
-      return typeof t === 'function'
-        ? (t as (i: number) => StaticText)(0)
-        : t
+      return typeof t === 'function' ? (t as (i: number) => StaticText)(0) : t
     }
     if (!('label' in item) || !item.label) {
       return undefined
@@ -1326,7 +1353,9 @@ function walkRepeaterItemToScreen(
       options: item.options,
     } as RadioField
     radioOptions = extractRadioPreviewOptions(pseudo)
-    if (typeof (item as { largeButtons?: boolean }).largeButtons === 'boolean') {
+    if (
+      typeof (item as { largeButtons?: boolean }).largeButtons === 'boolean'
+    ) {
       radioLargeButtons = (item as { largeButtons?: boolean }).largeButtons
     }
     if (item.backgroundColor === 'white' || item.backgroundColor === 'blue') {
@@ -1385,7 +1414,8 @@ function walkRepeaterItemToScreen(
     marginTop: null,
     marginBottom: null,
     paddingTop: null,
-    titleVariant: titleVariantStr && titleVariantStr.length > 0 ? titleVariantStr : null,
+    titleVariant:
+      titleVariantStr && titleVariantStr.length > 0 ? titleVariantStr : null,
     messageDescriptors: finalDescriptors,
     radioOptions,
     radioLargeButtons,
@@ -1493,7 +1523,9 @@ function walkTableRepeaterScreen(tr: TableRepeaterField): ScreenIntrospection {
   }
 }
 
-function walkFieldsRepeaterScreen(fr: FieldsRepeaterField): ScreenIntrospection {
+function walkFieldsRepeaterScreen(
+  fr: FieldsRepeaterField,
+): ScreenIntrospection {
   const frRecord = fr as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const pushText = (t: unknown) => {
@@ -1742,7 +1774,8 @@ function extractSubmitActionsForPreview(
       return {
         event,
         labelMessageId: String(label.id),
-        labelDefaultMessage: (label.defaultMessage as string | undefined) ?? null,
+        labelDefaultMessage:
+          (label.defaultMessage as string | undefined) ?? null,
         buttonType: action.type,
       }
     }
@@ -1881,11 +1914,16 @@ function walkFormLeaf(
     )
     description = extractStaticText(edp.description as StaticText | undefined)
     subTitle = extractStaticText(edp.subTitle as StaticText | undefined)
-    subDescription = extractStaticText(edp.subDescription as StaticText | undefined)
-    checkboxLabel = extractStaticText(edp.checkboxLabel as StaticText | undefined)
+    subDescription = extractStaticText(
+      edp.subDescription as StaticText | undefined,
+    )
+    checkboxLabel = extractStaticText(
+      edp.checkboxLabel as StaticText | undefined,
+    )
 
     const externalDataLeafId = extractStaticId(leaf.id) || 'external'
-    const dataProviders = (edp.dataProviders as DataProviderItem[] | undefined) ?? []
+    const dataProviders =
+      (edp.dataProviders as DataProviderItem[] | undefined) ?? []
     for (const provider of dataProviders) {
       if (!provider?.id) continue
       const childScreen = walkExternalDataSourceItem(
@@ -1901,7 +1939,9 @@ function walkFormLeaf(
     for (const permission of otherPermissions) {
       if (!permission?.id) continue
       const childScreen = walkExternalDataSourceItem(
-        `${externalDataLeafId}::perm::${extractStaticId(permission.id) || 'permission'}`,
+        `${externalDataLeafId}::perm::${
+          extractStaticId(permission.id) || 'permission'
+        }`,
         permission,
       )
       children.push(childScreen)
@@ -1955,7 +1995,9 @@ function walkFormLeaf(
       const fu = leaf as FileUploadField
       const pushFileUploadDescriptor = (t: unknown) => {
         if (t) {
-          for (const d of extractMessageDescriptorsFromFormText(t as FormText)) {
+          for (const d of extractMessageDescriptorsFromFormText(
+            t as FormText,
+          )) {
             if (!fromField.some((x) => x.id === d.id)) {
               fromField.push(d)
             }
@@ -2078,7 +2120,9 @@ function walkFormLeaf(
       ? (() => {
           const lf = leaf as LinkField
           return {
-            linkFieldLinkText: extractStaticText(lf.link as StaticText | undefined),
+            linkFieldLinkText: extractStaticText(
+              lf.link as StaticText | undefined,
+            ),
             linkFieldLinkMessageId:
               lf.link != null && isMessageDescriptor(lf.link)
                 ? String(lf.link.id)
@@ -2234,7 +2278,7 @@ function extractFormLogoKey(logo: Form['logo'] | undefined): string | null {
   if (!logo || typeof logo !== 'function') {
     return null
   }
-  const fn = logo as (Function & { displayName?: string })
+  const fn = logo as Function & { displayName?: string }
   // Application-dependent logo: `(application) => …`
   if (fn.length > 0) {
     return null
@@ -2428,8 +2472,9 @@ export class TemplateIntrospectionService {
 
     let customFieldManifest: Record<string, MessageDescriptorInfo[]> = {}
     try {
-      customFieldManifest =
-        await getApplicationCustomFieldMessageDescriptors(typeId)
+      customFieldManifest = await getApplicationCustomFieldMessageDescriptors(
+        typeId,
+      )
     } catch {
       customFieldManifest = {}
     }

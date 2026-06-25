@@ -116,7 +116,9 @@ export class SharedNamespaceIntrospectionService {
 
   introspectSharedNamespace(namespace: string): SharedNamespaceIntrospection {
     if (!isSharedTranslationNamespace(namespace)) {
-      throw new NotFoundException(`Shared translation namespace not found: ${namespace}`)
+      throw new NotFoundException(
+        `Shared translation namespace not found: ${namespace}`,
+      )
     }
 
     const roots = SHARED_NAMESPACE_MESSAGE_ROOTS[namespace]

@@ -1,4 +1,9 @@
-import { Box, Text, SkeletonLoader, GridContainer } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  SkeletonLoader,
+  GridContainer,
+} from '@island.is/island-ui/core'
 import type { ApolloError } from '@apollo/client'
 
 export const TranslationWorkspaceLoading = () => (

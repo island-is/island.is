@@ -12,11 +12,11 @@ const TranslationWorkspace = lazy(() =>
   })),
 )
 const SharedNamespaceTranslationWorkspace = lazy(() =>
-  import('./screens/SharedNamespaceTranslationWorkspace/SharedNamespaceTranslationWorkspace').then(
-    (m) => ({
-      default: m.SharedNamespaceTranslationWorkspace,
-    }),
-  ),
+  import(
+    './screens/SharedNamespaceTranslationWorkspace/SharedNamespaceTranslationWorkspace'
+  ).then((m) => ({
+    default: m.SharedNamespaceTranslationWorkspace,
+  })),
 )
 
 const allowedScopes: string[] = [

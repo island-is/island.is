@@ -74,14 +74,10 @@ module.exports = {
         transaction: t,
       })
 
-      await queryInterface.addIndex(
-        'application_translation',
-        ['namespace'],
-        {
-          name: 'application_translation_namespace_idx',
-          transaction: t,
-        },
-      )
+      await queryInterface.addIndex('application_translation', ['namespace'], {
+        name: 'application_translation_namespace_idx',
+        transaction: t,
+      })
 
       await queryInterface.createTable(
         'application_translation_log',

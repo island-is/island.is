@@ -137,7 +137,9 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
                       variant="text"
                       size="small"
                       onClick={() =>
-                        navigate(buildSharedNamespaceTranslationPath(entry.namespace))
+                        navigate(
+                          buildSharedNamespaceTranslationPath(entry.namespace),
+                        )
                       }
                     >
                       {formatMessage(m.translationOpen)}

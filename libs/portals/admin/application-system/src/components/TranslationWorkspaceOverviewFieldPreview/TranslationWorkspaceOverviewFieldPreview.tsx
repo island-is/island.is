@@ -82,7 +82,12 @@ export const TranslationWorkspaceOverviewFieldPreview = ({
       <ReviewGroup isEditable={false} isLast={true}>
         <Box marginRight={12}>
           {titleText !== '' && (
-            <Text variant="h3" as="h3" paddingTop={2} paddingBottom={descriptionMarkdown !== '' ? 2 : 5}>
+            <Text
+              variant="h3"
+              as="h3"
+              paddingTop={2}
+              paddingBottom={descriptionMarkdown !== '' ? 2 : 5}
+            >
               {titleText}
             </Text>
           )}
@@ -113,7 +118,9 @@ export const TranslationWorkspaceOverviewFieldPreview = ({
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
                 <Text variant="small" color="dark300">
-                  {formatMessage(m.translationWorkspaceOverviewPreviewStubValue)}
+                  {formatMessage(
+                    m.translationWorkspaceOverviewPreviewStubValue,
+                  )}
                 </Text>
               </GridColumn>
             </GridRow>

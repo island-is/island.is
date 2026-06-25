@@ -27,11 +27,7 @@ const collectDescriptorsFromDefineMessagesModule = (
       out.push({
         id: v.id,
         defaultMessage:
-          dm == null
-            ? undefined
-            : typeof dm === 'string'
-              ? dm
-              : String(dm),
+          dm == null ? undefined : typeof dm === 'string' ? dm : String(dm),
       })
     }
   }
@@ -98,7 +94,9 @@ export const buildTranslationWorkspacePreviewIntlMessages = (
     add(d.id, d.defaultMessage)
   }
 
-  for (const d of collectTranslationWorkspaceScreenDescriptors(previewScreens)) {
+  for (const d of collectTranslationWorkspaceScreenDescriptors(
+    previewScreens,
+  )) {
     add(d.id, d.defaultMessage)
   }
 

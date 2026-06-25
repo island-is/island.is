@@ -309,7 +309,10 @@ export const TranslationWorkspace = () => {
           offset < items.length;
           offset += GOOGLE_TRANSLATE_BATCH_SIZE
         ) {
-          const slice = items.slice(offset, offset + GOOGLE_TRANSLATE_BATCH_SIZE)
+          const slice = items.slice(
+            offset,
+            offset + GOOGLE_TRANSLATE_BATCH_SIZE,
+          )
           const { data } = await googleTranslate({
             variables: { input: { texts: slice.map((i) => i.sourceText) } },
           })

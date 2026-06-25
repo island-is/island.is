@@ -9,10 +9,7 @@ import type {
   CallToAction,
   LinkField,
 } from '@island.is/application/types'
-import {
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import type { ScreenIntrospectionNodeFieldsFragment } from '../queries/translations.generated'
 import type {
   RadioOptionIntrospection,
@@ -38,8 +35,7 @@ type MessageWithLinkIntrospectionSlice = Partial<
 >
 
 /** Introspection node shape as used by the preview field builder (GraphQL-aligned). */
-export type BuildPreviewFieldScreen =
-  ScreenIntrospection &
+export type BuildPreviewFieldScreen = ScreenIntrospection &
   MessageWithLinkIntrospectionSlice
 
 const asFieldWidth = (w: string | null | undefined): FieldWidth | undefined => {
@@ -56,7 +52,7 @@ const optionFromIntrospection = (o: RadioOptionIntrospection): Option => {
           id: o.labelMessageId,
           defaultMessage: o.labelDefaultMessage ?? '',
         }
-      : (o.labelDefaultMessage ?? o.value)
+      : o.labelDefaultMessage ?? o.value
   return {
     value: o.value,
     label,
@@ -176,7 +172,7 @@ export const buildPreviewFieldFromScreen = (
                 id: a.labelMessageId,
                 defaultMessage: a.labelDefaultMessage ?? '',
               }
-            : (a.labelDefaultMessage ?? a.event)) as FormText,
+            : a.labelDefaultMessage ?? a.event) as FormText,
         })) ?? []
       const placement = (screen.submitPlacement ??
         'footer') as SubmitField['placement']
@@ -211,8 +207,8 @@ export const buildPreviewFieldFromScreen = (
           screen.radioBackgroundColor === 'blue'
             ? screen.radioBackgroundColor
             : screen.radioLargeButtons !== false
-              ? 'blue'
-              : undefined,
+            ? 'blue'
+            : undefined,
         space: layout.paddingTop,
       } as Field
     }
@@ -224,30 +220,32 @@ export const buildPreviewFieldFromScreen = (
             id: titleMsgId,
             defaultMessage: defaultMsgForKey(titleMsgId) ?? '',
           }
-        : (screen.title ?? '')
+        : screen.title ?? ''
       const linkMsgId = screen.linkFieldLinkMessageId
       const linkFormText: FormText = linkMsgId
         ? {
             id: linkMsgId,
             defaultMessage: defaultMsgForKey(linkMsgId) ?? '',
           }
-        : (screen.linkFieldLinkText ?? '')
+        : screen.linkFieldLinkText ?? ''
       const s3MsgId = screen.linkFieldS3KeyMessageId
       const s3FormText: FormText = s3MsgId
         ? {
             id: s3MsgId,
             defaultMessage: defaultMsgForKey(s3MsgId) ?? '',
           }
-        : (screen.linkFieldS3KeyText ?? '')
+        : screen.linkFieldS3KeyText ?? ''
 
       const variant =
-        screen.linkFieldVariant === 'text' ? ('text' as const) : ('ghost' as const)
+        screen.linkFieldVariant === 'text'
+          ? ('text' as const)
+          : ('ghost' as const)
       const justifyContent =
         screen.linkFieldJustifyContent === 'center'
           ? ('center' as const)
           : screen.linkFieldJustifyContent === 'flexEnd'
-            ? ('flexEnd' as const)
-            : ('flexStart' as const)
+          ? ('flexEnd' as const)
+          : ('flexStart' as const)
 
       const iconProps: LinkField['iconProps'] | undefined =
         screen.linkFieldIcon != null && screen.linkFieldIcon !== ''
@@ -280,14 +278,14 @@ export const buildPreviewFieldFromScreen = (
             id: msgId,
             defaultMessage: defaultMsgForKey(msgId) ?? '',
           }
-        : (screen.messageWithLinkMessageStatic ?? '')
+        : screen.messageWithLinkMessageStatic ?? ''
       const btnId = screen.messageWithLinkButtonTitleMessageId
       const buttonTitle: FormText = btnId
         ? {
             id: btnId,
             defaultMessage: defaultMsgForKey(btnId) ?? '',
           }
-        : (screen.messageWithLinkButtonTitleStatic ?? '')
+        : screen.messageWithLinkButtonTitleStatic ?? ''
       const msgColorRaw = screen.messageWithLinkMessageColor
       const messageColor =
         msgColorRaw != null && msgColorRaw !== ''
@@ -306,7 +304,9 @@ export const buildPreviewFieldFromScreen = (
     }
 
     case FieldTypes.CHECKBOX: {
-      const options = (screen.checkboxOptions ?? []).map(optionFromIntrospection)
+      const options = (screen.checkboxOptions ?? []).map(
+        optionFromIntrospection,
+      )
       if (options.length === 0) {
         return null
       }
@@ -332,7 +332,7 @@ export const buildPreviewFieldFromScreen = (
     default:
       return null
   }
-};
+}
 
 export const TRANSLATION_WORKSPACE_UI_FIELD_TYPES: ReadonlySet<string> =
   new Set([

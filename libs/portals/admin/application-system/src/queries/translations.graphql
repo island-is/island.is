@@ -307,9 +307,7 @@ mutation googleTranslateStrings($input: GoogleTranslateStringsInput!) {
   }
 }
 
-mutation publishApplicationTranslations(
-  $input: PublishTranslationsInput!
-) {
+mutation publishApplicationTranslations($input: PublishTranslationsInput!) {
   publishApplicationTranslations(input: $input) {
     id
     namespace
@@ -331,9 +329,7 @@ query getApplicationTranslationPublishHistory($namespace: String!) {
   }
 }
 
-mutation rollbackApplicationTranslations(
-  $input: RollbackTranslationsInput!
-) {
+mutation rollbackApplicationTranslations($input: RollbackTranslationsInput!) {
   rollbackApplicationTranslations(input: $input) {
     id
     namespace

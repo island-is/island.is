@@ -151,7 +151,9 @@ export const TranslationWorkspacePreviewArea = ({
   const resolveStepTitle = (
     title: string | null | undefined,
     titleMessageDescriptor:
-      | (TemplateSectionNav['titleMessageDescriptor'] extends infer T ? T : never)
+      | (TemplateSectionNav['titleMessageDescriptor'] extends infer T
+          ? T
+          : never)
       | null
       | undefined,
   ) =>
@@ -279,14 +281,8 @@ export const TranslationWorkspacePreviewArea = ({
         >
           <FormStepperV2
             sections={[
-              <Box
-                marginLeft={1}
-                key="stepper-title"
-                paddingBottom={[0, 0, 4]}
-              >
-                <Text variant="h4">
-                  {activeFormTitle ?? templateName}
-                </Text>
+              <Box marginLeft={1} key="stepper-title" paddingBottom={[0, 0, 4]}>
+                <Text variant="h4">{activeFormTitle ?? templateName}</Text>
               </Box>,
               ...activeSections.map((section, i) => (
                 <Box
@@ -294,8 +290,7 @@ export const TranslationWorkspacePreviewArea = ({
                   cursor="pointer"
                   onClick={() => {
                     const sectionData = section
-                    const screens =
-                      sectionData.screens as ScreenIntrospection[]
+                    const screens = sectionData.screens as ScreenIntrospection[]
                     const firstSubSection = sectionData.subSections[0]
                     const location: SidebarNavLocation = {
                       stateKey: activeStateKey,
@@ -330,7 +325,12 @@ export const TranslationWorkspacePreviewArea = ({
                   }}
                 >
                   <Section
-                    section={resolveStepTitle(section.title, section.titleMessageDescriptor) || section.id}
+                    section={
+                      resolveStepTitle(
+                        section.title,
+                        section.titleMessageDescriptor,
+                      ) || section.id
+                    }
                     sectionIndex={i}
                     isActive={selectedLocation?.sectionId === section.id}
                     isComplete={
@@ -374,7 +374,10 @@ export const TranslationWorkspacePreviewArea = ({
                                     : 'regular'
                                 }
                               >
-                                {resolveStepTitle(sub.title, sub.titleMessageDescriptor) || sub.id}
+                                {resolveStepTitle(
+                                  sub.title,
+                                  sub.titleMessageDescriptor,
+                                ) || sub.id}
                               </Text>
                             </Box>
                           ))
