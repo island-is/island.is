@@ -36,8 +36,9 @@ interface GetUserProfileLocaleData {
 export const AppUserProfileLocale = () => {
   const { lang, changeLanguage } = useLocale()
   const userInfo = useUserInfo()
-  const [getUserProfile, { data }] =
-    useLazyQuery<GetUserProfileLocaleData>(GET_USER_PROFILE_LOCALE)
+  const [getUserProfile, { data }] = useLazyQuery<GetUserProfileLocaleData>(
+    GET_USER_PROFILE_LOCALE,
+  )
 
   const userProfile = data?.getUserProfileLocale ?? null
 
