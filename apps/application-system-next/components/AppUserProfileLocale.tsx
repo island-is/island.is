@@ -25,12 +25,17 @@ interface GetUserProfileLocaleData {
  * App-Router counterpart of the shared `UserProfileLocale` component, which
  * cannot run here because it depends on react-router's `useLocation`.
  *
- * On startup we adopt the user's preferred language: if the profile locale (or
- * a `?locale=` query override) differs from the active language, switch to it.
- * `LocaleProvider` always boots in the default language ('is'), so without this
- * the SDF app would ignore the user's saved preference. The screen itself reacts
- * to the resulting locale change via `useFormActions`.
+ * On startup we adopt the user's preferred language so the SDF app doesn't stay
+ * stuck on the `LocaleProvider` default ('is'). We resolve the locale from, in
+ * order of precedence:
+ *   1. a `?locale=` deep-link override,
+ *   2. the live user-profile value from `getUserProfileLocale` (reflects a
+ *      just-persisted language switch), and
+ *   3. `userInfo.profile.locale` straight off the BFF id token — instant and
+ *      scope-free, so it still works on a hard refresh even if the query is
+ *      unavailable (e.g. missing user-profile read scope).
  *
+ * The screen itself reacts to the resulting locale change via `useFormActions`.
  * Renders nothing.
  */
 export const AppUserProfileLocale = () => {
@@ -39,7 +44,8 @@ export const AppUserProfileLocale = () => {
   const [getUserProfile, { data }] =
     useLazyQuery<GetUserProfileLocaleData>(GET_USER_PROFILE_LOCALE)
 
-  const userProfile = data?.getUserProfileLocale ?? null
+  const tokenLocale = userInfo?.profile.locale ?? null
+  const profileLocale = data?.getUserProfileLocale?.locale ?? null
 
   useEffect(() => {
     if (userInfo?.profile.nationalId) {
@@ -48,14 +54,14 @@ export const AppUserProfileLocale = () => {
   }, [userInfo?.profile.nationalId, getUserProfile])
 
   useEffect(() => {
-    // `?locale=` (e.g. a deep link) takes precedence over the saved profile
-    // locale. Read it lazily from the URL to avoid pulling `useSearchParams`,
-    // which would de-opt the route to client-only rendering.
+    // `?locale=` (e.g. a deep link) takes precedence. Read it lazily from the
+    // URL to avoid pulling `useSearchParams`, which would de-opt the route to
+    // client-only rendering.
     const override =
       typeof window !== 'undefined'
         ? new URLSearchParams(window.location.search).get('locale')
         : null
-    const requestedLocale = override ?? userProfile?.locale ?? null
+    const requestedLocale = override ?? profileLocale ?? tokenLocale ?? null
 
     if (
       requestedLocale &&
@@ -64,10 +70,11 @@ export const AppUserProfileLocale = () => {
     ) {
       changeLanguage(requestedLocale)
     }
-    // Mirrors the shared component: only react to the resolved profile locale,
-    // not to every `lang`/`changeLanguage` identity change.
+    // Re-evaluate only when a locale *source* resolves (token on auth, profile
+    // on query) — never on a plain `lang` change — so we don't fight an
+    // in-session toggle from the language switcher.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile])
+  }, [profileLocale, tokenLocale])
 
   return null
 }

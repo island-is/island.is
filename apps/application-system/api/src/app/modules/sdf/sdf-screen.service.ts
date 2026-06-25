@@ -10,6 +10,7 @@ import { ApplicationService } from '@island.is/application/api/core'
 import {
   ApplicationTemplateHelper,
   coreErrorMessages,
+  coreMessages,
   getFormExpressionDependencies,
   getValueViaPath,
   resolveFormItemId,
@@ -26,6 +27,7 @@ import {
   FormValue,
   RoleInState,
   StaticText,
+  SubmitField,
   TemplateApi,
 } from '@island.is/application/types'
 import {
@@ -86,6 +88,42 @@ type ApplicationWithPageIndex = ApplicationWithAttachments & {
 
 type ScreenWithDescription = FormScreen & {
   description?: Parameters<FormTextResolver['resolve']>[0]
+}
+
+/**
+ * Locates the footer submit field for a screen so the footer can reuse its
+ * (translatable) action label, mirroring legacy `ScreenFooter`. External-data
+ * provider screens carry it directly; multi-field/repeater screens hold it
+ * among their children; a submit field can also be the screen itself.
+ *
+ * Only `placement: 'footer'` submit fields inform the footer label — legacy
+ * renders `placement: 'screen'` submit buttons inline, not in the footer.
+ */
+function getScreenSubmitField(
+  screen: FormScreen | undefined,
+): SubmitField | undefined {
+  if (!screen) return undefined
+
+  const isFooterSubmit = (field: SubmitField | undefined): boolean =>
+    !!field && field.placement !== 'screen'
+
+  const direct = (screen as { submitField?: SubmitField }).submitField
+  if (isFooterSubmit(direct)) return direct
+
+  if ((screen as { type?: unknown }).type === FieldTypes.SUBMIT) {
+    const self = screen as unknown as SubmitField
+    return isFooterSubmit(self) ? self : undefined
+  }
+
+  const children = (screen as { children?: unknown }).children
+  if (Array.isArray(children)) {
+    const submit = children.find(
+      (child) => (child as { type?: unknown })?.type === FieldTypes.SUBMIT,
+    ) as SubmitField | undefined
+    if (isFooterSubmit(submit)) return submit
+  }
+
+  return undefined
 }
 
 interface ScreenRenderContext {
@@ -371,12 +409,13 @@ export class SdfScreenService {
           context.filteredExternalData,
           context.bffUser,
           resolver,
+          getScreenSubmitField(currentScreen),
         )
       : [
           {
             id: 'next',
             text: resolver.resolve(
-              currentScreen?.nextButtonText ?? 'Halda áfram',
+              currentScreen?.nextButtonText ?? coreMessages.buttonNext,
             ),
             variant: 'PRIMARY',
             actionType: 'NEXT_PAGE',
