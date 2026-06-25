@@ -425,16 +425,11 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         if (auth.nationalId === undefined || auth.nationalId === null) {
           throw new TemplateApiError('National ID is not set', 500)
         }
-        const result =
-          await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
-            auth,
-            auth.nationalId,
-            year,
-          )
-        console.log('--------------------------------')
-        console.log('result', result)
-        console.log('--------------------------------')
-        return result
+        return await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
+          auth,
+          auth.nationalId,
+          year,
+        )
     }
   }
 
