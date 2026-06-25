@@ -430,7 +430,7 @@
           {
             "name": "paymentOrigin",
             "in": "query",
-            "description": "Origin of payment, e.g.standard payments(H�sb�t) or special payments(S�rstakar). 0= Both, 1= Almennar, 2=S�rstakar",
+            "description": "Origin of payment, e.g.standard payments(Húsbót) or special payments(Sérstakar). 0= Both, 1= Almennar, 2=Sérstakar",
             "style": "form",
             "schema": {
               "type": "integer",
