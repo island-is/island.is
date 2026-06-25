@@ -39,7 +39,10 @@ describe('buildFooterButtons', () => {
       actions: [
         {
           event: 'SUBMIT',
-          name: { id: 'application.system:button.next', defaultMessage: 'Halda áfram' },
+          name: {
+            id: 'application.system:button.next',
+            defaultMessage: 'Halda áfram',
+          },
           type: 'primary',
         },
       ],
