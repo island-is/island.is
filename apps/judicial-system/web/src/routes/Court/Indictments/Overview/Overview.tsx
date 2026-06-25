@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -45,6 +45,7 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { useCancelCase } from '../../../Shared/CaseTable/CancelCase'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -187,9 +188,29 @@ const OverviewBody = ({
 
 const IndictmentOverview = () => {
   const router = useRouter()
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
+
+  const goToDashboard = () => router.push(getStandardUserDashboardRoute(user))
+
+  const { cancelCase, CancelCaseModal } = useCancelCase(
+    goToDashboard,
+    goToDashboard,
+  )
+
+  // Show the cancellation modal whenever a district court user opens an
+  // indictment the prosecutor has cancelled, no matter how they got here
+  // (table, search, email, direct URL).
+  useEffect(() => {
+    if (
+      isDistrictCourtUser(user) &&
+      workingCase.state === CaseState.WAITING_FOR_CANCELLATION
+    ) {
+      cancelCase(workingCase.id)
+    }
+  }, [user, workingCase.state, workingCase.id, cancelCase])
 
   const defendants = workingCase.defendants
   const hasDefendants = isNonEmptyArray(defendants)
@@ -220,15 +241,18 @@ const IndictmentOverview = () => {
   )
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      isValid={hasDefendants}
-      onNavigationTo={handleNavigationTo}
-    >
-      <OverviewBody handleNavigationTo={handleNavigationTo} />
-    </PageLayout>
+    <>
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        isValid={hasDefendants}
+        onNavigationTo={handleNavigationTo}
+      >
+        <OverviewBody handleNavigationTo={handleNavigationTo} />
+      </PageLayout>
+      {CancelCaseModal}
+    </>
   )
 }
 

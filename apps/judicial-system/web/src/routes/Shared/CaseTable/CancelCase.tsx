@@ -15,7 +15,10 @@ import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { CourtCaseNumberInput } from '../../Court/components'
 
-export const useCancelCase = (onComplete: (caseId: string) => void) => {
+export const useCancelCase = (
+  onComplete: (caseId: string) => void,
+  onCancel?: () => void,
+) => {
   const { getCase } = useContext(FormContext)
   const [caseToCancel, setCaseToCancel] = useState<
     [
@@ -94,6 +97,7 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
 
   const handleSecondaryButtonClick = () => {
     setCaseToCancel([undefined, false, undefined])
+    onCancel?.()
   }
 
   const setCourtCaseNumber = (courtCaseNumber: string) =>
