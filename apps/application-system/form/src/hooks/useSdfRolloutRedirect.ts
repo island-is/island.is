@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
 
-import { ApplicationCard, ApplicationStatus } from '@island.is/application/types'
+import {
+  ApplicationCard,
+  ApplicationStatus,
+} from '@island.is/application/types'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 /**
