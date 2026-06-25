@@ -31,7 +31,10 @@ export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
       try {
         const cacheDir = new FileSystem.Directory(FileSystem.Paths.cache)
         const baseName =
-          uri.split('/').pop()?.replace(/\.pdf$/i, '') ?? 'doc'
+          uri
+            .split('/')
+            .pop()
+            ?.replace(/\.pdf$/i, '') ?? 'doc'
         const flatFile = new FileSystem.File(cacheDir, `${baseName}.flat.pdf`)
         if (flatFile.exists) {
           if (!cancelled) setEffectiveUri(flatFile.uri)
