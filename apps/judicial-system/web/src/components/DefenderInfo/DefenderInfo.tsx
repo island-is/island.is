@@ -216,7 +216,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
               </Box>
               <Box marginTop={2}>
                 <RadioButton
-                  name="defender-access-no"
+                  name="defender-access"
                   id="defender-access-no"
                   label={formatMessage(
                     isRestrictionCase(workingCase.type)
