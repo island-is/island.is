@@ -32,6 +32,7 @@ const renderOverview = (
   theCase: Case,
   userRole: UserRole,
   getCase: jest.Mock,
+  isCaseUpToDate = true,
 ) => {
   const wrapInProviders = (children: ReactNode) => (
     <MockedProvider addTypename={false}>
@@ -43,7 +44,7 @@ const renderOverview = (
               setWorkingCase: jest.fn(),
               isLoadingWorkingCase: false,
               caseNotFound: false,
-              isCaseUpToDate: true,
+              isCaseUpToDate,
               refreshCase: jest.fn(),
               getCase,
               isCreating: false,
@@ -93,6 +94,28 @@ describe('Court Indictment Overview', () => {
     const getCase = jest.fn((_id, onCompleted) => onCompleted(receivedCase))
 
     renderOverview(receivedCase, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    await waitFor(() => expect(getCase).not.toHaveBeenCalled())
+    expect(screen.queryByText('Mál afturkallað')).not.toBeInTheDocument()
+  })
+
+  it('does not show the modal for a stale cancelled case that is not up to date', async () => {
+    // Mirrors the bug where the FormProvider still holds a previously opened
+    // cancelled case while the next (non-cancelled) case is being fetched.
+    const staleCancelledCase: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    }
+    const getCase = jest.fn((_id, onCompleted) => {
+      Promise.resolve().then(() => onCompleted(staleCancelledCase))
+    })
+
+    renderOverview(
+      staleCancelledCase,
+      UserRole.DISTRICT_COURT_JUDGE,
+      getCase,
+      false,
+    )
 
     await waitFor(() => expect(getCase).not.toHaveBeenCalled())
     expect(screen.queryByText('Mál afturkallað')).not.toBeInTheDocument()

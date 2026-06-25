@@ -189,7 +189,7 @@ const OverviewBody = ({
 const IndictmentOverview = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound, isCaseUpToDate } =
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
 
@@ -202,15 +202,19 @@ const IndictmentOverview = () => {
 
   // Show the cancellation modal whenever a district court user opens an
   // indictment the prosecutor has cancelled, no matter how they got here
-  // (table, search, email, direct URL).
+  // (table, search, email, direct URL). Gate on isCaseUpToDate so we react to
+  // the freshly loaded case rather than a stale workingCase left over from a
+  // previously opened case (the FormProvider persists workingCase while the
+  // next case is still being fetched).
   useEffect(() => {
     if (
+      isCaseUpToDate &&
       isDistrictCourtUser(user) &&
       workingCase.state === CaseState.WAITING_FOR_CANCELLATION
     ) {
       cancelCase(workingCase.id)
     }
-  }, [user, workingCase.state, workingCase.id, cancelCase])
+  }, [isCaseUpToDate, user, workingCase.state, workingCase.id, cancelCase])
 
   const defendants = workingCase.defendants
   const hasDefendants = isNonEmptyArray(defendants)
