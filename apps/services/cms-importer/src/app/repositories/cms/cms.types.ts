@@ -1,7 +1,8 @@
+import { Document } from '@contentful/rich-text-types'
 import { Entry, EntryProps } from 'contentful-management'
 import { EN_LOCALE, LOCALE } from '../../constants'
 
-export type ContentTypeOptions = 'grant' | 'genericListItem'
+export type ContentTypeOptions = 'grant' | 'genericListItem' | 'news'
 
 export interface EntryUpdateDto {
   cmsEntry: Entry
@@ -16,21 +17,7 @@ export interface Localized<T> {
   [LOCALE]: T
 }
 
-export interface CmsRichTextDocument {
-  data: object
-  nodeType: 'document'
-  content: Array<{
-    data: object
-    nodeType: 'paragraph'
-    content: Array<{
-      marks: Array<{
-        type: string
-      }>
-      value: string
-      nodeType: 'text'
-    }>
-  }>
-}
+export { Document as CmsRichTextDocument }
 
 export interface RichTextParagraph {
   values: Array<RichTextValue>

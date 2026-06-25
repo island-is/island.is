@@ -1,4 +1,7 @@
+import { decode } from 'html-entities'
 import { isDefined } from '@island.is/shared/utils'
+import { Link } from 'contentful-management'
+import { BLOCKS } from '@contentful/rich-text-types'
 import { LOCALE, EN_LOCALE } from '../../constants'
 import {
   CmsRichTextDocument,
@@ -7,12 +10,27 @@ import {
   RichTextParagraph,
 } from './cms.types'
 
+export const stripHtml = (html: string): string =>
+  decode(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')).trim()
+
+export const makeTagMetadata = (
+  ...tagIds: string[]
+): EntryCreationDto['metadata'] => ({
+  tags: tagIds.map((id) => ({
+    sys: {
+      type: 'Link',
+      linkType: 'Tag',
+      id,
+    },
+  })),
+})
+
 interface Props {
   listId: string
   properties: {
     internalTitle: string
-    title: Localized<unknown>
-    slug: Localized<unknown>
+    title: Localized<string>
+    slug: Localized<string>
     tagIds?: string[]
     cardIntro?: Localized<Array<RichTextParagraph>>
     content?: Localized<Array<RichTextParagraph>>
@@ -28,8 +46,9 @@ export const generateGenericListItem = ({
   const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
 
   const newEntry: EntryCreationDto['fields'] = {
-    genericList: mapLocalizedValue<unknown>({
+    genericList: mapLocalizedValue<Link<'Entry'>>({
       sys: {
+        type: 'Link',
         id: listId,
         linkType: 'Entry',
       },
@@ -77,30 +96,30 @@ export const mapLocalizedRichTextDocument = (
     ...(enContent && {
       [EN_LOCALE]: {
         data: {},
-        nodeType: 'document',
+        nodeType: BLOCKS.DOCUMENT,
         content: enContent.map((paragraph) => ({
           data: {},
-          nodeType: 'paragraph',
+          nodeType: BLOCKS.PARAGRAPH,
           content: paragraph.values.map((item) => ({
             data: {},
-            marks: item.isBold ? [{ type: 'bold' }] : [],
+            marks: item.isBold ? [{ type: 'bold' as const }] : [],
             value: item.value,
-            nodeType: 'text',
+            nodeType: 'text' as const,
           })),
         })),
       },
     }),
     [LOCALE]: {
       data: {},
-      nodeType: 'document',
+      nodeType: BLOCKS.DOCUMENT,
       content: isContent.map((paragraph) => ({
         data: {},
-        nodeType: 'paragraph',
+        nodeType: BLOCKS.PARAGRAPH,
         content: paragraph.values.map((item) => ({
           data: {},
-          marks: item.isBold ? [{ type: 'bold' }] : [],
+          marks: item.isBold ? [{ type: 'bold' as const }] : [],
           value: item.value,
-          nodeType: 'text',
+          nodeType: 'text' as const,
         })),
       })),
     },

@@ -5,8 +5,5 @@ export type ContentfulFetchResponse<T> =
     }
   | {
       ok: false
-      error: {
-        code: number
-        message: string
-      }
+      error: unknown
     }

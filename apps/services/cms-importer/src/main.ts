@@ -59,6 +59,17 @@ switch (job) {
       })
     break
   }
+  case 'lyfjastofnun-news-import': {
+    import('./app/lyfjastofnun-news-import/lyfjastofnun-news-import-worker')
+      .then((app) => app.lyfjastofnunNewsImportWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the lyfjastofnun news import worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }
