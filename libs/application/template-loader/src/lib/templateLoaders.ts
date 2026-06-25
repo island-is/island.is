@@ -293,6 +293,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/submit-documents'),
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
     import('@island.is/application/templates/vmst/confirm-travel'),
+  [ApplicationTypes.CHILD_PROTECTION_NOTIFICATION]: () =>
+    import(
+      '@island.is/application/templates/national-agency-for-children-and-families/child-protection-notification'
+    ),
 }
 
 export default templates

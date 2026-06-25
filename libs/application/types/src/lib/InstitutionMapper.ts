@@ -531,4 +531,10 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  // TODO: Replace with real Barna- og fjölskyldustofa institution entries once onboarded
+  [ApplicationTypes.CHILD_PROTECTION_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
 }

@@ -192,6 +192,8 @@ import { ExemptionForTransportationModule } from './transport-authority/exemptio
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
 import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
+import { ChildProtectionNotificationService } from './national-agency-for-children-and-families/child-protection-notification/child-protection-notification.service'
+import { ChildProtectionNotificationModule } from './national-agency-for-children-and-families/child-protection-notification/child-protection-notification.module'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -291,6 +293,7 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
+  ChildProtectionNotificationModule,
 ]
 
 export const services = [
@@ -390,4 +393,5 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
+  ChildProtectionNotificationService,
 ]
