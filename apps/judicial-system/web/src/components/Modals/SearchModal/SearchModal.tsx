@@ -317,12 +317,14 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                             caseType={row.caseType}
                             caseNumber={caseNumber}
                             caseTableTitles={caseTableTitles}
-                            descriptor={`${row.matchedValue}${
+                            descriptor={
                               row.matchedField === 'defendantName' ||
                               !row.defendantName
-                                ? ''
-                                : ` - ${row.defendantName}`
-                            }`}
+                                ? row.matchedValue
+                                : row.matchedValue
+                                ? `${row.matchedValue} - ${row.defendantName}`
+                                : row.defendantName
+                            }
                             onClick={onClose}
                           />
                         </li>

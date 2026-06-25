@@ -15,6 +15,8 @@ export const rentalContractOptions = (application: Application) => {
       contract.contractParty
         ?.filter((party) => party.partyTypeUseCode === 'OWNER')
         .map((party) => party.name) ?? []
+    const propertyId = contract?.contractProperty?.[0]?.propertyId
+
     return {
       value: contract.contractId?.toString() ?? '',
       label: {
@@ -27,6 +29,10 @@ export const rentalContractOptions = (application: Application) => {
           apartmentNumber: contract?.contractProperty?.[0]?.apartment
             ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
             : '',
+          propertyNumberLine:
+            propertyId !== undefined && propertyId !== null
+              ? ` - Fasteignanúmer: ${propertyId}`
+              : '',
           landlords: landlords.join(', '),
           renters: renters.join(', '),
           landlordsCount: landlords.length,

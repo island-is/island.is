@@ -96,6 +96,9 @@ export enum Features {
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
 
+  //Enable sailors page
+  isServicePortalSailorsPageEnabled = 'isServicePortalSailorsPageEnabled',
+
   //Enable user ships page
   isServicePortalUserShipsPageEnabled = 'isServicePortalUserShipsPageEnabled',
 

@@ -18,9 +18,7 @@ import {
   mainFormAccessAgreementOverviewItems,
   mainFormAccessAgreementOverviewAttachments,
   incomeSectionOverviewItems,
-  incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
-  incomeNoTaxReturnOverviewAttachments,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
@@ -104,15 +102,9 @@ export const overviewSection = buildSection({
               return false
             }
             const emptyExternal = {} as ExternalData
-            const items = incomeSectionOverviewItems(answers, emptyExternal)
-            const attachments = incomeSectionOverviewAttachments(
-              answers,
-              emptyExternal,
-            )
-            return items.length > 0 || attachments.length > 0
+            return incomeSectionOverviewItems(answers, emptyExternal).length > 0
           },
           items: incomeSectionOverviewItems,
-          attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'incomeNoTaxReturnOverview',
@@ -120,7 +112,6 @@ export const overviewSection = buildSection({
           backId: 'incomeNoTaxReturnMultiField',
           condition: isTaxReturnNotFiled,
           items: incomeNoTaxReturnOverviewItems,
-          attachments: incomeNoTaxReturnOverviewAttachments,
         }),
         buildOverviewField({
           id: 'assetsDeclarationOverview',

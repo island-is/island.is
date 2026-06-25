@@ -135,7 +135,7 @@ export const Table = <TData extends object>({
     }
     return (
       <Box>
-        {table.getRowModel().rows.map((row) => {
+        {table.getRowModel().rows.map((row, rowIndex) => {
           const titleCell = row
             .getVisibleCells()
             .find((c) => c.column.id === mobileTitleKey)
@@ -156,7 +156,7 @@ export const Table = <TData extends object>({
                 [styles.container]: isExpanded || isCollapsing,
               })}
               position="relative"
-              paddingTop={3}
+              paddingTop={rowIndex > 0 ? 5 : 3}
               paddingBottom={3}
             >
               <Box
@@ -224,7 +224,7 @@ export const Table = <TData extends object>({
                   </Box>
                 )}
               </Box>
-              <Box marginBottom={2}>
+              <Box marginBottom={isExpanded || isCollapsing ? 0 : 2}>
                 {dataCells.map((cell) => {
                   const headerGroup = table.getHeaderGroups()[0]
                   const header = headerGroup?.headers.find(
