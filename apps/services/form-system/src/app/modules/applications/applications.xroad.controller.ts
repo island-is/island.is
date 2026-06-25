@@ -5,7 +5,6 @@ import {
   Param,
   Query,
   Req,
-  Inject,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import type { Request } from 'express'
@@ -20,13 +19,11 @@ import {
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
 import { ApplicationJsonDto } from './models/dto/application.json.dto'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsXRoadController {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationsXRoadService: ApplicationsXRoadService,
   ) {}
 
@@ -102,10 +99,6 @@ export class ApplicationsXRoadController {
       throw new BadRequestException('Missing required query parameter: s3Key')
     }
     const xRoadClient = this.getValidatedXRoadClient(req)
-    this.logger.info('Fetching file by id via X-Road', {
-      trimmedS3Key,
-      xRoadClient,
-    })
 
     return await this.applicationsXRoadService.getFile(
       trimmedS3Key,
