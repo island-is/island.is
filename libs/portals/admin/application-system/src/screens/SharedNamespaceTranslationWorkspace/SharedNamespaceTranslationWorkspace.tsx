@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
-import { Box, Button, Input, ModalBase, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Input,
+  ModalBase,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ApplicationSystemPaths } from '../../lib/paths'
+import {
+  ApplicationSystemPaths,
+  buildSharedNamespaceTranslationPath,
+} from '../../lib/paths'
 import {
   useGetApplicationSharedNamespaceIntrospectionQuery,
   useGetApplicationTranslationsQuery,
@@ -11,7 +21,10 @@ import {
   usePublishApplicationTranslationsMutation,
   useGoogleTranslateStringsMutation,
 } from '../../queries/translations.generated'
-import type { EditedTranslations, MessageDescriptor } from '../../types/translationWorkspace'
+import type {
+  EditedTranslations,
+  MessageDescriptor,
+} from '../../types/translationWorkspace'
 import {
   getTranslationSaveErrorDetail,
   isTranslationAccessForbiddenError,
@@ -25,7 +38,8 @@ import {
   TranslationWorkspaceNotFound,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
-import * as workspaceStyles from '../TranslationWorkspace/TranslationWorkspace.css'
+import { publishConfirmModal } from '../TranslationWorkspace/TranslationWorkspace.css'
+import * as styles from './SharedNamespaceTranslationWorkspace.css'
 
 const AUTOSAVE_INTERVAL_MS = 60_000
 const GOOGLE_TRANSLATE_BATCH_SIZE = 100
@@ -36,10 +50,11 @@ export const SharedNamespaceTranslationWorkspace = () => {
   const namespace = encodedNamespace ? decodeURIComponent(encodedNamespace) : ''
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useGetApplicationSharedNamespaceIntrospectionQuery({
-    variables: { namespace },
-    skip: !namespace,
-  })
+  const { data, loading, error } =
+    useGetApplicationSharedNamespaceIntrospectionQuery({
+      variables: { namespace },
+      skip: !namespace,
+    })
 
   const introspection = data?.applicationSharedNamespaceIntrospection ?? null
 
@@ -135,7 +150,8 @@ export const SharedNamespaceTranslationWorkspace = () => {
         const { data: translateData } = await googleTranslate({
           variables: { input: { texts: [sourceText] } },
         })
-        const translated = translateData?.googleTranslateStrings?.translations?.[0]
+        const translated =
+          translateData?.googleTranslateStrings?.translations?.[0]
         if (translated) {
           handleValueChange(descriptorId, translated)
         }
@@ -156,11 +172,17 @@ export const SharedNamespaceTranslationWorkspace = () => {
           offset < items.length;
           offset += GOOGLE_TRANSLATE_BATCH_SIZE
         ) {
-          const slice = items.slice(offset, offset + GOOGLE_TRANSLATE_BATCH_SIZE)
+          const slice = items.slice(
+            offset,
+            offset + GOOGLE_TRANSLATE_BATCH_SIZE,
+          )
           const { data: translateData } = await googleTranslate({
-            variables: { input: { texts: slice.map((item) => item.sourceText) } },
+            variables: {
+              input: { texts: slice.map((item) => item.sourceText) },
+            },
           })
-          const translations = translateData?.googleTranslateStrings?.translations ?? []
+          const translations =
+            translateData?.googleTranslateStrings?.translations ?? []
           for (let i = 0; i < slice.length; i++) {
             if (translations[i]) {
               handleValueChange(slice[i].id, translations[i])
@@ -347,12 +369,9 @@ export const SharedNamespaceTranslationWorkspace = () => {
     isReady: isWorkspaceReady,
   })
 
-  if (location.pathname.includes('/thydingar/shared/') && encodedNamespace) {
+  if (location.pathname.includes('/thydingar/shared/') && namespace) {
     return (
-      <Navigate
-        to={`${ApplicationSystemPaths.Translations}/namespaces/${encodedNamespace}`}
-        replace
-      />
+      <Navigate to={buildSharedNamespaceTranslationPath(namespace)} replace />
     )
   }
 
@@ -369,7 +388,12 @@ export const SharedNamespaceTranslationWorkspace = () => {
     if (isTranslationAccessForbiddenError(loadError)) {
       return <TranslationWorkspaceNotFound />
     }
-    return <TranslationWorkspaceError loadError={loadError} title="Error loading shared translations" />
+    return (
+      <TranslationWorkspaceError
+        loadError={loadError}
+        title="Error loading shared translations"
+      />
+    )
   }
 
   if (!introspection) {
@@ -377,12 +401,12 @@ export const SharedNamespaceTranslationWorkspace = () => {
   }
 
   return (
-    <Box className={workspaceStyles.workspaceShell}>
+    <Box className={styles.sharedNamespaceShell}>
       <TranslationWorkspacePageHeader />
 
-      <Box paddingX={[2, 3, 4]} paddingY={3}>
+      <Box paddingY={3}>
         <Box marginBottom={3}>
-          <Link to={ApplicationSystemPaths.Translations}>
+          <Link to={ApplicationSystemPaths.Root}>
             <Button variant="text" size="small">
               {formatMessage(m.translationBackToList)}
             </Button>
@@ -429,7 +453,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
 
       <ModalBase
         baseId="sharedNamespacePublishConfirmModal"
-        className={workspaceStyles.publishConfirmModal}
+        className={publishConfirmModal}
         isVisible={publishConfirmVisible}
         hideOnClickOutside
         onVisibilityChange={(visible) => {

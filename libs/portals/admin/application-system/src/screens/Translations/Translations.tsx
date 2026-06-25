@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ApplicationSystemPaths } from '../../lib/paths'
+import { buildSharedNamespaceTranslationPath } from '../../lib/paths'
 import {
   useGetApplicationSharedNamespaceListQuery,
   useGetApplicationTemplateListQuery,
@@ -134,9 +134,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
                       variant="text"
                       size="small"
                       onClick={() =>
-                        navigate(
-                          `${ApplicationSystemPaths.Translations}/namespaces/${encodeURIComponent(entry.namespace)}`,
-                        )
+                        navigate(buildSharedNamespaceTranslationPath(entry.namespace))
                       }
                     >
                       {formatMessage(m.translationOpen)}

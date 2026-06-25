@@ -11,7 +11,8 @@ import {
 import { useNamespaces } from '@island.is/localization'
 
 import {
-  ApplicationSystemPaths,
+  isApplicationTranslationWorkspacePath,
+  isSharedNamespaceTranslationPath,
   TranslationWorkspaceHeaderBridgeProvider,
 } from '@island.is/portals/admin/application-system'
 
@@ -124,14 +125,17 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const { pathname } = useLocation()
   const { layout = 'default' } = activeModule || {}
 
-  const onApplicationTranslationsRoute =
-    pathname === ApplicationSystemPaths.Translations ||
-    pathname.startsWith(`${ApplicationSystemPaths.Translations}/`)
+  const onApplicationTranslationWorkspaceRoute =
+    isApplicationTranslationWorkspacePath(pathname)
+  const onSharedNamespaceTranslationRoute =
+    isSharedNamespaceTranslationPath(pathname)
 
   const pageBackground: LayoutModuleContainerProps['pageBackground'] =
-    layout === 'full' && onApplicationTranslationsRoute
+    layout === 'full' && onApplicationTranslationWorkspaceRoute
       ? fullLayoutBackground
       : 'white'
+
+  const effectiveLayout = onSharedNamespaceTranslationRoute ? 'default' : layout
 
   if (modules.length === 0) {
     return (
@@ -146,9 +150,9 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <LayoutOuterContainer>
       <LayoutModuleContainer
-        layout={!activeModule ? 'none' : layout}
+        layout={!activeModule ? 'none' : effectiveLayout}
         pageBackground={pageBackground}
-        fullBleed={onApplicationTranslationsRoute}
+        fullBleed={onApplicationTranslationWorkspaceRoute}
       >
         {children}
       </LayoutModuleContainer>
