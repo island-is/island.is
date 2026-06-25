@@ -147,7 +147,7 @@ export class CustomsCalculatorClientService {
         stykki: input.unitCount,
         sykur: input.sugar,
         tollurKodi: input.customsCode,
-        voruverd: input.priceWithShipping,
+        voruverd: input.priceWithShipping || '0',
         wltpUtblastur: input.wltpEmission,
         wltpVigtadUtblastur: input.wltpWeightedEmission,
         nedcUtblastur: input.nedcEmission,
