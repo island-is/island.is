@@ -119,6 +119,7 @@ describe('HousingBenefitsService notifications', () => {
           provide: HmsHousingBenefitsClientService,
           useValue: {
             createHousingBenefitsApplication,
+            hasTaxReturnForYear: jest.fn().mockResolvedValue(true),
           },
         },
       ],
