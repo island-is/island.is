@@ -1,63 +1,77 @@
+// Android's PdfRenderer (used by @kishannareshpal/expo-pdf) does not render
+// AcroForm field appearances, so filled-in form fields show up blank on
+// Android while rendering fine on iOS and the web. On Android we flatten the
+// form with pdf-lib before display — this bakes the field appearances into
+// the page content stream so PdfRenderer shows them.
 import { DdLogs } from '@datadog/mobile-react-native'
-import { memo, useState } from 'react'
-import { Platform } from 'react-native'
-import Pdf from 'react-native-pdf'
+import { PdfView } from '@kishannareshpal/expo-pdf'
+import * as FileSystem from 'expo-file-system'
+import { PDFDocument } from 'pdf-lib'
+import { memo, useEffect, useState } from 'react'
+import { Platform, ViewStyle } from 'react-native'
 
 interface PdfViewerProps {
-  url: string
-  subject: string
-  senderName: string
-  onLoaded: (path: string) => void
-  onError: (err: Error) => void
+  uri: string
+  style?: ViewStyle
 }
 
-export const PdfViewer = memo(
-  ({ url, subject, senderName, onLoaded, onError }: PdfViewerProps) => {
-    const [actualUrl, setActualUrl] = useState(url)
-    const extraProps = {
-      activityIndicatorProps: {
-        color: '#0061ff',
-        progressTintColor: '#ccdfff',
-      },
+export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
+  const [effectiveUri, setEffectiveUri] = useState<string | null>(
+    Platform.OS === 'android' ? null : uri,
+  )
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      setEffectiveUri(uri)
+      return
+    }
+    let cancelled = false
+
+    const flattenIfNeeded = async () => {
+      try {
+        const cacheDir = new FileSystem.Directory(FileSystem.Paths.cache)
+        const baseName =
+          uri.split('/').pop()?.replace(/\.pdf$/i, '') ?? 'doc'
+        const flatFile = new FileSystem.File(cacheDir, `${baseName}.flat.pdf`)
+        if (flatFile.exists) {
+          if (!cancelled) setEffectiveUri(flatFile.uri)
+          return
+        }
+
+        const sourceFile = new FileSystem.File(uri)
+        const bytes = await sourceFile.bytes()
+        const doc = await PDFDocument.load(bytes, { ignoreEncryption: true })
+        const form = doc.getForm()
+        if (form.getFields().length === 0) {
+          if (!cancelled) setEffectiveUri(uri)
+          return
+        }
+        form.flatten()
+        const flatBytes = await doc.save()
+        flatFile.write(flatBytes)
+        if (!cancelled) setEffectiveUri(flatFile.uri)
+      } catch (e) {
+        const err = e as Error
+        console.warn(
+          'Pdf flatten failed, falling back to original:',
+          err?.message,
+          err?.stack,
+        )
+        DdLogs.warn('Pdf flatten failed, falling back to original', {
+          error: err?.message,
+        })
+        if (!cancelled) setEffectiveUri(uri)
+      }
     }
 
-    return (
-      <Pdf
-        spacing={0}
-        source={{ uri: actualUrl }}
-        onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath)
-        }}
-        onError={(err) => {
-          // Send error to Datadog with document subject and sender name
-          DdLogs.warn(`PDF error for document "${subject}"`, {
-            error: (err as Error)?.message,
-            documentTitle: subject,
-            documentSenderName: senderName,
-          })
-
-          // Check if actualUrl contains any whitespace character and update if needed
-          // The Base64 logic on iOS does not support whitespace.
-          if (/\s/.test(actualUrl)) {
-            const cleanedUrl = actualUrl.replace(/\s/g, '')
-            setActualUrl(cleanedUrl)
-          } else {
-            onError?.(err as Error)
-          }
-        }}
-        trustAllCerts={Platform.select({ android: false, ios: undefined })}
-        style={{
-          flex: 1,
-          backgroundColor: 'transparent',
-        }}
-        {...extraProps}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.url === nextProps.url) {
-      return true
+    flattenIfNeeded()
+    return () => {
+      cancelled = true
     }
-    return false
-  },
-)
+  }, [uri])
+
+  if (!effectiveUri) return null
+  return <PdfView uri={effectiveUri} style={style ?? { flex: 1 }} />
+})
+
+PdfViewer.displayName = 'PdfViewer'
