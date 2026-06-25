@@ -17,9 +17,9 @@ import {
 } from 'react-native'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
+import { PdfView } from '@kishannareshpal/expo-pdf'
 
 import { ButtonDrawer } from '@/components/button-drawer'
-import { PdfViewer } from '@/components/pdf-viewer/pdf-viewer'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { DocumentV2 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
@@ -304,7 +304,7 @@ export default function DocumentScreen() {
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
         ) : contentType === 'pdf' && pdfUri ? (
-          <PdfViewer key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
+          <PdfView key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
         ) : contentType === 'html' && htmlSource ? (
           <WebView source={htmlSource} scalesPageToFit />
         ) : contentType === 'url' && document.content?.value ? (

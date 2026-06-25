@@ -1,0 +1,15 @@
+diff --git a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
+index c0ff8613559cdec72138493e5dcd91fa84b97d94..a7515031dfa0732a4918caf9300119fa7af526eb 100644
+--- a/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
++++ b/android/src/main/java/com/kishannareshpal/expopdf/KJExpoPdfView.kt
+@@ -147,6 +147,10 @@ class KJExpoPdfView(context: Context, appContext: AppContext) : ExpoView(context
+     }
+ 
+     pdfBuilder
++      // Render AcroForm field widgets. Without this, filled-in form fields
++      // are blank on Android because the underlying Pdfium FFLDraw pass is
++      // gated on annotation rendering being enabled.
++      .enableAnnotationRendering(true)
+       .pageFitPolicy(this.fitMode.toFitPolicy())
+       .enableDoubletap(this.isDoubleTapZoomEnabled)
+       .swipeHorizontal(this.isHorizontalModeEnabled)
