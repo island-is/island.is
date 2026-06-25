@@ -6,14 +6,15 @@ import { startMocking } from '@island.is/shared/mocking'
 import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
-import { CodeTableV5 } from '../v5'
+import { CodeTableV6, ImageApiV6 } from '../v6'
 
 import { MOCK_TOKEN, requestHandlers } from './__mock-data__/requestHandlers'
 
 startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
   let service: DrivingLicenseApi
-  let codeTable: CodeTableV5
+  let codeTable: CodeTableV6
+  let imageApi: ImageApiV6
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -29,7 +30,8 @@ describe('DrivingLicenseDuplicateService', () => {
     }).compile()
 
     service = module.get(DrivingLicenseApi)
-    codeTable = module.get(CodeTableV5)
+    codeTable = module.get(CodeTableV6)
+    imageApi = module.get(ImageApiV6)
   })
 
   describe('Service', () => {
@@ -39,7 +41,17 @@ describe('DrivingLicenseDuplicateService', () => {
   })
 
   describe('Photo And Signature', () => {
+    // v6 sends no per-person token on the request (identity comes from the
+    // forwarded X-Road token), so these scenarios spy on the v6 ImageApi
+    // directly rather than routing by a jwttoken header.
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
     it('GetHasQualityPhoto for a person with no photo', async () => {
+      jest
+        .spyOn(imageApi, 'apiImagecontrollerV6HasqualityphotoGet')
+        .mockResolvedValue(0)
       const response = await service.getHasQualityPhoto({
         token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
@@ -47,6 +59,9 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualityPhoto for a person with photo', async () => {
+      jest
+        .spyOn(imageApi, 'apiImagecontrollerV6HasqualityphotoGet')
+        .mockResolvedValue(1)
       const response = await service.getHasQualityPhoto({
         token: MOCK_TOKEN.LICENSE_B_CATEGORY,
       })
@@ -54,6 +69,9 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualitySignature for a person with no signature', async () => {
+      jest
+        .spyOn(imageApi, 'apiImagecontrollerV6HasqualitysignatureGet')
+        .mockResolvedValue(0)
       const response = await service.getHasQualitySignature({
         token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
@@ -61,6 +79,9 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualitySignature for a person with signature', async () => {
+      jest
+        .spyOn(imageApi, 'apiImagecontrollerV6HasqualitysignatureGet')
+        .mockResolvedValue(1)
       const response = await service.getHasQualitySignature({
         token: MOCK_TOKEN.LICENSE_B_CATEGORY,
       })
@@ -108,7 +129,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('fetches the catalogue once and memoises a non-empty result', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockResolvedValue(sampleCatalogue)
 
       const first = await service.getErrorCodeDescriptions()
@@ -121,7 +142,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('does not memoise an empty body — retries on the next call', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce(sampleCatalogue)
 
@@ -135,7 +156,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('does not memoise a failure — retries on the next call', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockRejectedValueOnce(new Error('codetable down'))
         .mockResolvedValueOnce(sampleCatalogue)
 
