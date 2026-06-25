@@ -22,9 +22,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
   }
 
   async canGetNewDuplicate({ auth }: TemplateApiModuleActionProps) {
-    const can = await this.drivingLicenseService.canGetNewDuplicate(
-      auth.authorization,
-    )
+    const can = await this.drivingLicenseService.canGetNewDuplicate(auth)
     if (!can.canGetNewDuplicate) {
       let summary =
         coreErrorMessages.drivingLicenseDuplicateEntryValidationSign400Error
@@ -101,7 +99,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       .drivingLicenseDuplicateSubmission({
         pickUpLicense: Boolean(pickUpLicense),
         districtId: pickUpLicense ? parseInt(districtId) : 37,
-        token: auth.authorization,
+        auth,
         stolenOrLost: true,
         imageBiometricsId: imageBiometricsId,
         signatureBiometricsId: signatureBiometricsId,
