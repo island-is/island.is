@@ -476,6 +476,39 @@ function extractStaticText(text: StaticText | undefined): string | null {
   return null
 }
 
+function resolveTemplateDisplayName(
+  template: { name?: unknown },
+  fallback: string,
+): string {
+  if (typeof template.name === 'function') {
+    const { staticText } = tryInvokeFormTextFunction(template.name as Function)
+    return staticText ?? fallback
+  }
+  return extractStaticText(template.name as StaticText) ?? fallback
+}
+
+const templateDisplayNameCache = new Map<string, string>()
+
+async function getTemplateDisplayName(
+  typeId: ApplicationTypes,
+  fallback: string,
+): Promise<string> {
+  const cached = templateDisplayNameCache.get(typeId)
+  if (cached) {
+    return cached
+  }
+
+  try {
+    const template = await getApplicationTemplateByTypeId(typeId)
+    const name = resolveTemplateDisplayName(template, fallback)
+    templateDisplayNameCache.set(typeId, name)
+    return name
+  } catch {
+    templateDisplayNameCache.set(typeId, fallback)
+    return fallback
+  }
+}
+
 function isMessageDescriptor(obj: unknown): obj is MessageDescriptor {
   return (
     typeof obj === 'object' &&
@@ -2386,13 +2419,12 @@ export class TemplateIntrospectionService {
       throw new Error(`No configuration found for template ${typeId}`)
     }
 
-    const translationNamespaces = Array.isArray(config.translation)
-      ? config.translation
-      : [config.translation]
-
-    if (template.translationNamespaces) {
-      translationNamespaces.push(...template.translationNamespaces)
-    }
+    const translationNamespaces = [
+      ...(Array.isArray(config.translation)
+        ? config.translation
+        : [config.translation]),
+      ...(template.translationNamespaces ?? []),
+    ]
 
     let customFieldManifest: Record<string, MessageDescriptorInfo[]> = {}
     try {
@@ -2458,10 +2490,6 @@ export class TemplateIntrospectionService {
       })
     }
 
-    const templateName = extractStaticText(
-      typeof template.name === 'function' ? undefined : (template.name as StaticText),
-    )
-
     let validationDescriptors: ValidationMessageDescriptorInfo[] = []
     try {
       validationDescriptors = extractValidationDescriptors(template.dataSchema)
@@ -2481,7 +2509,7 @@ export class TemplateIntrospectionService {
 
     return {
       typeId,
-      name: templateName ?? config.slug,
+      name: resolveTemplateDisplayName(template, config.slug),
       slug: config.slug,
       translationNamespaces: [...new Set(translationNamespaces)],
       states,
@@ -2501,30 +2529,37 @@ export class TemplateIntrospectionService {
     const allowedSet =
       allowedTypeIds != null ? new Set(allowedTypeIds) : undefined
 
-    const templates: Array<{
-      typeId: string
-      name: string
-      slug: string
-      translationNamespaces: string[]
-    }> = []
+    const entries = Object.entries(ApplicationConfigurations).filter(
+      ([typeId]) => !allowedSet || allowedSet.has(typeId),
+    )
 
-    for (const [typeId, config] of Object.entries(ApplicationConfigurations)) {
-      if (allowedSet && !allowedSet.has(typeId)) {
-        continue
-      }
+    return Promise.all(
+      entries.map(async ([typeId, config]) => {
+        const translationNamespaces = [
+          ...new Set(
+            Array.isArray(config.translation)
+              ? config.translation
+              : [config.translation],
+          ),
+        ]
 
-      const translationNamespaces = Array.isArray(config.translation)
-        ? config.translation
-        : [config.translation]
+        let name = config.slug
+        try {
+          name = await getTemplateDisplayName(
+            typeId as ApplicationTypes,
+            config.slug,
+          )
+        } catch {
+          // Keep slug fallback when template cannot be loaded.
+        }
 
-      templates.push({
-        typeId,
-        name: config.slug,
-        slug: config.slug,
-        translationNamespaces,
-      })
-    }
-
-    return templates
+        return {
+          typeId,
+          name,
+          slug: config.slug,
+          translationNamespaces,
+        }
+      }),
+    )
   }
 }

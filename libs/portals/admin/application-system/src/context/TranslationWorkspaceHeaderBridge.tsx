@@ -13,9 +13,11 @@ import {
 } from 'react'
 
 import type { FormatMessage } from '@island.is/localization'
+import { useNavigate } from 'react-router-dom'
 import { Box, Button, Inline, Tabs, Text } from '@island.is/island-ui/core'
 
 import { m } from '../lib/messages'
+import { ApplicationSystemPaths } from '../lib/paths'
 
 export type TranslationWorkspacePreviewLocale = 'is' | 'en'
 
@@ -25,7 +27,7 @@ export type TranslationWorkspaceHeaderChrome = {
   hasUnsavedChanges: boolean
   unsavedCount: number
   saving: boolean
-  onSaveAll: () => void
+  onSaveAll: () => void | Promise<boolean>
   formatMessage: FormatMessage
   showValidationErrors: boolean
   onToggleValidationErrors: () => void
@@ -214,6 +216,47 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     setWorkspaceChrome(chrome)
     return undefined
   }, [isReady, chrome, setWorkspaceChrome])
+}
+
+export const TranslationWorkspaceHeaderBackButton = () => {
+  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
+  const chrome = ctx?.workspaceChrome
+  const navigate = useNavigate()
+  const [navigating, setNavigating] = useState(false)
+
+  const handleBack = useCallback(async () => {
+    if (!chrome || navigating || chrome.saving) {
+      return
+    }
+
+    setNavigating(true)
+    try {
+      if (chrome.hasUnsavedChanges) {
+        const saved = await chrome.onSaveAll()
+        if (saved === false) {
+          return
+        }
+      }
+      navigate(ApplicationSystemPaths.Root)
+    } finally {
+      setNavigating(false)
+    }
+  }, [chrome, navigate, navigating])
+
+  if (!chrome) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="text"
+      size="small"
+      loading={navigating || chrome.saving}
+      onClick={handleBack}
+    >
+      {chrome.formatMessage(m.translationBackToList)}
+    </Button>
+  )
 }
 
 export const TranslationWorkspaceHeaderLanguageTabs = () => {

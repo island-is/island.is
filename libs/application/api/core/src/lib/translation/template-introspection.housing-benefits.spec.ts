@@ -1,5 +1,8 @@
 import { TemplateIntrospectionService } from './template-introspection.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+} from '@island.is/application/types'
 
 describe('TemplateIntrospectionService HousingBenefits', () => {
   it('returns JSON-serializable introspection with string ids on every screen', async () => {
@@ -42,5 +45,33 @@ describe('TemplateIntrospectionService HousingBenefits', () => {
     }
 
     expect(missingIds).toEqual([])
+  })
+
+  it('does not mutate ApplicationConfigurations when introspecting shared namespace arrays', async () => {
+    const svc = new TemplateIntrospectionService()
+    const config = ApplicationConfigurations[ApplicationTypes.HOUSING_BENEFITS]
+    const originalNamespaces = [...config.translation]
+
+    await svc.introspectTemplate(ApplicationTypes.HOUSING_BENEFITS)
+
+    expect(config.translation).toEqual(originalNamespaces)
+    expect(config.translation).toHaveLength(2)
+  })
+
+  it('listTemplates returns unique namespaces for HousingBenefits', async () => {
+    const svc = new TemplateIntrospectionService()
+
+    await svc.introspectTemplate(ApplicationTypes.HOUSING_BENEFITS)
+
+    const templates = await svc.listTemplates()
+    const housingBenefits = templates.find(
+      (template) => template.typeId === ApplicationTypes.HOUSING_BENEFITS,
+    )
+
+    expect(housingBenefits?.translationNamespaces).toEqual([
+      'hb.application',
+      'uiForms.application',
+    ])
+    expect(housingBenefits?.name).toBe('Húsnæðisbætur')
   })
 })

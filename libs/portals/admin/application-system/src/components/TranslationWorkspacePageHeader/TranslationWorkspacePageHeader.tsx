@@ -1,5 +1,6 @@
 import { Box } from '@island.is/island-ui/core'
 import {
+  TranslationWorkspaceHeaderBackButton,
   TranslationWorkspaceHeaderLanguageTabs,
   TranslationWorkspaceHeaderSaveButton,
   TranslationWorkspaceHeaderPublishButton,
@@ -9,9 +10,11 @@ import {
 export const TranslationWorkspacePageHeader = () => (
   <Box
     display={['flex', 'flex', 'none']}
-    justifyContent="flexEnd"
+    justifyContent="spaceBetween"
+    alignItems="center"
     columnGap={2}
   >
+    <TranslationWorkspaceHeaderBackButton />
     <Box
       display="flex"
       justifyContent="flexEnd"

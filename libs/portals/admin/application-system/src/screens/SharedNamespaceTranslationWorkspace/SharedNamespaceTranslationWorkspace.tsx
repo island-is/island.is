@@ -197,7 +197,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     [googleTranslate, handleValueChange],
   )
 
-  const handleSaveAll = useCallback(async () => {
+  const handleSaveAll = useCallback(async (): Promise<boolean> => {
     const dirtyByKey = new Map<string, { valueIs?: string; valueEn?: string }>()
 
     for (const locale of ['is', 'en'] as const) {
@@ -218,7 +218,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
       }),
     )
 
-    if (translationsToSave.length === 0) return
+    if (translationsToSave.length === 0) return true
 
     try {
       const { data: mutationData } = await bulkUpdate({
@@ -232,17 +232,20 @@ export const SharedNamespaceTranslationWorkspace = () => {
         await refetchTranslations()
         setEditedValues({ is: {}, en: {} })
         toast.success(formatMessage(m.translationSave))
-      } else {
-        toast.error(
-          formatMessage(m.translationSaveFailed, {
-            detail: 'Engin gögn komu til baka frá vefþjónustu.',
-          }),
-        )
+        return true
       }
+
+      toast.error(
+        formatMessage(m.translationSaveFailed, {
+          detail: 'Engin gögn komu til baka frá vefþjónustu.',
+        }),
+      )
+      return false
     } catch (err) {
       const detail = getTranslationSaveErrorDetail(err)
       console.error('bulkUpdateApplicationTranslations failed', err)
       toast.error(formatMessage(m.translationSaveFailed, { detail }))
+      return false
     }
   }, [
     editedValues,

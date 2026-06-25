@@ -9,6 +9,7 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import {
+  TranslationWorkspaceHeaderBackButton,
   TranslationWorkspaceHeaderLanguageTabs,
   TranslationWorkspaceHeaderSaveButton,
   TranslationWorkspaceHeaderPublishButton,
@@ -58,6 +59,7 @@ export const Header = () => {
                     columnGap={2}
                     marginRight={[1, 1, 2]}
                   >
+                    <TranslationWorkspaceHeaderBackButton />
                     <TranslationWorkspaceHeaderSaveButton />
                     <TranslationWorkspaceHeaderPublishButton />
                     <TranslationWorkspaceHeaderLanguageTabs />

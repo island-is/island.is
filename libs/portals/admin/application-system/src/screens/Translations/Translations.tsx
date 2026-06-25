@@ -51,11 +51,14 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
   const templates = data?.applicationTemplateList ?? []
   const sharedNamespaces = sharedData?.applicationSharedNamespaceList ?? []
 
-  const filtered = templates.filter(
-    (template) =>
-      template.slug.toLowerCase().includes(searchValue.toLowerCase()) ||
-      template.typeId.toLowerCase().includes(searchValue.toLowerCase()),
-  )
+  const filtered = templates.filter((template) => {
+    const search = searchValue.toLowerCase()
+    return (
+      template.name.toLowerCase().includes(search) ||
+      template.slug.toLowerCase().includes(search) ||
+      template.typeId.toLowerCase().includes(search)
+    )
+  })
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -195,7 +198,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
           {pageItems.map((template) => (
             <T.Row key={template.typeId}>
               <T.Data>
-                <Text variant="small">{template.typeId}</Text>
+                <Text variant="small">{template.name}</Text>
               </T.Data>
               <T.Data>
                 <Text variant="small">{template.slug}</Text>
