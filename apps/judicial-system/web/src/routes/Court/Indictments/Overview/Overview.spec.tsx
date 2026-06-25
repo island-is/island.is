@@ -10,7 +10,10 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase, mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import Overview from './Overview'
