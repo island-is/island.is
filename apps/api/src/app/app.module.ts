@@ -342,7 +342,7 @@ const environment = getConfig
         .documentProviderAdmins as string,
     }),
     ApplicationTranslationHttpModule.register({
-      baseUrl: environment.applicationSystem.baseApiUrl as string,
+      baseUrl: environment.applicationSystem.baseApiUrl ?? '',
     }),
     CmsTranslationsModule,
     TerminusModule,
