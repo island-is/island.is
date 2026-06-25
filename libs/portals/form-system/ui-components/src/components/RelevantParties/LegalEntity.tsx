@@ -49,7 +49,7 @@ export const LegalEntity = ({
               nationalId={nationalId}
               name={companyData?.formSystemCompanyByNationalId?.name}
             />
-            <GridRow>
+            {/* <GridRow>
               <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
                 <Input
                   label={formatMessage(m.address)}
@@ -76,7 +76,7 @@ export const LegalEntity = ({
                   />
                 </Box>
               </GridColumn>
-            </GridRow>
+            </GridRow> */}
           </>
         )}
       </Stack>
