@@ -37,7 +37,9 @@ export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
             ?.replace(/\.pdf$/i, '') ?? 'doc'
         const flatFile = new FileSystem.File(cacheDir, `${baseName}.flat.pdf`)
         if (flatFile.exists) {
-          if (!cancelled) setEffectiveUri(flatFile.uri)
+          if (!cancelled) {
+            setEffectiveUri(flatFile.uri)
+          }
           return
         }
 
@@ -46,13 +48,17 @@ export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
         const doc = await PDFDocument.load(bytes, { ignoreEncryption: true })
         const form = doc.getForm()
         if (form.getFields().length === 0) {
-          if (!cancelled) setEffectiveUri(uri)
+          if (!cancelled) {
+            setEffectiveUri(uri)
+          }
           return
         }
         form.flatten()
         const flatBytes = await doc.save()
         flatFile.write(flatBytes)
-        if (!cancelled) setEffectiveUri(flatFile.uri)
+        if (!cancelled) {
+          setEffectiveUri(flatFile.uri)
+        }
       } catch (e) {
         const err = e as Error
         console.warn(
@@ -63,7 +69,9 @@ export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
         DdLogs.warn('Pdf flatten failed, falling back to original', {
           error: err?.message,
         })
-        if (!cancelled) setEffectiveUri(uri)
+        if (!cancelled) {
+          setEffectiveUri(uri)
+        }
       }
     }
 
@@ -73,7 +81,9 @@ export const PdfViewer = memo(({ uri, style }: PdfViewerProps) => {
     }
   }, [uri])
 
-  if (!effectiveUri) return null
+  if (!effectiveUri) {
+    return null
+  }
   return <PdfView uri={effectiveUri} style={style ?? { flex: 1 }} />
 })
 
