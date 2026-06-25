@@ -8,7 +8,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { encodeTranslationNamespaceForUrlPath } from '@island.is/application/utils'
 import type {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
@@ -109,7 +108,9 @@ export class ApplicationTranslationApiService {
   }
 
   private namespacePath(namespace: string, suffix: string): string {
-    return `/${encodeTranslationNamespaceForUrlPath(namespace)}${suffix}`
+    // Dots are not encoded by encodeURIComponent; match application-system URL encoding.
+    const encodedNamespace = encodeURIComponent(namespace).replace(/\./g, '%2E')
+    return `/${encodedNamespace}${suffix}`
   }
 
   async getTranslationsByNamespace(
