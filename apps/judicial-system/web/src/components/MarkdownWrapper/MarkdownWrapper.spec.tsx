@@ -4,9 +4,7 @@ import MarkdownWrapper from './MarkdownWrapper'
 
 describe('MarkdownWrapper', () => {
   test('preserves the semantic heading level of each markdown heading', () => {
-    render(
-      <MarkdownWrapper markdown={'# First\n\n## Second\n\n### Third'} />,
-    )
+    render(<MarkdownWrapper markdown={'# First\n\n## Second\n\n### Third'} />)
 
     // Headings keep their level instead of all collapsing to the same element.
     expect(
