@@ -22,6 +22,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   ApplicationTranslationService,
+  SharedNamespaceIntrospectionService,
   TemplateIntrospectionService,
   TranslationAccessService,
 } from '@island.is/application/api/core'
@@ -48,6 +49,7 @@ export class TranslationController {
   constructor(
     private readonly translationService: ApplicationTranslationService,
     private readonly introspectionService: TemplateIntrospectionService,
+    private readonly sharedNamespaceIntrospectionService: SharedNamespaceIntrospectionService,
     private readonly translationAccessService: TranslationAccessService,
     private readonly cmsTranslationsService: CmsTranslationsService,
   ) {}
@@ -90,6 +92,29 @@ export class TranslationController {
       typeId as ApplicationTypes,
       stateKey,
       roleId,
+    )
+  }
+
+  @Scopes(...TRANSLATION_SCOPES)
+  @Get('shared/list')
+  async listSharedNamespaces(@CurrentUser() user: User) {
+    this.translationAccessService.assertGlobalTranslationAccess(user)
+    return this.sharedNamespaceIntrospectionService.listSharedNamespaces()
+  }
+
+  @Scopes(...TRANSLATION_SCOPES)
+  @Get('shared/introspect')
+  async introspectSharedNamespace(
+    @CurrentUser() user: User,
+    @Query('namespace') namespace: string,
+  ) {
+    if (!namespace?.trim()) {
+      throw new BadRequestException('Query parameter namespace is required')
+    }
+
+    this.translationAccessService.assertNamespaceAccess(user, namespace)
+    return this.sharedNamespaceIntrospectionService.introspectSharedNamespace(
+      namespace,
     )
   }
 
@@ -145,10 +170,7 @@ export class TranslationController {
 
   @Scopes(...TRANSLATION_SCOPES)
   @Post(':id/review')
-  async reviewTranslation(
-    @Param('id') id: string,
-    @CurrentUser() user: User,
-  ) {
+  async reviewTranslation(@Param('id') id: string, @CurrentUser() user: User) {
     const translation = await this.translationService.getTranslationById(id)
     if (!translation) {
       throw new NotFoundException('Translation not found')

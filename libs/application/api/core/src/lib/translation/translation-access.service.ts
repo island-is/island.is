@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   getAllowedTranslationTypeIds,
+  hasGlobalTranslationAccess,
   isTranslationNamespaceAllowed,
   isTranslationTypeIdAllowed,
 } from '@island.is/application/utils'
@@ -20,6 +21,14 @@ export class TranslationAccessService {
     if (!isTranslationNamespaceAllowed(user, namespace)) {
       throw new ForbiddenException(
         'You do not have access to translate this namespace',
+      )
+    }
+  }
+
+  assertGlobalTranslationAccess(user: User): void {
+    if (!hasGlobalTranslationAccess(user)) {
+      throw new ForbiddenException(
+        'You do not have access to manage shared translation namespaces',
       )
     }
   }

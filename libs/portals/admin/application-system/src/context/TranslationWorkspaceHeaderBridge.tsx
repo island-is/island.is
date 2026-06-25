@@ -29,6 +29,7 @@ export type TranslationWorkspaceHeaderChrome = {
   formatMessage: FormatMessage
   showValidationErrors: boolean
   onToggleValidationErrors: () => void
+  showValidationToggle?: boolean
   hasDraftChanges: boolean
   publishing: boolean
   onPublish: () => void
@@ -95,6 +96,7 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   formatMessage,
   showValidationErrors,
   onToggleValidationErrors,
+  showValidationToggle = true,
   hasDraftChanges,
   publishing,
   onPublish,
@@ -172,6 +174,7 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       formatMessage: stableFormatMessage,
       showValidationErrors,
       onToggleValidationErrors: stableOnToggleValidationErrors,
+      showValidationToggle,
       hasDraftChanges,
       publishing,
       onPublish: stableOnPublish,
@@ -188,6 +191,7 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       stableFormatMessage,
       showValidationErrors,
       stableOnToggleValidationErrors,
+      showValidationToggle,
       hasDraftChanges,
       publishing,
       stableOnPublish,
@@ -297,7 +301,7 @@ export const TranslationWorkspaceHeaderValidationToggle = () => {
   const ctx = useTranslationWorkspaceHeaderBridgeOptional()
   const chrome = ctx?.workspaceChrome
 
-  if (!chrome) {
+  if (!chrome || chrome.showValidationToggle === false) {
     return null
   }
 

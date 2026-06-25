@@ -5,9 +5,13 @@ import {
 } from '@island.is/application/types'
 
 import {
+  CORE_TRANSLATION_NAMESPACE,
   getAllowedTranslationTypeIds,
+  getSharedTranslationNamespaces,
   getTypeIdsForNamespace,
+  encodeTranslationNamespaceForUrlPath,
   hasGlobalTranslationAccess,
+  isSharedTranslationNamespace,
   isTranslationNamespaceAllowed,
   isTranslationTypeIdAllowed,
 } from './translationAccessUtils'
@@ -131,6 +135,55 @@ describe('translationAccessUtils', () => {
     it('allows any namespace for super admin', () => {
       expect(isTranslationNamespaceAllowed(superAdminUser, 'pa.application')).toBe(
         true,
+      )
+    })
+
+    it('denies core namespace for institution user', () => {
+      expect(
+        isTranslationNamespaceAllowed(hmsUser, CORE_TRANSLATION_NAMESPACE),
+      ).toBe(false)
+    })
+  })
+
+  describe('getSharedTranslationNamespaces', () => {
+    it('always includes application.system', () => {
+      const namespaces = getSharedTranslationNamespaces()
+      expect(namespaces.some((entry) => entry.namespace === CORE_TRANSLATION_NAMESPACE)).toBe(
+        true,
+      )
+    })
+
+    it('includes namespaces used by at least two application types', () => {
+      const uiForms = getSharedTranslationNamespaces().find(
+        (entry) => entry.namespace === 'uiForms.application',
+      )
+      expect(uiForms).toBeDefined()
+      expect(uiForms?.usedByCount).toBeGreaterThanOrEqual(2)
+    })
+
+    it('excludes single-app namespaces', () => {
+      const rentalAgreementNamespace = getSharedTranslationNamespaces().find(
+        (entry) => entry.namespace === 'ra.application',
+      )
+      expect(rentalAgreementNamespace).toBeUndefined()
+    })
+  })
+
+  describe('isSharedTranslationNamespace', () => {
+    it('returns true for core and multi-app namespaces', () => {
+      expect(isSharedTranslationNamespace(CORE_TRANSLATION_NAMESPACE)).toBe(true)
+      expect(isSharedTranslationNamespace('uiForms.application')).toBe(true)
+    })
+
+    it('returns false for single-app namespaces', () => {
+      expect(isSharedTranslationNamespace('ra.application')).toBe(false)
+    })
+  })
+
+  describe('encodeTranslationNamespaceForUrlPath', () => {
+    it('encodes dots in namespace for URL paths', () => {
+      expect(encodeTranslationNamespaceForUrlPath('application.system')).toBe(
+        'application%2Esystem',
       )
     })
   })

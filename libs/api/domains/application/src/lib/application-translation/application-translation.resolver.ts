@@ -14,6 +14,8 @@ import {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
   GoogleTranslateResultGql,
+  SharedNamespaceIntrospectionGql,
+  SharedTranslationNamespaceListItemGql,
   TemplateIntrospectionGql,
   TemplateListItemGql,
   TranslationPublishGql,
@@ -168,6 +170,23 @@ export class ApplicationTranslationResolver {
     @Args('typeId') typeId: string,
   ): Promise<TemplateIntrospectionGql> {
     return this.translationService.introspectTemplate(user, typeId)
+  }
+
+  @Query(() => [SharedTranslationNamespaceListItemGql], { nullable: true })
+  @Scopes(...TRANSLATION_SCOPES)
+  async applicationSharedNamespaceList(
+    @CurrentUser() user: User,
+  ): Promise<SharedTranslationNamespaceListItemGql[]> {
+    return this.translationService.listSharedNamespaces(user)
+  }
+
+  @Query(() => SharedNamespaceIntrospectionGql, { nullable: true })
+  @Scopes(...TRANSLATION_SCOPES)
+  async applicationSharedNamespaceIntrospection(
+    @CurrentUser() user: User,
+    @Args('namespace') namespace: string,
+  ): Promise<SharedNamespaceIntrospectionGql> {
+    return this.translationService.introspectSharedNamespace(user, namespace)
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })

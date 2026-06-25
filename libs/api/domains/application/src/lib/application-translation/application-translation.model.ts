@@ -494,6 +494,27 @@ export class TemplateListItemGql {
 }
 
 @ObjectType()
+export class SharedTranslationNamespaceListItemGql {
+  @Field()
+  namespace!: string
+
+  @Field(() => Int)
+  usedByCount!: number
+
+  @Field(() => [String])
+  usedByTypeIds!: string[]
+}
+
+@ObjectType()
+export class SharedNamespaceIntrospectionGql {
+  @Field()
+  namespace!: string
+
+  @Field(() => [MessageDescriptorGql])
+  messageDescriptors!: MessageDescriptorGql[]
+}
+
+@ObjectType()
 export class TranslationPublishGql {
   @Field(() => ID)
   id!: string

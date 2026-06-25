@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { Box, Button, ModalBase, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -25,6 +25,7 @@ import {
   isTranslationAccessForbiddenError,
   shortenForToast,
 } from '../../utils/translationWorkspaceErrors'
+import { ApplicationSystemPaths } from '../../lib/paths'
 import { PREVIEW_EXCLUDED_FIELD_TYPES } from '../../utils/translationWorkspaceFieldConstants'
 import { findFooterSubmitScreen } from '../../utils/translationWorkspaceFooterSubmit'
 import {
@@ -49,6 +50,7 @@ const AUTOSAVE_INTERVAL_MS = 60_000
 
 export const TranslationWorkspace = () => {
   const { typeId } = useParams<{ typeId: string }>()
+  const location = useLocation()
   const { formatMessage } = useLocale()
   const {
     customFields,
@@ -622,6 +624,18 @@ export const TranslationWorkspace = () => {
     lastAutosaveTime,
     isReady: isWorkspaceReady,
   })
+
+  if (typeId === 'shared' || typeId === 'namespaces') {
+    const suffix = location.pathname.split(`/thydingar/${typeId}/`)[1]
+    if (suffix) {
+      return (
+        <Navigate
+          to={`${ApplicationSystemPaths.Translations}/namespaces/${suffix}`}
+          replace
+        />
+      )
+    }
+  }
 
   if (loading || (introspection && translationsLoading)) {
     return <TranslationWorkspaceLoading />

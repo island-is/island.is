@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -9,6 +9,7 @@ import type {
 } from '../../types/translationWorkspace'
 import { m } from '../../lib/messages'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
+import { TranslationStringsList } from './TranslationStringsList'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 type PersistedByKey = Record<
@@ -61,16 +62,20 @@ export const TabsPanelStringsTab = ({
     return validationDescriptors.filter((d) => !ids.has(d.id))
   }, [showValidationErrors, visibleDescriptors, validationDescriptors])
 
-  const descriptorsForBulkTranslate = useMemo(() => {
-    const byId = new Map<string, MessageDescriptor>()
-    for (const d of visibleDescriptors) {
-      byId.set(d.id, d)
-    }
-    for (const v of visibleValidationDescriptors) {
-      byId.set(v.id, v)
-    }
-    return [...byId.values()]
-  }, [visibleDescriptors, visibleValidationDescriptors])
+  const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
+
+  const canShowScreenList = stringsListScope === 'screen' && selectedScreen
+  const canShowApplicationList =
+    stringsListScope === 'application' && applicationStringCount > 0
+
+  const showMainList = canShowScreenList || canShowApplicationList
+
+  const listHeading =
+    stringsListScope === 'application'
+      ? formatMessage(m.translationStringsAllApplicationHeading)
+      : selectedScreen
+        ? selectedScreen.title ?? selectedScreen.id
+        : ''
 
   const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
     if (activeLocale === 'en') {
@@ -92,62 +97,6 @@ export const TabsPanelStringsTab = ({
     )
   }
 
-  const handleTranslateAll = () => {
-    if (!onGoogleTranslateAll) return
-    const items = descriptorsForBulkTranslate
-      .map((d) => ({ id: d.id, sourceText: getSourceText(d) }))
-      .filter((item) => item.sourceText)
-    if (items.length > 0) {
-      onGoogleTranslateAll(items)
-    }
-  }
-
-  const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
-
-  const canShowScreenList = stringsListScope === 'screen' && selectedScreen
-  const canShowApplicationList =
-    stringsListScope === 'application' && applicationStringCount > 0
-
-  const showMainList = canShowScreenList || canShowApplicationList
-
-  const listHeading =
-    stringsListScope === 'application'
-      ? formatMessage(m.translationStringsAllApplicationHeading)
-      : selectedScreen
-        ? selectedScreen.title ?? selectedScreen.id
-        : ''
-
-  const descriptorCount =
-    visibleDescriptors.length + visibleValidationDescriptors.length
-
-  const renderDescriptorList = (descriptors: MessageDescriptor[]) =>
-    descriptors.map((descriptor) => {
-      const draft = editedValues[activeLocale][descriptor.id]
-      const persisted = getPersistedForLocale(descriptor.id)
-      const currentValue = draft ?? persisted
-      const isDirty = draft !== undefined && draft !== persisted
-      const sourceText = getSourceText(descriptor)
-
-      return (
-        <TranslationDescriptorCard
-          key={descriptor.id}
-          formatMessage={formatMessage}
-          descriptor={descriptor}
-          currentValue={currentValue}
-          isDirty={isDirty}
-          onValueChange={(value) => onValueChange(descriptor.id, value)}
-          referenceLabel={referenceLabel}
-          referenceValue={getReferenceForDescriptor(descriptor)}
-          onGoogleTranslate={
-            showTranslateButtons && sourceText
-              ? () => onGoogleTranslate(descriptor.id, sourceText)
-              : undefined
-          }
-          isTranslating={isTranslating}
-        />
-      )
-    })
-
   return (
     <Box className={styles.tabsPanelScroll}>
       <Box className={styles.tabsPanelInner}>
@@ -156,9 +105,7 @@ export const TabsPanelStringsTab = ({
             <Button
               type="button"
               size="small"
-              variant={
-                stringsListScope === 'screen' ? 'primary' : 'ghost'
-              }
+              variant={stringsListScope === 'screen' ? 'primary' : 'ghost'}
               onClick={() => onStringsListScopeChange('screen')}
               aria-pressed={stringsListScope === 'screen'}
             >
@@ -180,109 +127,76 @@ export const TabsPanelStringsTab = ({
 
         {showMainList && (
           <>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={3}
-              columnGap={2}
-            >
-              <Box flexGrow={1} style={{ minWidth: 0 }}>
-                <Text variant="h4" truncate>
-                  {listHeading}
-                </Text>
-              </Box>
-              <Box display="flex" alignItems="center" columnGap={2}>
-                <Text variant="small" color="dark300">
-                  {descriptorCount} strings
-                </Text>
-                {showTranslateButtons && (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    size="small"
-                    preTextIcon="swapHorizontal"
-                    preTextIconType="outline"
-                    onClick={handleTranslateAll}
-                    disabled={isTranslating}
-                    loading={isTranslating}
-                  >
-                    {formatMessage(m.translationGoogleTranslateAll)}
-                  </Button>
-                )}
-              </Box>
-            </Box>
+            <TranslationStringsList
+              heading={listHeading}
+              descriptors={visibleDescriptors}
+              editedValues={editedValues}
+              activeLocale={activeLocale}
+              getPersistedForLocale={getPersistedForLocale}
+              onValueChange={onValueChange}
+              formatMessage={formatMessage}
+              persistedByKey={persistedByKey}
+              onGoogleTranslate={onGoogleTranslate}
+              onGoogleTranslateAll={onGoogleTranslateAll}
+              isTranslating={isTranslating}
+              emptyMessage={
+                stringsListScope === 'application'
+                  ? 'No translatable strings found for this application template.'
+                  : 'No translatable strings found for this screen.'
+              }
+            />
 
-            <Divider />
-
-            <Box marginTop={6}>
-              {renderDescriptorList(visibleDescriptors)}
-
-              {visibleDescriptors.length === 0 &&
-                !(showValidationErrors && visibleValidationDescriptors.length > 0) && (
-                  <Box marginTop={3}>
-                    <Text color="dark300">
-                      {stringsListScope === 'application'
-                        ? 'No translatable strings found for this application template.'
-                        : 'No translatable strings found for this screen.'}
-                    </Text>
-                  </Box>
-                )}
-
-              {visibleValidationDescriptors.length > 0 && (
-                <Box marginTop={4}>
-                  <Divider />
-                  <Box marginTop={3} marginBottom={2}>
-                    <Text variant="h5">
-                      {formatMessage(m.translationValidationErrors)} (
-                      {visibleValidationDescriptors.length})
-                    </Text>
-                  </Box>
-
-                  {visibleValidationDescriptors.map((descriptor) => {
-                    const draft = editedValues[activeLocale][descriptor.id]
-                    const persisted = getPersistedForLocale(descriptor.id)
-                    const currentValue = draft ?? persisted
-                    const isDirty = draft !== undefined && draft !== persisted
-                    const sourceText = getSourceText(descriptor)
-
-                    return (
-                      <TranslationDescriptorCard
-                        key={descriptor.id}
-                        formatMessage={formatMessage}
-                        descriptor={descriptor}
-                        currentValue={currentValue}
-                        isDirty={isDirty}
-                        onValueChange={(value) =>
-                          onValueChange(descriptor.id, value)
-                        }
-                        tags={[
-                          { label: 'Error', variant: 'rose', outlined: true },
-                        ]}
-                        subtitle={`Field: ${descriptor.fieldPath}`}
-                        referenceLabel={referenceLabel}
-                        referenceValue={getReferenceForDescriptor(descriptor)}
-                        onGoogleTranslate={
-                          showTranslateButtons && sourceText
-                            ? () =>
-                                onGoogleTranslate(descriptor.id, sourceText)
-                            : undefined
-                        }
-                        isTranslating={isTranslating}
-                      />
-                    )
-                  })}
-                </Box>
-              )}
-
-              {showValidationErrors && validationDescriptors.length === 0 && (
-                <Box marginTop={3}>
-                  <Text color="dark300">
-                    No validation error messages found for this template.
+            {visibleValidationDescriptors.length > 0 && (
+              <Box marginTop={4}>
+                <Box marginBottom={2}>
+                  <Text variant="h5">
+                    {formatMessage(m.translationValidationErrors)} (
+                    {visibleValidationDescriptors.length})
                   </Text>
                 </Box>
-              )}
-            </Box>
+
+                {visibleValidationDescriptors.map((descriptor) => {
+                  const draft = editedValues[activeLocale][descriptor.id]
+                  const persisted = getPersistedForLocale(descriptor.id)
+                  const currentValue = draft ?? persisted
+                  const isDirty = draft !== undefined && draft !== persisted
+                  const sourceText = getSourceText(descriptor)
+
+                  return (
+                    <TranslationDescriptorCard
+                      key={descriptor.id}
+                      formatMessage={formatMessage}
+                      descriptor={descriptor}
+                      currentValue={currentValue}
+                      isDirty={isDirty}
+                      onValueChange={(value) =>
+                        onValueChange(descriptor.id, value)
+                      }
+                      tags={[
+                        { label: 'Error', variant: 'rose', outlined: true },
+                      ]}
+                      subtitle={`Field: ${descriptor.fieldPath}`}
+                      referenceLabel={referenceLabel}
+                      referenceValue={getReferenceForDescriptor(descriptor)}
+                      onGoogleTranslate={
+                        showTranslateButtons && sourceText
+                          ? () => onGoogleTranslate!(descriptor.id, sourceText)
+                          : undefined
+                      }
+                      isTranslating={isTranslating}
+                    />
+                  )
+                })}
+              </Box>
+            )}
+
+            {showValidationErrors && validationDescriptors.length === 0 && (
+              <Box marginTop={3}>
+                <Text color="dark300">
+                  No validation error messages found for this template.
+                </Text>
+              </Box>
+            )}
           </>
         )}
 
@@ -296,15 +210,14 @@ export const TabsPanelStringsTab = ({
           </Box>
         )}
 
-        {stringsListScope === 'application' &&
-          applicationStringCount === 0 && (
-            <Box marginTop={3}>
-              <Text color="dark300">
-                No translatable strings were reported for this application
-                template.
-              </Text>
-            </Box>
-          )}
+        {stringsListScope === 'application' && applicationStringCount === 0 && (
+          <Box marginTop={3}>
+            <Text color="dark300">
+              No translatable strings were reported for this application
+              template.
+            </Text>
+          </Box>
+        )}
       </Box>
     </Box>
   )

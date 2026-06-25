@@ -11,6 +11,13 @@ const TranslationWorkspace = lazy(() =>
     default: m.TranslationWorkspace,
   })),
 )
+const SharedNamespaceTranslationWorkspace = lazy(() =>
+  import('./screens/SharedNamespaceTranslationWorkspace/SharedNamespaceTranslationWorkspace').then(
+    (m) => ({
+      default: m.SharedNamespaceTranslationWorkspace,
+    }),
+  ),
+)
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
@@ -41,6 +48,16 @@ export const applicationSystemAdminModule: PortalModule = {
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
         },
       ],
+    },
+    {
+      name: m.translations,
+      path: '/umsoknakerfi/thydingar/shared/:namespace',
+      element: <SharedNamespaceTranslationWorkspace />,
+    },
+    {
+      name: m.translations,
+      path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
+      element: <SharedNamespaceTranslationWorkspace />,
     },
     {
       name: m.translations,

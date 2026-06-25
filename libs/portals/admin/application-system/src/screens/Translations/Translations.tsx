@@ -9,10 +9,15 @@ import {
   SkeletonLoader,
   Input,
   Pagination,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useGetApplicationTemplateListQuery } from '../../queries/translations.generated'
+import { ApplicationSystemPaths } from '../../lib/paths'
+import {
+  useGetApplicationSharedNamespaceListQuery,
+  useGetApplicationTemplateListQuery,
+} from '../../queries/translations.generated'
 import {
   getTranslationSaveErrorDetail,
   isTranslationAccessForbiddenError,
@@ -20,7 +25,11 @@ import {
 
 const PAGE_SIZE = 20
 
-const Translations = () => {
+interface TranslationsProps {
+  isSuperAdmin: boolean
+}
+
+const Translations = ({ isSuperAdmin }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const [searchValue, setSearchValue] = useState('')
@@ -30,7 +39,17 @@ const Translations = () => {
     ssr: false,
   })
 
+  const {
+    data: sharedData,
+    loading: sharedLoading,
+    error: sharedError,
+  } = useGetApplicationSharedNamespaceListQuery({
+    ssr: false,
+    skip: !isSuperAdmin,
+  })
+
   const templates = data?.applicationTemplateList ?? []
+  const sharedNamespaces = sharedData?.applicationSharedNamespaceList ?? []
 
   const filtered = templates.filter(
     (template) =>
@@ -41,7 +60,7 @@ const Translations = () => {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  if (loading) {
+  if (loading || (isSuperAdmin && sharedLoading)) {
     return (
       <Box>
         <SkeletonLoader height={48} repeat={6} space={2} />
@@ -49,15 +68,16 @@ const Translations = () => {
     )
   }
 
-  if (error) {
-    const detail = getTranslationSaveErrorDetail(error)
-    const isForbidden = isTranslationAccessForbiddenError(error)
+  const listError = error ?? (isSuperAdmin ? sharedError : undefined)
+  if (listError) {
+    const detail = getTranslationSaveErrorDetail(listError)
+    const isForbidden = isTranslationAccessForbiddenError(listError)
     return (
       <Box marginTop={3}>
         <Text color="red600">
           {isForbidden
             ? 'You do not have access to view application translations.'
-            : detail || error.message}
+            : detail || listError.message}
         </Text>
       </Box>
     )
@@ -73,6 +93,71 @@ const Translations = () => {
       >
         <Text variant="h3">{formatMessage(m.translations)}</Text>
       </Box>
+
+      {isSuperAdmin && (
+        <Box marginBottom={5}>
+          <Text variant="h4" marginBottom={3}>
+            {formatMessage(m.sharedTranslationSpaces)}
+          </Text>
+
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>
+                  <Text variant="small" fontWeight="semiBold">
+                    {formatMessage(m.sharedTranslationNamespace)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="small" fontWeight="semiBold">
+                    {formatMessage(m.sharedTranslationUsedBy)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData />
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {sharedNamespaces.map((entry) => (
+                <T.Row key={entry.namespace}>
+                  <T.Data>
+                    <Text variant="small">{entry.namespace}</Text>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="small">
+                      {entry.usedByCount > 0
+                        ? `${entry.usedByCount} applications`
+                        : 'All applications'}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Button
+                      variant="text"
+                      size="small"
+                      onClick={() =>
+                        navigate(
+                          `${ApplicationSystemPaths.Translations}/namespaces/${encodeURIComponent(entry.namespace)}`,
+                        )
+                      }
+                    >
+                      {formatMessage(m.translationOpen)}
+                    </Button>
+                  </T.Data>
+                </T.Row>
+              ))}
+            </T.Body>
+          </T.Table>
+
+          {sharedNamespaces.length === 0 && (
+            <Box marginTop={3}>
+              <Text>{formatMessage(m.notFound)}</Text>
+            </Box>
+          )}
+
+          <Box marginTop={5}>
+            <Divider />
+          </Box>
+        </Box>
+      )}
 
       <Box marginBottom={3}>
         <Input

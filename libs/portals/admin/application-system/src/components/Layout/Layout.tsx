@@ -134,7 +134,7 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                   label: formatMessage(m.translations),
                   content: (
                     <Suspense fallback={null}>
-                      <Translations />
+                      <Translations isSuperAdmin={isSuperAdmin} />
                     </Suspense>
                   ),
                 },

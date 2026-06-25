@@ -11,8 +11,10 @@ export const TranslationWorkspaceLoading = () => (
 
 export const TranslationWorkspaceError = ({
   loadError,
+  title = 'Error loading template',
 }: {
   loadError: ApolloError
+  title?: string
 }) => {
   const fromGraphQl = loadError.graphQLErrors
     ?.map((e) => e.message)
@@ -31,7 +33,7 @@ export const TranslationWorkspaceError = ({
     <GridContainer>
       <Box marginTop={4}>
         <Text variant="h4" color="red600">
-          Error loading template
+          {title}
         </Text>
         <Text marginTop={1} whiteSpace="preLine">
           {detailMessage}

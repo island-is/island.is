@@ -3,6 +3,14 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import { getTypeIdsForInstitution } from './institutionUtils'
 
+export const CORE_TRANSLATION_NAMESPACE = 'application.system'
+
+export interface SharedTranslationNamespaceInfo {
+  namespace: string
+  usedByCount: number
+  usedByTypeIds: string[]
+}
+
 export interface TranslationAccessContext {
   nationalId: string
   scope: string[]
@@ -94,3 +102,53 @@ export const isTranslationNamespaceAllowed = (
   const owningTypeIds = getTypeIdsForNamespace(namespace)
   return owningTypeIds.some((typeId) => allowed.includes(typeId))
 }
+
+const getAllConfiguredTranslationNamespaces = (): string[] => {
+  const namespaces = new Set<string>()
+
+  for (const config of Object.values(ApplicationConfigurations)) {
+    const configuredNamespaces = Array.isArray(config.translation)
+      ? config.translation
+      : [config.translation]
+
+    for (const namespace of configuredNamespaces) {
+      namespaces.add(namespace)
+    }
+  }
+
+  return [...namespaces]
+}
+
+export const getSharedTranslationNamespaces = (): SharedTranslationNamespaceInfo[] => {
+  const sharedNamespaces = new Map<string, SharedTranslationNamespaceInfo>()
+
+  sharedNamespaces.set(CORE_TRANSLATION_NAMESPACE, {
+    namespace: CORE_TRANSLATION_NAMESPACE,
+    usedByCount: 0,
+    usedByTypeIds: [],
+  })
+
+  for (const namespace of getAllConfiguredTranslationNamespaces()) {
+    const usedByTypeIds = getTypeIdsForNamespace(namespace)
+    if (usedByTypeIds.length < 2) {
+      continue
+    }
+
+    sharedNamespaces.set(namespace, {
+      namespace,
+      usedByCount: usedByTypeIds.length,
+      usedByTypeIds,
+    })
+  }
+
+  return [...sharedNamespaces.values()].sort((a, b) =>
+    a.namespace.localeCompare(b.namespace),
+  )
+}
+
+export const isSharedTranslationNamespace = (namespace: string): boolean =>
+  getSharedTranslationNamespaces().some((entry) => entry.namespace === namespace)
+
+/** Encodes namespace for URL path segments (dots are not encoded by encodeURIComponent). */
+export const encodeTranslationNamespaceForUrlPath = (namespace: string): string =>
+  encodeURIComponent(namespace).replace(/\./g, '%2E')

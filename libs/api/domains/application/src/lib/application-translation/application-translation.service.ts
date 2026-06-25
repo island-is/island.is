@@ -8,6 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
+import { encodeTranslationNamespaceForUrlPath } from '@island.is/application/utils'
 import type {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
@@ -107,18 +108,28 @@ export class ApplicationTranslationApiService {
     return response.json() as Promise<T>
   }
 
+  private namespacePath(namespace: string, suffix: string): string {
+    return `/${encodeTranslationNamespaceForUrlPath(namespace)}${suffix}`
+  }
+
   async getTranslationsByNamespace(
     user: User,
     namespace: string,
   ): Promise<ApplicationTranslationGql[]> {
-    return this.request<ApplicationTranslationGql[]>(user, `/${namespace}/all`)
+    return this.request<ApplicationTranslationGql[]>(
+      user,
+      this.namespacePath(namespace, '/all'),
+    )
   }
 
   async getTranslationStatus(
     user: User,
     namespace: string,
   ): Promise<ApplicationTranslationStatus> {
-    return this.request<ApplicationTranslationStatus>(user, `/${namespace}/status`)
+    return this.request<ApplicationTranslationStatus>(
+      user,
+      this.namespacePath(namespace, '/status'),
+    )
   }
 
   async getAllNamespacesWithStatus(
@@ -210,6 +221,44 @@ export class ApplicationTranslationApiService {
     )
   }
 
+  async listSharedNamespaces(user: User): Promise<
+    Array<{
+      namespace: string
+      usedByCount: number
+      usedByTypeIds: string[]
+    }>
+  > {
+    return this.request<
+      Array<{
+        namespace: string
+        usedByCount: number
+        usedByTypeIds: string[]
+      }>
+    >(user, '/shared/list')
+  }
+
+  async introspectSharedNamespace(
+    user: User,
+    namespace: string,
+  ): Promise<{
+    namespace: string
+    messageDescriptors: Array<{
+      id: string
+      defaultMessage?: string
+      description?: string
+    }>
+  }> {
+    const params = new URLSearchParams({ namespace })
+    return this.request<{
+      namespace: string
+      messageDescriptors: Array<{
+        id: string
+        defaultMessage?: string
+        description?: string
+      }>
+    }>(user, `/shared/introspect?${params.toString()}`)
+  }
+
   async publishTranslations(
     user: User,
     namespace: string,
@@ -217,7 +266,7 @@ export class ApplicationTranslationApiService {
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
-      `/${encodeURIComponent(namespace)}/publish`,
+      this.namespacePath(namespace, '/publish'),
       {
         method: 'POST',
         body: JSON.stringify({ note }),
@@ -231,7 +280,7 @@ export class ApplicationTranslationApiService {
   ): Promise<TranslationPublishGql[]> {
     return this.request<TranslationPublishGql[]>(
       user,
-      `/${encodeURIComponent(namespace)}/publish-history`,
+      this.namespacePath(namespace, '/publish-history'),
     )
   }
 
@@ -242,7 +291,7 @@ export class ApplicationTranslationApiService {
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
-      `/${encodeURIComponent(namespace)}/rollback/${encodeURIComponent(publishId)}`,
+      `${this.namespacePath(namespace, '/rollback')}/${encodeURIComponent(publishId)}`,
       {
         method: 'POST',
       },

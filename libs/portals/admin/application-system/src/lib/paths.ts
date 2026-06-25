@@ -4,5 +4,6 @@ export enum ApplicationSystemPaths {
   Overview = '/umsoknakerfi/yfirlit',
   Statistics = '/umsoknakerfi/tolfraedi',
   Translations = '/umsoknakerfi/thydingar',
+  SharedNamespaceTranslationWorkspace = '/umsoknakerfi/thydingar/namespaces/:namespace',
   TranslationWorkspace = '/umsoknakerfi/thydingar/:typeId',
 }

@@ -189,6 +189,22 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationOpen',
     defaultMessage: 'Opna þýðingar',
   },
+  sharedTranslationSpaces: {
+    id: 'admin-portal.application-system:sharedTranslationSpaces',
+    defaultMessage: 'Sameiginleg þýðingasvæði',
+  },
+  sharedTranslationNamespace: {
+    id: 'admin-portal.application-system:sharedTranslationNamespace',
+    defaultMessage: 'Nafnarammi',
+  },
+  sharedTranslationUsedBy: {
+    id: 'admin-portal.application-system:sharedTranslationUsedBy',
+    defaultMessage: 'Notað af',
+  },
+  sharedTranslationNamespaceEmpty: {
+    id: 'admin-portal.application-system:sharedTranslationNamespaceEmpty',
+    defaultMessage: 'Engar þýðanlegar strengir fundust fyrir þetta svæði.',
+  },
   translationBackToList: {
     id: 'admin-portal.application-system:translationBackToList',
     defaultMessage: 'Til baka',

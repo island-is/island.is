@@ -134,6 +134,25 @@ query getApplicationTemplateList {
   }
 }
 
+query getApplicationSharedNamespaceList {
+  applicationSharedNamespaceList {
+    namespace
+    usedByCount
+    usedByTypeIds
+  }
+}
+
+query getApplicationSharedNamespaceIntrospection($namespace: String!) {
+  applicationSharedNamespaceIntrospection(namespace: $namespace) {
+    namespace
+    messageDescriptors {
+      id
+      defaultMessage
+      description
+    }
+  }
+}
+
 query getApplicationTranslationAllStatus {
   applicationTranslationAllStatus {
     namespace
