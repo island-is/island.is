@@ -1166,7 +1166,6 @@ describe('InternalNotificationController - Ruling-order appeal uses the ruling o
   })
 })
 
-
 describe('InternalNotificationController - Corrected ruling-order appeal sends the corrected-ruling email identified by file name', () => {
   const { prosecutor, judge } = createTestUsers(['prosecutor', 'judge'])
 
