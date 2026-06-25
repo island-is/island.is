@@ -214,7 +214,9 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   const { formatMessage } = useIntl()
   const hideBreadcrumbs = isDefenceUser(user) || isCreating
 
-  return isLoading ? (
+  return (
+    <>
+      {isLoading ? (
     <Skeleton />
   ) : notFound ? (
     <AlertBanner
@@ -235,7 +237,6 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
       }}
     />
   ) : children ? (
-    <>
       <Box
         paddingBottom={[0, 0, 3, 6]}
         paddingX={[0, 0, 4]}
@@ -269,10 +270,13 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
           </GridRow>
         </GridContainer>
       </Box>
-      {/* Here we will mount our modal portal */}
+  ) : null}
+      {/* Modal portal target — rendered in every state so a modal mounted as a
+          sibling of PageLayout (e.g. the indictment cancellation modal) can
+          always portal here, even while loading or when the case is not found. */}
       <div id="modal" data-testid="modal" />
     </>
-  ) : null
+  )
 }
 
 export default PageLayout
