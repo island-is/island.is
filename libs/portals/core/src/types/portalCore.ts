@@ -163,13 +163,19 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
   dynamic?: boolean
 
   /**
-   * The key for the route. Used to filter feature flagged pages.
+   * Gates this route behind a feature flag.
    *
-   * To feature flag a route:
-   * create a feature flag in ConfigCat called `isPortalVehicleHistoryPageEnabled`
-   * In which case your route key would be `VehicleHistory`.
+   * Pass a `Features` enum value to use that flag directly:
+   *   `key: Features.isServicePortalVehicleHistoryPageEnabled`
+   *
+   * Or pass a plain string shorthand — the runtime will construct the flag name as
+   * `isServicePortal${key}PageEnabled`:
+   *   `key: 'VehicleHistory'`  →  `isServicePortalVehicleHistoryPageEnabled`
+   *
+   * Prefer the `Features` enum form — it is explicit and type-safe.
+   * The string shorthand exists for backwards compatibility.
    */
-  key?: string
+  key?: Features | string
 
   /**
    * Child routes of this route

@@ -1,0 +1,46 @@
+query ShipRegistrySailorSeagoingTime(
+  $input: ShipRegistrySeagoingTimeInput!
+  $locale: LocaleEnum
+) {
+  shipRegistrySailor {
+    seagoingTime(input: $input) {
+      data {
+        id
+        shipName
+        shipRegistrationNumber
+        rank
+        startDate
+        endDate
+        numberOfDays
+        length {
+          value
+          unit
+        }
+        grossTonnage {
+          value
+          unit
+        }
+        mainEngine {
+          value
+          unit
+        }
+      }
+      totalCount
+      pageInfo {
+        hasNextPage
+      }
+      totalCrewRegistrationDayCount
+      seaServiceDayCount
+      workAshoreDayCount
+      totalWorkDays
+      valueLabels {
+        entryField
+        label
+      }
+    }
+  }
+  shipRegistryRanks(locale: $locale) {
+    id
+    name
+  }
+}

@@ -529,7 +529,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
   return (
     <>
       {displayHeading && (
-        <SectionHeading title={formatMessage(strings.title)} />
+        <SectionHeading
+          title={
+            isCourtOfAppealsUser(user)
+              ? 'Skjöl héraðsdómsmáls'
+              : formatMessage(strings.title)
+          }
+        />
       )}
       <div className={grid({ gap: 5 })}>
         {displayGeneratedPDFs && (

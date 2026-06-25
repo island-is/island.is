@@ -47,6 +47,12 @@ export const ReviewDecision: FC<Props> = (props) => {
     const promises = []
 
     for (const d of workingCase.defendants || []) {
+      // Defendants whose indictment was cancelled or dismissed (completed for
+      // some) do not receive a verdict and require no review decision.
+      if (d.indictmentCancelledOrDismissedState) {
+        continue
+      }
+
       if (!d.indictmentReviewDecision) {
         return
       }

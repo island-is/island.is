@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   Param,
+  Query,
   Req,
+  Inject,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import type { Request } from 'express'
@@ -12,16 +14,19 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
 import { ApplicationJsonDto } from './models/dto/application.json.dto'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsXRoadController {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationsXRoadService: ApplicationsXRoadService,
   ) {}
 
@@ -76,18 +81,35 @@ export class ApplicationsXRoadController {
 
   @ApiOperation({ summary: 'Get file by id via X-Road' })
   @ApiOkResponse({ type: FileResponseDto, description: 'Get file by id' })
-  @ApiParam({ name: 'id', type: String })
+  @ApiQuery({
+    name: 's3Key',
+    type: String,
+    description: 'URL-encoded S3 key for the file',
+    required: true,
+  })
   @ApiHeader({
     name: 'X-Road-Client',
     description: 'X-Road client identifier',
     required: true,
   })
-  @Get('file/:id')
+  @Get('file')
   async getFile(
-    @Param('id') id: string,
+    @Query('s3Key') s3Key: string,
     @Req() req: Request,
   ): Promise<FileResponseDto> {
+    const trimmedS3Key = s3Key?.trim()
+    if (!trimmedS3Key) {
+      throw new BadRequestException('Missing required query parameter: s3Key')
+    }
     const xRoadClient = this.getValidatedXRoadClient(req)
-    return await this.applicationsXRoadService.getFile(id, xRoadClient)
+    this.logger.info('Fetching file by id via X-Road', {
+      trimmedS3Key,
+      xRoadClient,
+    })
+
+    return await this.applicationsXRoadService.getFile(
+      trimmedS3Key,
+      xRoadClient,
+    )
   }
 }
