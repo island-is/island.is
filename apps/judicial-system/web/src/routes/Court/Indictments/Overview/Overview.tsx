@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -193,12 +193,25 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
 
-  const goToDashboard = () => router.push(getStandardUserDashboardRoute(user))
+  // Once the user finishes or dismisses the modal we must not re-open it for the
+  // same loaded case — workingCase.state stays WAITING_FOR_CANCELLATION until the
+  // case is re-fetched, so the effect below would otherwise fire again.
+  const dismissedRef = useRef(false)
+
+  const dismissAndGoToDashboard = () => {
+    dismissedRef.current = true
+    router.push(getStandardUserDashboardRoute(user))
+  }
 
   const { cancelCase, CancelCaseModal } = useCancelCase(
-    goToDashboard,
-    goToDashboard,
+    dismissAndGoToDashboard,
+    dismissAndGoToDashboard,
   )
+
+  // A different case (or a fresh load of the same one) is a new chance to act.
+  useEffect(() => {
+    dismissedRef.current = false
+  }, [workingCase.id])
 
   // Show the cancellation modal whenever a district court user opens an
   // indictment the prosecutor has cancelled, no matter how they got here
@@ -209,6 +222,7 @@ const IndictmentOverview = () => {
   useEffect(() => {
     if (
       isCaseUpToDate &&
+      !dismissedRef.current &&
       isDistrictCourtUser(user) &&
       workingCase.state === CaseState.WAITING_FOR_CANCELLATION
     ) {

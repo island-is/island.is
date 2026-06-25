@@ -141,4 +141,31 @@ describe('Court Indictment Overview', () => {
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1))
   })
+
+  it('does not re-open the modal after the user dismisses it', async () => {
+    // The component stays mounted here (router.push is a no-op) and the case
+    // remains WAITING_FOR_CANCELLATION, so this guards against the effect
+    // re-triggering cancelCase once the modal has been dismissed.
+    const cancelledCase: Case = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    }
+    const getCase = jest.fn((_id, onCompleted) => {
+      Promise.resolve().then(() => onCompleted(cancelledCase))
+    })
+
+    renderOverview(cancelledCase, UserRole.DISTRICT_COURT_JUDGE, getCase)
+
+    expect(await screen.findByText('Mál afturkallað')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+    await waitFor(() =>
+      expect(screen.queryByText('Mál afturkallað')).not.toBeInTheDocument(),
+    )
+    // Settle any pending microtasks/effects, then assert no re-trigger.
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1))
+    expect(getCase).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText('Mál afturkallað')).not.toBeInTheDocument()
+  })
 })
