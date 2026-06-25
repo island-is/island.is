@@ -12,6 +12,7 @@ import {
 } from '../../gen/fetch/v6'
 
 export const DRIVING_LICENSE_API_VERSION_V6 = '6.0'
+export const DRIVING_LICENSE_API_USER_ID = 'SYS1'
 
 export class ConfigV6 extends Configuration {}
 export class ApiV6 extends OkuskirteiniApi {}
