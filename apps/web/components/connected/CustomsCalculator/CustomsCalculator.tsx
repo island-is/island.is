@@ -60,27 +60,29 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   const { formatMessage } = useIntl()
 
   const currencyOptions = useMemo<StringOption[]>(() => {
-    return [
-      { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
-      { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
-      { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
-      { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
-      { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
-      { label: 'EUR', value: 'EUR', description: 'Evra' },
-      { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
-      { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
-      { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
-      { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
-      { label: 'NOK', value: 'NOK', description: 'Norsk króna' },
-      { label: 'NZD', value: 'NZD', description: 'Ný-Sjálenskur dalur' },
-      { label: 'PLN', value: 'PLN', description: 'Pólskt slot' },
-      { label: 'SEK', value: 'SEK', description: 'Sænsk króna' },
-      { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
-      { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
-      { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
-      { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
-    ]
-  }, [])
+    return (
+      slice.configJson?.currencyOptions ?? [
+        { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
+        { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
+        { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
+        { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
+        { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
+        { label: 'EUR', value: 'EUR', description: 'Evra' },
+        { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
+        { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
+        { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
+        { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
+        { label: 'NOK', value: 'NOK', description: 'Norsk króna' },
+        { label: 'NZD', value: 'NZD', description: 'Ný-Sjálenskur dalur' },
+        { label: 'PLN', value: 'PLN', description: 'Pólskt slot' },
+        { label: 'SEK', value: 'SEK', description: 'Sænsk króna' },
+        { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
+        { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
+        { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
+        { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
+      ]
+    )
+  }, [slice.configJson?.currencyOptions])
 
   const [inputState, setInputState] = useState({
     searchInput: '',
