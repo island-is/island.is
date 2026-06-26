@@ -9,10 +9,9 @@ import Animated, {
 import styled, { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import { Container, Icon, Typography } from '@/ui'
+import { Avatar, Container, Icon, Typography } from '@/ui'
 import { Markdown } from '@/ui/lib/markdown/markdown'
 import { isAndroid } from '@/utils/devices'
-import { getInitials } from '@/utils/get-initials'
 
 export const TOGGLE_ANIMATION_DURATION = 300
 
@@ -44,8 +43,8 @@ const Body = styled(Container)`
 const IconBackground = styled.View`
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   background-color: ${({ theme }) => theme.color.blue100};
   border-radius: ${({ theme }) => theme.border.radius.full};
 `
@@ -131,20 +130,13 @@ export const DocumentListItem = ({
       >
         <View>
           <Host>
-            <IconBackground>
-              {!source ? (
-                <Typography
-                  variant="body"
-                  weight="600"
-                  lineHeight={0}
-                  color={theme.color.blue400}
-                >
-                  {getInitials(sender)}
-                </Typography>
-              ) : (
+            {source ? (
+              <IconBackground>
                 <Icon source={source} width={24} height={24} />
-              )}
-            </IconBackground>
+              </IconBackground>
+            ) : (
+              <Avatar name={sender} isSmall />
+            )}
             <Content>
               <Typography variant="eyebrow">{title}</Typography>
               <Typography variant="body3">{date}</Typography>
