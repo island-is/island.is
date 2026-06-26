@@ -25,6 +25,9 @@ export const FieldTypesEnum = {
   PAYMENT: 'PAYMENT',
   APPLICANT: 'APPLICANT',
   PAYMENT_QUANTITY: 'PAYMENT_QUANTITY',
+  ASSETS: 'ASSETS',
+  VEHICLE: 'VEHICLE',
+  REAL_ESTATE: 'REAL_ESTATE',
 } as const
 
 export const CertificationTypesEnum = {
@@ -49,6 +52,7 @@ export const ApplicantTypesEnum = {
   LEGAL_ENTITY: 'LEGAL_ENTITY',
   LEGAL_ENTITY_OF_PROCURATION_HOLDER: 'LEGAL_ENTITY_OF_PROCURATION_HOLDER',
   LEGAL_GUARDIAN: 'LEGAL_GUARDIAN',
+  WARD_OF_LEGAL_GUARDIAN: 'WARD_OF_LEGAL_GUARDIAN',
 } as const
 
 export const ListTypesEnum = {

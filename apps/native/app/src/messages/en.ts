@@ -168,15 +168,15 @@ export const en: TranslatedMessages = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Married}
+    MARRIED {Married or registered partnership}
     UNMARRIED {Unmarried}
     WIDOWED {Widowed}
     SEPARATED {Separated}
     DIVORCED {Divorced}
-    MARRIED_LIVING_SEPARATELY {Married}
-    MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    MARRIED_LIVING_SEPARATELY {Married, living separately}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Icelandic citizen married to a foreign citizen that does not fulfil registration requirements}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in foreign country; married to a non-registered foreign citizen}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Icelandic citizen with legal residence in Iceland; relations with a foreigner not on record}
     other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
@@ -269,6 +269,15 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.buttonReply': 'Reply',
   'documentDetail.buttonCommunications': 'Communications',
+  'documentDetail.archiveSuccess': 'Document archived',
+  'documentDetail.unarchiveSuccess': 'Document unarchived',
+  'documentDetail.bookmarkSuccess': 'Document starred',
+  'documentDetail.unbookmarkSuccess': 'Star removed',
+  'documentDetail.archiveError': 'Could not archive document',
+  'documentDetail.unarchiveError': 'Could not unarchive document',
+  'documentDetail.bookmarkError': 'Could not star document',
+  'documentDetail.unbookmarkError': 'Could not unstar document',
+  'documentDetail.pleaseTryAgain': 'Please try again later',
 
   // document reply
   'documentReply.to': 'To',
@@ -277,6 +286,8 @@ export const en: TranslatedMessages = {
   'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
+  'documentReply.sendMessageError': 'Could not send reply',
+  'documentReply.pleaseTryAgain': 'Please try again later',
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
@@ -791,6 +802,8 @@ export const en: TranslatedMessages = {
   'health.questionnaires.action.answer': 'Answer questionnaire',
   'health.questionnaires.action.continue-draft': 'Continue',
   'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.show-expired': 'Show expired',
+  'health.questionnaires.action.hide-expired': 'Hide expired',
   'health.questionnaires.detail.description':
     'Here you can find your answers to questionnaires. You can compare your answers.',
   'health.questionnaires.detail.status': 'Status',
@@ -820,18 +833,23 @@ export const en: TranslatedMessages = {
   'health.appointments.title': 'Appointments',
   'health.appointments.description':
     'Here you can see your appointments in the healthcare system.',
-  'health.appointments.detailTitle': 'Healthcare appointment',
-  'health.appointments.dateAndTime': 'Date and time',
-  'health.appointments.duration': 'Duration',
-  'health.appointments.location': 'Location',
-  'health.appointments.address': 'Address',
   'health.appointments.practitioners': 'Appointment with: {practitioner}',
   'health.appointments.appointmentWith': 'Appointment with',
-  'health.appointments.atTime': 'at {time}',
-  'health.appointments.timePrefix': 'at',
   'health.appointments.instructions': 'Instructions',
   'health.appointments.openMap': 'Open map',
-  'health.appointments.type': 'Type',
+  'health.appointments.locationInstructions': 'More about location',
+  'health.appointments.seeMore': 'See more',
+  'health.appointments.openingHours': 'Opening hours',
+  'health.appointments.phoneNumber': 'Phone number',
+  'health.appointments.organization': 'Organization',
+  'health.appointments.videoCall': 'Video call',
+  'health.appointments.videoCallInfoWithLink':
+    'The video call button becomes active 5 minutes before the booked time.',
+  'health.appointments.videoCallInfoWithLinkActive':
+    'Tap the button to start the video call.',
+  'health.appointments.videoCallInfoNoLink':
+    'This appointment includes a video call. You will receive a link to the video call shortly before the booked time. If no link is found, please contact the relevant institution.',
+  'health.appointments.startVideoCall': 'Start video call',
   'health.appointments.noAppointmentsTitle': 'No appointments',
   'health.appointments.noAppointmentsText':
     'You do not have any upcoming appointments.',
@@ -840,6 +858,7 @@ export const en: TranslatedMessages = {
   'health.appointments.notFoundMessage':
     'Appointment not found. It may have been cancelled.',
   'health.appointments.minutesFormat': '{minutes} minutes',
+  'health.appointments.moreInfo': 'More information',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

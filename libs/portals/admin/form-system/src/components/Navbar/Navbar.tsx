@@ -277,17 +277,13 @@ export const Navbar = () => {
   const renderToggleAllButton = () => (
     <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
       <Button
-        icon={allNavbarItemsOpen ? 'chevronUp' : 'chevronDown'}
-        iconType="filled"
-        circle
-        inline
-        variant="ghost"
+        variant="text"
         size="small"
         onClick={toggleAllNavbarItems}
         disabled={inputSectionIds.length === 0}
-        title={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
-        aria-label={allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
-      />
+      >
+        {allNavbarItemsOpen ? 'Loka öllu' : 'Opna allt'}
+      </Button>
     </Box>
   )
 

@@ -65,6 +65,7 @@ import {
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
@@ -817,7 +818,9 @@ export class CaseService {
       },
     )
 
-    for (const caseFile of theCase.caseFiles ?? []) {
+    const sortedCaseFiles = sortCaseFiles(theCase.caseFiles ?? [])
+
+    for (const caseFile of sortedCaseFiles) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
         caseFile.isKeyAccessible &&
@@ -853,10 +856,30 @@ export class CaseService {
     }
   }
 
+  private addMessagesForIndictmentConclusionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (
+      !theCase.courtCaseNumber ||
+      !theCase.indictmentRulingDecision ||
+      !theCase.rulingDate
+    )
+      return
+
+    addMessagesToQueue({
+      type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+      user,
+      caseId: theCase.id,
+    })
+  }
+
   private addMessagesForCompletedIndictmentCaseToQueue(
     updatedCase: Case,
     user: TUser,
   ): void {
+    this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+
     for (const caseFile of updatedCase.caseFiles ?? []) {
       if (
         caseFile.state === CaseFileState.STORED_IN_RVG &&
@@ -1046,7 +1069,9 @@ export class CaseService {
         }
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
-          if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
+          if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+            this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+          } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
           }
         } else {
@@ -1081,6 +1106,22 @@ export class CaseService {
             updatedCase,
             user,
           )
+
+          if (updatedCase.splitCaseId) {
+            const splitDefendant = updatedCase.defendants?.[0]
+            if (splitDefendant?.id) {
+              addMessagesToQueue({
+                type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+                user,
+                caseId: updatedCase.splitCaseId,
+                body: {
+                  defendantId: splitDefendant.id,
+                  splitCaseNumber: updatedCase.courtCaseNumber,
+                  rulingDate: updatedCase.created?.toISOString(),
+                },
+              })
+            }
+          }
         } else {
           this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
         }
@@ -1816,6 +1857,25 @@ export class CaseService {
         )
       }),
     )
+
+    if (theCase.courtCaseNumber) {
+      for (const { defendantId, rulingDecision, rulingDate } of decisions) {
+        if (!rulingDate) {
+          continue
+        }
+
+        addMessagesToQueue({
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
+          user,
+          caseId: theCase.id,
+          body: {
+            defendantId,
+            indictmentRulingDecision: rulingDecision,
+            rulingDate,
+          },
+        })
+      }
+    }
   }
 
   private async handleEventLogUpdates(
@@ -1995,11 +2055,26 @@ export class CaseService {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 
-    // Ensure that verdicts exist at this stage, if they don't exist we create them
+    // Ensure that verdicts exist at this stage, if they don't exist we create them.
+    // Defendants whose indictment has already been cancelled or dismissed
+    // (completed for some) do not receive a verdict.
     if (isCompletingIndictmentCaseWithRuling && theCase.defendants) {
       await Promise.all(
         theCase.defendants.map((defendant) => {
-          if (!defendant.verdicts || defendant.verdicts.length === 0) {
+          const isCancelledOrDismissed = Boolean(
+            DefendantEventLog.getEventLogByEventType(
+              [
+                DefendantEventType.INDICTMENT_CANCELLED,
+                DefendantEventType.INDICTMENT_DISMISSED,
+              ],
+              defendant.eventLogs,
+            ),
+          )
+
+          if (
+            !isCancelledOrDismissed &&
+            (!defendant.verdicts || defendant.verdicts.length === 0)
+          ) {
             return this.verdictService.createVerdict(
               theCase.id,
               { defendantId: defendant.id },
@@ -2448,6 +2523,18 @@ export class CaseService {
     }
 
     return extendedCase
+  }
+
+  async duplicateIndictmentCase(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
+    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
+      transaction,
+      prosecutorId: user.id,
+      prosecutorsOfficeId: user.institution?.id,
+    })
   }
 
   async splitDefendantFromCase(

@@ -62,6 +62,7 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { buildIndictmentConclusionContent } from '../court/court.service'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
@@ -80,6 +81,7 @@ import {
   DateLog,
   Defendant,
   DefendantEventLog,
+  DefendantRepositoryService,
   EventLog,
   IndictmentCount,
   Institution,
@@ -90,6 +92,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -207,6 +210,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => DefendantRepositoryService))
+    private readonly defendantRepositoryService: DefendantRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => PdfService))
@@ -1071,6 +1076,155 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update indictment case ${theCase.id} with cancellation notice`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentConclusionToCourt(
+    theCase: Case,
+    user: TUser,
+    deliverDto: DeliverIndictmentConclusionDto,
+  ): Promise<DeliverResponse> {
+    if (!theCase.courtCaseNumber || !theCase.court?.name) {
+      return { delivered: false }
+    }
+
+    if (deliverDto.splitCaseNumber && deliverDto.defendantId) {
+      const allowedCaseIds = [
+        theCase.id,
+        ...(theCase.splitCases?.map((splitCase) => splitCase.id) ?? []),
+      ]
+
+      const defendant = await this.defendantRepositoryService.findOne({
+        where: {
+          id: deliverDto.defendantId,
+          caseId: { [Op.in]: allowedCaseIds },
+        },
+      })
+
+      if (!defendant?.nationalId) {
+        return { delivered: false }
+      }
+
+      const rulingDate =
+        deliverDto.rulingDate ?? theCase.created ?? theCase.rulingDate
+
+      if (!rulingDate) {
+        return { delivered: false }
+      }
+
+      const content = buildIndictmentConclusionContent({
+        courtCaseNumber: theCase.courtCaseNumber,
+        rulingDate,
+        defendantNationalId: defendant.nationalId,
+        splitCaseNumber: deliverDto.splitCaseNumber,
+      })
+
+      return this.courtService
+        .updateIndictmentCaseWithConclusion(
+          user,
+          theCase.id,
+          theCase.court.name,
+          theCase.courtCaseNumber,
+          content,
+          deliverDto.defendantId,
+        )
+        .then(() => ({ delivered: true }))
+        .catch((reason) => {
+          this.logger.error(
+            `Failed to update indictment case ${theCase.id} with conclusion`,
+            { reason },
+          )
+
+          return { delivered: false }
+        })
+    }
+
+    if (
+      deliverDto.defendantId &&
+      deliverDto.indictmentRulingDecision &&
+      deliverDto.rulingDate
+    ) {
+      const defendant = theCase.defendants?.find(
+        (d) => d.id === deliverDto.defendantId,
+      )
+
+      if (!defendant?.nationalId) {
+        return { delivered: false }
+      }
+
+      const content = buildIndictmentConclusionContent({
+        courtCaseNumber: theCase.courtCaseNumber,
+        indictmentRulingDecision: deliverDto.indictmentRulingDecision,
+        rulingDate: deliverDto.rulingDate,
+        defendantNationalId: defendant.nationalId,
+      })
+
+      return this.courtService
+        .updateIndictmentCaseWithConclusion(
+          user,
+          theCase.id,
+          theCase.court.name,
+          theCase.courtCaseNumber,
+          content,
+          deliverDto.defendantId,
+        )
+        .then(() => ({ delivered: true }))
+        .catch((reason) => {
+          this.logger.error(
+            `Failed to update indictment case ${theCase.id} with conclusion`,
+            { reason },
+          )
+
+          return { delivered: false }
+        })
+    }
+
+    if (!theCase.indictmentRulingDecision || !theCase.rulingDate) {
+      return { delivered: false }
+    }
+
+    const wasAssignedToJudge =
+      theCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.WITHDRAWAL
+        ? Boolean(theCase.judgeId) ||
+          (await this.courtService.hasPriorIndictmentJudgeAssignment(
+            theCase.id,
+          ))
+        : undefined
+
+    const content = buildIndictmentConclusionContent({
+      courtCaseNumber: theCase.courtCaseNumber,
+      isCorrection: Boolean(theCase.rulingModifiedHistory),
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+      wasAssignedToJudge,
+      judgeNationalId:
+        theCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.WITHDRAWAL
+          ? theCase.judge?.nationalId
+          : undefined,
+      mergeCaseNumber:
+        theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE
+          ? theCase.mergeCase?.courtCaseNumber ?? theCase.mergeCaseNumber
+          : undefined,
+    })
+
+    return this.courtService
+      .updateIndictmentCaseWithConclusion(
+        user,
+        theCase.id,
+        theCase.court.name,
+        theCase.courtCaseNumber,
+        content,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with conclusion`,
           { reason },
         )
 

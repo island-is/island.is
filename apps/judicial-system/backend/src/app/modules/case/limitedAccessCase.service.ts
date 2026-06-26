@@ -37,7 +37,7 @@ import {
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
-  getDefenderVisiblePoliceCaseNumbers,
+  getDefenceUserVisiblePoliceCaseNumbers,
   isRulingOrderInConfirmedCourtSession,
 } from '../file'
 import {
@@ -863,16 +863,22 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
-        user.nationalId,
-        theCase.defendants,
-      )
-        ? getDefenderVisiblePoliceCaseNumbers(
-            user.nationalId,
-            theCase.defendants,
-            theCase.policeCaseNumbers,
-          )
-        : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip =
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants,
+        ) ||
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+          user.nationalId,
+          theCase.civilClaimants,
+        )
+          ? getDefenceUserVisiblePoliceCaseNumbers(
+              user.nationalId,
+              theCase.defendants,
+              theCase.civilClaimants,
+              theCase.policeCaseNumbers,
+            )
+          : theCase.policeCaseNumbers
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(

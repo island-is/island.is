@@ -1,10 +1,13 @@
 import React, { FC, useContext, useState } from 'react'
+import { useRouter } from 'next/router'
 
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRequestCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
   ProsecutorSelection,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -16,6 +19,8 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
   const { onClose } = props
   const { updateCase } = useCase()
   const { refreshCase, workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+  const router = useRouter()
 
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
   const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
@@ -58,7 +63,18 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
           await updateCase(workingCase.id, {
             prosecutorId: selectedProsecutorId,
           })
-          refreshCase()
+
+          const userWouldLoseAccess =
+            workingCase.isHeightenedSecurityLevel &&
+            user?.id !== workingCase.creatingProsecutor?.id &&
+            user?.id !== selectedProsecutorId
+
+          if (userWouldLoseAccess) {
+            router.push(getStandardUserDashboardRoute(user))
+          } else {
+            refreshCase()
+          }
+
           onClose()
         },
       }}

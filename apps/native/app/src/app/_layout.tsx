@@ -1,5 +1,6 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
+import { ToastHost } from '@/components/toast'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
@@ -186,8 +187,8 @@ function RootLayoutNav({
   return (
     <LocaleProvider>
       <AppThemeProvider>
-        <FeatureFlagProvider>
-          <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={apolloClient}>
+          <FeatureFlagProvider>
             <OfflineProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -197,9 +198,10 @@ function RootLayoutNav({
                 />
               </Stack>
               <PromptModal />
+              <ToastHost />
             </OfflineProvider>
-          </ApolloProvider>
-        </FeatureFlagProvider>
+          </FeatureFlagProvider>
+        </ApolloProvider>
       </AppThemeProvider>
     </LocaleProvider>
   )

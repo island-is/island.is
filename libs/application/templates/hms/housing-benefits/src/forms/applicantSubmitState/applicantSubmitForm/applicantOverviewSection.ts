@@ -18,9 +18,7 @@ import {
   applicantSubmitHouseholdMembersOverviewItems,
   applicantSubmitHouseholdMembersOverviewAttachments,
   incomeSectionOverviewItems,
-  incomeSectionOverviewAttachments,
   incomeNoTaxReturnOverviewItems,
-  incomeNoTaxReturnOverviewAttachments,
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
   applicantSubmitAccessAgreementOverviewAttachments,
@@ -83,22 +81,15 @@ export const applicantOverviewSection = buildSection({
               return false
             }
             const emptyExternal = {} as ExternalData
-            const items = incomeSectionOverviewItems(answers, emptyExternal)
-            const attachments = incomeSectionOverviewAttachments(
-              answers,
-              emptyExternal,
-            )
-            return items.length > 0 || attachments.length > 0
+            return incomeSectionOverviewItems(answers, emptyExternal).length > 0
           },
           items: incomeSectionOverviewItems,
-          attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'submitIncomeNoTaxReturnOverview',
           title: m.draftMessages.incomeNoTaxReturnSection.title,
           condition: isTaxReturnNotFiled,
           items: incomeNoTaxReturnOverviewItems,
-          attachments: incomeNoTaxReturnOverviewAttachments,
         }),
         buildOverviewField({
           id: 'submitAssetsDeclarationOverview',

@@ -40,6 +40,7 @@ export enum PrescribedItemRenewalStatusEnum {
   Approved = 'approved',
   Rejected = 'rejected',
   Dismissed = 'dismissed',
+  Unknown = 'unknown',
 }
 
 registerEnumType(PrescribedItemRenewalStatusEnum, {
@@ -104,6 +105,7 @@ export enum AppointmentAssigneeTypeEnum {
   EQUIPMENT = 'EQUIPMENT',
   SERVICE = 'SERVICE',
   OTHER = 'OTHER',
+  TEAM = 'TEAM',
 }
 
 registerEnumType(AppointmentAssigneeTypeEnum, {

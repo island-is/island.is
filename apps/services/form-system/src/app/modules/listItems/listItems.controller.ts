@@ -1,12 +1,20 @@
 import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
   Body,
   Controller,
+  Delete,
   Param,
   Post,
   Put,
-  Delete,
-  VERSION_NEUTRAL,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -19,16 +27,9 @@ import {
 import { ListItemsService } from './listItems.service'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
 import { ListItemDto } from './models/dto/listItem.dto'
+import { TemplateListDto } from './models/dto/templateList.dto'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  User,
-} from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -93,5 +94,19 @@ export class ListItemsController {
       user,
       updateListItemsDisplayOrderDto,
     )
+  }
+
+  @ApiOperation({ summary: 'Apply template list to field' })
+  @ApiCreatedResponse({
+    description: 'Template list items',
+    type: [ListItemDto],
+  })
+  @ApiBody({ type: TemplateListDto })
+  @Post('template')
+  async applyTemplateList(
+    @CurrentUser() user: User,
+    @Body() templateListDto: TemplateListDto,
+  ): Promise<ListItemDto[]> {
+    return this.listItemsService.applyTemplateList(user, templateListDto)
   }
 }
