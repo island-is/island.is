@@ -13,16 +13,7 @@ import { m } from '../../lib/messages'
 
 export interface DescriptorCardTag {
   label: string
-  variant:
-    | 'blue'
-    | 'blueberry'
-    | 'rose'
-    | 'darkerBlue'
-    | 'red'
-    | 'white'
-    | 'purple'
-    | 'mint'
-    | 'darkerMint'
+  variant: TagVariant
   outlined?: boolean
 }
 
@@ -86,7 +77,7 @@ export const TranslationDescriptorCard = ({
           {tags?.map((tag, i) => (
             <Tag
               key={i}
-              variant={tag.variant as TagVariant}
+              variant={tag.variant}
               outlined={tag.outlined}
             >
               {tag.label}
