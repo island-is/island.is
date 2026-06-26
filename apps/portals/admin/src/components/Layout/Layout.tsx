@@ -71,7 +71,11 @@ const LayoutModuleContainer: FC<
 
     if (fullBleed) {
       return (
-        <Box {...moduleContainerBoxProps} background={pageBackground}>
+        <Box
+          {...moduleContainerBoxProps}
+          background={pageBackground}
+          overflow="hidden"
+        >
           {children}
         </Box>
       )

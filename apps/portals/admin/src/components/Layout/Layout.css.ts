@@ -3,7 +3,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   minHeight: '-webkit-fill-available',
-  overflow: 'hidden',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
