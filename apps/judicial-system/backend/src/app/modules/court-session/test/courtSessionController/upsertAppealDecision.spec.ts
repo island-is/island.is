@@ -134,7 +134,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
           defendantId,
           civilClaimantId: undefined,
         },
-        { decision: CaseAppealDecision.POSTPONE, announcement: null },
+        { decision: CaseAppealDecision.POSTPONE },
         { transaction },
       )
     })
@@ -158,7 +158,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
           defendantId: undefined,
           civilClaimantId,
         },
-        { decision: CaseAppealDecision.NOT_APPLICABLE, announcement: null },
+        { decision: CaseAppealDecision.NOT_APPLICABLE },
         { transaction },
       )
     })
@@ -172,10 +172,10 @@ describe('CourtSessionController - Upsert appeal decision', () => {
       })
     })
 
-    it('should upsert with a null decision', () => {
+    it('should upsert the announcement only, leaving the decision untouched', () => {
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
         expect.anything(),
-        { decision: null, announcement: 'Drög að yfirlýsingu' },
+        { announcement: 'Drög að yfirlýsingu' },
         { transaction },
       )
     })
