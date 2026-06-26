@@ -10,12 +10,6 @@ import { ApplicationTranslationPublishSnapshot } from './application-translation
 import { ApplicationTranslationService } from './application-translation.service'
 import { ApplicationTranslationProviderImpl } from './application-translation.provider'
 
-/**
- * Registers DB-backed `APPLICATION_TRANSLATION_PROVIDER` for CmsTranslationsService.
- * Runtime reads use the workspace only when `Features.applicationTranslationsFromWorkspace`
- * is enabled; otherwise application namespaces still come from Contentful.
- * Must be imported after `SequelizeModule.forRoot` (application-system API).
- */
 @Global()
 @Module({
   imports: [
