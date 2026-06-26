@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { LyfjastofnunHealthProvidersClientService } from '@island.is/clients/lyfjastofnun-health-providers'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import { IcelandicMedicinesAgencyMedicalClinicsCollection } from './models/medicalClinicsCollection.model'
 import { IcelandicMedicinesAgencyPharmaciesCollection } from './models/pharmaciesCollection.model'
@@ -18,7 +19,7 @@ export class IcelandicMedicinesAgencyService {
       await this.lyfjastofnunHealthProvidersClientService.getPharmacies()
     const pharmacies = data
       .map(mapToPharmacy)
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort(sortAlpha('name'))
 
     return {
       data: pharmacies,
@@ -32,7 +33,7 @@ export class IcelandicMedicinesAgencyService {
       await this.lyfjastofnunHealthProvidersClientService.getMedicalClinics()
     const clinics = data
       .map(mapToMedicalClinic)
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort(sortAlpha('name'))
 
     return {
       data: clinics,
@@ -46,7 +47,7 @@ export class IcelandicMedicinesAgencyService {
       await this.lyfjastofnunHealthProvidersClientService.getWholesalers()
     const wholesalers = data
       .map(mapToWholesaler)
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .sort(sortAlpha('name'))
 
     return {
       data: wholesalers,
