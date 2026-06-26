@@ -224,7 +224,7 @@ export const Table = <TData extends object>({
                   </Box>
                 )}
               </Box>
-              <Box marginBottom={isExpanded || isCollapsing ? 0 : 2}>
+              <Box>
                 {dataCells.map((cell) => {
                   const headerGroup = table.getHeaderGroups()[0]
                   const header = headerGroup?.headers.find(
@@ -265,7 +265,7 @@ export const Table = <TData extends object>({
                             cell.getContext(),
                           )
                         ) : (
-                          <Text>
+                          <Text textAlign="right">
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext(),
