@@ -28,7 +28,7 @@ import {
   type PreviewFieldComponent,
 } from '../../utils/previewFieldRegistry'
 import { resolveSubmitActionLabel } from '../../utils/translationWorkspaceFooterSubmit'
-import { TranslationWorkspaceFieldPreview } from '../TranslationWorkspaceFieldPreview/TranslationWorkspaceFieldPreview'
+import { TranslationWorkspaceFieldPreview } from '../TranslationWorkspaceFieldPreview'
 import { TranslationWorkspaceFormLogo } from '../TranslationWorkspaceFormLogo/TranslationWorkspaceFormLogo'
 import { TranslationWorkspacePreviewShell } from '../TranslationWorkspacePreviewShell/TranslationWorkspacePreviewShell'
 import * as styles from './TranslationWorkspacePreviewArea.css'

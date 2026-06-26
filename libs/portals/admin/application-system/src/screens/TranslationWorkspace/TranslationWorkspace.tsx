@@ -42,7 +42,7 @@ import {
   TranslationWorkspaceNotFound,
 } from '../../components/TranslationWorkspaceLoadStates/TranslationWorkspaceLoadStates'
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
-import { createWorkspacePreviewApplication } from '../../components/TranslationWorkspaceFieldPreview/TranslationWorkspaceFieldPreview'
+import { createWorkspacePreviewApplication } from '../../components/TranslationWorkspaceFieldPreview'
 import { useTemplateCustomFields } from '../../hooks/useTemplateCustomFields'
 import * as workspaceStyles from './TranslationWorkspace.css'
 
