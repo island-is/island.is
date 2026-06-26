@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import {
@@ -30,7 +30,7 @@ export const useCancelCase = (
   const { updateCase, isUpdatingCase, transitionCase, isTransitioningCase } =
     useCase()
 
-  const cancelCase = async (caseId: string) => {
+  const cancelCase = useCallback(async (caseId: string) => {
     setCaseToCancel((prev) => {
       const [cancelCaseId] = prev
 
@@ -64,7 +64,7 @@ export const useCancelCase = (
 
       return [caseId, false, undefined]
     })
-  }
+  }, [getCase])
 
   const handlePrimaryButtonClick = async () => {
     const [cancelCaseId] = caseToCancel
