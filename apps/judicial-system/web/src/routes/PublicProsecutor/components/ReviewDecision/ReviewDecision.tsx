@@ -19,15 +19,15 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { ConfirmationModal, isConfirmProsecutorDecisionModal } from '../utils'
+import { isConfirmProsecutorDecisionModal, ModalId } from '../utils'
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
   caseId: string
   defendant: Defendant
-  modalVisible?: ConfirmationModal
-  setModalVisible: Dispatch<SetStateAction<ConfirmationModal | undefined>>
+  modalVisible?: ModalId
+  setModalVisible: Dispatch<SetStateAction<ModalId | undefined>>
   isFine: boolean
 }
 
@@ -47,6 +47,12 @@ export const ReviewDecision: FC<Props> = (props) => {
     const promises = []
 
     for (const d of workingCase.defendants || []) {
+      // Defendants whose indictment was cancelled or dismissed (completed for
+      // some) do not receive a verdict and require no review decision.
+      if (d.indictmentCancelledOrDismissedState) {
+        continue
+      }
+
       if (!d.indictmentReviewDecision) {
         return
       }

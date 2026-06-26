@@ -28,7 +28,6 @@ export const rentalAgreementSection = buildSection({
             'exemptionReason',
             'exemptionDocuments.studies',
             'exemptionDocuments.health',
-            'exemptionDocuments.housing',
             'exemptionDocuments.work',
           ],
           options: rentalContractOptions,

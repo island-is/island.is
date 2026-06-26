@@ -193,7 +193,7 @@ const getApplicationFilesForSubmission = (
   const collected: UploadedFile[] = []
 
   const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  if (exemptionReason) {
+  if (exemptionReason && exemptionReason !== 'housing') {
     const exemptionFiles = getValueViaPath<UploadedFile[]>(
       answers,
       `exemptionDocuments.${exemptionReason}`,
@@ -202,19 +202,6 @@ const getApplicationFilesForSubmission = (
       collected.push(...exemptionFiles)
     }
   }
-
-  const simpleFilePaths = [
-    'incomeContractorFiles',
-    'incomeForeignFiles',
-    'incomeOtherFiles',
-    'incomeNoTaxReturnFiles',
-  ]
-  simpleFilePaths.forEach((path) => {
-    const files = getValueViaPath<UploadedFile[]>(answers, path)
-    if (Array.isArray(files)) {
-      collected.push(...files)
-    }
-  })
 
   const householdRows = getValueViaPath<Array<{ file?: UploadedFile[] }>>(
     answers,
@@ -267,8 +254,9 @@ export const mapApplicationToHousingBenefitsModel = (
     accountNumber?: string
   }>(answers, 'payment.landlordBankAccount')
 
-  const hasAssetsAndIncome =
-    getValueViaPath<string>(answers, 'assetsDeclarationRadio') === YES
+  const hasAssetsAndIncome = Boolean(
+    getValueViaPath<string>(answers, 'assetsDeclarationTextField')?.trim(),
+  )
 
   return {
     kennitala: applicantKennitala,

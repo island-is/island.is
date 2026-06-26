@@ -68,7 +68,7 @@ export const CardPayment = ({
             <apple-pay-button
               id={APPLE_PAY_BUTTON_ID}
               buttonstyle="black"
-              type="pay"
+              type="plain"
               locale="is-IS" // apple does not support is-IS so this defaults to en-US
             ></apple-pay-button>
           </Box>
