@@ -75,11 +75,7 @@ export const TranslationDescriptorCard = ({
         </Box>
         <Box display="flex" columnGap={1}>
           {tags?.map((tag, i) => (
-            <Tag
-              key={i}
-              variant={tag.variant}
-              outlined={tag.outlined}
-            >
+            <Tag key={i} variant={tag.variant} outlined={tag.outlined}>
               {tag.label}
             </Tag>
           ))}
