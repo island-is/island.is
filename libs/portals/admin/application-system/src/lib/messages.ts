@@ -203,7 +203,7 @@ export const m = defineMessages({
   },
   sharedTranslationNamespaceEmpty: {
     id: 'admin-portal.application-system:sharedTranslationNamespaceEmpty',
-    defaultMessage: 'Engar þýðanlegar strengir fundust fyrir þetta svæði.',
+    defaultMessage: 'Engir þýðanlegar strengir fundust fyrir þetta svæði.',
   },
   translationBackToList: {
     id: 'admin-portal.application-system:translationBackToList',
