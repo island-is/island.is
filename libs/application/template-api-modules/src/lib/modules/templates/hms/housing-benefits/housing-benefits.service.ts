@@ -664,15 +664,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     try {
-      const taxReturnFiled = await this.checkTaxReturnFiledForYear(
-        auth,
-        'none',
-        2025,
-        2025,
-      )
-      console.log('--------------------------------')
-      console.log('taxReturnFiled', taxReturnFiled)
-      console.log('--------------------------------')
       const model = mapApplicationToHousingBenefitsModel(application)
       console.log('--------------------------------')
       console.log('model')
