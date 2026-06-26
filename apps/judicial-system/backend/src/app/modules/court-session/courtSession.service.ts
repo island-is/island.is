@@ -448,7 +448,6 @@ export class CourtSessionService {
       data,
       { transaction },
     )
-    )
   }
 
   private validateAppealDecisionParty(
