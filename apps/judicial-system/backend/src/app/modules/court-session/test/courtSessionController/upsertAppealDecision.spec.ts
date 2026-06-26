@@ -217,6 +217,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
     })
   })
 
@@ -247,6 +248,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
     })
   })
 
@@ -278,6 +280,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     it('should throw NotFoundException', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
     })
   })
 })
