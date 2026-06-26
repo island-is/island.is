@@ -284,7 +284,7 @@ const NAMESPACE_REGEX = /^[\w.]+:\w+(\.\w+)*$/
  * Generates "invalid" skeleton data for a zod schema to trigger refinement errors.
  * Uses empty strings, zeros, and false to maximize validation failures.
  */
-function generateInvalidSkeleton(schema: z.ZodType): unknown {
+const generateInvalidSkeleton = (schema: z.ZodType): unknown => {
   if (schema instanceof z.ZodString) return ''
   if (schema instanceof z.ZodNumber) return 0
   if (schema instanceof z.ZodBoolean) return false
@@ -349,7 +349,7 @@ function generateInvalidSkeleton(schema: z.ZodType): unknown {
 /**
  * Generates alternative invalid data (non-empty strings that fail format validations).
  */
-function generateAlternativeInvalidSkeleton(schema: z.ZodType): unknown {
+const generateAlternativeInvalidSkeleton = (schema: z.ZodType): unknown => {
   if (schema instanceof z.ZodString) return 'x'
   if (schema instanceof z.ZodNumber) return -1
   if (schema instanceof z.ZodBoolean) return false
@@ -415,11 +415,11 @@ function generateAlternativeInvalidSkeleton(schema: z.ZodType): unknown {
   return undefined
 }
 
-function collectDescriptorsFromIssues(
+const collectDescriptorsFromIssues = (
   issues: z.ZodIssue[],
   seen: Set<string>,
   result: ValidationMessageDescriptorInfo[],
-): void {
+): void => {
   for (const issue of issues) {
     if (issue.code !== ZodIssueCode.custom) continue
     const params = issue.params as Record<string, unknown> | undefined
@@ -445,9 +445,9 @@ function collectDescriptorsFromIssues(
  * safeParse with multiple invalid inputs and collecting the params from
  * resulting ZodIssues that contain message descriptors.
  */
-export function extractValidationDescriptors(
+export const extractValidationDescriptors = (
   schema: Schema | z.ZodEffects<any, any, any>,
-): ValidationMessageDescriptorInfo[] {
+): ValidationMessageDescriptorInfo[] => {
   const result: ValidationMessageDescriptorInfo[] = []
   const seen = new Set<string>()
 
@@ -503,7 +503,7 @@ export function extractValidationDescriptors(
   return result
 }
 
-function extractStaticText(text: StaticText | undefined): string | null {
+const extractStaticText = (text: StaticText | undefined): string | null => {
   if (!text) return null
   if (typeof text === 'string') return text
   if (typeof text === 'object' && 'defaultMessage' in text) {
@@ -512,10 +512,10 @@ function extractStaticText(text: StaticText | undefined): string | null {
   return null
 }
 
-function resolveTemplateDisplayName(
+const resolveTemplateDisplayName = (
   template: { name?: unknown },
   fallback: string,
-): string {
+): string => {
   if (typeof template.name === 'function') {
     const { staticText } = tryInvokeFormTextFunction(template.name as Function)
     return staticText ?? fallback
@@ -525,10 +525,10 @@ function resolveTemplateDisplayName(
 
 const templateDisplayNameCache = new Map<string, string>()
 
-async function getTemplateDisplayName(
+const getTemplateDisplayName = async (
   typeId: ApplicationTypes,
   fallback: string,
-): Promise<string> {
+): Promise<string> => {
   const cached = templateDisplayNameCache.get(typeId)
   if (cached) {
     return cached
@@ -545,7 +545,7 @@ async function getTemplateDisplayName(
   }
 }
 
-function isMessageDescriptor(obj: unknown): obj is MessageDescriptor {
+const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor => {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -554,10 +554,10 @@ function isMessageDescriptor(obj: unknown): obj is MessageDescriptor {
   )
 }
 
-function tryInvokeFormTextFunction(fn: Function): {
+const tryInvokeFormTextFunction = (fn: Function): {
   descriptors: MessageDescriptorInfo[]
   staticText: string | null
-} {
+} => {
   try {
     const mockApp = {
       answers: {},
@@ -592,9 +592,9 @@ function tryInvokeFormTextFunction(fn: Function): {
   return { descriptors: [], staticText: null }
 }
 
-function extractMessageDescriptorsFromFormText(
+const extractMessageDescriptorsFromFormText = (
   text: FormText | FormTextWithLocale | undefined,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   if (!text) return []
   if (typeof text === 'function') return []
   if (typeof text === 'string') return []
@@ -615,11 +615,11 @@ const MAX_PROPS_DESCRIPTOR_DEPTH = 12
 /**
  * Recursively collects `MessageDescriptor`-shaped objects from field `props` (e.g. CUSTOM fields).
  */
-function extractMessageDescriptorsFromPropsDeep(
+const extractMessageDescriptorsFromPropsDeep = (
   value: unknown,
   depth: number,
   visited: WeakSet<object>,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   if (depth > MAX_PROPS_DESCRIPTOR_DEPTH) {
     return []
   }
@@ -680,10 +680,10 @@ function extractMessageDescriptorsFromPropsDeep(
   return []
 }
 
-function walkExternalDataSourceItem(
+const walkExternalDataSourceItem = (
   syntheticId: string,
   provider: DataProviderItem,
-): ScreenIntrospection {
+): ScreenIntrospection => {
   const descriptors: MessageDescriptorInfo[] = []
   descriptors.push(
     ...extractMessageDescriptorsFromFormText(
@@ -720,7 +720,7 @@ function walkExternalDataSourceItem(
   }
 }
 
-function stubApplicationForOptionPreview(): Application {
+const stubApplicationForOptionPreview = (): Application => {
   return {
     answers: {},
     externalData: {},
@@ -737,7 +737,7 @@ function stubApplicationForOptionPreview(): Application {
   } as unknown as Application
 }
 
-function stubUserForIdPreview(): BffUser {
+const stubUserForIdPreview = (): BffUser => {
   const nationalId = '0000000000'
   return {
     nationalId,
@@ -745,7 +745,7 @@ function stubUserForIdPreview(): BffUser {
   } as unknown as BffUser
 }
 
-function extractStaticId(id: unknown): string {
+const extractStaticId = (id: unknown): string => {
   if (id === undefined || id === null) return ''
   if (typeof id === 'string') return id
   if (typeof id === 'function') {
@@ -767,10 +767,10 @@ function extractStaticId(id: unknown): string {
  * Evaluate `MaybeWithApplicationAndFieldAndLocale<Option[]>` so radio/checkbox previews
  * can show labels when templates pass option factories (e.g. `getOtherFeesPayeeOptions`).
  */
-function tryResolveOptionsArrayForPreview(
+const tryResolveOptionsArrayForPreview = (
   options: RadioField['options'] | CheckboxField['options'],
   fieldContext: RadioField | CheckboxField,
-): Option[] | undefined {
+): Option[] | undefined => {
   if (Array.isArray(options)) {
     return options
   }
@@ -798,10 +798,10 @@ function tryResolveOptionsArrayForPreview(
   return undefined
 }
 
-function extractFieldOptionsForPreview(
+const extractFieldOptionsForPreview = (
   options: RadioField['options'] | CheckboxField['options'],
   fieldContext: RadioField | CheckboxField,
-): RadioOptionIntrospection[] | undefined {
+): RadioOptionIntrospection[] | undefined => {
   const raw = tryResolveOptionsArrayForPreview(options, fieldContext)
   if (!raw) {
     return undefined
@@ -832,21 +832,21 @@ function extractFieldOptionsForPreview(
   })
 }
 
-function extractRadioPreviewOptions(
+const extractRadioPreviewOptions = (
   field: RadioField,
-): RadioOptionIntrospection[] | undefined {
+): RadioOptionIntrospection[] | undefined => {
   return extractFieldOptionsForPreview(field.options, field)
 }
 
-function extractCheckboxPreviewOptions(
+const extractCheckboxPreviewOptions = (
   field: CheckboxField,
-): RadioOptionIntrospection[] | undefined {
+): RadioOptionIntrospection[] | undefined => {
   return extractFieldOptionsForPreview(field.options, field)
 }
 
-function extractDisplayFieldMessageDescriptors(
+const extractDisplayFieldMessageDescriptors = (
   df: DisplayField,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const extra: MessageDescriptorInfo[] = []
   if (df.label != null && isMessageDescriptor(df.label)) {
     extra.push({
@@ -865,14 +865,14 @@ function extractDisplayFieldMessageDescriptors(
   return extra
 }
 
-function displayFieldStaticIntrospectionFromLeaf(leaf: FormLeaf):
+const displayFieldStaticIntrospectionFromLeaf = (leaf: FormLeaf):
   | {
       displayLabelMessageId: string | null
       displaySuffixMessageId: string | null
       displayLabelStatic: string | null
       displaySuffixStatic: string | null
     }
-  | Record<string, never> {
+  | Record<string, never> => {
   if (leaf.type !== FieldTypes.DISPLAY) {
     return {}
   }
@@ -903,12 +903,12 @@ function displayFieldStaticIntrospectionFromLeaf(leaf: FormLeaf):
   }
 }
 
-function textFieldIntrospectionFromLeaf(leaf: FormLeaf):
+const textFieldIntrospectionFromLeaf = (leaf: FormLeaf):
   | {
       textFieldVariant: string
       textFieldRows?: number | null
     }
-  | Record<string, never> {
+  | Record<string, never> => {
   if (leaf.type !== FieldTypes.TEXT) {
     return {}
   }
@@ -923,7 +923,7 @@ function textFieldIntrospectionFromLeaf(leaf: FormLeaf):
   return { textFieldVariant: variant }
 }
 
-function imageFieldIntrospectionFromLeaf(leaf: FormLeaf):
+const imageFieldIntrospectionFromLeaf = (leaf: FormLeaf):
   | {
       imageUrl: string | null
       imageSvgComponentName: string | null
@@ -931,7 +931,7 @@ function imageFieldIntrospectionFromLeaf(leaf: FormLeaf):
       imageWidth: unknown
       imagePosition: unknown
     }
-  | Record<string, never> {
+  | Record<string, never> => {
   if (leaf.type !== FieldTypes.IMAGE) {
     return {}
   }
@@ -954,9 +954,9 @@ function imageFieldIntrospectionFromLeaf(leaf: FormLeaf):
   }
 }
 
-function extractMessageDescriptorsFromField(
+const extractMessageDescriptorsFromField = (
   field: Field,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const descriptors: MessageDescriptorInfo[] = []
   const f = field as unknown as Record<string, unknown>
 
@@ -1065,10 +1065,10 @@ function extractMessageDescriptorsFromField(
   )
 }
 
-function mergeMessageDescriptors(
+const mergeMessageDescriptors = (
   base: MessageDescriptorInfo[],
   extra: MessageDescriptorInfo[],
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const out = [...base]
   for (const x of extra) {
     if (!out.some((z) => z.id === x.id)) {
@@ -1078,7 +1078,7 @@ function mergeMessageDescriptors(
   return out
 }
 
-function enrichNationalIdWithNameFieldDescriptors(
+const enrichNationalIdWithNameFieldDescriptors = (
   nif: {
     customNationalIdLabel?: StaticText
     customNameLabel?: StaticText
@@ -1088,7 +1088,7 @@ function enrichNationalIdWithNameFieldDescriptors(
     emailLabel?: StaticText
   },
   descriptors: MessageDescriptorInfo[],
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   let out = [...descriptors]
   if (!nif.customNationalIdLabel) {
     out = mergeMessageDescriptors(
@@ -1125,17 +1125,17 @@ function enrichNationalIdWithNameFieldDescriptors(
   return out
 }
 
-function enrichNationalIdWithNameRepeaterItemDescriptors(
+const enrichNationalIdWithNameRepeaterItemDescriptors = (
   item: RepeaterItem,
   descriptors: MessageDescriptorInfo[],
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   if (item.component !== 'nationalIdWithName') {
     return descriptors
   }
   return enrichNationalIdWithNameFieldDescriptors(item, descriptors)
 }
 
-function mapRepeaterItemToFieldType(item: RepeaterItem): string {
+const mapRepeaterItemToFieldType = (item: RepeaterItem): string => {
   switch (item.component) {
     case 'input': {
       const t = 'type' in item ? item.type : undefined
@@ -1176,9 +1176,9 @@ function mapRepeaterItemToFieldType(item: RepeaterItem): string {
   }
 }
 
-function buildTableRepeaterColumnHeaderDescriptors(
+const buildTableRepeaterColumnHeaderDescriptors = (
   tr: TableRepeaterField,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const fields = tr.fields ?? {}
   const items: Array<RepeaterItem & { id: string }> = Object.keys(fields).map(
     (id) => ({ id, ...fields[id] } as RepeaterItem & { id: string }),
@@ -1228,11 +1228,11 @@ function buildTableRepeaterColumnHeaderDescriptors(
   return out
 }
 
-function walkRepeaterItemToScreen(
+const walkRepeaterItemToScreen = (
   repeaterId: string,
   itemKey: string,
   item: RepeaterItem,
-): ScreenIntrospection {
+): ScreenIntrospection => {
   const id = `${repeaterId}::repeaterItem::${itemKey}`
   const descriptors: MessageDescriptorInfo[] = []
   const pushText = (t: unknown) => {
@@ -1452,7 +1452,7 @@ function walkRepeaterItemToScreen(
   return base
 }
 
-function walkTableRepeaterScreen(tr: TableRepeaterField): ScreenIntrospection {
+const walkTableRepeaterScreen = (tr: TableRepeaterField): ScreenIntrospection => {
   const trRecord = tr as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const pushText = (t: unknown) => {
@@ -1523,9 +1523,9 @@ function walkTableRepeaterScreen(tr: TableRepeaterField): ScreenIntrospection {
   }
 }
 
-function walkFieldsRepeaterScreen(
+const walkFieldsRepeaterScreen = (
   fr: FieldsRepeaterField,
-): ScreenIntrospection {
+): ScreenIntrospection => {
   const frRecord = fr as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const pushText = (t: unknown) => {
@@ -1587,16 +1587,16 @@ function walkFieldsRepeaterScreen(
   }
 }
 
-function addDescriptorIfNew(
+const addDescriptorIfNew = (
   target: MessageDescriptorInfo[],
   d: MessageDescriptorInfo,
-) {
+) => {
   if (!target.some((x) => x.id === d.id)) {
     target.push(d)
   }
 }
 
-function walkStaticTableScreen(st: StaticTableField): ScreenIntrospection {
+const walkStaticTableScreen = (st: StaticTableField): ScreenIntrospection => {
   const stRecord = st as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const mergeIn = (arr: MessageDescriptorInfo[]) => {
@@ -1701,9 +1701,9 @@ function walkStaticTableScreen(st: StaticTableField): ScreenIntrospection {
 /**
  * Template `field.backgroundColor` for input-like fields (exposed to translation preview as `inputBackgroundColor`).
  */
-function extractInputBackgroundColorFromLeaf(
+const extractInputBackgroundColorFromLeaf = (
   leaf: FormLeaf,
-): string | null | undefined {
+): string | null | undefined => {
   const withBg = new Set<FieldTypes>([
     FieldTypes.TEXT,
     FieldTypes.EMAIL,
@@ -1732,9 +1732,9 @@ function extractInputBackgroundColorFromLeaf(
   return undefined
 }
 
-function extractDescriptorsFromFormTextMaybeArray(
+const extractDescriptorsFromFormTextMaybeArray = (
   text: FormText | FormTextArray | undefined,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   if (!text) return []
   if (typeof text === 'function') return []
   if (Array.isArray(text)) {
@@ -1750,9 +1750,9 @@ function extractDescriptorsFromFormTextMaybeArray(
   return extractMessageDescriptorsFromFormText(text as FormText)
 }
 
-function extractDescriptorsFromKeyValueItem(
+const extractDescriptorsFromKeyValueItem = (
   item: KeyValueItem,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   let out = extractDescriptorsFromFormTextMaybeArray(item.keyText)
   out = mergeMessageDescriptors(
     out,
@@ -1761,9 +1761,9 @@ function extractDescriptorsFromKeyValueItem(
   return out
 }
 
-function extractSubmitActionsForPreview(
+const extractSubmitActionsForPreview = (
   sf: SubmitField,
-): SubmitActionIntrospection[] {
+): SubmitActionIntrospection[] => {
   return sf.actions.map((action) => {
     const event =
       typeof action.event === 'object'
@@ -1805,9 +1805,9 @@ function extractSubmitActionsForPreview(
  * Best-effort: run overview `items(answers, …)` with stub inputs so row-level
  * FormText message ids can appear on the OVERVIEW screen for translation tooling.
  */
-function extractOverviewItemsDescriptorsBestEffort(
+const extractOverviewItemsDescriptorsBestEffort = (
   field: OverviewField,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const collected: MessageDescriptorInfo[] = []
   const itemsFn = field.items
   if (typeof itemsFn !== 'function') {
@@ -1833,10 +1833,10 @@ function extractOverviewItemsDescriptorsBestEffort(
   return collected
 }
 
-function walkFormLeaf(
+const walkFormLeaf = (
   leaf: FormLeaf,
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
-): ScreenIntrospection {
+): ScreenIntrospection => {
   const descriptors: MessageDescriptorInfo[] = []
   const children: ScreenIntrospection[] = []
   const leafRecord = leaf as unknown as Record<string, unknown>
@@ -2228,10 +2228,10 @@ function walkFormLeaf(
   }
 }
 
-function walkSection(
+const walkSection = (
   section: Section,
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
-): SectionIntrospection {
+): SectionIntrospection => {
   const subSections: SubSectionIntrospection[] = []
   const screens: ScreenIntrospection[] = []
 
@@ -2254,10 +2254,10 @@ function walkSection(
   }
 }
 
-function walkSubSection(
+const walkSubSection = (
   subSection: SubSection,
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
-): SubSectionIntrospection {
+): SubSectionIntrospection => {
   const screens: ScreenIntrospection[] = []
 
   for (const child of subSection.children) {
@@ -2274,7 +2274,7 @@ function walkSubSection(
   }
 }
 
-function extractFormLogoKey(logo: Form['logo'] | undefined): string | null {
+const extractFormLogoKey = (logo: Form['logo'] | undefined): string | null => {
   if (!logo || typeof logo !== 'function') {
     return null
   }
@@ -2290,10 +2290,10 @@ function extractFormLogoKey(logo: Form['logo'] | undefined): string | null {
   return key
 }
 
-function walkForm(
+const walkForm = (
   form: Form,
   customFieldManifest?: Record<string, MessageDescriptorInfo[]>,
-): FormIntrospection {
+): FormIntrospection => {
   const sections: SectionIntrospection[] = []
 
   for (const child of form.children) {
@@ -2310,9 +2310,9 @@ function walkForm(
   }
 }
 
-function collectAllDescriptors(
+const collectAllDescriptors = (
   form: FormIntrospection,
-): MessageDescriptorInfo[] {
+): MessageDescriptorInfo[] => {
   const all: MessageDescriptorInfo[] = []
   const seen = new Set<string>()
 
@@ -2359,7 +2359,7 @@ function collectAllDescriptors(
   return all
 }
 
-function serializeLoadedFormForApi(form: Form): unknown {
+const serializeLoadedFormForApi = (form: Form): unknown => {
   try {
     return JSON.parse(JSON.stringify(form)) as unknown
   } catch (e) {
