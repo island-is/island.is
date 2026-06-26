@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API - Open Invoices",
-    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\r\n<ul>\r\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\r\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\r\n \r\n</ul>",
+    "description": "<h2>Open Invoices</h2><p>Status: Available</p><h3>Authentication</h3>\n<ul>\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\n \n</ul>",
     "version": "1.0"
   },
   "paths": {
