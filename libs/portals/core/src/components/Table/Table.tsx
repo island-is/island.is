@@ -58,7 +58,9 @@ export const Table = <TData extends object>({
   }
 
   const resolvedEmpty =
-    typeof emptyMessage === 'string' ? emptyMessage : formatMessage(emptyMessage)
+    typeof emptyMessage === 'string'
+      ? emptyMessage
+      : formatMessage(emptyMessage)
 
   return (
     <InteractiveTable
@@ -80,5 +82,10 @@ export const Table = <TData extends object>({
 }
 
 export default Table
-export type { ColumnDef, Row, SortingState, OnChangeFn } from '@tanstack/react-table'
+export type {
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from '@tanstack/react-table'
 export { createColumnHelper } from '@tanstack/react-table'

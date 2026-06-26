@@ -4,7 +4,11 @@ import { Meta } from '@storybook/react'
 import { Box } from '../Box/Box'
 import { Tag } from '../Tag/Tag'
 import { Text } from '../Text/Text'
-import { InteractiveTable, createColumnHelper, SortingState } from './InteractiveTable'
+import {
+  InteractiveTable,
+  createColumnHelper,
+  SortingState,
+} from './InteractiveTable'
 
 export default {
   title: 'Core/InteractiveTable',
@@ -30,8 +34,16 @@ const licenseColumns = [
   licenseHelper.accessor('date', { header: 'Date' }),
 ]
 const licenseData: License[] = [
-  { school: 'Menntamálaráðuneytið', programme: 'Kennararéttindi', date: '2010-09-01' },
-  { school: 'Viðskiptaráð', programme: 'Próf í verðbréfaviðskiptum', date: '2005-05-25' },
+  {
+    school: 'Menntamálaráðuneytið',
+    programme: 'Kennararéttindi',
+    date: '2010-09-01',
+  },
+  {
+    school: 'Viðskiptaráð',
+    programme: 'Próf í verðbréfaviðskiptum',
+    date: '2005-05-25',
+  },
   { school: 'Háskóli Íslands', programme: 'Lagafræði', date: '2015-06-15' },
   { school: 'HR', programme: 'Viðskiptafræði', date: '2018-01-10' },
 ]
@@ -47,7 +59,12 @@ export const Basic = () => (
 
 // --- Sortable ---
 
-type Vehicle = { regno: string; make: string; year: number; status: 'valid' | 'expired' }
+type Vehicle = {
+  regno: string
+  make: string
+  year: number
+  status: 'valid' | 'expired'
+}
 
 const vehicleHelper = createColumnHelper<Vehicle>()
 const vehicleColumns = [
@@ -63,7 +80,11 @@ const vehicleColumns = [
     enableSorting: false,
     meta: { type: 'interactive' },
     cell: (info) => (
-      <Tag variant={info.getValue() === 'valid' ? 'mint' : 'red'} outlined disabled>
+      <Tag
+        variant={info.getValue() === 'valid' ? 'mint' : 'red'}
+        outlined
+        disabled
+      >
         {info.getValue() === 'valid' ? 'Valid' : 'Expired'}
       </Tag>
     ),
@@ -90,7 +111,9 @@ export const Sortable = () => (
 // --- Controlled sorting ---
 
 export const ControlledSorting = () => {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'year', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'year', desc: true },
+  ])
   return (
     <InteractiveTable
       columns={vehicleColumns}
@@ -115,9 +138,24 @@ const permitColumns = [
   permitHelper.accessor('issued', { header: 'Issued' }),
 ]
 const permitData: Permit[] = [
-  { id: 'P-001', type: 'Fishing', issued: '2023-01-15', detail: 'Valid for coastal waters, zone A–C. Renewal due Jan 2025.' },
-  { id: 'P-002', type: 'Hunting', issued: '2022-09-01', detail: 'Restricted to highland regions. Valid season: Aug–Nov.' },
-  { id: 'P-003', type: 'Building', issued: '2024-03-20', detail: 'Single-family dwelling, lot 42B. Expires 2026-03-20.' },
+  {
+    id: 'P-001',
+    type: 'Fishing',
+    issued: '2023-01-15',
+    detail: 'Valid for coastal waters, zone A–C. Renewal due Jan 2025.',
+  },
+  {
+    id: 'P-002',
+    type: 'Hunting',
+    issued: '2022-09-01',
+    detail: 'Restricted to highland regions. Valid season: Aug–Nov.',
+  },
+  {
+    id: 'P-003',
+    type: 'Building',
+    issued: '2024-03-20',
+    detail: 'Single-family dwelling, lot 42B. Expires 2026-03-20.',
+  },
 ]
 
 export const Expandable = () => (

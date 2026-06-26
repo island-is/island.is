@@ -138,7 +138,9 @@ export const InteractiveTable = <TData extends object>({
     )
   }
 
-  const hasSortableColumns = table.getAllColumns().some((col) => col.getCanSort())
+  const hasSortableColumns = table
+    .getAllColumns()
+    .some((col) => col.getCanSort())
 
   const desktopTable = (
     <T.Table>
@@ -301,8 +303,7 @@ export const InteractiveTable = <TData extends object>({
                       }}
                     >
                       {cell.column.columnDef.meta?.type === 'interactive' ? (
-                        mobileTitleKey &&
-                        cell.column.id === mobileTitleKey ? (
+                        mobileTitleKey && cell.column.id === mobileTitleKey ? (
                           <Box id={`${tableId}-row-title-${row.id}`}>
                             {flexRender(
                               cell.column.columnDef.cell,
@@ -319,8 +320,7 @@ export const InteractiveTable = <TData extends object>({
                         <Text
                           variant="medium"
                           id={
-                            mobileTitleKey &&
-                            cell.column.id === mobileTitleKey
+                            mobileTitleKey && cell.column.id === mobileTitleKey
                               ? `${tableId}-row-title-${row.id}`
                               : undefined
                           }
@@ -396,8 +396,7 @@ export const InteractiveTable = <TData extends object>({
         const dataCells = row
           .getVisibleCells()
           .filter(
-            (c) =>
-              c.column.id !== mobileTitleKey && c.column.id !== 'expander',
+            (c) => c.column.id !== mobileTitleKey && c.column.id !== 'expander',
           )
         const isExpanded = row.getIsExpanded()
         const isCollapsing = collapsingRows.has(row.id)
@@ -564,5 +563,10 @@ export const InteractiveTable = <TData extends object>({
 }
 
 export default InteractiveTable
-export type { ColumnDef, Row, SortingState, OnChangeFn } from '@tanstack/react-table'
+export type {
+  ColumnDef,
+  Row,
+  SortingState,
+  OnChangeFn,
+} from '@tanstack/react-table'
 export { createColumnHelper } from '@tanstack/react-table'
