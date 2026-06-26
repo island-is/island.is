@@ -78,7 +78,12 @@ export const Drawer = ({
       backdropWhite={backdropWhite}
       backdropDark={backdropDark}
       backdropTransparent={backdropTransparent}
-      className={cn(styles.drawer, styles.position[position], panelClassName)}
+      className={cn(
+        styles.drawer,
+        styles.position[position],
+        backdropTransparent && styles.transparentBackdropPanel,
+        panelClassName,
+      )}
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
