@@ -12,7 +12,6 @@ import {
   NationalRegistryV3UserApi,
   NationalRegistryV3SpouseApi,
   defineTemplateApi,
-  IdentityApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -40,7 +39,6 @@ import {
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCountriesApi,
-  SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationEmploymentStatusesApi,
