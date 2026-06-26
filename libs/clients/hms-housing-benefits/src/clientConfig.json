@@ -662,6 +662,11 @@
           },
           "exemptionNumber": {
             "$ref": "#/components/schemas/ExemptionType"
+          },
+          "assetDeclaration": {
+            "type": "string",
+            "description": "The asset declaration.",
+            "nullable": false
           }
         },
         "additionalProperties": false,

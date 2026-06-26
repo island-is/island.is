@@ -674,6 +674,10 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       console.log('taxReturnFiled', taxReturnFiled)
       console.log('--------------------------------')
       const model = mapApplicationToHousingBenefitsModel(application)
+      console.log('--------------------------------')
+      console.log('model')
+      console.dir(model, { depth: null, colors: true })
+      console.log('--------------------------------')
       const result =
         await this.hmsHousingBenefitsClientService.createHousingBenefitsApplication(
           auth,

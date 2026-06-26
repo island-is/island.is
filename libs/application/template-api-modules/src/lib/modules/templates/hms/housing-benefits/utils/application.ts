@@ -9,9 +9,17 @@ import {
   ApplicationFile,
   HouseholdMember,
   HousingBenefitsApplicationModel,
+  PropertyType,
 } from '@island.is/clients/hms-housing-benefits'
 import { getCompletedAssigneeNationalIdSet } from '@island.is/application/templates/hms/housing-benefits'
 import * as kennitala from 'kennitala'
+
+export const normalizePhoneNumber = (phoneNumber: string): string => {
+  return phoneNumber
+    .trim()
+    .replace(/(^00354|^\+354)/g, '') // Remove country code
+    .replace(/\D/g, '') // Remove all non-digits
+}
 
 export const normalizeNationalId = (nationalId: string): string =>
   kennitala.isValid(nationalId)
@@ -124,6 +132,65 @@ const getOptionalDescription = (
   return value ? value : undefined
 }
 
+const getAssigneeHouseholdMemberFieldsFromAnswers = (
+  answers: ApplicationWithAttachments['answers'],
+  nationalId: string,
+): Pick<
+  HouseholdMember,
+  | 'email'
+  | 'phoneNumber'
+  | 'address'
+  | 'postalCode'
+  | 'acceptedMunicipalityDataFetch'
+  | 'acceptedDataFetch'
+  | 'acceptedPrivacyPolicy'
+  | 'assetDeclaration'
+> => {
+  const normalizedId = normalizeNationalId(nationalId)
+  const email = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.assigneeInfo.email`,
+  )?.trim()
+  const phoneNumber = normalizePhoneNumber(
+    getValueViaPath<string>(
+      answers,
+      `${normalizedId}.assigneeInfo.phoneNumber`,
+    )?.trim() ?? '',
+  )
+  const address = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.assigneeInfo.address`,
+  )?.trim()
+  const postalCode = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.assigneeInfo.postalCode`,
+  )?.trim()
+  const municipalityConsent = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.confirmMunicipalityDataFetch[0]`,
+  )
+  const approvedExternalData = getValueViaPath<boolean>(
+    answers,
+    `${normalizedId}.approveExternalData`,
+  )
+  const assetDeclaration = getValueViaPath<string>(
+    answers,
+    `${normalizedId}.assetDeclerationTextField`,
+  )?.trim()
+  return {
+    ...(email ? { email } : {}),
+    ...(phoneNumber ? { phoneNumber } : {}),
+    ...(address ? { address } : {}),
+    ...(postalCode ? { postalCode } : {}),
+    ...(municipalityConsent === YES
+      ? { acceptedMunicipalityDataFetch: true }
+      : {}),
+    ...(approvedExternalData === true ? { acceptedDataFetch: true } : {}),
+    acceptedPrivacyPolicy: true,
+    ...(assetDeclaration ? { assetDeclaration } : {}),
+  }
+}
+
 const getHouseholdMembersForSubmission = (
   application: ApplicationWithAttachments,
 ): Array<HouseholdMember> => {
@@ -142,7 +209,10 @@ const getHouseholdMembersForSubmission = (
     .filter((row) => !row.isRemoved)
     .map((row) => row.nationalIdWithName?.nationalId)
     .filter((id): id is string => Boolean(id))
-    .map((id) => ({ kennitala: normalizeNationalId(id) }))
+    .map((id) => ({
+      kennitala: normalizeNationalId(id),
+      ...getAssigneeHouseholdMemberFieldsFromAnswers(application.answers, id),
+    }))
 }
 
 const getSelectedLandlordKennitala = (
@@ -264,8 +334,10 @@ export const mapApplicationToHousingBenefitsModel = (
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
     postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
     islandIsDateRegistered: new Date(),
-    phoneNumber:
+
+    phoneNumber: normalizePhoneNumber(
       getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+    ),
     email: getValueViaPath<string>(answers, 'applicant.email') ?? '',
     bank: bankAccount?.bankNumber ?? '',
     ledger: bankAccount?.ledger ?? '',
@@ -296,5 +368,7 @@ export const mapApplicationToHousingBenefitsModel = (
     hasAssetsAndIncome: hasAssetsAndIncome ? 1 : 0,
     householdMembers: getHouseholdMembersForSubmission(application),
     files: getApplicationFilesForSubmission(application, applicantKennitala),
+    propertyTypeNumber:
+      getValueViaPath<PropertyType>(answers, 'propertyType') ?? undefined,
   }
 }
