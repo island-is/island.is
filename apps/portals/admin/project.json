@@ -24,9 +24,7 @@
         ],
         "styles": ["apps/portals/admin/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/portals/admin/webpack.config.js",
-        "maxWorkers": 2,
-        "memoryLimit": 8192
+        "webpackConfig": "apps/portals/admin/webpack.config.js"
       },
       "configurations": {
         "production": {
