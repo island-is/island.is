@@ -209,6 +209,7 @@ const AppealCaseFilesOverview = () => {
                         <IconButton
                           icon="ellipsisVertical"
                           colorScheme="transparent"
+                          ariaLabel={`Valmynd fyrir ${file.name}`}
                           onClick={(evt) => {
                             evt.stopPropagation()
                           }}
