@@ -272,27 +272,27 @@ export const m = defineMessages({
   },
   translationFieldsTab: {
     id: 'admin-portal.application-system:translationFieldsTab',
-    defaultMessage: 'Fields',
+    defaultMessage: 'Reitir',
   },
   translationFieldAutofill: {
     id: 'admin-portal.application-system:translationFieldAutofill',
-    defaultMessage: 'Autofill',
+    defaultMessage: 'Sjálfvirk útfylling',
   },
   translationFieldShowError: {
     id: 'admin-portal.application-system:translationFieldShowError',
-    defaultMessage: 'Show error',
+    defaultMessage: 'Birta villu',
   },
   translationFieldNoFields: {
     id: 'admin-portal.application-system:translationFieldNoFields',
-    defaultMessage: 'No fields on this screen',
+    defaultMessage: 'Engir reitir á þessum skjá',
   },
   translationFieldPrevious: {
     id: 'admin-portal.application-system:translationFieldPrevious',
-    defaultMessage: 'Previous',
+    defaultMessage: 'Fyrri',
   },
   translationFieldNext: {
     id: 'admin-portal.application-system:translationFieldNext',
-    defaultMessage: 'Next',
+    defaultMessage: 'Næsti',
   },
 
   // Filters
