@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, Divider, Pagination, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  Pagination,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CardLoader,
   NestedLines,
