@@ -133,7 +133,7 @@ export const RelevantParties = () => {
         handleCheckboxChange={handleCheckboxChange}
       />
 
-      <PartyType
+      {/* <PartyType
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
         formApplicantFields={applicantFields.filter(
@@ -158,7 +158,7 @@ export const RelevantParties = () => {
           (f) => f.fieldType === 'APPLICANT',
         )}
         handleCheckboxChange={handleCheckboxChange}
-      />
+      /> */}
     </Stack>
   )
 }
