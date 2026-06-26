@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import type { Application } from '@island.is/application/types'
 import {
   Box,
@@ -7,7 +7,6 @@ import {
   FormStepperV2,
   Section,
 } from '@island.is/island-ui/core'
-import type { ButtonTypes } from '@island.is/island-ui/core/types'
 import { coreMessages } from '@island.is/application/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
@@ -33,11 +32,13 @@ import { TranslationWorkspaceFormLogo } from '../TranslationWorkspaceFormLogo/Tr
 import { TranslationWorkspacePreviewShell } from '../TranslationWorkspacePreviewShell/TranslationWorkspacePreviewShell'
 import * as styles from './TranslationWorkspacePreviewArea.css'
 
-type SubmitPreviewButton = Omit<ButtonTypes, 'circle'> & {
+type SubmitPreviewButtonConfig = {
+  variant: 'primary' | 'ghost'
+  colorScheme?: 'default' | 'light' | 'destructive'
   icon?: 'checkmark' | 'close' | 'pencil'
 }
 
-const SUBMIT_PREVIEW_BUTTON_MAP: Record<string, SubmitPreviewButton> = {
+const SUBMIT_PREVIEW_BUTTON_MAP: Record<string, SubmitPreviewButtonConfig> = {
   primary: {
     icon: 'checkmark',
     colorScheme: 'default',
@@ -68,6 +69,28 @@ const SUBMIT_PREVIEW_BUTTON_MAP: Record<string, SubmitPreviewButton> = {
     variant: 'ghost',
   },
 }
+
+const SubmitPreviewButton = ({
+  config: { variant, colorScheme, icon },
+  children,
+}: {
+  config: SubmitPreviewButtonConfig
+  children: ReactNode
+}) =>
+  variant === 'ghost' ? (
+    <Button type="button" variant="ghost" colorScheme={colorScheme} icon={icon}>
+      {children}
+    </Button>
+  ) : (
+    <Button
+      type="button"
+      variant="primary"
+      colorScheme={colorScheme}
+      icon={icon}
+    >
+      {children}
+    </Button>
+  )
 
 export interface TranslationWorkspacePreviewAreaProps {
   previewScreens: ScreenIntrospection[]
@@ -240,14 +263,9 @@ export const TranslationWorkspacePreviewArea = ({
                         key={`${action.event}-${idx}`}
                         marginLeft={idx === 0 ? 0 : 2}
                       >
-                        <Button
-                          type="button"
-                          variant={cfg.variant}
-                          icon={cfg.icon}
-                          colorScheme={cfg.colorScheme as any}
-                        >
+                        <SubmitPreviewButton config={cfg}>
                           {label || formatMessage(coreMessages.buttonSubmit)}
-                        </Button>
+                        </SubmitPreviewButton>
                       </Box>
                     )
                   })
