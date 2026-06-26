@@ -1,3 +1,5 @@
+import type { SectionIntrospection } from '@island.is/application/types'
+
 export type {
   MessageDescriptorInfo as MessageDescriptor,
   ValidationMessageDescriptorInfo as ValidationMessageDescriptor,
@@ -6,8 +8,6 @@ export type {
   ScreenIntrospection,
   SectionIntrospection as TemplateSectionNav,
 } from '@island.is/application/types'
-
-import type { SectionIntrospection } from '@island.is/application/types'
 
 /** Where in the template tree a sidebar row was clicked (for debugging / tooling). */
 export interface SidebarNavLocation {
