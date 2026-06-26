@@ -29,6 +29,18 @@ import {
   getTranslationSaveErrorDetail,
   isTranslationAccessForbiddenError,
 } from '../../utils/translationWorkspaceErrors'
+import {
+  applyGoogleTranslateBatches,
+  AUTOSAVE_INTERVAL_MS,
+  buildPersistedByKey,
+  buildTranslationsToSave,
+  countUnsavedTranslationKeys,
+  filterMessageDescriptorsBySearch,
+  formatAutosaveTime,
+  getPersistedForMessage,
+  hasDraftChangesInRows,
+  hasUnsavedTranslationChanges,
+} from '../../utils/translationWorkspaceEditing'
 import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
 import { TranslationWorkspacePageHeader } from '../../components/TranslationWorkspacePageHeader/TranslationWorkspacePageHeader'
 import { TranslationStringsList } from '../../components/TranslationWorkspaceStatesTabsPanel/TranslationStringsList'
@@ -40,9 +52,6 @@ import {
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
 import { publishConfirmModal } from '../TranslationWorkspace/TranslationWorkspace.css'
 import * as styles from './SharedNamespaceTranslationWorkspace.css'
-
-const AUTOSAVE_INTERVAL_MS = 60_000
-const GOOGLE_TRANSLATE_BATCH_SIZE = 100
 
 export const SharedNamespaceTranslationWorkspace = () => {
   const { namespace: encodedNamespace } = useParams<{ namespace: string }>()
@@ -68,22 +77,17 @@ export const SharedNamespaceTranslationWorkspace = () => {
     skip: !namespace || !introspection,
   })
 
-  const persistedByKey = useMemo(() => {
-    const map: Record<string, { valueIs: string; valueEn?: string | null }> = {}
-    for (const row of translationsData?.applicationTranslations ?? []) {
-      map[row.messageKey] = {
-        valueIs: row.draftValueIs ?? row.valueIs,
-        valueEn: row.draftValueEn ?? row.valueEn,
-      }
-    }
-    return map
-  }, [translationsData])
+  const translationRows = translationsData?.applicationTranslations
 
-  const hasDraftChanges = useMemo(() => {
-    return (translationsData?.applicationTranslations ?? []).some(
-      (row) => row.draftValueIs != null || row.draftValueEn != null,
-    )
-  }, [translationsData])
+  const persistedByKey = useMemo(
+    () => buildPersistedByKey(translationRows),
+    [translationRows],
+  )
+
+  const hasDraftChanges = useMemo(
+    () => hasDraftChangesInRows(translationRows),
+    [translationRows],
+  )
 
   const [activeLocale, setActiveLocale] = useState<'is' | 'en'>('en')
   const [editedValues, setEditedValues] = useState<EditedTranslations>({
@@ -100,29 +104,15 @@ export const SharedNamespaceTranslationWorkspace = () => {
     [introspection],
   )
 
-  const filteredDescriptors = useMemo(() => {
-    const query = searchValue.trim().toLowerCase()
-    if (!query) return messageDescriptors
-
-    return messageDescriptors.filter(
-      (descriptor) =>
-        descriptor.id.toLowerCase().includes(query) ||
-        (descriptor.defaultMessage ?? '').toLowerCase().includes(query),
-    )
-  }, [messageDescriptors, searchValue])
-
-  const getPersistedForMessage = useCallback(
-    (messageKey: string, locale: 'is' | 'en') => {
-      const row = persistedByKey[messageKey]
-      if (!row) return ''
-      return locale === 'en' ? row.valueEn ?? '' : row.valueIs
-    },
-    [persistedByKey],
+  const filteredDescriptors = useMemo(
+    () => filterMessageDescriptorsBySearch(messageDescriptors, searchValue),
+    [messageDescriptors, searchValue],
   )
 
   const getPersistedForLocale = useCallback(
-    (messageKey: string) => getPersistedForMessage(messageKey, activeLocale),
-    [getPersistedForMessage, activeLocale],
+    (messageKey: string) =>
+      getPersistedForMessage(persistedByKey, messageKey, activeLocale),
+    [persistedByKey, activeLocale],
   )
 
   const handleValueChange = useCallback(
@@ -144,78 +134,53 @@ export const SharedNamespaceTranslationWorkspace = () => {
   const [googleTranslate, { loading: translating }] =
     useGoogleTranslateStringsMutation()
 
+  const translateTexts = useCallback(
+    async (texts: string[]) => {
+      const { data: translateData } = await googleTranslate({
+        variables: { input: { texts } },
+      })
+      return translateData?.googleTranslateStrings?.translations
+    },
+    [googleTranslate],
+  )
+
   const handleGoogleTranslate = useCallback(
     async (descriptorId: string, sourceText: string) => {
       try {
-        const { data: translateData } = await googleTranslate({
-          variables: { input: { texts: [sourceText] } },
-        })
-        const translated =
-          translateData?.googleTranslateStrings?.translations?.[0]
-        if (translated) {
-          handleValueChange(descriptorId, translated)
-        }
+        await applyGoogleTranslateBatches(
+          [{ id: descriptorId, sourceText }],
+          ({ texts }) => translateTexts(texts),
+          handleValueChange,
+        )
       } catch (err) {
         console.error('Google Translate failed', err)
         toast.error('Translation failed')
       }
     },
-    [googleTranslate, handleValueChange],
+    [translateTexts, handleValueChange],
   )
 
   const handleGoogleTranslateAll = useCallback(
     async (items: Array<{ id: string; sourceText: string }>) => {
-      if (items.length === 0) return
       try {
-        for (
-          let offset = 0;
-          offset < items.length;
-          offset += GOOGLE_TRANSLATE_BATCH_SIZE
-        ) {
-          const slice = items.slice(
-            offset,
-            offset + GOOGLE_TRANSLATE_BATCH_SIZE,
-          )
-          const { data: translateData } = await googleTranslate({
-            variables: {
-              input: { texts: slice.map((item) => item.sourceText) },
-            },
-          })
-          const translations =
-            translateData?.googleTranslateStrings?.translations ?? []
-          for (let i = 0; i < slice.length; i++) {
-            if (translations[i]) {
-              handleValueChange(slice[i].id, translations[i])
-            }
-          }
-        }
+        await applyGoogleTranslateBatches(
+          items,
+          ({ texts }) => translateTexts(texts),
+          handleValueChange,
+        )
       } catch (err) {
         console.error('Google Translate all failed', err)
         toast.error('Translation failed')
       }
     },
-    [googleTranslate, handleValueChange],
+    [translateTexts, handleValueChange],
   )
 
   const handleSaveAll = useCallback(async (): Promise<boolean> => {
-    const dirtyByKey = new Map<string, { valueIs?: string; valueEn?: string }>()
-
-    for (const locale of ['is', 'en'] as const) {
-      for (const [messageKey, value] of Object.entries(editedValues[locale])) {
-        if (value === getPersistedForMessage(messageKey, locale)) continue
-        const merged = dirtyByKey.get(messageKey) ?? {}
-        if (locale === 'is') merged.valueIs = value
-        else merged.valueEn = value
-        dirtyByKey.set(messageKey, merged)
-      }
-    }
-
-    const translationsToSave = Array.from(dirtyByKey.entries()).map(
-      ([messageKey, fields]) => ({
-        namespace,
-        messageKey,
-        ...fields,
-      }),
+    const translationsToSave = buildTranslationsToSave(
+      editedValues,
+      persistedByKey,
+      namespace,
     )
 
     if (translationsToSave.length === 0) return true
@@ -249,21 +214,16 @@ export const SharedNamespaceTranslationWorkspace = () => {
     }
   }, [
     editedValues,
+    persistedByKey,
     namespace,
     formatMessage,
     bulkUpdate,
-    getPersistedForMessage,
     refetchTranslations,
   ])
 
   const hasUnsavedChanges = useMemo(
-    () =>
-      (['is', 'en'] as const).some((locale) =>
-        Object.entries(editedValues[locale]).some(
-          ([key, value]) => value !== getPersistedForMessage(key, locale),
-        ),
-      ),
-    [editedValues, getPersistedForMessage],
+    () => hasUnsavedTranslationChanges(editedValues, persistedByKey),
+    [editedValues, persistedByKey],
   )
 
   const handleSaveAllRef = useRef(handleSaveAll)
@@ -285,12 +245,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     const id = setInterval(async () => {
       if (hasUnsavedChangesRef.current && !savingRef.current) {
         await handleSaveAllRef.current()
-        const now = new Date()
-        setLastAutosaveTime(
-          `${String(now.getHours()).padStart(2, '0')}:${String(
-            now.getMinutes(),
-          ).padStart(2, '0')}`,
-        )
+        setLastAutosaveTime(formatAutosaveTime(new Date()))
       }
     }, AUTOSAVE_INTERVAL_MS)
     return () => clearInterval(id)
@@ -336,17 +291,10 @@ export const SharedNamespaceTranslationWorkspace = () => {
     setHistoryOpen(false)
   }, [refetchTranslations])
 
-  const unsavedCount = useMemo(() => {
-    const keysWithPending = new Set<string>()
-    for (const locale of ['is', 'en'] as const) {
-      for (const [messageKey, value] of Object.entries(editedValues[locale])) {
-        if (value !== getPersistedForMessage(messageKey, locale)) {
-          keysWithPending.add(messageKey)
-        }
-      }
-    }
-    return keysWithPending.size
-  }, [editedValues, getPersistedForMessage])
+  const unsavedCount = useMemo(
+    () => countUnsavedTranslationKeys(editedValues, persistedByKey),
+    [editedValues, persistedByKey],
+  )
 
   const isWorkspaceReady =
     Boolean(introspection) &&
