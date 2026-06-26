@@ -28,7 +28,9 @@ export const inferTranslationWorkspaceShowFieldName = (
   return true
 }
 
-export const buildMockCustomField = (screen: ScreenIntrospection): CustomField => {
+export const buildMockCustomField = (
+  screen: ScreenIntrospection,
+): CustomField => {
   return {
     id: screen.id,
     type: FieldTypes.CUSTOM,
