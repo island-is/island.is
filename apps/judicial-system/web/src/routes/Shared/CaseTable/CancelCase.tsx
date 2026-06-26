@@ -30,41 +30,44 @@ export const useCancelCase = (
   const { updateCase, isUpdatingCase, transitionCase, isTransitioningCase } =
     useCase()
 
-  const cancelCase = useCallback(async (caseId: string) => {
-    setCaseToCancel((prev) => {
-      const [cancelCaseId] = prev
+  const cancelCase = useCallback(
+    async (caseId: string) => {
+      setCaseToCancel((prev) => {
+        const [cancelCaseId] = prev
 
-      if (cancelCaseId) {
-        return prev
-      }
+        if (cancelCaseId) {
+          return prev
+        }
 
-      const timeout = setTimeout(
-        () =>
-          setCaseToCancel(([cancelCaseId, _, theCase]) => [
-            cancelCaseId,
-            true,
-            theCase,
-          ]),
-        2000,
-      )
+        const timeout = setTimeout(
+          () =>
+            setCaseToCancel(([cancelCaseId, _, theCase]) => [
+              cancelCaseId,
+              true,
+              theCase,
+            ]),
+          2000,
+        )
 
-      getCase(
-        caseId,
-        (theCase) => {
-          clearTimeout(timeout)
-          setCaseToCancel(([cancelCaseId]) => [cancelCaseId, false, theCase])
-        },
-        () => {
-          clearTimeout(timeout)
-          setCaseToCancel([undefined, false, undefined])
+        getCase(
+          caseId,
+          (theCase) => {
+            clearTimeout(timeout)
+            setCaseToCancel(([cancelCaseId]) => [cancelCaseId, false, theCase])
+          },
+          () => {
+            clearTimeout(timeout)
+            setCaseToCancel([undefined, false, undefined])
 
-          toast.error('Upp kom villa við að sækja mál')
-        },
-      )
+            toast.error('Upp kom villa við að sækja mál')
+          },
+        )
 
-      return [caseId, false, undefined]
-    })
-  }, [getCase])
+        return [caseId, false, undefined]
+      })
+    },
+    [getCase],
+  )
 
   const handlePrimaryButtonClick = async () => {
     const [cancelCaseId] = caseToCancel
