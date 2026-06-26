@@ -20,7 +20,6 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationCountriesApi,
-  SocialInsuranceAdministrationLanguagesApi,
   SocialInsuranceAdministrationMaritalStatusesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
