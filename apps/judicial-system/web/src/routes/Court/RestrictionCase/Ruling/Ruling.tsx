@@ -17,7 +17,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
-import { sortCaseFiles } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -125,9 +124,8 @@ export const Ruling = () => {
   )
 
   const stepIsValid = isRulingValidRC(workingCase)
-  const caseFiles = sortCaseFiles(
-    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
-  )
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   const handleIsolationChange = useCallback(() => {
     let conclusion = undefined

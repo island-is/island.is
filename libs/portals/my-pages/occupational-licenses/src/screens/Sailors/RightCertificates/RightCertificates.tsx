@@ -96,7 +96,7 @@ const RightCertificates = () => {
                 <Text fontWeight="semiBold">{title}</Text>
               </Box>
               <Box width="half">
-                <Text>{value}</Text>
+                <Text textAlign="right">{value}</Text>
               </Box>
             </Box>
           ))}
