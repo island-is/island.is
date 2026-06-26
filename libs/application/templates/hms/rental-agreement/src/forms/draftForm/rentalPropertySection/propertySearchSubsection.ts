@@ -21,7 +21,7 @@ export const propertySearchSubsection = buildSubSection({
           component: 'PropertySearch',
         }),
         buildDescriptionField({
-          id: 'Routes.PROPERTYSEARCH.asdf',
+          id: 'Routes.PROPERTYSEARCH.description',
           description: m.propertySearch.search.spouseFamilyNotice,
           marginTop: 2,
         }),
