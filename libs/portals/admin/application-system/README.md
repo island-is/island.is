@@ -1,10 +1,10 @@
 # Portals Admin Application System
 
-This library was generated with [Nx](https://nx.dev).
-
 ## Translation Workspace
 
-The translation dashboard lists **message keys discovered by server-side form introspection**, not by rendering React. Custom field previews load real field components, but **strings that exist only inside component implementation code** are invisible to the dashboard unless they are also exposed on the form (`CUSTOM` `title` / `description` / `props` as `MessageDescriptor`s) or registered via `getCustomFieldMessageDescriptors` on the template library (see [`application-template-loader`](../../../application/template-loader/README.md)).
+The translation workspace allows the user to translate applications with a live preview of what the application will look like once it's published.
+It allows you to translate fields, sections and whole applications with Google translate, has a history log and allows you to rollback to an earlier state of translation.
+A super admin can tanslate all applications and the shared translation spaces and institutions can edit their applications.
 
 ## Running unit tests
 
