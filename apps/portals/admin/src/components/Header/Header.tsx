@@ -8,12 +8,7 @@ import {
   Inline,
   GridContainer,
 } from '@island.is/island-ui/core'
-import {
-  TranslationWorkspaceHeaderBackButton,
-  TranslationWorkspaceHeaderLanguageTabs,
-  TranslationWorkspaceHeaderSaveButton,
-  TranslationWorkspaceHeaderPublishButton,
-} from '@island.is/portals/admin/application-system'
+import { TranslationWorkspaceHeaderActions } from '@island.is/portals/admin/application-system'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { UserMenu } from '@island.is/shared/components'
 
@@ -53,17 +48,7 @@ export const Header = () => {
                 marginLeft={1}
               >
                 <Hidden below="md">
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    columnGap={2}
-                    marginRight={[1, 1, 2]}
-                  >
-                    <TranslationWorkspaceHeaderBackButton />
-                    <TranslationWorkspaceHeaderSaveButton />
-                    <TranslationWorkspaceHeaderPublishButton />
-                    <TranslationWorkspaceHeaderLanguageTabs />
-                  </Box>
+                  <TranslationWorkspaceHeaderActions />
                 </Hidden>
                 <UserMenu
                   showLanguageSwitcher={false}

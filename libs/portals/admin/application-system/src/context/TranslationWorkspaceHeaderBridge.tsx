@@ -355,3 +355,26 @@ export const TranslationWorkspaceHeaderValidationToggle = () => {
     </Button>
   )
 }
+
+/** Shell header actions (md+). Renders nothing when workspace chrome is not registered. */
+export const TranslationWorkspaceHeaderActions = () => {
+  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
+
+  if (!ctx?.workspaceChrome) {
+    return null
+  }
+
+  return (
+    <Box
+      display="flex"
+      alignItems="center"
+      columnGap={2}
+      marginRight={[1, 1, 2]}
+    >
+      <TranslationWorkspaceHeaderBackButton />
+      <TranslationWorkspaceHeaderSaveButton />
+      <TranslationWorkspaceHeaderPublishButton />
+      <TranslationWorkspaceHeaderLanguageTabs />
+    </Box>
+  )
+}
