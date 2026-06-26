@@ -53,6 +53,8 @@ interface DefendantInfoProps {
   isDismissalCase?: boolean
   isCancellationCase?: boolean
   isFineCase?: boolean
+  isWithdrawalCase?: boolean
+  isMergeCase?: boolean
 }
 
 const ConnectedCasesInfo = ({
@@ -121,6 +123,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     isDismissalCase,
     isCancellationCase,
     isFineCase,
+    isWithdrawalCase,
+    isMergeCase,
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -147,6 +151,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     isDismissalCase,
     isCancellationCase,
     isFineCase,
+    isWithdrawalCase,
+    isMergeCase,
   })
 
   return (

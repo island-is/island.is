@@ -121,6 +121,14 @@ const useInfoCardItems = () => {
                       workingCase.indictmentRulingDecision ===
                       CaseIndictmentRulingDecision.FINE
                     }
+                    isWithdrawalCase={
+                      workingCase.indictmentRulingDecision ===
+                      CaseIndictmentRulingDecision.WITHDRAWAL
+                    }
+                    isMergeCase={
+                      workingCase.indictmentRulingDecision ===
+                      CaseIndictmentRulingDecision.MERGE
+                    }
                   />
                 </div>
               ))}

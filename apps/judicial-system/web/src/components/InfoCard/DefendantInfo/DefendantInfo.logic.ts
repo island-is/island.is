@@ -70,12 +70,16 @@ export const getDefendantTagConfig = ({
   isDismissalCase,
   isCancellationCase,
   isFineCase,
+  isWithdrawalCase,
+  isMergeCase,
 }: {
   verdict?: DefendantVerdictTagInput | null
   isPublicProsecutionOffice: boolean
   isDismissalCase?: boolean
   isCancellationCase?: boolean
   isFineCase?: boolean
+  isWithdrawalCase?: boolean
+  isMergeCase?: boolean
 }): DefendantTagConfig | null => {
   if (verdict) {
     if (
@@ -130,6 +134,20 @@ export const getDefendantTagConfig = ({
     return {
       label: 'Viðurlagaákvörðun',
       variant: 'mint',
+    }
+  }
+
+  if (isWithdrawalCase) {
+    return {
+      label: 'Afturkallað',
+      variant: 'rose',
+    }
+  }
+
+  if (isMergeCase) {
+    return {
+      label: 'Sameinað',
+      variant: 'rose',
     }
   }
 

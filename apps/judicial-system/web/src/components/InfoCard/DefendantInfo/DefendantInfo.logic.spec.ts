@@ -218,6 +218,32 @@ describe('DefendantInfo', () => {
       })
     })
 
+    test('should return withdrawal tag when there is no verdict and withdrawal case is true', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        isWithdrawalCase: true,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Afturkallað',
+        variant: 'rose',
+      })
+    })
+
+    test('should return merge tag when there is no verdict and merge case is true', () => {
+      const tag = getDefendantTagConfig({
+        verdict: null,
+        isPublicProsecutionOffice: false,
+        isMergeCase: true,
+      })
+
+      expect(tag).toStrictEqual({
+        label: 'Sameinað',
+        variant: 'rose',
+      })
+    })
+
     test('should return null when no statuses match', () => {
       const tag = getDefendantTagConfig({
         verdict: null,
