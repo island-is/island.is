@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { createParser, useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client'
 
 import {
@@ -29,19 +28,9 @@ import { m as pharmacyStrings } from './translation.strings'
 import { Datasource, isDatasource, Item, Props } from './types'
 import { m as wholesalerStrings } from './wholesalers.strings'
 
-const regionParser = createParser<IcelandicMedicinesAgencyPharmacyRegion>({
-  parse(s) {
-    return (
-      Object.values(IcelandicMedicinesAgencyPharmacyRegion).find(
-        (v) => v.toLowerCase() === s,
-      ) ?? null
-    )
-  },
-  serialize: (v) => v.toLowerCase(),
-})
-
 const LyfjastofnunAccordion = ({ slice }: Props) => {
   const { formatMessage } = useIntl()
+  const uid = useId()
   // configJson must contain { "datasource": "pharmacies" | "medicalClinics" | "wholesalers" }; falls back to "pharmacies" if missing or invalid
   const raw = slice.configJson?.datasource
   const datasource: Datasource = isDatasource(raw) ? raw : 'pharmacies'
@@ -67,12 +56,9 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
   const loading = pharmacyLoading || clinicLoading || wholesalerLoading
   const error = pharmacyError ?? clinicError ?? wholesalerError
 
-  // not URL-persisted: multiple instances on the same page would share the param and filter together
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedRegion, setSelectedRegion] = useQueryState(
-    'region',
-    regionParser,
-  )
+  const [selectedRegion, setSelectedRegion] =
+    useState<IcelandicMedicinesAgencyPharmacyRegion | null>(null)
 
   const strings =
     datasource === 'pharmacies'
@@ -202,7 +188,7 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
       ) : (
         <Accordion>
           {filtered.map((item) => (
-            <AccordionItem key={item.id} id={item.id} label={item.name}>
+            <AccordionItem key={item.id} id={`${uid}-${item.id}`} label={item.name}>
               <GridRow rowGap={3}>
                 <GridColumn span={['12/12', '6/12']}>
                   <Stack space={2}>
