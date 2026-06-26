@@ -19,6 +19,8 @@ global:
 name: 'services-payments'
 enabled: true
 env:
+  BLIKK_API_BASE_URL: 'https://api.blikk.tech'
+  BLIKK_PAYMENT_TTL_SECONDS: '600'
   DB_EXTENSIONS: 'uuid-ossp'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_payments'
@@ -133,6 +135,7 @@ secrets:
   APPLE_PAY_MERCHANT_IDENTITY_CERT: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_CERT'
   APPLE_PAY_MERCHANT_IDENTITY_KEY: '/k8s/services-payments/APPLE_PAY_MERCHANT_IDENTITY_KEY'
   APPLE_PAY_PAYMENT_PROCESSING_KEY: '/k8s/services-payments/APPLE_PAY_PAYMENT_PROCESSING_KEY'
+  BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/services-payments/DB_PASSWORD'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'

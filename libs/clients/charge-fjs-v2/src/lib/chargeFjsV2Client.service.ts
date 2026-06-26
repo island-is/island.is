@@ -11,6 +11,7 @@ import {
   ChargeResponse,
   ChargeToValidate,
   PayeeInfo,
+  PayInfoPaymentMeansEnum,
 } from './chargeFjsV2Client.types'
 import { isValid } from 'kennitala'
 import type { Logger } from '@island.is/logging'
@@ -94,12 +95,18 @@ export class ChargeFjsV2ClientService {
         payInfo: upcomingPayment.payInfo
           ? {
               rRN: upcomingPayment.payInfo.RRN,
-              cardType: upcomingPayment.payInfo.cardType,
               paymentMeans: upcomingPayment.payInfo.paymentMeans,
-              authCode: upcomingPayment.payInfo.authCode,
-              pAN: upcomingPayment.payInfo.PAN,
               payableAmount: upcomingPayment.payInfo.payableAmount,
               correlationId: upcomingPayment.payInfo.correlationId,
+              // Card-only fields — narrowed on the discriminant so they're read only for card means.
+              ...(upcomingPayment.payInfo.paymentMeans ===
+              PayInfoPaymentMeansEnum.Milli
+                ? {}
+                : {
+                    cardType: upcomingPayment.payInfo.cardType,
+                    authCode: upcomingPayment.payInfo.authCode,
+                    pAN: upcomingPayment.payInfo.PAN,
+                  }),
             }
           : undefined,
         extraData: upcomingPayment.extraData

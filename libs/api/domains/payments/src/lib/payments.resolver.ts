@@ -35,6 +35,12 @@ import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant
 import { ValidateApplePayMerchantInput } from './dto/validateApplePayMerchant.input'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
+import { CreateBankTransferInput } from './dto/createBankTransfer.input'
+import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
+import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
+import { VerifyBankTransferResponse } from './dto/verifyBankTransfer.response'
+import { CancelBankTransferInput } from './dto/cancelBankTransfer.input'
+import { CancelBankTransferResponse } from './dto/cancelBankTransfer.response'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -133,6 +139,48 @@ export class PaymentsResolver {
   ): Promise<CreateInvoiceResponse> {
     try {
       return this.paymentsService.createInvoice(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => CreateBankTransferResponse, {
+    name: 'paymentsCreateBankTransfer',
+  })
+  async createBankTransfer(
+    @Args('input', { type: () => CreateBankTransferInput })
+    input: CreateBankTransferInput,
+  ): Promise<CreateBankTransferResponse> {
+    try {
+      return this.paymentsService.createBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => VerifyBankTransferResponse, {
+    name: 'paymentsVerifyBankTransfer',
+  })
+  async verifyBankTransfer(
+    @Args('input', { type: () => VerifyBankTransferInput })
+    input: VerifyBankTransferInput,
+  ): Promise<VerifyBankTransferResponse> {
+    try {
+      return this.paymentsService.verifyBankTransfer(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => CancelBankTransferResponse, {
+    name: 'paymentsCancelBankTransfer',
+  })
+  async cancelBankTransfer(
+    @Args('input', { type: () => CancelBankTransferInput })
+    input: CancelBankTransferInput,
+  ): Promise<CancelBankTransferResponse> {
+    try {
+      return this.paymentsService.cancelBankTransfer(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

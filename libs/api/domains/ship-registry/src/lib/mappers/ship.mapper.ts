@@ -1,21 +1,20 @@
-import {
-  MyShipDetailDto,
+import type {
   ShipBaseInfoDto,
-  ShipCertificateDetailDto,
+  ShipDetailDto,
+  ShipCertificateIssueStatus,
   ValueMessageDto,
   ValueUnitMessageDto,
 } from '@island.is/clients/ship-registry-v2'
 import { isDefined } from '@island.is/shared/utils'
-import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
-import { UserShip } from './models/userShip.model'
-import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
-import { ShipRegistryCertificateStatus } from './models/enums'
-import { parseDate } from './utils'
-import format from 'date-fns/format'
 import { LocaleEnum } from '@island.is/nest/graphql'
+import format from 'date-fns/format'
+import { UserShipCollectionItem } from '../models/userShipCollectionItem.model'
+import { UserShip } from '../models/userShip.model'
+import { ShipRegistryCertificateStatus } from '../models/enums'
+import { ShipRegistryLocalizedValue } from '../models/localizedValue.model'
 
 const mapCertificateStatus = (
-  raw: ShipCertificateDetailDto['certificateIssueStatusEnum'] | undefined,
+  raw: ShipCertificateIssueStatus | undefined,
 ): ShipRegistryCertificateStatus => {
   switch (raw) {
     case 'VALID':
@@ -72,7 +71,7 @@ export const mapToUserShipCollectionItem = (
 }
 
 export const mapToUserShipFromDetails = (
-  ship: MyShipDetailDto,
+  ship: ShipDetailDto,
   locale: LocaleEnum = LocaleEnum.Is,
 ): UserShip | undefined => {
   const info = ship.shipRegistrationInfo
@@ -83,12 +82,7 @@ export const mapToUserShipFromDetails = (
   }
 
   const registrationNumber = Number(info.shipRegistrationNumber.value)
-
-  const seaworthinessDate =
-    info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
-      ? parseDate(info.seaworthyExpiryDate.value, 'yyyy-MM-dd HH:mm:ss')
-      : undefined
-
+  const seaworthinessDate = info.seaworthyExpiryDateParsed
   const fisheryName = toLocalizedValue(info.fishery, locale)
 
   return {
@@ -144,23 +138,12 @@ export const mapToUserShipFromDetails = (
         }
       })
       .filter(isDefined),
-    certificates: ship.shipCertificateDetails
-      ?.map((cert) => {
-        const issueDate = cert.issueDate ? parseDate(cert.issueDate) : null
-        if (!issueDate || !cert.certificateTypeName) return undefined
-        return {
-          name: cert.certificateTypeName,
-          status: mapCertificateStatus(cert.certificateIssueStatusEnum),
-          issueDate,
-          validToDate:
-            cert.validToDate !== ''
-              ? parseDate(cert.validToDate) ?? undefined
-              : undefined,
-          extensionDate: cert.extensionDate
-            ? parseDate(cert.extensionDate) ?? undefined
-            : undefined,
-        }
-      })
-      .filter(isDefined),
+    certificates: ship.shipCertificateDetails.map((cert) => ({
+      name: cert.certificateTypeName,
+      status: mapCertificateStatus(cert.certificateIssueStatusEnum),
+      issueDate: cert.issueDate,
+      validToDate: cert.validToDate,
+      extensionDate: cert.extensionDate,
+    })),
   }
 }

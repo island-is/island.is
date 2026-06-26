@@ -15,6 +15,7 @@ import {
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { sortCaseFiles } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -133,8 +134,9 @@ export const Overview = () => {
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const caseFiles =
-    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+  const caseFiles = sortCaseFiles(
+    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
+  )
 
   return (
     <PageLayout
