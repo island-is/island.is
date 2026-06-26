@@ -3,7 +3,10 @@ export {
   TranslationWorkspaceFieldPreview,
   type TranslationWorkspaceFieldPreviewProps,
 } from './TranslationWorkspaceFieldPreview'
-export { LeafFieldPreview, type LeafFieldPreviewProps } from './LeafFieldPreview'
+export {
+  LeafFieldPreview,
+  type LeafFieldPreviewProps,
+} from './LeafFieldPreview'
 export { DescriptionFieldPreview } from './DescriptionFieldPreview'
 export { AlertMessageFieldPreview } from './AlertMessageFieldPreview'
 export { StaticTableFieldPreview } from './StaticTableFieldPreview'
