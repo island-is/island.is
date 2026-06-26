@@ -188,7 +188,11 @@ const LyfjastofnunAccordion = ({ slice }: Props) => {
       ) : (
         <Accordion>
           {filtered.map((item) => (
-            <AccordionItem key={item.id} id={`${uid}-${item.id}`} label={item.name}>
+            <AccordionItem
+              key={item.id}
+              id={`${uid}-${item.id}`}
+              label={item.name}
+            >
               <GridRow rowGap={3}>
                 <GridColumn span={['12/12', '6/12']}>
                   <Stack space={2}>
