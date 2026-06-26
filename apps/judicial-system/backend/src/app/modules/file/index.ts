@@ -5,7 +5,9 @@ export {
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
+  getDefenceUserVisiblePoliceCaseNumbers,
   getDefenderVisiblePoliceCaseNumbers,
+  getSpokespersonVisiblePoliceCaseNumbers,
   isConfirmedDefenderOfSpecificDefendant,
   isRulingOrderInConfirmedCourtSession,
 } from './guards/caseFileCategory'

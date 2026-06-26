@@ -81,6 +81,95 @@ describe('IndictmentCaseFilesList', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('should only show spokesperson-visible case file records', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'spokesperson-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Spokesperson',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                policeCaseNumbers: ['007-2026-1', '007-2026-2', '007-2026-3'],
+                defendants: [
+                  {
+                    id: 'defendant-1',
+                    isDefenderChoiceConfirmed: true,
+                    defenderNationalId: '0987654321',
+                    policeCaseNumbers: ['007-2026-2'],
+                  },
+                ],
+                civilClaimants: [
+                  {
+                    id: 'civil-claimant-1',
+                    hasSpokesperson: true,
+                    isSpokespersonConfirmed: true,
+                    caseFilesSharedWithSpokesperson: true,
+                    spokespersonNationalId: '1234567890',
+                    policeCaseNumbers: ['007-2026-1'],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(screen.queryByText(/Skjalaskrá 007-2026-3\.pdf/)).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/),
+    ).not.toBeInTheDocument()
+  })
+
+  it('should show all case file records for spokesperson when civil claimant has no police case numbers', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'spokesperson-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Spokesperson',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                policeCaseNumbers: ['007-2026-1', '007-2026-2'],
+                civilClaimants: [
+                  {
+                    id: 'civil-claimant-1',
+                    hasSpokesperson: true,
+                    isSpokespersonConfirmed: true,
+                    caseFilesSharedWithSpokesperson: true,
+                    spokespersonNationalId: '1234567890',
+                    policeCaseNumbers: [],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByText(/Skjalaskrá 007-2026-1\.pdf/)).toBeInTheDocument()
+    expect(screen.queryByText(/Skjalaskrá 007-2026-2\.pdf/)).toBeInTheDocument()
+  })
+
   it('should only show defender-visible subpoenas', () => {
     render(
       <IntlProviderWrapper>

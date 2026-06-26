@@ -41,6 +41,7 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
 grantNamespaces:
   - 'islandis'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

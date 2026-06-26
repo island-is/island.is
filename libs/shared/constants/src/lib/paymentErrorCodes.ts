@@ -1,6 +1,8 @@
 export enum FjsErrorCode {
   FailedToCreateCharge = 'FailedToCreateCharge',
   AlreadyCreatedCharge = 'AlreadyCreatedCharge',
+  // FJS already received the charge's cancellation — it is already deleted. Idempotent success for a refund.
+  AlreadyDeletedCharge = 'AlreadyDeletedCharge',
 }
 
 export enum PaymentServiceCode {
@@ -70,8 +72,22 @@ export enum InvoiceErrorCode {
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 
+export enum BankTransferErrorCode {
+  FailedToCreateBankTransfer = 'FailedToCreateBankTransfer',
+  MissingBankAccountNumber = 'MissingBankAccountNumber',
+  FailedToFetchBankTransfer = 'FailedToFetchBankTransfer',
+  BankTransferAlreadyInProgress = 'BankTransferAlreadyInProgress',
+  BankTransferNotFound = 'BankTransferNotFound',
+  UnknownBankTransferError = 'UnknownBankTransferError',
+  BankTransferRejected = 'BankTransferRejected',
+  BankTransferCancelled = 'BankTransferCancelled',
+  BankTransferGenericError = 'BankTransferGenericError',
+  BankTransferExpired = 'BankTransferExpired',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
+  | BankTransferErrorCode
   | PaymentServiceCode

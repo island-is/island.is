@@ -7,6 +7,9 @@ import { CustomsGeneralTariffKey } from './models/customsGeneralTariffKey.model'
 import { CustomsGeneralDetermination } from './models/customsGeneralDetermination.model'
 import { CustomsGeneralStorageLocation } from './models/customsGeneralStorageLocation.model'
 import { CustomsGeneralExemption } from './models/customsGeneralExemption.model'
+import { CustomsGeneralProhibition } from './models/customsGeneralProhibition.model'
+import { CustomsGeneralCharge } from './models/customsGeneralCharge.model'
+import { CustomsGeneralPermit } from './models/customsGeneralPermit.model'
 
 @Injectable()
 export class CustomsGeneralService {
@@ -48,7 +51,7 @@ export class CustomsGeneralService {
   async getProhibitions(
     date: string,
     system: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralProhibition[]> {
     const result = await this.customsGeneralClientService.getBonn({
       Dags: date,
       Kerfi: system,
@@ -57,13 +60,17 @@ export class CustomsGeneralService {
     return list.map((item) => ({
       code: item.Kodi,
       name: item.Heiti,
+      description: item.Astaeda,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
+      exemptionProvider: item.UndanthVeitir,
     }))
   }
 
   async getCharges(
     date: string,
     system: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralCharge[]> {
     const result = await this.customsGeneralClientService.getGjold({
       Dags: date,
       Kerfi: system,
@@ -73,13 +80,17 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
+      taxtiUpphaed: item.TaxtiUpphaed ?? undefined,
+      taxtiProsenta: item.TaxtiProsenta ?? undefined,
     }))
   }
 
   async getPermits(
     date: string,
     system: string,
-  ): Promise<CustomsGeneralEntry[]> {
+  ): Promise<CustomsGeneralPermit[]> {
     const result = await this.customsGeneralClientService.getLeyfi({
       Dags: date,
       Kerfi: system,
@@ -89,7 +100,9 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
-      system: item.Kerfi,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
+      leyfiVeitir: item.LeyfiVeitir,
     }))
   }
 
@@ -103,8 +116,10 @@ export class CustomsGeneralService {
     })
     const list = result.data?.Listi ?? []
     return list.map((item) => ({
-      description: item.Lysing,
       name: item.Tollur,
+      description: item.Lysing,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
     }))
   }
 
