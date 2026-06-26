@@ -17,9 +17,7 @@ export class IcelandicMedicinesAgencyService {
   async getPharmacies(): Promise<IcelandicMedicinesAgencyPharmaciesCollection> {
     const data =
       await this.lyfjastofnunHealthProvidersClientService.getPharmacies()
-    const pharmacies = data
-      .map(mapToPharmacy)
-      .sort(sortAlpha('name'))
+    const pharmacies = data.map(mapToPharmacy).sort(sortAlpha('name'))
 
     return {
       data: pharmacies,
@@ -31,9 +29,7 @@ export class IcelandicMedicinesAgencyService {
   async getMedicalClinics(): Promise<IcelandicMedicinesAgencyMedicalClinicsCollection> {
     const data =
       await this.lyfjastofnunHealthProvidersClientService.getMedicalClinics()
-    const clinics = data
-      .map(mapToMedicalClinic)
-      .sort(sortAlpha('name'))
+    const clinics = data.map(mapToMedicalClinic).sort(sortAlpha('name'))
 
     return {
       data: clinics,
@@ -45,9 +41,7 @@ export class IcelandicMedicinesAgencyService {
   async getWholesalers(): Promise<IcelandicMedicinesAgencyWholesalersCollection> {
     const data =
       await this.lyfjastofnunHealthProvidersClientService.getWholesalers()
-    const wholesalers = data
-      .map(mapToWholesaler)
-      .sort(sortAlpha('name'))
+    const wholesalers = data.map(mapToWholesaler).sort(sortAlpha('name'))
 
     return {
       data: wholesalers,
