@@ -554,7 +554,9 @@ const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor => {
   )
 }
 
-const tryInvokeFormTextFunction = (fn: Function): {
+const tryInvokeFormTextFunction = (
+  fn: Function,
+): {
   descriptors: MessageDescriptorInfo[]
   staticText: string | null
 } => {
@@ -865,7 +867,9 @@ const extractDisplayFieldMessageDescriptors = (
   return extra
 }
 
-const displayFieldStaticIntrospectionFromLeaf = (leaf: FormLeaf):
+const displayFieldStaticIntrospectionFromLeaf = (
+  leaf: FormLeaf,
+):
   | {
       displayLabelMessageId: string | null
       displaySuffixMessageId: string | null
@@ -903,7 +907,9 @@ const displayFieldStaticIntrospectionFromLeaf = (leaf: FormLeaf):
   }
 }
 
-const textFieldIntrospectionFromLeaf = (leaf: FormLeaf):
+const textFieldIntrospectionFromLeaf = (
+  leaf: FormLeaf,
+):
   | {
       textFieldVariant: string
       textFieldRows?: number | null
@@ -923,7 +929,9 @@ const textFieldIntrospectionFromLeaf = (leaf: FormLeaf):
   return { textFieldVariant: variant }
 }
 
-const imageFieldIntrospectionFromLeaf = (leaf: FormLeaf):
+const imageFieldIntrospectionFromLeaf = (
+  leaf: FormLeaf,
+):
   | {
       imageUrl: string | null
       imageSvgComponentName: string | null
@@ -1452,7 +1460,9 @@ const walkRepeaterItemToScreen = (
   return base
 }
 
-const walkTableRepeaterScreen = (tr: TableRepeaterField): ScreenIntrospection => {
+const walkTableRepeaterScreen = (
+  tr: TableRepeaterField,
+): ScreenIntrospection => {
   const trRecord = tr as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const pushText = (t: unknown) => {
