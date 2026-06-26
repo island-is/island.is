@@ -289,9 +289,9 @@ export const is = {
   'documentReply.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document communications
-  'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.caseNumber': 'Málsnr.',
   'documentCommunications.initialReply':
-    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}. Málsnúmerið er: {caseNumber}',
   'documentCommunications.cannotReply':
     'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
 

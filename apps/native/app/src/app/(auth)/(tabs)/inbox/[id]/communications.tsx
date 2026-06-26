@@ -1,14 +1,10 @@
-import { setStringAsync } from 'expo-clipboard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated,
-  Image,
-  LayoutChangeEvent,
   ListRenderItemInfo,
   RefreshControl,
   SafeAreaView,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -17,11 +13,13 @@ import styled, { useTheme } from 'styled-components/native'
 import { useApolloClient } from '@apollo/client'
 
 import { StackScreen } from '@/components/stack-screen'
-import { DocumentComment, useGetDocumentQuery } from '@/graphql/types/schema'
-import { useDateTimeFormatter } from '@/hooks/use-date-time-formatter'
+import {
+  DocumentComment,
+  useGetDocumentQuery,
+  useGetProfileQuery,
+} from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { Alert, Button, ListItemSkeleton, TopLine, Typography } from '@/ui'
-import copyIcon from '@/ui/assets/icons/copy.png'
+import { Alert, Button, ListItemSkeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import {
   DocumentListItem,
@@ -31,43 +29,19 @@ import { ButtonDrawer } from '../../../../../components/button-drawer'
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
 
-const CaseNumberWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
-`
-
-const ListWrapper = styled.View`
-  flex: 1;
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const AlertsContainer = styled.View`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  padding-bottom: ${({ theme }) => theme.spacing.p4}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 export default function DocumentCommunicationsScreen() {
-  const {
-    id: documentId,
-    ticketId,
-    replyEmail,
-  } = useLocalSearchParams<{
+  const { id: documentId, ticketId } = useLocalSearchParams<{
     id: string
     ticketId?: string
-    replyEmail?: string
   }>()
   const locale = useLocale()
   const theme = useTheme()
   const intl = useIntl()
-  const formatDate = useDateTimeFormatter()
-  const [actionsHeight, setActionsHeight] = useState(0)
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
   const scrollY = useRef(new Animated.Value(0)).current
@@ -98,6 +72,9 @@ export default function DocumentCommunicationsScreen() {
     },
   })
 
+  const profileRes = useGetProfileQuery()
+  const userEmail = profileRes.data?.getUserProfile?.email ?? undefined
+
   const document = docRes.data?.documentV2
   const comments = document?.ticket?.comments ?? []
   const replyable =
@@ -106,6 +83,11 @@ export default function DocumentCommunicationsScreen() {
       : false
   const closedForMoreReplies = document?.closedForMoreReplies ?? false
   const isSkeleton = docRes.loading && !docRes.data
+
+  const hasUserComment = comments.some((c) => c.isZendeskAgent === false)
+  const hasAgencyReply = comments.some((c) => c.isZendeskAgent === true)
+  const showAwaitingReplyAlert =
+    replyable && hasUserComment && !hasAgencyReply && !!userEmail
 
   const handleRefresh = () => {
     setRefetching(true)
@@ -142,6 +124,12 @@ export default function DocumentCommunicationsScreen() {
     [],
   )
 
+  const ticketIdNumber = document?.ticket?.id ?? ticketId ?? ''
+  const ticketIdValue = `#${ticketIdNumber}`
+  const caseNumberLabel = intl.formatMessage({
+    id: 'documentCommunications.caseNumber',
+  })
+
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
@@ -156,13 +144,23 @@ export default function DocumentCommunicationsScreen() {
           sender={item.author ?? ''}
           title={item.author ?? ''}
           body={item.body ?? undefined}
-          date={item.createdDate ? formatDate(item.createdDate) : undefined}
+          date={
+            item.createdDate
+              ? intl.formatDate(new Date(item.createdDate), {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })
+              : undefined
+          }
+          caseNumber={ticketIdNumber || undefined}
+          caseNumberLabel={caseNumberLabel}
           hasTopBorder={index !== 0}
         />
       )
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comments.length],
+    [comments.length, ticketIdNumber, caseNumberLabel],
   )
 
   const data = useMemo(
@@ -171,36 +169,46 @@ export default function DocumentCommunicationsScreen() {
     [isSkeleton, docRes.data],
   ) as FlatListItem[]
 
-  const ticketIdValue = `#${document?.ticket?.id ?? ticketId ?? ''}`
-
   return (
     <>
       <StackScreen
         networkStatus={docRes.networkStatus}
         options={{
-          headerTitle: () => (
-            <CaseNumberWrapper style={{ backgroundColor: 'white' }}>
-              <Typography variant="eyebrow" color={theme.color.purple400}>
-                {intl.formatMessage({
-                  id: 'documentCommunications.caseNumber',
-                })}
-              </Typography>
-              <Typography variant="body3">{ticketIdValue}</Typography>
-              <TouchableOpacity
-                onPress={() => setStringAsync(ticketIdValue)}
-                style={{ marginLeft: 4 }}
-              >
-                <Image
-                  source={copyIcon}
-                  style={{ width: 24, height: 24 }}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            </CaseNumberWrapper>
-          ),
+          title: document?.subject ?? '',
+          headerTitleAlign: 'center',
         }}
       />
       <View style={{ flexDirection: 'column', flex: 1 }}>
+        {(closedForMoreReplies || showAwaitingReplyAlert) && (
+          <AlertsContainer>
+            <View style={{ rowGap: theme.spacing[2] }}>
+              {closedForMoreReplies && (
+                <Alert
+                  type="info"
+                  message={intl.formatMessage({
+                    id: 'documentCommunications.cannotReply',
+                  })}
+                  hasBorder
+                />
+              )}
+              {showAwaitingReplyAlert && (
+                <Alert
+                  type="info"
+                  message={intl.formatMessage(
+                    {
+                      id: 'documentCommunications.initialReply',
+                    },
+                    {
+                      email: userEmail,
+                      caseNumber: ticketIdValue,
+                    },
+                  )}
+                  hasBorder
+                />
+              )}
+            </View>
+          </AlertsContainer>
+        )}
         <Animated.FlatList
           ref={flatListRef}
           keyExtractor={keyExtractor}
@@ -216,39 +224,6 @@ export default function DocumentCommunicationsScreen() {
           automaticallyAdjustContentInsets
           ListFooterComponent={<SafeAreaView style={{ height: 160 }} />}
         />
-        {(closedForMoreReplies || (replyEmail && replyable)) && (
-          <AlertsContainer
-            onLayout={(event: LayoutChangeEvent) => {
-              setActionsHeight(event.nativeEvent.layout.height)
-            }}
-          >
-            <SafeAreaView style={{ rowGap: theme.spacing[2] }}>
-              {closedForMoreReplies && (
-                <Alert
-                  type="info"
-                  message={intl.formatMessage({
-                    id: 'documentCommunications.cannotReply',
-                  })}
-                  hasBorder
-                />
-              )}
-              {replyEmail && replyable && (
-                <Alert
-                  type="info"
-                  message={intl.formatMessage(
-                    {
-                      id: 'documentCommunications.initialReply',
-                    },
-                    {
-                      email: replyEmail,
-                    },
-                  )}
-                  hasBorder
-                />
-              )}
-            </SafeAreaView>
-          </AlertsContainer>
-        )}
         {replyable && !closedForMoreReplies && (
           <ButtonDrawer>
             <SafeAreaView>
