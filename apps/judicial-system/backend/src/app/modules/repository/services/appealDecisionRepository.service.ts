@@ -122,7 +122,7 @@ export class AppealDecisionRepositoryService {
         `Upserting appeal decision for ${party.partyRole} in case ${party.caseId}`,
       )
 
-      const where = {
+      const key = {
         caseId: party.caseId,
         rulingFileId: party.rulingFileId ?? null,
         partyRole: party.partyRole,
@@ -130,30 +130,26 @@ export class AppealDecisionRepositoryService {
         civilClaimantId: party.civilClaimantId ?? null,
       }
 
-      const existing = await this.appealDecisionModel.findOne({
-        where,
-        transaction: options.transaction,
-      })
-
-      if (existing) {
-        const result = await existing.update(data, {
+      // Atomic insert-or-update keyed on the party. A read-then-write would
+      // race two concurrent requests for the same party into a duplicate
+      // insert; conflictFields target the composite UNIQUE index (NULLS NOT
+      // DISTINCT) so Postgres resolves the conflict in a single statement.
+      const [result] = await this.appealDecisionModel.upsert(
+        { ...key, ...data },
+        {
           transaction: options.transaction,
-        })
-
-        this.logger.debug(
-          `Updated appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
-        )
-
-        return result
-      }
-
-      const result = await this.appealDecisionModel.create(
-        { ...where, ...data },
-        { transaction: options.transaction },
+          conflictFields: [
+            'caseId',
+            'rulingFileId',
+            'partyRole',
+            'defendantId',
+            'civilClaimantId',
+          ],
+        },
       )
 
       this.logger.debug(
-        `Created appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
+        `Upserted appeal decision ${result.id} for ${party.partyRole} in case ${party.caseId}`,
       )
 
       return result

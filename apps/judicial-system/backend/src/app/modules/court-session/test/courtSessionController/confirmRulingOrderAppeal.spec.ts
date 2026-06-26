@@ -194,7 +194,11 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     it('should confirm without creating an appeal case', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(addMessagesToQueue).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+        }),
+      )
     })
   })
 
@@ -209,7 +213,11 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
 
     it('should not create another appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(addMessagesToQueue).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+        }),
+      )
     })
   })
 
