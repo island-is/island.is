@@ -61,7 +61,6 @@ export default function InboxLayout() {
       <Stack.Screen
         name="[id]/reply"
         options={{
-          headerShown: false,
           ...modalScreenOptions,
         }}
       />
