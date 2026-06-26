@@ -51,7 +51,6 @@ export const exemptionSection = buildSection({
           clearOnChange: [
             'exemptionDocuments.studies',
             'exemptionDocuments.health',
-            'exemptionDocuments.housing',
             'exemptionDocuments.work',
           ],
           options: [
@@ -83,12 +82,6 @@ export const exemptionSection = buildSection({
           condition: (answers) => isExemptionReason(answers, 'health'),
           id: 'exemptionDocuments.health',
           title: m.draftMessages.exemptionSection.fileUploadHealthTitle,
-          uploadAccept: UPLOAD_ACCEPT,
-        }),
-        buildFileUploadField({
-          condition: (answers) => isExemptionReason(answers, 'housing'),
-          id: 'exemptionDocuments.housing',
-          title: m.draftMessages.exemptionSection.fileUploadHousingTitle,
           uploadAccept: UPLOAD_ACCEPT,
         }),
         buildFileUploadField({

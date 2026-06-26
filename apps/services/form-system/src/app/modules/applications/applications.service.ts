@@ -164,7 +164,9 @@ export class ApplicationsService {
                           ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
                         type ===
                           ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
-                        type === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION ||
+                        type === ApplicantTypesEnum.LEGAL_GUARDIAN
                       ) {
                         valueJson['nationalId'] = user.actor?.nationalId || ''
                         valueJson['isLoggedInUser'] = true
@@ -173,7 +175,9 @@ export class ApplicationsService {
                         type === ApplicantTypesEnum.LEGAL_ENTITY ||
                         type ===
                           ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER ||
-                        type === ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION
+                        type ===
+                          ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION ||
+                        type === ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
                       ) {
                         valueJson['nationalId'] = user.nationalId
                         valueJson['applicantType'] = type
@@ -1531,6 +1535,11 @@ export class ApplicationsService {
           )
           loginTypes.push(ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION)
         }
+      } else if (
+        user.delegationType.includes(AuthDelegationType.LegalGuardian)
+      ) {
+        loginTypes.push(ApplicantTypesEnum.LEGAL_GUARDIAN)
+        loginTypes.push(ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN)
       }
     } else {
       loginTypes.push(ApplicantTypesEnum.INDIVIDUAL)

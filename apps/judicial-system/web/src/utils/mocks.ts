@@ -10,7 +10,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseTransition,
   CaseType,
   Gender,
   InstitutionType,
@@ -19,7 +18,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { TransitionAppealCaseDocument } from './hooks/useAppealCase/transitionAppealCase.generated'
-import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 import { CaseTableMembershipDocument } from './hooks/useCaseTableMembership/caseTableMembership.generated'
 
 export const mockCourt = {
@@ -122,30 +120,6 @@ export const mockProsecutorQuery = [
     result: {
       data: {
         currentUser: { user: mockProsecutor },
-      },
-    },
-  },
-]
-
-export const mockTransitonCaseMutation = (caseId: string) => [
-  {
-    request: {
-      query: TransitionCaseDocument,
-      variables: {
-        input: {
-          id: caseId,
-          transition: CaseTransition.COMPLETE_APPEAL,
-        },
-      },
-    },
-    result: {
-      data: {
-        transitionCase: {
-          state: CaseState.ACCEPTED,
-          appealState: AppealCaseState.COMPLETED,
-          statementDeadline: '2021-09-09T12:00:00.000Z',
-          appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
-        },
       },
     },
   },

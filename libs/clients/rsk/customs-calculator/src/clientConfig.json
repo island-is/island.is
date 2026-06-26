@@ -1,0 +1,146 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Skattur Tollur Reiknivel",
+    "description": "Vefþjónustur fyrir reiknivél tolla og gjalda í innflutningi",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://skatt-test.hysing.is/gateway/tollur-reiknivel/v1"
+    }
+  ],
+  "paths": {
+    "/reiknivel-voruflokkar": {
+      "get": {
+        "operationId": "getReiknivelVoruflokkar",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reiknivel-einingar": {
+      "get": {
+        "operationId": "getReiknivelEiningar",
+        "parameters": [
+          {
+            "name": "tollskrarnumer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vidmDags",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reiknivel-utreikningur": {
+      "post": {
+        "operationId": "postReiknivelUtreikningur",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReiknivelUtreikningurRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReiknivelUtreikningurRequest": {
+        "type": "object",
+        "required": [
+          "tollskrarnumer",
+          "tollurKodi",
+          "vidmDags",
+          "myntKodi",
+          "voruverd",
+          "plastumbudirKg",
+          "pappaumbudirKg",
+          "stykki",
+          "nettoKg",
+          "litrar",
+          "prosenta",
+          "netNetKg",
+          "sykur",
+          "saetuefni",
+          "nedcUtblastur",
+          "nedcVigtadUtblastur",
+          "wltpUtblastur",
+          "wltpVigtadUtblastur",
+          "eiginThyngd"
+        ],
+        "properties": {
+          "tollskrarnumer": { "type": "string" },
+          "tollurKodi": { "type": "string" },
+          "vidmDags": { "type": "string" },
+          "myntKodi": { "type": "string" },
+          "voruverd": { "type": "string" },
+          "plastumbudirKg": { "type": "string" },
+          "pappaumbudirKg": { "type": "string" },
+          "stykki": { "type": "string" },
+          "nettoKg": { "type": "string" },
+          "litrar": { "type": "string" },
+          "prosenta": { "type": "string" },
+          "netNetKg": { "type": "string" },
+          "sykur": { "type": "string" },
+          "saetuefni": { "type": "string" },
+          "nedcUtblastur": { "type": "string" },
+          "nedcVigtadUtblastur": { "type": "string" },
+          "wltpUtblastur": { "type": "string" },
+          "wltpVigtadUtblastur": { "type": "string" },
+          "eiginThyngd": { "type": "string" }
+        }
+      }
+    }
+  }
+}

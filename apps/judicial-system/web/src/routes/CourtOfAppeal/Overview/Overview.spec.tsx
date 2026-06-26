@@ -1,4 +1,5 @@
 import faker from 'faker'
+
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
@@ -10,7 +11,6 @@ import {
 import {
   mockCase,
   mockCaseTableMembershipQuery,
-  mockTransitonCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
@@ -35,10 +35,7 @@ describe('Overview', () => {
 
     render(
       <MockedProvider
-        mocks={[
-          ...mockTransitonCaseMutation(caseId),
-          ...mockCaseTableMembershipQuery(caseId),
-        ]}
+        mocks={[...mockCaseTableMembershipQuery(caseId)]}
         addTypename={false}
       >
         <IntlProviderWrapper>

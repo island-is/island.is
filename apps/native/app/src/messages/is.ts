@@ -167,15 +167,15 @@ export const is = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur} other {Óupplýst}}}
-    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill} other {Óupplýst}}}
-    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng} other {Óupplýst}}}
-    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn} other {Óupplýst}}}
-    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    MARRIED {Gift (kvæntur) eða staðfest samvist}
+    UNMARRIED {Ógift (ókvæntur)}
+    WIDOWED {Ekkill, ekkja}
+    SEPARATED {Skilin(n) að borði og sæng}
+    DIVORCED {Skilin(n) að lögum}
+    MARRIED_LIVING_SEPARATELY {Hjón ekki í samvistum}
+    MARRIED_TO_FOREIGN_LAW_PERSON {Íslendingur í hjúskap með útlendingi sem nýtur úrlendisréttar og verður því ekki skráður (t.d. varnarliðsmaður eða sendiráðsmaður)}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Íslendingur með lögheimili erlendis; í hjúskap með útlendingi sem ekki er á skrá}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá}
     other {Óupplýst}
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
