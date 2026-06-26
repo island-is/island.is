@@ -93,14 +93,14 @@ export class ApplicationTranslation extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  draftValueIs?: string
+  draftValueIs?: string | null
 
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   @ApiPropertyOptional()
-  draftValueEn?: string
+  draftValueEn?: string | null
 
   @CreatedAt
   @ApiProperty()

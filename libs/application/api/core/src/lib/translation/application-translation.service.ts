@@ -269,8 +269,8 @@ export class ApplicationTranslationService {
     for (const row of rows) {
       const oldValueIs = row.valueIs
       const updates: Partial<ApplicationTranslation> = {
-        draftValueIs: null as unknown as string,
-        draftValueEn: null as unknown as string,
+        draftValueIs: null,
+        draftValueEn: null,
       }
       let changed = false
 
@@ -369,8 +369,8 @@ export class ApplicationTranslationService {
         await row.update({
           valueIs: snapshot.valueIs,
           valueEn: snapshot.valueEn,
-          draftValueIs: null as unknown as string,
-          draftValueEn: null as unknown as string,
+          draftValueIs: null,
+          draftValueEn: null,
         })
 
         await this.logModel.create({
