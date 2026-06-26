@@ -25,7 +25,7 @@ import {
 } from '@island.is/application/utils'
 import type { MessageDescriptor } from 'react-intl'
 
-import type { MessageDescriptorInfo } from './template-introspection.service'
+import type { MessageDescriptorInfo } from '@island.is/application/types'
 
 export interface SharedNamespaceIntrospection {
   namespace: string
