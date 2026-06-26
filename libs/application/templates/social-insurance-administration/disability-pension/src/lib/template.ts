@@ -123,7 +123,6 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                IdentityApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
@@ -139,7 +138,6 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationEducationLevelsApi,
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
                 SocialInsuranceAdministrationCountriesApi,
-                SocialInsuranceAdministrationLanguagesApi,
                 SocialInsuranceAdministrationEmploymentStatusesApi,
                 SocialInsuranceAdministrationMaritalStatusesApi,
                 SocialInsuranceAdministrationProfessionActivitiesApi,
