@@ -426,6 +426,17 @@ export class CourtSessionService {
 
     this.validateAppealDecisionParty(theCase, update)
 
+    const data: {
+      decision?: CaseAppealDecision | null
+      announcement?: string | null
+    } = {}
+    if (update.decision !== undefined) {
+      data.decision = update.decision ?? null
+    }
+    if (update.announcement !== undefined) {
+      data.announcement = update.announcement ?? null
+    }
+
     return this.appealDecisionRepositoryService.upsert(
       {
         caseId: theCase.id,
@@ -434,11 +445,9 @@ export class CourtSessionService {
         defendantId: update.defendantId,
         civilClaimantId: update.civilClaimantId,
       },
-      {
-        decision: update.decision ?? null,
-        announcement: update.announcement ?? null,
-      },
+      data,
       { transaction },
+    )
     )
   }
 
