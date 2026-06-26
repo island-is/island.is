@@ -15,6 +15,7 @@ import { AppealCase } from './appealCase.model'
 import { Case } from './case.model'
 import { CivilClaimant } from './civilClaimant.model'
 import { Defendant } from './defendant.model'
+import { User } from './user.model'
 
 @Table({
   tableName: 'appeal_event_log',
@@ -144,14 +145,6 @@ export class AppealEventLog extends Model {
   @ApiProperty({ enum: AppealEventType })
   eventType!: AppealEventType
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(UserRole),
-  })
-  @ApiProperty({ enum: UserRole })
-  userRole!: UserRole
-
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -161,4 +154,39 @@ export class AppealEventLog extends Model {
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
   civilClaimantId?: string
+
+  /**********
+   * Actor snapshot - the human who performed the event, captured at event
+   * time so the record survives prosecutor/defender reassignment. userRole is
+   * the actor's role; userId is the acting system user (null for defenders,
+   * who are not system users - national_id/user_name identify them instead).
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(UserRole),
+  })
+  @ApiProperty({ enum: UserRole })
+  userRole!: UserRole
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  nationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userTitle?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  institutionName?: string
 }

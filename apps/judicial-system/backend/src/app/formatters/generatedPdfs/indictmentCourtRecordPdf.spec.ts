@@ -15,7 +15,7 @@ describe('getFiledBy', () => {
       [],
     )
 
-    expect(result).toBe('Sækjandi lagði fram:')
+    expect(result).toBe('Ákærandi lagði fram:')
   })
 
   it('omits prosecutor name for uploaded documents filed by a prosecutor', () => {
@@ -33,7 +33,7 @@ describe('getFiledBy', () => {
       ],
     )
 
-    expect(result).toBe('Sækjandi lagði fram:')
+    expect(result).toBe('Ákærandi lagði fram:')
   })
 
   it('keeps non-prosecutor names in the returned string', () => {

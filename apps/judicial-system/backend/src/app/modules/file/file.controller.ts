@@ -410,7 +410,11 @@ export class FileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard(indictmentCases),
+    new CaseTypeGuard([
+      ...indictmentCases,
+      ...restrictionCases,
+      ...investigationCases,
+    ]),
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
