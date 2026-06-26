@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
@@ -10,7 +10,7 @@ import {
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
@@ -91,16 +91,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [today])
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
-  const isLoadingMoreRef = useRef(false)
 
   const [displayGroups, setDisplayGroups] = useState<
     IcelandicGovernmentInstitutionsInvoiceGroup[]
   >(initialInvoiceGroups?.data ?? [])
-  const [endCursor, setEndCursor] = useState<string | null>(
-    initialInvoiceGroups?.pageInfo?.endCursor ?? null,
-  )
-  const [hasNextPage, setHasNextPage] = useState<boolean>(
-    initialInvoiceGroups?.pageInfo?.hasNextPage ?? false,
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalCount, setTotalCount] = useState<number>(
+    initialInvoiceGroups?.totalCount ?? 0,
   )
 
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
@@ -124,17 +121,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     parseAsArrayOf(parseAsString),
   )
 
-  const totalHits = useMemo(() => {
-    if (
-      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups.totalCount
-    ) {
-      return invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-        .totalCount
-    } else return initialInvoiceGroups?.totalCount ?? 0
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups?.totalCount,
-  ])
+  const totalHits = totalCount
 
   const fetchInvoiceGroups = useCallback(() => {
     if (initialRender) {
@@ -142,6 +129,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       return
     }
 
+    setCurrentPage(1)
     getInvoiceGroups({
       variables: {
         input: {
@@ -151,6 +139,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
           limit: PAGE_SIZE,
+          page: 1,
         },
       },
     })
@@ -180,19 +169,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     if (!invoiceGroupsData) return
     const result =
       invoiceGroupsData.icelandicGovernmentInstitutionsInvoiceGroups
-    if (isLoadingMoreRef.current) {
-      setDisplayGroups((prev) => [...prev, ...(result?.data ?? [])])
-    } else {
-      setDisplayGroups(result?.data ?? [])
-    }
-    isLoadingMoreRef.current = false
-    setEndCursor(result?.pageInfo?.endCursor ?? null)
-    setHasNextPage(result?.pageInfo?.hasNextPage ?? false)
+    setDisplayGroups(result?.data ?? [])
+    setTotalCount(result?.totalCount ?? 0)
   }, [invoiceGroupsData])
 
-  const handleLoadMore = () => {
-    if (!endCursor) return
-    isLoadingMoreRef.current = true
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
     getInvoiceGroups({
       variables: {
         input: {
@@ -202,7 +184,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           dateFrom: dateRangeStart ?? initialDates.dateFrom,
           dateTo: dateRangeEnd ?? initialDates.dateTo,
           limit: PAGE_SIZE,
-          after: endCursor,
+          page,
         },
       },
     })
@@ -391,26 +373,27 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               invoiceGroups={displayGroups}
               dateFrom={dateRangeStart}
               dateTo={dateRangeEnd}
-              loading={invoiceGroupsLoading && !isLoadingMoreRef.current}
+              loading={invoiceGroupsLoading}
               error={invoiceGroupsError}
             />
           </Box>
 
-          {hasNextPage && (
-            <Box
-              display="flex"
-              justifyContent="center"
-              marginTop={2}
-              marginBottom={0}
-            >
-              <Button
-                onClick={handleLoadMore}
-                loading={invoiceGroupsLoading}
-                disabled={invoiceGroupsLoading}
-                variant="ghost"
-              >
-                {formatMessage(m.search.loadMore)}
-              </Button>
+          {totalHits > PAGE_SIZE && (
+            <Box marginTop={2}>
+              <Pagination
+                variant="blue"
+                page={currentPage}
+                totalItems={totalHits}
+                itemsPerPage={PAGE_SIZE}
+                renderLink={(page, className, children) => (
+                  <button
+                    onClick={() => handlePageChange(page)}
+                    disabled={invoiceGroupsLoading}
+                  >
+                    <span className={className}>{children}</span>
+                  </button>
+                )}
+              />
             </Box>
           )}
         </SidebarLayout>
@@ -527,6 +510,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         debtors: debtorsInput,
         suppliers: suppliersInput,
         paymentTypeIds: invoicePaymentTypesInput,
+        limit: PAGE_SIZE,
+        page: 1,
       },
     },
   })

@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import { Injectable } from '@nestjs/common'
 import {
   getV1OpeninvoicesInvoices,
@@ -35,8 +36,12 @@ export class GovernmentInvoicesClientService {
       input
         ? {
             query: {
-              dateFrom: input.dateFrom,
-              dateTo: input.dateTo,
+              dateFrom: input.dateFrom
+                ? format(input.dateFrom, 'yyyy-MM-dd')
+                : undefined,
+              dateTo: input.dateTo
+                ? format(input.dateTo, 'yyyy-MM-dd')
+                : undefined,
               suppliers: input.suppliers,
               debtors: input.debtors,
               ministries: input.ministries,
@@ -44,8 +49,7 @@ export class GovernmentInvoicesClientService {
               sortBy: input.sortBy,
               sortDirection: input.sortDirection,
               limit: input.limit,
-              after: input.after,
-              before: input.before,
+              page: input.page,
             },
           }
         : {},

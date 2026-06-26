@@ -1,9 +1,21 @@
-import { PaginationInput } from '@island.is/nest/pagination'
-import { Field, InputType } from '@nestjs/graphql'
-import { IsDate, IsOptional, IsString } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsDate, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
 
 @InputType('IcelandicGovernmentInstitutionsInvoiceGroupsInput')
-export class InvoiceGroupsInput extends PaginationInput() {
+export class InvoiceGroupsInput {
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit?: number
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  page?: number
+
   @Field(() => [String], { nullable: true })
   @IsOptional()
   suppliers?: string[]

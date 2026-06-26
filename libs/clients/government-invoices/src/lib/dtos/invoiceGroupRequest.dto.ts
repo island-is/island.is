@@ -8,6 +8,5 @@ export interface InvoiceGroupRequestDto {
   sortBy?: string
   sortDirection?: string
   limit?: number
-  after?: string
-  before?: string
+  page?: number
 }

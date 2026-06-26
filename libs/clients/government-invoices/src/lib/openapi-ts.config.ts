@@ -14,7 +14,7 @@ export default defineConfig({
       name: '@hey-api/typescript',
     },
     {
-      dates: true,
+      dates: false,
       name: '@hey-api/transformers',
     },
     {
