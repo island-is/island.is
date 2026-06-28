@@ -18,8 +18,8 @@ import { AppealDecision } from '../models/appealDecision.model'
 
 // Identifies a party's decision row for a specific appealable ruling.
 // rulingFileId null targets the case-level ruling. defendantId is required
-// iff partyRole is DEFENDANT, civilClaimantId iff CIVIL_CLAIMANT - enforced
-// by a DB CHECK constraint.
+// iff partyRole is DEFENDANT and rulingFileId is not null,
+// civilClaimantId iff CIVIL_CLAIMANT - enforced by a DB CHECK constraint.
 export interface AppealDecisionPartyKey {
   caseId: string
   rulingFileId?: string | null
