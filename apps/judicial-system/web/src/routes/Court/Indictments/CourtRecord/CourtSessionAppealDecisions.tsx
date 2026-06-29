@@ -7,7 +7,10 @@ import {
   Input,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { BlueBox, SectionHeading } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import {
   AppealDecisionPartyRole,
   Case,
@@ -30,7 +33,11 @@ interface PartyKey {
 }
 
 const samePartyKey = (
-  a: { partyRole?: AppealDecisionPartyRole | null; defendantId?: string | null; civilClaimantId?: string | null },
+  a: {
+    partyRole?: AppealDecisionPartyRole | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+  },
   b: PartyKey,
 ): boolean =>
   a.partyRole === b.partyRole &&
@@ -71,9 +78,7 @@ const CourtSessionAppealDecisions: FC<Props> = ({
       )
       const merged = {
         __typename: 'AppealDecisionResponse' as const,
-        ...(index >= 0
-          ? decisions[index]
-          : { id: '', rulingFileId, ...party }),
+        ...(index >= 0 ? decisions[index] : { id: '', rulingFileId, ...party }),
         ...changes,
       }
 
@@ -113,8 +118,14 @@ const CourtSessionAppealDecisions: FC<Props> = ({
     }`
 
     const radios: { value: CaseAppealDecision; label: string }[] = [
-      { value: CaseAppealDecision.APPEAL, label: `${nominative} kærir úrskurðinn` },
-      { value: CaseAppealDecision.ACCEPT, label: `${nominative} unir úrskurðinum` },
+      {
+        value: CaseAppealDecision.APPEAL,
+        label: `${nominative} kærir úrskurðinn`,
+      },
+      {
+        value: CaseAppealDecision.ACCEPT,
+        label: `${nominative} unir úrskurðinum`,
+      },
       { value: CaseAppealDecision.NOT_APPLICABLE, label: 'Á ekki við' },
       {
         value: CaseAppealDecision.POSTPONE,
@@ -125,7 +136,9 @@ const CourtSessionAppealDecisions: FC<Props> = ({
     return (
       <BlueBox key={groupName}>
         <SectionHeading
-          title={`${name ? `${name} - ` : ''}Afstaða ${genitive} til úrskurðar í lok þinghalds`}
+          title={`${
+            name ? `${name} - ` : ''
+          }Afstaða ${genitive} til úrskurðar í lok þinghalds`}
           heading="h4"
           marginBottom={2}
           required
