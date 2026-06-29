@@ -125,10 +125,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               unread={!item.opened}
               replyable={item.replyable}
               senderName={item.sender.name}
-              icon={
-                (item.sender.name || item.sender.logoUrl) &&
-                getSenderLogo(item.sender, 75)
-              }
+              icon={getSenderLogo(item.sender, 75)}
               isUrgent={item.isUrgent}
               onPress={() =>
                 router.navigate({

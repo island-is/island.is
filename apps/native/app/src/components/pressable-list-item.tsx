@@ -34,10 +34,7 @@ export const PressableListItem = memo(
       [selectable, selectedItems, item.id],
     )
     const icon = useMemo(
-      () =>
-        item.sender.name || item.sender.logoUrl
-          ? getSenderLogo(item.sender, 75)
-          : undefined,
+      () => getSenderLogo(item.sender, 75),
       [item.sender, getSenderLogo],
     )
 
