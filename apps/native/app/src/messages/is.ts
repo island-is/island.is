@@ -290,6 +290,7 @@ export const is = {
 
   // document communications
   'documentCommunications.caseNumber': 'Málsnr.',
+  'documentCommunications.copyCaseNumber': 'Afrita málsnúmer',
   'documentCommunications.initialReply':
     'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}. Málsnúmerið er: {caseNumber}',
   'documentCommunications.cannotReply':

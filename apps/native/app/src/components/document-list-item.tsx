@@ -76,6 +76,7 @@ type DocumentListItemProps = {
   date?: string
   caseNumber?: string
   caseNumberLabel?: string
+  caseNumberCopyLabel?: string
   isOpen?: boolean
   closeable?: boolean
   hasTopBorder?: boolean
@@ -89,6 +90,7 @@ export const DocumentListItem = ({
   date,
   caseNumber,
   caseNumberLabel,
+  caseNumberCopyLabel,
   closeable = false,
   isOpen = false,
   hasTopBorder = true,
@@ -169,6 +171,8 @@ export const DocumentListItem = ({
                     <TouchableOpacity
                       onPress={() => setStringAsync(`#${caseNumber}`)}
                       hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={caseNumberCopyLabel}
                     >
                       <Image
                         source={copyIcon}

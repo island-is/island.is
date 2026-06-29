@@ -85,10 +85,22 @@ export default function DocumentCommunicationsScreen() {
   const closedForMoreReplies = document?.closedForMoreReplies ?? false
   const isSkeleton = docRes.loading && !docRes.data
 
-  const hasUserComment = comments.some((c) => c.isZendeskAgent === false)
-  const hasAgencyReply = comments.some((c) => c.isZendeskAgent === true)
+  const ticketIdNumber = document?.ticket?.id ?? ticketId ?? ''
+  const firstUserCommentIndex = comments.findIndex(
+    (c) => c.isZendeskAgent === false,
+  )
+  const hasUserComment = firstUserCommentIndex !== -1
+  const hasAgencyReplyAfterUser =
+    hasUserComment &&
+    comments
+      .slice(firstUserCommentIndex + 1)
+      .some((c) => c.isZendeskAgent === true)
   const showAwaitingReplyAlert =
-    replyable && hasUserComment && !hasAgencyReply && !!userEmail
+    replyable &&
+    hasUserComment &&
+    !hasAgencyReplyAfterUser &&
+    !!userEmail &&
+    !!ticketIdNumber
 
   const handleRefresh = () => {
     setRefetching(true)
@@ -134,10 +146,12 @@ export default function DocumentCommunicationsScreen() {
     [],
   )
 
-  const ticketIdNumber = document?.ticket?.id ?? ticketId ?? ''
   const ticketIdValue = `#${ticketIdNumber}`
   const caseNumberLabel = intl.formatMessage({
     id: 'documentCommunications.caseNumber',
+  })
+  const copyCaseNumberLabel = intl.formatMessage({
+    id: 'documentCommunications.copyCaseNumber',
   })
 
   const renderItem = useCallback(
@@ -165,12 +179,13 @@ export default function DocumentCommunicationsScreen() {
           }
           caseNumber={ticketIdNumber || undefined}
           caseNumberLabel={caseNumberLabel}
+          caseNumberCopyLabel={copyCaseNumberLabel}
           hasTopBorder={index !== 0}
         />
       )
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comments.length, ticketIdNumber, caseNumberLabel],
+    [comments.length, ticketIdNumber, caseNumberLabel, copyCaseNumberLabel],
   )
 
   const data = useMemo(
