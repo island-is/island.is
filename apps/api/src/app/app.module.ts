@@ -8,7 +8,10 @@ import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/ap
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
-import { ApplicationModule, ApplicationTranslationConfig } from '@island.is/api/domains/application'
+import {
+  ApplicationModule,
+  ApplicationTranslationConfig,
+} from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
