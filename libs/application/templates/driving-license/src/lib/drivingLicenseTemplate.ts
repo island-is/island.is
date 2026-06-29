@@ -4,6 +4,7 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import {
+  Application,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -175,7 +176,20 @@ const DrivingLicenseTemplate: ApplicationTemplate<
           name: m.applicationForDrivingLicense.defaultMessage,
           status: 'draft',
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          // BE drafts are short-lived (24h); all other license types keep the
+          // default 30 day lifecycle.
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              new Date(
+                Date.now() +
+                  (application.answers.applicationFor === BE ? 1 : 30) *
+                    24 *
+                    3600 *
+                    1000,
+              ),
+          },
           roles: [
             {
               id: Roles.APPLICANT,
