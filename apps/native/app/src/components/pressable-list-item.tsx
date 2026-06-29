@@ -28,17 +28,17 @@ export const PressableListItem = memo(
     setSelectedItems,
     setSelectedState,
   }: PressableListItemProps) => {
-    const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const { getSenderLogo } = useOrganizationsStore()
     const isSelected = useMemo(
       () => selectable && selectedItems.includes(item.id),
       [selectable, selectedItems, item.id],
     )
     const icon = useMemo(
       () =>
-        item.sender.name
-          ? getOrganizationLogoUrl(item.sender.name, 75)
+        item.sender.name || item.sender.logoUrl
+          ? getSenderLogo(item.sender, 75)
           : undefined,
-      [item.sender.name, getOrganizationLogoUrl],
+      [item.sender, getSenderLogo],
     )
 
     const toggleSelectItem = useCallback(() => {

@@ -46,6 +46,14 @@ interface OrganizationsStore {
     size?: number,
     canReturnEmpty?: boolean,
   ): ImageSourcePropType | undefined
+  getSenderLogo(
+    sender:
+      | { name?: string | null; logoUrl?: string | null }
+      | null
+      | undefined,
+    size?: number,
+    canReturnEmpty?: boolean,
+  ): ImageSourcePropType | undefined
   getOrganizationNameBySlug(slug: string): string
   actions: {
     updateOriganizations(): Promise<void>
@@ -113,6 +121,22 @@ export const organizationsStore = create<OrganizationsStore>()(
         const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
 
         return { uri }
+      },
+      getSenderLogo(
+        sender:
+          | { name?: string | null; logoUrl?: string | null }
+          | null
+          | undefined,
+        size = 100,
+        canReturnEmpty = false,
+      ) {
+        if (sender?.logoUrl) {
+          const url = sender.logoUrl.startsWith('https://')
+            ? sender.logoUrl
+            : `https:${sender.logoUrl}`
+          return { uri: `${url}?w=${size}&h=${size}&fit=pad&fm=png` }
+        }
+        return get().getOrganizationLogoUrl(sender?.name ?? '', size, canReturnEmpty)
       },
       getOrganizationNameBySlug(slug: string) {
         const org = get().organizations.find((o) => o.slug === slug)

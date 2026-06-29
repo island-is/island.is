@@ -56,7 +56,7 @@ const validateInboxInitialData = ({
 const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
   const theme = useTheme()
   const intl = useIntl()
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const { getSenderLogo } = useOrganizationsStore()
 
   if (error && !data) {
     return null
@@ -126,7 +126,8 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               replyable={item.replyable}
               senderName={item.sender.name}
               icon={
-                item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
+                (item.sender.name || item.sender.logoUrl) &&
+                getSenderLogo(item.sender, 75)
               }
               isUrgent={item.isUrgent}
               onPress={() =>
