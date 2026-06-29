@@ -74,6 +74,7 @@ const OrganizationParentSubpage: Screen<
       showReadSpeaker={false}
       pageTitle={pageTitle}
       organizationPage={organizationPage}
+      organizationSubpageId={subpage.id}
       fullWidthContent={true}
       pageFeaturedImage={
         subpage?.featuredImage ?? organizationPage?.featuredImage
