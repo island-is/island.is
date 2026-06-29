@@ -228,4 +228,46 @@ describe('IndictmentCountsList', () => {
       screen.getByRole('button', { name: 'Loka öllum' }),
     ).toBeInTheDocument()
   })
+
+  it('persists accordion state to local storage and restores it on remount', async () => {
+    const workingCase = createWorkingCase([
+      {
+        id: 'count-1',
+        displayOrder: 0,
+        policeCaseNumber: POLICE_CASE_NUMBER_EARLIER,
+        incidentDescription: 'Incident 1',
+        legalArguments: 'Legal arguments',
+      } as IndictmentCount,
+      {
+        id: 'count-2',
+        displayOrder: 1,
+        policeCaseNumber: POLICE_CASE_NUMBER_LATER,
+        incidentDescription: 'Incident 2',
+        legalArguments: 'Legal arguments',
+      } as IndictmentCount,
+    ])
+
+    const { unmount } = renderComponent(workingCase)
+
+    await user.click(screen.getByRole('button', { name: 'Loka öllum' }))
+
+    await waitFor(() => {
+      expect(
+        JSON.parse(localStorage.getItem('INDICTMENT_COUNTS_EXPANDED') ?? '{}'),
+      ).toEqual({
+        'test-case-id': { 'count-1': false, 'count-2': false },
+      })
+    })
+
+    unmount()
+
+    renderComponent(workingCase)
+
+    expect(
+      screen.getByRole('button', { name: /1\. 007-2021-001/ }),
+    ).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.getByRole('button', { name: /2\. 007-2021-002/ }),
+    ).toHaveAttribute('aria-expanded', 'false')
+  })
 })
