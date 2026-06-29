@@ -696,6 +696,9 @@
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
+      "@island.is/application/ui-components/utilities/formatters": [
+        "libs/application/ui-components/src/utilities/formatters.ts"
+      ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],

@@ -67,6 +67,18 @@ describe('TemplateIntrospectionService HousingBenefits', () => {
     expect(config.translation).toHaveLength(2)
   })
 
+  it('introspects Main form (draft) with applicant sections', async () => {
+    const svc = new TemplateIntrospectionService()
+    const result = await svc.introspectTemplate(
+      ApplicationTypes.HOUSING_BENEFITS,
+    )
+    const draft = result.states.find((s) => s.stateName === 'Main form')
+    expect(draft).toBeDefined()
+    const applicant = draft?.roles.find((r) => r.roleId === 'applicant')
+    expect(applicant?.form).toBeTruthy()
+    expect(applicant?.form?.sections?.length).toBeGreaterThan(0)
+  })
+
   it('listTemplates returns unique namespaces for HousingBenefits', async () => {
     const svc = new TemplateIntrospectionService()
 

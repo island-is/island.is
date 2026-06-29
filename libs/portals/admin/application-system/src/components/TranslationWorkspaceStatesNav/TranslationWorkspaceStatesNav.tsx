@@ -132,7 +132,7 @@ export const TranslationWorkspaceStatesNav = ({
                           labelUse="div"
                           iconVariant="small"
                         >
-                          {role.form?.sections
+                          {(role.form?.sections ?? [])
                             .filter((section) => {
                               const hasScreens =
                                 (section.screens as ScreenIntrospection[])
