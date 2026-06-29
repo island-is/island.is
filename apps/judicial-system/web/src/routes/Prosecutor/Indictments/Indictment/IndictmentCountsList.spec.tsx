@@ -75,6 +75,7 @@ describe('IndictmentCountsList', () => {
   beforeEach(() => {
     user = userEvent.setup()
     jest.clearAllMocks()
+    localStorage.clear()
 
     mockUseIndictmentCounts.mockReturnValue({
       reorderIndictmentCounts,
@@ -202,19 +203,8 @@ describe('IndictmentCountsList', () => {
       name: /2\. 007-2021-002/,
     })
 
-    expect(countOneAccordion).toHaveAttribute('aria-expanded', 'false')
-    expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'false')
-
-    await user.click(screen.getByRole('button', { name: 'Opna alla' }))
-
-    await waitFor(() => {
-      expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
-      expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
-    })
-
-    expect(
-      screen.getByRole('button', { name: 'Loka öllum' }),
-    ).toBeInTheDocument()
+    expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
+    expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
 
     await user.click(screen.getByRole('button', { name: 'Loka öllum' }))
 
@@ -225,6 +215,17 @@ describe('IndictmentCountsList', () => {
 
     expect(
       screen.getByRole('button', { name: 'Opna alla' }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Opna alla' }))
+
+    await waitFor(() => {
+      expect(countOneAccordion).toHaveAttribute('aria-expanded', 'true')
+      expect(countTwoAccordion).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    expect(
+      screen.getByRole('button', { name: 'Loka öllum' }),
     ).toBeInTheDocument()
   })
 })
