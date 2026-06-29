@@ -51,6 +51,19 @@ const getRole = (userRole?: UserRole) => {
   }
 }
 
+export const getCivilClaimsServiceText = (
+  hasCivilClaims?: boolean,
+  civilClaimantsCount?: number,
+): string | undefined => {
+  if (!hasCivilClaims) {
+    return undefined
+  }
+
+  return (civilClaimantsCount ?? 0) > 1
+    ? 'Greinargerðir vegna bótakrafna í málinu hafa jafnframt verið birtar.'
+    : 'Greinargerð vegna bótakröfu í málinu hefur jafnframt verið birt.'
+}
+
 export const createSubpoenaServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
@@ -191,6 +204,17 @@ export const createSubpoenaServiceCertificate = (
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(subpoena.type), 'Times-Roman')
+
+  addEmptyLines(doc, 2)
+
+  const civilClaimsText = getCivilClaimsServiceText(
+    theCase.hasCivilClaims,
+    theCase.civilClaimants?.length,
+  )
+
+  if (civilClaimsText) {
+    addNormalText(doc, civilClaimsText, 'Times-Bold')
+  }
 
   addEmptyLines(doc, 3)
 
