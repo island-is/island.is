@@ -1,6 +1,7 @@
 import '@tanstack/react-table'
 import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import {
+  createColumnHelper as _createColumnHelper,
   ColumnDef,
   ExpandedState,
   OnChangeFn,
@@ -563,10 +564,8 @@ export const InteractiveTable = <TData extends object>({
 }
 
 export default InteractiveTable
-export type {
-  ColumnDef,
-  Row,
-  SortingState,
-  OnChangeFn,
-} from '@tanstack/react-table'
-export { createColumnHelper } from '@tanstack/react-table'
+
+// Re-exported as local declarations so exportFinder (which only supports
+// relative re-exports) can resolve them through the barrel index.
+export type { ColumnDef, Row, SortingState, OnChangeFn }
+export const createColumnHelper = _createColumnHelper
