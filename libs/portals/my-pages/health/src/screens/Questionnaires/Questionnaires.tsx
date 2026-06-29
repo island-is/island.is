@@ -121,8 +121,7 @@ const Questionnaires: FC = () => {
     data?.questionnairesList?.questionnaires?.length === 0
 
   const filterIsEmpty =
-    filterValues.searchQuery.length === 0 &&
-    filterValues.status.length === 0
+    filterValues.searchQuery.length === 0 && filterValues.status.length === 0
 
   const noActive = filteredData?.every(
     (item) => item.status === QuestionnairesStatusEnum.expired,
