@@ -75,6 +75,7 @@ import {
 import { isCourtSessionValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectRepresentative } from '../../../Shared/AddFiles/SelectCaseFileRepresentative'
+import CourtSessionAppealDecisions from './CourtSessionAppealDecisions'
 import { CourtSessionMergedCaseEntries } from './CourtSessionMergedCaseEntries'
 import * as styles from './CourtRecord.css'
 
@@ -1668,6 +1669,14 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       required
                     />
                   </Box>
+                  {courtSession.rulingType ===
+                    CourtSessionRulingType.ORDER && (
+                    <CourtSessionAppealDecisions
+                      courtSession={courtSession}
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                    />
+                  )}
                   <Box>
                     <SectionHeading title="Bókanir í lok þinghalds" />
                     <Input
@@ -1797,7 +1806,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           )
                         }
                         size="small"
-                        disabled={!isCourtSessionValid(courtSession)}
+                        disabled={!isCourtSessionValid(courtSession, workingCase)}
                       >
                         Staðfesta þingbók
                       </Button>
