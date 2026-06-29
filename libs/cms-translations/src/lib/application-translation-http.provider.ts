@@ -6,7 +6,7 @@ import {
 import type { Locale } from '@island.is/shared/types'
 
 import type { ApplicationTranslationProvider } from './cms-translations.service'
-import { getApplicationTranslationNamespaceSet } from './application-translation.namespaces'
+import { isApplicationTranslationNamespace } from './application-translation.namespaces'
 import { APPLICATION_TRANSLATION_HTTP_FETCH } from './application-translation-http.fetch'
 
 export const APPLICATION_TRANSLATION_HTTP_CONFIG =
@@ -16,8 +16,6 @@ export interface ApplicationTranslationHttpConfig {
   /** Base URL of application-system API (e.g. https://application-system-api or http://localhost:3333) */
   baseUrl: string
 }
-
-const applicationNamespaces = getApplicationTranslationNamespaceSet()
 
 @Injectable()
 export class ApplicationTranslationHttpProvider
@@ -31,7 +29,7 @@ export class ApplicationTranslationHttpProvider
   ) {}
 
   isApplicationNamespace(namespace: string): boolean {
-    return applicationNamespaces.has(namespace)
+    return isApplicationTranslationNamespace(namespace)
   }
 
   async getTranslationsForNamespace(

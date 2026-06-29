@@ -119,6 +119,17 @@ const getAllConfiguredTranslationNamespaces = (): string[] => {
   return [...namespaces]
 }
 
+/** All Contentful-style namespaces used by application templates (from ApplicationConfigurations). */
+export const getApplicationTranslationNamespaceSet = (): Set<string> => {
+  const namespaces = new Set<string>([CORE_TRANSLATION_NAMESPACE])
+
+  for (const namespace of getAllConfiguredTranslationNamespaces()) {
+    namespaces.add(namespace)
+  }
+
+  return namespaces
+}
+
 export const getSharedTranslationNamespaces =
   (): SharedTranslationNamespaceInfo[] => {
     const sharedNamespaces = new Map<string, SharedTranslationNamespaceInfo>()

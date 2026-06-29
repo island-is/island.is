@@ -1,17 +1,15 @@
-import { ApplicationConfigurations } from '@island.is/application/types'
-
 export const CORE_TRANSLATION_NAMESPACE = 'application.system'
 
-/** All Contentful-style namespaces used by application templates (from ApplicationConfigurations). */
-export const getApplicationTranslationNamespaceSet = (): Set<string> => {
-  const namespaces = new Set<string>([CORE_TRANSLATION_NAMESPACE])
-  for (const config of Object.values(ApplicationConfigurations)) {
-    const ns = Array.isArray(config.translation)
-      ? config.translation
-      : [config.translation]
-    for (const n of ns) {
-      namespaces.add(n)
-    }
-  }
-  return namespaces
-}
+/** Namespaces that do not follow the `*.application` convention. */
+const APPLICATION_TRANSLATION_NAMESPACE_EXCEPTIONS = new Set(['vmst.cjs'])
+
+/**
+ * Lightweight check for application translation namespaces without importing
+ * ApplicationConfigurations (and its heavy template/UI dependency graph).
+ */
+export const isApplicationTranslationNamespace = (
+  namespace: string,
+): boolean =>
+  namespace === CORE_TRANSLATION_NAMESPACE ||
+  namespace.endsWith('.application') ||
+  APPLICATION_TRANSLATION_NAMESPACE_EXCEPTIONS.has(namespace)
