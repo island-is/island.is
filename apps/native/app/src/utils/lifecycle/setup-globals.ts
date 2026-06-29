@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DdRum,
   DdSdkReactNative,
   DatadogProviderConfiguration,
   TrackingConsent,
@@ -72,14 +71,14 @@ if (__DEV__) {
   initializePerformance(app)
 } else {
   // datadog rum config
-  // @todo migration
   const ddconfig = new DatadogProviderConfiguration(
     getConfig().datadog ?? '',
     'production',
-    TrackingConsent.NOT_GRANTED,
+    TrackingConsent.GRANTED,
     {
       site: 'EU',
       service: 'mobile-app',
+      version: Application.nativeApplicationVersion ?? undefined,
       rumConfiguration: {
         applicationId: '2736367a-a841-492d-adef-6f5a509d6ec2',
         trackInteractions: false, // do not track User interactions (e.g.: Tap on buttons.)
