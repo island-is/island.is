@@ -123,7 +123,10 @@ export const usePersonalTaxCreditForm = () => {
     return true
   }
 
-  const personalAction = useWatch({ control: personalForm.control, name: 'action' })
+  const personalAction = useWatch({
+    control: personalForm.control,
+    name: 'action',
+  })
   const spouseAction = useWatch({ control: spouseForm.control, name: 'action' })
 
   return {
