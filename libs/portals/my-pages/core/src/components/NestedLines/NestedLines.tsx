@@ -118,9 +118,7 @@ export const NestedLines = ({
             >
               <GridContainer className={cn(styles.innerGrid)}>
                 <GridRow>
-                  <GridColumn
-                    span={isMobile ? '6/12' : ['12/12', '12/12', titleWidth]}
-                  >
+                  <GridColumn span={['12/12', '12/12', titleWidth]}>
                     <Box className={styles.titleCol}>
                       <Text
                         fontWeight={boldTitle ? 'medium' : 'regular'}
@@ -131,9 +129,7 @@ export const NestedLines = ({
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn
-                    span={isMobile ? '6/12' : ['12/12', '12/12', columnWidth]}
-                  >
+                  <GridColumn span={['12/12', '12/12', columnWidth]}>
                     <Box className={styles.valueCol}>
                       {item.type === 'link' && item.href ? (
                         <LinkButton

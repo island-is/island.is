@@ -78,6 +78,7 @@ export const createTestingFileModule = async () => {
           findAll: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
+          max: jest.fn().mockResolvedValue(null),
         },
       },
       FileService,

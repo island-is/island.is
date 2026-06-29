@@ -8,7 +8,7 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, DialogPrompt } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../context/ControlContext'
 import { MainContent } from '../../MainContent/MainContent'
@@ -25,6 +25,7 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const [openPreview, setOpenPreview] = useState(false)
   const staticSection =
     activeItem.type === 'Section' &&
     ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
@@ -89,12 +90,9 @@ export const MainContentColumn = () => {
   }
 
   return (
-    <Box
-      className={cn(styles.mainColumn)}
-      padding={2}
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
-      {!isReadOnly &&
+    <Box className={cn(styles.mainColumn)} padding={2}>
+      {!openPreview &&
+      !isReadOnly &&
       !inSettings &&
       !staticSection &&
       !staticScreen &&
@@ -129,7 +127,10 @@ export const MainContentColumn = () => {
           flexGrow: 1,
         }}
       >
-        <MainContent />
+        <MainContent
+          openPreview={openPreview}
+          setOpenPreview={setOpenPreview}
+        />
       </Box>
     </Box>
   )

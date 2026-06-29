@@ -2,12 +2,13 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildKeyValueField,
-  buildSelectField,
+  buildAsyncSelectField,
   buildDividerField,
   buildTextField,
   buildSubSection,
   buildPhoneField,
   getValueViaPath,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import {
   Application,
@@ -22,6 +23,7 @@ import {
   B_FULL,
   B_ADVANCED,
 } from '../../lib/constants'
+import { GET_DRIVING_LICENSE_TEACHERS } from '../../graphql/teachersQuery'
 
 export const subSectionApplicantInfo = buildSubSection({
   id: 'infoStep',
@@ -112,22 +114,33 @@ export const subSectionApplicantInfo = buildSubSection({
             answers.applicationFor !== B_FULL_RENEWAL_65 &&
             answers.applicationFor !== B_FULL,
         }),
-        buildSelectField({
+        buildAsyncSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
+          loadingError: coreErrorMessages.failedDataProvider,
+          isSearchable: true,
           condition: (answers) =>
             answers.applicationFor !== B_FULL_RENEWAL_65 &&
             answers.applicationFor !== B_FULL,
           required: true,
-          options: ({
-            externalData: {
-              teachers: { data },
-            },
-          }) => {
-            return (data as TeacherV4[]).map(({ name, nationalId }) => ({
-              value: nationalId,
-              label: `${name} (${nationalId.substring(0, 6)})`,
-            }))
+          // Fetch the instructor list live so a newly-registered instructor
+          // shows up (and de-licensed ones drop off) without the user having
+          // to start a new application. The list used to be read from the
+          // snapshot frozen into external data when the application was created.
+          loadOptions: async ({ apolloClient }) => {
+            const { data } = await apolloClient.query<{
+              drivingLicenseTeachersV4: TeacherV4[]
+            }>({
+              query: GET_DRIVING_LICENSE_TEACHERS,
+              fetchPolicy: 'network-only',
+            })
+
+            return (data?.drivingLicenseTeachersV4 ?? []).map(
+              ({ name, nationalId }) => ({
+                value: nationalId,
+                label: `${name} (${nationalId.substring(0, 6)})`,
+              }),
+            )
           },
         }),
       ],

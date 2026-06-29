@@ -1,7 +1,6 @@
 import { Tag } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import { FormStatus } from '@island.is/form-system/shared'
 
 interface Props {
   status: string
@@ -14,7 +13,11 @@ export const StatusTag = ({ status }: Props) => {
   }
 
   if (status === 'PUBLISHED_BEING_CHANGED') {
-    return <Tag variant="purple">{formatMessage(m.publishedInProgress)}</Tag>
+    return (
+      <Tag variant="purple" truncate={true}>
+        {formatMessage(m.publishedInProgress)}
+      </Tag>
+    )
   }
 
   if (status === 'IN_DEVELOPMENT') {

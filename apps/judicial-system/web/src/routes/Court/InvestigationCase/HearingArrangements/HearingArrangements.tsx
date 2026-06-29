@@ -13,7 +13,7 @@ import {
   DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ArraignmentAlert,
   BlueBox,
@@ -48,6 +48,11 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
 
+enum ModalButtonLoading {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
+
 const HearingArrangements = () => {
   const {
     workingCase,
@@ -59,8 +64,12 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
-    useCase()
+  const {
+    setAndSendCaseToServer,
+    sendNotification,
+    isSendingNotification,
+    sendNotificationError,
+  } = useCase()
   const {
     courtDate,
     courtDateHasChanged,
@@ -70,7 +79,14 @@ const HearingArrangements = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [modalButtonLoading, setModalButtonLoading] =
+    useState<ModalButtonLoading>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
+
+  const handleCloseModal = () => {
+    setNavigateTo(undefined)
+    setModalButtonLoading(undefined)
+  }
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
@@ -347,6 +363,7 @@ const HearingArrangements = () => {
       {navigateTo !== undefined && (
         <Modal
           title={formatMessage(m.modal.heading)}
+          onClose={handleCloseModal}
           text={formatMessage(
             workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
               ? m.modal.allPresentText
@@ -359,6 +376,8 @@ const HearingArrangements = () => {
           primaryButton={{
             text: formatMessage(m.modal.primaryButtonText),
             onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
               const notificationSent = await sendNotification(
                 workingCase.id,
                 TrackedNotificationType.COURT_DATE,
@@ -368,14 +387,18 @@ const HearingArrangements = () => {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }
             },
-            isLoading: isSendingNotification,
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.PRIMARY,
           }}
           secondaryButton={{
             text: formatMessage(m.modal.secondaryButtonText, {
               courtDateHasChanged,
             }),
-            onClick: () => {
-              sendNotification(
+            onClick: async () => {
+              setModalButtonLoading(ModalButtonLoading.SECONDARY)
+
+              await sendNotification(
                 workingCase.id,
                 TrackedNotificationType.COURT_DATE,
                 true,
@@ -383,7 +406,15 @@ const HearingArrangements = () => {
 
               router.push(`${navigateTo}/${workingCase.id}`)
             },
+            isLoading:
+              isSendingNotification &&
+              modalButtonLoading === ModalButtonLoading.SECONDARY,
           }}
+          errorMessage={
+            modalButtonLoading && sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>
