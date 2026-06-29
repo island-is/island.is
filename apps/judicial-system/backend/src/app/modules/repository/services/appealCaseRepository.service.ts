@@ -156,7 +156,9 @@ export class AppealCaseRepositoryService {
 
       this.logger.debug(`Deleted appeal case ${appealCaseId}`)
     } catch (error) {
-      this.logger.error(`Error deleting appeal case ${appealCaseId}:`, { error })
+      this.logger.error(`Error deleting appeal case ${appealCaseId}:`, {
+        error,
+      })
 
       throw error
     }

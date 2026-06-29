@@ -8,6 +8,7 @@ import {
   InvoiceErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
+import { overrideFeatureFlags } from '../../../test/setup'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { PaymentMethod, PaymentStatus } from '../../types'
 import { AppModule } from '../app.module'
@@ -44,6 +45,7 @@ describe('InvoicePaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
+      override: overrideFeatureFlags,
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
