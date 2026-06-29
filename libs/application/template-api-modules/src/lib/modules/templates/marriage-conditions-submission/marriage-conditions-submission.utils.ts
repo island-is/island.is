@@ -17,14 +17,16 @@ export const getCeremonyPlace = (
 ): string => {
   const place = ceremony?.place
 
-  if (place?.ceremonyPlace === 'office' && place?.office) {
-    return place.office
+  // Gate each branch on the selected type so a stale office/society value left
+  // over from a previous selection is never submitted for another choice.
+  switch (place?.ceremonyPlace) {
+    case 'office':
+      return place.office ?? ''
+    case 'society':
+      return place.society ?? ''
+    case 'church':
+      return NATIONAL_CHURCH_PLACE
+    default:
+      return ''
   }
-  if (place?.ceremonyPlace === 'church') {
-    return NATIONAL_CHURCH_PLACE
-  }
-  if (place?.society) {
-    return place.society
-  }
-  return ''
 }

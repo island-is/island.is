@@ -63,6 +63,31 @@ describe('getCeremonyPlace', () => {
     expect(getCeremonyPlace(ceremony)).toBe('')
   })
 
+  it('does not submit a stale society value after switching to "none"', () => {
+    const ceremony = {
+      place: {
+        ceremonyPlace: 'none',
+        society: 'Siðmennt',
+      },
+    } as Ceremony
+
+    expect(getCeremonyPlace(ceremony)).toBe('')
+  })
+
+  it('does not submit a stale society value after switching to office', () => {
+    const ceremony = {
+      place: {
+        ceremonyPlace: 'office',
+        office: 'Sýslumaðurinn á höfuðborgarsvæðinu, Reykjavík',
+        society: 'Siðmennt',
+      },
+    } as Ceremony
+
+    expect(getCeremonyPlace(ceremony)).toBe(
+      'Sýslumaðurinn á höfuðborgarsvæðinu, Reykjavík',
+    )
+  })
+
   it('returns an empty string when no place is set', () => {
     expect(getCeremonyPlace({} as Ceremony)).toBe('')
   })
