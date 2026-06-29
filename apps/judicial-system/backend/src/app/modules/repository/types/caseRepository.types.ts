@@ -653,4 +653,5 @@ export interface UpdateDefendant {
   alternativeServiceDescription?: string
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  isDrivingLicenseSuspended?: boolean | null
 }
