@@ -70,7 +70,6 @@ applyDynamicColorSupport()
 if (__DEV__) {
   initializePerformance(app)
 } else {
-  // datadog rum config
   const ddconfig = new DatadogProviderConfiguration(
     getConfig().datadog ?? '',
     'production',
