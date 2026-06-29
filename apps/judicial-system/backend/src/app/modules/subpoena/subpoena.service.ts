@@ -21,7 +21,6 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
-  CaseOrigin,
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
@@ -34,13 +33,12 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getCaseFileHash } from '../../formatters'
-import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceDocumentType, PoliceService } from '../police'
+import { PoliceService } from '../police'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -101,8 +99,6 @@ export class SubpoenaService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
-    @Inject(forwardRef(() => InternalCaseService))
-    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -216,17 +212,7 @@ export class SubpoenaService {
       const defendant = defendants[i]
       const subpoena = subpoenas[i]
 
-      // For LOKE origin cases, also send to police
-      if (theCase.origin === CaseOrigin.LOKE) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [defendant.id, subpoena.id],
-        })
-      }
-
-      // Always send to national commissioners office and court
+      // Send to national commissioners office and court
       messages.push(
         {
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
@@ -530,41 +516,6 @@ export class SubpoenaService {
         'Error delivering subpoena to the police centralized file service',
         error,
       )
-
-      return { delivered: false }
-    }
-  }
-
-  async deliverSubpoenaFileToPolice(
-    theCase: Case,
-    defendant: Defendant,
-    subpoena: Subpoena,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<DeliverResponse> {
-    try {
-      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
-        theCase,
-        defendant,
-        transaction,
-        subpoena,
-      )
-
-      const delivered =
-        await this.internalCaseService.deliverCaseToPoliceWithFiles(
-          theCase,
-          user,
-          [
-            {
-              type: PoliceDocumentType.RVFK,
-              courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
-            },
-          ],
-        )
-
-      return { delivered }
-    } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
 
       return { delivered: false }
     }

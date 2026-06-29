@@ -695,7 +695,8 @@ export class InternalCaseController {
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers a completed indictment case to police',
+    description:
+      'Delivers court records for a completed indictment case to police',
   })
   deliverIndictmentCaseToPolice(
     @Param('caseId') caseId: string,
