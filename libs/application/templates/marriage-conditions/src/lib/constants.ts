@@ -19,6 +19,7 @@ export enum Roles {
 export enum CeremonyPlaces {
   office = 'office',
   society = 'society',
+  church = 'church',
 }
 
 export enum ApiActions {
