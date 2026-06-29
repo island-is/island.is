@@ -7,7 +7,16 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
 import type { User } from '@island.is/auth-nest-tools'
+import {
+  FetchError,
+  type EnhancedFetchAPI,
+  type EnhancedRequestInit,
+} from '@island.is/clients/middlewares'
+
+import { ApplicationTranslationConfig } from './application-translation.config'
+import { APPLICATION_TRANSLATION_FETCH } from './application-translation.fetch'
 import type {
   ApplicationTranslationGql,
   ApplicationTranslationStatus,
@@ -15,82 +24,47 @@ import type {
   TranslationPublishGql,
 } from './application-translation.model'
 
-export const TRANSLATION_API_CONFIG = 'TRANSLATION_API_CONFIG'
-
-export interface TranslationApiConfig {
-  baseApiUrl: string
-}
-
 @Injectable()
-export class ApplicationTranslationApiService {
+export class ApplicationTranslationClient {
   constructor(
-    @Inject(TRANSLATION_API_CONFIG)
-    private readonly config: TranslationApiConfig,
+    @Inject(ApplicationTranslationConfig.KEY)
+    private readonly config: ConfigType<typeof ApplicationTranslationConfig>,
+    @Inject(APPLICATION_TRANSLATION_FETCH)
+    private readonly fetch: EnhancedFetchAPI,
   ) {}
 
   private getUrl(path: string): string {
-    return `${this.config.baseApiUrl}/admin/translations${path}`
+    const base = this.config.baseApiUrl.replace(/\/$/, '')
+    return `${base}/admin/translations${path}`
   }
 
-  private getAuthorizationHeader(user: User): string {
+  private assertAuth(user: User): void {
     const raw = user.authorization
-    if (!raw) {
+    if (!raw?.replace(/^Bearer\s+/i, '').trim()) {
       throw new UnauthorizedException(
         'Missing authorization token for application translation API',
       )
     }
-    const token = raw.replace(/^Bearer\s+/i, '').trim()
-    if (!token) {
-      throw new UnauthorizedException(
-        'Invalid authorization token for application translation API',
-      )
-    }
-    return `Bearer ${token}`
   }
 
-  private async request<T>(
-    user: User,
-    path: string,
-    options?: RequestInit,
-  ): Promise<T> {
-    const url = this.getUrl(path)
-    let response: Response
-    try {
-      response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: this.getAuthorizationHeader(user),
-        },
-        ...options,
-      })
-    } catch (err) {
-      const hint =
-        this.config.baseApiUrl.includes('localhost') ||
-        this.config.baseApiUrl.includes('127.0.0.1')
-          ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
-          : ''
-      throw new ServiceUnavailableException(
-        `Could not reach application system API at ${url}: ${
-          err instanceof Error ? err.message : String(err)
-        }.${hint}`,
-      )
+  private formatErrorDetail(error: FetchError): string {
+    if (typeof error.body === 'string') {
+      return error.body.slice(0, 800)
     }
+    if (error.body) {
+      return JSON.stringify(error.body).slice(0, 800)
+    }
+    return ''
+  }
 
-    if (!response.ok) {
-      let detail = ''
-      try {
-        const text = await response.text()
-        if (text) {
-          detail = text.slice(0, 800)
-        }
-      } catch {
-        // ignore
-      }
+  private handleError(error: unknown, url: string): never {
+    if (error instanceof FetchError) {
+      const detail = this.formatErrorDetail(error)
       const message = detail
-        ? `Translation API error: ${response.status} ${response.statusText} — ${detail}`
-        : `Translation API error: ${response.status} ${response.statusText}`
+        ? `Translation API error: ${error.status} ${error.statusText} — ${detail}`
+        : `Translation API error: ${error.status} ${error.statusText}`
 
-      switch (response.status) {
+      switch (error.status) {
         case 401:
           throw new UnauthorizedException(message)
         case 403:
@@ -104,7 +78,40 @@ export class ApplicationTranslationApiService {
       }
     }
 
-    return response.json() as Promise<T>
+    const hint =
+      this.config.baseApiUrl.includes('localhost') ||
+      this.config.baseApiUrl.includes('127.0.0.1')
+        ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
+        : ''
+
+    throw new ServiceUnavailableException(
+      `Could not reach application system API at ${url}: ${
+        error instanceof Error ? error.message : String(error)
+      }.${hint}`,
+    )
+  }
+
+  private async request<T>(
+    user: User,
+    path: string,
+    init?: EnhancedRequestInit,
+  ): Promise<T> {
+    this.assertAuth(user)
+    const url = this.getUrl(path)
+
+    try {
+      const response = await this.fetch(url, {
+        ...init,
+        auth: user,
+        headers: {
+          'Content-Type': 'application/json',
+          ...init?.headers,
+        },
+      })
+      return response.json() as Promise<T>
+    } catch (error) {
+      this.handleError(error, url)
+    }
   }
 
   private namespacePath(namespace: string, suffix: string): string {
@@ -113,7 +120,7 @@ export class ApplicationTranslationApiService {
     return `/${encodedNamespace}${suffix}`
   }
 
-  async getTranslationsByNamespace(
+  getTranslationsByNamespace(
     user: User,
     namespace: string,
   ): Promise<ApplicationTranslationGql[]> {
@@ -123,7 +130,7 @@ export class ApplicationTranslationApiService {
     )
   }
 
-  async getTranslationStatus(
+  getTranslationStatus(
     user: User,
     namespace: string,
   ): Promise<ApplicationTranslationStatus> {
@@ -133,13 +140,13 @@ export class ApplicationTranslationApiService {
     )
   }
 
-  async getAllNamespacesWithStatus(
+  getAllNamespacesWithStatus(
     user: User,
   ): Promise<ApplicationTranslationStatus[]> {
     return this.request<ApplicationTranslationStatus[]>(user, '')
   }
 
-  async updateTranslation(
+  updateTranslation(
     user: User,
     input: {
       namespace: string
@@ -154,7 +161,7 @@ export class ApplicationTranslationApiService {
     })
   }
 
-  async bulkUpdateTranslations(
+  bulkUpdateTranslations(
     user: User,
     translations: Array<{
       namespace: string
@@ -169,16 +176,13 @@ export class ApplicationTranslationApiService {
     })
   }
 
-  async reviewTranslation(
-    user: User,
-    id: string,
-  ): Promise<ApplicationTranslationGql> {
+  reviewTranslation(user: User, id: string): Promise<ApplicationTranslationGql> {
     return this.request<ApplicationTranslationGql>(user, `/${id}/review`, {
       method: 'POST',
     })
   }
 
-  async listTemplates(user: User): Promise<
+  listTemplates(user: User): Promise<
     Array<{
       typeId: string
       name: string
@@ -186,17 +190,10 @@ export class ApplicationTranslationApiService {
       translationNamespaces: string[]
     }>
   > {
-    return this.request<
-      Array<{
-        typeId: string
-        name: string
-        slug: string
-        translationNamespaces: string[]
-      }>
-    >(user, '/templates/list')
+    return this.request(user, '/templates/list')
   }
 
-  async introspectTemplate(
+  introspectTemplate(
     user: User,
     typeId: string,
   ): Promise<TemplateIntrospectionGql> {
@@ -206,39 +203,30 @@ export class ApplicationTranslationApiService {
     )
   }
 
-  async loadRoleForm(
+  loadRoleForm(
     user: User,
     typeId: string,
     stateKey: string,
     roleId: string,
   ): Promise<unknown> {
-    const params = new URLSearchParams({
-      stateKey,
-      roleId,
-    })
+    const params = new URLSearchParams({ stateKey, roleId })
     return this.request<unknown>(
       user,
       `/templates/${encodeURIComponent(typeId)}/form?${params.toString()}`,
     )
   }
 
-  async listSharedNamespaces(user: User): Promise<
+  listSharedNamespaces(user: User): Promise<
     Array<{
       namespace: string
       usedByCount: number
       usedByTypeIds: string[]
     }>
   > {
-    return this.request<
-      Array<{
-        namespace: string
-        usedByCount: number
-        usedByTypeIds: string[]
-      }>
-    >(user, '/shared/list')
+    return this.request(user, '/shared/list')
   }
 
-  async introspectSharedNamespace(
+  introspectSharedNamespace(
     user: User,
     namespace: string,
   ): Promise<{
@@ -250,17 +238,10 @@ export class ApplicationTranslationApiService {
     }>
   }> {
     const params = new URLSearchParams({ namespace })
-    return this.request<{
-      namespace: string
-      messageDescriptors: Array<{
-        id: string
-        defaultMessage?: string
-        description?: string
-      }>
-    }>(user, `/shared/introspect?${params.toString()}`)
+    return this.request(user, `/shared/introspect?${params.toString()}`)
   }
 
-  async publishTranslations(
+  publishTranslations(
     user: User,
     namespace: string,
     note?: string,
@@ -275,7 +256,7 @@ export class ApplicationTranslationApiService {
     )
   }
 
-  async getPublishHistory(
+  getPublishHistory(
     user: User,
     namespace: string,
   ): Promise<TranslationPublishGql[]> {
@@ -285,7 +266,7 @@ export class ApplicationTranslationApiService {
     )
   }
 
-  async rollbackTranslations(
+  rollbackTranslations(
     user: User,
     namespace: string,
     publishId: string,

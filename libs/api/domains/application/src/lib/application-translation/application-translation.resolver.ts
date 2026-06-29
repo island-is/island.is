@@ -20,7 +20,7 @@ import {
   TemplateListItemGql,
   TranslationPublishGql,
 } from './application-translation.model'
-import { ApplicationTranslationApiService } from './application-translation.service'
+import { ApplicationTranslationClient } from './application-translation.client'
 import { GoogleTranslateService } from './google-translate.service'
 import {
   UpdateApplicationTranslationInput,
@@ -39,7 +39,7 @@ const TRANSLATION_SCOPES = [
 @Resolver(() => ApplicationTranslationGql)
 export class ApplicationTranslationResolver {
   constructor(
-    private readonly translationService: ApplicationTranslationApiService,
+    private readonly translationClient: ApplicationTranslationClient,
     private readonly googleTranslateService: GoogleTranslateService,
   ) {}
 
@@ -49,7 +49,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
   ): Promise<ApplicationTranslationGql[]> {
-    return this.translationService.getTranslationsByNamespace(user, namespace)
+    return this.translationClient.getTranslationsByNamespace(user, namespace)
   }
 
   @Query(() => ApplicationTranslationStatus, { nullable: true })
@@ -58,7 +58,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
   ): Promise<ApplicationTranslationStatus> {
-    return this.translationService.getTranslationStatus(user, namespace)
+    return this.translationClient.getTranslationStatus(user, namespace)
   }
 
   @Query(() => [ApplicationTranslationStatus], { nullable: true })
@@ -66,7 +66,7 @@ export class ApplicationTranslationResolver {
   async applicationTranslationAllStatus(
     @CurrentUser() user: User,
   ): Promise<ApplicationTranslationStatus[]> {
-    return this.translationService.getAllNamespacesWithStatus(user)
+    return this.translationClient.getAllNamespacesWithStatus(user)
   }
 
   @Mutation(() => ApplicationTranslationGql)
@@ -75,7 +75,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateApplicationTranslationInput,
   ): Promise<ApplicationTranslationGql> {
-    return this.translationService.updateTranslation(user, {
+    return this.translationClient.updateTranslation(user, {
       namespace: input.namespace,
       messageKey: input.messageKey,
       valueIs: input.valueIs ?? undefined,
@@ -89,7 +89,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: BulkUpdateApplicationTranslationsInput,
   ): Promise<ApplicationTranslationGql[]> {
-    return this.translationService.bulkUpdateTranslations(
+    return this.translationClient.bulkUpdateTranslations(
       user,
       input.translations.map((t) => ({
         namespace: t.namespace,
@@ -106,7 +106,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('id') id: string,
   ): Promise<ApplicationTranslationGql> {
-    return this.translationService.reviewTranslation(user, id)
+    return this.translationClient.reviewTranslation(user, id)
   }
 
   @Mutation(() => GoogleTranslateResultGql)
@@ -126,7 +126,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: PublishTranslationsInput,
   ): Promise<TranslationPublishGql> {
-    return this.translationService.publishTranslations(
+    return this.translationClient.publishTranslations(
       user,
       input.namespace,
       input.note ?? undefined,
@@ -139,7 +139,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
   ): Promise<TranslationPublishGql[]> {
-    return this.translationService.getPublishHistory(user, namespace)
+    return this.translationClient.getPublishHistory(user, namespace)
   }
 
   @Mutation(() => TranslationPublishGql)
@@ -148,7 +148,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: RollbackTranslationsInput,
   ): Promise<TranslationPublishGql> {
-    return this.translationService.rollbackTranslations(
+    return this.translationClient.rollbackTranslations(
       user,
       input.namespace,
       input.publishId,
@@ -160,7 +160,7 @@ export class ApplicationTranslationResolver {
   async applicationTemplateList(
     @CurrentUser() user: User,
   ): Promise<TemplateListItemGql[]> {
-    return this.translationService.listTemplates(user)
+    return this.translationClient.listTemplates(user)
   }
 
   @Query(() => TemplateIntrospectionGql, { nullable: true })
@@ -169,7 +169,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('typeId') typeId: string,
   ): Promise<TemplateIntrospectionGql> {
-    return this.translationService.introspectTemplate(user, typeId)
+    return this.translationClient.introspectTemplate(user, typeId)
   }
 
   @Query(() => [SharedTranslationNamespaceListItemGql], { nullable: true })
@@ -177,7 +177,7 @@ export class ApplicationTranslationResolver {
   async applicationSharedNamespaceList(
     @CurrentUser() user: User,
   ): Promise<SharedTranslationNamespaceListItemGql[]> {
-    return this.translationService.listSharedNamespaces(user)
+    return this.translationClient.listSharedNamespaces(user)
   }
 
   @Query(() => SharedNamespaceIntrospectionGql, { nullable: true })
@@ -186,7 +186,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('namespace') namespace: string,
   ): Promise<SharedNamespaceIntrospectionGql> {
-    return this.translationService.introspectSharedNamespace(user, namespace)
+    return this.translationClient.introspectSharedNamespace(user, namespace)
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })
@@ -197,6 +197,6 @@ export class ApplicationTranslationResolver {
     @Args('stateKey') stateKey: string,
     @Args('roleId') roleId: string,
   ): Promise<unknown> {
-    return this.translationService.loadRoleForm(user, typeId, stateKey, roleId)
+    return this.translationClient.loadRoleForm(user, typeId, stateKey, roleId)
   }
 }

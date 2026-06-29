@@ -8,10 +8,8 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ApplicationAdminV2Resolver } from './application-admin/application-adminV2.resolver'
 import { ApplicationAdminV2Service } from './application-admin/application-adminV2.service'
 import { ApplicationTranslationResolver } from './application-translation/application-translation.resolver'
-import {
-  ApplicationTranslationApiService,
-  TRANSLATION_API_CONFIG,
-} from './application-translation/application-translation.service'
+import { ApplicationTranslationClient } from './application-translation/application-translation.client'
+import { applicationTranslationFetch } from './application-translation/application-translation.fetch'
 import { GoogleTranslateService } from './application-translation/google-translate.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
@@ -37,12 +35,9 @@ export class ApplicationModule {
         ApplicationService,
         ApplicationV2Service,
         ApplicationAdminV2Service,
-        ApplicationTranslationApiService,
+        applicationTranslationFetch,
+        ApplicationTranslationClient,
         GoogleTranslateService,
-        {
-          provide: TRANSLATION_API_CONFIG,
-          useValue: { baseApiUrl: config.baseApiUrl },
-        },
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(
