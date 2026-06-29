@@ -444,7 +444,9 @@ export class CourtSessionService {
       { transaction },
     )
 
-    await this.appealCaseRepositoryService.delete(appealCase.id, { transaction })
+    await this.appealCaseRepositoryService.delete(appealCase.id, {
+      transaction,
+    })
 
     await this.eventLogService.createWithUser(
       EventType.APPEAL_DELETED,
