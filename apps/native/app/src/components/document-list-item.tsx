@@ -158,9 +158,7 @@ export const DocumentListItem = ({
             <Content>
               <Typography variant="heading5">{title}</Typography>
               <MetaRow>
-                {date ? (
-                  <Typography variant="body3">{date}</Typography>
-                ) : null}
+                {date ? <Typography variant="body3">{date}</Typography> : null}
                 {caseNumber ? (
                   <>
                     {date ? <MetaSeparator /> : null}
