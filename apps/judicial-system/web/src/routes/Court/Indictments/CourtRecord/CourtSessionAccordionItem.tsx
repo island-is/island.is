@@ -1669,8 +1669,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       required
                     />
                   </Box>
-                  {courtSession.rulingType ===
-                    CourtSessionRulingType.ORDER && (
+                  {courtSession.rulingType === CourtSessionRulingType.ORDER && (
                     <CourtSessionAppealDecisions
                       courtSession={courtSession}
                       workingCase={workingCase}
@@ -1806,7 +1805,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                           )
                         }
                         size="small"
-                        disabled={!isCourtSessionValid(courtSession, workingCase)}
+                        disabled={
+                          !isCourtSessionValid(courtSession, workingCase)
+                        }
                       >
                         Staðfesta þingbók
                       </Button>
