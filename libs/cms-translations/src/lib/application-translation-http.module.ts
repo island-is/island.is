@@ -6,6 +6,7 @@ import {
   ApplicationTranslationHttpConfig,
   ApplicationTranslationHttpProvider,
 } from './application-translation-http.provider'
+import { applicationTranslationHttpFetch } from './application-translation-http.fetch'
 
 /**
  * HTTP-backed APPLICATION_TRANSLATION_PROVIDER for APIs without the application DB (e.g. island.is api).
@@ -19,6 +20,7 @@ export class ApplicationTranslationHttpModule {
       module: ApplicationTranslationHttpModule,
       providers: [
         { provide: APPLICATION_TRANSLATION_HTTP_CONFIG, useValue: config },
+        applicationTranslationHttpFetch,
         {
           provide: APPLICATION_TRANSLATION_PROVIDER,
           useClass: ApplicationTranslationHttpProvider,

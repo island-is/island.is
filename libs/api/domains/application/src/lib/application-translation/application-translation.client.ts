@@ -14,6 +14,7 @@ import {
   type EnhancedFetchAPI,
   type EnhancedRequestInit,
 } from '@island.is/clients/middlewares'
+import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationTranslationConfig } from './application-translation.config'
 import { APPLICATION_TRANSLATION_FETCH } from './application-translation.fetch'
@@ -114,10 +115,27 @@ export class ApplicationTranslationClient {
     }
   }
 
-  private namespacePath(namespace: string, suffix: string): string {
+  private encodeNamespace(namespace: string): string {
     // Dots are not encoded by encodeURIComponent; match application-system URL encoding.
-    const encodedNamespace = encodeURIComponent(namespace).replace(/\./g, '%2E')
-    return `/${encodedNamespace}${suffix}`
+    return encodeURIComponent(namespace).replace(/\./g, '%2E')
+  }
+
+  private namespacePath(namespace: string, suffix: string): string {
+    return `/${this.encodeNamespace(namespace)}${suffix}`
+  }
+
+  getPublicTranslationsForNamespace(
+    namespace: string,
+    locale: Locale,
+  ): Promise<Record<string, string>> {
+    const base = this.config.baseApiUrl.replace(/\/$/, '')
+    const url = `${base}/public/translations/${this.encodeNamespace(
+      namespace,
+    )}?locale=${encodeURIComponent(locale)}`
+
+    return this.fetch(url)
+      .then((response) => response.json() as Promise<Record<string, string>>)
+      .catch((error) => this.handleError(error, url))
   }
 
   getTranslationsByNamespace(
