@@ -3,10 +3,10 @@ import {
   FC,
   SetStateAction,
   useCallback,
-  useEffect,
+  useMemo,
   useRef,
-  useState,
 } from 'react'
+import { useLocalStorage } from 'react-use'
 import { Reorder } from 'motion/react'
 
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
@@ -28,6 +28,10 @@ import {
 
 import { IndictmentCount } from './IndictmentCount'
 import { IndictmentCountAccordionItem } from './IndictmentCountAccordionItem'
+
+const EXPANDED_STORAGE_KEY = 'INDICTMENT_COUNTS_EXPANDED'
+
+type ExpandedByCase = Record<string, Record<string, boolean>>
 
 interface Props {
   workingCase: Case
@@ -144,48 +148,46 @@ export const IndictmentCountsList: FC<Props> = ({
 
   const canDelete = orderedCounts.length > 1
 
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set())
+  const [expandedByCase, setExpandedByCase] =
+    useLocalStorage<ExpandedByCase>(EXPANDED_STORAGE_KEY)
 
-  useEffect(() => {
-    const validIds = new Set(
-      (workingCase.indictmentCounts ?? []).map((count) => count.id),
-    )
+  const caseExpanded = useMemo(
+    () => expandedByCase?.[workingCase.id] ?? {},
+    [expandedByCase, workingCase.id],
+  )
 
-    setExpandedIds((previous) => {
-      const next = new Set([...previous].filter((id) => validIds.has(id)))
+  const isExpanded = (indictmentCountId: string) =>
+    caseExpanded[indictmentCountId] !== false
 
-      return next.size === previous.size ? previous : next
-    })
-  }, [workingCase.indictmentCounts])
+  const persistCaseExpanded = useCallback(
+    (nextCaseExpanded: Record<string, boolean>) => {
+      setExpandedByCase({
+        ...(expandedByCase ?? {}),
+        [workingCase.id]: nextCaseExpanded,
+      })
+    },
+    [expandedByCase, setExpandedByCase, workingCase.id],
+  )
 
   const allExpanded =
-    orderedCounts.length > 0 &&
-    orderedCounts.every((count) => expandedIds.has(count.id))
+    orderedCounts.length > 0 && orderedCounts.every((count) => isExpanded(count.id))
 
   const handleToggleExpandAll = useCallback(() => {
-    if (allExpanded) {
-      setExpandedIds(new Set())
-      return
-    }
+    const expanded = !allExpanded
+    const nextCaseExpanded = { ...caseExpanded }
 
-    setExpandedIds(new Set(orderedCounts.map((count) => count.id)))
-  }, [allExpanded, orderedCounts])
+    orderedCounts.forEach((count) => {
+      nextCaseExpanded[count.id] = expanded
+    })
+
+    persistCaseExpanded(nextCaseExpanded)
+  }, [allExpanded, caseExpanded, orderedCounts, persistCaseExpanded])
 
   const handleAccordionToggle = useCallback(
     (indictmentCountId: string, expanded: boolean) => {
-      setExpandedIds((previous) => {
-        const next = new Set(previous)
-
-        if (expanded) {
-          next.add(indictmentCountId)
-        } else {
-          next.delete(indictmentCountId)
-        }
-
-        return next
-      })
+      persistCaseExpanded({ ...caseExpanded, [indictmentCountId]: expanded })
     },
-    [],
+    [caseExpanded, persistCaseExpanded],
   )
 
   return (
@@ -234,7 +236,7 @@ export const IndictmentCountsList: FC<Props> = ({
               index={index}
               indictmentCount={indictmentCount}
               workingCase={workingCase}
-              expanded={expandedIds.has(indictmentCount.id)}
+              expanded={isExpanded(indictmentCount.id)}
               onToggle={(expanded) =>
                 handleAccordionToggle(indictmentCount.id, expanded)
               }
