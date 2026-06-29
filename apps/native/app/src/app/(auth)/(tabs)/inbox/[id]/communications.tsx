@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   View,
 } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useApolloClient } from '@apollo/client'
@@ -26,6 +26,7 @@ import {
   TOGGLE_ANIMATION_DURATION,
 } from '../../../../../components/document-list-item'
 import { ButtonDrawer } from '../../../../../components/button-drawer'
+import { uiStore } from '@/stores/ui-store'
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
 
@@ -108,6 +109,15 @@ export default function DocumentCommunicationsScreen() {
       },
     })
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      uiStore.setState({ tabsHidden: true })
+      return () => {
+        uiStore.setState({ tabsHidden: false })
+      }
+    }, []),
+  )
 
   useEffect(() => {
     if (!isSkeleton && comments.length > 0) {
