@@ -12,6 +12,7 @@ import {
 
 import { EventService } from '../../event'
 import { type Case } from '../../repository'
+import { UserInitiatedAppealNotificationType } from '../dto/appealNotification.dto'
 import { UserInitiatedNotificationType } from '../dto/notification.dto'
 import { SendNotificationResponse } from '../models/sendNotification.response'
 
@@ -32,6 +33,33 @@ export class NotificationService {
       caseId: theCase.id,
       body: { type },
     })
+  }
+
+  // The appeal case is resolved and validated against the case by
+  // AppealCaseExistsGuard before this is called.
+  async addMessagesForAppealNotificationToQueue(
+    type: UserInitiatedAppealNotificationType,
+    theCase: Case,
+    user: User,
+    appealCaseId: string,
+  ): Promise<SendNotificationResponse> {
+    switch (type) {
+      case UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED:
+        addMessagesToQueue({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+          elementId: appealCaseId,
+          body: { type },
+        })
+        break
+      default:
+        throw new InternalServerErrorException(
+          `Invalid appeal notification type ${type}`,
+        )
+    }
+
+    return { notificationSent: true }
   }
 
   async addMessagesForNotificationToQueue(
@@ -69,10 +97,7 @@ export class NotificationService {
         }
         break
       case UserInitiatedNotificationType.HEADS_UP:
-      case UserInitiatedNotificationType.APPEAL_JUDGES_ASSIGNED:
-      case UserInitiatedNotificationType.APPEAL_CASE_FILES_UPDATED:
       case UserInitiatedNotificationType.CASE_FILES_UPDATED:
-      case UserInitiatedNotificationType.RULING_ORDER_ADDED:
         this.addMessageForNotificationToQueue(type, user, theCase)
         break
       default:

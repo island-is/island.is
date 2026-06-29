@@ -10,6 +10,7 @@ import {
 import {
   AppealCaseNotificationType,
   AppealCaseState,
+  AppealEventType,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -25,6 +26,8 @@ import { nowFactory } from '../../../../factories'
 import {
   AppealCase,
   AppealCaseRepositoryService,
+  AppealDecisionRepositoryService,
+  AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
 } from '../../../repository'
@@ -62,6 +65,8 @@ describe('AppealCaseController - Create', () => {
   const now = new Date('2024-01-15T10:00:00Z')
 
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
+  let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
+  let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
@@ -72,11 +77,15 @@ describe('AppealCaseController - Create', () => {
     const {
       appealCaseController,
       appealCaseRepositoryService,
+      appealDecisionRepositoryService,
+      appealEventLogRepositoryService,
       caseRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
+    mockAppealDecisionRepositoryService = appealDecisionRepositoryService
+    mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
@@ -120,10 +129,31 @@ describe('AppealCaseController - Create', () => {
     it('should create an appealed appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
-        { appealState: AppealCaseState.APPEALED },
+        { appealState: AppealCaseState.APPEALED, appealDate: now },
         { transaction },
       )
       expect(then.result).toBe(createdAppealCase)
+    })
+
+    it('should not touch appeal_decision rows for an out-of-court appeal', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should record an APPEALED event with the actor snapshot incl. user id', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEALED,
+          userRole: UserRole.PROSECUTOR,
+          userId: prosecutor.id,
+          nationalId: prosecutor.nationalId,
+          userName: prosecutor.name,
+          userTitle: prosecutor.title,
+          institutionName: prosecutor.institution?.name,
+        },
+        { transaction },
+      )
     })
 
     it('should stamp the prosecutor postponed appeal date on the case', () => {
@@ -139,7 +169,7 @@ describe('AppealCaseController - Create', () => {
     it('should queue the appeal to court of appeals notification', () => {
       expect(addMessagesToQueue).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: MessageType.NOTIFICATION,
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
           body: {
             type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,

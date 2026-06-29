@@ -66,6 +66,15 @@ export {
   appealEventTypes,
 } from './lib/eventLog'
 
+export {
+  AppealCaseState,
+  AppealCaseRulingDecision,
+  AppealCaseTransition,
+  AppealDecisionPartyRole,
+  getStatementDeadline,
+  CaseAppealDecision,
+} from './lib/appealCase'
+
 export { DateType, dateTypes } from './lib/dateLog'
 
 export { StringType, stringTypes } from './lib/caseString'
@@ -78,6 +87,9 @@ export {
   HashAlgorithm,
   PoliceFileTypeCode,
 } from './lib/file'
+
+export { sortCaseFiles } from './lib/sortCaseFiles'
+export type { CaseFileOrderFields } from './lib/sortCaseFiles'
 
 export {
   UserRole,
@@ -119,16 +131,13 @@ export {
   IndictmentCaseSubtypes,
   type Subtype,
   courtSubtypes,
-  AppealCaseState,
   RequestCaseState,
   CaseTransition,
   IndictmentCaseTransition,
   RequestCaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
-  CaseAppealDecision,
   CaseDecision,
-  AppealCaseRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   RequestSharedWhen,
@@ -148,12 +157,10 @@ export {
   isCompletedCase,
   isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
-  getStatementDeadline,
   isIndictmentCaseState,
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
-  AppealCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'

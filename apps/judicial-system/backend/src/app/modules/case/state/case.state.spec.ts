@@ -827,14 +827,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        Object.values(CaseIndictmentRulingDecision).filter(
-          (indictmentRulingDecision) =>
-            !allowedIndictmentRulingDecisions.includes(
-              indictmentRulingDecision,
-            ),
-        ),
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not reopen',
         (indictmentRulingDecision) => {
           // Arrange
@@ -979,14 +972,7 @@ describe('Transition Case', () => {
         },
       )
 
-      describe.each(
-        Object.values(CaseIndictmentRulingDecision).filter(
-          (indictmentRulingDecision) =>
-            !allowedIndictmentRulingDecisions.includes(
-              indictmentRulingDecision,
-            ),
-        ),
-      )(
+      describe.each([CaseIndictmentRulingDecision.WITHDRAWAL])(
         'indictment ruling decision %s - should not correct',
         (indictmentRulingDecision) => {
           // Arrange

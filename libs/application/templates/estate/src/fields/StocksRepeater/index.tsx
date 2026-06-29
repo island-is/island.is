@@ -34,7 +34,7 @@ interface StocksRepeaterProps {
 export const StocksRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & StocksRepeaterProps>
 > = ({ application, field, errors }) => {
-  const { id } = field
+  const id = field.id as string
   const repeaterButtonText = field?.props?.repeaterButtonText
   const error = (errors as ErrorValue)?.estate?.stocks
   const { formatMessage } = useLocale()
@@ -162,12 +162,14 @@ export const StocksRepeater: FC<
               )}
               {!field.initial && (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
                   icon="remove"
+                  iconType="outline"
                   onClick={handleRemoveStock.bind(null, index)}
-                />
+                >
+                  {formatMessage(m.deleteAsset)}
+                </Button>
               )}
             </Box>
             <GridRow>

@@ -1,5 +1,6 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
+import { ToastHost } from '@/components/toast'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
@@ -86,10 +87,15 @@ export default function RootLayout() {
         //    The reactive Redirect in (tabs)/_layout then drives routing.
         if (isAuthenticated) {
           await getNextOnboardingStep()
-          // Stamp cold-start lock before splash hides so the overlay is on
-          // first paint. `0` is past any grace, so it forces auth.
+          // Stamp a past timestamp so the auth-layout mount effect pushes the
+          // lock on cold start. Past grace forces auth (PIN/biometric) rather
+          // than auto-unlock. Post-login mounts don't hit this path so the
+          // stamp stays undefined → no lock right after login.
           if (isOnboarded() && !config.isTestingApp) {
-            authStore.setState({ lockScreenActivatedAt: 0 })
+            authStore.setState({
+              lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
+              biometricAutoPromptedForCurrentLock: false,
+            })
           }
         }
 
@@ -110,8 +116,59 @@ export default function RootLayout() {
   }, [fontsError])
 
   useEffect(() => {
-    if (fontsLoaded && appReady) {
-      SplashScreen.hideAsync()
+    if (!fontsLoaded || !appReady) {
+      return
+    }
+
+    // Defer splash hide until the lock mounts (avoids tab flash); 2s fallback
+    // so the splash never hangs.
+    const { authorizeResult } = authStore.getState()
+    const willPushLockScreen =
+      !!authorizeResult && isOnboarded() && !config.isTestingApp
+
+    if (!willPushLockScreen) {
+      SplashScreen.hideAsync().catch(() => {})
+      return
+    }
+
+    let cancelled = false
+    let deferredId: ReturnType<typeof setTimeout> | undefined
+    const hide = () => {
+      if (cancelled) {
+        return
+      }
+      cancelled = true
+      SplashScreen.hideAsync().catch(() => {})
+    }
+    // componentId is set at React-commit time, before iOS finishes
+    // presentViewController — wait a beat so the modal is on screen before
+    // the splash drops.
+    const hideAfterPresent = () => {
+      deferredId = setTimeout(hide, 100)
+    }
+
+    if (authStore.getState().lockScreenComponentId) {
+      hideAfterPresent()
+      return () => {
+        if (deferredId) {
+          clearTimeout(deferredId)
+        }
+      }
+    }
+
+    const unsub = authStore.subscribe((state) => {
+      if (state.lockScreenComponentId) {
+        hideAfterPresent()
+      }
+    })
+    const timeoutId = setTimeout(hide, 2000)
+
+    return () => {
+      clearTimeout(timeoutId)
+      if (deferredId) {
+        clearTimeout(deferredId)
+      }
+      unsub()
     }
   }, [fontsLoaded, appReady])
 
@@ -130,8 +187,8 @@ function RootLayoutNav({
   return (
     <LocaleProvider>
       <AppThemeProvider>
-        <FeatureFlagProvider>
-          <ApolloProvider client={apolloClient}>
+        <ApolloProvider client={apolloClient}>
+          <FeatureFlagProvider>
             <OfflineProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -141,9 +198,10 @@ function RootLayoutNav({
                 />
               </Stack>
               <PromptModal />
+              <ToastHost />
             </OfflineProvider>
-          </ApolloProvider>
-        </FeatureFlagProvider>
+          </FeatureFlagProvider>
+        </ApolloProvider>
       </AppThemeProvider>
     </LocaleProvider>
   )

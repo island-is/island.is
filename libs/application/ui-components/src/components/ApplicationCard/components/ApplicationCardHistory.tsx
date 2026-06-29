@@ -43,12 +43,15 @@ export const ApplicationCardHistory = ({ items }: Props) => {
         <div ref={containerRef}>
           <HistoryStepper
             sections={items.map(
-              ({ date, title, content, subjectAndActor }, index) => (
+              (
+                { date, title, content, subjectAndActor, isComplete },
+                index,
+              ) => (
                 <HistorySection
                   key={`history-section-${index}`}
                   section={title}
                   sectionIndex={index}
-                  isComplete
+                  isComplete={isComplete ?? true}
                   theme={FormStepperThemes.PURPLE}
                   isLast={index + 1 === items.length}
                   date={date}

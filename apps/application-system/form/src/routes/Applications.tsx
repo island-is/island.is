@@ -100,16 +100,16 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  const [createApplicationMutation, { error: createError }] = useMutation(
-    CREATE_APPLICATION,
-    {
-      onCompleted({ createApplication }) {
-        if (slug) {
-          navigate(`../${slug}/${createApplication.id}`)
-        }
-      },
+  const [
+    createApplicationMutation,
+    { error: createError, loading: createLoading },
+  ] = useMutation(CREATE_APPLICATION, {
+    onCompleted({ createApplication }) {
+      if (slug) {
+        navigate(`../${slug}/${createApplication.id}`)
+      }
     },
-  )
+  })
 
   const createApplication = () => {
     createApplicationMutation({
@@ -224,6 +224,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
                 <Box marginTop={[2, 0]}>
                   <Button
                     onClick={createApplication}
+                    loading={createLoading}
+                    disabled={createLoading}
                     data-testid="create-new-application"
                   >
                     {template.newApplicationButtonLabel

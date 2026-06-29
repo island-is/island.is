@@ -15,6 +15,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { ConfirmRulingOrderInput } from './dto/confirmRulingOrder.input'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
 import { CreateCriminalRecordInput } from './dto/createCriminalRecord.input'
 import { CreateDefendantFileInput } from './dto/createDefendantFile.input'
@@ -187,6 +188,26 @@ export class FileResolver {
       user.id,
       AuditedAction.REJECT_FILE,
       backendService.rejectCaseFile(caseId, id),
+      id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  confirmRulingOrder(
+    @Args('input', { type: () => ConfirmRulingOrderInput })
+    input: ConfirmRulingOrderInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, id } = input
+
+    this.logger.debug(`Confirming ruling order ${id} of case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CONFIRM_RULING_ORDER,
+      backendService.confirmRulingOrder(caseId, id),
       id,
     )
   }

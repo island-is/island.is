@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button } from '@island.is/island-ui/core'
@@ -512,21 +513,24 @@ const Subpoena: FC = () => {
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {modalContent && (
-        <Modal
-          title={modalContent.title}
-          text={modalContent.text}
-          primaryButton={{
-            text: modalContent.primaryButtonText,
-            onClick: () => scheduleArraignmentDate(),
-            isLoading: isCreatingSubpoena,
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.modalSecondaryButtonText),
-            onClick: () => setNavigateTo(undefined),
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {modalContent && (
+          <Modal
+            title={modalContent.title}
+            text={modalContent.text}
+            primaryButton={{
+              text: modalContent.primaryButtonText,
+              onClick: () => scheduleArraignmentDate(),
+              isLoading: isCreatingSubpoena,
+            }}
+            secondaryButton={{
+              text: formatMessage(strings.modalSecondaryButtonText),
+              onClick: () => setNavigateTo(undefined),
+            }}
+            onClose={() => setNavigateTo(undefined)}
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

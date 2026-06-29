@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { getInitials } from '../../../utils/get-initials'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
@@ -8,11 +9,10 @@ const Host = styled.View<{ isSmall?: boolean }>`
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  height: ${(props) => (props.isSmall ? '48px' : '80px')};
-  width: ${(props) => (props.isSmall ? '48px' : '80px')};
-  padding-top: ${(props) => (props.isSmall ? '0' : '3px')};
+  height: ${(props) => (props.isSmall ? '40px' : '48px')};
+  width: ${(props) => (props.isSmall ? '40px' : '48px')};
   overflow: hidden;
-  border-radius: ${(props) => (props.isSmall ? '48px' : '80px')};
+  border-radius: ${(props) => (props.isSmall ? '40px' : '48px')};
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue100,
     dark: theme.shades.dark.shade300,
@@ -21,9 +21,9 @@ const Host = styled.View<{ isSmall?: boolean }>`
 
 const Text = styled.Text<{ isSmall?: boolean }>`
   ${font({
-    fontSize: (props) => (props.isSmall ? 20 : 32),
+    fontSize: (props) => (props.isSmall ? 16 : 20),
     fontWeight: '600',
-    lineHeight: (props) => (props.isSmall ? 26 : 38),
+    lineHeight: (props) => (props.isSmall ? 20 : 26),
     color: ({ theme }) => ({
       light: theme.color.blue400,
       dark: theme.color.roseTinted200,
@@ -37,21 +37,9 @@ interface AvatarProps {
 }
 
 export function Avatar({ name, isSmall }: AvatarProps) {
-  function getFirstLetters(str: string) {
-    const names = str.split(' ')
-
-    let initials = names[0].substring(0, 1).toUpperCase()
-
-    if (names.length > 1) {
-      initials += names[names.length - 1].substring(0, 1).toUpperCase()
-    }
-
-    return initials
-  }
-
   return (
     <Host isSmall={isSmall}>
-      <Text isSmall={isSmall}>{getFirstLetters(name)}</Text>
+      <Text isSmall={isSmall}>{getInitials(name)}</Text>
     </Host>
   )
 }

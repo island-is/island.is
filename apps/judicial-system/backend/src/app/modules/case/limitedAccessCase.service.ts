@@ -37,7 +37,8 @@ import {
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserCutoffDate,
-  getDefenderVisiblePoliceCaseNumbers,
+  getDefenceUserVisiblePoliceCaseNumbers,
+  isRulingOrderInConfirmedCourtSession,
 } from '../file'
 import {
   AppealCase,
@@ -388,15 +389,6 @@ export const include: Includeable[] = [
     as: 'caseStrings',
     required: false,
     where: { stringType: stringTypes },
-    separate: true,
-  },
-  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
-  {
-    model: Notification,
-    as: 'notifications',
-    required: false,
-    where: { type: AppealCaseNotificationType.APPEAL_COMPLETED },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -786,6 +778,15 @@ export class LimitedAccessCaseService {
           return false
         }
 
+        // A ruling order uploaded during the course of a case is only visible
+        // once it has been added to a confirmed court session.
+        if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
+          return isRulingOrderInConfirmedCourtSession(
+            file.id,
+            theCase.courtSessions,
+          )
+        }
+
         if (!allowedCaseFileCategories.includes(file.category)) {
           return false
         }
@@ -862,16 +863,22 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip = Defendant.isConfirmedDefenderOfDefendant(
-        user.nationalId,
-        theCase.defendants,
-      )
-        ? getDefenderVisiblePoliceCaseNumbers(
-            user.nationalId,
-            theCase.defendants,
-            theCase.policeCaseNumbers,
-          )
-        : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip =
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants,
+        ) ||
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+          user.nationalId,
+          theCase.civilClaimants,
+        )
+          ? getDefenceUserVisiblePoliceCaseNumbers(
+              user.nationalId,
+              theCase.defendants,
+              theCase.civilClaimants,
+              theCase.policeCaseNumbers,
+            )
+          : theCase.policeCaseNumbers
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(

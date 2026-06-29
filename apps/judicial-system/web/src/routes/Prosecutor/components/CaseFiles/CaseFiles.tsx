@@ -1,13 +1,9 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { validate as validateUuid } from 'uuid'
 
-import {
-  FileUploadStatus,
-  Input,
-  InputFileUpload,
-} from '@island.is/island-ui/core'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { FileUploadStatus, Input, toast } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -26,13 +22,19 @@ import {
   PageTitle,
   ParentCaseFiles,
   ProsecutorCaseInfo,
+  ReorderableFileUpload,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useUpdateFilesReorderableMutation } from '@island.is/judicial-system-web/src/components/ReorderableFileUpload/updateFiles.generated'
+import {
+  CaseOrigin,
+  PoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useDebouncedInput,
   useFileList,
+  usePoliceDigitalCaseFile,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -44,6 +46,7 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
+import { PoliceDigitalCaseFilesList } from '../PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
@@ -64,6 +67,8 @@ export const CaseFiles = () => {
   const { formatMessage } = useIntl()
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
+  const [editCount, setEditCount] = useState(0)
+  const [updateFilesMutation] = useUpdateFilesReorderableMutation()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
@@ -82,6 +87,13 @@ export const CaseFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
+
+  const {
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+    digitalCaseFilesError,
+    deletePoliceDigitalCaseFile,
+  } = usePoliceDigitalCaseFile()
 
   const caseFilesComments = useDebouncedInput('caseFilesComments', [])
 
@@ -142,7 +154,71 @@ export const CaseFiles = () => {
     }
   }, [uploadFiles, formatMessage])
 
-  const stepIsValid = !isUploadingPoliceCaseFiles && allFilesDoneOrError
+  const stepIsValid =
+    !isUploadingPoliceCaseFiles && allFilesDoneOrError && editCount === 0
+
+  const handleReorder = async (
+    files: { id: string; orderWithinChapter: number }[],
+  ) => {
+    const persistedFiles = files.filter((file) => validateUuid(file.id))
+
+    if (persistedFiles.length === 0) {
+      return
+    }
+
+    files.forEach(({ id, orderWithinChapter }) => {
+      const file = uploadFiles.find((f) => f.id === id)
+      if (file) {
+        updateUploadFile({ ...file, orderWithinChapter })
+      }
+    })
+
+    try {
+      const { errors: mutationErrors } = await updateFilesMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            files: persistedFiles.map((f) => ({
+              id: f.id,
+              orderWithinChapter: f.orderWithinChapter,
+            })),
+          },
+        },
+      })
+      if (mutationErrors) {
+        toast.error(formatMessage(errors.general))
+      }
+    } catch {
+      toast.error(formatMessage(errors.general))
+    }
+  }
+
+  const handleRename = async (fileId: string, newName: string) => {
+    const fileToUpdate = uploadFiles.find((file) => file.id === fileId)
+    if (fileToUpdate) {
+      updateUploadFile({ ...fileToUpdate, userGeneratedFilename: newName })
+    }
+
+    if (!validateUuid(fileId)) {
+      return
+    }
+
+    try {
+      const { errors: mutationErrors } = await updateFilesMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            files: [{ id: fileId, userGeneratedFilename: newName }],
+          },
+        },
+      })
+      if (mutationErrors) {
+        toast.error(formatMessage(errors.general))
+      }
+    } catch {
+      toast.error(formatMessage(errors.general))
+    }
+  }
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
@@ -224,26 +300,42 @@ export const CaseFiles = () => {
               policeCaseFileList={policeCaseFileList}
               policeCaseFiles={policeCaseFiles}
             />
+            {((digitalCaseFiles && digitalCaseFiles.length > 0) ||
+              digitalCaseFilesError) && (
+              <PoliceDigitalCaseFilesList
+                digitalCaseFiles={digitalCaseFiles ?? []}
+                onRemove={(file: PoliceDigitalCaseFile) => {
+                  deletePoliceDigitalCaseFile(file.id)
+                }}
+                isLoading={digitalCaseFilesLoading}
+                errorMessage={
+                  digitalCaseFilesError
+                    ? 'Ekki tókst að sækja rafræn skjöl í LÖKE.'
+                    : undefined
+                }
+              />
+            )}
           </section>
           <section>
             <SectionHeading
               title={formatMessage(strings.filesHeading)}
-              description={formatMessage(strings.filesIntroduction)}
+              description="Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti."
             />
-            <InputFileUpload
-              name="fileUpload"
-              accept={Object.values(fileExtensionWhitelist)}
+            <ReorderableFileUpload
               files={uploadFiles.filter((file) => !file.category)}
-              title={formatMessage(strings.filesLabel)}
-              buttonLabel={formatMessage(strings.filesButtonLabel)}
-              onChange={(files) =>
+              dropzoneTitle={formatMessage(strings.filesLabel)}
+              dropzoneButtonLabel={formatMessage(strings.filesButtonLabel)}
+              onFilesChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
-              errorMessage={uploadErrorMessage}
-              disabled={isUploadingPoliceCaseFiles}
               onOpenFile={(file) => onOpenFile(file)}
+              onReorder={handleReorder}
+              onRename={handleRename}
+              setEditCount={setEditCount}
+              disabled={isUploadingPoliceCaseFiles}
+              errorMessage={uploadErrorMessage}
             />
           </section>
           <section>
