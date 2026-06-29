@@ -3,27 +3,21 @@ import {
   FetchError,
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { ConfigType } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 
 import type { ApplicationTranslationProvider } from './cms-translations.service'
 import { isApplicationTranslationNamespace } from './application-translation.namespaces'
 import { APPLICATION_TRANSLATION_HTTP_FETCH } from './application-translation-http.fetch'
-
-export const APPLICATION_TRANSLATION_HTTP_CONFIG =
-  'APPLICATION_TRANSLATION_HTTP_CONFIG'
-
-export interface ApplicationTranslationHttpConfig {
-  /** Base URL of application-system API (e.g. https://application-system-api or http://localhost:3333) */
-  baseUrl: string
-}
+import { ApplicationTranslationHttpConfig } from './application-translation-http.config'
 
 @Injectable()
 export class ApplicationTranslationHttpProvider
   implements ApplicationTranslationProvider
 {
   constructor(
-    @Inject(APPLICATION_TRANSLATION_HTTP_CONFIG)
-    private readonly config: ApplicationTranslationHttpConfig,
+    @Inject(ApplicationTranslationHttpConfig.KEY)
+    private readonly config: ConfigType<typeof ApplicationTranslationHttpConfig>,
     @Inject(APPLICATION_TRANSLATION_HTTP_FETCH)
     private readonly fetch: EnhancedFetchAPI,
   ) {}
@@ -36,7 +30,7 @@ export class ApplicationTranslationHttpProvider
     namespace: string,
     locale: Locale,
   ): Promise<Record<string, string>> {
-    const base = this.config.baseUrl.replace(/\/$/, '')
+    const base = this.config.baseApiUrl.replace(/\/$/, '')
     const encodedNamespace = encodeURIComponent(namespace).replace(/\./g, '%2E')
     const url = `${base}/public/translations/${encodedNamespace}?locale=${encodeURIComponent(
       locale,
@@ -62,8 +56,8 @@ export class ApplicationTranslationHttpProvider
       }
 
       const hint =
-        this.config.baseUrl.includes('localhost') ||
-        this.config.baseUrl.includes('127.0.0.1')
+        this.config.baseApiUrl.includes('localhost') ||
+        this.config.baseApiUrl.includes('127.0.0.1')
           ? ' Ensure application-system-api is running (dev default: http://localhost:3333).'
           : ''
 

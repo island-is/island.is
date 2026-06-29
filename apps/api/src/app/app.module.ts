@@ -174,6 +174,7 @@ import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import {
+  ApplicationTranslationHttpConfig,
   ApplicationTranslationHttpModule,
   CmsTranslationsModule,
 } from '@island.is/cms-translations'
@@ -344,9 +345,7 @@ const environment = getConfig
       documentProviderAdmins: environment.documentProviderService
         .documentProviderAdmins as string,
     }),
-    ApplicationTranslationHttpModule.register({
-      baseUrl: environment.applicationSystem.baseApiUrl ?? '',
-    }),
+    ApplicationTranslationHttpModule,
     CmsTranslationsModule,
     TerminusModule,
     HealthInsuranceModule,
@@ -558,6 +557,7 @@ const environment = getConfig
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
         ApplicationTranslationConfig,
+        ApplicationTranslationHttpConfig,
         RecyclingFundClientConfig,
         CustomsGeneralClientConfig,
       ],
