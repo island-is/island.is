@@ -1,11 +1,10 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
 import { ToastHost } from '@/components/toast'
-import { Stack, usePathname } from 'expo-router'
+import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import 'react-native-reanimated'
-import { DdRum } from '@datadog/mobile-react-native'
 
 import { LocaleProvider } from '../components/providers/locale-provider'
 import { OfflineProvider } from '../components/providers/offline-provider'
@@ -185,23 +184,6 @@ function RootLayoutNav({
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
 }) {
-  // Restore Datadog RUM view tracking lost in the expo-router migration
-  // (was previously wired through Navigation.events() in setup-globals.ts).
-  const pathname = usePathname()
-  const previousPathnameRef = useRef<string | null>(null)
-
-  useEffect(() => {
-    if (__DEV__ || !pathname) {
-      return
-    }
-    const previous = previousPathnameRef.current
-    if (previous && previous !== pathname) {
-      DdRum.stopView(previous).catch(() => {})
-    }
-    DdRum.startView(pathname, pathname).catch(() => {})
-    previousPathnameRef.current = pathname
-  }, [pathname])
-
   return (
     <LocaleProvider>
       <AppThemeProvider>
