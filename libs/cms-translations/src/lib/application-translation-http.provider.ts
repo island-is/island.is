@@ -3,7 +3,7 @@ import {
   FetchError,
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 
 import type { ApplicationTranslationProvider } from './cms-translations.service'
