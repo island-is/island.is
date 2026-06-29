@@ -22,7 +22,9 @@ export function normalizePushBranchTag(branch) {
 }
 
 export function getPreReleaseTagPrefix(branch) {
-  return `${normalizePushBranchTag(`pre-release/${getReleaseVersion(branch)}`)}_`
+  return `${normalizePushBranchTag(
+    `pre-release/${getReleaseVersion(branch)}`,
+  )}_`
 }
 
 export function chunkToBuildMatrix(chunks) {
