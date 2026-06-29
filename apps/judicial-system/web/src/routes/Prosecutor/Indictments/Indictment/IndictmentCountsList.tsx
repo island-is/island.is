@@ -170,7 +170,8 @@ export const IndictmentCountsList: FC<Props> = ({
   )
 
   const allExpanded =
-    orderedCounts.length > 0 && orderedCounts.every((count) => isExpanded(count.id))
+    orderedCounts.length > 0 &&
+    orderedCounts.every((count) => isExpanded(count.id))
 
   const handleToggleExpandAll = useCallback(() => {
     const expanded = !allExpanded
