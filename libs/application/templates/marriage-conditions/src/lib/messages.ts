@@ -286,6 +286,11 @@ export const m = defineMessages({
     defaultMessage: 'Trú- eða lífsskoðunarfélagi',
     description: '',
   },
+  ceremonyAtNationalChurch: {
+    id: 'mac.application:ceremonyAtNationalChurch',
+    defaultMessage: 'Þjóðkirkjan',
+    description: 'The national church of Iceland',
+  },
   ceremonyPlaceNone: {
     id: 'mac.application:ceremonyPlaceNone',
     defaultMessage: 'Ekki ákveðið',
