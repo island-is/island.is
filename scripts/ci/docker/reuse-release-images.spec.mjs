@@ -21,7 +21,9 @@ const ecrMock = ({ imageDetails = {}, manifests = {} } = {}) => ({
   batchGetImage: jest.fn(({ imageIds }) => ({
     promise: async () => {
       const manifest = manifests[imageIds[0].imageTag]
-      return manifest ? { images: [{ imageManifest: manifest }] } : { images: [] }
+      return manifest
+        ? { images: [{ imageManifest: manifest }] }
+        : { images: [] }
     },
   })),
   putImage: jest.fn(() => ({ promise: async () => ({}) })),

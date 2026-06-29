@@ -24,7 +24,11 @@ export async function prepareReleaseImageReuse({
   chunks,
 }) {
   if (!isReleaseBranch(releaseBranch) || chunks.length === 0) {
-    return { initialReleaseRun: false, buildChunks: chunks, reusedDockerData: [] }
+    return {
+      initialReleaseRun: false,
+      buildChunks: chunks,
+      reusedDockerData: [],
+    }
   }
 
   const releasePrefix = getReleaseTagPrefix(releaseBranch)
@@ -35,7 +39,11 @@ export async function prepareReleaseImageReuse({
   )
 
   if (hasReleaseImages) {
-    return { initialReleaseRun: false, buildChunks: chunks, reusedDockerData: [] }
+    return {
+      initialReleaseRun: false,
+      buildChunks: chunks,
+      reusedDockerData: [],
+    }
   }
 
   const preReleasePrefix = getPreReleaseTagPrefix(releaseBranch)
@@ -86,7 +94,10 @@ export function setReuseOutputs(coreApi, result) {
   coreApi.setOutput('INITIAL_RELEASE_RUN', String(result.initialReleaseRun))
   coreApi.setOutput('CHUNKS', JSON.stringify(result.buildChunks))
   coreApi.setOutput('BUILD_CHUNKS', chunkToBuildMatrix(result.buildChunks))
-  coreApi.setOutput('REUSED_DOCKER_DATA', JSON.stringify(result.reusedDockerData))
+  coreApi.setOutput(
+    'REUSED_DOCKER_DATA',
+    JSON.stringify(result.reusedDockerData),
+  )
 }
 
 export async function main() {
