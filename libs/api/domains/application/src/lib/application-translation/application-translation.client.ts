@@ -176,7 +176,10 @@ export class ApplicationTranslationClient {
     })
   }
 
-  reviewTranslation(user: User, id: string): Promise<ApplicationTranslationGql> {
+  reviewTranslation(
+    user: User,
+    id: string,
+  ): Promise<ApplicationTranslationGql> {
     return this.request<ApplicationTranslationGql>(user, `/${id}/review`, {
       method: 'POST',
     })
