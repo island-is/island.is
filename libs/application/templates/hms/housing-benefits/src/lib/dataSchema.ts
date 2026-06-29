@@ -534,6 +534,10 @@ export const dataSchema = baseSchema
         continue
       }
 
+      if (bucket.assetDeclerationTextField === undefined) {
+        continue
+      }
+
       const text =
         typeof bucket.assetDeclerationTextField === 'string'
           ? bucket.assetDeclerationTextField.trim()

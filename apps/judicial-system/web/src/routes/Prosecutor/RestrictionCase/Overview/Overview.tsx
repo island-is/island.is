@@ -15,7 +15,6 @@ import {
   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
-import { sortCaseFiles } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -137,9 +136,8 @@ export const Overview = () => {
     setModal('caseSubmittedModal')
   }
 
-  const caseFiles = sortCaseFiles(
-    workingCase.caseFiles?.filter((file) => !file.category) ?? [],
-  )
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
