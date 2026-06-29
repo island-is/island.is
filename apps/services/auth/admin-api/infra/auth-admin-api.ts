@@ -115,6 +115,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
+        featureHostPrefix: 'identity-server-',
         paths: ['/backend'],
         public: true,
         extraAnnotations: {

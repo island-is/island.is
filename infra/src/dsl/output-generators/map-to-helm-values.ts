@@ -595,9 +595,22 @@ export const HelmOutput: OutputFormat<HelmService> = {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      ingress.host.dev = ingress.host.dev.map(
-        (host) => `${env.feature}-${host}`,
-      )
+      if (ingress.featureHostPrefix) {
+        ingress.host.dev = ingress.host.dev.map((host) => {
+          if (host.includes('.')) {
+            const parts = host.split('.')
+            return `${ingress.featureHostPrefix}${env.feature}.${parts
+              .slice(1)
+              .join('.')}`
+          } else {
+            return `${ingress.featureHostPrefix}${env.feature}`
+          }
+        })
+      } else {
+        ingress.host.dev = ingress.host.dev.map(
+          (host) => `${env.feature}-${host}`,
+        )
+      }
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
@@ -613,6 +626,15 @@ export const HelmOutput: OutputFormat<HelmService> = {
         env.feature!,
         s.initContainers.postgres,
       )
+    }
+    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
+      const currentValue = s.env.IDENTITY_SERVER_ISSUER_URL
+      if (typeof currentValue === 'object' && 'dev' in currentValue) {
+        s.env.IDENTITY_SERVER_ISSUER_URL = {
+          ...currentValue,
+          dev: `https://identity-server-${env.feature}.${env.domain}`,
+        }
+      }
     }
   },
   serializeService(
