@@ -16,7 +16,10 @@ import type {
   TemplateIntrospection,
   ValidationMessageDescriptorInfo,
 } from '@island.is/application/types'
-import { getTemplateDisplayName, resolveTemplateDisplayName } from './utils/template-display-name.util'
+import {
+  getTemplateDisplayName,
+  resolveTemplateDisplayName,
+} from './utils/template-display-name.util'
 import { extractValidationDescriptors } from './utils/validation-descriptors.util'
 import {
   collectAllDescriptors,

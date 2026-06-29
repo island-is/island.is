@@ -99,7 +99,9 @@ export const walkExternalDataSourceItem = (
   }
 }
 
-export const walkStaticTableScreen = (st: StaticTableField): ScreenIntrospection => {
+export const walkStaticTableScreen = (
+  st: StaticTableField,
+): ScreenIntrospection => {
   const stRecord = st as unknown as Record<string, unknown>
   const descriptors: MessageDescriptorInfo[] = []
   const mergeIn = (arr: MessageDescriptorInfo[]) => {
@@ -642,7 +644,9 @@ export const walkSubSection = (
   }
 }
 
-export const extractFormLogoKey = (logo: Form['logo'] | undefined): string | null => {
+export const extractFormLogoKey = (
+  logo: Form['logo'] | undefined,
+): string | null => {
   if (!logo || typeof logo !== 'function') {
     return null
   }

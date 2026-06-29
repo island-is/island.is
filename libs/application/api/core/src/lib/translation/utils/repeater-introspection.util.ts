@@ -14,9 +14,7 @@ import type {
   RadioOptionIntrospection,
   ScreenIntrospection,
 } from '@island.is/application/types'
-import {
-  enrichNationalIdWithNameRepeaterItemDescriptors,
-} from './field-introspection.util'
+import { enrichNationalIdWithNameRepeaterItemDescriptors } from './field-introspection.util'
 import {
   extractMessageDescriptorsFromFormText,
   extractStaticText,
