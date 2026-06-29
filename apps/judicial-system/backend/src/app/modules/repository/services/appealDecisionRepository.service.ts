@@ -139,11 +139,11 @@ export class AppealDecisionRepositoryService {
         {
           transaction: options.transaction,
           conflictFields: [
-            'caseId',
-            'rulingFileId',
-            'partyRole',
-            'defendantId',
-            'civilClaimantId',
+            'case_id',
+            'ruling_file_id',
+            'party_role',
+            'defendant_id',
+            'civil_claimant_id',
           ],
         },
       )
