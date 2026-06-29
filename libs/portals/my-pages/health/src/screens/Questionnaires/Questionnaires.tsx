@@ -35,14 +35,12 @@ import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 const defaultFilterValues = {
   searchQuery: '',
   status: [],
-  organization: [],
   treatment: [],
 }
 
 type FilterValues = {
   searchQuery: string
   status: QuestionnaireQuestionnairesStatusEnum[]
-  organization: QuestionnaireQuestionnairesOrganizationEnum[]
   treatment: string[]
 }
 
@@ -74,17 +72,6 @@ const Questionnaires: FC = () => {
       status: prev.status.includes(status)
         ? prev.status.filter((s) => s !== status)
         : [...prev.status, status],
-    }))
-  }
-
-  const toggleOrganization = (
-    organization: QuestionnaireQuestionnairesOrganizationEnum,
-  ) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      organization: prev.organization.includes(organization)
-        ? prev.organization.filter((o) => o !== organization)
-        : [...prev.organization, organization],
     }))
   }
 
@@ -120,22 +107,11 @@ const Questionnaires: FC = () => {
           filterValues.status.length === 0 ||
           (item.status && filterValues.status.includes(item.status))
 
-        // Organization filter
-        const matchesOrganization =
-          filterValues.organization.length === 0 ||
-          (item.organization &&
-            filterValues.organization.includes(item.organization))
-
         // Expired filter
         const matchesExpired =
           showExpired || item.status !== QuestionnairesStatusEnum.expired
 
-        return (
-          matchesSearch &&
-          matchesStatus &&
-          matchesOrganization &&
-          matchesExpired
-        )
+        return matchesSearch && matchesStatus && matchesExpired
       }) ?? null,
     )
   }, [filterValues, data, showExpired])
@@ -146,8 +122,7 @@ const Questionnaires: FC = () => {
 
   const filterIsEmpty =
     filterValues.searchQuery.length === 0 &&
-    filterValues.status.length === 0 &&
-    filterValues.organization.length === 0
+    filterValues.status.length === 0
 
   const noActive = filteredData?.every(
     (item) => item.status === QuestionnairesStatusEnum.expired,
@@ -253,42 +228,6 @@ const Questionnaires: FC = () => {
                   checked={filterValues.status.includes(status)}
                   onChange={() => {
                     toggleStatus(status)
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box paddingX={4} paddingBottom={2}>
-            <Text
-              variant="default"
-              as="p"
-              fontWeight="semiBold"
-              paddingBottom={2}
-            >
-              {formatMessage(messages.organization)}
-            </Text>
-
-            <Stack space={2}>
-              {[
-                {
-                  name: 'lsh',
-                  label: formatMessage(messages.landspitali),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
-                },
-                {
-                  name: 'el',
-                  label: formatMessage(messages.healthDirectorate),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
-                },
-              ].map(({ name, label, organization }) => (
-                <Checkbox
-                  key={name}
-                  name={name}
-                  label={label}
-                  value={name}
-                  checked={filterValues.organization.includes(organization)}
-                  onChange={() => {
-                    toggleOrganization(organization)
                   }}
                 />
               ))}
