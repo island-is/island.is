@@ -24,6 +24,7 @@ import {
 import { useUiStore } from '@/stores/ui-store'
 import { dynamicColor, font } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
+import { useBrowser } from '@/hooks/use-browser'
 
 const MAX_PIN_CHARS = 4
 const MAX_ATTEMPTS = 3
@@ -81,6 +82,7 @@ export default function AppLockScreen() {
   const logout = useAuthStore(({ logout }) => logout)
   const biometricType = useBiometricType()
   const intl = useIntl()
+  const { openBrowser } = useBrowser()
 
   // Clear state before router.back so the layout's re-push subscriber
   // doesn't fire during unmount. Defer the deep-link replay until back has
@@ -92,7 +94,7 @@ export default function AppLockScreen() {
       biometricAutoPromptedForCurrentLock: false,
     })
     router.back()
-    setTimeout(consumePendingDeepLink, 0)
+    setTimeout(() => void consumePendingDeepLink(openBrowser), 0)
   }
 
   const authenticateWithBiometrics = async () => {

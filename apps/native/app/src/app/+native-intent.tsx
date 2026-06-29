@@ -1,4 +1,4 @@
-import { findRoute } from '@/lib/deep-linking'
+import { findRoute, navigateToUniversalLink } from '@/lib/deep-linking'
 import { Href, router } from 'expo-router'
 import { isLockScreenActive } from '@/stores/auth-store'
 
@@ -21,30 +21,36 @@ export function stashPendingDeepLink(url: string): void {
   pendingDeepLink = url
 }
 
-export function consumePendingDeepLink(): void {
+export async function consumePendingDeepLink(
+  openBrowser?: (url: string) => void | Promise<void>,
+): Promise<void> {
   const raw = pendingDeepLink
   pendingDeepLink = null
   if (!raw) return
 
-  // Normalize first so findRoute and router.navigate both work on a clean
-  // relative path. For custom-scheme URLs the "host" is actually the first
+  // HTTP(S) URLs delegate to navigateToUniversalLink so we get route-match
+  // for known universal links plus passkey-aware browser open for the rest.
+  // Otherwise an external URL with no native route would hit
+  // router.navigate(fullUrl) and either loop (Android forwards to
+  // Linking.openURL) or dead-end inside the app.
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    await navigateToUniversalLink({ link: raw, openBrowser })
+    return
+  }
+
+  // Custom-scheme URLs (widgets, is.island.app://...): host is the first
   // path segment (is.island.app.dev://wallet/X → /wallet/X), so prepend it.
-  // For http/https, host is a domain — leave it off. Passing a full URL to
-  // router.navigate would forward to Linking.openURL on Android and loop.
   let path = raw
   if (raw.includes('://')) {
     try {
       const url = new URL(raw)
-      const isHttpUrl = url.protocol === 'http:' || url.protocol === 'https:'
-      const hostPrefix = !isHttpUrl && url.host ? `/${url.host}` : ''
+      const hostPrefix = url.host ? `/${url.host}` : ''
       path = `${hostPrefix}${url.pathname}${url.search}` || '/'
     } catch {
       // keep raw on parse failure
     }
   }
 
-  // findRoute covers universal-link paths (/minarsidur/...). Widgets and
-  // custom-scheme URLs come through as the native route already.
   const mapped = findRoute(path)
   if (mapped) {
     router.navigate(mapped as Parameters<typeof router.navigate>[0])
