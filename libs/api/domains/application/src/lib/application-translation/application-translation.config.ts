@@ -9,6 +9,9 @@ export const ApplicationTranslationConfig = defineConfig({
   name: 'ApplicationTranslationConfig',
   schema,
   load: (env) => ({
-    baseApiUrl: env.required('APPLICATION_SYSTEM_API_URL'),
+    baseApiUrl: env.required(
+      'APPLICATION_SYSTEM_API_URL',
+      'http://localhost:3333',
+    ),
   }),
 })
