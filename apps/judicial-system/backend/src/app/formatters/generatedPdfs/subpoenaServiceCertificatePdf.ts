@@ -55,11 +55,11 @@ export const getCivilClaimsServiceText = (
   hasCivilClaims?: boolean,
   civilClaimantsCount?: number,
 ): string | undefined => {
-  if (!hasCivilClaims) {
+  if (!hasCivilClaims || !civilClaimantsCount) {
     return undefined
   }
 
-  return (civilClaimantsCount ?? 0) > 1
+  return civilClaimantsCount > 1
     ? 'Greinargerðir vegna bótakrafna í málinu hafa jafnframt verið birtar.'
     : 'Greinargerð vegna bótakröfu í málinu hefur jafnframt verið birt.'
 }
@@ -205,14 +205,13 @@ export const createSubpoenaServiceCertificate = (
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(subpoena.type), 'Times-Roman')
 
-  addEmptyLines(doc, 2)
-
   const civilClaimsText = getCivilClaimsServiceText(
     theCase.hasCivilClaims,
     theCase.civilClaimants?.length,
   )
 
   if (civilClaimsText) {
+    addEmptyLines(doc, 2)
     addNormalText(doc, civilClaimsText, 'Times-Bold')
   }
 

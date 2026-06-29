@@ -15,16 +15,12 @@ describe('getCivilClaimsServiceText', () => {
     )
   })
 
-  it('should return singular text when civilClaimantsCount is undefined', () => {
-    expect(getCivilClaimsServiceText(true, undefined)).toBe(
-      'Greinargerð vegna bótakröfu í málinu hefur jafnframt verið birt.',
-    )
+  it('should return undefined when civilClaimantsCount is undefined', () => {
+    expect(getCivilClaimsServiceText(true, undefined)).toBeUndefined()
   })
 
-  it('should return singular text when civilClaimantsCount is zero', () => {
-    expect(getCivilClaimsServiceText(true, 0)).toBe(
-      'Greinargerð vegna bótakröfu í málinu hefur jafnframt verið birt.',
-    )
+  it('should return undefined when civilClaimantsCount is zero', () => {
+    expect(getCivilClaimsServiceText(true, 0)).toBeUndefined()
   })
 
   it('should return plural text when there are multiple civil claimants', () => {
