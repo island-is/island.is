@@ -50,6 +50,7 @@ const CaseFile: FC<Props> = (props) => {
           <IconButton
             icon={icon.icon}
             colorScheme={icon.color.includes('blue') ? 'blue' : 'red'}
+            ariaLabel={`Aðgerð fyrir ${name}`}
             onClick={() => icon.onClick?.(id)}
           />
         ) : (
