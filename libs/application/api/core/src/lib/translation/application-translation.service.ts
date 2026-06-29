@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
+import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
@@ -31,16 +32,11 @@ export interface PublishHistoryItem {
   note?: string
 }
 
-/** Columns translated_by, reviewed_by, changed_by are VARCHAR(20) in the DB. */
-const MAX_ACTOR_ID_LENGTH = 20
-
-function truncateActorId(id: string | undefined): string | undefined {
-  if (id === undefined) {
-    return undefined
-  }
-  return id.length <= MAX_ACTOR_ID_LENGTH
-    ? id
-    : id.slice(0, MAX_ACTOR_ID_LENGTH)
+/** Matches audit module: nationalId is the subject; actor is the delegating user when present. */
+const getTranslationActors = (user: User) => {
+  const subjectNationalId = user.nationalId
+  const actorNationalId = user.actor?.nationalId ?? user.nationalId
+  return { subjectNationalId, actorNationalId }
 }
 
 @Injectable()
@@ -121,9 +117,9 @@ export class ApplicationTranslationService {
    */
   async upsertTranslation(
     input: UpsertTranslationInput,
-    translatedBy?: string,
+    user: User,
   ): Promise<ApplicationTranslation> {
-    const actor = truncateActorId(translatedBy)
+    const { actorNationalId } = getTranslationActors(user)
 
     const existing = await this.translationModel.findOne({
       where: {
@@ -155,9 +151,7 @@ export class ApplicationTranslationService {
       }
 
       if (Object.keys(updates).length > 0) {
-        if (actor) {
-          updates.translatedBy = actor
-        }
+        updates.translatedBy = actorNationalId
         updates.isReviewed = false
         await existing.update(updates)
 
@@ -165,7 +159,7 @@ export class ApplicationTranslationService {
           translationId: existing.id,
           oldValue: logOldValue,
           newValue: logNewValue,
-          changedBy: actor,
+          changedBy: actorNationalId,
           action: 'draft',
         })
       }
@@ -179,14 +173,14 @@ export class ApplicationTranslationService {
       valueIs: '',
       draftValueIs: input.valueIs,
       draftValueEn: input.valueEn,
-      translatedBy: actor,
+      translatedBy: actorNationalId,
       isReviewed: false,
     })
 
     await this.logModel.create({
       translationId: created.id,
       newValue: input.valueIs ?? input.valueEn,
-      changedBy: actor,
+      changedBy: actorNationalId,
       action: 'create',
     })
 
@@ -195,11 +189,11 @@ export class ApplicationTranslationService {
 
   async bulkUpsertTranslations(
     translations: UpsertTranslationInput[],
-    translatedBy?: string,
+    user: User,
   ): Promise<ApplicationTranslation[]> {
     const results: ApplicationTranslation[] = []
     for (const input of translations) {
-      const result = await this.upsertTranslation(input, translatedBy)
+      const result = await this.upsertTranslation(input, user)
       results.push(result)
     }
     return results
@@ -207,9 +201,9 @@ export class ApplicationTranslationService {
 
   async markAsReviewed(
     id: string,
-    reviewedBy: string,
+    user: User,
   ): Promise<ApplicationTranslation | null> {
-    const reviewer = truncateActorId(reviewedBy)
+    const { actorNationalId } = getTranslationActors(user)
 
     const translation = await this.translationModel.findByPk(id)
     if (!translation) {
@@ -218,12 +212,12 @@ export class ApplicationTranslationService {
 
     await translation.update({
       isReviewed: true,
-      reviewedBy: reviewer,
+      reviewedBy: actorNationalId,
     })
 
     await this.logModel.create({
       translationId: translation.id,
-      changedBy: reviewer,
+      changedBy: actorNationalId,
       action: 'review',
     })
 
@@ -236,12 +230,10 @@ export class ApplicationTranslationService {
    */
   async publishTranslations(
     namespace: string,
-    publishedBy?: string,
+    user: User,
     note?: string,
-    actorNationalId?: string,
   ): Promise<ApplicationTranslationPublish> {
-    const actor = truncateActorId(publishedBy)
-    const truncatedActorNationalId = truncateActorId(actorNationalId)
+    const { subjectNationalId, actorNationalId } = getTranslationActors(user)
 
     const rows = await this.translationModel.findAll({
       where: { namespace },
@@ -249,8 +241,8 @@ export class ApplicationTranslationService {
 
     const publish = await this.publishModel.create({
       namespace,
-      publishedBy: actor,
-      actorNationalId: truncatedActorNationalId,
+      publishedBy: subjectNationalId,
+      actorNationalId: user.actor?.nationalId,
       note,
     })
 
@@ -290,7 +282,7 @@ export class ApplicationTranslationService {
           translationId: row.id,
           oldValue: oldValueIs,
           newValue: updates.valueIs ?? oldValueIs,
-          changedBy: actor,
+          changedBy: actorNationalId,
           action: 'publish',
         })
       }
@@ -321,11 +313,9 @@ export class ApplicationTranslationService {
   async rollbackToPublish(
     publishId: string,
     namespace: string,
-    rolledBackBy?: string,
-    actorNationalId?: string,
+    user: User,
   ): Promise<ApplicationTranslationPublish | null> {
-    const actor = truncateActorId(rolledBackBy)
-    const truncatedActorNationalId = truncateActorId(actorNationalId)
+    const { subjectNationalId, actorNationalId } = getTranslationActors(user)
 
     const publish = await this.publishModel.findByPk(publishId, {
       include: [ApplicationTranslationPublishSnapshot],
@@ -344,8 +334,8 @@ export class ApplicationTranslationService {
 
     const rollbackPublish = await this.publishModel.create({
       namespace,
-      publishedBy: actor,
-      actorNationalId: truncatedActorNationalId,
+      publishedBy: subjectNationalId,
+      actorNationalId: user.actor?.nationalId,
       note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
     })
 
@@ -377,7 +367,7 @@ export class ApplicationTranslationService {
           translationId: row.id,
           oldValue: oldValueIs,
           newValue: snapshot.valueIs,
-          changedBy: actor,
+          changedBy: actorNationalId,
           action: 'rollback',
         })
       }

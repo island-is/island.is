@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { ApplicationTranslationService } from './application-translation.service'
 import { ApplicationTranslation } from './application-translation.model'
@@ -15,6 +16,13 @@ describe('ApplicationTranslationService', () => {
   let createLogSpy: jest.Mock
   let createPublishSpy: jest.Mock
   let bulkCreateSnapshotSpy: jest.Mock
+
+  const user = {
+    nationalId: '0101302989',
+    scope: [],
+    authorization: '',
+    client: 'test',
+  } satisfies User
 
   beforeEach(async () => {
     findOneSpy = jest.fn()
@@ -72,7 +80,7 @@ describe('ApplicationTranslationService', () => {
           valueIs: 'Draft Icelandic',
           valueEn: 'Draft English',
         },
-        '0101302989',
+        user,
       )
 
       expect(createTranslationSpy).toHaveBeenCalledWith({
@@ -111,7 +119,7 @@ describe('ApplicationTranslationService', () => {
           messageKey: 'key.one',
           valueIs: 'Draft Icelandic',
         },
-        '0101302989',
+        user,
       )
 
       expect(updateSpy).toHaveBeenCalledWith({
@@ -139,7 +147,7 @@ describe('ApplicationTranslationService', () => {
       findAllTranslationsSpy.mockResolvedValue([row])
       createPublishSpy.mockResolvedValue({ id: 'publish-id' })
 
-      await service.publishTranslations('test.ns', '0101302989')
+      await service.publishTranslations('test.ns', user)
 
       expect(updateSpy).toHaveBeenCalledWith({
         draftValueIs: null,
@@ -172,7 +180,7 @@ describe('ApplicationTranslationService', () => {
       findAllTranslationsSpy.mockResolvedValue([row])
       createPublishSpy.mockResolvedValue({ id: 'publish-id' })
 
-      await service.publishTranslations('test.ns', '0101302989')
+      await service.publishTranslations('test.ns', user)
 
       expect(updateSpy).toHaveBeenCalledWith({
         draftValueIs: null,
@@ -243,11 +251,7 @@ describe('ApplicationTranslationService', () => {
         ApplicationTranslationService,
       )
 
-      await rollbackService.rollbackToPublish(
-        'publish-id',
-        'test.ns',
-        '0101302989',
-      )
+      await rollbackService.rollbackToPublish('publish-id', 'test.ns', user)
 
       expect(createLogSpy).toHaveBeenCalledWith({
         translationId: 'row-id',

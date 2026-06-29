@@ -145,7 +145,7 @@ export class TranslationController {
         valueIs: body.valueIs,
         valueEn: body.valueEn,
       },
-      user.nationalId,
+      user,
     )
   }
 
@@ -164,7 +164,7 @@ export class TranslationController {
 
     return this.translationService.bulkUpsertTranslations(
       body.translations,
-      user.nationalId,
+      user,
     )
   }
 
@@ -181,7 +181,7 @@ export class TranslationController {
       translation.namespace,
     )
 
-    return this.translationService.markAsReviewed(id, user.nationalId)
+    return this.translationService.markAsReviewed(id, user)
   }
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -225,9 +225,8 @@ export class TranslationController {
 
     const publish = await this.translationService.publishTranslations(
       namespace,
-      user.nationalId,
+      user,
       body.note,
-      user.actor?.nationalId,
     )
 
     await this.cmsTranslationsService.invalidateApplicationTranslationCache(
@@ -249,8 +248,7 @@ export class TranslationController {
     const rollback = await this.translationService.rollbackToPublish(
       publishId,
       namespace,
-      user.nationalId,
-      user.actor?.nationalId,
+      user,
     )
 
     if (rollback) {
