@@ -32,14 +32,7 @@ interface PartyKey {
   civilClaimantId?: string
 }
 
-const samePartyKey = (
-  a: {
-    partyRole?: AppealDecisionPartyRole | null
-    defendantId?: string | null
-    civilClaimantId?: string | null
-  },
-  b: PartyKey,
-): boolean =>
+const samePartyKey = (a: PartyKey, b: PartyKey): boolean =>
   a.partyRole === b.partyRole &&
   (a.defendantId ?? null) === (b.defendantId ?? null) &&
   (a.civilClaimantId ?? null) === (b.civilClaimantId ?? null)
@@ -113,7 +106,13 @@ const CourtSessionAppealDecisions: FC<Props> = ({
   ) => {
     const { name, nominative, genitive } = options
     const decision = findDecision(party)
-    const groupName = `appeal-decision-${party.partyRole}-${
+    // Scope the radio group name + id to the court session. The same case
+    // parties appear in every ORDER session, so without the session id the
+    // radios across sessions share a `name` (one DOM radio group) and a
+    // duplicate `id`. A label's `htmlFor` then resolves to the first matching
+    // id - an earlier session's radio - so clicking a radio in a later session
+    // never fires its onChange and no request is sent.
+    const groupName = `appeal-decision-${courtSession.id}-${party.partyRole}-${
       party.defendantId ?? party.civilClaimantId ?? 'prosecutor'
     }`
 
