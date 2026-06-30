@@ -72,7 +72,7 @@ export class CourtSessionService {
     // in a confirmed court session, the parties are notified about the ruling.
     if (courtSession.rulingType === CourtSessionRulingType.ORDER) {
       messages.push({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId,
         body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
