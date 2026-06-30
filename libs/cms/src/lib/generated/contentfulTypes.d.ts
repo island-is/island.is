@@ -4682,6 +4682,7 @@ export interface ISliceConnectedComponentFields {
     | 'Syslumenn/DrivingInstructorList'
     | 'FSRE/EmployeeList'
     | 'Lyfjastofnun/Pharmacies'
+    | 'Lyfjastofnun/LicensedOperations'
     | 'NewKilometerFee'
     | 'LatestVerdicts'
     | 'SupremeCourt/Determinations'

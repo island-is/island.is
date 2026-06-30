@@ -5,10 +5,10 @@ const schema = z.object({
   basePath: z.string(),
 })
 
-export const LyfjastofnunPharmaciesClientConfig = defineConfig<
+export const LyfjastofnunHealthProvidersClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'LyfjastofnunPharmaciesClientConfig',
+  name: 'LyfjastofnunHealthProvidersClientConfig',
   schema,
   load: (env) => ({
     basePath: env.required(

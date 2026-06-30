@@ -174,7 +174,10 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
     givenWhenThen(
       caseWith({ appealState, appealFiles: true }),
       { rulingFileId: newRulingFileId } as UpdateCourtSessionDto,
-      { rulingType: CourtSessionRulingType.ORDER, rulingFileId: newRulingFileId },
+      {
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: newRulingFileId,
+      },
     )
 
   describe('swapping the ruling file of a still-APPEALED appeal', () => {
