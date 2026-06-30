@@ -649,6 +649,9 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 export const isCourtSessionValid = (
   courtSession: CourtSessionResponse,
   workingCase: Case,
+  // Appeal decisions are only required once the (flagged) in-court appeal UI is
+  // live; while it is hidden, an ORDER session can be confirmed without them.
+  appealRulingOrderEnabled: boolean,
 ) => {
   return (
     (courtSession.isClosed
@@ -663,7 +666,8 @@ export const isCourtSessionValid = (
     (courtSession.rulingType === CourtSessionRulingType.ORDER
       ? !!courtSession.rulingFileId
       : true) &&
-    (courtSession.rulingType === CourtSessionRulingType.ORDER
+    (courtSession.rulingType === CourtSessionRulingType.ORDER &&
+    appealRulingOrderEnabled
       ? areAppealDecisionsComplete(courtSession, workingCase)
       : true) &&
     (courtSession.isAttestingWitness

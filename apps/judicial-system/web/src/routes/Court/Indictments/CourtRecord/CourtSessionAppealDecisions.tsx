@@ -32,7 +32,14 @@ interface PartyKey {
   civilClaimantId?: string
 }
 
-const samePartyKey = (a: PartyKey, b: PartyKey): boolean =>
+const samePartyKey = (
+  a: {
+    partyRole?: AppealDecisionPartyRole | null
+    defendantId?: string | null
+    civilClaimantId?: string | null
+  },
+  b: PartyKey,
+): boolean =>
   a.partyRole === b.partyRole &&
   (a.defendantId ?? null) === (b.defendantId ?? null) &&
   (a.civilClaimantId ?? null) === (b.civilClaimantId ?? null)

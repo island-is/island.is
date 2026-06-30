@@ -38,9 +38,11 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
+  FeatureContext,
   FileNotFoundModal,
   FormContext,
   Modal,
@@ -166,6 +168,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
   const ref = useRef<HTMLDivElement>(null)
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
+  const { features } = useContext(FeatureContext)
+  // The in-court appeal decision UI is behind a flag until it's ready for prod.
+  const showAppealDecisions = features.includes(Feature.APPEAL_RULING_ORDER)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -1685,13 +1690,15 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       required
                     />
                   </Box>
-                  {courtSession.rulingType === CourtSessionRulingType.ORDER && (
-                    <CourtSessionAppealDecisions
-                      courtSession={courtSession}
-                      workingCase={workingCase}
-                      setWorkingCase={setWorkingCase}
-                    />
-                  )}
+                  {showAppealDecisions &&
+                    courtSession.rulingType ===
+                      CourtSessionRulingType.ORDER && (
+                      <CourtSessionAppealDecisions
+                        courtSession={courtSession}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                      />
+                    )}
                   <Box>
                     <SectionHeading title="Bókanir í lok þinghalds" />
                     <Input
@@ -1822,7 +1829,11 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         }
                         size="small"
                         disabled={
-                          !isCourtSessionValid(courtSession, workingCase)
+                          !isCourtSessionValid(
+                            courtSession,
+                            workingCase,
+                            showAppealDecisions,
+                          )
                         }
                       >
                         Staðfesta þingbók
