@@ -27,7 +27,7 @@ import {
   TranslationAccessService,
 } from '@island.is/application/api/core'
 import { getAllowedTranslationTypeIds } from '@island.is/application/utils'
-import { CmsTranslationsService } from '@island.is/cms-translations'
+import { ApplicationTranslationCacheService } from '@island.is/islandis-translations'
 import { ApplicationTypes } from '@island.is/application/types'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -51,7 +51,7 @@ export class TranslationController {
     private readonly introspectionService: TemplateIntrospectionService,
     private readonly sharedNamespaceIntrospectionService: SharedNamespaceIntrospectionService,
     private readonly translationAccessService: TranslationAccessService,
-    private readonly cmsTranslationsService: CmsTranslationsService,
+    private readonly translationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -229,9 +229,7 @@ export class TranslationController {
       body.note,
     )
 
-    await this.cmsTranslationsService.invalidateApplicationTranslationCache(
-      namespace,
-    )
+    await this.translationCacheService.invalidate(namespace)
 
     return publish
   }
@@ -252,9 +250,7 @@ export class TranslationController {
     )
 
     if (rollback) {
-      await this.cmsTranslationsService.invalidateApplicationTranslationCache(
-        namespace,
-      )
+      await this.translationCacheService.invalidate(namespace)
     }
 
     return rollback

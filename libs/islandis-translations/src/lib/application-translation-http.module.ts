@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common'
 
-import { APPLICATION_TRANSLATION_PROVIDER } from './cms-translations.service'
+import { APPLICATION_TRANSLATION_PROVIDER } from './application-translation.provider'
 import { ApplicationTranslationHttpProvider } from './application-translation-http.provider'
 import { applicationTranslationHttpFetch } from './application-translation-http.fetch'
 

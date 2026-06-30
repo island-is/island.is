@@ -12,7 +12,7 @@ export const applicationTranslationHttpFetch = {
   scope: LazyDuringDevScope,
   useFactory: (): EnhancedFetchAPI =>
     createEnhancedFetch({
-      name: 'cms-application-translation-http',
+      name: 'islandis-application-translation-http',
       organizationSlug: 'stafraent-island',
       timeout: 60000,
       logErrorResponseBody: true,

@@ -10,21 +10,13 @@ import { logger } from '@island.is/logging'
 import { ContentfulRepository } from '@island.is/cms'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { Locale } from '@island.is/shared/types'
-
-import { getApplicationTranslationCacheKey } from './application-translation.cache'
+import {
+  ApplicationTranslationProvider,
+  APPLICATION_TRANSLATION_PROVIDER,
+  getApplicationTranslationCacheKey,
+} from '@island.is/islandis-translations'
 
 export type TranslationsDict = Record<string, string>
-
-export const APPLICATION_TRANSLATION_PROVIDER =
-  'APPLICATION_TRANSLATION_PROVIDER'
-
-export interface ApplicationTranslationProvider {
-  getTranslationsForNamespace(
-    namespace: string,
-    locale: Locale,
-  ): Promise<Record<string, string>>
-  isApplicationNamespace(namespace: string): boolean
-}
 
 interface Messages {
   id: string
@@ -83,12 +75,6 @@ export class CmsTranslationsService {
       Features.applicationTranslationsFromWorkspace,
       false,
     )
-  }
-
-  invalidateApplicationTranslationCache = async (
-    namespace: string,
-  ): Promise<void> => {
-    await this.cacheManager.del(getApplicationTranslationCacheKey(namespace))
   }
 
   private getNamespaceMessagesFromDb = async (

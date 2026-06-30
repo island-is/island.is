@@ -1,11 +1,8 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Test } from '@nestjs/testing'
 
-import { CmsTranslationsService } from './cms-translations.service'
-import { CmsTranslationConfig } from './cms-translations.config'
+import { ApplicationTranslationCacheService } from './application-translation-cache.service'
 import { getApplicationTranslationCacheKey } from './application-translation.cache'
-import { ContentfulRepository } from '@island.is/cms'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 describe('getApplicationTranslationCacheKey', () => {
   it('returns the shared runtime cache key for a namespace', () => {
@@ -15,35 +12,23 @@ describe('getApplicationTranslationCacheKey', () => {
   })
 })
 
-describe('CmsTranslationsService.invalidateApplicationTranslationCache', () => {
+describe('ApplicationTranslationCacheService.invalidate', () => {
   it('deletes the namespace cache key from Redis', async () => {
     const delSpy = jest.fn().mockResolvedValue(undefined)
 
     const module = await Test.createTestingModule({
       providers: [
-        CmsTranslationsService,
-        {
-          provide: ContentfulRepository,
-          useValue: {},
-        },
-        {
-          provide: CmsTranslationConfig.KEY,
-          useValue: { memCacheExpiryMilliseconds: 900000 },
-        },
+        ApplicationTranslationCacheService,
         {
           provide: CACHE_MANAGER,
           useValue: { del: delSpy, get: jest.fn(), set: jest.fn() },
         },
-        {
-          provide: FeatureFlagService,
-          useValue: { getValue: jest.fn() },
-        },
       ],
     }).compile()
 
-    const service = module.get(CmsTranslationsService)
+    const service = module.get(ApplicationTranslationCacheService)
 
-    await service.invalidateApplicationTranslationCache('ApplicationSystem')
+    await service.invalidate('ApplicationSystem')
 
     expect(delSpy).toHaveBeenCalledWith(
       getApplicationTranslationCacheKey('ApplicationSystem'),

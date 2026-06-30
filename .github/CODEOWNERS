@@ -306,6 +306,7 @@ codemagic.yaml                                                                  
 /libs/clients/fishing-license/                                                                                               @island-is/norda
 /libs/clients/hms-application-system/                                                                                        @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                                                   @island-is/norda
+/libs/islandis-translations                                                                                                  @island-is/norda
 /libs/clients/payment-schedule/                                                                                              @island-is/norda
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
@@ -538,7 +539,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
 
-libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo 
+libs/portals/my-pages/social-benefits/src/screens/unemployment-benefits/                                                     @island-is/origo
 
 # DevOps
 /.github/                                                                                                                    @island-is/devops

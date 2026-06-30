@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/cms-translations'
+import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/islandis-translations'
 
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'

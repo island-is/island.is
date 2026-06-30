@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { getApplicationTranslationNamespaceSet } from '@island.is/application/utils'
-import { type ApplicationTranslationProvider } from '@island.is/cms-translations'
+import { type ApplicationTranslationProvider } from '@island.is/islandis-translations'
 import { Locale } from '@island.is/shared/types'
 import { ApplicationTranslationService } from './application-translation.service'
 

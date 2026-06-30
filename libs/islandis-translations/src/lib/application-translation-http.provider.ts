@@ -6,7 +6,7 @@ import {
 import type { ConfigType } from '@island.is/nest/config'
 import type { Locale } from '@island.is/shared/types'
 
-import type { ApplicationTranslationProvider } from './cms-translations.service'
+import type { ApplicationTranslationProvider } from './application-translation.provider'
 import { isApplicationTranslationNamespace } from './application-translation.namespaces'
 import { APPLICATION_TRANSLATION_HTTP_FETCH } from './application-translation-http.fetch'
 import { ApplicationTranslationHttpConfig } from './application-translation-http.config'
