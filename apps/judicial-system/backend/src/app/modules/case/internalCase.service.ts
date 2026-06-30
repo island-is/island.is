@@ -1938,8 +1938,6 @@ export class InternalCaseService {
           model: Defendant,
           as: 'defendants',
           required: true,
-          order: [['created', 'DESC']],
-          separate: true,
           where: {
             indictmentReviewDecision: null,
           },
