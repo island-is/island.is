@@ -237,6 +237,11 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     statusIconColor = 'yellow600'
   }
 
+  const statusIconTooltip =
+    statusIcon === 'warning' && hasBeenAppealed
+      ? 'Kæruferli í gangi'
+      : undefined
+
   const showCompletedPill =
     appealCase?.appealState === AppealCaseState.COMPLETED
 
@@ -250,6 +255,7 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
           subtitle={statusText}
           subtitleIcon={statusIcon}
           subtitleIconColor={statusIconColor}
+          subtitleIconTooltip={statusIconTooltip}
           renderAs="row"
           disabled={!file.isKeyAccessible}
           handleClick={() => onOpenFile(file.id)}
