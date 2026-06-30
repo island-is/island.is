@@ -72,6 +72,10 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     mockUpsert.mockImplementation((party) =>
       Promise.resolve({ id: uuid(), ...party } as AppealDecision),
     )
+    // Default: no stored decision (a fresh row), so recording a decision clears
+    // any withdrawal. Tests that assert the no-clear guard override this.
+    const mockFindAll = mockAppealDecisionRepositoryService.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (theCase, courtSession, update) => {
       const then = {} as Then
@@ -110,7 +114,11 @@ describe('CourtSessionController - Upsert appeal decision', () => {
           defendantId: undefined,
           civilClaimantId: undefined,
         },
-        { decision: CaseAppealDecision.APPEAL, announcement: 'Sækjandi kærir' },
+        {
+          decision: CaseAppealDecision.APPEAL,
+          announcement: 'Sækjandi kærir',
+          withdrawnDate: null,
+        },
         { transaction },
       )
     })
@@ -134,7 +142,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
           defendantId,
           civilClaimantId: undefined,
         },
-        { decision: CaseAppealDecision.POSTPONE },
+        { decision: CaseAppealDecision.POSTPONE, withdrawnDate: null },
         { transaction },
       )
     })
@@ -158,7 +166,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
           defendantId: undefined,
           civilClaimantId,
         },
-        { decision: CaseAppealDecision.NOT_APPLICABLE },
+        { decision: CaseAppealDecision.NOT_APPLICABLE, withdrawnDate: null },
         { transaction },
       )
     })
@@ -176,6 +184,50 @@ describe('CourtSessionController - Upsert appeal decision', () => {
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
         expect.anything(),
         { announcement: 'Drög að yfirlýsingu' },
+        { transaction },
+      )
+    })
+  })
+
+  describe('re-recording the same decision', () => {
+    beforeEach(async () => {
+      ;(
+        mockAppealDecisionRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        { decision: CaseAppealDecision.APPEAL } as AppealDecision,
+      ])
+      await givenWhenThen(theCase, orderSession, {
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.APPEAL,
+      })
+    })
+
+    it('should not clear the withdrawal date', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
+        expect.anything(),
+        { decision: CaseAppealDecision.APPEAL },
+        { transaction },
+      )
+    })
+  })
+
+  describe('changing the decision', () => {
+    beforeEach(async () => {
+      ;(
+        mockAppealDecisionRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        { decision: CaseAppealDecision.APPEAL } as AppealDecision,
+      ])
+      await givenWhenThen(theCase, orderSession, {
+        partyRole: AppealDecisionPartyRole.PROSECUTOR,
+        decision: CaseAppealDecision.ACCEPT,
+      })
+    })
+
+    it('should clear the withdrawal date', () => {
+      expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalledWith(
+        expect.anything(),
+        { decision: CaseAppealDecision.ACCEPT, withdrawnDate: null },
         { transaction },
       )
     })

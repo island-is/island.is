@@ -746,9 +746,29 @@ export class CourtSessionService {
     const data: {
       decision?: CaseAppealDecision | null
       announcement?: string | null
+      withdrawnDate?: Date | null
     } = {}
     if (update.decision !== undefined) {
-      data.decision = update.decision ?? null
+      const newDecision = update.decision ?? null
+      data.decision = newDecision
+
+      // Recording a *changed* decision is a fresh statement of the party's
+      // stance, so it clears any prior in-court appeal withdrawal. Confirm the
+      // decision actually changed server-side - never rely on the client not to
+      // re-send an unchanged decision and accidentally un-withdraw the party.
+      const [existing] = await this.appealDecisionRepositoryService.findAll({
+        where: {
+          caseId: theCase.id,
+          rulingFileId: courtSession.rulingFileId,
+          partyRole: update.partyRole,
+          defendantId: update.defendantId ?? null,
+          civilClaimantId: update.civilClaimantId ?? null,
+        },
+        transaction,
+      })
+      if ((existing?.decision ?? null) !== newDecision) {
+        data.withdrawnDate = null
+      }
     }
     if (update.announcement !== undefined) {
       data.announcement = update.announcement ?? null

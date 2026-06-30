@@ -31,6 +31,7 @@ export interface AppealDecisionPartyKey {
 interface UpdateAppealDecision {
   decision?: CaseAppealDecision | null
   announcement?: string | null
+  withdrawnDate?: Date | null
 }
 
 interface FindAllOptions {
