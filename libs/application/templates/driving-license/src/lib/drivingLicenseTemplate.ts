@@ -20,7 +20,6 @@ import {
   QualityPhotoAndSignatureApi,
   AllPhotosFromThjodskraApi,
   TeachersApi,
-  ExistingApplicationApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
@@ -142,14 +141,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
-                ExistingApplicationApi.configure({
-                  params: {
-                    states: [States.PAYMENT, States.DRAFT],
-                    where: {
-                      applicant: 'applicant',
-                    },
-                  },
-                }),
               ],
             },
           ],

@@ -6,7 +6,6 @@ import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
-import { sectionExistingApplication } from './sectionExistingApplication'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
@@ -41,7 +40,6 @@ export const getForm = ({
         children: [
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
-          sectionExistingApplication,
           ...(allowPickLicense
             ? [
                 sectionApplicationFor(
