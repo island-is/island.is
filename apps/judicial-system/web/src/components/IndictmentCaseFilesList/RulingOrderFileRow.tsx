@@ -40,6 +40,7 @@ import {
 import {
   getAppealActorText,
   getCurrentUserStatementDate,
+  hasAcceptedRulingOrderInCourt,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ContextMenuItem } from '../ContextMenu/ContextMenu'
@@ -135,7 +136,13 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
   const items: ContextMenuItem[] = []
 
   if (!hasBeenAppealed) {
-    if (file.canBeAppealed && (isProsecution || isDefence)) {
+    // A party that accepted the ruling in court has waived its appeal right
+    // (enforced on the backend); hide the action for it too.
+    if (
+      file.canBeAppealed &&
+      (isProsecution || isDefence) &&
+      !hasAcceptedRulingOrderInCourt(workingCase, user, file.id)
+    ) {
       items.push({
         title: 'Senda inn kæru',
         icon: 'document',
@@ -188,8 +195,15 @@ const RulingOrderFileRow: FC<Props> = ({ file, onOpenFile }) => {
     undefined
 
   if (!hasBeenAppealed) {
-    // Pre-appeal: only the appealing-eligible parties see the deadline.
-    if ((isProsecution || isDefence) && !isCompletedCase(workingCase.state)) {
+    // Pre-appeal: only the appealing-eligible parties see the deadline. A party
+    // that accepted the ruling in court has waived its appeal right, so it sees
+    // no status until another party appeals (which moves the row out of this
+    // pre-appeal branch).
+    if (
+      (isProsecution || isDefence) &&
+      !isCompletedCase(workingCase.state) &&
+      !hasAcceptedRulingOrderInCourt(workingCase, user, file.id)
+    ) {
       statusText = `Kærufrestur ${
         file.isAppealDeadlineExpired ? 'rann' : 'rennur'
       } út ${formatDate(file.appealDeadline, 'PPPp')}`

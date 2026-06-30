@@ -7,12 +7,15 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import {
   AppealCaseState,
   AppealCaseTransition,
+  AppealDecisionPartyRole,
   Case,
+  CaseAppealDecision,
   CaseFile,
   CaseFileCategory,
   CaseState,
   CaseType,
   User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCase,
@@ -144,5 +147,97 @@ describe('RulingOrderFileRow - send in-court appeal to Landsréttur', () => {
 
     expect(await screen.findByText('Senda inn greinargerð')).toBeInTheDocument()
     expect(screen.queryByText('Senda til Landsréttar')).not.toBeInTheDocument()
+  })
+})
+
+// A party that accepted the ruling in court ("unir úrskurðinum") has waived its
+// appeal right, so the appeal action must be hidden for it.
+describe('RulingOrderFileRow - hide appeal action for an accepted party', () => {
+  const rulingFileId = 'ruling-file-appeal'
+  const defendantId = 'defendant-appeal'
+  const fileName = 'urskurdur-til-kaeru.pdf'
+
+  const defenceUser = {
+    id: 'defender-user',
+    role: UserRole.DEFENDER,
+    nationalId: '1234567890',
+  } as User
+
+  const renderForDecision = (decision: CaseAppealDecision) => {
+    const file = {
+      id: rulingFileId,
+      name: fileName,
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      canBeAppealed: true,
+      isKeyAccessible: true,
+    } as CaseFile
+
+    const workingCase = {
+      ...mockCase(CaseType.INDICTMENT),
+      state: CaseState.RECEIVED,
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: defenceUser.nationalId,
+        },
+      ],
+      appealDecisions: [
+        {
+          rulingFileId,
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision,
+        },
+      ],
+      rulingOrderAppealCases: [],
+    } as unknown as Case
+
+    return render(
+      <MockedProvider addTypename={false}>
+        <IntlProviderWrapper>
+          <UserContext.Provider value={{ user: defenceUser }}>
+            <FormContext.Provider
+              value={
+                {
+                  workingCase,
+                  setWorkingCase: jest.fn(),
+                  isLoadingWorkingCase: false,
+                  caseNotFound: false,
+                  isCaseUpToDate: true,
+                  refreshCase: jest.fn(),
+                  getCase: jest.fn(),
+                  isCreating: false,
+                } as unknown as React.ContextType<typeof FormContext>
+              }
+            >
+              <RulingOrderFileRow file={file} onOpenFile={jest.fn()} />
+            </FormContext.Provider>
+          </UserContext.Provider>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+  }
+
+  afterEach(() => jest.clearAllMocks())
+
+  it('hides the appeal action and the "Kærufrestur" deadline when the defendant accepted', () => {
+    renderForDecision(CaseAppealDecision.ACCEPT)
+
+    // The appeal action is the only menu item in this state, so with it gone the
+    // action menu trigger is not rendered at all.
+    expect(
+      screen.queryByLabelText(`Valmynd fyrir ${fileName}`),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/Kærufrestur/)).not.toBeInTheDocument()
+  })
+
+  it('shows the appeal action and the "Kærufrestur" deadline on POSTPONE', async () => {
+    renderForDecision(CaseAppealDecision.POSTPONE)
+
+    expect(screen.getByText(/Kærufrestur/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByLabelText(`Valmynd fyrir ${fileName}`))
+    expect(await screen.findByText('Senda inn kæru')).toBeInTheDocument()
   })
 })

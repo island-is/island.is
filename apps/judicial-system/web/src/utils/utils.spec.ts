@@ -4,6 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealCase,
   AppealCaseState,
+  AppealDecisionPartyRole,
   Case,
   CaseAppealDecision,
   CaseFile,
@@ -23,6 +24,7 @@ import * as formatters from './formatters'
 import {
   getAppealActorText,
   getDefaultDefendantGender,
+  hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   mapStringToGender,
@@ -619,6 +621,121 @@ describe('Utils', () => {
           'file-b',
         ),
       ).toBeUndefined()
+    })
+  })
+
+  describe('hasAcceptedRulingOrderInCourt', () => {
+    const rulingFileId = 'ruling-file-1'
+    const defendantId = 'defendant-1'
+    const defenderNationalId = '1234567890'
+
+    const defenceUser = {
+      role: UserRole.DEFENDER,
+      nationalId: defenderNationalId,
+    } as User
+
+    const prosecutionUser = {
+      role: UserRole.PROSECUTOR,
+      nationalId: '0000000000',
+      institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+    } as User
+
+    const caseWith = (
+      decisions: {
+        partyRole: AppealDecisionPartyRole
+        defendantId?: string
+        decision: CaseAppealDecision
+      }[],
+    ) =>
+      ({
+        defendants: [
+          {
+            id: defendantId,
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId,
+          },
+        ],
+        civilClaimants: [],
+        appealDecisions: decisions.map((decision) => ({
+          ...decision,
+          rulingFileId,
+        })),
+      } as unknown as Case)
+
+    it("is true when the defence user's defendant accepted in court", () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, defenceUser, rulingFileId),
+      ).toBe(true)
+    })
+
+    it('is false when the defendant took the deadline (POSTPONE)', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.POSTPONE,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, defenceUser, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is true when the prosecution accepted in court', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(
+          workingCase,
+          prosecutionUser,
+          rulingFileId,
+        ),
+      ).toBe(true)
+    })
+
+    it('is false when the user represents no party on the case', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.DEFENDANT,
+          defendantId,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+      const otherDefender = {
+        role: UserRole.DEFENDER,
+        nationalId: '9999999999',
+      } as User
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, otherDefender, rulingFileId),
+      ).toBe(false)
+    })
+
+    it('is false when there is no user', () => {
+      const workingCase = caseWith([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      expect(
+        hasAcceptedRulingOrderInCourt(workingCase, undefined, rulingFileId),
+      ).toBe(false)
     })
   })
 
