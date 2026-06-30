@@ -2541,7 +2541,7 @@ export const messages = defineMessages({
   },
   appointmentNotFoundDetail: {
     id: 'sp.health:appointment-not-found-detail',
-    defaultMessage: 'Þessi tímabókun er ekki til eða hefur verið breytt',
+    defaultMessage: 'Þessi tímabókun er ekki til eða hefur verið afbókuð',
   },
   appointmentWith: {
     id: 'sp.health:appointment-with',
