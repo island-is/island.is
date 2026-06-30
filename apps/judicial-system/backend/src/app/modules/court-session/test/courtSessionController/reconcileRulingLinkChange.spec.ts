@@ -74,6 +74,7 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
   const caseWith = (options: {
     appealState?: AppealCaseState
     appealFiles?: boolean
+    targetHasAppealCase?: boolean
   }): Case =>
     ({
       id: caseId,
@@ -84,15 +85,26 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       ],
       defendants: [{ id: defendantId }],
       civilClaimants: [],
-      rulingOrderAppealCases: options.appealState
-        ? [
-            {
-              id: appealCaseId,
-              rulingFileId: previousRulingFileId,
-              appealState: options.appealState,
-            },
-          ]
-        : [],
+      rulingOrderAppealCases: [
+        ...(options.appealState
+          ? [
+              {
+                id: appealCaseId,
+                rulingFileId: previousRulingFileId,
+                appealState: options.appealState,
+              },
+            ]
+          : []),
+        ...(options.targetHasAppealCase
+          ? [
+              {
+                id: 'target-appeal-case-id',
+                rulingFileId: newRulingFileId,
+                appealState: AppealCaseState.APPEALED,
+              },
+            ]
+          : []),
+      ],
     } as unknown as Case)
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
@@ -128,6 +140,10 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
+    // Default: the swap target is a clean ruling file (no recorded decisions).
+    ;(
+      mockAppealDecisionRepositoryService.findAll as jest.Mock
+    ).mockResolvedValue([])
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockFileService = fileService
@@ -283,6 +299,63 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       })
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(mockFileService.updateCaseFile).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('swapping onto a ruling file already linked to another appeal', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        caseWith({
+          appealState: AppealCaseState.APPEALED,
+          appealFiles: true,
+          targetHasAppealCase: true,
+        }),
+        { rulingFileId: newRulingFileId } as UpdateCourtSessionDto,
+        {
+          rulingType: CourtSessionRulingType.ORDER,
+          rulingFileId: newRulingFileId,
+        },
+      )
+    })
+
+    it('should reject the swap and write nothing', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
+      expect(
+        mockAppealDecisionRepositoryService.updateRulingFile,
+      ).not.toHaveBeenCalled()
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('swapping onto a ruling file that already has decisions', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealDecisionRepositoryService.findAll as jest.Mock
+      ).mockResolvedValue([
+        { id: 'existing-decision', rulingFileId: newRulingFileId },
+      ])
+
+      then = await givenWhenThen(
+        caseWith({ appealState: AppealCaseState.APPEALED, appealFiles: true }),
+        { rulingFileId: newRulingFileId } as UpdateCourtSessionDto,
+        {
+          rulingType: CourtSessionRulingType.ORDER,
+          rulingFileId: newRulingFileId,
+        },
+      )
+    })
+
+    it('should reject the swap and write nothing', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
+      expect(
+        mockAppealDecisionRepositoryService.updateRulingFile,
+      ).not.toHaveBeenCalled()
     })
   })
 

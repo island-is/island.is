@@ -232,16 +232,26 @@ export class CourtSessionService {
     // A correction can swap the ruling order file or move the session away from
     // ORDER. The previously pronounced ruling's in-court appeal is reconciled
     // separately from the new ruling's (see reconcileRulingLinkChange after the
-    // write). Only removing the ruling outright needs an up-front guard: there
-    // is no file to carry a progressed appeal onto, so reject that. Gated on the
-    // link change rather than on confirmation, because the file can be swapped
-    // in a non-confirming correction save before the session is re-confirmed.
+    // write); both link changes need an up-front guard. A swap must target a
+    // clean ruling file (re-keying onto one that already carries appeal data
+    // would collide or merge two appeals); a removal must not orphan a progressed
+    // appeal. Gated on the link change rather than on confirmation, because the
+    // file can be swapped in a non-confirming correction save before the session
+    // is re-confirmed.
     const previousRulingFileId = existingCourtSession.rulingFileId
     const rulingLinkChanged =
       !!previousRulingFileId && previousRulingFileId !== effectiveRulingFileId
 
-    if (rulingLinkChanged && !effectiveRulingFileId) {
-      this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+    if (rulingLinkChanged) {
+      if (effectiveRulingFileId) {
+        await this.validateRulingSwapAllowed(
+          theCase,
+          effectiveRulingFileId,
+          transaction,
+        )
+      } else {
+        this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+      }
     }
 
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
@@ -395,6 +405,40 @@ export class CourtSessionService {
     ) {
       throw new BadRequestException(
         'The appeal of this ruling has progressed past the district court, so the ruling cannot be removed by correcting the court record',
+      )
+    }
+  }
+
+  // The session's ruling is being swapped onto a different file, which re-keys
+  // this ruling's decisions, appeal case and appeal party files onto it
+  // (reconcileRulingLinkChange). The file selector only validates existence and
+  // category, so the target could already be another session's appealed ruling.
+  // Re-keying onto it would violate the (case, ruling file) unique indexes or
+  // merge two separate appeals, so reject up front if the target already carries
+  // an appeal case or any recorded decisions.
+  private async validateRulingSwapAllowed(
+    theCase: Case,
+    nextRulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const targetAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === nextRulingFileId,
+    )
+
+    if (targetAppealCase) {
+      throw new BadRequestException(
+        'The selected ruling file is already linked to another appeal',
+      )
+    }
+
+    const targetDecisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId: nextRulingFileId },
+      transaction,
+    })
+
+    if (targetDecisions.length > 0) {
+      throw new BadRequestException(
+        'The selected ruling file already has recorded appeal decisions',
       )
     }
   }
