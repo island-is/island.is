@@ -164,6 +164,7 @@ export const Expandable = () => (
     data={permitData}
     emptyMessage="No permits found."
     mobileTitleKey="id"
+    expanderLabel="Expand row"
     renderExpandedRow={(row) => (
       <Box paddingY={2}>
         <Text fontWeight="semiBold">Details</Text>

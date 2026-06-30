@@ -625,6 +625,7 @@ const User = () => {
                         data={notifications?.adminNotifications?.data ?? []}
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
+                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}
@@ -673,6 +674,7 @@ const User = () => {
                         }
                         emptyMessage={formatMessage(m.notificationsEmpty)}
                         getRowId={(row) => String(row.id)}
+                        mobileTitleKey="id"
                         renderExpandedRow={(row) => (
                           <NotificationDeliveriesPanel
                             notificationId={row.original.id}

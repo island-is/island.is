@@ -42,16 +42,27 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export interface InteractiveTableProps<TData extends object> {
+type WithExpander<TData extends object> = {
+  renderExpandedRow: (row: Row<TData>) => React.ReactNode
+  expanderLabel: string
+  mobileTitleKey: string
+}
+
+type WithoutExpander = {
+  renderExpandedRow?: never
+  expanderLabel?: never
+  mobileTitleKey?: string
+}
+
+type BaseInteractiveTableProps<TData extends object> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[]
   data: TData[]
   loading?: boolean
   errorMessage?: string
+  errorTitle?: string
   emptyMessage?: string
-  renderExpandedRow?: (row: Row<TData>) => React.ReactNode
   getRowId?: (originalRow: TData, index: number) => string
-  mobileTitleKey?: string
   manualSorting?: boolean
   sorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
@@ -61,13 +72,18 @@ export interface InteractiveTableProps<TData extends object> {
   meta?: TableMeta<TData>
 }
 
+export type InteractiveTableProps<TData extends object> = BaseInteractiveTableProps<TData> &
+  (WithExpander<TData> | WithoutExpander)
+
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,
   data,
   loading,
   errorMessage,
+  errorTitle,
   emptyMessage,
   renderExpandedRow,
+  expanderLabel,
   getRowId,
   mobileTitleKey,
   manualSorting,
@@ -78,6 +94,7 @@ export const InteractiveTable = <TData extends object>({
   sortHint = 'Activate to sort.',
   meta,
 }: InteractiveTableProps<TData>) => {
+  const resolvedExpanderLabel = expanderLabel ?? ''
   const [internalSorting, setInternalSorting] = useState<SortingState>(
     defaultSorting ?? [],
   )
@@ -123,7 +140,7 @@ export const InteractiveTable = <TData extends object>({
     return (
       <ProblemTemplate
         variant="error"
-        title="Error"
+        title={errorTitle ?? 'Error'}
         message={errorMessage}
         noBorder
       />
@@ -145,10 +162,11 @@ export const InteractiveTable = <TData extends object>({
 
   const desktopTable = (
     <T.Table>
-      {hasSortableColumns && (
+      {srCaption && (
         <caption>
           <span className={helperStyles.srOnly}>
-            {srCaption} {sortHint}
+            {srCaption}
+            {hasSortableColumns && ` ${sortHint}`}
           </span>
         </caption>
       )}
@@ -160,7 +178,9 @@ export const InteractiveTable = <TData extends object>({
                 key={header.id}
                 scope="col"
                 aria-label={
-                  header.column.id === 'expander' ? 'Expand row' : undefined
+                  header.column.id === 'expander'
+                    ? resolvedExpanderLabel
+                    : undefined
                 }
                 aria-sort={
                   header.column.getCanSort()
@@ -276,6 +296,9 @@ export const InteractiveTable = <TData extends object>({
                             mobileTitleKey
                               ? `${tableId}-row-title-${row.id}`
                               : undefined
+                          }
+                          aria-label={
+                            mobileTitleKey ? undefined : resolvedExpanderLabel
                           }
                           aria-expanded={isExpanded}
                           aria-controls={`${tableId}-row-expanded-${row.id}`}
@@ -465,6 +488,9 @@ export const InteractiveTable = <TData extends object>({
                       mobileTitleKey
                         ? `${tableId}-row-title-${row.id}`
                         : undefined
+                    }
+                    aria-label={
+                      mobileTitleKey ? undefined : resolvedExpanderLabel
                     }
                     aria-expanded={isExpanded}
                     aria-controls={`${tableId}-row-expanded-${row.id}`}

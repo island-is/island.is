@@ -24,23 +24,34 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
  *
  * Prefer using `InteractiveTable` directly when you don't need these portal conveniences.
  */
-interface PortalTableProps<TData extends object> {
+type PortalWithExpander<TData extends object> = {
+  renderExpandedRow: (row: Row<TData>) => React.ReactNode
+  /** Accessible label for the expand/collapse button. Defaults to the Icelandic "Skoða nánar". */
+  expanderLabel?: string
+  mobileTitleKey: string
+}
+
+type PortalWithoutExpander = {
+  renderExpandedRow?: never
+  expanderLabel?: never
+  mobileTitleKey?: string
+}
+
+type PortalTableProps<TData extends object> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<TData, any>[]
   data: TData[]
   loading?: boolean
   error?: ApolloError
   emptyMessage: string | MessageDescriptor
-  renderExpandedRow?: (row: Row<TData>) => React.ReactNode
   getRowId?: (originalRow: TData, index: number) => string
-  mobileTitleKey?: string
   manualSorting?: boolean
   sorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
   defaultSorting?: SortingState
   srCaption?: string
   meta?: TableMeta<TData>
-}
+} & (PortalWithExpander<TData> | PortalWithoutExpander)
 
 export const PortalTable = <TData extends object>({
   columns,
@@ -49,6 +60,7 @@ export const PortalTable = <TData extends object>({
   error,
   emptyMessage,
   renderExpandedRow,
+  expanderLabel,
   getRowId,
   mobileTitleKey,
   manualSorting,
@@ -73,23 +85,32 @@ export const PortalTable = <TData extends object>({
       ? emptyMessage
       : formatMessage(emptyMessage)
 
-  return (
-    <InteractiveTable
-      columns={columns}
-      data={data}
-      emptyMessage={resolvedEmpty}
-      renderExpandedRow={renderExpandedRow}
-      getRowId={getRowId}
-      mobileTitleKey={mobileTitleKey}
-      manualSorting={manualSorting}
-      sorting={sorting}
-      onSortingChange={onSortingChange}
-      defaultSorting={defaultSorting}
-      srCaption={srCaption ?? formatMessage(m.tableCaption)}
-      sortHint={formatMessage(m.tableSortHint)}
-      meta={meta}
-    />
-  )
+  const commonProps = {
+    columns,
+    data,
+    emptyMessage: resolvedEmpty,
+    getRowId,
+    manualSorting,
+    sorting,
+    onSortingChange,
+    defaultSorting,
+    srCaption: srCaption ?? formatMessage(m.tableCaption),
+    sortHint: formatMessage(m.tableSortHint),
+    meta,
+  }
+
+  if (renderExpandedRow && mobileTitleKey) {
+    return (
+      <InteractiveTable
+        {...commonProps}
+        mobileTitleKey={mobileTitleKey}
+        renderExpandedRow={renderExpandedRow}
+        expanderLabel={expanderLabel ?? formatMessage(m.tableExpandColumn)}
+      />
+    )
+  }
+
+  return <InteractiveTable {...commonProps} mobileTitleKey={mobileTitleKey} />
 }
 
 export default PortalTable
