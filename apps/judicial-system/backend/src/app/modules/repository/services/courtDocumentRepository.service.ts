@@ -538,7 +538,9 @@ export class CourtDocumentRepositoryService {
       )
 
       if (courtDocumentsToFile.length === 0) {
-        this.logger.debug(`No available court documents to file in case ${caseId}`)
+        this.logger.debug(
+          `No available court documents to file in case ${caseId}`,
+        )
         return
       }
 
