@@ -120,9 +120,7 @@ describe('RulingOrderFileRow - send in-court appeal to Landsréttur', () => {
     renderRow(mockJudge)
     openMenu()
 
-    expect(
-      await screen.findByText('Senda til Landsréttar'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Senda til Landsréttar')).toBeInTheDocument()
   })
 
   it('receives the appeal (RECEIVE_APPEAL) when sending to Landsréttur', async () => {
@@ -145,8 +143,6 @@ describe('RulingOrderFileRow - send in-court appeal to Landsréttur', () => {
     openMenu()
 
     expect(await screen.findByText('Senda inn greinargerð')).toBeInTheDocument()
-    expect(
-      screen.queryByText('Senda til Landsréttar'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Senda til Landsréttar')).not.toBeInTheDocument()
   })
 })
