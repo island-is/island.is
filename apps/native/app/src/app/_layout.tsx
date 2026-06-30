@@ -1,10 +1,11 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
 import { PromptModal } from '@/components/prompt-modal'
 import { ToastHost } from '@/components/toast'
-import { Stack } from 'expo-router'
+import { Stack, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import 'react-native-reanimated'
+import { DdRum } from '@datadog/mobile-react-native'
 
 import { LocaleProvider } from '../components/providers/locale-provider'
 import { OfflineProvider } from '../components/providers/offline-provider'
@@ -184,6 +185,26 @@ function RootLayoutNav({
 }: {
   apolloClient: ApolloClient<NormalizedCacheObject>
 }) {
+  // Datadog RUM view tracking. Uses route segment templates (e.g. inbox/[id])
+  // rather than the resolved pathname so dynamic params like document IDs
+  // don't leak into Datadog.
+  const segments = useSegments()
+  const viewName =
+    segments.filter((s) => !s.startsWith('(')).join('/') || 'index'
+  const previousViewRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (__DEV__) {
+      return
+    }
+    const previous = previousViewRef.current
+    if (previous && previous !== viewName) {
+      DdRum.stopView(previous).catch(() => {})
+    }
+    DdRum.startView(viewName, viewName).catch(() => {})
+    previousViewRef.current = viewName
+  }, [viewName])
+
   return (
     <LocaleProvider>
       <AppThemeProvider>
