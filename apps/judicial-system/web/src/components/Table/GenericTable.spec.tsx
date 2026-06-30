@@ -102,8 +102,12 @@ describe('GenericTable', () => {
     renderTable(jest.fn(), false, [{ title: 'Eyða', onClick: jest.fn() }])
 
     // A single, accessibly-named menu trigger — not a duplicate tab stop with
-    // an empty-named wrapper plus a redundant inner button.
-    const triggers = screen.getAllByRole('button', { name: 'Valmynd' })
+    // an empty-named wrapper plus a redundant inner button. The name is
+    // descriptive (derived from the row label) so screen reader users can tell
+    // each row's menu apart.
+    const triggers = screen.getAllByRole('button', {
+      name: 'Frekari aðgerðir fyrir mál R-123/2021',
+    })
     expect(triggers).toHaveLength(1)
     expect(triggers[0]).toHaveAttribute('aria-haspopup', 'menu')
     expect(triggers[0]).toHaveAttribute('tabindex', '0')
