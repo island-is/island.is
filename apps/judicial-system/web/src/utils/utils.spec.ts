@@ -470,6 +470,19 @@ describe('Utils', () => {
     })
 
     describe('indictment ruling-order appeals', () => {
+      test('returns "Kært í þinghaldi {date}" when appealed in court', () => {
+        const workingCase = { type: CaseType.INDICTMENT } as Case
+        const appealCase = {
+          rulingFileId: 'file-1',
+          appealedInCourt: true,
+          appealedDate,
+        } as AppealCase
+
+        expect(getAppealActorText(workingCase, appealCase)).toBe(
+          `Kært í þinghaldi ${dateStr}`,
+        )
+      })
+
       test('uses subject-verb form for prosecutor', () => {
         const workingCase = { type: CaseType.INDICTMENT } as Case
         const appealCase = {

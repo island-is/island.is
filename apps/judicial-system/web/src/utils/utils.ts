@@ -316,6 +316,12 @@ export const getAppealActorText = (
   if (appealCase?.rulingFileId) {
     const dateStr = formatDate(appealCase.appealedDate, 'PPPp')
 
+    // In-court ruling-order appeal: any number of parties may have appealed in
+    // the þingbók, so the court of appeals shows it without naming who appealed.
+    if (appealCase.appealedInCourt) {
+      return `Kært í þinghaldi ${dateStr}`
+    }
+
     if (appealCase.appealedByRole === UserRole.PROSECUTOR) {
       return `Ákærandi kærði úrskurðinn ${dateStr}`
     }
