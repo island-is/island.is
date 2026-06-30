@@ -80,7 +80,9 @@ describe('<AppealCaseFilesOverview />', () => {
         </ApolloProvider>
       </IntlProvider>,
     )
-    const button = await screen.findByRole('button', { name: /^Valmynd fyrir / })
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -112,7 +114,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button', { name: /^Valmynd fyrir / })
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -143,7 +147,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button', { name: /^Valmynd fyrir / })
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
@@ -174,7 +180,9 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    const button = await screen.findByRole('button', { name: /^Valmynd fyrir / })
+    const button = await screen.findByRole('button', {
+      name: /^Valmynd fyrir /,
+    })
     await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })
