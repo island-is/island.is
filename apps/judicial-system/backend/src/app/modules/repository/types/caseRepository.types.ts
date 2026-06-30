@@ -153,6 +153,10 @@ export const caseInclude: Includeable[] = [
         model: CaseFile,
         as: 'caseFiles',
         required: false,
+        order: [
+          ['orderWithinChapter', 'ASC NULLS LAST'],
+          ['created', 'ASC'],
+        ],
         where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
         separate: true,
       },
@@ -284,7 +288,10 @@ export const caseInclude: Includeable[] = [
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    order: [['created', 'DESC']],
+    order: [
+      ['orderWithinChapter', 'ASC NULLS LAST'],
+      ['created', 'ASC'],
+    ],
     where: { state: { [Op.not]: CaseFileState.DELETED } },
     separate: true,
   },
@@ -639,4 +646,5 @@ export interface UpdateDefendant {
   alternativeServiceDescription?: string
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
+  isDrivingLicenseSuspended?: boolean | null
 }

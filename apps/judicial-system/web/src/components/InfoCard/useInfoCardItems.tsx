@@ -17,6 +17,7 @@ import {
 import {
   isCompletedCase,
   isDefenceUser,
+  isIndictmentCase,
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -179,7 +180,7 @@ const useInfoCardItems = () => {
 
   const prosecutorsOffice: Item = {
     id: 'prosecutors-office-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(workingCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [workingCase.prosecutorsOffice?.name || ''],
   }
 
@@ -292,7 +293,7 @@ const useInfoCardItems = () => {
 
   const mergedCaseProsecutor = (mergedCase: Case): Item => ({
     id: 'merged-case-prosecutor-item',
-    title: formatMessage(core.prosecutor),
+    title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 

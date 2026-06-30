@@ -1,7 +1,14 @@
 import { ComponentProps, FC, PropsWithChildren, useContext } from 'react'
 import cn from 'classnames'
 
-import { Box, Button, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  IconMapIcon,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -15,6 +22,7 @@ interface Props {
   subtitle?: string | null
   subtitleIcon?: IconMapIcon
   subtitleIconColor?: ComponentProps<typeof Icon>['color']
+  subtitleIconTooltip?: string
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -43,6 +51,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   subtitle,
   subtitleIcon,
   subtitleIconColor,
+  subtitleIconTooltip,
   pdfType,
   disabled,
   renderAs = 'button',
@@ -121,9 +130,16 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
       </Box>
       {subtitle && (
         <Box marginTop={1} display="flex" alignItems="center" columnGap={1}>
-          {subtitleIcon && (
-            <Icon icon={subtitleIcon} color={subtitleIconColor} />
-          )}
+          {subtitleIcon &&
+            (subtitleIconTooltip ? (
+              <Tooltip text={subtitleIconTooltip} placement="top">
+                <span>
+                  <Icon icon={subtitleIcon} color={subtitleIconColor} />
+                </span>
+              </Tooltip>
+            ) : (
+              <Icon icon={subtitleIcon} color={subtitleIconColor} />
+            ))}
           <Text variant="small" color="dark400">
             {subtitle}
           </Text>

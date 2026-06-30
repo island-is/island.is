@@ -239,7 +239,7 @@ export const olMessage = defineMessages({
   },
   sailorCrewRegistrationsTabsLabel: {
     id: 'sp.occupational-licenses:sailor-crew-registrations-tabs-label',
-    defaultMessage: 'Lögskráningar',
+    defaultMessage: 'Veldu tegund',
   },
   sailorColumnRank: {
     id: 'sp.occupational-licenses:sailor-column-rank',

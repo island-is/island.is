@@ -184,6 +184,7 @@ const CaseFileTable: FC<Props> = ({
                           <IconButton
                             icon="ellipsisVertical"
                             colorScheme="transparent"
+                            ariaLabel={`Valmynd fyrir ${file.name}`}
                           />
                         </motion.div>
                       }
