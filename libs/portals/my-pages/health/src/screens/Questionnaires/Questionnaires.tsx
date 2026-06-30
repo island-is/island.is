@@ -35,14 +35,12 @@ import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 const defaultFilterValues = {
   searchQuery: '',
   status: [],
-  organization: [],
   treatment: [],
 }
 
 type FilterValues = {
   searchQuery: string
   status: QuestionnaireQuestionnairesStatusEnum[]
-  organization: QuestionnaireQuestionnairesOrganizationEnum[]
   treatment: string[]
 }
 
@@ -53,6 +51,7 @@ const Questionnaires: FC = () => {
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
+  const [inputValue, setInputValue] = useState('')
   const [filteredData, setFilteredData] = useState<
     QuestionnairesBaseItem[] | null
   >(null)
@@ -76,17 +75,6 @@ const Questionnaires: FC = () => {
     }))
   }
 
-  const toggleOrganization = (
-    organization: QuestionnaireQuestionnairesOrganizationEnum,
-  ) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      organization: prev.organization.includes(organization)
-        ? prev.organization.filter((o) => o !== organization)
-        : [...prev.organization, organization],
-    }))
-  }
-
   const debouncedSetSearchQuery = useMemo(
     () =>
       debounce((value: string) => {
@@ -99,6 +87,7 @@ const Questionnaires: FC = () => {
   )
 
   const handleSearchChange = (value: string) => {
+    setInputValue(value)
     debouncedSetSearchQuery(value)
   }
 
@@ -109,6 +98,7 @@ const Questionnaires: FC = () => {
         const searchLower = filterValues.searchQuery.toLowerCase()
         const matchesSearch =
           !searchLower ||
+          item.senderGroupName?.toLowerCase().includes(searchLower) ||
           item.organization?.toLowerCase().includes(searchLower) ||
           item.title?.toLowerCase().includes(searchLower)
 
@@ -117,22 +107,11 @@ const Questionnaires: FC = () => {
           filterValues.status.length === 0 ||
           (item.status && filterValues.status.includes(item.status))
 
-        // Organization filter
-        const matchesOrganization =
-          filterValues.organization.length === 0 ||
-          (item.organization &&
-            filterValues.organization.includes(item.organization))
-
         // Expired filter
         const matchesExpired =
           showExpired || item.status !== QuestionnairesStatusEnum.expired
 
-        return (
-          matchesSearch &&
-          matchesStatus &&
-          matchesOrganization &&
-          matchesExpired
-        )
+        return matchesSearch && matchesStatus && matchesExpired
       }) ?? null,
     )
   }, [filterValues, data, showExpired])
@@ -142,9 +121,7 @@ const Questionnaires: FC = () => {
     data?.questionnairesList?.questionnaires?.length === 0
 
   const filterIsEmpty =
-    filterValues.searchQuery.length === 0 &&
-    filterValues.status.length === 0 &&
-    filterValues.organization.length === 0
+    filterValues.searchQuery.length === 0 && filterValues.status.length === 0
 
   const noActive = filteredData?.every(
     (item) => item.status === QuestionnairesStatusEnum.expired,
@@ -198,6 +175,7 @@ const Questionnaires: FC = () => {
           labelOpen={formatMessage(m.openFilter)}
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
+            setInputValue('')
             setFilterValues(defaultFilterValues)
           }}
           filterInput={
@@ -206,6 +184,7 @@ const Questionnaires: FC = () => {
               name="rafraen-skjol-input"
               size="xs"
               label={formatMessage(m.searchLabel)}
+              value={inputValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               backgroundColor="blue"
               icon={{ name: 'search' }}
@@ -248,42 +227,6 @@ const Questionnaires: FC = () => {
                   checked={filterValues.status.includes(status)}
                   onChange={() => {
                     toggleStatus(status)
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box paddingX={4} paddingBottom={2}>
-            <Text
-              variant="default"
-              as="p"
-              fontWeight="semiBold"
-              paddingBottom={2}
-            >
-              {formatMessage(messages.organization)}
-            </Text>
-
-            <Stack space={2}>
-              {[
-                {
-                  name: 'lsh',
-                  label: formatMessage(messages.landspitali),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
-                },
-                {
-                  name: 'el',
-                  label: formatMessage(messages.healthDirectorate),
-                  organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
-                },
-              ].map(({ name, label, organization }) => (
-                <Checkbox
-                  key={name}
-                  name={name}
-                  label={label}
-                  value={name}
-                  checked={filterValues.organization.includes(organization)}
-                  onChange={() => {
-                    toggleOrganization(organization)
                   }}
                 />
               ))}
@@ -353,10 +296,11 @@ const Questionnaires: FC = () => {
                 headingVariant="h4"
                 subText={questionnaire.description ?? ''}
                 eyebrow={
-                  questionnaire.organization ===
+                  questionnaire.senderGroupName ??
+                  (questionnaire.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
                     ? formatMessage(messages.healthDirectorate)
-                    : formatMessage(messages.landspitali)
+                    : formatMessage(messages.landspitali))
                 }
                 eyebrowColor="purple400"
                 text={formatDate(questionnaire.sentDate)}

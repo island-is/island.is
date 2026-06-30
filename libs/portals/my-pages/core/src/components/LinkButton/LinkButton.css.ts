@@ -1,7 +1,9 @@
 import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
-export const link = style({})
+export const link = style({
+  display: 'inline-block',
+})
 
 globalStyle(`${link}:focus > span`, {
   color: theme.color.dark400,

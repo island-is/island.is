@@ -11,6 +11,7 @@ import {
   Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
   CreateAppealCaseMutation,
@@ -145,13 +146,13 @@ const useAppealCase = () => {
           }
 
           if (setWorkingCase) {
-            setWorkingCase((prevWorkingCase) => ({
-              ...prevWorkingCase,
-              appealCase: {
-                ...prevWorkingCase.appealCase,
-                ...appealCase,
-              } as AppealCase,
-            }))
+            setWorkingCase((prevWorkingCase) =>
+              applyAppealCaseUpdate(
+                prevWorkingCase,
+                appealCaseId,
+                appealCase as Partial<AppealCase>,
+              ),
+            )
           }
 
           return true

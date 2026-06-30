@@ -12,8 +12,10 @@ export const mapToElAnswer = (
   input: QuestionnaireInput,
   formatMessage: FormatMessage,
 ): SubmitQuestionnaireDto => {
-  const replies: SubmitQuestionnaireDto['replies'] = input.entries.map(
+  const replies: SubmitQuestionnaireDto['replies'] = input.entries.flatMap(
     (entry) => {
+      if (!entry.answers?.length) return []
+
       const questionId = entry.entryId
       const answerValues = entry.answers.map((a) => a.value)
 

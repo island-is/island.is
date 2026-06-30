@@ -47,6 +47,7 @@ type UpdateVerdict = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
   defendantHasRequestedAppeal?: boolean | null
   serviceRequirement?: ServiceRequirement | null
+  isDefaultJudgement?: boolean | null
 } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
@@ -56,7 +57,6 @@ type UpdateVerdict = {
   | 'appealDecision'
   | 'appealDate'
   | 'serviceInformationForDefendant'
-  | 'isDefaultJudgement'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -297,6 +297,7 @@ export class VerdictService {
         isAcquittedByPublicProsecutionOffice: null,
         defendantHasRequestedAppeal: null,
         serviceRequirement: null,
+        isDefaultJudgement: null,
       },
       transaction,
     )

@@ -1,7 +1,7 @@
 import { FormatMessage } from '@island.is/localization'
 import flatten from 'lodash/flatten'
 import type { BffUser } from '@island.is/shared/types'
-import { FeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { isCompany } from '@island.is/shared/utils'
@@ -75,10 +75,11 @@ export const arrangeRoutes = async ({
   const mappedRoutes = await Promise.all(
     flatRoutes.map(async (route) => {
       if (route.key) {
-        const ff = await featureFlagClient.getValue(
-          `isServicePortal${route.key}PageEnabled`,
-          false,
-        )
+        const featureValues: string[] = Object.values(Features)
+        const flagKey = featureValues.includes(route.key)
+          ? route.key
+          : `isServicePortal${route.key}PageEnabled`
+        const ff = await featureFlagClient.getValue(flagKey, false)
         return ff ? route : false
       }
       return route
