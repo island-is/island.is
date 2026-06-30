@@ -232,16 +232,26 @@ export class CourtSessionService {
     // A correction can swap the ruling order file or move the session away from
     // ORDER. The previously pronounced ruling's in-court appeal is reconciled
     // separately from the new ruling's (see reconcileRulingLinkChange after the
-    // write). Only removing the ruling outright needs an up-front guard: there
-    // is no file to carry a progressed appeal onto, so reject that. Gated on the
-    // link change rather than on confirmation, because the file can be swapped
-    // in a non-confirming correction save before the session is re-confirmed.
+    // write); both link changes need an up-front guard. A swap must target a
+    // clean ruling file (re-keying onto one that already carries appeal data
+    // would collide or merge two appeals); a removal must not orphan a progressed
+    // appeal. Gated on the link change rather than on confirmation, because the
+    // file can be swapped in a non-confirming correction save before the session
+    // is re-confirmed.
     const previousRulingFileId = existingCourtSession.rulingFileId
     const rulingLinkChanged =
       !!previousRulingFileId && previousRulingFileId !== effectiveRulingFileId
 
-    if (rulingLinkChanged && !effectiveRulingFileId) {
-      this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+    if (rulingLinkChanged) {
+      if (effectiveRulingFileId) {
+        await this.validateRulingSwapAllowed(
+          theCase,
+          effectiveRulingFileId,
+          transaction,
+        )
+      } else {
+        this.validateRulingRemovalAllowed(theCase, previousRulingFileId)
+      }
     }
 
     const updatedCourtSession = await this.courtSessionRepositoryService.update(
@@ -295,6 +305,19 @@ export class CourtSessionService {
       where: { caseId: theCase.id, rulingFileId },
       transaction,
     })
+
+    // TEMPORARY — REMOVE WHEN THE RULING-ORDER APPEAL UI IS DEPLOYED.
+    // The court UI that records per-party "Ákvörðun um kæru" decisions is not in
+    // production yet, so no ORDER session can have any decisions and this check
+    // would block every ruling-order confirmation. While no decisions exist we
+    // skip the completeness check, restoring pre-appeal confirmation behaviour.
+    // Once the data-entry UI (in-court and out-of-court ruling-order appeals)
+    // ships, DELETE this early return so confirming an ORDER session again
+    // requires every party's decision — otherwise a session with no decisions
+    // entered could be confirmed and silently bypass the requirement.
+    if (decisions.length === 0) {
+      return
+    }
 
     const hasDecision = (
       predicate: (decision: AppealDecision) => boolean,
@@ -395,6 +418,40 @@ export class CourtSessionService {
     ) {
       throw new BadRequestException(
         'The appeal of this ruling has progressed past the district court, so the ruling cannot be removed by correcting the court record',
+      )
+    }
+  }
+
+  // The session's ruling is being swapped onto a different file, which re-keys
+  // this ruling's decisions, appeal case and appeal party files onto it
+  // (reconcileRulingLinkChange). The file selector only validates existence and
+  // category, so the target could already be another session's appealed ruling.
+  // Re-keying onto it would violate the (case, ruling file) unique indexes or
+  // merge two separate appeals, so reject up front if the target already carries
+  // an appeal case or any recorded decisions.
+  private async validateRulingSwapAllowed(
+    theCase: Case,
+    nextRulingFileId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const targetAppealCase = theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === nextRulingFileId,
+    )
+
+    if (targetAppealCase) {
+      throw new BadRequestException(
+        'The selected ruling file is already linked to another appeal',
+      )
+    }
+
+    const targetDecisions = await this.appealDecisionRepositoryService.findAll({
+      where: { caseId: theCase.id, rulingFileId: nextRulingFileId },
+      transaction,
+    })
+
+    if (targetDecisions.length > 0) {
+      throw new BadRequestException(
+        'The selected ruling file already has recorded appeal decisions',
       )
     }
   }
