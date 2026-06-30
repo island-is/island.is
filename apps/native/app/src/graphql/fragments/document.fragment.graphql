@@ -48,6 +48,7 @@ fragment ListDocument on DocumentV2 {
   sender {
     id
     name
+    logoUrl
   }
   archived @client
 }
