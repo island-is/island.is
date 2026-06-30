@@ -25,7 +25,9 @@ import {
 import {
   useAppealCase,
   useCase,
+  useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   onClose: () => void
@@ -37,12 +39,13 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const handlePrimaryButtonClick = async () => {
     const caseTransitioned = isCourtOfAppealsUser(user)
       ? await transitionAppealCase(
           workingCase.id,
-          workingCase.appealCase?.id ?? '',
+          targetAppealCase?.id ?? workingCase.appealCase?.id ?? '',
           AppealCaseTransition.REOPEN_APPEAL,
         )
       : isRequestCase(workingCase.type)
@@ -52,7 +55,10 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
     if (caseTransitioned) {
       router.push(
         isCourtOfAppealsUser(user)
-          ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
+          ? appendAppealCaseIdQuery(
+              `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`,
+              targetAppealCase?.id,
+            )
           : isRestrictionCase(workingCase.type)
           ? `${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
           : isInvestigationCase(workingCase.type)

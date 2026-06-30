@@ -122,32 +122,29 @@ export class AppealDecisionRepositoryService {
         `Upserting appeal decision for ${party.partyRole} in case ${party.caseId}`,
       )
 
-      // Atomic upsert against the
-      // (case_id, ruling_file_id, party_role, defendant_id, civil_claimant_id)
-      // NULLS NOT DISTINCT unique index. A separate findOne + create would race:
-      // two concurrent requests for the same party (e.g. a decision and its
-      // autofilled announcement firing together) could both miss the lookup and
-      // then collide on the unique constraint. decision and announcement are
-      // always set together, so this replaces the party's recorded position.
+      const key = {
+        caseId: party.caseId,
+        rulingFileId: party.rulingFileId ?? null,
+        partyRole: party.partyRole,
+        defendantId: party.defendantId ?? null,
+        civilClaimantId: party.civilClaimantId ?? null,
+      }
+
+      // Atomic insert-or-update keyed on the party. A read-then-write would
+      // race two concurrent requests for the same party into a duplicate
+      // insert; conflictFields target the composite UNIQUE index (NULLS NOT
+      // DISTINCT) so Postgres resolves the conflict in a single statement.
       const [result] = await this.appealDecisionModel.upsert(
+        { ...key, ...data },
         {
-          caseId: party.caseId,
-          rulingFileId: party.rulingFileId ?? null,
-          partyRole: party.partyRole,
-          defendantId: party.defendantId ?? null,
-          civilClaimantId: party.civilClaimantId ?? null,
-          decision: data.decision ?? null,
-          announcement: data.announcement ?? null,
-        },
-        {
-          conflictFields: [
-            'case_id',
-            'ruling_file_id',
-            'party_role',
-            'defendant_id',
-            'civil_claimant_id',
-          ],
           transaction: options.transaction,
+          conflictFields: [
+            'caseId',
+            'rulingFileId',
+            'partyRole',
+            'defendantId',
+            'civilClaimantId',
+          ],
         },
       )
 

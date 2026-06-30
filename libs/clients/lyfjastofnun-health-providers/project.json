@@ -1,7 +1,7 @@
 {
-  "name": "clients-lyfjastofnun-pharmacies",
+  "name": "clients-lyfjastofnun-health-providers",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/lyfjastofnun-pharmacies/src",
+  "sourceRoot": "libs/clients/lyfjastofnun-health-providers/src",
   "projectType": "library",
   "tags": ["lib:client", "scope:client"],
   "targets": {
@@ -12,7 +12,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/lyfjastofnun-pharmacies/jest.config.ts"
+        "jestConfig": "libs/clients/lyfjastofnun-health-providers/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -23,13 +23,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/lyfjastofnun-pharmacies"
+        "cwd": "libs/clients/lyfjastofnun-health-providers"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-ts -f libs/clients/lyfjastofnun-pharmacies/src/lib/openapi-ts.config.ts"
+        "command": "yarn openapi-ts -f libs/clients/lyfjastofnun-health-providers/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
